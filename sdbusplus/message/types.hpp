@@ -112,6 +112,13 @@ template <> struct type_id<const char*> : tuple_type_id<'s'> {};
 template <> struct type_id<char*> : tuple_type_id<'s'> {};
 template <> struct type_id<std::string> : tuple_type_id<'s'> {};
 
+template <typename T> struct type_id<std::vector<T>>
+{
+    static constexpr auto value = std::tuple_cat(
+        tuple_type_id<'a'>::value,
+        type_id_single<T>());
+};
+
 template <typename T> constexpr auto& type_id_single()
 {
     static_assert(!std::is_base_of<undefined_type_id, type_id<T>>::value,
@@ -131,7 +138,7 @@ template <typename T, typename ...Args> constexpr auto type_id_multiple()
  *  duplication in type_id template specializations.
  *
  *  1. Remove references.
- *  2. Remove 'const' and 'vector'.
+ *  2. Remove 'const' and 'volatile'.
  *  3. Convert 'char[N]' to 'char*'.
  */
 template <typename T> struct type_id_downcast

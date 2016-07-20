@@ -193,6 +193,33 @@ void runTests()
         b.call_noreply(m);
     }
 
+    // Test vector.
+    {
+        auto m = newMethodCall__test(b);
+        std::vector<std::string> s{ "1", "2", "3"};
+        m.append(1, s, 2);
+        verifyTypeString = "iasi";
+
+        struct verify
+        {
+            static void op(sdbusplus::message::message& m)
+            {
+                int32_t a = 0;
+                std::vector<std::string> s;
+                m.read(a, s);
+                assert(a == 1);
+                assert(s[0] == "1");
+                assert(s[1] == "2");
+                assert(s[2] == "3");
+                decltype(s) s2 = { "1" , "2" , "3" };
+                assert(s == s2);
+            }
+        };
+        verifyCallback = &verify::op;
+
+        b.call_noreply(m);
+    }
+
     // Shutdown server.
     {
         auto m = b.new_method_call(SERVICE, "/", INTERFACE, QUIT_METHOD);

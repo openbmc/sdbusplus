@@ -47,6 +47,9 @@ namespace details
 template<typename T> struct can_append_multiple : std::true_type {};
     // std::string needs a c_str() call.
 template<> struct can_append_multiple<std::string> : std::false_type {};
+    // std::vector needs a loop.
+template<typename T>
+struct can_append_multiple<std::vector<T>> : std::false_type {};
 
 /** @struct append_single
  *  @brief Utility to append a single C++ element into a sd_bus_message.
@@ -101,6 +104,20 @@ template <> struct append_single<std::string>
     {
         constexpr auto dbusType = std::get<0>(types::type_id<T>());
         sd_bus_message_append_basic(m, dbusType, s.c_str());
+    }
+};
+
+/** @brief Specialization of append_single for std::vectors. */
+template <typename T> struct append_single<std::vector<T>>
+{
+    template<typename S>
+    static void op(sd_bus_message* m, S&& s)
+    {
+        constexpr auto dbusType = utility::tuple_to_array(types::type_id<T>());
+
+        sd_bus_message_open_container(m, SD_BUS_TYPE_ARRAY, dbusType.data());
+        for(auto& i : s) { sdbusplus::message::append(m, i); }
+        sd_bus_message_close_container(m);
     }
 };
 

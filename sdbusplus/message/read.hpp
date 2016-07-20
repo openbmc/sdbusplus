@@ -47,6 +47,9 @@ namespace details
 template<typename T> struct can_read_multiple : std::true_type {};
     // std::string needs a c_str() call.
 template<> struct can_read_multiple<std::string> : std::false_type {};
+    // std::vector needs a loop.
+template<typename T>
+struct can_read_multiple<std::vector<T>> : std::false_type {};
 
 /** @struct read_single
  *  @brief Utility to read a single C++ element from a sd_bus_message.
@@ -103,6 +106,28 @@ template <> struct read_single<std::string>
         const char* str = nullptr;
         sd_bus_message_read_basic(m, dbusType, &str);
         s = str;
+    }
+};
+
+/** @brief Specialization of read_single for std::vectors. */
+template <typename T> struct read_single<std::vector<T>>
+{
+    template<typename S>
+    static void op(sd_bus_message* m, S&& s)
+    {
+        s.clear();
+
+        constexpr auto dbusType = utility::tuple_to_array(types::type_id<T>());
+        sd_bus_message_enter_container(m, SD_BUS_TYPE_ARRAY, dbusType.data());
+
+        while(!sd_bus_message_at_end(m, false))
+        {
+            std::remove_const_t<T> t{};
+            sdbusplus::message::read(m, t);
+            s.push_back(std::move(t));
+        }
+
+        sd_bus_message_exit_container(m);
     }
 };
 

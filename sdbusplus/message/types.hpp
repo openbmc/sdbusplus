@@ -34,6 +34,24 @@ template <typename ...Args> constexpr auto type_id();
 namespace details
 {
 
+/** @brief Convert some C++ types to others for 'type_id' conversion purposes.
+ *
+ *  Similar C++ types have the same dbus type-id, so 'downcast' those to limit
+ *  duplication in type_id template specializations.
+ *
+ *  1. Remove references.
+ *  2. Remove 'const' and 'volatile'.
+ *  3. Convert 'char[N]' to 'char*'.
+ */
+template <typename T> struct type_id_downcast
+{
+    using type = typename utility::array_to_ptr_t<
+            char, std::remove_cv_t<std::remove_reference_t<T>>>;
+};
+
+template <typename T> using type_id_downcast_t =
+        typename type_id_downcast<T>::type;
+
 /** @struct undefined_type_id
  *  @brief Special type indicating no dbus-type_id is defined for a C++ type.
  */
@@ -112,6 +130,13 @@ template <> struct type_id<const char*> : tuple_type_id<'s'> {};
 template <> struct type_id<char*> : tuple_type_id<'s'> {};
 template <> struct type_id<std::string> : tuple_type_id<'s'> {};
 
+template <typename T> struct type_id<std::vector<T>>
+{
+    static constexpr auto value = std::tuple_cat(
+        tuple_type_id<'a'>::value,
+        type_id<type_id_downcast_t<T>>::value);
+};
+
 template <typename T> constexpr auto& type_id_single()
 {
     static_assert(!std::is_base_of<undefined_type_id, type_id<T>>::value,
@@ -124,24 +149,6 @@ template <typename T, typename ...Args> constexpr auto type_id_multiple()
     return std::tuple_cat(type_id_single<T>(),
         type_id_single<Args>()...);
 }
-
-/** @brief Convert some C++ types to others for 'type_id' conversion purposes.
- *
- *  Similar C++ types have the same dbus type-id, so 'downcast' those to limit
- *  duplication in type_id template specializations.
- *
- *  1. Remove references.
- *  2. Remove 'const' and 'vector'.
- *  3. Convert 'char[N]' to 'char*'.
- */
-template <typename T> struct type_id_downcast
-{
-    using type = typename utility::array_to_ptr_t<
-            char, std::remove_cv_t<std::remove_reference_t<T>>>;
-};
-
-template <typename T> using type_id_downcast_t =
-        typename type_id_downcast<T>::type;
 
 } // namespace details
 

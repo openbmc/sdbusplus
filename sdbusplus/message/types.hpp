@@ -124,12 +124,14 @@ template <typename T, typename ...Args> constexpr auto type_id_multiple()
  *  2. Remove 'const' and 'vector'.
  *  3. Convert 'char[N]' to 'char*'.
  */
+template <typename T> struct type_id_downcast
+{
+    using type = typename utility::array_to_ptr_t<
+            char, std::remove_cv_t<std::remove_reference_t<T>>>;
+};
+
 template <typename T> using type_id_downcast_t =
-        utility::array_to_ptr_t<char,
-            std::remove_cv_t<
-                std::remove_reference_t<T>
-            >
-        >;
+        typename type_id_downcast<T>::type;
 
 } // namespace details
 

@@ -1,6 +1,7 @@
 #include <iostream>
 #include <sdbusplus/message/append.hpp>
 #include <cassert>
+#include <sdbusplus/bus.hpp>
 
 // Global to share the dbus type string between client and server.
 static std::string verifyTypeString;
@@ -11,29 +12,27 @@ static constexpr auto TEST_METHOD = "test";
 static constexpr auto QUIT_METHOD = "quit";
 
 // Open up the sdbus and claim SERVICE name.
-void serverInit(sd_bus** b)
+auto serverInit()
 {
-    assert(0 <= sd_bus_open(b));
-    assert(0 <= sd_bus_request_name(*b, SERVICE, 0));
+    auto b = sdbusplus::bus::new_default();
+    b.request_name(SERVICE);
+
+    return std::move(b);
 }
 
 // Thread to run the dbus server.
 void* server(void* b)
 {
-    auto bus = reinterpret_cast<sd_bus*>(b);
+    auto bus = sdbusplus::bus::bus(reinterpret_cast<sdbusplus::bus::busp_t>(b));
 
     while(1)
     {
         // Wait for messages.
-        sd_bus_message *m = nullptr;
-        if (0 == sd_bus_process(bus, &m))
-        {
-            sd_bus_wait(bus, 0);
-            continue;
-        }
+        sd_bus_message *m = bus.process();
 
-        if(!m)
+        if(m == nullptr)
         {
+            bus.wait();
             continue;
         }
 
@@ -54,12 +53,10 @@ void* server(void* b)
     }
 }
 
-void newMethodCall__test(sd_bus* b, sd_bus_message** m)
+void newMethodCall__test(sdbusplus::bus::bus& b, sd_bus_message** m)
 {
     // Allocate a method-call message for INTERFACE,TEST_METHOD.
-    assert(0 <= sd_bus_message_new_method_call(b, m, SERVICE, "/", INTERFACE,
-                                               TEST_METHOD));
-    sd_bus_message_set_expect_reply(*m, true);
+    *m = b.new_method_call(SERVICE, "/", INTERFACE, TEST_METHOD);
 }
 
 void runTests()
@@ -67,17 +64,14 @@ void runTests()
     using namespace std::literals;
 
     sd_bus_message* m = nullptr;
-    sd_bus* b = nullptr;
-
-    // Connect to dbus.
-    assert(0 <= sd_bus_open(&b));
+    auto b = sdbusplus::bus::new_default();
 
     // Test r-value int.
     {
         newMethodCall__test(b, &m);
         sdbusplus::message::append(m, 1);
         verifyTypeString = "i";
-        sd_bus_call(b, m, 0, nullptr, nullptr);
+        b.call_noreply(m);
     }
 
     // Test l-value int.
@@ -86,7 +80,7 @@ void runTests()
         int a = 1;
         sdbusplus::message::append(m, a, a);
         verifyTypeString = "ii";
-        sd_bus_call(b, m, 0, nullptr, nullptr);
+        b.call_noreply(m);
     }
 
     // Test multiple ints.
@@ -94,7 +88,7 @@ void runTests()
         newMethodCall__test(b, &m);
         sdbusplus::message::append(m, 1, 2, 3, 4, 5);
         verifyTypeString = "iiiii";
-        sd_bus_call(b, m, 0, nullptr, nullptr);
+        b.call_noreply(m);
     }
 
     // Test r-value string.
@@ -102,7 +96,7 @@ void runTests()
         newMethodCall__test(b, &m);
         sdbusplus::message::append(m, "asdf"s);
         verifyTypeString = "s";
-        sd_bus_call(b, m, 0, nullptr, nullptr);
+        b.call_noreply(m);
     }
 
     // Test multiple strings, various forms.
@@ -113,12 +107,12 @@ void runTests()
         sdbusplus::message::append(m, 1, "asdf", "ASDF"s, str,
                                    std::move(str2), 5);
         verifyTypeString = "issssi";
-        sd_bus_call(b, m, 0, nullptr, nullptr);
+        b.call_noreply(m);
     }
 
     // Shutdown server.
-    sd_bus_call_method(b, SERVICE, "/", INTERFACE, QUIT_METHOD,
-                       nullptr, nullptr, nullptr);
+    m = b.new_method_call(SERVICE, "/", INTERFACE, QUIT_METHOD);
+    b.call_noreply(m);
 }
 
 int main()
@@ -126,9 +120,8 @@ int main()
     // Initialize and start server thread.
     pthread_t t;
     {
-        sd_bus* b;
-        serverInit(&b);
-        pthread_create(&t, NULL, server, b);
+        auto b = serverInit();
+        pthread_create(&t, NULL, server, b.release());
     }
 
     runTests();

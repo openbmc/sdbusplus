@@ -1,6 +1,6 @@
 #include <iostream>
-#include <sdbusplus/message/append.hpp>
 #include <cassert>
+#include <sdbusplus/message.hpp>
 #include <sdbusplus/bus.hpp>
 
 // Global to share the dbus type string between client and server.
@@ -53,66 +53,66 @@ void* server(void* b)
     }
 }
 
-void newMethodCall__test(sdbusplus::bus::bus& b, sd_bus_message** m)
+auto newMethodCall__test(sdbusplus::bus::bus& b)
 {
     // Allocate a method-call message for INTERFACE,TEST_METHOD.
-    *m = b.new_method_call(SERVICE, "/", INTERFACE, TEST_METHOD);
+    return b.new_method_call(SERVICE, "/", INTERFACE, TEST_METHOD);
 }
 
 void runTests()
 {
     using namespace std::literals;
 
-    sd_bus_message* m = nullptr;
     auto b = sdbusplus::bus::new_default();
 
     // Test r-value int.
     {
-        newMethodCall__test(b, &m);
-        sdbusplus::message::append(m, 1);
+        auto m = newMethodCall__test(b);
+        m.append(1);
         verifyTypeString = "i";
         b.call_noreply(m);
     }
-
     // Test l-value int.
     {
-        newMethodCall__test(b, &m);
+        auto m = newMethodCall__test(b);
         int a = 1;
-        sdbusplus::message::append(m, a, a);
+        m.append(a, a);
         verifyTypeString = "ii";
         b.call_noreply(m);
     }
 
     // Test multiple ints.
     {
-        newMethodCall__test(b, &m);
-        sdbusplus::message::append(m, 1, 2, 3, 4, 5);
+        auto m = newMethodCall__test(b);
+        m.append(1, 2, 3, 4, 5);
         verifyTypeString = "iiiii";
         b.call_noreply(m);
     }
 
     // Test r-value string.
     {
-        newMethodCall__test(b, &m);
-        sdbusplus::message::append(m, "asdf"s);
+        auto m = newMethodCall__test(b);
+        m.append("asdf"s);
         verifyTypeString = "s";
         b.call_noreply(m);
     }
 
     // Test multiple strings, various forms.
     {
-        newMethodCall__test(b, &m);
+        auto m = newMethodCall__test(b);
         auto str = "jkl;"s;
         auto str2 = "JKL:"s;
-        sdbusplus::message::append(m, 1, "asdf", "ASDF"s, str,
-                                   std::move(str2), 5);
+        m.append(1, "asdf", "ASDF"s, str,
+                 std::move(str2), 5);
         verifyTypeString = "issssi";
         b.call_noreply(m);
     }
 
     // Shutdown server.
-    m = b.new_method_call(SERVICE, "/", INTERFACE, QUIT_METHOD);
-    b.call_noreply(m);
+    {
+        auto m = b.new_method_call(SERVICE, "/", INTERFACE, QUIT_METHOD);
+        b.call_noreply(m);
+    }
 }
 
 int main()

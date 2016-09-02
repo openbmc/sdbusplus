@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <systemd/sd-bus.h>
+#include <sdbusplus/message.hpp>
 
 namespace sdbusplus
 {
@@ -107,7 +108,7 @@ struct bus
         sd_bus_message_new_method_call(_bus.get(), &m, service, objpath,
                                        interf, method);
 
-        return m;
+        return message::message(m);
     }
 
     /** @brief Perform a message call.
@@ -117,10 +118,10 @@ struct bus
      *
      *  @return The response message.
      */
-    auto call(sd_bus_message* m, uint64_t timeout_us = 0)
+    auto call(message::message& m, uint64_t timeout_us = 0)
     {
         sd_bus_message* reply = nullptr;
-        sd_bus_call(_bus.get(), m, timeout_us, nullptr, &reply);
+        sd_bus_call(_bus.get(), m.get(), timeout_us, nullptr, &reply);
 
         return reply;
     }
@@ -130,9 +131,9 @@ struct bus
      *  @param[in] m - The method_call message.
      *  @param[in] timeout_us - The timeout for the method call.
      */
-    void call_noreply(sd_bus_message* m, uint64_t timeout_us = 0)
+    void call_noreply(message::message& m, uint64_t timeout_us = 0)
     {
-        sd_bus_call(_bus.get(), m, timeout_us, nullptr, nullptr);
+        sd_bus_call(_bus.get(), m.get(), timeout_us, nullptr, nullptr);
     }
 
     private:

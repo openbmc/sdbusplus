@@ -3,6 +3,7 @@
 #include <memory>
 #include <systemd/sd-bus.h>
 #include <sdbusplus/message/append.hpp>
+#include <sdbusplus/message/read.hpp>
 
 namespace sdbusplus
 {
@@ -62,6 +63,10 @@ struct message
     /** @brief Release ownership of the stored msg-pointer. */
     msgp_t release() { return _msg.release(); }
 
+    /** @brief Check if message contains a real pointer. (non-nullptr). */
+    explicit operator bool() const { return bool(_msg); }
+
+
     /** @brief Perform sd_bus_message_append, with automatic type deduction.
      *
      *  @tparam ...Args - Type of items to append to message.
@@ -70,6 +75,37 @@ struct message
     template <typename ...Args> void append(Args&&... args)
     {
         sdbusplus::message::append(_msg.get(), std::forward<Args>(args)...);
+    }
+
+    /** @brief Perform sd_bus_message_read, with automatic type deduction.
+     *
+     *  @tparam ...Args - Type of items to read from message.
+     *  @param[out] args - Items to read from message.
+     */
+    template <typename ...Args> void read(Args&&... args)
+    {
+        sdbusplus::message::read(_msg.get(), std::forward<Args>(args)...);
+    }
+
+    /** @brief Get the signature of a message.
+     *
+     *  @return A [weak] pointer to the signature of the message.
+     */
+    const char* get_signature()
+    {
+        return sd_bus_message_get_signature(_msg.get(), true);
+    }
+
+    /** @brief Check if message is a method call for an interface/method.
+     *
+     *  @param[in] interface - The interface to match.
+     *  @param[in] method - The method to match.
+     *
+     *  @return True - if message is a method call for interface/method.
+     */
+    bool is_method_call(const char* interface, const char* method)
+    {
+        return sd_bus_message_is_method_call(_msg.get(), interface, method);
     }
 
     friend struct sdbusplus::bus::bus;

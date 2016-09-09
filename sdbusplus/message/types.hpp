@@ -3,6 +3,7 @@
 #include <tuple>
 #include <string>
 #include <vector>
+#include <systemd/sd-bus.h>
 
 #include <sdbusplus/utility/type_traits.hpp>
 
@@ -115,25 +116,25 @@ template <typename T, typename ...Args> constexpr auto type_id_multiple();
  */
 template <typename T> struct type_id : public undefined_type_id {};
     // Specializations for built-in types.
-template <> struct type_id<bool> : tuple_type_id<'b'> {};
-template <> struct type_id<uint8_t> : tuple_type_id<'y'> {};
+template <> struct type_id<bool> : tuple_type_id<SD_BUS_TYPE_BOOLEAN> {};
+template <> struct type_id<uint8_t> : tuple_type_id<SD_BUS_TYPE_BYTE> {};
 // int8_t isn't supported by dbus.
-template <> struct type_id<uint16_t> : tuple_type_id<'q'> {};
-template <> struct type_id<int16_t> : tuple_type_id<'n'> {};
-template <> struct type_id<uint32_t> : tuple_type_id<'u'> {};
-template <> struct type_id<int32_t> : tuple_type_id<'i'> {};
-template <> struct type_id<uint64_t> : tuple_type_id<'t'> {};
-template <> struct type_id<int64_t> : tuple_type_id<'x'> {};
+template <> struct type_id<uint16_t> : tuple_type_id<SD_BUS_TYPE_UINT16> {};
+template <> struct type_id<int16_t> : tuple_type_id<SD_BUS_TYPE_INT16> {};
+template <> struct type_id<uint32_t> : tuple_type_id<SD_BUS_TYPE_UINT32> {};
+template <> struct type_id<int32_t> : tuple_type_id<SD_BUS_TYPE_INT32> {};
+template <> struct type_id<uint64_t> : tuple_type_id<SD_BUS_TYPE_UINT64> {};
+template <> struct type_id<int64_t> : tuple_type_id<SD_BUS_TYPE_INT64> {};
 // float isn't supported by dbus.
-template <> struct type_id<double> : tuple_type_id<'d'> {};
-template <> struct type_id<const char*> : tuple_type_id<'s'> {};
-template <> struct type_id<char*> : tuple_type_id<'s'> {};
-template <> struct type_id<std::string> : tuple_type_id<'s'> {};
+template <> struct type_id<double> : tuple_type_id<SD_BUS_TYPE_DOUBLE> {};
+template <> struct type_id<const char*> : tuple_type_id<SD_BUS_TYPE_STRING> {};
+template <> struct type_id<char*> : tuple_type_id<SD_BUS_TYPE_STRING> {};
+template <> struct type_id<std::string> : tuple_type_id<SD_BUS_TYPE_STRING> {};
 
 template <typename T> struct type_id<std::vector<T>>
 {
     static constexpr auto value = std::tuple_cat(
-        tuple_type_id<'a'>::value,
+        tuple_type_id<SD_BUS_TYPE_ARRAY>::value,
         type_id<type_id_downcast_t<T>>::value);
 };
 

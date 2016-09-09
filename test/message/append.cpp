@@ -31,7 +31,7 @@ void* server(void* b)
     while(1)
     {
         // Wait for messages.
-        sd_bus_message *m = bus.process();
+        auto m = bus.process().release();
 
         if(m == nullptr)
         {

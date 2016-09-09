@@ -80,7 +80,7 @@ struct bus
         sd_bus_message* m = nullptr;
         sd_bus_process(_bus.get(), &m);
 
-        return m;
+        return message::message(m);
     }
 
     /** @brief Claim a service name on the dbus.

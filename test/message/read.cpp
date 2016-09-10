@@ -247,7 +247,30 @@ void runTests()
         b.call_noreply(m);
     }
 
+    // Test tuple.
+    {
+        auto m = newMethodCall__test(b);
+        std::tuple<int, double, std::string> a{ 3, 4.1, "asdf" };
+        m.append(1, a, 2);
+        verifyTypeString = "i(ids)i";
 
+        struct verify
+        {
+            static void op(sdbusplus::message::message& m)
+            {
+                int32_t a = 0, b = 0;
+                std::tuple<int, double, std::string> c{};
+
+                m.read(a, c, b);
+                assert(a == 1);
+                assert(b == 2);
+                assert(c == std::make_tuple(3, 4.1, "asdf"s));
+            }
+        };
+        verifyCallback = &verify::op;
+
+        b.call_noreply(m);
+    }
 
     // Shutdown server.
     {

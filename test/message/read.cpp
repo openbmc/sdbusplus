@@ -220,6 +220,35 @@ void runTests()
         b.call_noreply(m);
     }
 
+    // Test map.
+    {
+        auto m = newMethodCall__test(b);
+        std::map<std::string, int> s = { { "asdf", 3 }, { "jkl;", 4 } };
+        m.append(1, s, 2);
+        verifyTypeString = "ia{si}i";
+
+        struct verify
+        {
+            static void op(sdbusplus::message::message& m)
+            {
+                int32_t a = 0, b = 0;
+                std::map<std::string, int> s{};
+
+                m.read(a, s, b);
+                assert(a == 1);
+                assert(s.size() == 2);
+                assert(s["asdf"] == 3);
+                assert(s["jkl;"] == 4);
+                assert(b == 2);
+            }
+        };
+        verifyCallback = &verify::op;
+
+        b.call_noreply(m);
+    }
+
+
+
     // Shutdown server.
     {
         auto m = b.new_method_call(SERVICE, "/", INTERFACE, QUIT_METHOD);

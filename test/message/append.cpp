@@ -234,6 +234,65 @@ void runTests()
         b.call_noreply(m);
     }
 
+    // Test map.
+    {
+        auto m = newMethodCall__test(b);
+        std::map<std::string, int> s = { { "asdf", 3 }, { "jkl;", 4 } };
+        m.append(1, s, 2);
+        verifyTypeString = "ia{si}i";
+
+        struct verify
+        {
+            static void op(sd_bus_message* m)
+            {
+                int32_t a = 0;
+                sd_bus_message_read(m, "i", &a);
+                assert(a == 1);
+
+                auto rc = sd_bus_message_enter_container(m,
+                                                         SD_BUS_TYPE_ARRAY,
+                                                         "{si}");
+                assert(0 <= rc);
+
+                rc = sd_bus_message_enter_container(m,
+                                                    SD_BUS_TYPE_DICT_ENTRY,
+                                                    "si");
+                assert(0 <= rc);
+
+                const char* s = nullptr;
+                sd_bus_message_read_basic(m, 's', &s);
+                assert(0 == strcmp("asdf", s));
+                sd_bus_message_read_basic(m, 'i', &a);
+                assert(a == 3);
+
+                assert(1 == sd_bus_message_at_end(m, false));
+                sd_bus_message_exit_container(m);
+
+                rc = sd_bus_message_enter_container(m,
+                                                    SD_BUS_TYPE_DICT_ENTRY,
+                                                    "si");
+                assert(0 <= rc);
+
+                sd_bus_message_read_basic(m, 's', &s);
+                assert(0 == strcmp("jkl;", s));
+                sd_bus_message_read_basic(m, 'i', &a);
+                assert(a == 4);
+
+                assert(1 == sd_bus_message_at_end(m, false));
+                sd_bus_message_exit_container(m);
+
+                assert(1 == sd_bus_message_at_end(m, false));
+                sd_bus_message_exit_container(m);
+
+                sd_bus_message_read(m, "i", &a);
+                assert(a == 2);
+            }
+        };
+        verifyCallback = &verify::op;
+
+        b.call_noreply(m);
+    }
+
     // Shutdown server.
     {
         auto m = b.new_method_call(SERVICE, "/", INTERFACE, QUIT_METHOD);

@@ -50,6 +50,12 @@ template<> struct can_append_multiple<std::string> : std::false_type {};
     // std::vector needs a loop.
 template<typename T>
 struct can_append_multiple<std::vector<T>> : std::false_type {};
+    // std::pair needs to be broken down into components.
+template<typename T1, typename T2>
+struct can_append_multiple<std::pair<T1,T2>> : std::false_type {};
+    // std::map needs a loop.
+template<typename T1, typename T2>
+struct can_append_multiple<std::map<T1,T2>> : std::false_type {};
 
 /** @struct append_single
  *  @brief Utility to append a single C++ element into a sd_bus_message.
@@ -114,6 +120,38 @@ template <typename T> struct append_single<std::vector<T>>
     static void op(sd_bus_message* m, S&& s)
     {
         constexpr auto dbusType = utility::tuple_to_array(types::type_id<T>());
+
+        sd_bus_message_open_container(m, SD_BUS_TYPE_ARRAY, dbusType.data());
+        for(auto& i : s) { sdbusplus::message::append(m, i); }
+        sd_bus_message_close_container(m);
+    }
+};
+
+/** @brief Specialization of append_single for std::pairs. */
+template <typename T1, typename T2> struct append_single<std::pair<T1, T2>>
+{
+    template <typename S>
+    static void op(sd_bus_message* m, S&& s)
+    {
+        constexpr auto dbusType = utility::tuple_to_array(
+                std::tuple_cat(types::type_id_nonull<T1>(),
+                               types::type_id<T2>()));
+
+        sd_bus_message_open_container(
+                m, SD_BUS_TYPE_DICT_ENTRY, dbusType.data());
+        sdbusplus::message::append(m, s.first, s.second);
+        sd_bus_message_close_container(m);
+    }
+};
+
+/** @brief Specialization of append_single for std::maps. */
+template <typename T1, typename T2> struct append_single<std::map<T1, T2>>
+{
+    template<typename S>
+    static void op(sd_bus_message* m, S&& s)
+    {
+        constexpr auto dbusType = utility::tuple_to_array(
+                types::type_id<typename std::map<T1, T2>::value_type>());
 
         sd_bus_message_open_container(m, SD_BUS_TYPE_ARRAY, dbusType.data());
         for(auto& i : s) { sdbusplus::message::append(m, i); }

@@ -293,6 +293,45 @@ void runTests()
         b.call_noreply(m);
     }
 
+    // Test tuple.
+    {
+        auto m = newMethodCall__test(b);
+        std::tuple<int, double, std::string> a{ 3, 4.1, "asdf" };
+        m.append(1, a, 2);
+        verifyTypeString = "i(ids)i";
+
+        struct verify
+        {
+            static void op(sd_bus_message* m)
+            {
+                int32_t a = 0;
+                double b = 0;
+                const char* c = nullptr;
+
+                sd_bus_message_read(m, "i", &a);
+                assert(a == 1);
+
+                auto rc = sd_bus_message_enter_container(m,
+                                                         SD_BUS_TYPE_STRUCT,
+                                                         "ids");
+                assert(0 <= rc);
+
+                sd_bus_message_read(m, "ids", &a, &b, &c);
+                assert(a == 3);
+                assert(b == 4.1);
+                assert(0 == strcmp(c, "asdf"));
+
+                sd_bus_message_exit_container(m);
+
+                sd_bus_message_read(m, "i", &a);
+                assert(a == 2);
+            }
+        };
+        verifyCallback = &verify::op;
+
+        b.call_noreply(m);
+    }
+
     // Shutdown server.
     {
         auto m = b.new_method_call(SERVICE, "/", INTERFACE, QUIT_METHOD);

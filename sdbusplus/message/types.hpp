@@ -161,6 +161,14 @@ template <typename T1, typename T2> struct type_id<std::map<T1, T2>>
         type_id<typename std::map<T1,T2>::value_type>::value);
 };
 
+template <typename ...Args> struct type_id<std::tuple<Args...>>
+{
+    static constexpr auto value = std::tuple_cat(
+        tuple_type_id<SD_BUS_TYPE_STRUCT_BEGIN>::value,
+        type_id<type_id_downcast_t<Args>>::value...,
+        tuple_type_id<SD_BUS_TYPE_STRUCT_END>::value);
+};
+
 template <typename T> constexpr auto& type_id_single()
 {
     static_assert(!std::is_base_of<undefined_type_id, type_id<T>>::value,

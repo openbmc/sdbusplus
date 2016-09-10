@@ -56,6 +56,9 @@ struct can_read_multiple<std::pair<T1,T2>> : std::false_type {};
     // std::map needs a loop.
 template<typename T1, typename T2>
 struct can_read_multiple<std::map<T1,T2>> : std::false_type {};
+    // std::tuple needs to be broken down into components.
+template<typename ...Args>
+struct can_read_multiple<std::tuple<Args...>> : std::false_type {};
 
 /** @struct read_single
  *  @brief Utility to read a single C++ element from a sd_bus_message.
@@ -178,6 +181,31 @@ template <typename T1, typename T2> struct read_single<std::map<T1, T2>>
     }
 };
 
+/** @brief Specialization of read_single for std::tuples. */
+template <typename ...Args> struct read_single<std::tuple<Args...>>
+{
+    template<typename S, std::size_t... I>
+    static void _op(sd_bus_message* m, S&& s,
+                    std::integer_sequence<std::size_t, I...>)
+    {
+        sdbusplus::message::read(m, std::get<I>(s)...);
+    }
+
+    template<typename S>
+    static void op(sd_bus_message* m, S&& s)
+    {
+        constexpr auto dbusType = utility::tuple_to_array(std::tuple_cat(
+                types::type_id_nonull<Args...>(),
+                std::make_tuple('\0') /* null terminator for C-string */));
+
+        sd_bus_message_enter_container(
+                m, SD_BUS_TYPE_STRUCT, dbusType.data());
+        _op(m, std::forward<S>(s),
+            std::make_index_sequence<sizeof...(Args)>());
+        sd_bus_message_exit_container(m);
+
+    }
+};
 
 /** @brief Read a tuple of content from the sd_bus_message.
  *

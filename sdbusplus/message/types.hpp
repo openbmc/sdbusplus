@@ -3,6 +3,7 @@
 #include <tuple>
 #include <string>
 #include <vector>
+#include <map>
 #include <systemd/sd-bus.h>
 
 #include <sdbusplus/utility/type_traits.hpp>
@@ -31,6 +32,12 @@ namespace types
  *  the cost of hard-coded type string constants.
  */
 template <typename ...Args> constexpr auto type_id();
+/** @fn type_id_nonull()
+ *  @brief A non-null-terminated version of type_id.
+ *
+ *  This is useful when type-ids may need to be concatenated.
+ */
+template <typename ...Args> constexpr auto type_id_nonull();
 
 namespace details
 {
@@ -138,6 +145,22 @@ template <typename T> struct type_id<std::vector<T>>
         type_id<type_id_downcast_t<T>>::value);
 };
 
+template <typename T1, typename T2> struct type_id<std::pair<T1, T2>>
+{
+    static constexpr auto value = std::tuple_cat(
+        tuple_type_id<SD_BUS_TYPE_DICT_ENTRY_BEGIN>::value,
+        type_id<type_id_downcast_t<T1>>::value,
+        type_id<type_id_downcast_t<T2>>::value,
+        tuple_type_id<SD_BUS_TYPE_DICT_ENTRY_END>::value);
+};
+
+template <typename T1, typename T2> struct type_id<std::map<T1, T2>>
+{
+    static constexpr auto value = std::tuple_cat(
+        tuple_type_id<SD_BUS_TYPE_ARRAY>::value,
+        type_id<typename std::map<T1,T2>::value_type>::value);
+};
+
 template <typename T> constexpr auto& type_id_single()
 {
     static_assert(!std::is_base_of<undefined_type_id, type_id<T>>::value,
@@ -158,6 +181,11 @@ template <typename ...Args> constexpr auto type_id()
     return std::tuple_cat(
         details::type_id_multiple<details::type_id_downcast_t<Args>...>(),
         std::make_tuple('\0') /* null terminator for C-string */ );
+}
+
+template <typename ...Args> constexpr auto type_id_nonull()
+{
+    return details::type_id_multiple<details::type_id_downcast_t<Args>...>();
 }
 
 } // namespace types

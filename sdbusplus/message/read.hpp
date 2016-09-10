@@ -50,6 +50,12 @@ template<> struct can_read_multiple<std::string> : std::false_type {};
     // std::vector needs a loop.
 template<typename T>
 struct can_read_multiple<std::vector<T>> : std::false_type {};
+    // std::pair needs to be broken down into components.
+template<typename T1, typename T2>
+struct can_read_multiple<std::pair<T1,T2>> : std::false_type {};
+    // std::map needs a loop.
+template<typename T1, typename T2>
+struct can_read_multiple<std::map<T1,T2>> : std::false_type {};
 
 /** @struct read_single
  *  @brief Utility to read a single C++ element from a sd_bus_message.
@@ -130,6 +136,48 @@ template <typename T> struct read_single<std::vector<T>>
         sd_bus_message_exit_container(m);
     }
 };
+
+/** @brief Specialization of read_single for std::pairs. */
+template <typename T1, typename T2> struct read_single<std::pair<T1, T2>>
+{
+    template <typename S>
+    static void op(sd_bus_message* m, S&& s)
+    {
+        constexpr auto dbusType = utility::tuple_to_array(
+                std::tuple_cat(types::type_id_nonull<T1>(),
+                               types::type_id<T2>()));
+
+        sd_bus_message_enter_container(
+                m, SD_BUS_TYPE_DICT_ENTRY, dbusType.data());
+        sdbusplus::message::read(m, s.first, s.second);
+        sd_bus_message_exit_container(m);
+    }
+};
+
+/** @brief Specialization of read_single for std::maps. */
+template <typename T1, typename T2> struct read_single<std::map<T1, T2>>
+{
+    template<typename S>
+    static void op(sd_bus_message* m, S&& s)
+    {
+        s.clear();
+
+        constexpr auto dbusType = utility::tuple_to_array(
+                types::type_id<typename std::map<T1, T2>::value_type>());
+
+        sd_bus_message_enter_container(m, SD_BUS_TYPE_ARRAY, dbusType.data());
+
+        while(!sd_bus_message_at_end(m, false))
+        {
+            std::pair<std::remove_const_t<T1>, std::remove_const_t<T2>> p{};
+            sdbusplus::message::read(m, p);
+            s.insert(std::move(p));
+        }
+
+        sd_bus_message_exit_container(m);
+    }
+};
+
 
 /** @brief Read a tuple of content from the sd_bus_message.
  *

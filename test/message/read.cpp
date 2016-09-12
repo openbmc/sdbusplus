@@ -272,6 +272,61 @@ void runTests()
         b.call_noreply(m);
     }
 
+    // Test variant.
+    {
+        auto m = newMethodCall__test(b);
+        sdbusplus::message::variant<int, double> a1{3.1}, a2{4};
+        m.append(1, a1, a2, 2);
+        verifyTypeString = "ivvi";
+
+        struct verify
+        {
+            static void op(sdbusplus::message::message& m)
+            {
+                int32_t a, b;
+                sdbusplus::message::variant<int, double> a1{}, a2{};
+
+                m.read(a, a1, a2, b);
+                assert(a == 1);
+                assert(a1 == 3.1);
+                assert(a2 == 4);
+                assert(b == 2);
+            }
+        };
+        verifyCallback = &verify::op;
+
+        b.call_noreply(m);
+    }
+
+    // Test map-variant.
+    {
+        auto m = newMethodCall__test(b);
+        std::map<std::string, sdbusplus::message::variant<int, double>> a1 =
+                { { "asdf", 3 }, { "jkl;", 4.1 } };
+        m.append(1, a1, 2);
+        verifyTypeString = "ia{sv}i";
+
+        struct verify
+        {
+            static void op(sdbusplus::message::message& m)
+            {
+                int32_t a = 0, b = 0;
+                std::map<std::string,
+                         sdbusplus::message::variant<int, double>> a1{};
+
+                m.read(a, a1, b);
+                assert(a == 1);
+                assert(a1["asdf"] == 3);
+                assert(a1["jkl;"] == 4.1);
+                assert(b == 2);
+            }
+        };
+        verifyCallback = &verify::op;
+
+        b.call_noreply(m);
+    }
+
+
     // Shutdown server.
     {
         auto m = b.new_method_call(SERVICE, "/", INTERFACE, QUIT_METHOD);

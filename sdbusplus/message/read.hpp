@@ -59,6 +59,9 @@ struct can_read_multiple<std::map<T1,T2>> : std::false_type {};
     // std::tuple needs to be broken down into components.
 template<typename ...Args>
 struct can_read_multiple<std::tuple<Args...>> : std::false_type {};
+    // variant needs to be broken down into components.
+template<typename ...Args>
+struct can_read_multiple<variant<Args...>> : std::false_type {};
 
 /** @struct read_single
  *  @brief Utility to read a single C++ element from a sd_bus_message.
@@ -204,6 +207,46 @@ template <typename ...Args> struct read_single<std::tuple<Args...>>
             std::make_index_sequence<sizeof...(Args)>());
         sd_bus_message_exit_container(m);
 
+    }
+};
+
+/** @brief Specialization of read_single for std::variant. */
+template <typename ...Args> struct read_single<variant<Args...>>
+{
+    template<typename S, typename S1, typename ...Args1>
+    static void read(sd_bus_message* m, S&& s)
+    {
+        constexpr auto dbusType = utility::tuple_to_array(types::type_id<S1>());
+
+        auto rc = sd_bus_message_verify_type(m,
+                                             SD_BUS_TYPE_VARIANT,
+                                             dbusType.data());
+        if (0 >= rc)
+        {
+            read<S, Args1...>(m, s);
+            return;
+        }
+
+        std::remove_reference_t<S1> s1;
+
+        sd_bus_message_enter_container(m, SD_BUS_TYPE_VARIANT, dbusType.data());
+        sdbusplus::message::read(m, s1);
+        sd_bus_message_exit_container(m);
+
+        s = std::move(s1);
+    }
+
+    template<typename S>
+    static void read(sd_bus_message* m, S&& s)
+    {
+        s = std::remove_reference_t<S>{};
+    }
+
+    template<typename S,
+             typename = std::enable_if_t<0 < sizeof...(Args)>>
+    static void op(sd_bus_message* m, S&& s)
+    {
+        read<S, Args...>(m, s);
     }
 };
 

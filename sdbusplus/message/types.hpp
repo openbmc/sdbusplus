@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <mapbox/variant.hpp>
 #include <systemd/sd-bus.h>
 
 #include <sdbusplus/utility/type_traits.hpp>
@@ -13,6 +14,9 @@ namespace sdbusplus
 
 namespace message
 {
+
+template <typename ...Args>
+using variant = mapbox::util::variant<Args...>;
 
 namespace types
 {
@@ -168,6 +172,9 @@ template <typename ...Args> struct type_id<std::tuple<Args...>>
         type_id<type_id_downcast_t<Args>>::value...,
         tuple_type_id<SD_BUS_TYPE_STRUCT_END>::value);
 };
+
+template <typename ...Args>
+struct type_id<variant<Args...>> : tuple_type_id<SD_BUS_TYPE_VARIANT> {};
 
 template <typename T> constexpr auto& type_id_single()
 {

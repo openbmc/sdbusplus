@@ -123,7 +123,7 @@ template <typename T, typename ...Args> constexpr auto type_id_multiple();
  *  @tparam T - C++ type.
  *
  *  Struct must have a 'value' tuple containing the dbus type.  The default
- *  value is an empty tuple, which can be used to indicate
+ *  value is an empty tuple, which is used to indicate an unsupported type.
  */
 template <typename T> struct type_id : public undefined_type_id {};
     // Specializations for built-in types.

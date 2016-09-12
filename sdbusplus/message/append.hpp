@@ -59,6 +59,9 @@ struct can_append_multiple<std::map<T1,T2>> : std::false_type {};
     // std::tuple needs to be broken down into components.
 template<typename ...Args>
 struct can_append_multiple<std::tuple<Args...>> : std::false_type {};
+    // variant needs to be broken down into components.
+template<typename ...Args>
+struct can_append_multiple<variant<Args...>> : std::false_type {};
 
 /** @struct append_single
  *  @brief Utility to append a single C++ element into a sd_bus_message.
@@ -185,6 +188,30 @@ template <typename ...Args> struct append_single<std::tuple<Args...>>
             std::make_index_sequence<sizeof...(Args)>());
         sd_bus_message_close_container(m);
 
+    }
+};
+
+/** @brief Specialization of append_single for std::variant. */
+template <typename ...Args> struct append_single<variant<Args...>>
+{
+    template<typename S,
+             typename = std::enable_if_t<0 < sizeof...(Args)>>
+    static void op(sd_bus_message* m, S&& s)
+    {
+        auto apply =
+            [m](auto&& arg)
+            {
+                constexpr auto dbusType = utility::tuple_to_array(
+                    types::type_id<decltype(arg)>());
+
+                sd_bus_message_open_container(m,
+                                              SD_BUS_TYPE_VARIANT,
+                                              dbusType.data());
+                sdbusplus::message::append(m, arg);
+                sd_bus_message_close_container(m);
+            };
+
+        std::remove_reference_t<S>::visit(s, apply);
     }
 };
 

@@ -332,6 +332,89 @@ void runTests()
         b.call_noreply(m);
     }
 
+    // Test variant.
+    {
+        auto m = newMethodCall__test(b);
+        sdbusplus::message::variant<int, double> a1{3.1}, a2{4};
+        m.append(1, a1, a2, 2);
+        verifyTypeString = "ivvi";
+
+        struct verify
+        {
+            static void op(sd_bus_message* m)
+            {
+                int32_t a = 0;
+                double b = 0;
+
+                sd_bus_message_read(m, "i", &a);
+                assert(a == 1);
+
+                sd_bus_message_enter_container(m, SD_BUS_TYPE_VARIANT, "d");
+                sd_bus_message_read(m, "d", &b);
+                assert(b == 3.1);
+                sd_bus_message_exit_container(m);
+
+                sd_bus_message_enter_container(m, SD_BUS_TYPE_VARIANT, "i");
+                sd_bus_message_read(m, "i", &a);
+                assert(a == 4);
+                sd_bus_message_exit_container(m);
+
+                sd_bus_message_read(m, "i", &a);
+                assert(a == 2);
+            }
+        };
+        verifyCallback = &verify::op;
+
+        b.call_noreply(m);
+    }
+
+    // Test map-variant.
+    {
+        auto m = newMethodCall__test(b);
+        std::map<std::string, sdbusplus::message::variant<int, double>> a1 =
+                { { "asdf", 3 }, { "jkl;", 4.1 } };
+        m.append(1, a1, 2);
+        verifyTypeString = "ia{sv}i";
+
+        struct verify
+        {
+            static void op(sd_bus_message* m)
+            {
+                int32_t a = 0;
+                double b = 0;
+                const char* c = nullptr;
+
+                sd_bus_message_read(m, "i", &a);
+                assert(a == 1);
+
+                sd_bus_message_enter_container(m, SD_BUS_TYPE_ARRAY, "{sv}");
+                sd_bus_message_enter_container(m, SD_BUS_TYPE_DICT_ENTRY, "sv");
+                sd_bus_message_read(m, "s", &c);
+                assert(0 == strcmp("asdf", c));
+                sd_bus_message_enter_container(m, SD_BUS_TYPE_VARIANT, "i");
+                sd_bus_message_read(m, "i", &a);
+                assert(a == 3);
+                sd_bus_message_exit_container(m);
+                sd_bus_message_exit_container(m);
+                sd_bus_message_enter_container(m, SD_BUS_TYPE_DICT_ENTRY, "sv");
+                sd_bus_message_read(m, "s", &c);
+                assert(0 == strcmp("jkl;", c));
+                sd_bus_message_enter_container(m, SD_BUS_TYPE_VARIANT, "d");
+                sd_bus_message_read(m, "d", &b);
+                assert(b == 4.1);
+                sd_bus_message_exit_container(m);
+                sd_bus_message_exit_container(m);
+                sd_bus_message_exit_container(m);
+
+                sd_bus_message_read(m, "i", &a);
+                assert(a == 2);
+            }
+        };
+        verifyCallback = &verify::op;
+
+        b.call_noreply(m);
+    }
+
     // Shutdown server.
     {
         auto m = b.new_method_call(SERVICE, "/", INTERFACE, QUIT_METHOD);

@@ -10,3 +10,7 @@ class Method(NamedElement):
         self.errors = kwargs.pop('errors', [])
 
         super(Method, self).__init__(**kwargs)
+
+    def markdown(self, loader):
+        template = loader.get_template("method.mako.md")
+        return template.render(method=self, loader=loader)

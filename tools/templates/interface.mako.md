@@ -21,3 +21,12 @@ ${"##"} Properties
 %else:
 No properties.
 %endif
+
+${"##"} Signals
+% if len(interface.signals):
+    % for s in interface.signals:
+${s.markdown(loader)}
+    %endfor
+%else:
+No signals.
+%endif

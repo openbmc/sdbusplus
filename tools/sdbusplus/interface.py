@@ -2,11 +2,13 @@ import yaml
 from .namedelement import NamedElement
 from .property import Property
 from .method import Method
+from .signal import Signal
 
 class Interface(NamedElement):
     def __init__(self, name, *args, **kwargs):
         self.properties = []
         self.methods = []
+        self.signals = []
 
         rootdir = kwargs.get('rootdir', ".")
         filename = rootdir + "/" + name.replace('.', '/') + ".interface.yaml"
@@ -29,3 +31,7 @@ class Interface(NamedElement):
         methods = y.get('methods', [])
         for m in methods:
             self.methods.append(Method(m))
+
+        signals = y.get('signals', [])
+        for s in signals:
+            self.signals.append(Signal(s))

@@ -6,3 +6,7 @@ class Property(NamedElement):
 
         self.typeName = values.get('type')
         self.defaultValue = values.get('default')
+
+    def markdown(self, loader):
+        template = loader.get_template("property.mako.md")
+        return template.render(property=self, loader=loader).strip()

@@ -6,3 +6,7 @@ class Property(NamedElement):
         self.defaultValue = kwargs.pop('default', None)
 
         super(Property, self).__init__(**kwargs)
+
+    def markdown(self, loader):
+        template = loader.get_template("property.mako.md")
+        return template.render(property=self, loader=loader).strip()

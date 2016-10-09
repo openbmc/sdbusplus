@@ -2,6 +2,7 @@ import os
 import yaml
 from .namedelement import NamedElement
 from .property import Property
+from .method import Method
 
 class Interface(NamedElement, object):
     @staticmethod
@@ -17,9 +18,14 @@ class Interface(NamedElement, object):
 
     def __init__(self, values):
         self.properties = []
+        self.methods = []
 
         super(Interface, self).__init__(values)
 
         properties = values.get('properties', [])
         for p in properties:
             self.properties.append(Property(p))
+
+        methods = values.get('methods', [])
+        for m in methods:
+            self.methods.append(Method(m))

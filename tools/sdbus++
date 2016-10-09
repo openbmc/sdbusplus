@@ -1,0 +1,29 @@
+#!/bin/env python
+import sdbusplus
+import mako.lookup
+import argparse
+
+valid_types = { 'interface': sdbusplus.Interface }
+valid_processes = { 'markdown' : "markdown" }
+
+parser = argparse.ArgumentParser(description='Process sdbus++ YAML files.')
+
+parser.add_argument('-r', '--rootdir', dest='rootdir', default='example',
+                    type=str, help='Location of files to process.')
+parser.add_argument('-t', '--templatedir', dest='templatedir',
+                    default='templates', type=str,
+                    help='Location of templates files.')
+parser.add_argument('typeName', metavar='TYPE', type=str,
+                    choices=valid_types.keys(), help='Type to operate on.')
+parser.add_argument('process', metavar='PROCESS', type=str,
+                    choices=valid_processes.keys(), help='Process to apply.')
+parser.add_argument('item', metavar='ITEM', type=str,
+                    help='Item to process.')
+
+args = parser.parse_args();
+
+lookup = mako.lookup.TemplateLookup(directories=[args.templatedir])
+
+instance = valid_types[args.typeName](args.item, rootdir=args.rootdir)
+function = getattr(instance, args.process)
+print(function(lookup))

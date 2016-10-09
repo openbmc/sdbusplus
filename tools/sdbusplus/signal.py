@@ -7,3 +7,7 @@ class Signal(NamedElement, object):
             kwargs.pop('properties', []) ]
 
         super(Signal, self).__init__(**kwargs)
+
+    def markdown(self, loader):
+        template = loader.get_template("signal.mako.md")
+        return template.render(signal=self, loader=loader)

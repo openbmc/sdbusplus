@@ -3,6 +3,7 @@ import yaml
 from .namedelement import NamedElement
 from .property import Property
 from .method import Method
+from .signal import Signal
 
 class Interface(NamedElement, object):
     @staticmethod
@@ -19,6 +20,7 @@ class Interface(NamedElement, object):
     def __init__(self, values):
         self.properties = []
         self.methods = []
+        self.signals = []
 
         super(Interface, self).__init__(values)
 
@@ -29,3 +31,7 @@ class Interface(NamedElement, object):
         methods = values.get('methods', [])
         for m in methods:
             self.methods.append(Method(m))
+
+        signals = values.get('signals', [])
+        for s in signals:
+            self.signals.append(Signal(s))

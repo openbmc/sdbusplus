@@ -1,10 +1,12 @@
 import yaml
 from .namedelement import NamedElement
 from .property import Property
+from .method import Method
 
 class Interface(NamedElement):
     def __init__(self, name, *args, **kwargs):
         self.properties = []
+        self.methods = []
 
         rootdir = kwargs.get('rootdir', ".")
         filename = rootdir + "/" + name.replace('.', '/') + ".interface.yaml"
@@ -23,3 +25,7 @@ class Interface(NamedElement):
         properties = y.get('properties', [])
         for p in properties:
             self.properties.append(Property(p))
+
+        methods = y.get('methods', [])
+        for m in methods:
+            self.methods.append(Method(m))

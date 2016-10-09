@@ -3,6 +3,7 @@ import yaml
 from .namedelement import NamedElement
 from .property import Property
 from .method import Method
+from .signal import Signal
 
 class Interface(NamedElement, object):
     @staticmethod
@@ -21,5 +22,7 @@ class Interface(NamedElement, object):
             kwargs.pop('properties', []) ]
         self.methods = [ Method(**m) for m in
             kwargs.pop('methods', []) ]
+        self.signals = [ Signal(**s) for s in
+            kwargs.pop('signals', []) ]
 
         super(Interface, self).__init__(**kwargs)

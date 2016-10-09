@@ -35,3 +35,7 @@ class Interface(NamedElement):
         signals = y.get('signals', [])
         for s in signals:
             self.signals.append(Signal(s))
+
+    def markdown(self, loader):
+        template = loader.get_template("interface.mako.md")
+        return template.render(interface=self, loader=loader)

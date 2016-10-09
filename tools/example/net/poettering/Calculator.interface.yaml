@@ -1,0 +1,62 @@
+description: >
+    An example interface originally described as part of the announcment
+    of new sd-bus interfaces at:
+        http://0pointer.net/blog/the-new-sd-bus-api-of-systemd.html
+methods:
+    - name: Multiply
+      description: >
+        Multiplies two integers 'x' and 'y' and returns the result.
+      parameters:
+        - name: x
+          type: integer
+          description: >
+            The first integer to multiply.
+        - name: y
+          type: integer
+          description: >
+            The second integer to multiply.
+          default: 1
+      returns:
+        - name: z
+          type: integer
+          description: >
+            The result of (x*y).
+    - name: Divide
+      description: >
+        Divides two integers 'x' and 'y' and returns the result.
+      parameters:
+        - name: x
+          type: integer
+          description: >
+            The first integer to divide.
+        - name: y
+          type: integer
+          description: >
+            The second integer to divide.
+          default: 1
+      returns:
+        - name: z
+          type: integer
+          description: >
+            The result of (x/y).
+      errors:
+        - self.DivisionByZero
+    - name: Clear
+      description: >
+        Reset the LastResult property to zero.
+properties:
+    - name: LastResult
+      type: integer
+      default: 0
+      description: >
+        The result of the most recent calculation.
+signals:
+    - name: Cleared
+      description: >
+        Signal indicating the LastReset property has been set to zero by the
+        'Clear' method.
+      properties:
+        - type: integer
+          description: >
+            Value of LastReset prior to Clear.
+        

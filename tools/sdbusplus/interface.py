@@ -26,3 +26,7 @@ class Interface(NamedElement, object):
             kwargs.pop('signals', []) ]
 
         super(Interface, self).__init__(**kwargs)
+
+    def markdown(self, loader):
+        template = loader.get_template("interface.mako.md")
+        return template.render(interface=self, loader=loader)

@@ -3,6 +3,7 @@
 #include <memory>
 #include <systemd/sd-bus.h>
 #include <sdbusplus/message.hpp>
+#include <sdbusplus/loop.hpp>
 
 namespace sdbusplus
 {
@@ -134,6 +135,12 @@ struct bus
     void call_noreply(message::message& m, uint64_t timeout_us = 0)
     {
         sd_bus_call(_bus.get(), m.get(), timeout_us, nullptr, nullptr);
+    }
+
+    void attach(sdeventplus::loop::loop &l,
+                uint64_t priority = SD_EVENT_PRIORITY_NORMAL)
+    {
+        sd_bus_attach_event(_bus.get(), l._loop.get(), priority);
     }
 
     private:

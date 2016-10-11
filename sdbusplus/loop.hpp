@@ -69,6 +69,8 @@ struct loop
 
     private:
         details::loop _loop;
+
+    friend class sdbusplus::bus::bus;
 };
 
 loop new_loop()

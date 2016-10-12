@@ -140,21 +140,21 @@ struct bus
         details::bus _bus;
 };
 
-bus new_default()
+inline bus new_default()
 {
     sd_bus* b = nullptr;
     sd_bus_open(&b);
     return bus(b);
 }
 
-bus new_user()
+inline bus new_user()
 {
     sd_bus* b = nullptr;
     sd_bus_open_user(&b);
     return bus(b);
 }
 
-bus new_system()
+inline bus new_system()
 {
     sd_bus* b = nullptr;
     sd_bus_open_system(&b);

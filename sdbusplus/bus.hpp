@@ -3,6 +3,7 @@
 #include <memory>
 #include <systemd/sd-bus.h>
 #include <sdbusplus/message.hpp>
+#include <sdbusplus/vtable.hpp>
 
 namespace sdbusplus
 {
@@ -134,6 +135,37 @@ struct bus
     void call_noreply(message::message& m, uint64_t timeout_us = 0)
     {
         sd_bus_call(_bus.get(), m.get(), timeout_us, nullptr, nullptr);
+    }
+
+    /** @brief Add a freedesktop ObjectManager.
+     *
+     *  @param[in] path - The ObjectManager path.
+     *  @param[out] slot - Optional bus slot reference.
+     */
+    void add_object_manager(const char *path, sd_bus_slot **slot = nullptr)
+    {
+        auto r = 0;
+        if((r = sd_bus_add_object_manager(_bus.get(), slot, path)) < 0)
+            throw std::runtime_error(strerror(-r));
+    }
+
+    /** @brief Add an interface vtable.
+     *
+     *  @param[in] path - The object path.
+     *  @param[in] iface - The interface name.
+     *  @param[in] vtbl - The interface vtable.
+     *  @param[out] slot - Optional bus slot reference.
+     *  @param[in] slot - Optional user data.
+     */
+    void add_object_vtable(const char *path, const char *iface,
+                           const sdbusplus::vtable::vtable_t &vtbl,
+                           sd_bus_slot **slot = nullptr,
+                           void *data = nullptr)
+    {
+        auto r = 0;
+        if((r = sd_bus_add_object_vtable(_bus.get(),
+                                         slot, path, iface, &vtbl, data)) < 0)
+            throw std::runtime_error(strerror(-r));
     }
 
     private:

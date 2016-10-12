@@ -70,7 +70,7 @@ struct bus
      *
      *  @param[in] timeout_us - Timeout in usec.
      */
-    void wait(uint64_t timeout_us = 0)
+    void wait(uint64_t timeout_us = -1)
     {
         sd_bus_wait(_bus.get(), timeout_us);
     }

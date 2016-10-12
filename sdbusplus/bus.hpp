@@ -3,6 +3,7 @@
 #include <memory>
 #include <systemd/sd-bus.h>
 #include <sdbusplus/message.hpp>
+#include <sdbusplus/vtable.hpp>
 
 namespace sdbusplus
 {
@@ -134,6 +135,19 @@ struct bus
     void call_noreply(message::message& m, uint64_t timeout_us = 0)
     {
         sd_bus_call(_bus.get(), m.get(), timeout_us, nullptr, nullptr);
+    }
+
+    void add_object_manager(const char *path, sd_bus_slot **slot = nullptr)
+    {
+        sd_bus_add_object_manager(_bus.get(), slot, path);
+    }
+
+    void add_object_vtable(const char *path, const char *iface,
+                           const sdbusplus::vtable::vtable_t &vtbl,
+                           sd_bus_slot **slot = nullptr,
+                           void *data = nullptr)
+    {
+        sd_bus_add_object_vtable(_bus.get(), slot, path, iface, &vtbl, data);
     }
 
     private:

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <climits>
 #include <systemd/sd-bus.h>
 #include <sdbusplus/message.hpp>
 
@@ -69,7 +70,7 @@ struct bus
      *
      *  @param[in] timeout_us - Timeout in usec.
      */
-    void wait(uint64_t timeout_us = 0)
+    void wait(uint64_t timeout_us = ULLONG_MAX)
     {
         sd_bus_wait(_bus.get(), timeout_us);
     }

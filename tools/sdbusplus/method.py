@@ -1,7 +1,8 @@
 from .property import Property
 from .namedelement import NamedElement
+from .renderer import Renderer
 
-class Method(NamedElement):
+class Method(NamedElement, Renderer):
     def __init__(self, **kwargs):
         self.parameters = [ Property(**p) for p in
             kwargs.pop('parameters', []) ]
@@ -12,5 +13,4 @@ class Method(NamedElement):
         super(Method, self).__init__(**kwargs)
 
     def markdown(self, loader):
-        template = loader.get_template("method.mako.md")
-        return template.render(method=self, loader=loader)
+        return self.render(loader, "method.mako.md", method=self)

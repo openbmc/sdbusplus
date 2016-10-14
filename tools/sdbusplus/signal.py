@@ -1,7 +1,8 @@
 from .property import Property
 from .namedelement import NamedElement
+from .renderer import Renderer
 
-class Signal(NamedElement):
+class Signal(NamedElement, Renderer):
     def __init__(self, **kwargs):
         self.properties = [ Property(**p) for p in
             kwargs.pop('properties', []) ]
@@ -9,5 +10,4 @@ class Signal(NamedElement):
         super(Signal, self).__init__(**kwargs)
 
     def markdown(self, loader):
-        template = loader.get_template("signal.mako.md")
-        return template.render(signal=self, loader=loader)
+        return self.render(loader, "signal.mako.md", signal=self)

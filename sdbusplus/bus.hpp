@@ -168,6 +168,24 @@ struct bus
             throw std::runtime_error(strerror(-r));
     }
 
+    /** @brief Add a signal match.
+     *
+     *  @param[in] path - The match specification.
+     *  @param[in] iface - The signal callback method.
+     *  @param[out] slot - Optional bus slot reference.
+     *  @param[in] slot - Optional user data.
+     */
+    void add_match(const char *match,
+                   sd_bus_message_handler_t callback,
+                   sd_bus_slot **slot = nullptr,
+                   void *data = nullptr)
+    {
+        int r;
+        if((r = sd_bus_add_match(_bus.get(), slot, match, callback, data)) < 0)
+            throw std::runtime_error(strerror(-r));
+    }
+
+
     private:
         details::bus _bus;
 };

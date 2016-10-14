@@ -27,7 +27,7 @@ def main():
     lookup = mako.lookup.TemplateLookup(directories=[args.templatedir])
 
     instance = valid_types[args.typeName].load(args.item, args.rootdir)
-    function = getattr(instance, args.process)
+    function = getattr(instance, valid_processes[args.process])
     print(function(lookup))
 
 if __name__ == '__main__':

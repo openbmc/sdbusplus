@@ -5,7 +5,7 @@ from .property import Property
 from .method import Method
 from .signal import Signal
 
-class Interface(NamedElement, object):
+class Interface(NamedElement):
     @staticmethod
     def load(name, rootdir='.'):
         filename = os.path.join(rootdir,

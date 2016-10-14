@@ -4,8 +4,9 @@ from .namedelement import NamedElement
 from .property import Property
 from .method import Method
 from .signal import Signal
+from .renderer import Renderer
 
-class Interface(NamedElement):
+class Interface(NamedElement, Renderer):
     @staticmethod
     def load(name, rootdir='.'):
         filename = os.path.join(rootdir,
@@ -28,5 +29,4 @@ class Interface(NamedElement):
         super(Interface, self).__init__(**kwargs)
 
     def markdown(self, loader):
-        template = loader.get_template("interface.mako.md")
-        return template.render(interface=self, loader=loader)
+        return self.render(loader, "interface.mako.md", interface=self)

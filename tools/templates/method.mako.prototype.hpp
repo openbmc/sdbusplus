@@ -14,7 +14,7 @@
             join([ parameter(p, defaultValue) for p in method.parameters ])
 
     def parameter(p, defaultValue=False):
-        r = "%s %s" % (p.typeName, p.name)
+        r = "%s %s" % (p.typeName, p.camelCase)
         if defaultValue:
             r += default_value(p)
         return r
@@ -34,17 +34,17 @@
     % if len(method.parameters) != 0:
          *
         % for p in method.parameters:
-         *  @param[in] ${p.name} - ${p.description.strip()}
+         *  @param[in] ${p.camelCase} - ${p.description.strip()}
         % endfor
     % endif
     % if len(method.returns) != 0:
          *
         % for r in method.returns:
-         *  @return ${r.name}[${r.typeName}] - ${r.description.strip()}
+         *  @return ${r.camelCase}[${r.typeName}] - ${r.description.strip()}
         % endfor
     % endif
          */
-        virtual ${cpp_return_type()} ${ method.name }(
+        virtual ${cpp_return_type()} ${ method.camelCase }(
             ${ parameters() }) = 0;
 ###
 ### Emit 'callback-header'
@@ -52,6 +52,6 @@
     % elif ptype == 'callback-header':
         /** @brief sd-bus callback for ${ method.name }
          */
-        static int _callback_${ method.name }(
+        static int _callback_${ method.CamelCase }(
             sd_bus_message*, void*, sd_bus_error*);
     % endif

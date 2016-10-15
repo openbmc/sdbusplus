@@ -4,4 +4,6 @@ class Renderer(object):
 
     def render(self, loader, template, **kwargs):
         t = loader.get_template(template)
-        return t.render(loader=loader, **kwargs)
+        post = kwargs.pop('post', lambda result: result)
+        r = t.render(loader=loader, **kwargs)
+        return post(r)

@@ -9,4 +9,5 @@ class Property(NamedElement, Renderer):
         super(Property, self).__init__(**kwargs)
 
     def markdown(self, loader):
-        return self.render(loader, "property.mako.md", property=self).strip()
+        return self.render(loader, "property.mako.md", property=self,
+                           post = str.strip)

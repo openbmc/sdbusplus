@@ -28,7 +28,7 @@ struct BusDeleter
 {
     void operator()(sd_bus* ptr) const
     {
-        sd_bus_flush_close_unref(ptr);
+        sd_bus_unref(ptr);
     }
 };
 

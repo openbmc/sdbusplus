@@ -108,6 +108,18 @@ struct message
         return sd_bus_message_is_method_call(_msg.get(), interface, method);
     }
 
+    /** @brief Create a 'method_return' type message from an existing message.
+     *
+     *  @return method-return message.
+     */
+    message new_method_return()
+    {
+        msgp_t reply = nullptr;
+        sd_bus_message_new_method_return(this->get(), &reply);
+
+        return message(reply);
+    }
+
     friend struct sdbusplus::bus::bus;
 
     private:

@@ -33,3 +33,6 @@ class Interface(NamedElement, Renderer):
 
     def server_header(self, loader):
         return self.render(loader, "interface.mako.server.hpp", interface=self)
+
+    def server_cpp(self, loader):
+        return self.render(loader, "interface.mako.server.cpp", interface=self)

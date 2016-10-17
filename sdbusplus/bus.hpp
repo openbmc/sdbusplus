@@ -7,6 +7,10 @@
 
 namespace sdbusplus
 {
+
+// Forward declare.
+namespace server { namespace interface { struct interface; } }
+
 namespace bus
 {
 
@@ -161,7 +165,10 @@ struct bus
         b.call_noreply(m);
     }
 
+    friend struct server::interface::interface;
+
     private:
+        busp_t get() { return _bus.get(); }
         details::bus _bus;
 };
 

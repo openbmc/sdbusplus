@@ -114,7 +114,7 @@ int ${interface_name()}::_callback_${ method.CamelCase }(
     reply.append(${returns_as_tuple_index("r")});
     % endif
 
-    sdbusplus::bus::method_return(reply);
+    reply.method_return();
 
     return 0;
 }

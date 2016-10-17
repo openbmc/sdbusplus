@@ -2,6 +2,8 @@
 #include <tuple>
 #include <systemd/sd-bus.h>
 #include <sdbusplus/vtable.hpp>
+#include <sdbusplus/interface.hpp>
+#include <sdbusplus/bus.hpp>
     <%
         namespaces = interface.name.split('.')
         classname = namespaces.pop()
@@ -18,6 +20,27 @@ namespace ${s}
 class ${classname}
 {
     public:
+        /* Define all of the basic class operations:
+         *     Not allowed:
+         *         - Default constructor to avoid nullptrs.
+         *         - Copy operations due to internal unique_ptr.
+         *     Allowed:
+         *         - Move operations.
+         *         - Destructor.
+         */
+        ${classname}() = delete;
+        ${classname}(const ${classname}&) = delete;
+        ${classname}& operator=(const ${classname}&) = delete;
+        ${classname}(${classname}&&) = default;
+        ${classname}& operator=(${classname}&&) = default;
+        virtual ~${classname}() = default;
+
+        /** @brief Constructor to put object onto bus at a dbus path.
+         *  @param[in] bus - Bus to attach to.
+         *  @param[in] path - Path to attach at.
+         */
+        ${classname}(bus::bus& bus, const char* path);
+
     % for m in interface.methods:
 ${ m.cpp_prototype(loader, interface=interface, ptype='header') }
     % endfor
@@ -27,7 +50,10 @@ ${ m.cpp_prototype(loader, interface=interface, ptype='header') }
 ${ m.cpp_prototype(loader, interface=interface, ptype='callback-header') }
     % endfor
 
+        static constexpr auto _interface = "${interface.name}";
         static const sdbusplus::vtable::vtable_t _vtable[];
+        interface::interface _${"_".join(interface.name.split('.'))}_interface;
+
 };
 
     % for s in namespaces:

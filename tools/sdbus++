@@ -2,6 +2,7 @@
 import sdbusplus
 import mako.lookup
 import argparse
+import sys
 
 def main():
     valid_types = { 'interface': sdbusplus.Interface }
@@ -26,7 +27,11 @@ def main():
 
     args = parser.parse_args();
 
-    lookup = mako.lookup.TemplateLookup(directories=[args.templatedir])
+    if sys.version_info < (3,0):
+        lookup = mako.lookup.TemplateLookup(directories=[args.templatedir],
+                                            disable_unicode=True)
+    else:
+        lookup = mako.lookup.TemplateLookup(directories=[args.templatedir])
 
     instance = valid_types[args.typeName].load(args.item, args.rootdir)
     function = getattr(instance, valid_processes[args.process])

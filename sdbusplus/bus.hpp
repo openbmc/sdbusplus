@@ -142,30 +142,6 @@ struct bus
         sd_bus_call(_bus.get(), m.get(), timeout_us, nullptr, nullptr);
     }
 
-    /** @brief Perform a 'method-return' response call.
-     *
-     *  @param[in] m - The method-return type message to send.
-     *
-     *  This is a static method on bus because:
-     *      1. The typical caller of this is from within a method callback
-     *         on an sd-bus managed object, which does not have access to
-     *         its own bus.
-     *      2. Due to header dependency, sdbusplus::message cannot create
-     *         an sdbusplus::bus itself.
-     *      3. We do not want sdbusplus::message to call sd_bus_call directly,
-     *         in order to have common error handling code with bus::call.
-     */
-    static void method_return(message::message& m)
-    {
-        auto b = bus(sd_bus_message_get_bus(m.get()));
-
-        // Need to increment the reference since 'b' will now decrement
-        // on destruction.
-        sd_bus_ref(b._bus.get());
-
-        b.call_noreply(m);
-    }
-
     friend struct server::interface::interface;
     friend struct server::manager::manager;
 
@@ -194,10 +170,6 @@ inline bus new_system()
     sd_bus_open_system(&b);
     return bus(b);
 }
-
-/** Alias sdbusplus::bus::bus::method_return for convenience. */
-inline void method_return(message::message& m) { return bus::method_return(m); }
-
 
 } // namespace bus
 

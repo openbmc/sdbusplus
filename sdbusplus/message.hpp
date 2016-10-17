@@ -120,6 +120,13 @@ struct message
         return message(reply);
     }
 
+    /** @brief Perform a 'method-return' response call. */
+    void method_return()
+    {
+        auto b = sd_bus_message_get_bus(this->get());
+        sd_bus_send(b, this->get(), nullptr);
+    }
+
     friend struct sdbusplus::bus::bus;
 
     private:

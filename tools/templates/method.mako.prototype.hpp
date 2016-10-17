@@ -6,7 +6,7 @@
             return method.returns[0].typeName
         else:
             return "std::tuple<" + \
-                   ", ".join([ r.typeName for r in method.returns ]) + \
+                   returns_as_list() + \
                    ">"
 
     def parameters(defaultValue=False):
@@ -19,11 +19,17 @@
     def parameters_as_list():
         return ", ".join([ p.camelCase for p in method.parameters ])
 
+    def parameters_types_as_list():
+        return ", ".join([ p.typeName for p in method.parameters ])
+
     def parameter(p, defaultValue=False):
         r = "%s %s" % (p.typeName, p.camelCase)
         if defaultValue:
             r += default_value(p)
         return r
+
+    def returns_as_list():
+        return ", ".join([ r.typeName for r in method.returns ])
 
     def returns_as_tuple_index(tuple):
         return ", ".join([ "std::move(std::get<%d>(%s))" % (i,tuple) \
@@ -68,6 +74,16 @@
         static int _callback_${ method.CamelCase }(
             sd_bus_message*, void*, sd_bus_error*);
 ###
+### Emit 'vtable'
+###
+    % elif ptype == 'vtable':
+    vtable::method("${method.name}",
+                   details::${interface_name()}::_param_${ method.CamelCase }
+                        .data(),
+                   details::${interface_name()}::_return_${ method.CamelCase }
+                        .data(),
+                   _callback_${ method.CamelCase }),
+###
 ### Emit 'callback-cpp'
 ###
     % elif ptype == 'callback-cpp':
@@ -101,5 +117,24 @@ int ${interface_name()}::_callback_${ method.CamelCase }(
     sdbusplus::bus::method_return(reply);
 
     return 0;
+}
+
+namespace details {
+namespace ${interface_name()} {
+static const auto _param_${ method.CamelCase } =
+    % if len(method.parameters) == 0:
+        utility::tuple_to_array(std::make_tuple('\0'));
+    % else:
+        utility::tuple_to_array(message::types::type_id<
+                ${ parameters_types_as_list() }>());
+    % endif
+static const auto _return_${ method.CamelCase } =
+    % if len(method.parameters) == 0:
+        utility::tuple_to_array(std::make_tuple('\0'));
+    % else:
+        utility::tuple_to_array(message::types::type_id<
+                ${ returns_as_list() }>());
+    % endif
+}
 }
     % endif

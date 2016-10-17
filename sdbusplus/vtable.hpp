@@ -37,9 +37,10 @@ constexpr vtable_t method(const char* member, const char* signature,
  *  @param[in] offset - Offset.
  *  @param[in] flags - optional sdbusplus::vtable::method_ value.
  */
-constexpr vtable_t method(const char* member, const char* signature,
-                          const char* result, sd_bus_message_handler_t handler,
-                          size_t offset, decltype(vtable_t::flags) flags = 0);
+constexpr vtable_t method_o(const char* member, const char* signature,
+                            const char* result,
+                            sd_bus_message_handler_t handler,
+                            size_t offset, decltype(vtable_t::flags) flags = 0);
 
 /** Create a SD_BUS_SIGNAL entry.
  *
@@ -133,12 +134,13 @@ constexpr vtable_t method(const char* member, const char* signature,
                           const char* result, sd_bus_message_handler_t handler,
                           decltype(vtable_t::flags) flags)
 {
-    return method(member, signature, result, handler, 0, flags);
+    return method_o(member, signature, result, handler, 0, flags);
 }
 
-constexpr vtable_t method(const char* member, const char* signature,
-                          const char* result, sd_bus_message_handler_t handler,
-                          size_t offset, decltype(vtable_t::flags) flags)
+constexpr vtable_t method_o(const char* member, const char* signature,
+                            const char* result,
+                            sd_bus_message_handler_t handler,
+                            size_t offset, decltype(vtable_t::flags) flags)
 {
     vtable_t v{};
     v.type = _SD_BUS_VTABLE_METHOD;

@@ -10,6 +10,7 @@ namespace sdbusplus
 
 // Forward declare.
 namespace server { namespace interface { struct interface; } }
+namespace server { namespace manager { struct manager; } }
 
 namespace bus
 {
@@ -166,6 +167,7 @@ struct bus
     }
 
     friend struct server::interface::interface;
+    friend struct server::manager::manager;
 
     private:
         busp_t get() { return _bus.get(); }

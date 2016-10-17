@@ -13,6 +13,13 @@ namespace server
 namespace ${s}
 {
     % endfor
+
+${classname}::${classname}(bus::bus& bus, const char* path)
+        : _${"_".join(interface.name.split('.'))}_interface(
+                bus, path, _interface, _vtable, this)
+{
+}
+
     % for m in interface.methods:
 ${ m.cpp_prototype(loader, interface=interface, ptype='callback-cpp') }
     % endfor

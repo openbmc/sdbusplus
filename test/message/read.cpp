@@ -144,6 +144,31 @@ void runTests()
         b.call_noreply(m);
     }
 
+    // Test double and bool.
+    {
+        auto m = newMethodCall__test(b);
+        bool t = true;
+        m.append(t, true, false, 1.1);
+        verifyTypeString = "bbbd";
+
+        struct verify
+        {
+            static void op(sdbusplus::message::message& m)
+            {
+                bool t1, t2, f1;
+                double d;
+                m.read(t1, t2, f1, d);
+                assert(t1);
+                assert(t2);
+                assert(!f1);
+                assert(d == 1.1);
+            }
+        };
+        verifyCallback = &verify::op;
+
+        b.call_noreply(m);
+    }
+
     // Test r-value string.
     {
         auto m = newMethodCall__test(b);

@@ -80,21 +80,40 @@ struct object : details::compose<Args...>
      *
      *  @param[in] bus - The bus to place the object on.
      *  @param[in] path - The path the object resides at.
+     *  @param[in] deferSignal - Set to true if emit_object_added should be
+     *                           deferred.  This would likely be true if the
+     *                           object needs custom property init before the
+     *                           signal can be sent.
      */
     object(bus::bus& bus,
-           const char* path)
+           const char* path,
+           bool deferSignal = false)
         : details::compose<Args...>(bus, path),
           __sdbusplus_server_object_bus(sd_bus_ref(bus.get())),
-          __sdbusplus_server_object_path(path)
+          __sdbusplus_server_object_path(path),
+          __sdbusplus_server_object_emitremoved(false)
     {
-        sd_bus_emit_object_added(__sdbusplus_server_object_bus.get(),
-                                 __sdbusplus_server_object_path.c_str());
+        if (!deferSignal)
+        {
+            emit_object_added();
+        }
     }
 
     ~object()
     {
         sd_bus_emit_object_removed(__sdbusplus_server_object_bus.get(),
                                    __sdbusplus_server_object_path.c_str());
+    }
+
+    /** Emit the 'object-added' signal, if not already sent. */
+    void emit_object_added()
+    {
+        if (!__sdbusplus_server_object_emitremoved)
+        {
+            sd_bus_emit_object_added(__sdbusplus_server_object_bus.get(),
+                                     __sdbusplus_server_object_path.c_str());
+            __sdbusplus_server_object_emitremoved = true;
+        }
     }
 
     private:
@@ -104,6 +123,7 @@ struct object : details::compose<Args...>
         // ambiguity.
         bus::bus __sdbusplus_server_object_bus;
         std::string __sdbusplus_server_object_path;
+        bool __sdbusplus_server_object_emitremoved;
 
 };
 

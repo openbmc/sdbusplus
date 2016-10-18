@@ -54,5 +54,8 @@ struct manager
 };
 
 } // namespace manager
+
+using manager_t = manager::manager;
+
 } // namespace server
 } // namespace sdbusplus

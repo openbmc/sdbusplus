@@ -91,7 +91,7 @@ int ${interface_name()}::_callback_${ method.CamelCase }(
         sd_bus_message* msg, void* context, sd_bus_error* error)
 {
     ### Need to add a ref to msg since we attached it to an sdbusplus::message.
-    auto m = sdbusplus::message::message(sd_bus_message_ref(msg));
+    auto m = message::message(sd_bus_message_ref(msg));
 
     % if len(method.parameters) != 0:
     ${parameters_as_local()}{};

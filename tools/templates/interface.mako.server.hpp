@@ -47,14 +47,39 @@ ${ m.cpp_prototype(loader, interface=interface, ptype='header') }
 ${ s.cpp_prototype(loader, interface=interface, ptype='header') }
     % endfor
 
+    % for p in interface.properties:
+        /** Get value of ${p.name} */
+        virtual ${p.typeName} ${p.camelCase}() const;
+        /** Set value of ${p.name} */
+        virtual ${p.typeName} ${p.camelCase}(${p.typeName} value);
+    % endfor
+
     private:
     % for m in interface.methods:
 ${ m.cpp_prototype(loader, interface=interface, ptype='callback-header') }
     % endfor
 
+    % for p in interface.properties:
+        static int _callback_get_${p.name}(
+            sd_bus*, const char*, const char*, const char*,
+            sd_bus_message*, void*, sd_bus_error*);
+        static int _callback_set_${p.name}(
+            sd_bus*, const char*, const char*, const char*,
+            sd_bus_message*, void*, sd_bus_error*);
+
+    % endfor
+
         static constexpr auto _interface = "${interface.name}";
         static const vtable::vtable_t _vtable[];
         interface::interface _${"_".join(interface.name.split('.'))}_interface;
+
+    % for p in interface.properties:
+        % if p.defaultValue:
+        ${p.typeName} _${p.camelCase} = ${p.defaultValue};
+        % else:
+        ${p.typeName} _${p.camelCase}{};
+        % endif
+    % endfor
 
 };
 

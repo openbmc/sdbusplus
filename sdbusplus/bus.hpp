@@ -117,6 +117,22 @@ struct bus
         return message::message(m);
     }
 
+    /** @brief Create a signal message.
+     *
+     *  @param[in] objpath - The object's path for the signal.
+     *  @param[in] interf - The object's interface for the signal.
+     *  @param[in] member - The signal name.
+     *
+     *  @return A newly constructed message.
+     */
+    auto new_signal(const char* objpath, const char* interf, const char* member)
+    {
+        sd_bus_message* m = nullptr;
+        sd_bus_message_new_signal(_bus.get(), &m, objpath, interf, member);
+
+        return message::message(m);
+    }
+
     /** @brief Perform a message call.
      *
      *  @param[in] m - The method_call message.

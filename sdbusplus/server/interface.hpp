@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 #include <systemd/sd-bus.h>
 #include <sdbusplus/slot.hpp>
 #include <sdbusplus/vtable.hpp>
@@ -58,16 +59,30 @@ struct interface final
               const char* path,
               const char* interf,
               const sdbusplus::vtable::vtable_t* vtable,
-              void* context) : _slot(nullptr)
+              void* context) :
+        _bus(sd_bus_ref(bus.get())), _path(path), _interf(interf),
+        _slot(nullptr)
     {
         sd_bus_slot* slot = nullptr;
-        sd_bus_add_object_vtable(bus.get(), &slot, path, interf,
-                                 vtable, context);
+        sd_bus_add_object_vtable(_bus.get(), &slot, _path.c_str(),
+                                 _interf.c_str(), vtable, context);
 
         _slot = decltype(_slot){slot};
+
     }
 
+    auto new_signal(const char* member)
+    {
+        return _bus.new_signal(_path.c_str(), _interf.c_str(), member);
+    }
+
+    bus::bus& bus() { return _bus; }
+    const std::string& path() { return _path; }
+
     private:
+        bus::bus _bus;
+        std::string _path;
+        std::string _interf;
         slot::slot _slot;
 };
 

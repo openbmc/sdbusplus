@@ -137,6 +137,9 @@ struct message
         sd_bus_send(b, this->get(), nullptr);
     }
 
+    /** @brief Perform a 'signal-send' call. */
+    void signal_send() { method_return(); }
+
     friend struct sdbusplus::bus::bus;
 
     private:

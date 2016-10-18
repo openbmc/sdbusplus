@@ -108,6 +108,16 @@ struct message
         return sd_bus_message_is_method_call(_msg.get(), interface, method);
     }
 
+    /** @brief Check if message is a signal for an interface/member.
+     *
+     *  @param[in] interface - The interface to match.
+     *  @param[in] member - The member to match.
+     */
+    bool is_signal(const char* interface, const char* member)
+    {
+        return sd_bus_message_is_signal(_msg.get(), interface, member);
+    }
+
     /** @brief Create a 'method_return' type message from an existing message.
      *
      *  @return method-return message.

@@ -23,10 +23,17 @@ ${classname}::${classname}(bus::bus& bus, const char* path)
 ${ m.cpp_prototype(loader, interface=interface, ptype='callback-cpp') }
     % endfor
 
+    % for s in interface.signals:
+${ s.cpp_prototype(loader, interface=interface, ptype='callback-cpp') }
+    % endfor
+
 const vtable::vtable_t ${classname}::_vtable[] = {
     vtable::start(),
     % for m in interface.methods:
 ${ m.cpp_prototype(loader, interface=interface, ptype='vtable') }
+    % endfor
+    % for s in interface.signals:
+${ s.cpp_prototype(loader, interface=interface, ptype='vtable') }
     % endfor
     vtable::end()
 };

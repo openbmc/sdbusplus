@@ -11,3 +11,7 @@ class Signal(NamedElement, Renderer):
 
     def markdown(self, loader):
         return self.render(loader, "signal.mako.md", signal=self)
+
+    def cpp_prototype(self, loader, interface, ptype):
+        return self.render(loader, "signal.mako.prototype.hpp", signal=self,
+                           interface=interface, ptype=ptype, post=str.rstrip)

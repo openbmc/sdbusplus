@@ -43,6 +43,10 @@ class ${classname}
 ${ m.cpp_prototype(loader, interface=interface, ptype='header') }
     % endfor
 
+    % for s in interface.signals:
+${ s.cpp_prototype(loader, interface=interface, ptype='header') }
+    % endfor
+
     private:
     % for m in interface.methods:
 ${ m.cpp_prototype(loader, interface=interface, ptype='callback-header') }

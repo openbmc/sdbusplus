@@ -1,9 +1,7 @@
 #pragma once
 #include <tuple>
 #include <systemd/sd-bus.h>
-#include <sdbusplus/vtable.hpp>
-#include <sdbusplus/interface.hpp>
-#include <sdbusplus/bus.hpp>
+#include <sdbusplus/server.hpp>
     <%
         namespaces = interface.name.split('.')
         classname = namespaces.pop()
@@ -51,7 +49,7 @@ ${ m.cpp_prototype(loader, interface=interface, ptype='callback-header') }
     % endfor
 
         static constexpr auto _interface = "${interface.name}";
-        static const sdbusplus::vtable::vtable_t _vtable[];
+        static const vtable::vtable_t _vtable[];
         interface::interface _${"_".join(interface.name.split('.'))}_interface;
 
 };

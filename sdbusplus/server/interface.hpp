@@ -72,5 +72,8 @@ struct interface final
 };
 
 } // namespace interface
+
+using interface_t = interface::interface;
+
 } // namespace server
 } // namespace sdbusplus

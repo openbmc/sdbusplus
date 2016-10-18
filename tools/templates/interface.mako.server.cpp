@@ -1,5 +1,4 @@
-#include <sdbusplus/bus.hpp>
-#include <sdbusplus/message.hpp>
+#include <sdbusplus/server.hpp>
 #include <${"/".join(interface.name.split('.') + [ 'server.hpp' ])}>
     <%
         namespaces = interface.name.split('.')

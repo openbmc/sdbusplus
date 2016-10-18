@@ -98,7 +98,7 @@ ${ s.cpp_prototype(loader, interface=interface, ptype='vtable') }
     vtable::end()
 };
 
-    % for s in namespaces:
+    % for s in reversed(namespaces):
 } // namespace ${s}
     % endfor
 } // namespace server

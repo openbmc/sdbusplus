@@ -89,6 +89,13 @@ struct bus
         return message::message(m);
     }
 
+    /** @brief Process waiting dbus messages or signals, discarding unhandled.
+     */
+    void process_discard()
+    {
+        sd_bus_process(_bus.get(), nullptr);
+    }
+
     /** @brief Claim a service name on the dbus.
      *
      *  @param[in] service - The service name to claim.

@@ -80,6 +80,16 @@ struct interface final
         return _bus.new_signal(_path.c_str(), _interf.c_str(), member);
     }
 
+    /** @brief Broadcast a property changed signal.
+     *
+     *  @param[in] property - The property which changed.
+     */
+    void property_changed(const char* property)
+    {
+        sd_bus_emit_properties_changed(_bus.get(), _path.c_str(),
+                                       _interf.c_str(), property, nullptr);
+    }
+
     bus::bus& bus() { return _bus; }
     const std::string& path() { return _path; }
 

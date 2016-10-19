@@ -3,6 +3,9 @@
     <%
         namespaces = interface.name.split('.')
         classname = namespaces.pop()
+
+        def interface_instance():
+            return "_".join(interface.name.split('.') + ['interface'])
     %>
 namespace sdbusplus
 {
@@ -14,7 +17,7 @@ namespace ${s}
     % endfor
 
 ${classname}::${classname}(bus::bus& bus, const char* path)
-        : _${"_".join(interface.name.split('.'))}_interface(
+        : _${interface_instance()}(
                 bus, path, _interface, _vtable, this)
 {
 }
@@ -48,7 +51,11 @@ int ${classname}::_callback_get_${p.name}(
 
 ${p.typeName} ${classname}::${p.camelCase}(${p.typeName} value)
 {
-    _${p.camelCase} = value;
+    if (_${p.camelCase} != value)
+    {
+        _${p.camelCase} = value;
+        _${interface_instance()}.property_changed("${p.name}");
+    }
 
     return _${p.camelCase};
 }
@@ -93,7 +100,8 @@ ${ s.cpp_prototype(loader, interface=interface, ptype='vtable') }
                      details::${classname}::_property_${p.name}
                         .data(),
                      _callback_get_${p.name},
-                     _callback_set_${p.name}),
+                     _callback_set_${p.name},
+                     vtable::property_::emits_change),
     % endfor
     vtable::end()
 };

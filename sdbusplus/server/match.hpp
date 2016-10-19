@@ -34,12 +34,14 @@ struct match
      *  @param[in] bus - The bus to register on.
      *  @param[in] match - The match to register.
      *  @param[in] handler - The callback for matches.
+     *  @param[in] context - An optional context to pass to the handler.
      */
     match(sdbusplus::bus::bus& bus, const char* match,
-          sd_bus_message_handler_t handler) : _slot(nullptr)
+          sd_bus_message_handler_t handler, void* context = nullptr)
+                : _slot(nullptr)
     {
         sd_bus_slot* slot = nullptr;
-        sd_bus_add_match(bus.get(), &slot, match, handler, nullptr);
+        sd_bus_add_match(bus.get(), &slot, match, handler, context);
 
         _slot = decltype(_slot){slot};
     }

@@ -11,6 +11,7 @@ namespace sdbusplus
 namespace server { namespace interface { struct interface; } }
 namespace server { namespace manager { struct manager; } }
 namespace server { namespace object { template<class...> struct object; } }
+namespace server { namespace match { struct match; } }
 
 namespace bus
 {
@@ -168,6 +169,7 @@ struct bus
     friend struct server::interface::interface;
     friend struct server::manager::manager;
     template<class... Args> friend struct server::object::object;
+    friend struct server::match::match;
 
     private:
         busp_t get() { return _bus.get(); }

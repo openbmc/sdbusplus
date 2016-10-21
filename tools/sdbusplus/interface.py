@@ -6,6 +6,7 @@ from .method import Method
 from .signal import Signal
 from .renderer import Renderer
 
+
 class Interface(NamedElement, Renderer):
     @staticmethod
     def load(name, rootdir='.'):
@@ -13,18 +14,18 @@ class Interface(NamedElement, Renderer):
                                 name.replace('.', '/') + ".interface.yaml")
 
         with open(filename) as f:
-            data = f.read();
+            data = f.read()
             y = yaml.safe_load(data)
             y['name'] = name
             return Interface(**y)
 
     def __init__(self, **kwargs):
-        self.properties = [ Property(**p) for p in
-            kwargs.pop('properties', []) ]
-        self.methods = [ Method(**m) for m in
-            kwargs.pop('methods', []) ]
-        self.signals = [ Signal(**s) for s in
-            kwargs.pop('signals', []) ]
+        self.properties = \
+            [Property(**p) for p in kwargs.pop('properties', [])]
+        self.methods = \
+            [Method(**m) for m in kwargs.pop('methods', [])]
+        self.signals = \
+            [Signal(**s) for s in kwargs.pop('signals', [])]
 
         super(Interface, self).__init__(**kwargs)
 

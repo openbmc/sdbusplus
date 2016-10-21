@@ -2,12 +2,13 @@ from .property import Property
 from .namedelement import NamedElement
 from .renderer import Renderer
 
+
 class Method(NamedElement, Renderer):
     def __init__(self, **kwargs):
-        self.parameters = [ Property(**p) for p in
-            kwargs.pop('parameters', []) ]
-        self.returns = [ Property(**r) for r in
-            kwargs.pop('returns', []) ]
+        self.parameters = \
+            [Property(**p) for p in kwargs.pop('parameters', [])]
+        self.returns = \
+            [Property(**r) for r in kwargs.pop('returns', [])]
         self.errors = kwargs.pop('errors', [])
 
         super(Method, self).__init__(**kwargs)

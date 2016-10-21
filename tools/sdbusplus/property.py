@@ -1,6 +1,7 @@
 from .namedelement import NamedElement
 from .renderer import Renderer
 
+
 class Property(NamedElement, Renderer):
     def __init__(self, **kwargs):
         self.typeName = kwargs.pop('type', None)
@@ -10,4 +11,4 @@ class Property(NamedElement, Renderer):
 
     def markdown(self, loader):
         return self.render(loader, "property.mako.md", property=self,
-                           post = str.strip)
+                           post=str.strip)

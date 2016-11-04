@@ -224,6 +224,7 @@ template <typename ...Args> struct read_single<variant<Args...>>
         if (0 >= rc)
         {
             read<S, Args1...>(m, s);
+            sd_bus_message_skip(m, "v");
             return;
         }
 

@@ -9,7 +9,7 @@ static std::string verifyTypeString;
 using verifyCallback_t = void(*)(sdbusplus::message::message&);
 verifyCallback_t verifyCallback = nullptr;
 
-static constexpr auto SERVICE = "sdbusplus.test";
+static constexpr auto SERVICE = "sdbusplus.test.message.read";
 static constexpr auto INTERFACE = SERVICE;
 static constexpr auto TEST_METHOD = "test";
 static constexpr auto QUIT_METHOD = "quit";

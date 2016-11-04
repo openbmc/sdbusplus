@@ -14,3 +14,5 @@ nobase_include_HEADERS = \
 	sdbusplus/utility/tuple_to_array.hpp \
 	sdbusplus/utility/type_traits.hpp \
 	sdbusplus/vtable.hpp
+
+SUBDIRS = test

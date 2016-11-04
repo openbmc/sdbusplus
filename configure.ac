@@ -6,6 +6,7 @@ AM_INIT_AUTOMAKE([subdir-objects -Wall -Werror foreign dist-xz])
 AM_SILENT_RULES([yes])
 
 # Checks for programs.
+AC_PROG_CXX
 AC_PROG_CC
 AM_PROG_AR
 AC_PROG_INSTALL
@@ -18,7 +19,9 @@ PKG_CHECK_MODULES([SYSTEMD], [libsystemd >= 221])
 AC_CHECK_HEADER(systemd/sd-bus.h, ,[AC_MSG_ERROR([Could not find systemd/sd-bus.h...systemd developement package required])])
 
 # Checks for typedefs, structures, and compiler characteristics.
-AX_APPEND_COMPILE_FLAGS([-fpic -Wall -Werror], [CFLAGS])
+AX_CXX_COMPILE_STDCXX_14([noext])
+AX_APPEND_COMPILE_FLAGS([-Wall -Werror], [CFLAGS])
+AX_APPEND_COMPILE_FLAGS([-Wall -Werror], [CXXFLAGS])
 
 # Checks for library functions.
 LT_INIT # Removes 'unrecognized options: --with-libtool-sysroot'
@@ -46,5 +49,5 @@ AS_IF([test "x$enable_oe_sdk" == "xyes"],
 )
 
 # Create configured output
-AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([Makefile test/Makefile])
 AC_OUTPUT

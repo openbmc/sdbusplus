@@ -1,3 +1,4 @@
+AM_CPPFLAGS = -I$(top_srcdir)
 check_PROGRAMS =
 
 TESTS = $(check_PROGRAMS)

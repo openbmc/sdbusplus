@@ -239,6 +239,7 @@ template <typename ...Args> struct read_single<variant<Args...>>
     template<typename S>
     static void read(sd_bus_message* m, S&& s)
     {
+        sd_bus_message_skip(m, "v");
         s = std::remove_reference_t<S>{};
     }
 

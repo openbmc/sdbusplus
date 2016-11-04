@@ -65,6 +65,8 @@ void* server(void* b)
             break;
         }
     }
+
+    return nullptr;
 }
 
 auto newMethodCall__test(sdbusplus::bus::bus& b)

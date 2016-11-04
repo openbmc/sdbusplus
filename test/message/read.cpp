@@ -325,6 +325,32 @@ void runTests()
         b.call_noreply(m);
     }
 
+    // Test variant with missing/wrong type.
+    {
+        auto m = newMethodCall__test(b);
+        sdbusplus::message::variant<uint64_t, double> a1{3.1}, a2{uint64_t(4)};
+        m.append(1, a1, a2, 2);
+        verifyTypeString = "ivvi";
+
+        struct verify
+        {
+            static void op(sdbusplus::message::message& m)
+            {
+                int32_t a, b;
+                sdbusplus::message::variant<uint8_t, double> a1{}, a2{};
+
+                m.read(a, a1, a2, b);
+                assert(a == 1);
+                assert(a1 == 3.1);
+                assert(a2 == uint8_t());
+                assert(b == 2);
+            }
+        };
+        verifyCallback = &verify::op;
+
+        b.call_noreply(m);
+    }
+
     // Test map-variant.
     {
         auto m = newMethodCall__test(b);

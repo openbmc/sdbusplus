@@ -16,4 +16,4 @@ nobase_include_HEADERS = \
 	sdbusplus/utility/type_traits.hpp \
 	sdbusplus/vtable.hpp
 
-SUBDIRS = test
+SUBDIRS = test tools

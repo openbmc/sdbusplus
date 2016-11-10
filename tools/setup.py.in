@@ -1,0 +1,9 @@
+from distutils.core import setup
+
+setup(name='sdbusplus',
+      version='1.0',
+      package_dir={'':'@top_srcdir@/tools'},
+      packages=['sdbusplus'],
+      scripts=['@top_srcdir@/tools/sdbus++'],
+      package_data={'sdbusplus': ['templates/*.mako.*']},
+      )

@@ -12,6 +12,19 @@ AM_PROG_AR
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET
 
+# setup sdbus++
+AM_PATH_PYTHON([2.7], [AC_SUBST([PYTHON], [echo "$PYTHON"])])
+AC_SUBST([PYTHONDIR], ${pythondir})
+AS_IF([test "$PYTHON" != :], [have_python=yes], [have_python=no])
+
+AC_ARG_ENABLE([sdbuspp],
+    AS_HELP_STRING([--disable-sdbuspp], [Disable sdbus++]))
+
+AS_IF([test "x$enable_sdbuspp" != "xno"],
+    [AS_IF([test "x$have_python" = "xno"], [AC_MSG_ERROR([sdbus++ requires python])])])
+
+AM_CONDITIONAL([WANT_SDBUSPP], [test "x$enable_sdbuspp" != "xno"])
+
 # Checks for libraries.
 PKG_CHECK_MODULES([SYSTEMD], [libsystemd >= 221])
 
@@ -49,5 +62,5 @@ AS_IF([test "x$enable_oe_sdk" == "xyes"],
 )
 
 # Create configured output
-AC_CONFIG_FILES([Makefile test/Makefile])
+AC_CONFIG_FILES([Makefile test/Makefile tools/Makefile tools/setup.py])
 AC_OUTPUT

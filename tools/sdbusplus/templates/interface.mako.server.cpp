@@ -1,12 +1,12 @@
 #include <sdbusplus/server.hpp>
 #include <${"/".join(interface.name.split('.') + [ 'server.hpp' ])}>
-    <%
-        namespaces = interface.name.split('.')
-        classname = namespaces.pop()
+<%
+    namespaces = interface.name.split('.')
+    classname = namespaces.pop()
 
-        def interface_instance():
-            return "_".join(interface.name.split('.') + ['interface'])
-    %>
+    def interface_instance():
+        return "_".join(interface.name.split('.') + ['interface'])
+%>
 namespace sdbusplus
 {
 namespace server

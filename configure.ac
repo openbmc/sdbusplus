@@ -25,14 +25,23 @@ AS_IF([test "x$enable_sdbuspp" != "xno"],
 
 AM_CONDITIONAL([WANT_SDBUSPP], [test "x$enable_sdbuspp" != "xno"])
 
-# Checks for libraries.
-PKG_CHECK_MODULES([SYSTEMD], [libsystemd >= 221])
+# setup libsdbusplus
+PKG_CHECK_MODULES([SYSTEMD], [libsystemd >= 221], [have_systemd=yes], [have_systemd=no])
+AC_ARG_ENABLE([libsdbusplus],
+    AS_HELP_STRING([--disable-libsdbusplus], [Disable libsdbusplus]))
+
+AS_IF([test "x$enable_libsdbusplus" != "xno"],
+      [AS_IF([test "x$have_systemd" = "xno"], [AC_MSG_ERROR([libsdbusplus requires systemd])])])
+
+AM_CONDITIONAL([WANT_LIBSDBUSPLUS], [test "x$enable_libsdbusplus" != "xno"])
 
 # Checks for header files.
-AC_CHECK_HEADER(systemd/sd-bus.h, ,[AC_MSG_ERROR([Could not find systemd/sd-bus.h...systemd developement package required])])
+AS_IF([test "x$enable_libsdbusplus" = "xyes"],
+      [AC_CHECK_HEADER(systemd/sd-bus.h, ,[AC_MSG_ERROR([Could not find systemd/sd-bus.h...systemd developement package required])])])
 
 # Checks for typedefs, structures, and compiler characteristics.
-AX_CXX_COMPILE_STDCXX_14([noext])
+AS_IF([test "x$enable_libsdbusplus" = "xyes"],
+      [AX_CXX_COMPILE_STDCXX_14([noext])])
 AX_APPEND_COMPILE_FLAGS([-Wall -Werror], [CFLAGS])
 AX_APPEND_COMPILE_FLAGS([-Wall -Werror], [CXXFLAGS])
 

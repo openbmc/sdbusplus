@@ -1,3 +1,5 @@
+if WANT_LIBSDBUSPLUS
+
 AM_CPPFLAGS = -I$(top_srcdir)
 check_PROGRAMS =
 
@@ -25,3 +27,4 @@ utility_type_traits_SOURCES = utility/type_traits.cpp
 check_PROGRAMS += vtable_vtable
 vtable_vtable_SOURCES = vtable/vtable.cpp vtable/vtable_c.c
 
+endif

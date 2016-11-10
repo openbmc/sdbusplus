@@ -1,3 +1,5 @@
+if WANT_LIBSDBUSPLUS
+
 nobase_include_HEADERS = \
 	mapbox/recursive_wrapper.hpp \
 	mapbox/variant.hpp \
@@ -16,4 +18,5 @@ nobase_include_HEADERS = \
 	sdbusplus/utility/type_traits.hpp \
 	sdbusplus/vtable.hpp
 
+endif
 SUBDIRS = test tools

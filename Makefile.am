@@ -5,6 +5,7 @@ nobase_include_HEADERS = \
 	sdbusplus/message.hpp \
 	sdbusplus/message/append.hpp \
 	sdbusplus/message/read.hpp \
+	sdbusplus/message/types.hpp \
 	sdbusplus/server.hpp \
 	sdbusplus/server/interface.hpp \
 	sdbusplus/server/manager.hpp \

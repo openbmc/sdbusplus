@@ -5,13 +5,13 @@
 % for m in interface.methods:
 ${ m.cpp_prototype(loader, interface=interface, ptype='callback-cpp-includes') }
 % endfor
-    <%
-        namespaces = interface.name.split('.')
-        classname = namespaces.pop()
+<%
+    namespaces = interface.name.split('.')
+    classname = namespaces.pop()
 
-        def interface_instance():
-            return "_".join(interface.name.split('.') + ['interface'])
-    %>
+    def interface_instance():
+        return "_".join(interface.name.split('.') + ['interface'])
+%>
 namespace sdbusplus
 {
     % for s in namespaces:

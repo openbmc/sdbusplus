@@ -2,10 +2,10 @@
 #include <tuple>
 #include <systemd/sd-bus.h>
 #include <sdbusplus/server.hpp>
-    <%
-        namespaces = interface.name.split('.')
-        classname = namespaces.pop()
-    %>
+<%
+    namespaces = interface.name.split('.')
+    classname = namespaces.pop()
+%>
 namespace sdbusplus
 {
     % for s in namespaces:

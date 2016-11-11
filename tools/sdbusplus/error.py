@@ -24,4 +24,4 @@ class Error(NamedElement, Renderer):
         super(Error, self).__init__(**kwargs)
 
     def exception_header(self, loader):
-        return ""
+        return self.render(loader, "error.mako.hpp", error=self)

@@ -1,0 +1,3 @@
+- name: DivisionByZero
+  description: >
+    An attempt to divide by zero was attempted.

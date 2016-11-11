@@ -2,6 +2,7 @@ nobase_include_HEADERS = \
 	mapbox/recursive_wrapper.hpp \
 	mapbox/variant.hpp \
 	sdbusplus/bus.hpp \
+	sdbusplus/exception.hpp \
 	sdbusplus/message.hpp \
 	sdbusplus/message/append.hpp \
 	sdbusplus/message/read.hpp \

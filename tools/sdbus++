@@ -11,7 +11,8 @@ def main():
     valid_processes = {'markdown': "markdown",
                        'server-header': "server_header",
                        'server-cpp': "server_cpp",
-                       'exception-header': "exception_header"}
+                       'exception-header': "exception_header",
+                       'exception-cpp': "exception_cpp"}
 
     parser = argparse.ArgumentParser(description='Process sdbus++ YAML files.')
 

@@ -9,12 +9,12 @@
     %>
 namespace sdbusplus
 {
-namespace server
-{
     % for s in namespaces:
 namespace ${s}
 {
     % endfor
+namespace server
+{
 
 ${classname}::${classname}(bus::bus& bus, const char* path)
         : _${interface_instance()}(
@@ -106,8 +106,8 @@ ${ s.cpp_prototype(loader, interface=interface, ptype='vtable') }
     vtable::end()
 };
 
+} // namespace server
     % for s in reversed(namespaces):
 } // namespace ${s}
     % endfor
-} // namespace server
 } // namespace sdbusplus

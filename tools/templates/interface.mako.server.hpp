@@ -8,12 +8,12 @@
     %>
 namespace sdbusplus
 {
-namespace server
-{
     % for s in namespaces:
 namespace ${s}
 {
     % endfor
+namespace server
+{
 
 class ${classname}
 {
@@ -73,7 +73,8 @@ ${ m.cpp_prototype(loader, interface=interface, ptype='callback-header') }
 
         static constexpr auto _interface = "${interface.name}";
         static const vtable::vtable_t _vtable[];
-        interface::interface _${"_".join(interface.name.split('.'))}_interface;
+        sdbusplus::server::interface::interface
+                _${"_".join(interface.name.split('.'))}_interface;
 
     % for p in interface.properties:
         % if p.defaultValue:
@@ -85,8 +86,8 @@ ${ m.cpp_prototype(loader, interface=interface, ptype='callback-header') }
 
 };
 
+} // namespace server
     % for s in reversed(namespaces):
 } // namespace ${s}
     % endfor
-} // namespace server
 } // namespace sdbusplus

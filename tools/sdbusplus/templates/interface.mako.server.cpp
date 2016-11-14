@@ -1,5 +1,9 @@
 #include <sdbusplus/server.hpp>
+#include <sdbusplus/exception.hpp>
 #include <${"/".join(interface.name.split('.') + [ 'server.hpp' ])}>
+% for m in interface.methods:
+${ m.cpp_prototype(loader, interface=interface, ptype='callback-cpp-includes') }
+% endfor
     <%
         namespaces = interface.name.split('.')
         classname = namespaces.pop()

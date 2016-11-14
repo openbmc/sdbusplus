@@ -43,6 +43,20 @@
 
     def interface_name():
         return interface.name.split('.').pop()
+
+    def error_namespace(e):
+        n = e.split('.');
+        n.pop(); # Remove error name.
+
+        n = map((lambda x: interface.name if x == "self" else x), n);
+        return '::'.join('.'.join(n).split('.'));
+
+    def error_name(e):
+        return e.split('.').pop();
+
+    def error_include(e):
+        return '/'.join(error_namespace(e).split('::')) + '/error.hpp';
+
 %>
 ###
 ### Emit 'header'
@@ -90,31 +104,49 @@
 int ${interface_name()}::_callback_${ method.CamelCase }(
         sd_bus_message* msg, void* context, sd_bus_error* error)
 {
-    ### Need to add a ref to msg since we attached it to an sdbusplus::message.
-    auto m = message::message(sd_bus_message_ref(msg));
+    try
+    {
+        ### Need to add a ref to msg since we attached it to an
+        ### sdbusplus::message.
+        auto m = message::message(sd_bus_message_ref(msg));
 
     % if len(method.parameters) != 0:
-    ${parameters_as_local()}{};
+        ${parameters_as_local()}{};
 
-    m.read(${parameters_as_list()});
+        m.read(${parameters_as_list()});
     % endif
 
-    auto o = static_cast<${interface_name()}*>(context);
+        auto o = static_cast<${interface_name()}*>(context);
     % if len(method.returns) != 0:
-    auto r = \
+        auto r = \
     %endif
-    o->${ method.camelCase }(${parameters_as_list()});
+        o->${ method.camelCase }(${parameters_as_list()});
 
-    auto reply = m.new_method_return();
+        auto reply = m.new_method_return();
     % if len(method.returns) == 0:
-    // No data to append on reply.
+        // No data to append on reply.
     % elif len(method.returns) == 1:
-    reply.append(std::move(r));
+        reply.append(std::move(r));
     % else:
-    reply.append(${returns_as_tuple_index("r")});
+        reply.append(${returns_as_tuple_index("r")});
     % endif
 
-    reply.method_return();
+        reply.method_return();
+    }
+    catch(sdbusplus::internal_exception_t& e)
+    {
+        auto name = e.what();
+        sd_bus_error_set_const(error, name, name);
+        return -EINVAL;
+    }
+    % for e in method.errors:
+    catch(sdbusplus::${error_namespace(e)}::common::${error_name(e)}& e)
+    {
+        auto name = e.what();
+        sd_bus_error_set_const(error, name, name);
+        return -EINVAL;
+    }
+    % endfor
 
     return 0;
 }
@@ -139,4 +171,8 @@ static const auto _return_${ method.CamelCase } =
     % endif
 }
 }
+    % elif ptype == 'callback-cpp-includes':
+        % for e in method.errors:
+#include <${error_include(e)}>
+        % endfor
     % endif

@@ -50,6 +50,11 @@ properties:
       default: 0
       description: >
         The result of the most recent calculation.
+    - name: Error
+      type: enum[self.State]
+      default: Success
+      description: >
+        The current state of the Calculator.
 signals:
     - name: Cleared
       description: >
@@ -59,4 +64,14 @@ signals:
         - type: int64
           description: >
             Value of LastReset prior to Clear.
-
+enumerations:
+    - name: State
+      description: >
+        Identifies if the service has encountered an error or not.
+      values:
+        - name: Success
+          description: >
+            No error has been encountered.
+        - name: Error
+          description: >
+            The service has encountered an error.

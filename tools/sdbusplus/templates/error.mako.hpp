@@ -12,12 +12,16 @@ namespace Error
 {
 
     % for e in error.errors:
-struct ${e.name} : public sdbusplus::exception_t
+struct ${e.name} final : public sdbusplus::exception_t
 {
-    static constexpr auto name = "${error.name}.${e.name}";
-    static constexpr auto description =
+    static constexpr auto errName = "${error.name}.${e.name}";
+    static constexpr auto errDesc =
             "${e.description.strip()}";
+    static constexpr auto errWhat =
+            "${error.name}.${e.name}: ${e.description.strip()}";
 
+    const char* name() const noexcept override;
+    const char* description() const noexcept override;
     const char* what() const noexcept override;
 };
 

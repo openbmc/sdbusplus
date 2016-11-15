@@ -137,15 +137,13 @@ int ${interface_name()}::_callback_${ method.CamelCase }(
     }
     catch(sdbusplus::internal_exception_t& e)
     {
-        auto name = e.what();
-        sd_bus_error_set_const(error, name, name);
+        sd_bus_error_set_const(error, e.name(), e.description());
         return -EINVAL;
     }
     % for e in method.errors:
     catch(sdbusplus::${error_namespace(e)}::${error_name(e)}& e)
     {
-        auto name = e.what();
-        sd_bus_error_set_const(error, name, name);
+        sd_bus_error_set_const(error, e.name(), e.description());
         return -EINVAL;
     }
     % endfor

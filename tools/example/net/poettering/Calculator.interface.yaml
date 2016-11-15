@@ -8,17 +8,17 @@ methods:
         Multiplies two integers 'x' and 'y' and returns the result.
       parameters:
         - name: x
-          type: integer
+          type: int64
           description: >
             The first integer to multiply.
         - name: y
-          type: integer
+          type: int64
           description: >
             The second integer to multiply.
           default: 1
       returns:
         - name: z
-          type: integer
+          type: int64
           description: >
             The result of (x*y).
     - name: Divide
@@ -26,17 +26,17 @@ methods:
         Divides two integers 'x' and 'y' and returns the result.
       parameters:
         - name: x
-          type: integer
+          type: int64
           description: >
             The first integer to divide.
         - name: y
-          type: integer
+          type: int64
           description: >
             The second integer to divide.
           default: 1
       returns:
         - name: z
-          type: integer
+          type: int64
           description: >
             The result of (x/y).
       errors:
@@ -46,7 +46,7 @@ methods:
         Reset the LastResult property to zero.
 properties:
     - name: LastResult
-      type: integer
+      type: int64
       default: 0
       description: >
         The result of the most recent calculation.
@@ -56,7 +56,7 @@ signals:
         Signal indicating the LastReset property has been set to zero by the
         'Clear' method.
       properties:
-        - type: integer
+        - type: int64
           description: >
             Value of LastReset prior to Clear.
 

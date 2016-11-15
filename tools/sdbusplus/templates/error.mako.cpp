@@ -9,9 +9,17 @@ namespace ${s}
 namespace Error
 {
     % for e in error.errors:
+const char* ${e.name}::name() const noexcept
+{
+    return errName;
+}
+const char* ${e.name}::description() const noexcept
+{
+    return errDesc;
+}
 const char* ${e.name}::what() const noexcept
 {
-    return name;
+    return errWhat;
 }
     % endfor
 

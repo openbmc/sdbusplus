@@ -49,9 +49,9 @@ ${ s.cpp_prototype(loader, interface=interface, ptype='header') }
 
     % for p in interface.properties:
         /** Get value of ${p.name} */
-        virtual ${p.typeName} ${p.camelCase}() const;
+        virtual ${p.cppTypeName} ${p.camelCase}() const;
         /** Set value of ${p.name} */
-        virtual ${p.typeName} ${p.camelCase}(${p.typeName} value);
+        virtual ${p.cppTypeName} ${p.camelCase}(${p.cppTypeName} value);
     % endfor
 
     private:
@@ -78,9 +78,9 @@ ${ m.cpp_prototype(loader, interface=interface, ptype='callback-header') }
 
     % for p in interface.properties:
         % if p.defaultValue:
-        ${p.typeName} _${p.camelCase} = ${p.defaultValue};
+        ${p.cppTypeName} _${p.camelCase} = ${p.defaultValue};
         % else:
-        ${p.typeName} _${p.camelCase}{};
+        ${p.cppTypeName} _${p.camelCase}{};
         % endif
     % endfor
 

@@ -13,3 +13,10 @@ ${"####"} Parameters and Returns
 | out | ${r.markdown(loader)} |
     % endfor
 % endif
+
+% if len(method.errors):
+${"####"} Errors
+    % for e in method.errors:
+ * ${e}
+    % endfor
+% endif

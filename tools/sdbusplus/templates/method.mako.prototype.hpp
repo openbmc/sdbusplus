@@ -148,7 +148,7 @@ int ${interface_name()}::_callback_${ method.CamelCase }(
     }
     % endfor
 
-    return 0;
+    return true;
 }
 
 namespace details

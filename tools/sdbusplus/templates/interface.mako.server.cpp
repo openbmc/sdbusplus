@@ -50,7 +50,7 @@ int ${classname}::_callback_get_${p.name}(
     auto o = static_cast<${classname}*>(context);
     m.append(o->${p.camelCase}());
 
-    return 0;
+    return true;
 }
 
 ${p.cppTypeName} ${classname}::${p.camelCase}(${p.cppTypeName} value)
@@ -77,7 +77,7 @@ int ${classname}::_callback_set_${p.name}(
     m.read(v);
     o->${p.camelCase}(v);
 
-    return 0;
+    return true;
 }
 
 namespace details

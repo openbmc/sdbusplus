@@ -8,7 +8,7 @@ namespace sdbusplus
 namespace ${s}
 {
     % endfor
-namespace common
+namespace Error
 {
 
     % for e in error.errors:
@@ -22,7 +22,7 @@ struct ${e.name} : public sdbusplus::exception_t
 };
 
     % endfor
-} // namespace common
+} // namespace Error
     % for s in reversed(namespaces):
 } // namespace ${s}
     % endfor

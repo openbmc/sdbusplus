@@ -55,7 +55,9 @@
         return e.split('.').pop();
 
     def error_include(e):
-        return '/'.join(error_namespace(e).split('::')) + '/error.hpp';
+        l = error_namespace(e).split('::')
+        l.pop() # Remove "Error"
+        return '/'.join(l) + '/error.hpp';
 
 %>
 ###
@@ -140,7 +142,7 @@ int ${interface_name()}::_callback_${ method.CamelCase }(
         return -EINVAL;
     }
     % for e in method.errors:
-    catch(sdbusplus::${error_namespace(e)}::common::${error_name(e)}& e)
+    catch(sdbusplus::${error_namespace(e)}::${error_name(e)}& e)
     {
         auto name = e.what();
         sd_bus_error_set_const(error, name, name);

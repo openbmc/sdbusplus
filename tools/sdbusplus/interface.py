@@ -4,6 +4,7 @@ from .namedelement import NamedElement
 from .property import Property
 from .method import Method
 from .signal import Signal
+from .enum import Enum
 from .renderer import Renderer
 
 
@@ -26,6 +27,8 @@ class Interface(NamedElement, Renderer):
             [Method(**m) for m in kwargs.pop('methods', [])]
         self.signals = \
             [Signal(**s) for s in kwargs.pop('signals', [])]
+        self.enums = \
+            [Enum(**e) for e in kwargs.pop('enumerations', [])]
 
         super(Interface, self).__init__(**kwargs)
 

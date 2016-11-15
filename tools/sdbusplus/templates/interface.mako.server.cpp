@@ -35,7 +35,7 @@ ${ s.cpp_prototype(loader, interface=interface, ptype='callback-cpp') }
     % endfor
 
     % for p in interface.properties:
-${p.typeName} ${classname}::${p.camelCase}() const
+${p.cppTypeName} ${classname}::${p.camelCase}() const
 {
     return _${p.camelCase};
 }
@@ -53,7 +53,7 @@ int ${classname}::_callback_get_${p.name}(
     return 0;
 }
 
-${p.typeName} ${classname}::${p.camelCase}(${p.typeName} value)
+${p.cppTypeName} ${classname}::${p.camelCase}(${p.cppTypeName} value)
 {
     if (_${p.camelCase} != value)
     {
@@ -86,7 +86,7 @@ namespace ${classname}
 {
 static const auto _property_${p.name} =
     utility::tuple_to_array(message::types::type_id<
-            ${p.typeName}>());
+            ${p.cppTypeName}>());
 }
 }
     % endfor

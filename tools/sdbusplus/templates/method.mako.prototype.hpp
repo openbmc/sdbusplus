@@ -3,7 +3,7 @@
         if len(method.returns) == 0:
             return "void"
         elif len(method.returns) == 1:
-            return method.returns[0].typeName
+            return method.returns[0].cppTypeName
         else:
             return "std::tuple<" + \
                    returns_as_list() + \
@@ -20,16 +20,16 @@
         return ", ".join([ p.camelCase for p in method.parameters ])
 
     def parameters_types_as_list():
-        return ", ".join([ p.typeName for p in method.parameters ])
+        return ", ".join([ p.cppTypeName for p in method.parameters ])
 
     def parameter(p, defaultValue=False):
-        r = "%s %s" % (p.typeName, p.camelCase)
+        r = "%s %s" % (p.cppTypeName, p.camelCase)
         if defaultValue:
             r += default_value(p)
         return r
 
     def returns_as_list():
-        return ", ".join([ r.typeName for r in method.returns ])
+        return ", ".join([ r.cppTypeName for r in method.returns ])
 
     def returns_as_tuple_index(tuple):
         return ", ".join([ "std::move(std::get<%d>(%s))" % (i,tuple) \
@@ -73,7 +73,7 @@
     % if len(method.returns) != 0:
          *
         % for r in method.returns:
-         *  @return ${r.camelCase}[${r.typeName}] - ${r.description.strip()}
+         *  @return ${r.camelCase}[${r.cppTypeName}] - ${r.description.strip()}
         % endfor
     % endif
          */

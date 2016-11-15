@@ -18,15 +18,29 @@ ${"##"} Properties
     % for p in interface.properties:
 | ${p.markdown(loader)} |
     % endfor
-%else:
+% else:
 No properties.
-%endif
+% endif
 
 ${"##"} Signals
 % if len(interface.signals):
     % for s in interface.signals:
 ${s.markdown(loader)}
     %endfor
-%else:
+% else:
 No signals.
-%endif
+% endif
+
+${"##"} Enumerations
+% if len(interface.enums):
+    % for e in interface.enums:
+${"###"} ${e.name}
+| name | description |
+|------|-------------|
+        % for v in e.values:
+| **${v.name}** | ${ v.description.strip() } |
+        % endfor
+    % endfor
+% else:
+No enumerations.
+% endif

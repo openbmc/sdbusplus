@@ -40,7 +40,7 @@ methods:
           description: >
             The result of (x/y).
       errors:
-        - self.DivisionByZero
+        - self.Error.DivisionByZero
     - name: Clear
       description: >
         Reset the LastResult property to zero.

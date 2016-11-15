@@ -6,7 +6,7 @@ namespace sdbusplus
 namespace ${s}
 {
     % endfor
-namespace common
+namespace Error
 {
     % for e in error.errors:
 const char* ${e.name}::what() const noexcept
@@ -15,7 +15,7 @@ const char* ${e.name}::what() const noexcept
 }
     % endfor
 
-} // namespace common
+} // namespace Error
     % for s in reversed(namespaces):
 } // namespace ${s}
     % endfor

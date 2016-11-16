@@ -44,6 +44,19 @@ class Property(NamedElement, Renderer):
             return "std::string"
         return self.cppTypeName
 
+    def enum_namespace(self, interface):
+        if not self.is_enum():
+            return ""
+        l = self.cppTypeParam(interface).split("::")[0:-1]
+        if len(l) != 0:
+            return "::".join(l) + "::"
+        return ""
+
+    def enum_name(self, interface):
+        if not self.is_enum():
+            return ""
+        return self.cppTypeParam(interface).split("::")[-1]
+
     def parse_cpp_type(self, typeName):
         if not typeName:
             return None

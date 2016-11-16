@@ -4,7 +4,7 @@
             join([ parameter(p, defaultValue) for p in signal.properties ])
 
     def parameter(p, defaultValue=False):
-        r = "%s %s" % (p.cppTypeName, p.camelCase)
+        r = "%s %s" % (p.cppTypeParam(interface.name), p.camelCase)
         if defaultValue:
             r += default_value(p)
         return r
@@ -13,7 +13,8 @@
         return ", ".join([ p.camelCase for p in signal.properties ])
 
     def parameters_types_as_list():
-        return ", ".join([ p.cppTypeName for p in signal.properties ])
+        return ", ".join([ p.cppTypeMessage(interface.name)
+                for p in signal.properties ])
 
     def default_value(p):
         if p.defaultValue != None:

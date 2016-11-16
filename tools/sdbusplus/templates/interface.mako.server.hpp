@@ -39,6 +39,15 @@ class ${classname}
          */
         ${classname}(bus::bus& bus, const char* path);
 
+    % for e in interface.enums:
+        enum class ${e.name}
+        {
+        % for v in e.values:
+            ${v.name},
+        % endfor
+        };
+    % endfor
+
     % for m in interface.methods:
 ${ m.cpp_prototype(loader, interface=interface, ptype='header') }
     % endfor
@@ -49,9 +58,10 @@ ${ s.cpp_prototype(loader, interface=interface, ptype='header') }
 
     % for p in interface.properties:
         /** Get value of ${p.name} */
-        virtual ${p.cppTypeName} ${p.camelCase}() const;
+        virtual ${p.cppTypeParam(interface.name)} ${p.camelCase}() const;
         /** Set value of ${p.name} */
-        virtual ${p.cppTypeName} ${p.camelCase}(${p.cppTypeName} value);
+        virtual ${p.cppTypeParam(interface.name)} \
+${p.camelCase}(${p.cppTypeParam(interface.name)} value);
     % endfor
 
     private:
@@ -78,9 +88,9 @@ ${ m.cpp_prototype(loader, interface=interface, ptype='callback-header') }
 
     % for p in interface.properties:
         % if p.defaultValue:
-        ${p.cppTypeName} _${p.camelCase} = ${p.defaultValue};
+        ${p.cppTypeParam(interface.name)} _${p.camelCase} = ${p.defaultValue};
         % else:
-        ${p.cppTypeName} _${p.camelCase}{};
+        ${p.cppTypeParam(interface.name)} _${p.camelCase}{};
         % endif
     % endfor
 

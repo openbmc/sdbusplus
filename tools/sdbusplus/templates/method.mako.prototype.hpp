@@ -3,7 +3,7 @@
         if len(method.returns) == 0:
             return "void"
         elif len(method.returns) == 1:
-            return method.returns[0].cppTypeName
+            return method.returns[0].cppTypeParam(interface.name)
         else:
             return "std::tuple<" + \
                    returns_as_list() + \
@@ -20,16 +20,18 @@
         return ", ".join([ p.camelCase for p in method.parameters ])
 
     def parameters_types_as_list():
-        return ", ".join([ p.cppTypeName for p in method.parameters ])
+        return ", ".join([ p.cppTypeMessage(interface.name)
+                for p in method.parameters ])
 
     def parameter(p, defaultValue=False):
-        r = "%s %s" % (p.cppTypeName, p.camelCase)
+        r = "%s %s" % (p.cppTypeParam(interface.name), p.camelCase)
         if defaultValue:
             r += default_value(p)
         return r
 
-    def returns_as_list():
-        return ", ".join([ r.cppTypeName for r in method.returns ])
+    def returns_as_list(as_param=True):
+        return ", ".join([ (r.cppTypeParam(interface.name) if as_param else
+                r.cppTypeMessage(interface.name)) for r in method.returns ])
 
     def returns_as_tuple_index(tuple):
         return ", ".join([ "std::move(std::get<%d>(%s))" % (i,tuple) \
@@ -75,7 +77,8 @@
     % if len(method.returns) != 0:
          *
         % for r in method.returns:
-         *  @return ${r.camelCase}[${r.cppTypeName}] - ${r.description.strip()}
+         *  @return ${r.camelCase}[${r.cppTypeParam(interface.name)}] \
+- ${r.description.strip()}
         % endfor
     % endif
          */
@@ -167,7 +170,7 @@ static const auto _return_${ method.CamelCase } =
         utility::tuple_to_array(std::make_tuple('\0'));
     % else:
         utility::tuple_to_array(message::types::type_id<
-                ${ returns_as_list() }>());
+                ${ returns_as_list(as_param=False) }>());
     % endif
 }
 }

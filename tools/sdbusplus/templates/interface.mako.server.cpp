@@ -35,7 +35,8 @@ ${ s.cpp_prototype(loader, interface=interface, ptype='callback-cpp') }
     % endfor
 
     % for p in interface.properties:
-${p.cppTypeName} ${classname}::${p.camelCase}() const
+auto ${classname}::${p.camelCase}() const ->
+        ${p.cppTypeParam(interface.name)}
 {
     return _${p.camelCase};
 }
@@ -53,7 +54,8 @@ int ${classname}::_callback_get_${p.name}(
     return true;
 }
 
-${p.cppTypeName} ${classname}::${p.camelCase}(${p.cppTypeName} value)
+auto ${classname}::${p.camelCase}(${p.cppTypeParam(interface.name)} value) ->
+        ${p.cppTypeParam(interface.name)}
 {
     if (_${p.camelCase} != value)
     {
@@ -73,7 +75,7 @@ int ${classname}::_callback_set_${p.name}(
 
     auto o = static_cast<${classname}*>(context);
 
-    decltype(_${p.camelCase}) v{};
+    ${p.cppTypeMessage(interface.name)} v{};
     m.read(v);
     o->${p.camelCase}(v);
 
@@ -86,7 +88,7 @@ namespace ${classname}
 {
 static const auto _property_${p.name} =
     utility::tuple_to_array(message::types::type_id<
-            ${p.cppTypeName}>());
+            ${p.cppTypeMessage(interface.name)}>());
 }
 }
     % endfor

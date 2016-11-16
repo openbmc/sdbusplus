@@ -11,6 +11,32 @@ class Property(NamedElement, Renderer):
 
         super(Property, self).__init__(**kwargs)
 
+    """ Return a conversion of the cppTypeName valid as a function parameter.
+        Currently only 'enum' requires conversion.
+    """
+    def cppTypeParam(self, interface, server=True):
+        if self.cppTypeName.startswith("enum<"):
+            # strip off 'enum<' and '>'
+            r = self.cppTypeName.split('>')[0].split('<')[1]
+
+            # self. means local type.
+            if r.startswith("self."):
+                return r.split('self.')[1]
+
+            r = r.split('.')
+            r.insert(-2, "server" if server else "client")
+            r = "::".join(r)
+            return r
+        return self.cppTypeName
+
+    """ Return a conversion of the cppTypeName valid as it is read out of a
+        message.  Currently only 'enum' requires conversion.
+    """
+    def cppTypeMessage(self, interface):
+        if self.cppTypeName.startswith("enum<"):
+            return "std::string"
+        return self.cppTypeName
+
     def parse_cpp_type(self, typeName):
         if not typeName:
             return None

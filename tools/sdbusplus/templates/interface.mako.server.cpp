@@ -47,10 +47,12 @@ int ${classname}::_callback_get_${p.name}(
         const char* property, sd_bus_message* reply, void* context,
         sd_bus_error* error)
 {
+    using sdbusplus::server::binding::details::convertForMessage;
+
     auto m = message::message(sd_bus_message_ref(reply));
 
     auto o = static_cast<${classname}*>(context);
-    m.append(o->${p.camelCase}());
+    m.append(convertForMessage(o->${p.camelCase}()));
 
     return true;
 }
@@ -78,7 +80,12 @@ int ${classname}::_callback_set_${p.name}(
 
     ${p.cppTypeMessage(interface.name)} v{};
     m.read(v);
+    % if p.is_enum():
+    o->${p.camelCase}(${p.enum_namespace(interface.name)}\
+convert${p.enum_name(interface.name)}FromString(v));
+    % else:
     o->${p.camelCase}(v);
+    % endif
 
     return true;
 }

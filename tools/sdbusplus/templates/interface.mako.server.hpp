@@ -64,6 +64,15 @@ ${ s.cpp_prototype(loader, interface=interface, ptype='header') }
 ${p.camelCase}(${p.cppTypeParam(interface.name)} value);
     % endfor
 
+    % for e in interface.enums:
+    /** @brief Convert a string to an appropriate enum value.
+     *  @param[in] s - The string to convert in the form of
+     *                 "${interface.name}.<value name>"
+     *  @return - The enum value.
+     */
+    static ${e.name} convert${e.name}FromString(std::string& s);
+    % endfor
+
     private:
     % for m in interface.methods:
 ${ m.cpp_prototype(loader, interface=interface, ptype='callback-header') }
@@ -99,6 +108,18 @@ ${p.defaultValue};
     % endfor
 
 };
+
+    % for e in interface.enums:
+/* Specialization of sdbusplus::server::bindings::details::convertForMessage
+ * for enum-type ${classname}::${e.name}.
+ *
+ * This converts from the enum to a constant c-string representing the enum.
+ *
+ * @param[in] e - Enum value to convert.
+ * @return C-string representing the name for the enum value.
+ */
+std::string convertForMessage(${classname}::${e.name} e);
+    % endfor
 
 } // namespace server
     % for s in reversed(namespaces):

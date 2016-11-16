@@ -11,11 +11,18 @@ class Property(NamedElement, Renderer):
 
         super(Property, self).__init__(**kwargs)
 
+    def is_enum(self):
+        if not self.cppTypeName:
+            return False
+        if self.cppTypeName.startswith("enum<"):
+            return True
+        return False
+
     """ Return a conversion of the cppTypeName valid as a function parameter.
         Currently only 'enum' requires conversion.
     """
     def cppTypeParam(self, interface, server=True):
-        if self.cppTypeName.startswith("enum<"):
+        if self.is_enum():
             # strip off 'enum<' and '>'
             r = self.cppTypeName.split('>')[0].split('<')[1]
 
@@ -33,7 +40,7 @@ class Property(NamedElement, Renderer):
         message.  Currently only 'enum' requires conversion.
     """
     def cppTypeMessage(self, interface):
-        if self.cppTypeName.startswith("enum<"):
+        if self.is_enum():
             return "std::string"
         return self.cppTypeName
 

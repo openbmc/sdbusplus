@@ -13,18 +13,20 @@
         return ",\n            ".\
             join([ parameter(p, defaultValue) for p in method.parameters ])
 
-    def parameters_as_local():
-        return "{};\n    ".join([ parameter(p) for p in method.parameters ])
+    def parameters_as_local(as_param=True):
+        return "{};\n    ".join([ parameter(p,as_param=as_param)
+                for p in method.parameters ])
 
-    def parameters_as_list():
-        return ", ".join([ p.camelCase for p in method.parameters ])
+    def parameters_as_list(transform=lambda p: p.camelCase):
+        return ", ".join([ transform(p) for p in method.parameters ])
 
     def parameters_types_as_list():
         return ", ".join([ p.cppTypeMessage(interface.name)
                 for p in method.parameters ])
 
-    def parameter(p, defaultValue=False):
-        r = "%s %s" % (p.cppTypeParam(interface.name), p.camelCase)
+    def parameter(p, defaultValue=False, as_param=True):
+        r = "%s %s" % (p.cppTypeParam(interface.name) if as_param else \
+                p.cppTypeMessage(interface.name), p.camelCase)
         if defaultValue:
             r += default_value(p)
         return r
@@ -33,8 +35,9 @@
         return ", ".join([ (r.cppTypeParam(interface.name) if as_param else
                 r.cppTypeMessage(interface.name)) for r in method.returns ])
 
-    def returns_as_tuple_index(tuple):
-        return ", ".join([ "std::move(std::get<%d>(%s))" % (i,tuple) \
+    def returns_as_tuple_index(tuple, pre="", post=""):
+        return ", ".join([ "%sstd::move(std::get<%d>(%s))%s" %\
+                (pre,i,tuple,post) \
                 for i in range(len(method.returns))])
 
     def default_value(p):
@@ -60,6 +63,15 @@
         l = error_namespace(e).split('::')
         l.pop() # Remove "Error"
         return '/'.join(l) + '/error.hpp';
+
+    def enum_convert(p):
+        if not p.is_enum():
+            return p.camelCase
+        else:
+            return "%sconvert%sFromString(%s)" % \
+                (p.enum_namespace(interface.name),
+                 p.enum_name(interface.name),
+                 p.camelCase)
 
 %>
 ###
@@ -109,6 +121,8 @@
 int ${interface_name()}::_callback_${ method.CamelCase }(
         sd_bus_message* msg, void* context, sd_bus_error* error)
 {
+    using sdbusplus::server::binding::details::convertForMessage;
+
     try
     {
         ### Need to add a ref to msg since we attached it to an
@@ -116,7 +130,7 @@ int ${interface_name()}::_callback_${ method.CamelCase }(
         auto m = message::message(sd_bus_message_ref(msg));
 
     % if len(method.parameters) != 0:
-        ${parameters_as_local()}{};
+        ${parameters_as_local(as_param=False)}{};
 
         m.read(${parameters_as_list()});
     % endif
@@ -125,15 +139,16 @@ int ${interface_name()}::_callback_${ method.CamelCase }(
     % if len(method.returns) != 0:
         auto r = \
     %endif
-        o->${ method.camelCase }(${parameters_as_list()});
+        o->${ method.camelCase }(${parameters_as_list(transform=enum_convert)});
 
         auto reply = m.new_method_return();
     % if len(method.returns) == 0:
         // No data to append on reply.
     % elif len(method.returns) == 1:
-        reply.append(std::move(r));
+        reply.append(convertForMessage(std::move(r)));
     % else:
-        reply.append(${returns_as_tuple_index("r")});
+        reply.append(\
+${returns_as_tuple_index("r",pre="convertForMessage(",post=")")});
     % endif
 
         reply.method_return();

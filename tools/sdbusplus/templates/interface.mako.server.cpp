@@ -49,10 +49,18 @@ int ${classname}::_callback_get_${p.name}(
 {
     using sdbusplus::server::binding::details::convertForMessage;
 
-    auto m = message::message(sd_bus_message_ref(reply));
+    try
+    {
+        auto m = message::message(sd_bus_message_ref(reply));
 
-    auto o = static_cast<${classname}*>(context);
-    m.append(convertForMessage(o->${p.camelCase}()));
+        auto o = static_cast<${classname}*>(context);
+        m.append(convertForMessage(o->${p.camelCase}()));
+    }
+    catch(sdbusplus::internal_exception_t& e)
+    {
+        sd_bus_error_set_const(error, e.name(), e.description());
+        return -EINVAL;
+    }
 
     return true;
 }
@@ -74,18 +82,26 @@ int ${classname}::_callback_set_${p.name}(
         const char* property, sd_bus_message* value, void* context,
         sd_bus_error* error)
 {
-    auto m = message::message(sd_bus_message_ref(value));
+    try
+    {
+        auto m = message::message(sd_bus_message_ref(value));
 
-    auto o = static_cast<${classname}*>(context);
+        auto o = static_cast<${classname}*>(context);
 
-    ${p.cppTypeMessage(interface.name)} v{};
-    m.read(v);
+        ${p.cppTypeMessage(interface.name)} v{};
+        m.read(v);
     % if p.is_enum():
-    o->${p.camelCase}(${p.enum_namespace(interface.name)}\
+        o->${p.camelCase}(${p.enum_namespace(interface.name)}\
 convert${p.enum_name(interface.name)}FromString(v));
     % else:
-    o->${p.camelCase}(v);
+        o->${p.camelCase}(v);
     % endif
+    }
+    catch(sdbusplus::internal_exception_t& e)
+    {
+        sd_bus_error_set_const(error, e.name(), e.description());
+        return -EINVAL;
+    }
 
     return true;
 }

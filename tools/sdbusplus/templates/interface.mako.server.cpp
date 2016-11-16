@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <sdbusplus/server.hpp>
 #include <sdbusplus/exception.hpp>
 #include <${"/".join(interface.name.split('.') + [ 'server.hpp' ])}>
@@ -90,6 +91,46 @@ static const auto _property_${p.name} =
     utility::tuple_to_array(message::types::type_id<
             ${p.cppTypeMessage(interface.name)}>());
 }
+}
+    % endfor
+
+    % for e in interface.enums:
+auto ${classname}::convert${e.name}FromString(std::string& s) ->
+        ${e.name}
+{
+    static const std::tuple<const char*, ${e.name}> mapping[] =
+            {
+        % for v in e.values:
+                std::make_tuple( "${interface.name}.${e.name}.${v.name}", \
+${e.name}::${v.name} ),
+        % endfor
+            };
+
+    auto i = std::find_if(std::begin(mapping),std::end(mapping),
+             [&s](auto& e){ return 0 == strcmp(s.c_str(), std::get<0>(e)); } );
+    if (std::end(mapping) == i)
+    {
+        throw sdbusplus::exception::InvalidEnumString();
+    }
+    else
+    {
+        return std::get<1>(*i);
+    }
+}
+
+std::string convertForMessage(${classname}::${e.name} v)
+{
+    static const std::tuple<${classname}::${e.name}, const char*> mapping[] =
+            {
+        % for v in e.values:
+                std::make_tuple(${classname}::${e.name}::${v.name}, \
+"${interface.name}.${e.name}.${v.name}"),
+        % endfor
+            };
+
+    auto i = std::find_if(std::begin(mapping),std::end(mapping),
+            [v](auto& e){ return v == std::get<0>(e); });
+    return std::get<1>(*i);
 }
     % endfor
 

@@ -10,6 +10,7 @@ nobase_include_HEADERS = \
 	sdbusplus/message/read.hpp \
 	sdbusplus/message/types.hpp \
 	sdbusplus/server.hpp \
+	sdbusplus/server/bindings.hpp \
 	sdbusplus/server/interface.hpp \
 	sdbusplus/server/manager.hpp \
 	sdbusplus/server/match.hpp \

@@ -154,7 +154,7 @@ struct bus
         sd_bus_message* reply = nullptr;
         sd_bus_call(_bus.get(), m.get(), timeout_us, nullptr, &reply);
 
-        return reply;
+        return message::message(reply);
     }
 
     /** @brief Perform a message call, ignoring the reply.

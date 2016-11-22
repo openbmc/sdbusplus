@@ -181,7 +181,7 @@ static const auto _param_${ method.CamelCase } =
                 ${ parameters_types_as_list() }>());
     % endif
 static const auto _return_${ method.CamelCase } =
-    % if len(method.parameters) == 0:
+    % if len(method.returns) == 0:
         utility::tuple_to_array(std::make_tuple('\0'));
     % else:
         utility::tuple_to_array(message::types::type_id<

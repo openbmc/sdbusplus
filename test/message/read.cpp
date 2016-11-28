@@ -150,19 +150,23 @@ void runTests()
     {
         auto m = newMethodCall__test(b);
         bool t = true;
-        m.append(t, true, false, 1.1);
-        verifyTypeString = "bbbd";
+        bool f = false;
+        bool f2 = false;
+        m.append(t, true, f, std::move(f2), false, 1.1);
+        verifyTypeString = "bbbbbd";
 
         struct verify
         {
             static void op(sdbusplus::message::message& m)
             {
-                bool t1, t2, f1;
+                bool t1, t2, f1, f2, f3;
                 double d;
-                m.read(t1, t2, f1, d);
+                m.read(t1, t2, f1, f2, f3, d);
                 assert(t1);
                 assert(t2);
                 assert(!f1);
+                assert(!f2);
+                assert(!f3);
                 assert(d == 1.1);
             }
         };

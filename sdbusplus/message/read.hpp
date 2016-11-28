@@ -47,6 +47,8 @@ namespace details
 template<typename T> struct can_read_multiple : std::true_type {};
     // std::string needs a c_str() call.
 template<> struct can_read_multiple<std::string> : std::false_type {};
+    // bool needs to be resized to int, per sdbus documentation.
+template<> struct can_read_multiple<bool> : std::false_type {};
     // std::vector needs a loop.
 template<typename T>
 struct can_read_multiple<std::vector<T>> : std::false_type {};
@@ -120,6 +122,20 @@ template <> struct read_single<std::string>
         s = str;
     }
 };
+
+/** @brief Specialization of read_single for bools. */
+template <> struct read_single<bool>
+{
+    template<typename T>
+    static void op(sd_bus_message* m, T&& b)
+    {
+        constexpr auto dbusType = 'b';
+        int i = 0;
+        sd_bus_message_read_basic(m, dbusType, &i);
+        b = (i != 0);
+    }
+};
+
 
 /** @brief Specialization of read_single for std::vectors. */
 template <typename T> struct read_single<std::vector<T>>

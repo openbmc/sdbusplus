@@ -22,15 +22,16 @@ class ${classname}
          *     Not allowed:
          *         - Default constructor to avoid nullptrs.
          *         - Copy operations due to internal unique_ptr.
+         *         - Move operations due to 'this' being registered as the
+         *           'context' with sdbus.
          *     Allowed:
-         *         - Move operations.
          *         - Destructor.
          */
         ${classname}() = delete;
         ${classname}(const ${classname}&) = delete;
         ${classname}& operator=(const ${classname}&) = delete;
-        ${classname}(${classname}&&) = default;
-        ${classname}& operator=(${classname}&&) = default;
+        ${classname}(${classname}&&) = delete;
+        ${classname}& operator=(${classname}&&) = delete;
         virtual ~${classname}() = default;
 
         /** @brief Constructor to put object onto bus at a dbus path.

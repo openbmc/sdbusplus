@@ -129,7 +129,7 @@ template <> struct read_single<bool>
     template<typename T>
     static void op(sd_bus_message* m, T&& b)
     {
-        constexpr auto dbusType = 'b';
+        constexpr auto dbusType = std::get<0>(types::type_id<T>());
         int i = 0;
         sd_bus_message_read_basic(m, dbusType, &i);
         b = (i != 0);

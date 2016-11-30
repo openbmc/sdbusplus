@@ -127,7 +127,7 @@ template <> struct append_single<bool>
     template<typename T>
     static void op(sd_bus_message* m, T&& b)
     {
-        constexpr auto dbusType = 'b';
+        constexpr auto dbusType = std::get<0>(types::type_id<T>());
         int i = b;
         sd_bus_message_append_basic(m, dbusType, &i);
     }

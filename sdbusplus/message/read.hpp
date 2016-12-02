@@ -116,8 +116,10 @@ template <> struct read_single<std::string>
     template<typename T>
     static void op(sd_bus_message* m, T&& s)
     {
-        constexpr auto dbusType = std::get<0>(types::type_id<T>());
         const char* str = nullptr;
+        char peek;
+        sd_bus_message_peek_type(m, &peek, nullptr);
+        auto dbusType = peek;
         sd_bus_message_read_basic(m, dbusType, &str);
         s = str;
     }

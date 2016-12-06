@@ -167,6 +167,17 @@ struct bus
         sd_bus_call(_bus.get(), m.get(), timeout_us, nullptr, nullptr);
     }
 
+    /** @brief Get the bus unique name. Ex: ":1.11".
+      *
+      * @return The bus unique name.
+      */
+    const char*  get_unique_name()
+    {
+        const char* unique = NULL;
+        sd_bus_get_unique_name(_bus.get(), &unique);
+        return unique;
+    }
+
     friend struct server::interface::interface;
     friend struct server::manager::manager;
     template<class... Args> friend struct server::object::object;

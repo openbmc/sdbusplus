@@ -103,6 +103,16 @@ struct message
     bool is_method_error()
     {
         return sd_bus_message_is_method_error(_msg.get(), nullptr);
+
+    /** @brief Get the transaction cookie of a message.
+      *
+      * @return The transaction cookie of a message.
+      */
+    uint64_t get_cookie()
+    {
+        uint64_t cookie;
+        sd_bus_message_get_cookie(_msg.get(), &cookie);
+        return cookie;
     }
 
     /** @brief Check if message is a method call for an interface/method.

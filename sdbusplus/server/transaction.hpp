@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <thread>
 #include <sdbusplus/bus.hpp>
 
 namespace sdbusplus
@@ -11,6 +12,8 @@ namespace transaction
 {
 namespace details
 {
+    // Thread local storage
+    thread_local uint64_t transactionId = 0;
 
     /** @brief Generate transaction id from hashigh the  bus name
       * and message cookie.
@@ -40,7 +43,26 @@ namespace details
         return hashName;
     }
 
+    /** @brief Set transaction id
+      * 
+      * @param[in] value - Desired value for the transaction id
+      */
+    void set_id(uint64_t value)
+    {
+        transactionId = value;
+    }
+
 } // details
+
+    /** @brief Get transaction id
+      * 
+      * @return The value of the transaction id
+      */
+    uint64_t get_id()
+    {
+        return details::transactionId;
+    }
+
 } // transaction
 } // server
 } // sdbusplus

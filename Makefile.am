@@ -22,5 +22,11 @@ nobase_include_HEADERS = \
 	sdbusplus/utility/type_traits.hpp \
 	sdbusplus/vtable.hpp
 
+    libsdbusplusdir = ${libdir}
+    libsdbusplus_LTLIBRARIES = libsdbusplus.la
+    libsdbusplus_la_SOURCES = sdbusplus/server/transaction.cpp
+    libsdbusplus_la_LDFLAGS = $(SYSTEMD_LIBS) -version-info 1:0:0 -shared
+    libsdbusplus_la_CXXFLAGS = $(SYSTEMD_CFLAGS)
+
 endif
 SUBDIRS = test tools

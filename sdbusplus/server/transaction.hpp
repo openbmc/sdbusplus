@@ -39,16 +39,6 @@ constexpr auto combine(H1&& h1, H2&& h2)
 }
 
 } // namespace details
-
-/** @brief Get transaction id
-  *
-  * @return The value of the transaction id
-  */
-uint64_t get_id()
-{
-    return details::id;
-}
-
 } // namespace transaction
 } // namespace server
 } // namespace sdbusplus
@@ -91,3 +81,30 @@ struct hash<sdbusplus::server::transaction::Random>
 };
 
 } // namespace std
+
+namespace sdbusplus
+{
+namespace server
+{
+namespace transaction
+{
+
+/** @brief Get transaction id
+  *
+  * @return The value of the transaction id
+  */
+uint64_t get_id()
+{
+    // Generate a random id if the transaction id is not set.
+    if (!details::id)
+    {
+        Random r;
+        details::id = std::hash<sdbusplus::server::transaction::Random>{}(r);
+    }
+    return details::id;
+}
+
+} // namespace transaction
+} // namespace server
+} // namespace sdbusplus
+

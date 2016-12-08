@@ -55,6 +55,14 @@ const auto Transaction<sdbusplus::bus::bus, sdbusplus::message::message>
   */
 uint64_t get_id()
 {
+    // Generate a unique id if the transaction id is not set.
+    // Arbitrarily use the current time and thread id.
+    if (!details::id)
+    {
+        auto t = std::time(nullptr);
+        auto i = std::this_thread::get_id();
+        details::id = Transaction(t, i);
+    }
     return details::id;
 }
 

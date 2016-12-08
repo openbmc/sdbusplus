@@ -20,7 +20,7 @@ namespace details
       */
     inline auto combine_hash(auto hash1, auto hash2)
     {
-        return (hash1 ^ hash2 + 0x9e3779b9 + (hash1 << 6) + (hash1 >> 2))
+        return hash1 ^ (hash2 + 0x9e3779b9 + (hash1 << 6) + (hash1 >> 2));
     }
 
     /** @brief Generate a transaction id from hashing the bus name
@@ -60,15 +60,6 @@ namespace details
         return combine_hash(hash1, hash2);
     }
 
-    /** @brief Set transaction id
-      *
-      * @param[in] value - Desired value for the transaction id
-      */
-    void set_id(uint64_t value)
-    {
-        transactionId = value;
-    }
-
 } // details
 
     /** @brief Get transaction id
@@ -77,7 +68,28 @@ namespace details
       */
     uint64_t get_id()
     {
+        if (!details::transactionId)
+        {
+            auto random = details::generate_random_id();
+            details::transactionId = random;
+        }
+
         return details::transactionId;
+    }
+
+    /** @brief Generate and save the transaction id info
+      *
+      * @param[in] bus - Dbus bus
+      * @param[in] msg - Dbus message
+      */
+    void enter(sdbusplus::bus::bus& bus,
+               sdbusplus::message::message& msg)
+    {
+        // TODO Call this function from within sdbusplu
+        // when a dbus message is created
+
+        auto value = details::generate_id(bus, msg);
+        details::transactionId = value;
     }
 
 } // transaction

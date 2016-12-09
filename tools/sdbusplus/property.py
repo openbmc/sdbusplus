@@ -144,7 +144,9 @@ class Property(NamedElement, Renderer):
         # syntax.
         result += '<'
         if entry.get('noparse'):
-            result += ", ".join(rest)
+            # Do not parse the parameter list, just use the first element
+            # of each tuple and ignore possible parameters
+            result += ", ".join([e[0] for e in rest])
         else:
             result += ", ".join(map(lambda e: self.__parse_cpp_type__(e),
                                     rest))

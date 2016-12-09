@@ -65,14 +65,39 @@ class Property(NamedElement, Renderer):
             and then wrap it in a [ ] and it becomes valid YAML.  (assuming
             the user gave us a valid typename)
         """
-        parse = yaml.safe_load("[" + ",[".join(typeName.split("[")) + "]")
-        return self.__parse_cpp_type__(parse)
+        typeArray = yaml.safe_load("[" + ",[".join(typeName.split("[")) + "]")
+        typeTuple = self.__preprocess_yaml_type_array(typeArray).pop(0)
+        return self.__parse_cpp_type__(typeTuple)
+
+    """ Take a list of dbus types from YAML and convert it to a recursive data
+        structure. Each entry of the original list gets converted into a tuple
+        consisting of the type name and a list with the params for this type,
+        e.g.
+            ['dict', ['string', 'dict', ['string', 'int64']]]
+        is converted to
+            [('dict', [('string', []), ('dict', [('string', []), ('int64', [])]]]
+    """
+    def __preprocess_yaml_type_array(self, typeArray):
+        result = []
+
+        for i in range(len(typeArray)):
+            # Ignore lists because we merge them with the previous element
+            if type(typeArray[i]) is list:
+                continue
+
+            # If there is a next element and it is a list, merge it with the current element.
+            if i < len(typeArray)-1 and type(typeArray[i+1]) is list:
+                result.append((typeArray[i], self.__preprocess_yaml_type_array(typeArray[i+1])))
+            else:
+                result.append((typeArray[i], []))
+
+        return result
 
     """ Take a list of dbus types and perform validity checking, such as:
             [ variant [ dict [ int32, int32 ], double ] ]
         This function then converts the type-list into a C++ type string.
     """
-    def __parse_cpp_type__(self, typeArray):
+    def __parse_cpp_type__(self, typeTuple):
         propertyMap = {
             'byte': {'cppName': 'uint8_t', 'params': 0},
             'boolean': {'cppName': 'bool', 'params': 0},
@@ -92,23 +117,23 @@ class Property(NamedElement, Renderer):
             'dict': {'cppName': 'std::map', 'params': 2},
             'enum': {'cppName': 'enum', 'params': 1, 'noparse': True}}
 
-        first = typeArray.pop(0)
+        if len(typeTuple) != 2:
+            raise RuntimeError("Invalid typeTuple %s" % typeTuple)
+
+        first = typeTuple[0]
         entry = propertyMap[first]
 
         result = entry['cppName']
 
         # Handle 0-entry parameter lists.
         if (entry['params'] == 0):
-            if (len(typeArray) != 0):
-                raise RuntimeError("Invalid typeArray %s" % typeArray)
+            if (len(typeTuple[1]) != 0):
+                raise RuntimeError("Invalid typeTuple %s" % typeTuple)
             else:
                 return result
 
-        # Get remainder of the parameter list, which should be the last
-        # element.
-        rest = typeArray.pop(0)
-        if (len(typeArray) != 0):
-            raise RuntimeError("Invalid typeArray %s" % typeArray)
+        # Get the parameter list
+        rest = typeTuple[1]
 
         # Confirm parameter count matches.
         if (entry['params'] != -1) and (entry['params'] != len(rest)):
@@ -121,7 +146,7 @@ class Property(NamedElement, Renderer):
         if entry.get('noparse'):
             result += ", ".join(rest)
         else:
-            result += ", ".join(map(lambda e: self.__parse_cpp_type__([e]),
+            result += ", ".join(map(lambda e: self.__parse_cpp_type__(e),
                                     rest))
         result += '>'
 

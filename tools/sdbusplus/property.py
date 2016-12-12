@@ -75,7 +75,8 @@ class Property(NamedElement, Renderer):
         e.g.
             ['dict', ['string', 'dict', ['string', 'int64']]]
         is converted to
-            [('dict', [('string', []), ('dict', [('string', []), ('int64', [])]]]
+            [('dict', [('string', []), ('dict', [('string', []),
+             ('int64', [])]]]
     """
     def __preprocess_yaml_type_array(self, typeArray):
         result = []
@@ -85,9 +86,12 @@ class Property(NamedElement, Renderer):
             if type(typeArray[i]) is list:
                 continue
 
-            # If there is a next element and it is a list, merge it with the current element.
+            # If there is a next element and it is a list, merge it with the
+            # current element.
             if i < len(typeArray)-1 and type(typeArray[i+1]) is list:
-                result.append((typeArray[i], self.__preprocess_yaml_type_array(typeArray[i+1])))
+                result.append(
+                    (typeArray[i],
+                     self.__preprocess_yaml_type_array(typeArray[i+1])))
             else:
                 result.append((typeArray[i], []))
 

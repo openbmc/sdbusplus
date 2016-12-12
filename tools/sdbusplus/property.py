@@ -113,7 +113,8 @@ class Property(NamedElement, Renderer):
             'signature': {'cppName': 'std::string', 'params': 0},
             'array': {'cppName': 'std::vector', 'params': 1},
             'struct': {'cppName': 'std::tuple', 'params': -1},
-            'variant': {'cppName': 'sdbusplus::variant', 'params': -1},
+            'variant': {'cppName': 'sdbusplus::message::variant',
+                        'params': -1},
             'dict': {'cppName': 'std::map', 'params': 2},
             'enum': {'cppName': 'enum', 'params': 1, 'noparse': True}}
 

@@ -96,6 +96,15 @@ struct message
         return sd_bus_message_get_signature(_msg.get(), true);
     }
 
+    /** @brief Check if message is a method error.
+     *
+     *	@return True - if message is a method error.
+     */
+    bool is_method_error()
+    {
+    	return sd_bus_message_is_method_error(_msg.get(), nullptr);
+    }
+
     /** @brief Check if message is a method call for an interface/method.
      *
      *  @param[in] interface - The interface to match.

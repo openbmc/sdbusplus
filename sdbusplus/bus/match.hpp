@@ -6,7 +6,7 @@
 namespace sdbusplus
 {
 
-namespace server
+namespace bus
 {
 
 namespace match
@@ -14,14 +14,14 @@ namespace match
 
 struct match
 {
-            /* Define all of the basic class operations:
-         *     Not allowed:
-         *         - Default constructor to avoid nullptrs.
-         *         - Copy operations due to internal unique_ptr.
-         *     Allowed:
-         *         - Move operations.
-         *         - Destructor.
-         */
+	/* Define all of the basic class operations:
+	 *     Not allowed:
+	 *         - Default constructor to avoid nullptrs.
+	 *         - Copy operations due to internal unique_ptr.
+	 *     Allowed:
+	 *         - Move operations.
+	 *         - Destructor.
+	 */
     match() = delete;
     match(const match&) = delete;
     match& operator=(const match&) = delete;
@@ -54,5 +54,5 @@ struct match
 
 using match_t = match::match;
 
-} // namespace server
+} // namespace bus
 } // namespace sdbusplus

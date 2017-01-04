@@ -27,6 +27,9 @@ bus new_user();
 /** @brief Get an instance of the 'system' bus. */
 bus new_system();
 
+/** @brief Get the bus unique name. Ex: ":1.11". */
+auto get_unique_name();
+
 namespace details
 {
 
@@ -196,6 +199,13 @@ inline bus new_system()
     sd_bus* b = nullptr;
     sd_bus_open_system(&b);
     return bus(b);
+}
+
+inline auto get_unique_name()
+{
+    const char* unique = nullptr;
+    sd_bus_get_unique_name(_bus.get(), &unique);
+    return std::string(unique);
 }
 
 } // namespace bus

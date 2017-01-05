@@ -15,6 +15,14 @@ namespace details
     // Thread local storage variable
     thread_local uint64_t transactionId = 0;
 
+    /** @brief Combine 2 hash values together.
+      * @details Use the boost::hash_combine() algorithm.
+      */
+    inline auto combine_hash(auto hash1, auto hash2)
+    {
+        return (hash1 ^ hash2 + 0x9e3779b9 + (hash1 << 6) + (hash1 >> 2))
+    }
+
     /** @brief Generate a transaction id from hashing the bus name
       * and message cookie.
       *
@@ -34,11 +42,22 @@ namespace details
         auto hashName = std::hash<std::string>{}(uniqueName);
         auto hashCookie = std::hash<uint64_t>{}(cookie);
 
-        // Combine the hash for the unique name and cookie following the
-        // algorithm from boost::hash_combine() (Documented in the boost lib)
-        hashName ^= hashCookie + 0x9e3779b9 + (hashName << 6) + (hashName >> 2);
+        return combine_hash(hashName, hashCookie);
+    }
 
-        return hashName;
+    /** @brief Generate a random transaction id.
+      *
+      * @return The generated transaction id.
+      */
+    auto generate_random_id()
+    {
+        // Arbitrarily use the current time and thread id to generate a
+        // transaction id hash.
+
+        auto hash1 = std::hash<int>{}(std::time(nullptr));
+        auto hash2 = std::hash<std::thread::id>{}(std::this_thread::get_id());
+
+        return combine_hash(hash1, hash2);
     }
 
     /** @brief Set transaction id

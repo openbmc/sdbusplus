@@ -16,13 +16,20 @@ namespace details
 // Transaction Id
 thread_local uint64_t id = 0;
 
+/** @brief Use the boost::hash_combine() algorithm to combine 2 hash values. */
+constexpr auto combine(size_t h1, size_t h2)
+{
+    return h1 ^ (h2 + 0x9e3779b9 + (h1 << 6) + (h1 >> 2));
+}
+
 } // namespace details
 
 /** @brief Return a unique value by combining the hash of 2 parameters */
 template <typename T, typename U>
 const auto Transaction(T& t, U& u)
 {
-    return 0; // Placeholder
+    return details::combine(
+        std::hash<T>{}(std::forward<T>(t)), std::hash<U>{}(std::forward<U>(u)));
 }
 
 /** @brief Specialization for sdbusplus bus and msg. */
@@ -39,8 +46,7 @@ const auto Transaction<sdbusplus::bus::bus, sdbusplus::message::message>
     auto hash1 = std::hash<std::string>{}(uniqueName);
     auto hash2 = std::hash<uint64_t>{}(cookie);
 
-    // boost::hash_combine() algorithm.
-    return hash1 ^ (hash2 + 0x9e3779b9 + (hash1 << 6) + (hash1 >> 2));
+    return details::combine(hash1, hash2);
 }
 
 /** @brief Get transaction id

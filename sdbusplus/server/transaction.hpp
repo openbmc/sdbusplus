@@ -19,12 +19,16 @@ extern thread_local uint64_t id;
 
 struct Transaction
 {
-    Transaction(): bus(nullptr), msg(nullptr) {}
+    Transaction(): bus(nullptr), msg(nullptr), time(std::time(nullptr)),
+        thread(std::this_thread::get_id()) {}
     explicit Transaction(sdbusplus::bus::bus &bus, sdbusplus::message::message&
-        msg): bus(&bus), msg(&msg) {}
+        msg): bus(&bus), msg(&msg), time(std::time(nullptr)),
+        thread(std::this_thread::get_id()) {}
 
     sdbusplus::bus::bus *bus;
     sdbusplus::message::message *msg;
+    int time;
+    std::thread::id thread;
 };
 
 } // namespace transaction
@@ -72,6 +76,11 @@ struct hash<sdbusplus::server::transaction::Transaction>
         {
             hash1 = std::hash<sdbusplus::bus::bus>{}(*t.bus);
             hash2 = std::hash<sdbusplus::message::message>{}(*t.msg);
+        }
+        else
+        {
+            hash1 = std::hash<int>{}(t.time);
+            hash2 = std::hash<std::thread::id>{}(t.thread);
         }
 
         // boost::hash_combine() algorithm.

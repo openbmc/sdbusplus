@@ -17,11 +17,26 @@ struct Transaction
     sdbusplus::message::message& msg;
 };
 
+struct Random
+{
+    Random() :
+        currentTime(std::time(nullptr)), threadId(std::this_thread::get_id()) {}
+    int currentTime;
+    std::thread::id threadId;
+};
+
 namespace details
 {
 
 // Transaction Id
 thread_local uint64_t id = 0;
+
+/** @brief Use the boost::hash_combine() algorithm to combine 2 hash values. */
+template <typename H1, typename H2>
+constexpr auto combine(H1&& h1, H2&& h2)
+{
+    return h1 ^ (h2 + 0x9e3779b9 + (h2 << 6) + (h2 >> 2));
+}
 
 } // namespace details
 
@@ -57,8 +72,21 @@ struct hash<sdbusplus::server::transaction::Transaction>
         auto hash1 = std::hash<std::string>{}(uniqueName);
         auto hash2 = std::hash<uint64_t>{}(cookie);
 
-        // boost::hash_combine() algorithm.
-        return hash1 ^ (hash2 + 0x9e3779b9 + (hash2 << 6) + (hash2 >> 2));
+        return sdbusplus::server::transaction::details::combine(hash1, hash2);
+    }
+};
+
+/** @ brief Overload of std::hash for Random */
+template <>
+struct hash<sdbusplus::server::transaction::Random>
+{
+    auto operator()
+        (sdbusplus::server::transaction::Random const& r) const
+    {
+        auto hash1 = std::hash<int>{}(r.currentTime);
+        auto hash2 = std::hash<std::thread::id>{}(r.threadId);
+
+        return sdbusplus::server::transaction::details::combine(hash1, hash2);
     }
 };
 

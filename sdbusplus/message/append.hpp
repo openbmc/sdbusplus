@@ -47,6 +47,10 @@ namespace details
 template<typename T> struct can_append_multiple : std::true_type {};
     // std::string needs a c_str() call.
 template<> struct can_append_multiple<std::string> : std::false_type {};
+    // object_path needs a c_str() call.
+template<> struct can_append_multiple<object_path> : std::false_type {};
+    // signature needs a c_str() call.
+template<> struct can_append_multiple<signature> : std::false_type {};
     // bool needs to be resized to int, per sdbus documentation.
 template<> struct can_append_multiple<bool> : std::false_type {};
     // std::vector needs a loop.
@@ -120,6 +124,18 @@ template <> struct append_single<std::string>
         sd_bus_message_append_basic(m, dbusType, s.c_str());
     }
 };
+
+/** @brief Specialization of append_single for details::string_wrapper. */
+template <typename T> struct append_single<details::string_wrapper<T>>
+{
+    template<typename S>
+    static void op(sd_bus_message* m, S&& s)
+    {
+        constexpr auto dbusType = std::get<0>(types::type_id<S>());
+        sd_bus_message_append_basic(m, dbusType, s.str.c_str());
+    }
+};
+
 
 /** @brief Specialization of append_single for bool. */
 template <> struct append_single<bool>

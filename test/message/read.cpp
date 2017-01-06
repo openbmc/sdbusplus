@@ -224,6 +224,34 @@ void runTests()
         b.call_noreply(m);
     }
 
+    // Test object_path and signature.
+    {
+        auto m = newMethodCall__test(b);
+        auto o = sdbusplus::message::object_path("/asdf");
+        auto s = sdbusplus::message::signature("iii");
+        m.append(1, o, s, 4);
+        verifyTypeString = "iogi";
+
+        struct verify
+        {
+            static void op(sdbusplus::message::message& m)
+            {
+                int32_t a = 0, b = 0;
+                sdbusplus::message::object_path o;
+                sdbusplus::message::signature s;
+                m.read(a, o, s, b);
+                assert(a == 1);
+                assert(b == 4);
+                assert(std::string(o) == "/asdf"s);
+                assert(std::string(s) == "iii"s);
+            }
+        };
+        verifyCallback = &verify::op;
+
+        b.call_noreply(m);
+    }
+
+
     // Test vector.
     {
         auto m = newMethodCall__test(b);

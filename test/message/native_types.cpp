@@ -1,5 +1,8 @@
 #include <cassert>
 #include <sdbusplus/message.hpp>
+#include <vector>
+#include <map>
+#include <unordered_map>
 
 int main()
 {
@@ -8,6 +11,15 @@ int main()
 
     std::string s2 = sdbusplus::message::signature("iii");
     sdbusplus::message::signature sig = s2;
+
+    std::vector<sdbusplus::message::signature> v =
+        { sdbusplus::message::signature("iii") };
+
+    std::map<sdbusplus::message::signature, int> m =
+        { { sdbusplus::message::signature("iii"), 1 } };
+
+    std::unordered_map<sdbusplus::message::signature, int> u =
+        { { sdbusplus::message::signature("iii"), 1 } };
 
     return 0;
 }

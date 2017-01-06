@@ -45,8 +45,12 @@ namespace details
  *
  */
 template<typename T> struct can_read_multiple : std::true_type {};
-    // std::string needs a c_str() call.
+    // std::string needs a char* conversion.
 template<> struct can_read_multiple<std::string> : std::false_type {};
+    // object_path needs a char* conversion.
+template<> struct can_read_multiple<object_path> : std::false_type {};
+    // signature needs a char* conversion.
+template<> struct can_read_multiple<signature> : std::false_type {};
     // bool needs to be resized to int, per sdbus documentation.
 template<> struct can_read_multiple<bool> : std::false_type {};
     // std::vector needs a loop.
@@ -122,6 +126,20 @@ template <> struct read_single<std::string>
         s = str;
     }
 };
+
+/** @brief Specialization of read_single for details::string_wrapper. */
+template <typename T> struct read_single<details::string_wrapper<T>>
+{
+    template<typename S>
+    static void op(sd_bus_message* m, S&& s)
+    {
+        constexpr auto dbusType = std::get<0>(types::type_id<S>());
+        const char* str = nullptr;
+        sd_bus_message_read_basic(m, dbusType, &str);
+        s.str = str;
+    }
+};
+
 
 /** @brief Specialization of read_single for bools. */
 template <> struct read_single<bool>

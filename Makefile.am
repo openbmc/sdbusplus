@@ -7,6 +7,7 @@ nobase_include_HEADERS = \
 	sdbusplus/exception.hpp \
 	sdbusplus/message.hpp \
 	sdbusplus/message/append.hpp \
+	sdbusplus/message/native_types.hpp \
 	sdbusplus/message/read.hpp \
 	sdbusplus/message/types.hpp \
 	sdbusplus/server.hpp \

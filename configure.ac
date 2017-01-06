@@ -36,11 +36,11 @@ AS_IF([test "x$enable_libsdbusplus" != "xno"],
 AM_CONDITIONAL([WANT_LIBSDBUSPLUS], [test "x$enable_libsdbusplus" != "xno"])
 
 # Checks for header files.
-AS_IF([test "x$enable_libsdbusplus" = "xyes"],
+AS_IF([test "x$enable_libsdbusplus" != "xno"],
       [AC_CHECK_HEADER(systemd/sd-bus.h, ,[AC_MSG_ERROR([Could not find systemd/sd-bus.h...systemd developement package required])])])
 
 # Checks for typedefs, structures, and compiler characteristics.
-AS_IF([test "x$enable_libsdbusplus" = "xyes"],
+AS_IF([test "x$enable_libsdbusplus" != "xno"],
       [AX_CXX_COMPILE_STDCXX_14([noext])])
 AX_APPEND_COMPILE_FLAGS([-Wall -Werror], [CFLAGS])
 AX_APPEND_COMPILE_FLAGS([-Wall -Werror], [CXXFLAGS])

@@ -29,5 +29,12 @@ int main()
 
         assert(dbus_string(a, std::move(b), c) == "sss");
     }
+
+    // Check object_path and signatures.
+    assert(dbus_string(std::string("asdf"),
+                       sdbusplus::message::object_path("/asdf"),
+                       sdbusplus::message::signature("sss")) ==
+           "sog");
+
     return 0;
 }

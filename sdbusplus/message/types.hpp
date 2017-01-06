@@ -8,6 +8,7 @@
 #include <systemd/sd-bus.h>
 
 #include <sdbusplus/utility/type_traits.hpp>
+#include <sdbusplus/message/native_types.hpp>
 
 namespace sdbusplus
 {
@@ -141,6 +142,10 @@ template <> struct type_id<double> : tuple_type_id<SD_BUS_TYPE_DOUBLE> {};
 template <> struct type_id<const char*> : tuple_type_id<SD_BUS_TYPE_STRING> {};
 template <> struct type_id<char*> : tuple_type_id<SD_BUS_TYPE_STRING> {};
 template <> struct type_id<std::string> : tuple_type_id<SD_BUS_TYPE_STRING> {};
+template <> struct type_id<object_path> :
+        tuple_type_id<SD_BUS_TYPE_OBJECT_PATH> {};
+template <> struct type_id<signature> :
+        tuple_type_id<SD_BUS_TYPE_SIGNATURE> {};
 
 template <typename T> struct type_id<std::vector<T>>
 {

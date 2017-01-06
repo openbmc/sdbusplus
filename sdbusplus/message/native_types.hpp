@@ -31,6 +31,9 @@ struct string_wrapper
     operator std::string() const { return str; }
     operator const std::string&() const { return str; }
     operator std::string&&() { return std::move(str); }
+
+    bool operator==(const string_wrapper<T>& r) const { return str == r.str; }
+    bool operator<(const string_wrapper<T>& r) const { return str < r.str; }
 };
 
     /** Typename for sdbus OBJECT_PATH types. */
@@ -47,3 +50,21 @@ using signature = details::string_wrapper<details::signature_type>;
 
 } // namespace message
 } // namespace sdbusplus
+
+namespace std
+{
+
+    /** Overload of std::hash for details::string_wrappers */
+template <typename T>
+struct hash<sdbusplus::message::details::string_wrapper<T>>
+{
+    using argument_type = sdbusplus::message::details::string_wrapper<T>;
+    using result_type = std::size_t;
+
+    result_type operator()(argument_type const& s) const
+    {
+        return hash<std::string>()(s.str);
+    }
+};
+
+} // namespace std

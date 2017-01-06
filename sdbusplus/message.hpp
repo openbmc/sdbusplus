@@ -4,6 +4,7 @@
 #include <systemd/sd-bus.h>
 #include <sdbusplus/message/append.hpp>
 #include <sdbusplus/message/read.hpp>
+#include <sdbusplus/message/native_types.hpp>
 
 namespace sdbusplus
 {

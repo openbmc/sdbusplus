@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a23299d_050c9c41",
+        "filename": "sdbusplus/bus/watch.hpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2017-01-11T21:03:19Z",
+      "side": 1,
+      "message": "Do we need to be able to pass a void* context?  I\u0027m thinking a typical use case would be that I have a class that owns a \u0027watch\u0027.  I want to create a watch instance that [eventually] calls this-\u003efoo().\n\nHow can I make this work with std::function with this format?  I think std::mem_fn might be useful here but I don\u0027t think that is of type std::function.",
+      "range": {
+        "startLine": 46,
+        "startChar": 27,
+        "endLine": 46,
+        "endChar": 31
+      },
+      "revId": "a82d3165ac7b0595d53f2bb8f0a9e32f8439a65b",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a23299d_0525bcc1",
+        "filename": "sdbusplus/bus/watch.hpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2017-01-11T21:03:19Z",
+      "side": 1,
+      "message": "Why not just use string concatenation here?",
+      "range": {
+        "startLine": 53,
+        "startChar": 8,
+        "endLine": 60,
+        "endChar": 34
+      },
+      "revId": "a82d3165ac7b0595d53f2bb8f0a9e32f8439a65b",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a23299d_e508802f",
+        "filename": "sdbusplus/bus/watch.hpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2017-01-11T21:03:19Z",
+      "side": 1,
+      "message": "Minor style point here but we tend to prefer * and \u0026 with the type.  \"sd_bus_message* m\".  This is due to recommendation from the CppCoreGuidelines.",
+      "range": {
+        "startLine": 66,
+        "startChar": 28,
+        "endLine": 66,
+        "endChar": 45
+      },
+      "revId": "a82d3165ac7b0595d53f2bb8f0a9e32f8439a65b",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a23299d_a52ba893",
+        "filename": "sdbusplus/bus/watch.hpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2017-01-11T21:03:19Z",
+      "side": 1,
+      "message": "Can\u0027t this object simply have-a match?  I don\u0027t see a need for wrapping it in a unique_ptr.",
+      "range": {
+        "startLine": 92,
+        "startChar": 8,
+        "endLine": 92,
+        "endChar": 55
+      },
+      "revId": "a82d3165ac7b0595d53f2bb8f0a9e32f8439a65b",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
+    }
+  ]
+}

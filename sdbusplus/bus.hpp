@@ -88,7 +88,7 @@ struct bus
         sd_bus_message* m = nullptr;
         sd_bus_process(_bus.get(), &m);
 
-        return message::message(m);
+        return message::message(m, std::false_type());
     }
 
     /** @brief Process waiting dbus messages or signals, discarding unhandled.
@@ -123,7 +123,7 @@ struct bus
         sd_bus_message_new_method_call(_bus.get(), &m, service, objpath,
                                        interf, method);
 
-        return message::message(m);
+        return message::message(m, std::false_type());
     }
 
     /** @brief Create a signal message.
@@ -139,7 +139,7 @@ struct bus
         sd_bus_message* m = nullptr;
         sd_bus_message_new_signal(_bus.get(), &m, objpath, interf, member);
 
-        return message::message(m);
+        return message::message(m, std::false_type());
     }
 
     /** @brief Perform a message call.
@@ -154,7 +154,7 @@ struct bus
         sd_bus_message* reply = nullptr;
         sd_bus_call(_bus.get(), m.get(), timeout_us, nullptr, &reply);
 
-        return message::message(reply);
+        return message::message(reply, std::false_type());
     }
 
     /** @brief Perform a message call, ignoring the reply.

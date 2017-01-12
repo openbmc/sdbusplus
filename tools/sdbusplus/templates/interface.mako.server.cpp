@@ -51,7 +51,7 @@ int ${classname}::_callback_get_${p.name}(
 
     try
     {
-        auto m = message::message(sd_bus_message_ref(reply));
+        auto m = message::message(reply);
 
         auto o = static_cast<${classname}*>(context);
         m.append(convertForMessage(o->${p.camelCase}()));
@@ -84,7 +84,7 @@ int ${classname}::_callback_set_${p.name}(
 {
     try
     {
-        auto m = message::message(sd_bus_message_ref(value));
+        auto m = message::message(value);
 
         auto o = static_cast<${classname}*>(context);
 

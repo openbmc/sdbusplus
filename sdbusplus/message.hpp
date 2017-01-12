@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <type_traits>
 #include <systemd/sd-bus.h>
 #include <sdbusplus/message/append.hpp>
 #include <sdbusplus/message/read.hpp>
@@ -57,9 +58,16 @@ struct message
 
     /** @brief Conversion constructor for 'msgp_t'.
      *
+     *  Takes increment ref-count of the msg-pointer and release when
+     *  destructed.
+     */
+    explicit message(msgp_t m) : _msg(sd_bus_message_ref(m)) {}
+
+    /** @brief Constructor for 'msgp_t'.
+     *
      *  Takes ownership of the msg-pointer and releases it when done.
      */
-    explicit message(msgp_t m) : _msg(m) {}
+    message(msgp_t m, std::false_type) : _msg(m) {}
 
     /** @brief Release ownership of the stored msg-pointer. */
     msgp_t release() { return _msg.release(); }
@@ -137,7 +145,7 @@ struct message
         msgp_t reply = nullptr;
         sd_bus_message_new_method_return(this->get(), &reply);
 
-        return message(reply);
+        return message(reply, std::false_type());
     }
 
     /** @brief Perform a 'method-return' response call. */

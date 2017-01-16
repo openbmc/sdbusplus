@@ -3,6 +3,7 @@
 #include <memory>
 #include <climits>
 #include <systemd/sd-bus.h>
+#include <systemd/sd-event.h>
 #include <sdbusplus/message.hpp>
 
 namespace sdbusplus
@@ -165,6 +166,28 @@ struct bus
     void call_noreply(message::message& m, uint64_t timeout_us = 0)
     {
         sd_bus_call(_bus.get(), m.get(), timeout_us, nullptr, nullptr);
+    }
+
+    /** @brief Attach the bus with a sd-event event loop object.
+     *
+     *  @param[in] event - sd_event object.
+     *  @param[in] priority - priority of bus event source.
+     */
+    int attach_event(sd_event *event, int priority)
+    {
+        return sd_bus_attach_event(_bus.get(), event, priority);
+    }
+
+    /** @brief Detach the bus from its sd-event event loop object */
+    int detach_event()
+    {
+        return sd_bus_detach_event(_bus.get());
+    }
+
+    /** @brief Get the sd-event event loop object of the bus */
+    sd_event* get_event()
+    {
+        return sd_bus_get_event(_bus.get());
     }
 
     friend struct server::interface::interface;

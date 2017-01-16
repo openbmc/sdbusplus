@@ -101,8 +101,11 @@ struct object : details::compose<Args...>
 
     ~object()
     {
-        sd_bus_emit_object_removed(__sdbusplus_server_object_bus.get(),
-                                   __sdbusplus_server_object_path.c_str());
+        if (__sdbusplus_server_object_emitremoved)
+        {
+            sd_bus_emit_object_removed(__sdbusplus_server_object_bus.get(),
+                                       __sdbusplus_server_object_path.c_str());
+        }
     }
 
     /** Emit the 'object-added' signal, if not already sent. */

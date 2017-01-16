@@ -3,6 +3,7 @@
 #include <memory>
 #include <climits>
 #include <systemd/sd-bus.h>
+#include <systemd/sd-event.h>
 #include <sdbusplus/message.hpp>
 
 namespace sdbusplus
@@ -176,6 +177,28 @@ struct bus
         const char* unique = nullptr;
         sd_bus_get_unique_name(_bus.get(), &unique);
         return std::string(unique);
+    }
+
+    /** @brief Attach the bus with a sd-event event loop object.
+     *
+     *  @param[in] event - sd_event object.
+     *  @param[in] priority - priority of bus event source.
+     */
+    void attach_event(sd_event* event, int priority)
+    {
+        sd_bus_attach_event(_bus.get(), event, priority);
+    }
+
+    /** @brief Detach the bus from its sd-event event loop object */
+    void detach_event()
+    {
+        sd_bus_detach_event(_bus.get());
+    }
+
+    /** @brief Get the sd-event event loop object of the bus */
+    auto get_event()
+    {
+        return sd_bus_get_event(_bus.get());
     }
 
     friend struct server::interface::interface;

@@ -32,8 +32,14 @@ struct string_wrapper
     operator const std::string&() const { return str; }
     operator std::string&&() { return std::move(str); }
 
-    bool operator==(const string_wrapper<T>& r) const { return str == r.str; }
-    bool operator<(const string_wrapper<T>& r) const { return str < r.str; }
+    friend bool operator==(const string_wrapper<T>& l, const string_wrapper<T>& r)
+    {
+        return l.str == r.str;
+    }
+    friend bool operator<(const string_wrapper<T>& l, const string_wrapper<T>& r)
+    {
+        return l.str < r.str;
+    }
 };
 
 /** Typename for sdbus OBJECT_PATH types. */

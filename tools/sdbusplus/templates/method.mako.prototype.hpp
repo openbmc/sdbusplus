@@ -128,6 +128,9 @@ int ${interface_name()}::_callback_${ method.CamelCase }(
         ### Need to add a ref to msg since we attached it to an
         ### sdbusplus::message.
         auto m = message::message(msg);
+        t.msg = &m;
+        sdbusplus::server::transaction::set_id(std::hash
+            <sdbusplus::server::transaction::Transaction>{}(t));
 
     % if len(method.parameters) != 0:
         ${parameters_as_local(as_param=False)}{};

@@ -75,6 +75,7 @@ ${p.camelCase}(${p.cppTypeParam(interface.name)} value);
     % endfor
 
     private:
+        static sdbusplus::server::transaction::Transaction t;
     % for m in interface.methods:
 ${ m.cpp_prototype(loader, interface=interface, ptype='callback-header') }
     % endfor

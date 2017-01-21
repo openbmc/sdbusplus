@@ -21,10 +21,13 @@ namespace ${s}
 namespace server
 {
 
+sdbusplus::server::transaction::Transaction ${classname}::t;
+
 ${classname}::${classname}(bus::bus& bus, const char* path)
         : _${interface_instance()}(
                 bus, path, _interface, _vtable, this)
 {
+    t.bus = &bus;
 }
 
     % for m in interface.methods:

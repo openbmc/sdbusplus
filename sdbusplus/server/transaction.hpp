@@ -103,6 +103,12 @@ namespace transaction
   */
 inline uint64_t get_id()
 {
+    // If the transaction id has not been initialized, generate one.
+    if (!details::id)
+    {
+        Transaction t;
+        details::id = std::hash<Transaction>{}(t);
+    }
     return details::id;
 }
 

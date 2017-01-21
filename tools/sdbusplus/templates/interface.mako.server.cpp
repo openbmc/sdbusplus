@@ -52,6 +52,12 @@ int ${classname}::_callback_get_${p.name}(
     try
     {
         auto m = message::message(reply);
+#ifdef ENABLE_TRANSACTION
+        auto tbus = (sdbusplus::bus::bus)m.get_bus();
+        sdbusplus::server::transaction::Transaction t(tbus, m);
+        sdbusplus::server::transaction::set_id
+            (std::hash<sdbusplus::server::transaction::Transaction>{}(t));
+#endif
 
         auto o = static_cast<${classname}*>(context);
         m.append(convertForMessage(o->${p.camelCase}()));
@@ -85,6 +91,12 @@ int ${classname}::_callback_set_${p.name}(
     try
     {
         auto m = message::message(value);
+#ifdef ENABLE_TRANSACTION
+        auto tbus = (sdbusplus::bus::bus)m.get_bus();
+        sdbusplus::server::transaction::Transaction t(tbus, m);
+        sdbusplus::server::transaction::set_id
+            (std::hash<sdbusplus::server::transaction::Transaction>{}(t));
+#endif
 
         auto o = static_cast<${classname}*>(context);
 

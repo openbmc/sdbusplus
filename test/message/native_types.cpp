@@ -4,6 +4,14 @@
 #include <map>
 #include <unordered_map>
 
+void check_string_compares(const sdbusplus::message::signature& sig,
+                           const std::string& str)
+{
+    assert(sig == str);
+    assert(str == sig);
+    return;
+}
+
 int main()
 {
     std::string s1 = sdbusplus::message::object_path("/asdf/");
@@ -11,6 +19,8 @@ int main()
 
     std::string s2 = sdbusplus::message::signature("iii");
     sdbusplus::message::signature sig = s2;
+
+    check_string_compares(sig, s2);
 
     std::vector<sdbusplus::message::signature> v =
         { sdbusplus::message::signature("iii") };

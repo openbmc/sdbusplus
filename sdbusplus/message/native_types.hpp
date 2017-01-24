@@ -34,6 +34,8 @@ struct string_wrapper
 
     bool operator==(const string_wrapper<T>& r) const { return str == r.str; }
     bool operator<(const string_wrapper<T>& r) const { return str < r.str; }
+    bool operator==(const std::string& r) const { return str == r; }
+    bool operator<(const std::string& r) const { return str < r; }
 };
 
 /** Typename for sdbus OBJECT_PATH types. */

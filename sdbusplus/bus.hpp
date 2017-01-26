@@ -211,4 +211,15 @@ inline bus new_system()
 
 } // namespace bus
 
+/** @brief Get the dbus bus from the message.
+ *
+ *  @return The dbus bus.
+ */
+inline auto message::message::get_bus()
+{
+    sd_bus* b = nullptr;
+    b = sd_bus_message_get_bus(_msg.get());
+    return bus::bus(sd_bus_ref(b));
+}
+
 } // namespace sdbusplus

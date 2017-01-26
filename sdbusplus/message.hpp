@@ -96,6 +96,17 @@ struct message
         sdbusplus::message::read(_msg.get(), std::forward<Args>(args)...);
     }
 
+    /** @brief Get the dbus bus from the message.
+     *
+     *  @return The dbus bus.
+     */
+    auto get_bus()
+    {
+        sd_bus* b = nullptr;
+        b = sd_bus_message_get_bus(_msg.get());
+        return b;
+    }
+
     /** @brief Get the signature of a message.
      *
      *  @return A [weak] pointer to the signature of the message.

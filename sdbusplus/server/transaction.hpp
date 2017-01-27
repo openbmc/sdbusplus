@@ -15,6 +15,15 @@ namespace details
 // Transaction Id
 extern thread_local uint64_t id;
 
+struct Transaction
+{
+    Transaction(): time(std::time(nullptr)), thread(std::this_thread::get_id())
+        {}
+
+    int time;
+    std::thread::id thread;
+};
+
 } // namespace details
 
 struct Transaction
@@ -32,6 +41,19 @@ struct Transaction
 
 namespace std
 {
+
+/** @ brief Overload of std::hash for std::pair<size_t, size_t> */
+template <>
+struct hash<std::pair<size_t, size_t>>
+{
+    std::size_t operator()
+        (std::pair<size_t, size_t> const& p) const
+    {
+        // boost::hash_combine() algorithm.
+        return p.first ^ (p.second + 0x9e3779b9 + (p.first << 6)
+            + (p.first >> 2));
+    }
+};
 
 /** @ brief Overload of std::hash for sdbusplus::bus::bus */
 template <>
@@ -67,8 +89,23 @@ struct hash<sdbusplus::server::transaction::Transaction>
         std::size_t hash1 = std::hash<sdbusplus::bus::bus>{}(t.bus);
         std::size_t hash2 = std::hash<sdbusplus::message::message>{}(t.msg);
 
-        // boost::hash_combine() algorithm.
-        return hash1 ^ (hash2 + 0x9e3779b9 + (hash1 << 6) + (hash1 >> 2));
+        return std::hash<std::pair<size_t, size_t>>{}
+            (std::make_pair(hash1, hash2));
+    }
+};
+
+/** @ brief Overload of std::hash for details::Transaction */
+template <>
+struct hash<sdbusplus::server::transaction::details::Transaction>
+{
+    std::size_t operator()
+        (sdbusplus::server::transaction::details::Transaction const& t) const
+    {
+        std::size_t hash1 = std::hash<int>{}(t.time);
+        std::size_t hash2 = std::hash<std::thread::id>{}(t.thread);
+
+        return std::hash<std::pair<size_t, size_t>>{}
+            (std::make_pair(hash1, hash2));
     }
 };
 

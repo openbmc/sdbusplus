@@ -15,6 +15,15 @@ namespace details
 // Transaction Id
 extern thread_local uint64_t id;
 
+struct Transaction
+{
+    Transaction(): time(std::time(nullptr)), thread(std::this_thread::get_id())
+        {}
+
+    int time;
+    std::thread::id thread;
+};
+
 } // namespace details
 
 struct Transaction
@@ -66,6 +75,22 @@ struct hash<sdbusplus::server::transaction::Transaction>
     {
         auto hash1 = std::hash<sdbusplus::bus::bus>{}(t.bus);
         auto hash2 = std::hash<sdbusplus::message::message>{}(t.msg);
+
+        // boost::hash_combine() algorithm.
+        return static_cast<size_t>(hash1 ^ (hash2 + 0x9e3779b9 + (hash1 << 6) +
+            (hash1 >> 2)));
+    }
+};
+
+/** @ brief Overload of std::hash for details::Transaction */
+template <>
+struct hash<sdbusplus::server::transaction::details::Transaction>
+{
+    auto operator()
+        (sdbusplus::server::transaction::details::Transaction const& t) const
+    {
+        auto hash1 = std::hash<int>{}(t.time);
+        auto hash2 = std::hash<std::thread::id>{}(t.thread);
 
         // boost::hash_combine() algorithm.
         return static_cast<size_t>(hash1 ^ (hash2 + 0x9e3779b9 + (hash1 << 6) +

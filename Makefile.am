@@ -31,5 +31,8 @@ libsdbusplus_la_SOURCES = $(LIBSDBUSPLUS_FILES)
 libsdbusplus_la_LDFLAGS = $(SYSTEMD_LIBS) -version-info 1:0:0 -shared
 libsdbusplus_la_CXXFLAGS = $(SYSTEMD_CFLAGS)
 
+pkgconfiglibdir = ${libdir}/pkgconfig
+pkgconfiglib_DATA = sdbusplus.pc
+
 endif
 SUBDIRS = test tools

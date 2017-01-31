@@ -1,5 +1,6 @@
 #pragma once
 
+#include <thread>
 #include <sdbusplus/bus.hpp>
 
 namespace sdbusplus
@@ -8,6 +9,13 @@ namespace server
 {
 namespace transaction
 {
+namespace details
+{
+
+// Transaction Id
+extern thread_local uint64_t id;
+
+} // namespace details
 
 struct Transaction
 {
@@ -66,3 +74,32 @@ struct hash<sdbusplus::server::transaction::Transaction>
 };
 
 } // namespace std
+
+namespace sdbusplus
+{
+namespace server
+{
+namespace transaction
+{
+
+/** @brief Get transaction id
+  *
+  * @return The value of the transaction id
+  */
+inline uint64_t get_id()
+{
+    return details::id;
+}
+
+/** @brief Set transaction id
+  *
+  * @param[in] value - Desired value for the transaction id
+  */
+inline void set_id(uint64_t value)
+{
+    details::id = value;
+}
+
+} // namespace transaction
+} // namespace server
+} // namespace sdbusplus

@@ -89,6 +89,13 @@ ${p.camelCase}(${p.cppTypeParam(interface.name)} value);
         void setPropertyByName(const std::string& name,
                                const PropertiesVariant& val);
 
+
+        /** @brief Gets a property by name.
+         *  @param[in] name - A string representation of the property name.
+         *  @return - A variant containing the value of the property.
+         */
+        PropertiesVariant getPropertyByName(const std::string& name);
+
     % for e in interface.enums:
     /** @brief Convert a string to an appropriate enum value.
      *  @param[in] s - The string to convert in the form of

@@ -16,8 +16,11 @@ namespace sdbusplus
 namespace message
 {
 
+namespace variant_ns = mapbox::util;
+
 template <typename ...Args>
-using variant = mapbox::util::variant<Args...>;
+using variant = variant_ns::variant<Args...>;
+
 
 namespace types
 {

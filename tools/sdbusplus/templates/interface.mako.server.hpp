@@ -5,6 +5,10 @@
 <%
     namespaces = interface.name.split('.')
     classname = namespaces.pop()
+
+    def setOfPropertyTypes():
+        return set(p.cppTypeParam(interface.name) for p in
+                   interface.properties);
 %>
 namespace sdbusplus
 {
@@ -49,6 +53,9 @@ class ${classname}
         };
     % endfor
 
+        using PropertiesVariant = sdbusplus::message::variant<
+                ${",\n                ".join(setOfPropertyTypes())}>;
+
     % for m in interface.methods:
 ${ m.cpp_prototype(loader, interface=interface, ptype='header') }
     % endfor
@@ -64,6 +71,13 @@ ${ s.cpp_prototype(loader, interface=interface, ptype='header') }
         virtual ${p.cppTypeParam(interface.name)} \
 ${p.camelCase}(${p.cppTypeParam(interface.name)} value);
     % endfor
+
+        /** @brief Sets a property by name.
+         *  @param[in] name - A string representation of the property name.
+         *  @param[in] val - A variant containing the value to set.
+         */
+        void setPropertyByName(const std::string& name,
+                               const PropertiesVariant& val);
 
     % for e in interface.enums:
     /** @brief Convert a string to an appropriate enum value.

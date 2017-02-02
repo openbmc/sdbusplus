@@ -157,6 +157,17 @@ val);
     % endfor
 }
 
+auto ${classname}::getPropertyByName(const std::string& name) ->
+        PropertiesVariant
+{
+    % for p in interface.properties:
+    if (name == "${p.name}")
+    {
+        return ${p.camelCase}();
+    }
+    % endfor
+}
+
     % for e in interface.enums:
 
 namespace

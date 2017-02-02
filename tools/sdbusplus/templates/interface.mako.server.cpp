@@ -133,6 +133,20 @@ static const auto _property_${p.name} =
 }
     % endfor
 
+void ${classname}::setPropertyByName(const std::string& name,
+                                     const PropertiesVariant& val)
+{
+    % for p in interface.properties:
+    if (name == "${p.name}")
+    {
+        auto& v = message::variant_ns::get<${p.cppTypeParam(interface.name)}>(\
+val);
+        ${p.camelCase}(v);
+        return;
+    }
+    % endfor
+}
+
     % for e in interface.enums:
 
 namespace

@@ -57,6 +57,16 @@ class ${classname}
         using PropertiesVariant = sdbusplus::message::variant<
                 ${",\n                ".join(setOfPropertyTypes())}>;
 
+        /** @brief Constructor to initialize the object from a map of
+         *         properties.
+         *
+         *  @param[in] bus - Bus to attach to.
+         *  @param[in] path - Path to attach at.
+         *  @param[in] vals - Map of property name to value for initalization.
+         */
+        ${classname}(bus::bus& bus, const char* path,
+                     const std::map<std::string, PropertiesVariant>& vals);
+
     % endif
     % for m in interface.methods:
 ${ m.cpp_prototype(loader, interface=interface, ptype='header') }

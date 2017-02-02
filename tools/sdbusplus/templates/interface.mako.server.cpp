@@ -27,6 +27,16 @@ ${classname}::${classname}(bus::bus& bus, const char* path)
 {
 }
 
+${classname}::${classname}(bus::bus& bus, const char* path,
+                           const std::map<std::string, PropertiesVariant>& vals)
+        : ${classname}(bus, path)
+{
+    for (const auto& v : vals)
+    {
+        setPropertyByName(v.first, v.second);
+    }
+}
+
     % for m in interface.methods:
 ${ m.cpp_prototype(loader, interface=interface, ptype='callback-cpp') }
     % endfor

@@ -201,6 +201,24 @@ struct bus
         return sd_bus_get_event(_bus.get());
     }
 
+    /** @brief Wrapper for sd_bus_emit_object_added
+     *
+     *  @param[in] path - The path to forward to sd_bus_emit_object_added
+     */
+    void emit_object_added(const char* path)
+    {
+        sd_bus_emit_object_added(_bus.get(), path);
+    }
+
+    /** @brief Wrapper for sd_bus_emit_object_removed
+     *
+     *  @param[in] path - The path to forward to sd_bus_emit_object_removed
+     */
+    void emit_object_removed(const char* path)
+    {
+        sd_bus_emit_object_removed(_bus.get(), path);
+    }
+
     friend struct server::interface::interface;
     friend struct server::manager::manager;
     template<class... Args> friend struct server::object::object;

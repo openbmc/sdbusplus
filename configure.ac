@@ -26,7 +26,12 @@ AS_IF([test "x$enable_sdbuspp" != "xno"],
 AM_CONDITIONAL([WANT_SDBUSPP], [test "x$enable_sdbuspp" != "xno"])
 
 # setup libsdbusplus
-PKG_CHECK_MODULES([SYSTEMD], [libsystemd >= 221], [have_systemd=yes], [have_systemd=no])
+AX_PKG_CHECK_MODULES(
+    [SYSTEMD],
+    [],
+    [libsystemd >= 221],
+    [have_systemd=yes],
+    [have_systemd=no])
 AC_ARG_ENABLE([libsdbusplus],
     AS_HELP_STRING([--disable-libsdbusplus], [Disable libsdbusplus]))
 

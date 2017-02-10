@@ -7,6 +7,8 @@ Name: sdbusplus
 Description: C++ bindings for systemd dbus APIs
 URL: https://github.com/openbmc/sdbusplus
 Version: @VERSION@
+Requires: @AX_PACKAGE_REQUIRES@
+Requires.private: @AX_PACKAGE_REQUIRES_PRIVATE@
 Libs: -L@libdir@ -lsdbusplus
 Cflags: -I@includedir@
 

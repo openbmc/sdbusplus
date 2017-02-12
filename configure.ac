@@ -40,6 +40,12 @@ AS_IF([test "x$enable_libsdbusplus" != "xno"],
 
 AM_CONDITIONAL([WANT_LIBSDBUSPLUS], [test "x$enable_libsdbusplus" != "xno"])
 
+# setup transaction
+AC_ARG_ENABLE([transaction],
+    AS_HELP_STRING([--enable-transaction], [Enable transaction id]))
+
+AM_CONDITIONAL([WANT_TRANSACTION], [test "x$enable_transaction" = "xyes"])
+
 # Checks for header files.
 AS_IF([test "x$enable_libsdbusplus" != "xno"],
       [AC_CHECK_HEADER(systemd/sd-bus.h, ,[AC_MSG_ERROR([Could not find systemd/sd-bus.h...systemd developement package required])])])

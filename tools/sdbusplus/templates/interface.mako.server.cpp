@@ -64,7 +64,7 @@ int ${classname}::_callback_get_${p.name}(
     try
     {
         auto m = message::message(reply);
-#ifndef DISABLE_TRANSACTION
+#ifdef WANT_TRANSACTION
         {
             auto tbus = m.get_bus();
             sdbusplus::server::transaction::Transaction t(tbus, m);
@@ -105,7 +105,7 @@ int ${classname}::_callback_set_${p.name}(
     try
     {
         auto m = message::message(value);
-#ifndef DISABLE_TRANSACTION
+#ifdef WANT_TRANSACTION
         {
             auto tbus = m.get_bus();
             sdbusplus::server::transaction::Transaction t(tbus, m);

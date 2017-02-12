@@ -239,7 +239,7 @@ struct bus
 
 inline bus::bus(busp_t b) : _bus(b)
 {
-#ifndef DISABLE_TRANSACTION
+#if @WANT_TRANSACTION@
     // Emitting object added causes a message to get the properties
     // which can trigger a 'transaction' in the server bindings.  If
     // the bus isn't up far enough, this causes an assert deep in

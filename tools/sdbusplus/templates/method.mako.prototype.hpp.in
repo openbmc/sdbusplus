@@ -128,7 +128,7 @@ int ${interface_name()}::_callback_${ method.CamelCase }(
         ### Need to add a ref to msg since we attached it to an
         ### sdbusplus::message.
         auto m = message::message(msg);
-#ifndef DISABLE_TRANSACTION
+#if @WANT_TRANSACTION@
         {
             auto tbus = m.get_bus();
             sdbusplus::server::transaction::Transaction t(tbus, m);

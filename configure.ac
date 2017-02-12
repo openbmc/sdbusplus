@@ -40,6 +40,15 @@ AS_IF([test "x$enable_libsdbusplus" != "xno"],
 
 AM_CONDITIONAL([WANT_LIBSDBUSPLUS], [test "x$enable_libsdbusplus" != "xno"])
 
+# setup transaction
+AC_ARG_ENABLE([transaction],
+    AS_HELP_STRING([--enable-transaction], [Enable transaction id support.]))
+AC_ARG_VAR(WANT_TRANSACTION, [Enable transaction id support.])
+AS_IF([test "x$enable_transaction" = "xyes"], \
+    [WANT_TRANSACTION="1"], \
+    [WANT_TRANSACTION="0"])
+AM_CONDITIONAL([WANT_TRANSACTION], [test "x$enable_transaction" = "xyes"])
+
 # Checks for header files.
 AS_IF([test "x$enable_libsdbusplus" != "xno"],
       [AC_CHECK_HEADER(systemd/sd-bus.h, ,[AC_MSG_ERROR([Could not find systemd/sd-bus.h...systemd developement package required])])])
@@ -78,4 +87,8 @@ AS_IF([test "x$enable_oe_sdk" == "xyes"],
 # Create configured output
 AC_CONFIG_FILES([Makefile test/Makefile tools/Makefile tools/setup.py])
 AC_CONFIG_FILES([sdbusplus.pc])
+AC_CONFIG_FILES([sdbusplus/bus.hpp])
+AC_CONFIG_FILES([sdbusplus/server.hpp])
+AC_CONFIG_FILES([tools/sdbusplus/templates/interface.mako.server.cpp])
+AC_CONFIG_FILES([tools/sdbusplus/templates/method.mako.prototype.hpp])
 AC_OUTPUT

@@ -22,12 +22,18 @@ nobase_include_HEADERS = \
 	sdbusplus/utility/type_traits.hpp \
 	sdbusplus/vtable.hpp
 
-LIBSDBUSPLUS_FILES = \
+LIBSDBUSPLUS_FILES =
+
+if WANT_TRANSACTION
+LIBSDBUPLUS_FILES_TRANSACTION = \
 	sdbusplus/server/transaction.cpp
+endif
 
 libsdbusplusdir = ${libdir}
 libsdbusplus_LTLIBRARIES = libsdbusplus.la
-libsdbusplus_la_SOURCES = $(LIBSDBUSPLUS_FILES)
+libsdbusplus_la_SOURCES = \
+	$(LIBSDBUSPLUS_FILES) \
+	$(LIBSDBUPLUS_FILES_TRANSACTION)
 libsdbusplus_la_LDFLAGS = $(SYSTEMD_LIBS) -version-info 1:0:0 -shared
 libsdbusplus_la_CXXFLAGS = $(SYSTEMD_CFLAGS)
 

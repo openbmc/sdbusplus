@@ -8,4 +8,6 @@
 #include <sdbusplus/server/object.hpp>
 #include <sdbusplus/server/match.hpp>
 #include <sdbusplus/server/bindings.hpp>
+#if @WANT_TRANSACTION@
 #include <sdbusplus/server/transaction.hpp>
+#endif

@@ -83,6 +83,24 @@ template<typename S> struct append_single
     template<typename T>
     using Td = types::details::type_id_downcast_t<T>;
 
+    // sd_bus_message_append_basic expects a T* (cast to void*) for most types,
+    // so t& is appropriate.  In the case of char*, it expects the void* is
+    // the char*.  If we use &t, that is a char** and not a char*.
+    //
+    // Use these helper templates 'address_of(t)' in place of '&t' to
+    // handle both cases.
+    template<typename T>
+    static auto address_of_helper(T&& t, std::false_type) { return &t; }
+    template<typename T>
+    static auto address_of_helper(T&& t, std::true_type) { return t; }
+
+    template<typename T>
+    static auto address_of(T&& t)
+    {
+        return address_of_helper(std::forward<T>(t),
+                                 std::is_pointer<std::remove_reference_t<T>>());
+    }
+
     /** @brief Do the operation to append element.
      *
      *  @tparam T - Type of element to append.
@@ -107,7 +125,8 @@ template<typename S> struct append_single
                       "Non-basic types are not allowed.");
 
         constexpr auto dbusType = std::get<0>(types::type_id<T>());
-        sd_bus_message_append_basic(m, dbusType, &t);
+        sd_bus_message_append_basic(m, dbusType,
+                                    address_of(std::forward<T>(t)));
     }
 };
 

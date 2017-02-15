@@ -193,14 +193,49 @@ void runTests()
         b.call_noreply(m);
     }
 
+    // Test const string owned by const struct.  openbmc/openbmc#1025
+    {
+        struct
+        {
+            const char* foo;
+
+            void insert(sdbusplus::message::message& m)
+            {
+                m.append(foo);
+            }
+        } s;
+
+        auto m = newMethodCall__test(b);
+        s.foo = "1234";
+        s.insert(m);
+
+        verifyTypeString = "s";
+
+        struct verify
+        {
+            static void op(sd_bus_message* m)
+            {
+                const char* s = nullptr;
+                sd_bus_message_read_basic(m, 's', &s);
+                assert(0 == strcmp("1234", s));
+            }
+        };
+        verifyCallback = &verify::op;
+
+        b.call_noreply(m);
+    }
+
     // Test multiple strings, various forms.
     {
         auto m = newMethodCall__test(b);
         auto str = "jkl;"s;
         auto str2 = "JKL:"s;
+        const char* str3 = "1234";
+        const char* const str4 = "5678";
+        const auto str5 = "!@#$";
         m.append(1, "asdf", "ASDF"s, str,
-                 std::move(str2), 5);
-        verifyTypeString = "issssi";
+                 std::move(str2), str3, str4, str5, 5);
+        verifyTypeString = "isssssssi";
 
         struct verify
         {
@@ -208,14 +243,20 @@ void runTests()
             {
                 int32_t a = 0, b = 0;
                 const char *s0 = nullptr, *s1 = nullptr, *s2 = nullptr,
-                           *s3 = nullptr;
-                sd_bus_message_read(m, "issssi", &a, &s0, &s1, &s2, &s3, &b);
+                           *s3 = nullptr, *s4 = nullptr, *s5 = nullptr,
+                           *s6 = nullptr;
+                sd_bus_message_read(m, "isssssssi", &a, &s0, &s1, &s2, &s3,
+                                    &s4, &s5, &s6, &b);
                 assert(a == 1);
                 assert(b == 5);
                 assert(0 == strcmp("asdf", s0));
                 assert(0 == strcmp("ASDF", s1));
                 assert(0 == strcmp("jkl;", s2));
                 assert(0 == strcmp("JKL:", s3));
+                assert(0 == strcmp("1234", s4));
+                assert(0 == strcmp("5678", s5));
+                assert(0 == strcmp("!@#$", s6));
+                assert(b == 5);
             }
         };
         verifyCallback = &verify::op;

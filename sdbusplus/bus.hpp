@@ -69,7 +69,7 @@ struct bus
      *
      *  Takes ownership of the bus-pointer and releases it when done.
      */
-    explicit bus(busp_t b) : _bus(b) {}
+    explicit bus(busp_t b);
 
     /** @brief Release ownership of the stored bus-pointer. */
     busp_t release() { return _bus.release(); }
@@ -236,6 +236,22 @@ struct bus
         busp_t get() { return _bus.get(); }
         details::bus _bus;
 };
+
+inline bus::bus(busp_t b) : _bus(b)
+{
+#ifndef DISABLE_TRANSACTION
+    // Emitting object added causes a message to get the properties
+    // which can trigger a 'transaction' in the server bindings.  If
+    // the bus isn't up far enough, this causes an assert deep in
+    // sd-bus code.  Get the 'unique_name' to ensure the bus is up far
+    // enough to avoid the assert.
+    if (b != nullptr)
+    {
+        get_unique_name();
+    }
+#endif
+}
+
 
 inline bus new_default()
 {

@@ -2,6 +2,8 @@
 
 #include <memory>
 #include <climits>
+#include <vector>
+#include <string>
 #include <systemd/sd-bus.h>
 #include <systemd/sd-event.h>
 #include <sdbusplus/message.hpp>
@@ -38,6 +40,40 @@ struct BusDeleter
     {
         sd_bus_unref(ptr);
     }
+};
+
+/** @brief Convert a vector of strings to c-style char** array. */
+class Strv
+{
+    public:
+        ~Strv() = default;
+        Strv() = delete;
+        Strv(const Strv&) = delete;
+        Strv& operator=(const Strv&) = delete;
+        Strv(Strv&&) = default;
+        Strv& operator=(Strv&&) = default;
+
+        explicit Strv(const std::vector<std::string>& v)
+            : strings(), ptrs()
+        {
+            for (const auto& s: v)
+            {
+                strings.push_back(std::vector<char>({s.cbegin(), s.cend()}));
+                strings.back().push_back('\0');
+                ptrs.push_back(&strings.back()[0]);
+            }
+
+            ptrs.push_back(nullptr);
+        }
+
+        explicit operator char**()
+        {
+            return &ptrs[0];
+        }
+
+    private:
+        std::vector<std::vector<char>> strings;
+        std::vector<char *> ptrs;
 };
 
 /* @brief Alias 'bus' to a unique_ptr type for auto-release. */
@@ -199,6 +235,42 @@ struct bus
     auto get_event()
     {
         return sd_bus_get_event(_bus.get());
+    }
+
+    /** @brief Wrapper for sd_bus_emit_interfaces_added_strv
+     *
+     *  In general the similarly named server::object::object API should
+     *  be used to manage emission of ObjectManager signals in favor
+     *  of this one.  Provided here for complex usage scenarios.
+     *
+     *  @param[in] path - The path to forward.
+     *  @param[in] ifaces - The interfaces to forward.
+     */
+    void emit_interfaces_added(const char* path,
+                               const std::vector<std::string>& ifaces)
+    {
+        details::Strv s{ifaces};
+        sd_bus_emit_interfaces_added_strv(_bus.get(),
+                                          path,
+                                          static_cast<char**>(s));
+    }
+
+    /** @brief Wrapper for sd_bus_emit_interfaces_removed_strv
+     *
+     *  In general the similarly named server::object::object API should
+     *  be used to manage emission of ObjectManager signals in favor
+     *  of this one.  Provided here for complex usage scenarios.
+     *
+     *  @param[in] path - The path to forward.
+     *  @param[in] ifaces - The interfaces to forward.
+     */
+    void emit_interfaces_removed(const char* path,
+                                 const std::vector<std::string>& ifaces)
+    {
+        details::Strv s{ifaces};
+        sd_bus_emit_interfaces_removed_strv(_bus.get(),
+                                            path,
+                                            static_cast<char**>(s));
     }
 
     /** @brief Wrapper for sd_bus_emit_object_added

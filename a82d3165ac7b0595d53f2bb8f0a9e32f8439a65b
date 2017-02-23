@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "3a1d315d_6a6e78cb",
+        "filename": "sdbusplus/bus/watch.hpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1000065
+      },
+      "writtenOn": "2017-02-23T16:00:56Z",
+      "side": 1,
+      "message": "Registering a member function of the class owning the watch is possible using a lambda, e.g.:\n\nsdbusplus::bus::watch_t watch_{\n    bus,\n    \"my.service.Name\",\n    [this](){ on_connected(); },\n    [this](){ on_disconnected(); }};\n\nBut a void* context might be useful nevertheless to differentiate between multiple watch instances while using the same callback function in every case. Or the callback should provide the matched bus name.",
+      "parentUuid": "7a23299d_050c9c41",
+      "range": {
+        "startLine": 46,
+        "startChar": 27,
+        "endLine": 46,
+        "endChar": 31
+      },
+      "revId": "a82d3165ac7b0595d53f2bb8f0a9e32f8439a65b",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a23299d_0525bcc1",
         "filename": "sdbusplus/bus/watch.hpp",
         "patchSetId": 4
@@ -36,6 +60,30 @@
       "writtenOn": "2017-01-11T21:03:19Z",
       "side": 1,
       "message": "Why not just use string concatenation here?",
+      "range": {
+        "startLine": 53,
+        "startChar": 8,
+        "endLine": 60,
+        "endChar": 34
+      },
+      "revId": "a82d3165ac7b0595d53f2bb8f0a9e32f8439a65b",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a1d315d_4a73bcb1",
+        "filename": "sdbusplus/bus/watch.hpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 1000065
+      },
+      "writtenOn": "2017-02-23T16:00:56Z",
+      "side": 1,
+      "message": "Ok",
+      "parentUuid": "7a23299d_0525bcc1",
       "range": {
         "startLine": 53,
         "startChar": 8,
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "3a1d315d_0a65c4e0",
+        "filename": "sdbusplus/bus/watch.hpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 1000065
+      },
+      "writtenOn": "2017-02-23T16:00:56Z",
+      "side": 1,
+      "message": "Ok, I just copied the signature from the C API and forgot to update this.",
+      "parentUuid": "7a23299d_e508802f",
+      "range": {
+        "startLine": 66,
+        "startChar": 28,
+        "endLine": 66,
+        "endChar": 45
+      },
+      "revId": "a82d3165ac7b0595d53f2bb8f0a9e32f8439a65b",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a23299d_a52ba893",
         "filename": "sdbusplus/bus/watch.hpp",
         "patchSetId": 4
@@ -82,6 +154,30 @@
       "writtenOn": "2017-01-11T21:03:19Z",
       "side": 1,
       "message": "Can\u0027t this object simply have-a match?  I don\u0027t see a need for wrapping it in a unique_ptr.",
+      "range": {
+        "startLine": 92,
+        "startChar": 8,
+        "endLine": 92,
+        "endChar": 55
+      },
+      "revId": "a82d3165ac7b0595d53f2bb8f0a9e32f8439a65b",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a1d315d_2aaf60e5",
+        "filename": "sdbusplus/bus/watch.hpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 1000065
+      },
+      "writtenOn": "2017-02-23T16:00:56Z",
+      "side": 1,
+      "message": "Hmm, match has no default constructor and is not copyable. If I move the complete construction of match incl. the match-string into the constructor initializer list, it would be possible to remove the unique_ptr and just use a match_t.",
+      "parentUuid": "7a23299d_a52ba893",
       "range": {
         "startLine": 92,
         "startChar": 8,

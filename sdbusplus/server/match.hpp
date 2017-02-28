@@ -12,16 +12,44 @@ namespace server
 namespace match
 {
 
+namespace details
+{
+
+struct match_impl
+{
+    match_impl() = delete;
+    match_impl(const match_impl&) = delete;
+    match_impl& operator=(const match_impl&) = delete;
+    match_impl(match_impl&&) = default;
+    match_impl& operator=(match_impl&&) = default;
+    ~match_impl() = default;
+
+    match_impl(sdbusplus::bus::bus& bus, const char* match,
+          sd_bus_message_handler_t handler, void* context = nullptr)
+                : _slot(nullptr)
+    {
+        sd_bus_slot* slot = nullptr;
+        sd_bus_add_match(bus.get(), &slot, match, handler, context);
+
+        _slot = decltype(_slot){slot};
+    }
+
+    private:
+        slot::slot _slot;
+};
+
+} // namespace details
+
 struct match
 {
-            /* Define all of the basic class operations:
-         *     Not allowed:
-         *         - Default constructor to avoid nullptrs.
-         *         - Copy operations due to internal unique_ptr.
-         *     Allowed:
-         *         - Move operations.
-         *         - Destructor.
-         */
+    /* Define all of the basic class operations:
+     *     Not allowed:
+     *         - Default constructor to avoid nullptrs.
+     *         - Copy operations due to internal unique_ptr.
+     *     Allowed:
+     *         - Move operations.
+     *         - Destructor.
+     */
     match() = delete;
     match(const match&) = delete;
     match& operator=(const match&) = delete;
@@ -38,16 +66,13 @@ struct match
      */
     match(sdbusplus::bus::bus& bus, const char* match,
           sd_bus_message_handler_t handler, void* context = nullptr)
-                : _slot(nullptr)
+                : _impl(std::make_unique<details::match_impl>(
+                            bus, match, handler, context))
     {
-        sd_bus_slot* slot = nullptr;
-        sd_bus_add_match(bus.get(), &slot, match, handler, context);
-
-        _slot = decltype(_slot){slot};
     }
 
     private:
-        slot::slot _slot;
+        std::unique_ptr<details::match_impl> _impl;
 };
 
 } // namespace match

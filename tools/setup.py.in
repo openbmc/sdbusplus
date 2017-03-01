@@ -1,9 +1,28 @@
 from distutils.core import setup
+from distutils.command.build import build
+from shutil import copy2, Error
+
+
+class CustomBuild(build):
+    def run(self):
+        try:
+            copy2('@top_builddir@/tools/sdbusplus/templates/'
+                  'interface.mako.server.cpp',
+                  '@top_srcdir@/tools/sdbusplus/templates/')
+        except Error:
+            pass
+        try:
+            copy2('@top_builddir@/tools/sdbusplus/templates/'
+                  'method.mako.prototype.hpp',
+                  '@top_srcdir@/tools/sdbusplus/templates/')
+        except Error:
+            pass
 
 setup(name='sdbusplus',
       version='1.0',
       package_dir={'':'@top_srcdir@/tools'},
       packages=['sdbusplus'],
       scripts=['@top_srcdir@/tools/sdbus++'],
+      cmdclass={'build': CustomBuild},
       package_data={'sdbusplus': ['templates/*.mako.*']},
       )

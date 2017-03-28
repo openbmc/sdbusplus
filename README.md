@@ -29,3 +29,4 @@ python tools/sdbus++ --templatedir=tools/sdbusplus/templates --rootdir=$root_dir
 python tools/sdbus++ --templatedir=tools/sdbusplus/templates --rootdir=$root_dir interface markdown $desired_interface > $outdir/$file_prefix.md
 python tools/sdbus++ --templatedir=tools/sdbusplus/templates --rootdir=$root_dir error markdown $desired_interface > $outdir/$file_exp_prefix.md
 ```
+

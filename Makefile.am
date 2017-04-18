@@ -22,7 +22,8 @@ nobase_include_HEADERS = \
 	sdbusplus/utility/type_traits.hpp \
 	sdbusplus/vtable.hpp
 
-LIBSDBUSPLUS_FILES =
+LIBSDBUSPLUS_FILES = \
+	sdbusplus/exception.cpp
 
 if WANT_TRANSACTION
 LIBSDBUPLUS_FILES_TRANSACTION = \

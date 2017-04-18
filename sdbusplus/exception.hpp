@@ -35,20 +35,9 @@ struct InvalidEnumString final : public internal_exception
         "An enumeration mapping was attempted for which no valid enumeration "
         "value exists.";
 
-    const char* name() const noexcept override
-    {
-        return errName;
-    }
-
-    const char* description() const noexcept override
-    {
-        return errDesc;
-    }
-
-    const char* what() const noexcept override
-    {
-        return errWhat;
-    }
+    const char* name() const noexcept override;
+    const char* description() const noexcept override;
+    const char* what() const noexcept override;
 };
 
 } // namespace exception

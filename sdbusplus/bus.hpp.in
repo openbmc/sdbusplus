@@ -36,8 +36,10 @@ struct BusDeleter
 {
     void operator()(sd_bus* ptr) const
     {
-        sd_bus_unref(ptr);
+        deleter(ptr);
     }
+
+    decltype(&sd_bus_flush_close_unref) deleter = sd_bus_flush_close_unref;
 };
 
 /* @brief Alias 'bus' to a unique_ptr type for auto-release. */
@@ -67,9 +69,17 @@ struct bus
 
     /** @brief Conversion constructor from 'busp_t'.
      *
-     *  Takes ownership of the bus-pointer and releases it when done.
+     *  Increments ref-count of the bus-pointer and releases it when done.
      */
     explicit bus(busp_t b);
+
+    /** @brief Constructor for 'bus'.
+     *
+     *  Takes ownership of the bus-pointer and releases it when done.
+     *  This method will also cause the bus to be flushed and closed
+     *  on destruction.
+     */
+    bus(busp_t b, std::false_type);
 
     /** @brief Release ownership of the stored bus-pointer. */
     busp_t release() { return _bus.release(); }
@@ -237,7 +247,24 @@ struct bus
         details::bus _bus;
 };
 
-inline bus::bus(busp_t b) : _bus(b)
+inline bus::bus(busp_t b) : _bus(sd_bus_ref(b))
+{
+    _bus.get_deleter().deleter = sd_bus_unref;
+
+#if @WANT_TRANSACTION@
+    // Emitting object added causes a message to get the properties
+    // which can trigger a 'transaction' in the server bindings.  If
+    // the bus isn't up far enough, this causes an assert deep in
+    // sd-bus code.  Get the 'unique_name' to ensure the bus is up far
+    // enough to avoid the assert.
+    if (b != nullptr)
+    {
+        get_unique_name();
+    }
+#endif
+}
+
+inline bus::bus(busp_t b, std::false_type) : _bus(b)
 {
 #if @WANT_TRANSACTION@
     // Emitting object added causes a message to get the properties
@@ -257,21 +284,21 @@ inline bus new_default()
 {
     sd_bus* b = nullptr;
     sd_bus_open(&b);
-    return bus(b);
+    return bus(b, std::false_type());
 }
 
 inline bus new_user()
 {
     sd_bus* b = nullptr;
     sd_bus_open_user(&b);
-    return bus(b);
+    return bus(b, std::false_type());
 }
 
 inline bus new_system()
 {
     sd_bus* b = nullptr;
     sd_bus_open_system(&b);
-    return bus(b);
+    return bus(b, std::false_type());
 }
 
 } // namespace bus
@@ -284,7 +311,7 @@ inline auto message::message::get_bus()
 {
     sd_bus* b = nullptr;
     b = sd_bus_message_get_bus(_msg.get());
-    return bus::bus(sd_bus_ref(b));
+    return bus::bus(b);
 }
 
 } // namespace sdbusplus

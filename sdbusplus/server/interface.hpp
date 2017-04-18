@@ -60,7 +60,7 @@ struct interface final
               const char* interf,
               const sdbusplus::vtable::vtable_t* vtable,
               void* context) :
-        _bus(sd_bus_ref(bus.get())), _path(path), _interf(interf),
+        _bus(bus.get()), _path(path), _interf(interf),
         _slot(nullptr)
     {
         sd_bus_slot* slot = nullptr;

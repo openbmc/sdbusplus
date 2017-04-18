@@ -89,7 +89,7 @@ struct object : details::compose<Args...>
            const char* path,
            bool deferSignal = false)
         : details::compose<Args...>(bus, path),
-          __sdbusplus_server_object_bus(sd_bus_ref(bus.get())),
+          __sdbusplus_server_object_bus(bus.get()),
           __sdbusplus_server_object_path(path),
           __sdbusplus_server_object_emitremoved(false)
     {

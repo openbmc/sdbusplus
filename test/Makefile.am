@@ -25,6 +25,7 @@ message_native_types_SOURCES = message/native_types.cpp
 
 check_PROGRAMS += message_types
 message_types_SOURCES = message/types.cpp
+message_types_LDFLAGS = $(gtest_ldflags)
 
 check_PROGRAMS += utility_tuple_to_array
 utility_tuple_to_array_SOURCES = utility/tuple_to_array.cpp

@@ -305,6 +305,28 @@ struct bus
         sd_bus_emit_object_removed(_bus.get(), path);
     }
 
+    /** @brief Wrapper for sd_bus_list_names.
+     *
+     *  @return A vector of strings containing the 'acquired' names from
+     *          sd_bus_list_names.
+     */
+    auto list_names_acquired()
+    {
+        char** names = nullptr;
+
+        sd_bus_list_names(_bus.get(), &names, nullptr);
+
+        std::vector<std::string> result;
+        for(auto ptr = names; ptr && *ptr; ++ptr)
+        {
+            result.push_back(*ptr);
+            free(*ptr);
+        }
+        free(names);
+
+        return result;
+    }
+
     friend struct server::interface::interface;
     friend struct server::manager::manager;
     template<class... Args> friend struct server::object::object;

@@ -18,6 +18,7 @@ message_read_SOURCES = message/read.cpp
 
 check_PROGRAMS += message_native_types
 message_native_types_SOURCES = message/native_types.cpp
+message_native_types_LDFLAGS = $(gtest_ldflags)
 
 check_PROGRAMS += message_types
 message_types_SOURCES = message/types.cpp

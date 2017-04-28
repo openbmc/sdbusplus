@@ -1,5 +1,5 @@
 #include <sdbusplus/vtable.hpp>
-#include <cassert>
+#include <gtest/gtest.h>
 
 static const sdbusplus::vtable::vtable_t example[] =
     {
@@ -21,10 +21,12 @@ static const sdbusplus::vtable::vtable_t example[] =
 extern const sd_bus_vtable example2[];
 extern const size_t example2_size;
 
-int main(int argc, char** argv)
+TEST(VtableTest, SameSize)
 {
-    assert(sizeof(example) == example2_size);
-    assert(0 == memcmp(example, example2, example2_size));
+    ASSERT_EQ(sizeof(example), example2_size);
+}
 
-    return 0;
-};
+TEST(VtableTest, SameContent)
+{
+    ASSERT_EQ(0, memcmp(example, example2, example2_size));
+}

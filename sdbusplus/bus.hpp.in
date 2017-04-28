@@ -74,6 +74,19 @@ class Strv
         std::vector<const char*> ptrs;
 };
 
+/** @brief Convert a c-style char** array to a vector of strings. */
+auto unStrv(char** strv)
+{
+    std::vector<std::string> s;
+    while(strv)
+    {
+        s.push_back(*strv);
+        ++strv;
+    }
+
+    return s;
+};
+
 /* @brief Alias 'bus' to a unique_ptr type for auto-release. */
 using bus = std::unique_ptr<sd_bus, BusDeleter>;
 
@@ -303,6 +316,23 @@ struct bus
     void emit_object_removed(const char* path)
     {
         sd_bus_emit_object_removed(_bus.get(), path);
+    }
+
+    /** @brief Wrapper for sd_bus_list_names.
+     *
+     *  @return A vector of strings containing the 'acquired' names from
+     *          sd_bus_list_names.
+     */
+    auto list_names_acquired()
+    {
+        char** names = nullptr;
+
+        sd_bus_list_names(_bus.get(), &names, nullptr);
+
+        auto result = details::unStrv(names);
+        free(names);
+
+        return result;
     }
 
     friend struct server::interface::interface;

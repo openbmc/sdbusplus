@@ -1,6 +1,7 @@
 if WANT_LIBSDBUSPLUS
 
 AM_CPPFLAGS = -I$(top_srcdir) $(GTEST_CPPFLAGS)
+gtest_ldflags = -lgtest -lgtest_main
 check_PROGRAMS =
 
 TESTS = $(check_PROGRAMS)
@@ -27,12 +28,13 @@ message_types_SOURCES = message/types.cpp
 
 check_PROGRAMS += utility_tuple_to_array
 utility_tuple_to_array_SOURCES = utility/tuple_to_array.cpp
+utility_tuple_to_array_LDFLAGS = $(gtest_ldflags)
 
 check_PROGRAMS += utility_type_traits
 utility_type_traits_SOURCES = utility/type_traits.cpp
 
 check_PROGRAMS += vtable_vtable
 vtable_vtable_SOURCES = vtable/vtable.cpp vtable/vtable_c.c
-vtable_vtable_LDFLAGS = -lgtest -lgtest_main
+vtable_vtable_LDFLAGS = $(gtest_ldflags)
 
 endif

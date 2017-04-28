@@ -5,6 +5,10 @@ check_PROGRAMS =
 
 TESTS = $(check_PROGRAMS)
 
+check_PROGRAMS += bus_list_names
+bus_list_names_SOURCES = bus/list_names.cpp
+bus_list_names_LDFLAGS = $(gtest_ldflags) $(SYSTEMD_LIBS)
+
 check_PROGRAMS += message_append
 message_append_CXXFLAGS = $(SYSTEMD_CFLAGS) $(PTHREAD_CFLAGS)
 message_append_LDFLAGS = $(SYSTEMD_LIBS) $(PTHREAD_LIBS)

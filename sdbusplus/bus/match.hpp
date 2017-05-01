@@ -1,7 +1,10 @@
 #pragma once
 
+#include <functional>
+#include <memory>
 #include <sdbusplus/slot.hpp>
 #include <sdbusplus/bus.hpp>
+#include <sdbusplus/message.hpp>
 
 namespace sdbusplus
 {
@@ -46,8 +49,40 @@ struct match
         _slot = decltype(_slot){slot};
     }
 
+    using callback_t = std::function<void(sdbusplus::message::message&)>;
+
+    /** @brief Register a signal match.
+     *
+     *  @param[in] bus - The bus to register on.
+     *  @param[in] match - The match to register.
+     *  @param[in] callback - The callback for matches.
+     */
+    match(sdbusplus::bus::bus& bus, const char* match,
+          callback_t callback)
+                : _slot(nullptr),
+                  _callback(std::make_unique<callback_t>(std::move(callback)))
+    {
+        sd_bus_slot* slot = nullptr;
+        sd_bus_add_match(bus.get(), &slot, match, callCallback,
+                         _callback.get());
+
+        _slot = decltype(_slot){slot};
+    }
+
     private:
         slot::slot _slot;
+        std::unique_ptr<callback_t> _callback = nullptr;
+
+        static int callCallback(sd_bus_message *m, void* context,
+                                sd_bus_error* e)
+        {
+            auto c = static_cast<callback_t*>(context);
+            message::message message{m};
+
+            (*c)(message);
+
+            return 0;
+        }
 };
 
 } // namespace match

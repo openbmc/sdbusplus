@@ -49,6 +49,9 @@ struct match
 
         _slot = decltype(_slot){slot};
     }
+    match(sdbusplus::bus::bus& bus, const std::string& _match,
+          sd_bus_message_handler_t handler, void* context = nullptr)
+                : match(bus, _match.c_str(), handler, context) {}
 
     using callback_t = std::function<void(sdbusplus::message::message&)>;
 
@@ -69,6 +72,9 @@ struct match
 
         _slot = decltype(_slot){slot};
     }
+    match(sdbusplus::bus::bus& bus, const std::string& _match,
+          callback_t callback)
+                : match(bus, _match.c_str(), callback) {}
 
     private:
         slot::slot _slot;

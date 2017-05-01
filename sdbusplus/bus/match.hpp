@@ -2,6 +2,7 @@
 
 #include <functional>
 #include <memory>
+#include <string>
 #include <sdbusplus/slot.hpp>
 #include <sdbusplus/bus.hpp>
 #include <sdbusplus/message.hpp>
@@ -85,6 +86,45 @@ struct match
         }
 };
 
+/** Utilities for defining match rules based on the DBus specification */
+namespace rules
+{
+
+using namespace std::string_literals;
+
+namespace type
+{
+
+auto signal() { return "type='signal',"s; }
+auto method() { return "type='method',"s; }
+auto method_return() { return "type='method_return',"s; }
+auto error() { return "type='error',"s; }
+
+} // namespace type
+
+auto sender(const std::string& s) { return "sender='"s + s + "',"; }
+auto interface(const std::string& s) { return "interface='"s + s + "',"; }
+auto member(const std::string& s) { return "member='"s + s + "',"; }
+auto path(const std::string& s) { return "path='"s + s + "',"; }
+auto path_namespace(const std::string& s)
+        { return "path_namespace='"s + s + "',"; }
+auto destination(const std::string& s) { return "destination='"s + s + "',"; }
+auto argN(size_t n, const std::string& s)
+        { return "arg"s + std::to_string(n) + "='"s + s + "',"; }
+auto argNpath(size_t n, const std::string& s)
+        { return "arg"s + std::to_string(n) + "path='"s + s + "',"; }
+auto arg0namespace(const std::string& s)
+        { return "arg0namespace='"s + s + "',"; }
+auto eavesdrop() { return "eavesdrop='true',"s; }
+
+auto nameOwnerChanged(const std::string& interface)
+{
+    return "type='signal',"
+           "sender='org.freedesktop.DBus',"
+           "member='NameOwnerChanged',"s;
+}
+
+} // namespace rules
 } // namespace match
 
 using match_t = match::match;

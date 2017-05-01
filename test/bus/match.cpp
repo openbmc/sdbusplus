@@ -11,11 +11,12 @@ class Match : public ::testing::Test
         static constexpr auto busName =
                 "xyz.openbmc_project.sdbusplus.test.Match";
 
-        static constexpr auto matchRule =
-                "type='signal',"
-                "interface=org.freedesktop.DBus,"
-                "member='NameOwnerChanged',"
-                "arg0='xyz.openbmc_project.sdbusplus.test.Match'";
+
+        static auto matchRule()
+        {
+            using namespace sdbusplus::bus::match::rules;
+            return nameOwnerChanged(busName) + argN(0, busName);
+        }
 
         void waitForIt(bool& triggered)
         {
@@ -36,7 +37,7 @@ TEST_F(Match, FunctorIs_sd_bus_message_handler_t)
             return 0;
         };
 
-    sdbusplus::bus::match_t m{bus, matchRule, trigger, &triggered};
+    sdbusplus::bus::match_t m{bus, matchRule().c_str(), trigger, &triggered};
     auto m2 = std::move(m);  // ensure match is move-safe.
 
     waitForIt(triggered);
@@ -56,7 +57,7 @@ TEST_F(Match, FunctorIs_LambdaTakingMessage)
             triggered = true;
         };
 
-    sdbusplus::bus::match_t m{bus, matchRule, trigger};
+    sdbusplus::bus::match_t m{bus, matchRule().c_str(), trigger};
     auto m2 = std::move(m);  // ensure match is move-safe.
 
     waitForIt(triggered);
@@ -83,7 +84,7 @@ TEST_F(Match, FunctorIs_MemberFunctionTakingMessage)
     };
     BoolHolder b;
 
-    sdbusplus::bus::match_t m{bus, matchRule,
+    sdbusplus::bus::match_t m{bus, matchRule().c_str(),
                               std::bind(std::mem_fn(&BoolHolder::callback),
                                         &b, std::placeholders::_1)};
     auto m2 = std::move(m);  // ensure match is move-safe.

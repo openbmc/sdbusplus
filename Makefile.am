@@ -35,7 +35,8 @@ libsdbusplus_LTLIBRARIES = libsdbusplus.la
 libsdbusplus_la_SOURCES = \
 	$(LIBSDBUSPLUS_FILES) \
 	$(LIBSDBUPLUS_FILES_TRANSACTION)
-libsdbusplus_la_LDFLAGS = $(SYSTEMD_LIBS) -version-info 1:0:0 -shared
+libsdbusplus_la_LIBADD = $(SYSTEMD_LIBS)
+libsdbusplus_la_LDFLAGS = -version-info 1:0:0 -shared
 libsdbusplus_la_CXXFLAGS = $(SYSTEMD_CFLAGS)
 
 pkgconfiglibdir = ${libdir}/pkgconfig

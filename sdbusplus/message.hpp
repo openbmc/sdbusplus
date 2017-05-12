@@ -109,6 +109,51 @@ struct message
         return sd_bus_message_get_signature(_msg.get(), true);
     }
 
+    /** @brief Get the path of a message.
+     *
+     *  @return A [weak] pointer to the path of the message.
+     */
+    const char* get_path()
+    {
+        return sd_bus_message_get_path(_msg.get());
+    }
+
+    /** @brief Get the interface of a message.
+     *
+     *  @return A [weak] pointer to the interface of the message.
+     */
+    const char* get_interface()
+    {
+        return sd_bus_message_get_interface(_msg.get());
+    }
+
+    /** @brief Get the member of a message.
+     *
+     *  @return A [weak] pointer to the member of the message.
+     */
+    const char* get_member()
+    {
+        return sd_bus_message_get_member(_msg.get());
+    }
+
+    /** @brief Get the destination of a message.
+     *
+     *  @return A [weak] pointer to the destination of the message.
+     */
+    const char* get_destination()
+    {
+        return sd_bus_message_get_destination(_msg.get());
+    }
+
+    /** @brief Get the sender of a message.
+     *
+     *  @return A [weak] pointer to the sender of the message.
+     */
+    const char* get_sender()
+    {
+        return sd_bus_message_get_sender(_msg.get());
+    }
+
     /** @brief Check if message is a method error.
      *
      *  @return True - if message is a method error.

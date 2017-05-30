@@ -132,6 +132,13 @@ inline auto nameOwnerChanged()
            "member='NameOwnerChanged',"s;
 }
 
+inline auto interfacesAdded()
+{
+    return "type='signal',"
+           "interface='org.freedesktop.DBus.ObjectManager',"
+           "member='InterfacesAdded',"s;
+}
+
 } // namespace rules
 } // namespace match
 

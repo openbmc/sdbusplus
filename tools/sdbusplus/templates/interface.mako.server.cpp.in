@@ -190,7 +190,7 @@ mapping${classname}${e.name}[] =
 
 } // anonymous namespace
 
-auto ${classname}::convert${e.name}FromString(std::string& s) ->
+auto ${classname}::convert${e.name}FromString(const std::string& s) ->
         ${e.name}
 {
     auto i = std::find_if(

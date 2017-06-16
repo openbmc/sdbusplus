@@ -105,7 +105,7 @@ ${p.camelCase}(${p.cppTypeParam(interface.name)} value);
      *                 "${interface.name}.<value name>"
      *  @return - The enum value.
      */
-    static ${e.name} convert${e.name}FromString(std::string& s);
+    static ${e.name} convert${e.name}FromString(const std::string& s);
     % endfor
 
     private:

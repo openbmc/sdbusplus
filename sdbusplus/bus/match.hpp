@@ -139,6 +139,32 @@ inline auto interfacesAdded()
            "member='InterfacesAdded',"s;
 }
 
+inline auto interfacesRemoved()
+{
+    return "type='signal',"
+           "interface='org.freedesktop.DBus.ObjectManager',"
+           "member='InterfacesRemoved',"s;
+}
+
+inline auto interfacesAdded(const std::string& p)
+{
+    return interfacesAdded() + path(p);
+}
+
+inline auto interfacesRemoved(const std::string& p)
+{
+    return interfacesRemoved() + path(p);
+}
+
+inline auto propertiesChanged(const std::string& p, const std::string& i)
+{
+    return type::signal() +
+           path(p) +
+           member("PropertiesChanged"s) +
+           interface("org.freedesktop.DBus.Properties"s) +
+           argN(0, i);
+}
+
 } // namespace rules
 } // namespace match
 

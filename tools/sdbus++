@@ -19,7 +19,7 @@ def main():
 
     parser = argparse.ArgumentParser(description='Process sdbus++ YAML files.')
 
-    parser.add_argument('-r', '--rootdir', dest='rootdir', default='example',
+    parser.add_argument('-r', '--rootdir', dest='rootdir', default='.',
                         type=str, help='Location of files to process.')
     parser.add_argument('-t', '--templatedir', dest='templatedir',
                         default=os.path.join(module_path, 'templates'),

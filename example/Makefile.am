@@ -22,23 +22,23 @@ CLEANFILES = \
 	$(calculator_markdown_generated_files)
 
 net/poettering/Calculator/server.hpp:
-	@top_srcdir@/tools/sdbus++ -r . \
+	@top_srcdir@/tools/sdbus++ \
 	    interface server-header net.poettering.Calculator > $@
 
 net/poettering/Calculator/server.cpp:
-	@top_srcdir@/tools/sdbus++ -r . \
+	@top_srcdir@/tools/sdbus++ \
 	    interface server-cpp net.poettering.Calculator > $@
 
 net/poettering/Calculator/error.hpp:
-	@top_srcdir@/tools/sdbus++ -r . \
+	@top_srcdir@/tools/sdbus++ \
 	    error exception-header net.poettering.Calculator > $@
 
 net/poettering/Calculator/error.cpp:
-	@top_srcdir@/tools/sdbus++ -r . \
+	@top_srcdir@/tools/sdbus++ \
 	    error exception-cpp net.poettering.Calculator > $@
 
 calculator.md:
-	@top_srcdir@/tools/sdbus++ -r . \
+	@top_srcdir@/tools/sdbus++ \
 	    interface markdown net.poettering.Calculator > $@
-	@top_srcdir@/tools/sdbus++ -r . \
+	@top_srcdir@/tools/sdbus++ \
 	    error markdown net.poettering.Calculator >> $@

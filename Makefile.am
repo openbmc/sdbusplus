@@ -43,4 +43,4 @@ pkgconfiglibdir = ${libdir}/pkgconfig
 pkgconfiglib_DATA = sdbusplus.pc
 
 endif
-SUBDIRS = test tools
+SUBDIRS = . tools example test

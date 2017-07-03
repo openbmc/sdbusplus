@@ -86,6 +86,7 @@ AS_IF([test "x$enable_oe_sdk" == "xyes"],
 
 # Create configured output
 AC_CONFIG_FILES([Makefile test/Makefile tools/Makefile tools/setup.py])
+AC_CONFIG_FILES([example/Makefile])
 AC_CONFIG_FILES([sdbusplus.pc])
 AC_CONFIG_FILES([sdbusplus/bus.hpp])
 AC_CONFIG_FILES([sdbusplus/server.hpp])

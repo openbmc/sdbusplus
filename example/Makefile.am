@@ -1,4 +1,4 @@
-noinst_PROGRAMS = calculator-server
+noinst_PROGRAMS = calculator-server list-users
 
 calculator_server_generated_files = \
 	net/poettering/Calculator/server.hpp \
@@ -13,6 +13,10 @@ calculator_server_SOURCES = \
     calculator-server.cpp $(calculator_server_generated_files)
 calculator_server_CXXFLAGS = $(SYSTEMD_CFLAGS)
 calculator_server_LDADD = $(SYSTEMD_LIBS) ../libsdbusplus.la
+
+list_users_SOURCES = list-users.cpp
+list_users_CXXFLAGS = $(SYSTEMD_CFLAGS)
+list_users_LDADD = $(SYSTEMD_LIBS) ../libsdbusplus.la
 
 BUILT_SOURCES = \
 	$(calculator_server_generated_files) \

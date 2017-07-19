@@ -42,5 +42,7 @@ libsdbusplus_la_CXXFLAGS = $(SYSTEMD_CFLAGS)
 pkgconfiglibdir = ${libdir}/pkgconfig
 pkgconfiglib_DATA = sdbusplus.pc
 
-endif
 SUBDIRS = . tools example test
+else
+SUBDIRS = . tools
+endif # WANT_LIBSDBUSPLUS

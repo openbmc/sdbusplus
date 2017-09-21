@@ -135,10 +135,14 @@ struct bus
     }
 
     /** @brief Process waiting dbus messages or signals, discarding unhandled.
+     *
+     * @return If progress was made, a positive integer is returned. If no
+     * progress was made, 0 is returned. If an error occurs, a negative
+     * errno-style error code is returned.
      */
-    void process_discard()
+    int process_discard()
     {
-        sd_bus_process(_bus.get(), nullptr);
+        return sd_bus_process(_bus.get(), nullptr);
     }
 
     /** @brief Claim a service name on the dbus.

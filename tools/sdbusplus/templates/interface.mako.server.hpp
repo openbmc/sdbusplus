@@ -62,7 +62,7 @@ class ${classname}
          *
          *  @param[in] bus - Bus to attach to.
          *  @param[in] path - Path to attach at.
-         *  @param[in] vals - Map of property name to value for initalization.
+         *  @param[in] vals - Map of property name to value for initialization.
          */
         ${classname}(bus::bus& bus, const char* path,
                      const std::map<std::string, PropertiesVariant>& vals);

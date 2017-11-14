@@ -165,6 +165,18 @@ inline auto propertiesChanged(const std::string& p, const std::string& i)
            argN(0, i);
 }
 
+/**
+ * @brief Constructs a NameOwnerChanged match string for a service name
+ *
+ * @param[in] s - Service name
+ *
+ * @return NameOwnerChanged match string for a service name
+ */
+inline auto nameOwnerChanged(const std::string& s)
+{
+    return nameOwnerChanged() + argN(0, s);
+}
+
 } // namespace rules
 } // namespace match
 

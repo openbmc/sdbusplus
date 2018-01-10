@@ -2,11 +2,9 @@
 
 #include <type_traits>
 
-namespace sdbusplus
-{
+namespace sdbusplus {
 
-namespace utility
-{
+namespace utility {
 
 /** @brief Convert T[N] to T* if is_same<Tbase,T>
  *
@@ -15,13 +13,11 @@ namespace utility
  */
 template <typename Tbase, typename T>
 using array_to_ptr_t = typename std::conditional_t<
-        std::is_array<T>::value,
-        std::conditional_t<std::is_same<Tbase,
-                                        std::remove_extent_t<T>>::value,
-                           std::add_pointer_t<std::remove_extent_t<T>>,
-                           T>,
-        T>;
+    std::is_array<T>::value,
+    std::conditional_t<std::is_same<Tbase, std::remove_extent_t<T>>::value,
+                       std::add_pointer_t<std::remove_extent_t<T>>, T>,
+    T>;
 
-} // namespace utility
+}  // namespace utility
 
-} // namespace sdbusplus
+}  // namespace sdbusplus

@@ -1,12 +1,12 @@
-#include <iostream>
 #include <cassert>
-#include <sdbusplus/message.hpp>
+#include <iostream>
 #include <sdbusplus/bus.hpp>
+#include <sdbusplus/message.hpp>
 
 // Global to share the dbus type string between client and server.
 static std::string verifyTypeString;
 
-using verifyCallback_t = void(*)(sd_bus_message*);
+using verifyCallback_t = void (*)(sd_bus_message*);
 verifyCallback_t verifyCallback = nullptr;
 
 static constexpr auto SERVICE = "sdbusplus.test.message.append";
@@ -15,8 +15,7 @@ static constexpr auto TEST_METHOD = "test";
 static constexpr auto QUIT_METHOD = "quit";
 
 // Open up the sdbus and claim SERVICE name.
-auto serverInit()
-{
+auto serverInit() {
     auto b = sdbusplus::bus::new_default();
     b.request_name(SERVICE);
 
@@ -24,40 +23,31 @@ auto serverInit()
 }
 
 // Thread to run the dbus server.
-void* server(void* b)
-{
+void* server(void* b) {
     auto bus = sdbusplus::bus::bus(reinterpret_cast<sdbusplus::bus::busp_t>(b));
 
-    while(1)
-    {
+    while (1) {
         // Wait for messages.
         auto m = bus.process().release();
 
-        if(m == nullptr)
-        {
+        if (m == nullptr) {
             bus.wait();
             continue;
         }
 
-        if (sd_bus_message_is_method_call(m, INTERFACE, TEST_METHOD))
-        {
+        if (sd_bus_message_is_method_call(m, INTERFACE, TEST_METHOD)) {
             // Verify the message type matches what the test expects.
             assert(verifyTypeString == sd_bus_message_get_signature(m, true));
-            if (verifyCallback)
-            {
+            if (verifyCallback) {
                 verifyCallback(m);
                 verifyCallback = nullptr;
-            }
-            else
-            {
-                std::cout << "Warning: No verification for "
-                          << verifyTypeString << std::endl;
+            } else {
+                std::cout << "Warning: No verification for " << verifyTypeString
+                          << std::endl;
             }
             // Reply to client.
             sd_bus_reply_method_return(m, nullptr);
-        }
-        else if (sd_bus_message_is_method_call(m, INTERFACE, QUIT_METHOD))
-        {
+        } else if (sd_bus_message_is_method_call(m, INTERFACE, QUIT_METHOD)) {
             // Reply and exit.
             sd_bus_reply_method_return(m, nullptr);
             break;
@@ -67,14 +57,12 @@ void* server(void* b)
     return nullptr;
 }
 
-auto newMethodCall__test(sdbusplus::bus::bus& b)
-{
+auto newMethodCall__test(sdbusplus::bus::bus& b) {
     // Allocate a method-call message for INTERFACE,TEST_METHOD.
     return b.new_method_call(SERVICE, "/", INTERFACE, TEST_METHOD);
 }
 
-void runTests()
-{
+void runTests() {
     using namespace std::literals;
 
     auto b = sdbusplus::bus::new_default();
@@ -85,10 +73,8 @@ void runTests()
         m.append(1);
         verifyTypeString = "i";
 
-        struct verify
-        {
-            static void op(sd_bus_message* m)
-            {
+        struct verify {
+            static void op(sd_bus_message* m) {
                 int32_t i = 0;
                 sd_bus_message_read_basic(m, 'i', &i);
                 assert(i == 1);
@@ -105,10 +91,8 @@ void runTests()
         m.append(a, a);
         verifyTypeString = "ii";
 
-        struct verify
-        {
-            static void op(sd_bus_message* m)
-            {
+        struct verify {
+            static void op(sd_bus_message* m) {
                 int32_t a = 0, b = 0;
                 sd_bus_message_read(m, "ii", &a, &b);
                 assert(a == 1);
@@ -126,10 +110,8 @@ void runTests()
         m.append(1, 2, 3, 4, 5);
         verifyTypeString = "iiiii";
 
-        struct verify
-        {
-            static void op(sd_bus_message* m)
-            {
+        struct verify {
+            static void op(sd_bus_message* m) {
                 int32_t a = 0, b = 0, c = 0, d = 0, e = 0;
                 sd_bus_message_read(m, "iiiii", &a, &b, &c, &d, &e);
                 assert(a == 1);
@@ -153,10 +135,8 @@ void runTests()
         m.append(t, true, f, std::move(f2), false, 1.1);
         verifyTypeString = "bbbbbd";
 
-        struct verify
-        {
-            static void op(sd_bus_message* m)
-            {
+        struct verify {
+            static void op(sd_bus_message* m) {
                 bool t1, t2, f1, f2, f3;
                 double d;
                 sd_bus_message_read(m, "bbbbbd", &t1, &t2, &f1, &f2, &f3, &d);
@@ -179,10 +159,8 @@ void runTests()
         m.append("asdf"s);
         verifyTypeString = "s";
 
-        struct verify
-        {
-            static void op(sd_bus_message* m)
-            {
+        struct verify {
+            static void op(sd_bus_message* m) {
                 const char* s = nullptr;
                 sd_bus_message_read_basic(m, 's', &s);
                 assert(0 == strcmp("asdf", s));
@@ -195,14 +173,10 @@ void runTests()
 
     // Test const string owned by const struct.  openbmc/openbmc#1025
     {
-        struct
-        {
+        struct {
             const char* foo;
 
-            void insert(sdbusplus::message::message& m)
-            {
-                m.append(foo);
-            }
+            void insert(sdbusplus::message::message& m) { m.append(foo); }
         } s;
 
         auto m = newMethodCall__test(b);
@@ -211,10 +185,8 @@ void runTests()
 
         verifyTypeString = "s";
 
-        struct verify
-        {
-            static void op(sd_bus_message* m)
-            {
+        struct verify {
+            static void op(sd_bus_message* m) {
                 const char* s = nullptr;
                 sd_bus_message_read_basic(m, 's', &s);
                 assert(0 == strcmp("1234", s));
@@ -233,20 +205,17 @@ void runTests()
         const char* str3 = "1234";
         const char* const str4 = "5678";
         const auto str5 = "!@#$";
-        m.append(1, "asdf", "ASDF"s, str,
-                 std::move(str2), str3, str4, str5, 5);
+        m.append(1, "asdf", "ASDF"s, str, std::move(str2), str3, str4, str5, 5);
         verifyTypeString = "isssssssi";
 
-        struct verify
-        {
-            static void op(sd_bus_message* m)
-            {
+        struct verify {
+            static void op(sd_bus_message* m) {
                 int32_t a = 0, b = 0;
                 const char *s0 = nullptr, *s1 = nullptr, *s2 = nullptr,
                            *s3 = nullptr, *s4 = nullptr, *s5 = nullptr,
                            *s6 = nullptr;
-                sd_bus_message_read(m, "isssssssi", &a, &s0, &s1, &s2, &s3,
-                                    &s4, &s5, &s6, &b);
+                sd_bus_message_read(m, "isssssssi", &a, &s0, &s1, &s2, &s3, &s4,
+                                    &s5, &s6, &b);
                 assert(a == 1);
                 assert(b == 5);
                 assert(0 == strcmp("asdf", s0));
@@ -272,10 +241,8 @@ void runTests()
         m.append(1, o, s, 4);
         verifyTypeString = "iogi";
 
-        struct verify
-        {
-            static void op(sd_bus_message* m)
-            {
+        struct verify {
+            static void op(sd_bus_message* m) {
                 int32_t a = 0, b = 0;
                 const char *s0 = nullptr, *s1 = nullptr;
                 sd_bus_message_read(m, "iogi", &a, &s0, &s1, &b);
@@ -283,7 +250,6 @@ void runTests()
                 assert(b == 4);
                 assert(0 == strcmp("/asdf", s0));
                 assert(0 == strcmp("iii", s1));
-
             }
         };
         verifyCallback = &verify::op;
@@ -294,21 +260,18 @@ void runTests()
     // Test vector.
     {
         auto m = newMethodCall__test(b);
-        std::vector<std::string> s{ "1", "2", "3"};
+        std::vector<std::string> s{"1", "2", "3"};
         m.append(1, s, 2);
         verifyTypeString = "iasi";
 
-        struct verify
-        {
-            static void op(sd_bus_message* m)
-            {
+        struct verify {
+            static void op(sd_bus_message* m) {
                 int32_t a = 0;
                 sd_bus_message_read(m, "i", &a);
                 assert(a == 1);
 
-                auto rc = sd_bus_message_enter_container(m,
-                                                         SD_BUS_TYPE_ARRAY,
-                                                         "s");
+                auto rc =
+                    sd_bus_message_enter_container(m, SD_BUS_TYPE_ARRAY, "s");
                 assert(0 <= rc);
 
                 const char* s = nullptr;
@@ -324,11 +287,9 @@ void runTests()
 
                 sd_bus_message_read(m, "i", &a);
                 assert(a == 2);
-
             }
         };
         verifyCallback = &verify::op;
-
 
         b.call_noreply(m);
     }
@@ -336,25 +297,21 @@ void runTests()
     // Test map.
     {
         auto m = newMethodCall__test(b);
-        std::map<std::string, int> s = { { "asdf", 3 }, { "jkl;", 4 } };
+        std::map<std::string, int> s = {{"asdf", 3}, {"jkl;", 4}};
         m.append(1, s, 2);
         verifyTypeString = "ia{si}i";
 
-        struct verify
-        {
-            static void op(sd_bus_message* m)
-            {
+        struct verify {
+            static void op(sd_bus_message* m) {
                 int32_t a = 0;
                 sd_bus_message_read(m, "i", &a);
                 assert(a == 1);
 
-                auto rc = sd_bus_message_enter_container(m,
-                                                         SD_BUS_TYPE_ARRAY,
+                auto rc = sd_bus_message_enter_container(m, SD_BUS_TYPE_ARRAY,
                                                          "{si}");
                 assert(0 <= rc);
 
-                rc = sd_bus_message_enter_container(m,
-                                                    SD_BUS_TYPE_DICT_ENTRY,
+                rc = sd_bus_message_enter_container(m, SD_BUS_TYPE_DICT_ENTRY,
                                                     "si");
                 assert(0 <= rc);
 
@@ -367,8 +324,7 @@ void runTests()
                 assert(1 == sd_bus_message_at_end(m, false));
                 sd_bus_message_exit_container(m);
 
-                rc = sd_bus_message_enter_container(m,
-                                                    SD_BUS_TYPE_DICT_ENTRY,
+                rc = sd_bus_message_enter_container(m, SD_BUS_TYPE_DICT_ENTRY,
                                                     "si");
                 assert(0 <= rc);
 
@@ -395,14 +351,12 @@ void runTests()
     // Test tuple.
     {
         auto m = newMethodCall__test(b);
-        std::tuple<int, double, std::string> a{ 3, 4.1, "asdf" };
+        std::tuple<int, double, std::string> a{3, 4.1, "asdf"};
         m.append(1, a, 2);
         verifyTypeString = "i(ids)i";
 
-        struct verify
-        {
-            static void op(sd_bus_message* m)
-            {
+        struct verify {
+            static void op(sd_bus_message* m) {
                 int32_t a = 0;
                 double b = 0;
                 const char* c = nullptr;
@@ -410,8 +364,7 @@ void runTests()
                 sd_bus_message_read(m, "i", &a);
                 assert(a == 1);
 
-                auto rc = sd_bus_message_enter_container(m,
-                                                         SD_BUS_TYPE_STRUCT,
+                auto rc = sd_bus_message_enter_container(m, SD_BUS_TYPE_STRUCT,
                                                          "ids");
                 assert(0 <= rc);
 
@@ -438,10 +391,8 @@ void runTests()
         m.append(1, a1, a2, 2);
         verifyTypeString = "ivvi";
 
-        struct verify
-        {
-            static void op(sd_bus_message* m)
-            {
+        struct verify {
+            static void op(sd_bus_message* m) {
                 int32_t a = 0;
                 double b = 0;
 
@@ -470,15 +421,13 @@ void runTests()
     // Test map-variant.
     {
         auto m = newMethodCall__test(b);
-        std::map<std::string, sdbusplus::message::variant<int, double>> a1 =
-                { { "asdf", 3 }, { "jkl;", 4.1 } };
+        std::map<std::string, sdbusplus::message::variant<int, double>> a1 = {
+            {"asdf", 3}, {"jkl;", 4.1}};
         m.append(1, a1, 2);
         verifyTypeString = "ia{sv}i";
 
-        struct verify
-        {
-            static void op(sd_bus_message* m)
-            {
+        struct verify {
+            static void op(sd_bus_message* m) {
                 int32_t a = 0;
                 double b = 0;
                 const char* c = nullptr;
@@ -521,9 +470,7 @@ void runTests()
     }
 }
 
-int main()
-{
-
+int main() {
     // Initialize and start server thread.
     pthread_t t;
     {

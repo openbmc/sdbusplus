@@ -17,5 +17,5 @@ class Method(NamedElement, Renderer):
         return self.render(loader, "method.mako.md", method=self)
 
     def cpp_prototype(self, loader, interface, ptype):
-        return self.render(loader, "method.mako.prototype.hpp", method=self,
+        return self.render(loader, "method.mako.prototype.hpp.in", method=self,
                            interface=interface, ptype=ptype, post=str.rstrip)

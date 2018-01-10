@@ -27,7 +27,7 @@ class Error(NamedElement, Renderer):
         return self.render(loader, "error.mako.md", error=self)
 
     def exception_header(self, loader):
-        return self.render(loader, "error.mako.hpp", error=self)
+        return self.render(loader, "error.mako.hpp.in", error=self)
 
     def exception_cpp(self, loader):
-        return self.render(loader, "error.mako.cpp", error=self)
+        return self.render(loader, "error.mako.cpp.in", error=self)

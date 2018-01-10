@@ -42,40 +42,35 @@
          */
         void ${ signal.camelCase }(
             ${ parameters(True) });
-###
-### Emit 'vtable'
-###
-    % elif ptype == 'vtable':
-    vtable::signal("${signal.name}",
-                   details::${interface_name()}::_signal_${signal.CamelCase }
-                        .data()),
-###
-### Emit 'callback-cpp'
-###
-    % elif ptype == 'callback-cpp':
-void ${interface_name()}::${ signal.camelCase }(
-            ${ parameters() })
-{
-    using sdbusplus::server::binding::details::convertForMessage;
+## # ## #Emit 'vtable'## # % elif ptype == 'vtable'
+    : vtable::signal(
+          "${signal.name}",
+          details::$ { interface_name() } ::_signal_${signal.CamelCase}.data()),
+    ## # ## #Emit 'callback-cpp'## # % elif ptype == 'callback-cpp' : void $ {
+  interface_name()
+}
+::${signal.camelCase}(${parameters()}) {
+  using sdbusplus::server::binding::details::convertForMessage;
 
-    auto& i = _${"_".join(interface.name.split('.'))}_interface;
-    auto m = i.new_signal("${ signal.name }");
+  auto& i = _$ { "_".join(interface.name.split('.')) }
+  _interface;
+  auto m = i.new_signal("${ signal.name }");
 
-    m.append(${ parameters_as_list(pre="convertForMessage(", post=")") });
-    m.signal_send();
+  m.append(${parameters_as_list(pre = "convertForMessage(", post = ")")});
+  m.signal_send();
 }
 
-namespace details
+namespace details {
+namespace $ {
+interface_name()
+}
 {
-namespace ${interface_name()}
-{
-static const auto _signal_${ signal.CamelCase } =
-    % if len(signal.properties) == 0:
-        utility::tuple_to_array(std::make_tuple('\0'));
-    % else:
-        utility::tuple_to_array(message::types::type_id<
-                ${ parameters_types_as_list() }>());
-    % endif
+  static const auto _signal_${signal.CamelCase} =
+      % if len(signal.properties) == 0
+      : utility::tuple_to_array(std::make_tuple('\0'));
+  % else : utility::tuple_to_array(
+               message::types::type_id<${parameters_types_as_list()}>());
+  % endif
 }
 }
-    % endif
+% endif

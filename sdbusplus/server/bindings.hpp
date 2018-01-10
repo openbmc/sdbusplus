@@ -2,14 +2,10 @@
 
 #include <utility>
 
-namespace sdbusplus
-{
-namespace server
-{
-namespace binding
-{
-namespace details
-{
+namespace sdbusplus {
+namespace server {
+namespace binding {
+namespace details {
 
 /** Utility for converting C++ types prior to 'append'ing to a message.
  *
@@ -18,11 +14,9 @@ namespace details
  *  implementation for all other types.
  */
 template <typename T>
-T&& convertForMessage(T&& t)
-{
+T&& convertForMessage(T&& t) {
     return std::forward<T>(t);
 }
-
 }
 }
 }

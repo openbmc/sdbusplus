@@ -1,18 +1,12 @@
 #pragma once
 
-#include <utility>
-#include <tuple>
 #include <array>
+#include <tuple>
+#include <utility>
 
-namespace sdbusplus
-{
-
-namespace utility
-{
-
-namespace details
-{
-
+namespace sdbusplus {
+namespace utility {
+namespace details {
 /** tuple_to_array - Create std::array from std::tuple.
  *
  *  @tparam V - Type of the first tuple element.
@@ -26,14 +20,15 @@ namespace details
  *  @return A std::array where each I-th element is tuple's I-th element.
  */
 template <typename V, typename... Types, std::size_t... I>
-constexpr auto tuple_to_array(
-    std::tuple<V, Types...>&& tuple,
-    std::integer_sequence<std::size_t, I...>)
+constexpr auto tuple_to_array(std::tuple<V, Types...>&& tuple,
+                              std::integer_sequence<std::size_t, I...>)
 {
-    return std::array<V, sizeof...(I) >({ std::get<I>(tuple)..., });
+    return std::array<V, sizeof...(I)>({
+        std::get<I>(tuple)...,
+    });
 }
 
-} // namespace details
+}  // namespace details
 
 /** tuple_to_array - Create std::array from std::tuple.
  *
@@ -51,6 +46,6 @@ constexpr auto tuple_to_array(std::tuple<Types...>&& tuple)
     return details::tuple_to_array(std::move(tuple), I());
 }
 
-} // namespace utility
+}  // namespace utility
 
-} // namespace sdbusplus
+}  // namespace sdbusplus

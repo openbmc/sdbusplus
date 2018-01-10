@@ -2,12 +2,8 @@
 
 #include <exception>
 
-namespace sdbusplus
-{
-
-namespace exception
-{
-
+namespace sdbusplus {
+namespace exception {
 /** Base exception class for all sdbusplus exceptions, including those created
  *  by the bindings. */
 struct exception : public std::exception
@@ -40,9 +36,9 @@ struct InvalidEnumString final : public internal_exception
     const char* what() const noexcept override;
 };
 
-} // namespace exception
+}  // namespace exception
 
 using exception_t = exception::exception;
 using internal_exception_t = exception::internal_exception;
 
-} // namespace sdbusplus
+}  // namespace sdbusplus

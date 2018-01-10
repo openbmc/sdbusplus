@@ -1,17 +1,11 @@
 #pragma once
 
-#include <sdbusplus/slot.hpp>
 #include <sdbusplus/bus.hpp>
+#include <sdbusplus/slot.hpp>
 
-namespace sdbusplus
-{
-
-namespace server
-{
-
-namespace manager
-{
-
+namespace sdbusplus {
+namespace server {
+namespace manager {
 /** @class manager
  *  @brief Provide a C++ holder for a sd-bus object manager.
  *
@@ -20,14 +14,14 @@ namespace manager
  */
 struct manager
 {
-        /* Define all of the basic class operations:
-         *     Not allowed:
-         *         - Default constructor to avoid nullptrs.
-         *         - Copy operations due to internal unique_ptr.
-         *     Allowed:
-         *         - Move operations.
-         *         - Destructor.
-         */
+    /* Define all of the basic class operations:
+     *     Not allowed:
+     *         - Default constructor to avoid nullptrs.
+     *         - Copy operations due to internal unique_ptr.
+     *     Allowed:
+     *         - Move operations.
+     *         - Destructor.
+     */
     manager() = delete;
     manager(const manager&) = delete;
     manager& operator=(const manager&) = delete;
@@ -48,14 +42,13 @@ struct manager
         _slot = decltype(_slot){slot};
     }
 
-    private:
-        slot::slot _slot;
-
+   private:
+    slot::slot _slot;
 };
 
-} // namespace manager
+}  // namespace manager
 
 using manager_t = manager::manager;
 
-} // namespace server
-} // namespace sdbusplus
+}  // namespace server
+}  // namespace sdbusplus

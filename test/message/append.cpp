@@ -1,12 +1,12 @@
-#include <iostream>
 #include <cassert>
-#include <sdbusplus/message.hpp>
+#include <iostream>
 #include <sdbusplus/bus.hpp>
+#include <sdbusplus/message.hpp>
 
 // Global to share the dbus type string between client and server.
 static std::string verifyTypeString;
 
-using verifyCallback_t = void(*)(sd_bus_message*);
+using verifyCallback_t = void (*)(sd_bus_message*);
 verifyCallback_t verifyCallback = nullptr;
 
 static constexpr auto SERVICE = "sdbusplus.test.message.append";
@@ -28,12 +28,12 @@ void* server(void* b)
 {
     auto bus = sdbusplus::bus::bus(reinterpret_cast<sdbusplus::bus::busp_t>(b));
 
-    while(1)
+    while (1)
     {
         // Wait for messages.
         auto m = bus.process().release();
 
-        if(m == nullptr)
+        if (m == nullptr)
         {
             bus.wait();
             continue;
@@ -50,8 +50,8 @@ void* server(void* b)
             }
             else
             {
-                std::cout << "Warning: No verification for "
-                          << verifyTypeString << std::endl;
+                std::cout << "Warning: No verification for " << verifyTypeString
+                          << std::endl;
             }
             // Reply to client.
             sd_bus_reply_method_return(m, nullptr);
@@ -233,8 +233,7 @@ void runTests()
         const char* str3 = "1234";
         const char* const str4 = "5678";
         const auto str5 = "!@#$";
-        m.append(1, "asdf", "ASDF"s, str,
-                 std::move(str2), str3, str4, str5, 5);
+        m.append(1, "asdf", "ASDF"s, str, std::move(str2), str3, str4, str5, 5);
         verifyTypeString = "isssssssi";
 
         struct verify
@@ -245,8 +244,8 @@ void runTests()
                 const char *s0 = nullptr, *s1 = nullptr, *s2 = nullptr,
                            *s3 = nullptr, *s4 = nullptr, *s5 = nullptr,
                            *s6 = nullptr;
-                sd_bus_message_read(m, "isssssssi", &a, &s0, &s1, &s2, &s3,
-                                    &s4, &s5, &s6, &b);
+                sd_bus_message_read(m, "isssssssi", &a, &s0, &s1, &s2, &s3, &s4,
+                                    &s5, &s6, &b);
                 assert(a == 1);
                 assert(b == 5);
                 assert(0 == strcmp("asdf", s0));
@@ -283,7 +282,6 @@ void runTests()
                 assert(b == 4);
                 assert(0 == strcmp("/asdf", s0));
                 assert(0 == strcmp("iii", s1));
-
             }
         };
         verifyCallback = &verify::op;
@@ -294,7 +292,7 @@ void runTests()
     // Test vector.
     {
         auto m = newMethodCall__test(b);
-        std::vector<std::string> s{ "1", "2", "3"};
+        std::vector<std::string> s{"1", "2", "3"};
         m.append(1, s, 2);
         verifyTypeString = "iasi";
 
@@ -306,9 +304,8 @@ void runTests()
                 sd_bus_message_read(m, "i", &a);
                 assert(a == 1);
 
-                auto rc = sd_bus_message_enter_container(m,
-                                                         SD_BUS_TYPE_ARRAY,
-                                                         "s");
+                auto rc =
+                    sd_bus_message_enter_container(m, SD_BUS_TYPE_ARRAY, "s");
                 assert(0 <= rc);
 
                 const char* s = nullptr;
@@ -324,11 +321,9 @@ void runTests()
 
                 sd_bus_message_read(m, "i", &a);
                 assert(a == 2);
-
             }
         };
         verifyCallback = &verify::op;
-
 
         b.call_noreply(m);
     }
@@ -336,7 +331,7 @@ void runTests()
     // Test map.
     {
         auto m = newMethodCall__test(b);
-        std::map<std::string, int> s = { { "asdf", 3 }, { "jkl;", 4 } };
+        std::map<std::string, int> s = {{"asdf", 3}, {"jkl;", 4}};
         m.append(1, s, 2);
         verifyTypeString = "ia{si}i";
 
@@ -348,13 +343,11 @@ void runTests()
                 sd_bus_message_read(m, "i", &a);
                 assert(a == 1);
 
-                auto rc = sd_bus_message_enter_container(m,
-                                                         SD_BUS_TYPE_ARRAY,
+                auto rc = sd_bus_message_enter_container(m, SD_BUS_TYPE_ARRAY,
                                                          "{si}");
                 assert(0 <= rc);
 
-                rc = sd_bus_message_enter_container(m,
-                                                    SD_BUS_TYPE_DICT_ENTRY,
+                rc = sd_bus_message_enter_container(m, SD_BUS_TYPE_DICT_ENTRY,
                                                     "si");
                 assert(0 <= rc);
 
@@ -367,8 +360,7 @@ void runTests()
                 assert(1 == sd_bus_message_at_end(m, false));
                 sd_bus_message_exit_container(m);
 
-                rc = sd_bus_message_enter_container(m,
-                                                    SD_BUS_TYPE_DICT_ENTRY,
+                rc = sd_bus_message_enter_container(m, SD_BUS_TYPE_DICT_ENTRY,
                                                     "si");
                 assert(0 <= rc);
 
@@ -395,7 +387,7 @@ void runTests()
     // Test tuple.
     {
         auto m = newMethodCall__test(b);
-        std::tuple<int, double, std::string> a{ 3, 4.1, "asdf" };
+        std::tuple<int, double, std::string> a{3, 4.1, "asdf"};
         m.append(1, a, 2);
         verifyTypeString = "i(ids)i";
 
@@ -410,8 +402,7 @@ void runTests()
                 sd_bus_message_read(m, "i", &a);
                 assert(a == 1);
 
-                auto rc = sd_bus_message_enter_container(m,
-                                                         SD_BUS_TYPE_STRUCT,
+                auto rc = sd_bus_message_enter_container(m, SD_BUS_TYPE_STRUCT,
                                                          "ids");
                 assert(0 <= rc);
 
@@ -470,8 +461,8 @@ void runTests()
     // Test map-variant.
     {
         auto m = newMethodCall__test(b);
-        std::map<std::string, sdbusplus::message::variant<int, double>> a1 =
-                { { "asdf", 3 }, { "jkl;", 4.1 } };
+        std::map<std::string, sdbusplus::message::variant<int, double>> a1 = {
+            {"asdf", 3}, {"jkl;", 4.1}};
         m.append(1, a1, 2);
         verifyTypeString = "ia{sv}i";
 
@@ -523,7 +514,6 @@ void runTests()
 
 int main()
 {
-
     // Initialize and start server thread.
     pthread_t t;
     {

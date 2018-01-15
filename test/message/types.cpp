@@ -2,17 +2,16 @@
 #include <sdbusplus/message/types.hpp>
 #include <sdbusplus/utility/tuple_to_array.hpp>
 
-template <typename ...Args>
-auto dbus_string(Args&& ... args)
+template <typename... Args> auto dbus_string(Args &&... args)
 {
-    return std::string(
-               sdbusplus::utility::tuple_to_array(
-                   sdbusplus::message::types::type_id<Args...>()).data());
+    return std::string(sdbusplus::utility::tuple_to_array(
+                           sdbusplus::message::types::type_id<Args...>())
+                           .data());
 }
 
 TEST(MessageTypes, Integer)
 {
-    ASSERT_EQ(dbus_string(1),"i");
+    ASSERT_EQ(dbus_string(1), "i");
 }
 
 TEST(MessageTypes, Double)
@@ -30,7 +29,7 @@ TEST(MessageTypes, StringReferences)
 {
     std::string a = "a";
     std::string b = "b";
-    const char* c = "c";
+    const char *c = "c";
 
     ASSERT_EQ(dbus_string(a, std::move(b), c), "sss");
 }

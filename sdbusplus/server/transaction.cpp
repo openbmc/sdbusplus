@@ -1,13 +1,9 @@
 #include "transaction.hpp"
 
-namespace sdbusplus
-{
-namespace server
-{
-namespace transaction
-{
-namespace details
-{
+namespace sdbusplus {
+namespace server {
+namespace transaction {
+namespace details {
 
 // Transaction Id
 thread_local uint64_t id = 0;

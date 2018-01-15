@@ -9,7 +9,7 @@ namespace sdbusplus
 namespace slot
 {
 
-using slotp_t = sd_bus_slot*;
+using slotp_t = sd_bus_slot *;
 class slot;
 
 namespace details
@@ -33,36 +33,43 @@ using slot = std::unique_ptr<sd_bus_slot, SlotDeleter>;
  */
 struct slot
 {
-        /* Define all of the basic class operations:
-         *     Not allowed:
-         *         - Default constructor to avoid nullptrs.
-         *         - Copy operations due to internal unique_ptr.
-         *     Allowed:
-         *         - Move operations.
-         *         - Destructor.
-         */
+    /* Define all of the basic class operations:
+     *     Not allowed:
+     *         - Default constructor to avoid nullptrs.
+     *         - Copy operations due to internal unique_ptr.
+     *     Allowed:
+     *         - Move operations.
+     *         - Destructor.
+     */
     slot() = delete;
-    slot(const slot&) = delete;
-    slot& operator=(const slot&) = delete;
-    slot(slot&&) = default;
-    slot& operator=(slot&&) = default;
+    slot(const slot &) = delete;
+    slot &operator=(const slot &) = delete;
+    slot(slot &&) = default;
+    slot &operator=(slot &&) = default;
     ~slot() = default;
 
     /** @brief Conversion constructor for 'slotp_t'.
      *
      *  Takes ownership of the slot-pointer and releases it when done.
      */
-    explicit slot(slotp_t s) : _slot(s) {}
+    explicit slot(slotp_t s) : _slot(s)
+    {
+    }
 
     /** @brief Release ownership of the stored slot-pointer. */
-    slotp_t release() { return _slot.release(); }
+    slotp_t release()
+    {
+        return _slot.release();
+    }
 
     /** @brief Check if slot contains a real pointer. (non-nullptr). */
-    explicit operator bool() const { return bool(_slot); }
+    explicit operator bool() const
+    {
+        return bool(_slot);
+    }
 
-    private:
-        details::slot _slot;
-
+  private:
+    details::slot _slot;
 };
 
 } // namespace slot

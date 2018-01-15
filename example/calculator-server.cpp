@@ -1,22 +1,24 @@
 #include <iostream>
-#include <sdbusplus/server.hpp>
-#include <net/poettering/Calculator/server.hpp>
 #include <net/poettering/Calculator/error.hpp>
+#include <net/poettering/Calculator/server.hpp>
+#include <sdbusplus/server.hpp>
 
-using Calculator_inherit = sdbusplus::server::object_t<
-        sdbusplus::net::poettering::server::Calculator>;
+using Calculator_inherit =
+    sdbusplus::server::object_t<sdbusplus::net::poettering::server::Calculator>;
 
 /** Example implementation of net.poettering.Calculator */
 struct Calculator : Calculator_inherit
 {
     /** Constructor */
-    Calculator(sdbusplus::bus::bus& bus, const char* path) :
-        Calculator_inherit(bus, path) { }
+    Calculator(sdbusplus::bus::bus &bus, const char *path) :
+        Calculator_inherit(bus, path)
+    {
+    }
 
     /** Multiply (x*y), update lastResult */
     int64_t multiply(int64_t x, int64_t y) override
     {
-        return lastResult(x*y);
+        return lastResult(x * y);
     }
 
     /** Divide (x/y), update lastResult
@@ -32,7 +34,7 @@ struct Calculator : Calculator_inherit
             throw DivisionByZero();
         }
 
-        return lastResult(x/y);
+        return lastResult(x / y);
     }
 
     /** Clear lastResult, broadcast 'Cleared' signal */
@@ -62,7 +64,7 @@ int main()
     Calculator c1{b, path};
 
     // Handle dbus processing forever.
-    while(1)
+    while (1)
     {
         b.process_discard(); // discard any unhandled messages
         b.wait();

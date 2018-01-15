@@ -1,5 +1,5 @@
-#include <sdbusplus/utility/tuple_to_array.hpp>
 #include <gtest/gtest.h>
+#include <sdbusplus/utility/tuple_to_array.hpp>
 
 TEST(TupleToArray, Test3Chars)
 {

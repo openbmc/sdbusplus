@@ -18,31 +18,36 @@ namespace details
  *  These allow an object to group multiple dbus interface bindings into a
  *  single class.
  */
-template <class T, class... Rest> struct compose_impl :
-        T, compose_impl<Rest...>
+template <class T, class... Rest> struct compose_impl : T, compose_impl<Rest...>
 {
-    compose_impl(bus::bus& bus, const char* path) :
-        T(bus, path), compose_impl<Rest...>(bus, path) {}
+    compose_impl(bus::bus &bus, const char *path) :
+        T(bus, path), compose_impl<Rest...>(bus, path)
+    {
+    }
 };
 
 /** Specialization for single element. */
 template <class T> struct compose_impl<T> : T
 {
-    compose_impl(bus::bus& bus, const char* path) :
-        T(bus, path) {}
+    compose_impl(bus::bus &bus, const char *path) : T(bus, path)
+    {
+    }
 };
 
 /** Default compose operation for variadic arguments. */
 template <class... Args> struct compose : compose_impl<Args...>
 {
-    compose(bus::bus& bus, const char* path) :
-        compose_impl<Args...>(bus, path) {}
+    compose(bus::bus &bus, const char *path) : compose_impl<Args...>(bus, path)
+    {
+    }
 };
 
 /** Specialization for zero variadic arguments. */
 template <> struct compose<>
 {
-    compose(bus::bus& bus, const char* path) {}
+    compose(bus::bus &bus, const char *path)
+    {
+    }
 };
 
 } // namespace details
@@ -59,22 +64,21 @@ template <> struct compose<>
  *  'sd_bus_emit_object_removed' signals are emitted.
  *
  */
-template<class... Args>
-struct object : details::compose<Args...>
+template <class... Args> struct object : details::compose<Args...>
 {
-        /* Define all of the basic class operations:
-         *     Not allowed:
-         *         - Default constructor to avoid nullptrs.
-         *         - Copy operations due to internal unique_ptr.
-         *     Allowed:
-         *         - Move operations.
-         *         - Destructor.
-         */
+    /* Define all of the basic class operations:
+     *     Not allowed:
+     *         - Default constructor to avoid nullptrs.
+     *         - Copy operations due to internal unique_ptr.
+     *     Allowed:
+     *         - Move operations.
+     *         - Destructor.
+     */
     object() = delete;
-    object(const object&) = delete;
-    object& operator=(const object&) = delete;
-    object(object&&) = default;
-    object& operator=(object&&) = default;
+    object(const object &) = delete;
+    object &operator=(const object &) = delete;
+    object(object &&) = default;
+    object &operator=(object &&) = default;
 
     /** Construct an 'object' on a bus with a path.
      *
@@ -85,13 +89,11 @@ struct object : details::compose<Args...>
      *                           object needs custom property init before the
      *                           signal can be sent.
      */
-    object(bus::bus& bus,
-           const char* path,
-           bool deferSignal = false)
-        : details::compose<Args...>(bus, path),
-          __sdbusplus_server_object_bus(bus.get()),
-          __sdbusplus_server_object_path(path),
-          __sdbusplus_server_object_emitremoved(false)
+    object(bus::bus &bus, const char *path, bool deferSignal = false) :
+        details::compose<Args...>(bus, path),
+        __sdbusplus_server_object_bus(bus.get()),
+        __sdbusplus_server_object_path(path),
+        __sdbusplus_server_object_emitremoved(false)
     {
         if (!deferSignal)
         {
@@ -119,15 +121,14 @@ struct object : details::compose<Args...>
         }
     }
 
-    private:
-        // These member names are purposefully chosen as long and, hopefully,
-        // unique.  Since an object is 'composed' via multiple-inheritence,
-        // all members need to have unique names to ensure there is no
-        // ambiguity.
-        bus::bus __sdbusplus_server_object_bus;
-        std::string __sdbusplus_server_object_path;
-        bool __sdbusplus_server_object_emitremoved;
-
+  private:
+    // These member names are purposefully chosen as long and, hopefully,
+    // unique.  Since an object is 'composed' via multiple-inheritence,
+    // all members need to have unique names to ensure there is no
+    // ambiguity.
+    bus::bus __sdbusplus_server_object_bus;
+    std::string __sdbusplus_server_object_path;
+    bool __sdbusplus_server_object_emitremoved;
 };
 
 } // namespace object

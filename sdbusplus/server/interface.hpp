@@ -1,10 +1,10 @@
 #pragma once
 
-#include <string>
-#include <systemd/sd-bus.h>
+#include <sdbusplus/bus.hpp>
 #include <sdbusplus/slot.hpp>
 #include <sdbusplus/vtable.hpp>
-#include <sdbusplus/bus.hpp>
+#include <string>
+#include <systemd/sd-bus.h>
 
 namespace sdbusplus
 {
@@ -31,19 +31,19 @@ namespace interface
  */
 struct interface final
 {
-        /* Define all of the basic class operations:
-         *     Not allowed:
-         *         - Default constructor to avoid nullptrs.
-         *         - Copy operations due to internal unique_ptr.
-         *     Allowed:
-         *         - Move operations.
-         *         - Destructor.
-         */
+    /* Define all of the basic class operations:
+     *     Not allowed:
+     *         - Default constructor to avoid nullptrs.
+     *         - Copy operations due to internal unique_ptr.
+     *     Allowed:
+     *         - Move operations.
+     *         - Destructor.
+     */
     interface() = delete;
-    interface(const interface&) = delete;
-    interface& operator=(const interface&) = delete;
-    interface(interface&&) = default;
-    interface& operator=(interface&&) = default;
+    interface(const interface &) = delete;
+    interface &operator=(const interface &) = delete;
+    interface(interface &&) = default;
+    interface &operator=(interface &&) = default;
     ~interface() = default;
 
     /** @brief Register the (path, interface, vtable) as a dbus object.
@@ -55,27 +55,23 @@ struct interface final
      *  @param[in] context - User-defined context, which is often 'this' from
      *                       the interface implementation class.
      */
-    interface(sdbusplus::bus::bus& bus,
-              const char* path,
-              const char* interf,
-              const sdbusplus::vtable::vtable_t* vtable,
-              void* context) :
-        _bus(bus.get()), _path(path), _interf(interf),
-        _slot(nullptr)
+    interface(sdbusplus::bus::bus &bus, const char *path, const char *interf,
+              const sdbusplus::vtable::vtable_t *vtable, void *context) :
+        _bus(bus.get()),
+        _path(path), _interf(interf), _slot(nullptr)
     {
-        sd_bus_slot* slot = nullptr;
+        sd_bus_slot *slot = nullptr;
         sd_bus_add_object_vtable(_bus.get(), &slot, _path.c_str(),
                                  _interf.c_str(), vtable, context);
 
         _slot = decltype(_slot){slot};
-
     }
 
     /** @brief Create a new signal message.
      *
      *  @param[in] member - The signal name to create.
      */
-    auto new_signal(const char* member)
+    auto new_signal(const char *member)
     {
         return _bus.new_signal(_path.c_str(), _interf.c_str(), member);
     }
@@ -84,20 +80,26 @@ struct interface final
      *
      *  @param[in] property - The property which changed.
      */
-    void property_changed(const char* property)
+    void property_changed(const char *property)
     {
         sd_bus_emit_properties_changed(_bus.get(), _path.c_str(),
                                        _interf.c_str(), property, nullptr);
     }
 
-    bus::bus& bus() { return _bus; }
-    const std::string& path() { return _path; }
+    bus::bus &bus()
+    {
+        return _bus;
+    }
+    const std::string &path()
+    {
+        return _path;
+    }
 
-    private:
-        bus::bus _bus;
-        std::string _path;
-        std::string _interf;
-        slot::slot _slot;
+  private:
+    bus::bus _bus;
+    std::string _path;
+    std::string _interf;
+    slot::slot _slot;
 };
 
 } // namespace interface

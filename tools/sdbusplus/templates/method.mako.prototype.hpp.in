@@ -113,7 +113,12 @@
                         .data(),
                    details::${interface_name()}::_return_${ method.CamelCase }
                         .data(),
-                   _callback_${ method.CamelCase }),
+                   _callback_${ method.CamelCase }\
+        % if method.cppFlags:
+,
+                   ${method.cppFlags}\
+        % endif
+),
 ###
 ### Emit 'callback-cpp'
 ###

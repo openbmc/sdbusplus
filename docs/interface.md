@@ -110,17 +110,20 @@ for locally defined types.
 
 ## Methods
 
-A method must have the YAML property `name` and may optionally have
-`parameters`, `returns`, `errors`, and `description`.  Each parameter must
-have a `name`, `type`, and optional `description`.  Each return must have a
-`type` and may optionally have a `name` and `description`.  Errors are a list
-of fully-qualified or shortened `self.` identifiers for errors the method may
-return, which must be defined in a corresponding errors YAML file.
+A method must have the YAML property `name` and may optionally have `flags`,
+`parameters`, `returns`, `errors`, and `description`.  Flags are a list of
+sd-bus flags featuring `deprecated`, 'hidden', `unprivileged` and `no_reply`.
+Each parameter must have a `name`, `type`, and optional `description`.  Each
+return must have a `type` and may optionally have a `name` and `description`.
+Errors are a list of fully-qualified or shortened `self.` identifiers for errors
+the method may return, which must be defined in a corresponding errors YAML file.
 
 Example:
 ```
 methods:
     - name: Shuffle
+      flags:
+        - unprivileged
       errors:
         - self.Error.TooTired
     - name: Deal
@@ -133,6 +136,9 @@ methods:
         - name: Card
           type: struct[enum[self.Suit], byte]
     - name: MoveToTop
+      flags:
+        - unprivileged
+        - no_reply
       parameters:
         - name: Card
           type: struct[enum[self.Suit], byte]

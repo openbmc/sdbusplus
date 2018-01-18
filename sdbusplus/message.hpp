@@ -10,8 +10,11 @@
 namespace sdbusplus
 {
 
-    // Forward declare sdbusplus::bus::bus for 'friend'ship.
-namespace bus { struct bus; };
+// Forward declare sdbusplus::bus::bus for 'friend'ship.
+namespace bus
+{
+struct bus;
+};
 
 namespace message
 {
@@ -41,14 +44,14 @@ using msg = std::unique_ptr<sd_bus_message, MsgDeleter>;
  */
 struct message
 {
-        /* Define all of the basic class operations:
-         *     Not allowed:
-         *         - Default constructor to avoid nullptrs.
-         *         - Copy operations due to internal unique_ptr.
-         *     Allowed:
-         *         - Move operations.
-         *         - Destructor.
-         */
+    /* Define all of the basic class operations:
+     *     Not allowed:
+     *         - Default constructor to avoid nullptrs.
+     *         - Copy operations due to internal unique_ptr.
+     *     Allowed:
+     *         - Move operations.
+     *         - Destructor.
+     */
     message() = delete;
     message(const message&) = delete;
     message& operator=(const message&) = delete;
@@ -61,27 +64,36 @@ struct message
      *  Takes increment ref-count of the msg-pointer and release when
      *  destructed.
      */
-    explicit message(msgp_t m) : _msg(sd_bus_message_ref(m)) {}
+    explicit message(msgp_t m) : _msg(sd_bus_message_ref(m))
+    {
+    }
 
     /** @brief Constructor for 'msgp_t'.
      *
      *  Takes ownership of the msg-pointer and releases it when done.
      */
-    message(msgp_t m, std::false_type) : _msg(m) {}
+    message(msgp_t m, std::false_type) : _msg(m)
+    {
+    }
 
     /** @brief Release ownership of the stored msg-pointer. */
-    msgp_t release() { return _msg.release(); }
+    msgp_t release()
+    {
+        return _msg.release();
+    }
 
     /** @brief Check if message contains a real pointer. (non-nullptr). */
-    explicit operator bool() const { return bool(_msg); }
-
+    explicit operator bool() const
+    {
+        return bool(_msg);
+    }
 
     /** @brief Perform sd_bus_message_append, with automatic type deduction.
      *
      *  @tparam ...Args - Type of items to append to message.
      *  @param[in] args - Items to append to message.
      */
-    template <typename ...Args> void append(Args&&... args)
+    template <typename... Args> void append(Args&&... args)
     {
         sdbusplus::message::append(_msg.get(), std::forward<Args>(args)...);
     }
@@ -91,7 +103,7 @@ struct message
      *  @tparam ...Args - Type of items to read from message.
      *  @param[out] args - Items to read from message.
      */
-    template <typename ...Args> void read(Args&&... args)
+    template <typename... Args> void read(Args&&... args)
     {
         sdbusplus::message::read(_msg.get(), std::forward<Args>(args)...);
     }
@@ -164,9 +176,9 @@ struct message
     }
 
     /** @brief Get the transaction cookie of a message.
-      *
-      * @return The transaction cookie of a message.
-      */
+     *
+     * @return The transaction cookie of a message.
+     */
     auto get_cookie()
     {
         uint64_t cookie;
@@ -216,14 +228,20 @@ struct message
     }
 
     /** @brief Perform a 'signal-send' call. */
-    void signal_send() { method_return(); }
+    void signal_send()
+    {
+        method_return();
+    }
 
     friend struct sdbusplus::bus::bus;
 
-    private:
-        /** @brief Get a pointer to the owned 'msgp_t'. */
-        msgp_t get() { return _msg.get(); }
-        details::msg _msg;
+  private:
+    /** @brief Get a pointer to the owned 'msgp_t'. */
+    msgp_t get()
+    {
+        return _msg.get();
+    }
+    details::msg _msg;
 };
 
 } // namespace message

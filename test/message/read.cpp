@@ -6,7 +6,7 @@
 // Global to share the dbus type string between client and server.
 static std::string verifyTypeString;
 
-using verifyCallback_t = void(*)(sdbusplus::message::message&);
+using verifyCallback_t = void (*)(sdbusplus::message::message&);
 verifyCallback_t verifyCallback = nullptr;
 
 static constexpr auto SERVICE = "sdbusplus.test.message.read";
@@ -28,12 +28,12 @@ void* server(void* b)
 {
     auto bus = sdbusplus::bus::bus(reinterpret_cast<sdbusplus::bus::busp_t>(b));
 
-    while(1)
+    while (1)
     {
         // Wait for messages.
         auto m = bus.process();
 
-        if(!m)
+        if (!m)
         {
             bus.wait();
             continue;
@@ -52,8 +52,8 @@ void* server(void* b)
             }
             else
             {
-                std::cout << "Warning: No verification for "
-                          << verifyTypeString << std::endl;
+                std::cout << "Warning: No verification for " << verifyTypeString
+                          << std::endl;
             }
             // Reply to client.
             sd_bus_reply_method_return(m.release(), nullptr);
@@ -133,7 +133,7 @@ void runTests()
             static void op(sdbusplus::message::message& m)
             {
                 int32_t a = 0, b = 0, c = 0, d = 0, e = 0;
-                m.read(a,b,c,d,e);
+                m.read(a, b, c, d, e);
                 assert(a == 1);
                 assert(b == 2);
                 assert(c == 3);
@@ -200,8 +200,7 @@ void runTests()
         auto m = newMethodCall__test(b);
         auto str = "jkl;"s;
         auto str2 = "JKL:"s;
-        m.append(1, "asdf", "ASDF"s, str,
-                 std::move(str2), 5);
+        m.append(1, "asdf", "ASDF"s, str, std::move(str2), 5);
         verifyTypeString = "issssi";
 
         struct verify
@@ -251,11 +250,10 @@ void runTests()
         b.call_noreply(m);
     }
 
-
     // Test vector.
     {
         auto m = newMethodCall__test(b);
-        std::vector<std::string> s{ "1", "2", "3"};
+        std::vector<std::string> s{"1", "2", "3"};
         m.append(1, s, 2);
         verifyTypeString = "iasi";
 
@@ -270,7 +268,7 @@ void runTests()
                 assert(s[0] == "1");
                 assert(s[1] == "2");
                 assert(s[2] == "3");
-                decltype(s) s2 = { "1" , "2" , "3" };
+                decltype(s) s2 = {"1", "2", "3"};
                 assert(s == s2);
             }
         };
@@ -282,7 +280,7 @@ void runTests()
     // Test map.
     {
         auto m = newMethodCall__test(b);
-        std::map<std::string, int> s = { { "asdf", 3 }, { "jkl;", 4 } };
+        std::map<std::string, int> s = {{"asdf", 3}, {"jkl;", 4}};
         m.append(1, s, 2);
         verifyTypeString = "ia{si}i";
 
@@ -309,7 +307,7 @@ void runTests()
     // Test tuple.
     {
         auto m = newMethodCall__test(b);
-        std::tuple<int, double, std::string> a{ 3, 4.1, "asdf" };
+        std::tuple<int, double, std::string> a{3, 4.1, "asdf"};
         m.append(1, a, 2);
         verifyTypeString = "i(ids)i";
 
@@ -386,8 +384,8 @@ void runTests()
     // Test map-variant.
     {
         auto m = newMethodCall__test(b);
-        std::map<std::string, sdbusplus::message::variant<int, double>> a1 =
-                { { "asdf", 3 }, { "jkl;", 4.1 } };
+        std::map<std::string, sdbusplus::message::variant<int, double>> a1 = {
+            {"asdf", 3}, {"jkl;", 4.1}};
         m.append(1, a1, 2);
         verifyTypeString = "ia{sv}i";
 
@@ -396,8 +394,8 @@ void runTests()
             static void op(sdbusplus::message::message& m)
             {
                 int32_t a = 0, b = 0;
-                std::map<std::string,
-                         sdbusplus::message::variant<int, double>> a1{};
+                std::map<std::string, sdbusplus::message::variant<int, double>>
+                    a1{};
 
                 m.read(a, a1, b);
                 assert(a == 1);
@@ -410,7 +408,6 @@ void runTests()
 
         b.call_noreply(m);
     }
-
 
     // Shutdown server.
     {

@@ -26,11 +26,12 @@ namespace details
  *  @return A std::array where each I-th element is tuple's I-th element.
  */
 template <typename V, typename... Types, std::size_t... I>
-constexpr auto tuple_to_array(
-    std::tuple<V, Types...>&& tuple,
-    std::integer_sequence<std::size_t, I...>)
+constexpr auto tuple_to_array(std::tuple<V, Types...>&& tuple,
+                              std::integer_sequence<std::size_t, I...>)
 {
-    return std::array<V, sizeof...(I) >({ std::get<I>(tuple)..., });
+    return std::array<V, sizeof...(I)>({
+        std::get<I>(tuple)...,
+    });
 }
 
 } // namespace details

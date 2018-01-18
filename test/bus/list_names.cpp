@@ -5,17 +5,15 @@ constexpr auto this_name = "xyz.openbmc_project.sdbusplus.test.ListNames";
 
 class ListNames : public ::testing::Test
 {
-    protected:
-        decltype(sdbusplus::bus::new_default()) bus =
-                sdbusplus::bus::new_default();
+  protected:
+    decltype(sdbusplus::bus::new_default()) bus = sdbusplus::bus::new_default();
 };
 
 TEST_F(ListNames, NoServiceNameWithoutRequestName)
 {
     auto names = bus.list_names_acquired();
 
-    EXPECT_EQ(names.cend(),
-              std::find(names.cbegin(), names.cend(), this_name));
+    EXPECT_EQ(names.cend(), std::find(names.cbegin(), names.cend(), this_name));
 }
 
 TEST_F(ListNames, HasServiceNameAfterRequestName)
@@ -37,7 +35,6 @@ TEST_F(ListNames, HasUniqueName)
     EXPECT_NE(names.cend(),
               std::find(names.cbegin(), names.cend(), bus.get_unique_name()));
 }
-
 
 TEST_F(ListNames, HasDbusServer)
 {

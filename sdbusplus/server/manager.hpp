@@ -20,14 +20,14 @@ namespace manager
  */
 struct manager
 {
-        /* Define all of the basic class operations:
-         *     Not allowed:
-         *         - Default constructor to avoid nullptrs.
-         *         - Copy operations due to internal unique_ptr.
-         *     Allowed:
-         *         - Move operations.
-         *         - Destructor.
-         */
+    /* Define all of the basic class operations:
+     *     Not allowed:
+     *         - Default constructor to avoid nullptrs.
+     *         - Copy operations due to internal unique_ptr.
+     *     Allowed:
+     *         - Move operations.
+     *         - Destructor.
+     */
     manager() = delete;
     manager(const manager&) = delete;
     manager& operator=(const manager&) = delete;
@@ -48,9 +48,8 @@ struct manager
         _slot = decltype(_slot){slot};
     }
 
-    private:
-        slot::slot _slot;
-
+  private:
+    slot::slot _slot;
 };
 
 } // namespace manager

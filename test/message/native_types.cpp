@@ -28,24 +28,24 @@ TEST(MessageNativeTypeConversions, Signature)
 
 TEST(MessageNativeTypeConversions, SignatureInVector)
 {
-    std::vector<sdbusplus::message::signature> v =
-        { sdbusplus::message::signature("iii") };
+    std::vector<sdbusplus::message::signature> v = {
+        sdbusplus::message::signature("iii")};
 
     ASSERT_EQ(v.front(), "iii");
 }
 
 TEST(MessageNativeTypeConversions, SignatureInMap)
 {
-    std::map<sdbusplus::message::signature, int> m =
-        { { sdbusplus::message::signature("iii"), 1 } };
+    std::map<sdbusplus::message::signature, int> m = {
+        {sdbusplus::message::signature("iii"), 1}};
 
     ASSERT_EQ(m[sdbusplus::message::signature("iii")], 1);
 }
 
 TEST(MessageNativeTypeConversions, SignatureInUnorderedMap)
 {
-    std::unordered_map<sdbusplus::message::signature, int> u =
-        { { sdbusplus::message::signature("iii"), 2 } };
+    std::unordered_map<sdbusplus::message::signature, int> u = {
+        {sdbusplus::message::signature("iii"), 2}};
 
     ASSERT_EQ(u[sdbusplus::message::signature("iii")], 2);
 }

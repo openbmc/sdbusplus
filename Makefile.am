@@ -1,4 +1,5 @@
 if WANT_LIBSDBUSPLUS
+ACLOCAL_AMFLAGS = -I m4
 
 nobase_include_HEADERS = \
 	mapbox/recursive_wrapper.hpp \

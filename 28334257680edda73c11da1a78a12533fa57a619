@@ -22,6 +22,29 @@
       "revId": "28334257680edda73c11da1a78a12533fa57a619",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dad5f5cf_4b8899e7",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1000020
+      },
+      "writtenOn": "2018-01-25T20:10:04Z",
+      "side": 1,
+      "message": "I assume you added these to get rid of warnings from autoreconf ?\n\nlibtoolize: Consider adding \u0027AC_CONFIG_MACRO_DIRS([m4])\u0027 to configure.ac,\nlibtoolize: and rerunning libtoolize and aclocal.\nlibtoolize: Consider adding \u0027-I m4\u0027 to ACLOCAL_AMFLAGS in Makefile.am.",
+      "range": {
+        "startLine": 12,
+        "startChar": 0,
+        "endLine": 13,
+        "endChar": 46
+      },
+      "revId": "28334257680edda73c11da1a78a12533fa57a619",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
     }
   ]
 }

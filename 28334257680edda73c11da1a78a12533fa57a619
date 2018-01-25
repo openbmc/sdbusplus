@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dad5f5cf_0b237106",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1000020
+      },
+      "writtenOn": "2018-01-25T20:01:38Z",
+      "side": 1,
+      "message": "commit messages should be:\n\nCommit Message Summary \nBlank Line \nCommit Message Body\n\nhttps://chris.beams.io/posts/git-commit/\nThe commit message summary should be under 72 characters.",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 8,
+        "endChar": 31
+      },
+      "revId": "28334257680edda73c11da1a78a12533fa57a619",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
+    }
+  ]
+}

@@ -5,11 +5,37 @@ import yaml
 
 class Property(NamedElement, Renderer):
     def __init__(self, **kwargs):
+        self.flags = kwargs.pop('flags', [])
+        self.cppFlags = self.cpp_flags(self.flags)
         self.typeName = kwargs.pop('type', None)
         self.cppTypeName = self.parse_cpp_type(self.typeName)
         self.defaultValue = kwargs.pop('default', None)
 
         super(Property, self).__init__(**kwargs)
+
+    def cpp_flags(self, flags):
+        flags_map = {
+            "deprecated":"vtable::common_::deprecated",
+            "hidden":"vtable::common_::hidden",
+            "unprivileged":"vtable::common_::unprivileged",
+            "const":"vtable::property_::const_",
+            "emits_change":"vtable::property_::emits_change",
+            "emits_invalidation":"vtable::property_::emits_invalidation",
+            "explicit":"vtable::property_::explicit_"
+        }
+
+        l = []
+        for flag in flags:
+            if flag == 'readonly':
+                continue
+
+            r = flags_map.get(flag)
+            if r is None:
+                raise RuntimeError("Invalid property flag %s" % flag)
+
+            l.append(r)
+
+        return ' | '.join(l)
 
     def is_enum(self):
         if not self.cppTypeName:

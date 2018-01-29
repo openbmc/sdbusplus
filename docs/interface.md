@@ -147,8 +147,14 @@ methods:
 ## Properties
 
 A property must have the YAML property `name` and `type` and may optionally
-have `description` and `default`.  The `default` defines the default value of
-the property.
+have `description`, `default`, and `flags`.
+
+The `default` defines the default value of the property.
+
+The `flags` are a list of sd-bus flags featuring `deprecated`, `hidden`,
+`unprivileged`, `const`, `emits_change`, `emits_invalidation`, `explicit`
+and a `readonly`. The flag `readonly` prohibits the client from changing
+the property. If `const` is set, `readonly` is implied.
 
 Example:
 ```
@@ -156,6 +162,8 @@ properties:
     - name: CardsRemaining
       type: uint32
       default: 52
+      flags:
+        - const
       description: >
         The number of cards remaining in the deck.
 ```

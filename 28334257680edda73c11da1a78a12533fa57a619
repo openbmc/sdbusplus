@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "dad5f5cf_7da1a2a8",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2018-01-29T05:40:16Z",
+      "side": 1,
+      "message": "What kind of malformed configure file are you seeing?\n\nNote that most openbmc projects depend on autoconf-archive instead of shipping the .m4 files. Do you have that package installed?",
+      "parentUuid": "dad5f5cf_0b237106",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 8,
+        "endChar": 31
+      },
+      "revId": "28334257680edda73c11da1a78a12533fa57a619",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "dad5f5cf_4b8899e7",
         "filename": "/COMMIT_MSG",
         "patchSetId": 1

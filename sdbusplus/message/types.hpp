@@ -108,7 +108,7 @@ template <char C1, char... C> struct tuple_type_id
  *
  *  @tparam T - The type to get the dbus type character(s) for.
  */
-template <typename T> constexpr auto& type_id_single();
+template <typename T> constexpr auto type_id_single();
 
 /** @fn type_id_multiple()
  *  @brief Get a tuple containing the dbus type characters for a sequence of
@@ -212,7 +212,7 @@ struct type_id<variant<Args...>> : tuple_type_id<SD_BUS_TYPE_VARIANT>
 {
 };
 
-template <typename T> constexpr auto& type_id_single()
+template <typename T> constexpr auto type_id_single()
 {
     static_assert(!std::is_base_of<undefined_type_id, type_id<T>>::value,
                   "No dbus type conversion provided for type.");

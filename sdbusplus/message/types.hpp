@@ -7,6 +7,7 @@
 #include <mapbox/variant.hpp>
 #include <systemd/sd-bus.h>
 
+#include <sdbusplus/utility/container_traits.hpp>
 #include <sdbusplus/utility/type_traits.hpp>
 #include <sdbusplus/message/native_types.hpp>
 
@@ -48,6 +49,35 @@ template <typename... Args> constexpr auto type_id_nonull();
 namespace details
 {
 
+/** @brief Downcast type submembers.
+ *
+ * This allows std::tuple and std::pair members to be downcast to their
+ * non-const, nonref versions of themselves to limit duplication in template
+ * specializations
+ *
+ *  1. Remove references.
+ *  2. Remove 'const' and 'volatile'.
+ *  3. Convert 'char[N]' to 'char*'.
+ */
+template <typename T> struct downcast_members
+{
+    using type = T;
+};
+template <typename... Args> struct downcast_members<std::pair<Args...>>
+{
+    using type = std::pair<utility::array_to_ptr_t<
+        char, std::remove_cv_t<std::remove_reference_t<Args>>>...>;
+};
+
+template <typename... Args> struct downcast_members<std::tuple<Args...>>
+{
+    using type = std::tuple<utility::array_to_ptr_t<
+        char, std::remove_cv_t<std::remove_reference_t<Args>>>...>;
+};
+
+template <typename T>
+using downcast_members_t = typename downcast_members<T>::type;
+
 /** @brief Convert some C++ types to others for 'type_id' conversion purposes.
  *
  *  Similar C++ types have the same dbus type-id, so 'downcast' those to limit
@@ -59,8 +89,8 @@ namespace details
  */
 template <typename T> struct type_id_downcast
 {
-    using type = typename utility::array_to_ptr_t<
-        char, std::remove_cv_t<std::remove_reference_t<T>>>;
+    using type = utility::array_to_ptr_t<
+        char, downcast_members_t<std::remove_cv_t<std::remove_reference_t<T>>>>;
 };
 
 template <typename T>
@@ -127,7 +157,8 @@ template <typename T, typename... Args> constexpr auto type_id_multiple();
  *  Struct must have a 'value' tuple containing the dbus type.  The default
  *  value is an empty tuple, which is used to indicate an unsupported type.
  */
-template <typename T> struct type_id : public undefined_type_id
+template <typename T, typename Enable = void>
+struct type_id : public undefined_type_id
 {
 };
 // Specializations for built-in types.
@@ -176,11 +207,13 @@ template <> struct type_id<signature> : tuple_type_id<SD_BUS_TYPE_SIGNATURE>
 {
 };
 
-template <typename T> struct type_id<std::vector<T>>
+template <typename T>
+struct type_id<T, std::enable_if_t<utility::has_const_iterator<T>::value>>
+    : std::false_type
 {
-    static constexpr auto value =
-        std::tuple_cat(tuple_type_id<SD_BUS_TYPE_ARRAY>::value,
-                       type_id<type_id_downcast_t<T>>::value);
+    static constexpr auto value = std::tuple_cat(
+        tuple_type_id<SD_BUS_TYPE_ARRAY>::value,
+        type_id<type_id_downcast_t<typename T::value_type>>::value);
 };
 
 template <typename T1, typename T2> struct type_id<std::pair<T1, T2>>
@@ -190,13 +223,6 @@ template <typename T1, typename T2> struct type_id<std::pair<T1, T2>>
                        type_id<type_id_downcast_t<T1>>::value,
                        type_id<type_id_downcast_t<T2>>::value,
                        tuple_type_id<SD_BUS_TYPE_DICT_ENTRY_END>::value);
-};
-
-template <typename T1, typename T2> struct type_id<std::map<T1, T2>>
-{
-    static constexpr auto value =
-        std::tuple_cat(tuple_type_id<SD_BUS_TYPE_ARRAY>::value,
-                       type_id<typename std::map<T1, T2>::value_type>::value);
 };
 
 template <typename... Args> struct type_id<std::tuple<Args...>>

@@ -2,6 +2,8 @@
 #include <cassert>
 #include <sdbusplus/message.hpp>
 #include <sdbusplus/bus.hpp>
+#include <unordered_map>
+#include <set>
 
 // Global to share the dbus type string between client and server.
 static std::string verifyTypeString;
@@ -373,6 +375,139 @@ void runTests()
                 sd_bus_message_exit_container(m);
 
                 assert(1 == sd_bus_message_at_end(m, false));
+                sd_bus_message_exit_container(m);
+
+                sd_bus_message_read(m, "i", &a);
+                assert(a == 2);
+            }
+        };
+        verifyCallback = &verify::op;
+
+        b.call_noreply(m);
+    }
+
+    // Test unordered_map.
+    {
+        auto m = newMethodCall__test(b);
+        std::unordered_map<std::string, int> s = {{"asdf", 3}, {"jkl;", 4}};
+        m.append(1, s, 2);
+        verifyTypeString = "ia{si}i";
+
+        struct verify
+        {
+            static void op(sd_bus_message* m)
+            {
+                int32_t a = 0;
+                sd_bus_message_read(m, "i", &a);
+                assert(a == 1);
+
+                auto rc = sd_bus_message_enter_container(m, SD_BUS_TYPE_ARRAY,
+                                                         "{si}");
+                assert(0 <= rc);
+
+                rc = sd_bus_message_enter_container(m, SD_BUS_TYPE_DICT_ENTRY,
+                                                    "si");
+                assert(0 <= rc);
+
+                const char* s = nullptr;
+                sd_bus_message_read_basic(m, 's', &s);
+                sd_bus_message_read_basic(m, 'i', &a);
+                assert((0 == strcmp("asdf", s) && a == 3) ||
+                       (a = 4 && 0 == strcmp("jkl;", s)));
+
+                assert(1 == sd_bus_message_at_end(m, false));
+                sd_bus_message_exit_container(m);
+
+                rc = sd_bus_message_enter_container(m, SD_BUS_TYPE_DICT_ENTRY,
+                                                    "si");
+                assert(0 <= rc);
+
+                sd_bus_message_read_basic(m, 's', &s);
+                sd_bus_message_read_basic(m, 'i', &a);
+                assert((0 == strcmp("asdf", s) && a == 3) ||
+                       (a = 4 && 0 == strcmp("jkl;", s)));
+
+                assert(1 == sd_bus_message_at_end(m, false));
+                sd_bus_message_exit_container(m);
+
+                assert(1 == sd_bus_message_at_end(m, false));
+                sd_bus_message_exit_container(m);
+
+                sd_bus_message_read(m, "i", &a);
+                assert(a == 2);
+            }
+        };
+        verifyCallback = &verify::op;
+
+        b.call_noreply(m);
+    }
+
+    // Test set.
+    {
+        auto m = newMethodCall__test(b);
+        std::set<std::string> s = {{"asdf"}, {"jkl;"}};
+        m.append(1, s, 2);
+        verifyTypeString = "iasi";
+
+        struct verify
+        {
+            static void op(sd_bus_message* m)
+            {
+                int32_t a = 0;
+                sd_bus_message_read(m, "i", &a);
+                assert(a == 1);
+
+                auto rc =
+                    sd_bus_message_enter_container(m, SD_BUS_TYPE_ARRAY, "s");
+                assert(0 <= rc);
+
+                const char* s = nullptr;
+                sd_bus_message_read_basic(m, 's', &s);
+                assert(0 == strcmp("asdf", s));
+
+                sd_bus_message_read_basic(m, 's', &s);
+                assert(0 == strcmp("jkl;", s));
+
+                assert(1 == sd_bus_message_at_end(m, false));
+                sd_bus_message_exit_container(m);
+
+                sd_bus_message_read(m, "i", &a);
+                assert(a == 2);
+            }
+        };
+        verifyCallback = &verify::op;
+
+        b.call_noreply(m);
+    }
+
+    // Test array.
+    {
+        auto m = newMethodCall__test(b);
+        std::array<std::string, 3> s{"1", "2", "3"};
+        m.append(1, s, 2);
+        verifyTypeString = "iasi";
+
+        struct verify
+        {
+            static void op(sd_bus_message* m)
+            {
+                int32_t a = 0;
+                sd_bus_message_read(m, "i", &a);
+                assert(a == 1);
+
+                auto rc =
+                    sd_bus_message_enter_container(m, SD_BUS_TYPE_ARRAY, "s");
+                assert(0 <= rc);
+
+                const char* s = nullptr;
+                sd_bus_message_read_basic(m, 's', &s);
+                assert(0 == strcmp("1", s));
+                sd_bus_message_read_basic(m, 's', &s);
+                assert(0 == strcmp("2", s));
+                sd_bus_message_read_basic(m, 's', &s);
+                assert(0 == strcmp("3", s));
+                assert(1 == sd_bus_message_at_end(m, false));
+
                 sd_bus_message_exit_container(m);
 
                 sd_bus_message_read(m, "i", &a);

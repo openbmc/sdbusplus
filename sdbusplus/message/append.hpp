@@ -1,10 +1,12 @@
 #pragma once
 
 #include <tuple>
-#include <sdbusplus/message/types.hpp>
-#include <sdbusplus/utility/type_traits.hpp>
-#include <sdbusplus/utility/tuple_to_array.hpp>
+
 #include <systemd/sd-bus.h>
+#include <sdbusplus/message/types.hpp>
+#include <sdbusplus/utility/container_traits.hpp>
+#include <sdbusplus/utility/tuple_to_array.hpp>
+#include <sdbusplus/utility/type_traits.hpp>
 
 namespace sdbusplus
 {
@@ -44,7 +46,8 @@ namespace details
  *  User-defined types are expected to inherit from std::false_type.
  *
  */
-template <typename T> struct can_append_multiple : std::true_type
+template <typename T, typename Enable = void>
+struct can_append_multiple : std::true_type
 {
 };
 // std::string needs a c_str() call.
@@ -63,19 +66,16 @@ template <> struct can_append_multiple<signature> : std::false_type
 template <> struct can_append_multiple<bool> : std::false_type
 {
 };
-// std::vector needs a loop.
+// std::vector/map/unordered_map/set need loops
 template <typename T>
-struct can_append_multiple<std::vector<T>> : std::false_type
+struct can_append_multiple<
+    T, typename std::enable_if<utility::has_const_iterator<T>::value>::type>
+    : std::false_type
 {
 };
 // std::pair needs to be broken down into components.
 template <typename T1, typename T2>
 struct can_append_multiple<std::pair<T1, T2>> : std::false_type
-{
-};
-// std::map needs a loop.
-template <typename T1, typename T2>
-struct can_append_multiple<std::map<T1, T2>> : std::false_type
 {
 };
 // std::tuple needs to be broken down into components.
@@ -97,7 +97,7 @@ struct can_append_multiple<variant<Args...>> : std::false_type
  *
  *  @tparam S - Type of element to append.
  */
-template <typename S> struct append_single
+template <typename S, typename Enable = void> struct append_single
 {
     // Downcast
     template <typename T> using Td = types::details::type_id_downcast_t<T>;
@@ -165,6 +165,7 @@ template <> struct append_single<std::string>
     }
 };
 
+
 /** @brief Specialization of append_single for details::string_wrapper. */
 template <typename T> struct append_single<details::string_wrapper<T>>
 {
@@ -186,14 +187,17 @@ template <> struct append_single<bool>
     }
 };
 
-/** @brief Specialization of append_single for std::vectors. */
-template <typename T> struct append_single<std::vector<T>>
+/** @brief Specialization of append_single for containers (ie vector, array,
+ * set, map, ect) */
+template <typename T>
+struct append_single<T, std::enable_if_t<utility::has_const_iterator<T>::value>>
 {
     template <typename S> static void op(sd_bus_message* m, S&& s)
     {
         constexpr auto dbusType = utility::tuple_to_array(types::type_id<T>());
 
-        sd_bus_message_open_container(m, SD_BUS_TYPE_ARRAY, dbusType.data());
+        sd_bus_message_open_container(m, SD_BUS_TYPE_ARRAY,
+                                      dbusType.data() + 1);
         for (auto& i : s)
         {
             sdbusplus::message::append(m, i);
@@ -213,23 +217,6 @@ template <typename T1, typename T2> struct append_single<std::pair<T1, T2>>
         sd_bus_message_open_container(m, SD_BUS_TYPE_DICT_ENTRY,
                                       dbusType.data());
         sdbusplus::message::append(m, s.first, s.second);
-        sd_bus_message_close_container(m);
-    }
-};
-
-/** @brief Specialization of append_single for std::maps. */
-template <typename T1, typename T2> struct append_single<std::map<T1, T2>>
-{
-    template <typename S> static void op(sd_bus_message* m, S&& s)
-    {
-        constexpr auto dbusType = utility::tuple_to_array(
-            types::type_id<typename std::map<T1, T2>::value_type>());
-
-        sd_bus_message_open_container(m, SD_BUS_TYPE_ARRAY, dbusType.data());
-        for (auto& i : s)
-        {
-            sdbusplus::message::append(m, i);
-        }
         sd_bus_message_close_container(m);
     }
 };

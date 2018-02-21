@@ -2,6 +2,8 @@
 #include <cassert>
 #include <sdbusplus/message.hpp>
 #include <sdbusplus/bus.hpp>
+#include <unordered_map>
+#include <set>
 
 // Global to share the dbus type string between client and server.
 static std::string verifyTypeString;
@@ -296,6 +298,60 @@ void runTests()
                 assert(s.size() == 2);
                 assert(s["asdf"] == 3);
                 assert(s["jkl;"] == 4);
+                assert(b == 2);
+            }
+        };
+        verifyCallback = &verify::op;
+
+        b.call_noreply(m);
+    }
+
+    // Test unordered_map.
+    {
+        auto m = newMethodCall__test(b);
+        std::unordered_map<std::string, int> s = {{"asdf", 3}, {"jkl;", 4}};
+        m.append(1, s, 2);
+        verifyTypeString = "ia{si}i";
+
+        struct verify
+        {
+            static void op(sdbusplus::message::message& m)
+            {
+                int32_t a = 0, b = 0;
+                std::unordered_map<std::string, int> s{};
+
+                m.read(a, s, b);
+                assert(a == 1);
+                assert(s.size() == 2);
+                assert(s["asdf"] == 3);
+                assert(s["jkl;"] == 4);
+                assert(b == 2);
+            }
+        };
+        verifyCallback = &verify::op;
+
+        b.call_noreply(m);
+    }
+
+    // Test set.
+    {
+        auto m = newMethodCall__test(b);
+        std::set<std::string> s = {{"asdf"}, {"jkl;"}};
+        m.append(1, s, 2);
+        verifyTypeString = "iasi";
+
+        struct verify
+        {
+            static void op(sdbusplus::message::message& m)
+            {
+                int32_t a = 0, b = 0;
+                std::set<std::string> s{};
+
+                m.read(a, s, b);
+                assert(a == 1);
+                assert(s.size() == 2);
+                assert(s.find("asdf") != s.end());
+                assert(s.find("jkl;") != s.end());
                 assert(b == 2);
             }
         };

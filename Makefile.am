@@ -17,6 +17,7 @@ nobase_include_HEADERS = \
 	sdbusplus/server/manager.hpp \
 	sdbusplus/server/object.hpp \
 	sdbusplus/slot.hpp \
+	sdbusplus/utility/container_traits.hpp \
 	sdbusplus/utility/tuple_to_array.hpp \
 	sdbusplus/utility/type_traits.hpp \
 	sdbusplus/vtable.hpp

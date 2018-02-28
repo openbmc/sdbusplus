@@ -302,7 +302,7 @@ void append_tuple(sd_bus_message* m, Tuple&& t, std::index_sequence<I...>)
  */
 template <typename Tuple>
 std::enable_if_t<2 <= std::tuple_size<Tuple>::value>
-append_tuple(sd_bus_message* m, Tuple&& t)
+    append_tuple(sd_bus_message* m, Tuple&& t)
 {
     append_tuple(m, std::move(t),
                  std::make_index_sequence<std::tuple_size<Tuple>::value>());
@@ -320,7 +320,7 @@ append_tuple(sd_bus_message* m, Tuple&& t)
  */
 template <typename Tuple>
 std::enable_if_t<1 == std::tuple_size<Tuple>::value>
-append_tuple(sd_bus_message* m, Tuple&& t)
+    append_tuple(sd_bus_message* m, Tuple&& t)
 {
     using itemType = decltype(std::get<0>(t));
     append_single_t<itemType>::op(m, std::forward<itemType>(std::get<0>(t)));
@@ -345,7 +345,7 @@ std::enable_if_t<0 == std::tuple_size<Tuple>::value> inline append_tuple(
 template <typename Tuple, typename Arg>
 std::enable_if_t<
     can_append_multiple<types::details::type_id_downcast_t<Arg>>::value>
-append_grouping(sd_bus_message* m, Tuple&& t, Arg&& arg);
+    append_grouping(sd_bus_message* m, Tuple&& t, Arg&& arg);
 /** @brief Group a sequence of C++ types for appending into an sd_bus_message.
  *  @tparam Tuple - A tuple of previously analyzed types.
  *  @tparam Arg - The argument to analyze for grouping.
@@ -355,7 +355,7 @@ append_grouping(sd_bus_message* m, Tuple&& t, Arg&& arg);
 template <typename Tuple, typename Arg>
 std::enable_if_t<
     !can_append_multiple<types::details::type_id_downcast_t<Arg>>::value>
-append_grouping(sd_bus_message* m, Tuple&& t, Arg&& arg);
+    append_grouping(sd_bus_message* m, Tuple&& t, Arg&& arg);
 /** @brief Group a sequence of C++ types for appending into an sd_bus_message.
  *  @tparam Tuple - A tuple of previously analyzed types.
  *  @tparam Arg - The argument to analyze for grouping.
@@ -366,7 +366,7 @@ append_grouping(sd_bus_message* m, Tuple&& t, Arg&& arg);
 template <typename Tuple, typename Arg, typename... Rest>
 std::enable_if_t<
     can_append_multiple<types::details::type_id_downcast_t<Arg>>::value>
-append_grouping(sd_bus_message* m, Tuple&& t, Arg&& arg, Rest&&... rest);
+    append_grouping(sd_bus_message* m, Tuple&& t, Arg&& arg, Rest&&... rest);
 /** @brief Group a sequence of C++ types for appending into an sd_bus_message.
  *  @tparam Tuple - A tuple of previously analyzed types.
  *  @tparam Arg - The argument to analyze for grouping.
@@ -377,12 +377,12 @@ append_grouping(sd_bus_message* m, Tuple&& t, Arg&& arg, Rest&&... rest);
 template <typename Tuple, typename Arg, typename... Rest>
 std::enable_if_t<
     !can_append_multiple<types::details::type_id_downcast_t<Arg>>::value>
-append_grouping(sd_bus_message* m, Tuple&& t, Arg&& arg, Rest&&... rest);
+    append_grouping(sd_bus_message* m, Tuple&& t, Arg&& arg, Rest&&... rest);
 
 template <typename Tuple, typename Arg>
 std::enable_if_t<
     can_append_multiple<types::details::type_id_downcast_t<Arg>>::value>
-append_grouping(sd_bus_message* m, Tuple&& t, Arg&& arg)
+    append_grouping(sd_bus_message* m, Tuple&& t, Arg&& arg)
 {
     // Last element of a sequence and can_append_multiple, so add it to
     // the tuple and call append_tuple.
@@ -395,7 +395,7 @@ append_grouping(sd_bus_message* m, Tuple&& t, Arg&& arg)
 template <typename Tuple, typename Arg>
 std::enable_if_t<
     !can_append_multiple<types::details::type_id_downcast_t<Arg>>::value>
-append_grouping(sd_bus_message* m, Tuple&& t, Arg&& arg)
+    append_grouping(sd_bus_message* m, Tuple&& t, Arg&& arg)
 {
     // Last element of a sequence but !can_append_multiple, so call
     // append_tuple on the previous elements and separately this single
@@ -408,7 +408,7 @@ append_grouping(sd_bus_message* m, Tuple&& t, Arg&& arg)
 template <typename Tuple, typename Arg, typename... Rest>
 std::enable_if_t<
     can_append_multiple<types::details::type_id_downcast_t<Arg>>::value>
-append_grouping(sd_bus_message* m, Tuple&& t, Arg&& arg, Rest&&... rest)
+    append_grouping(sd_bus_message* m, Tuple&& t, Arg&& arg, Rest&&... rest)
 {
     // Not the last element of a sequence and can_append_multiple, so add it
     // to the tuple and keep grouping.
@@ -423,7 +423,7 @@ append_grouping(sd_bus_message* m, Tuple&& t, Arg&& arg, Rest&&... rest)
 template <typename Tuple, typename Arg, typename... Rest>
 std::enable_if_t<
     !can_append_multiple<types::details::type_id_downcast_t<Arg>>::value>
-append_grouping(sd_bus_message* m, Tuple&& t, Arg&& arg, Rest&&... rest)
+    append_grouping(sd_bus_message* m, Tuple&& t, Arg&& arg, Rest&&... rest)
 {
     // Not the last element of a sequence but !can_append_multiple, so call
     // append_tuple on the previous elements and separately this single

@@ -8,11 +8,13 @@ TESTS = $(check_PROGRAMS)
 
 check_PROGRAMS += bus_list_names
 bus_list_names_SOURCES = bus/list_names.cpp
-bus_list_names_LDADD = $(gtest_ldadd) $(SYSTEMD_LIBS)
+bus_list_names_CXXFLAGS = $(SYSTEMD_CFLAGS) $(PTHREAD_CFLAGS)
+bus_list_names_LDADD = $(gtest_ldadd) $(SYSTEMD_LIBS) $(PTHREAD_LIBS)
 
 check_PROGRAMS += bus_match
 bus_match_SOURCES = bus/match.cpp
-bus_match_LDADD = $(gtest_ldadd) $(SYSTEMD_LIBS)
+bus_match_CXXFLAGS = $(SYSTEMD_CFLAGS) $(PTHREAD_CFLAGS)
+bus_match_LDADD = $(gtest_ldadd) $(SYSTEMD_LIBS) $(PTHREAD_LIBS)
 
 check_PROGRAMS += message_append
 message_append_SOURCES = message/append.cpp
@@ -26,21 +28,25 @@ message_read_LDADD = $(SYSTEMD_LIBS) $(PTHREAD_LIBS)
 
 check_PROGRAMS += message_native_types
 message_native_types_SOURCES = message/native_types.cpp
-message_native_types_LDADD = $(gtest_ldadd)
+message_native_types_CXXFLAGS = $(PTHREAD_CFLAGS)
+message_native_types_LDADD = $(gtest_ldadd) $(PTHREAD_LIBS)
 
 check_PROGRAMS += message_types
 message_types_SOURCES = message/types.cpp
-message_types_LDADD = $(gtest_ldadd)
+message_types_CXXFLAGS = $(PTHREAD_CFLAGS)
+message_types_LDADD = $(gtest_ldadd) $(PTHREAD_LIBS)
 
 check_PROGRAMS += utility_tuple_to_array
 utility_tuple_to_array_SOURCES = utility/tuple_to_array.cpp
-utility_tuple_to_array_LDADD = $(gtest_ldadd)
+utility_tuple_to_array_CXXFLAGS = $(PTHREAD_CFLAGS)
+utility_tuple_to_array_LDADD = $(gtest_ldadd) $(PTHREAD_LIBS)
 
 check_PROGRAMS += utility_type_traits
 utility_type_traits_SOURCES = utility/type_traits.cpp
 
 check_PROGRAMS += vtable_vtable
 vtable_vtable_SOURCES = vtable/vtable.cpp vtable/vtable_c.c
-vtable_vtable_LDADD = $(gtest_ldadd)
+vtable_vtable_CXXFLAGS = $(PTHREAD_CFLAGS)
+vtable_vtable_LDADD = $(gtest_ldadd) $(PTHREAD_LIBS)
 
 endif

@@ -85,6 +85,7 @@ int ${classname}::_callback_get_${p.name}(
     return true;
 }
 
+% if 'const' not in p.flags:
 auto ${classname}::${p.camelCase}(${p.cppTypeParam(interface.name)} value) ->
         ${p.cppTypeParam(interface.name)}
 {
@@ -96,7 +97,9 @@ auto ${classname}::${p.camelCase}(${p.cppTypeParam(interface.name)} value) ->
 
     return _${p.camelCase};
 }
+% endif
 
+% if set(['readonly', 'const']).isdisjoint(p.flags):
 int ${classname}::_callback_set_${p.name}(
         sd_bus* bus, const char* path, const char* interface,
         const char* property, sd_bus_message* value, void* context,
@@ -133,6 +136,7 @@ convert${p.enum_name(interface.name)}FromString(v));
 
     return true;
 }
+% endif
 
 namespace details
 {
@@ -150,6 +154,7 @@ void ${classname}::setPropertyByName(const std::string& name,
                                      const PropertiesVariant& val)
 {
         % for p in interface.properties:
+            % if 'const' not in p.flags:
     if (name == "${p.name}")
     {
         auto& v = message::variant_ns::get<${p.cppTypeParam(interface.name)}>(\
@@ -157,6 +162,7 @@ val);
         ${p.camelCase}(v);
         return;
     }
+            % endif
         % endfor
 }
 
@@ -230,8 +236,14 @@ ${ s.cpp_prototype(loader, interface=interface, ptype='vtable') }
                      details::${classname}::_property_${p.name}
                         .data(),
                      _callback_get_${p.name},
+        % if set(['readonly', 'const']).isdisjoint(p.flags):
                      _callback_set_${p.name},
+        % endif
+        % if not p.cppFlags:
                      vtable::property_::emits_change),
+        % else:
+                     ${p.cppFlags}),
+        % endif
     % endfor
     vtable::end()
 };

@@ -79,9 +79,11 @@ ${ s.cpp_prototype(loader, interface=interface, ptype='header') }
     % for p in interface.properties:
         /** Get value of ${p.name} */
         virtual ${p.cppTypeParam(interface.name)} ${p.camelCase}() const;
+        % if 'const' not in p.flags:
         /** Set value of ${p.name} */
         virtual ${p.cppTypeParam(interface.name)} \
 ${p.camelCase}(${p.cppTypeParam(interface.name)} value);
+        % endif
     % endfor
 
     % if interface.properties:
@@ -118,11 +120,12 @@ ${ m.cpp_prototype(loader, interface=interface, ptype='callback-header') }
         static int _callback_get_${p.name}(
             sd_bus*, const char*, const char*, const char*,
             sd_bus_message*, void*, sd_bus_error*);
+        % if set(['readonly', 'const']).isdisjoint(p.flags):
         /** @brief sd-bus callback for set-property '${p.name}' */
         static int _callback_set_${p.name}(
             sd_bus*, const char*, const char*, const char*,
             sd_bus_message*, void*, sd_bus_error*);
-
+        % endif
     % endfor
 
         static constexpr auto _interface = "${interface.name}";

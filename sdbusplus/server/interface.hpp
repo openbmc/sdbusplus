@@ -25,7 +25,7 @@ namespace interface
  *  implementation of a class representing a dbus interface, which will be
  *  composed through multiple-inheritence to create a single dbus 'object'.
  *  Marking it 'final' prevents users from using an 'is-a' relationship via
- *  inheritence, which might be a natural option.  Instead, a dbus interface
+ *  inheritance, which might be a natural option.  Instead, a dbus interface
  *  implementation should 'has-a' server::interface with a name sufficiently
  *  unique to prevent name collisions in multiple-inheritence situations.
  */

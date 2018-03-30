@@ -187,7 +187,7 @@ template <> struct append_single<bool>
 };
 
 /** @brief Specialization of append_single for containers (ie vector, array,
- * set, map, ect) */
+ * set, map, etc) */
 template <typename T>
 struct append_single<T, std::enable_if_t<utility::has_const_iterator<T>::value>>
 {

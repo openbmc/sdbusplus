@@ -3,7 +3,9 @@ if WANT_LIBSDBUSPLUS
 nobase_include_HEADERS = \
 	mapbox/recursive_wrapper.hpp \
 	mapbox/variant.hpp \
+	sdbusplus/base.hpp \
 	sdbusplus/bus.hpp \
+	sdbusplus/test/bus_mock.hpp \
 	sdbusplus/bus/match.hpp \
 	sdbusplus/exception.hpp \
 	sdbusplus/message.hpp \

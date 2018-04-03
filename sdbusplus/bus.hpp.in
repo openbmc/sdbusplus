@@ -7,6 +7,7 @@
 #include <string>
 #include <systemd/sd-bus.h>
 #include <systemd/sd-event.h>
+#include <sdbusplus/base.hpp>
 #include <sdbusplus/message.hpp>
 
 namespace sdbusplus
@@ -82,16 +83,17 @@ using bus = std::unique_ptr<sd_bus, BusDeleter>;
 /** @class bus
  *  @brief Provides C++ bindings to the sd_bus_* class functions.
  */
-struct bus
+class bus : public BusAbc
 {
-        /* Define all of the basic class operations:
-         *     Not allowed:
-         *         - Default constructor to avoid nullptrs.
-         *         - Copy operations due to internal unique_ptr.
-         *     Allowed:
-         *         - Move operations.
-         *         - Destructor.
-         */
+ public:
+    /* Define all of the basic class operations:
+     *     Not allowed:
+     *         - Default constructor to avoid nullptrs.
+     *         - Copy operations due to internal unique_ptr.
+     *     Allowed:
+     *         - Move operations.
+     *         - Destructor.
+     */
     bus() = delete;
     bus(const bus&) = delete;
     bus& operator=(const bus&) = delete;
@@ -114,19 +116,19 @@ struct bus
     bus(busp_t b, std::false_type);
 
     /** @brief Release ownership of the stored bus-pointer. */
-    busp_t release() { return _bus.release(); }
+    busp_t release() override { return _bus.release(); }
 
     /** @brief Wait for new dbus messages or signals.
      *
      *  @param[in] timeout_us - Timeout in usec.
      */
-    void wait(uint64_t timeout_us = ULLONG_MAX)
+    void wait(uint64_t timeout_us = ULLONG_MAX) override
     {
         sd_bus_wait(_bus.get(), timeout_us);
     }
 
     /** @brief Process waiting dbus messages or signals. */
-    auto process()
+    message::message process() override
     {
         sd_bus_message* m = nullptr;
         sd_bus_process(_bus.get(), &m);
@@ -136,7 +138,7 @@ struct bus
 
     /** @brief Process waiting dbus messages or signals, discarding unhandled.
      */
-    void process_discard()
+    void process_discard() override
     {
         sd_bus_process(_bus.get(), nullptr);
     }
@@ -145,7 +147,7 @@ struct bus
      *
      *  @param[in] service - The service name to claim.
      */
-    void request_name(const char* service)
+    void request_name(const char* service) override
     {
         sd_bus_request_name(_bus.get(), service, 0);
     }
@@ -159,8 +161,9 @@ struct bus
      *
      *  @return A newly constructed message.
      */
-    auto new_method_call(const char* service, const char* objpath,
-                         const char* interf, const char* method)
+    message::message new_method_call(
+        const char* service, const char* objpath,
+        const char* interf, const char* method) override
     {
         sd_bus_message* m = nullptr;
         sd_bus_message_new_method_call(_bus.get(), &m, service, objpath,
@@ -177,7 +180,8 @@ struct bus
      *
      *  @return A newly constructed message.
      */
-    auto new_signal(const char* objpath, const char* interf, const char* member)
+    message::message new_signal(
+        const char* objpath, const char* interf, const char* member) override
     {
         sd_bus_message* m = nullptr;
         sd_bus_message_new_signal(_bus.get(), &m, objpath, interf, member);
@@ -192,7 +196,7 @@ struct bus
      *
      *  @return The response message.
      */
-    auto call(message::message& m, uint64_t timeout_us = 0)
+    message::message call(message::message& m, uint64_t timeout_us = 0) override
     {
         sd_bus_message* reply = nullptr;
         sd_bus_call(_bus.get(), m.get(), timeout_us, nullptr, &reply);
@@ -205,7 +209,7 @@ struct bus
      *  @param[in] m - The method_call message.
      *  @param[in] timeout_us - The timeout for the method call.
      */
-    void call_noreply(message::message& m, uint64_t timeout_us = 0)
+    void call_noreply(message::message& m, uint64_t timeout_us = 0) override
     {
         sd_bus_call(_bus.get(), m.get(), timeout_us, nullptr, nullptr);
     }
@@ -214,7 +218,7 @@ struct bus
       *
       * @return The bus unique name.
       */
-    auto get_unique_name()
+    std::string get_unique_name() override
     {
         const char* unique = nullptr;
         sd_bus_get_unique_name(_bus.get(), &unique);
@@ -226,19 +230,19 @@ struct bus
      *  @param[in] event - sd_event object.
      *  @param[in] priority - priority of bus event source.
      */
-    void attach_event(sd_event* event, int priority)
+    void attach_event(sd_event* event, int priority) override
     {
         sd_bus_attach_event(_bus.get(), event, priority);
     }
 
     /** @brief Detach the bus from its sd-event event loop object */
-    void detach_event()
+    void detach_event() override
     {
         sd_bus_detach_event(_bus.get());
     }
 
     /** @brief Get the sd-event event loop object of the bus */
-    auto get_event()
+    sd_event* get_event() override
     {
         return sd_bus_get_event(_bus.get());
     }
@@ -252,8 +256,8 @@ struct bus
      *  @param[in] path - The path to forward.
      *  @param[in] ifaces - The interfaces to forward.
      */
-    void emit_interfaces_added(const char* path,
-                               const std::vector<std::string>& ifaces)
+    void emit_interfaces_added(
+        const char* path, const std::vector<std::string>& ifaces) override
     {
         details::Strv s{ifaces};
         sd_bus_emit_interfaces_added_strv(_bus.get(),
@@ -270,8 +274,8 @@ struct bus
      *  @param[in] path - The path to forward.
      *  @param[in] ifaces - The interfaces to forward.
      */
-    void emit_interfaces_removed(const char* path,
-                                 const std::vector<std::string>& ifaces)
+    void emit_interfaces_removed(
+        const char* path, const std::vector<std::string>& ifaces) override
     {
         details::Strv s{ifaces};
         sd_bus_emit_interfaces_removed_strv(_bus.get(),
@@ -287,7 +291,7 @@ struct bus
      *
      *  @param[in] path - The path to forward to sd_bus_emit_object_added
      */
-    void emit_object_added(const char* path)
+    void emit_object_added(const char* path) override
     {
         sd_bus_emit_object_added(_bus.get(), path);
     }
@@ -300,7 +304,7 @@ struct bus
      *
      *  @param[in] path - The path to forward to sd_bus_emit_object_removed
      */
-    void emit_object_removed(const char* path)
+    void emit_object_removed(const char* path) override
     {
         sd_bus_emit_object_removed(_bus.get(), path);
     }
@@ -310,7 +314,7 @@ struct bus
      *  @return A vector of strings containing the 'acquired' names from
      *          sd_bus_list_names.
      */
-    auto list_names_acquired()
+    std::vector<std::string> list_names_acquired() override
     {
         char** names = nullptr;
 
@@ -400,7 +404,7 @@ inline bus new_system()
 inline auto message::message::get_bus()
 {
     sd_bus* b = nullptr;
-    b = sd_bus_message_get_bus(_msg.get());
+    b = _intf->sd_bus_message_get_bus(_msg.get());
     return bus::bus(b);
 }
 

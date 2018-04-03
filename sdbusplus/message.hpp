@@ -1,11 +1,13 @@
 #pragma once
 
+#include <iostream>
 #include <memory>
 #include <type_traits>
 #include <systemd/sd-bus.h>
 #include <sdbusplus/message/append.hpp>
 #include <sdbusplus/message/read.hpp>
 #include <sdbusplus/message/native_types.hpp>
+#include <sdbusplus/sdbus.hpp>
 
 namespace sdbusplus
 {
@@ -26,6 +28,8 @@ namespace details
 {
 
 /** @brief unique_ptr functor to release a msg reference. */
+// TODO(venture): Consider using template <SdBusInterfaceType> for this so that it doesn't require
+// creating a specific instance of it, unless that's ok --
 struct MsgDeleter
 {
     void operator()(msgp_t ptr) const
@@ -42,7 +46,7 @@ using msg = std::unique_ptr<sd_bus_message, MsgDeleter>;
 /** @class message
  *  @brief Provides C++ bindings to the sd_bus_message_* class functions.
  */
-struct message
+class message
 {
     /* Define all of the basic class operations:
      *     Not allowed:
@@ -52,19 +56,25 @@ struct message
      *         - Move operations.
      *         - Destructor.
      */
+  public:
     message() = delete;
     message(const message&) = delete;
     message& operator=(const message&) = delete;
+
     message(message&&) = default;
     message& operator=(message&&) = default;
     ~message() = default;
+
+    message(msgp_t m, std::unique_ptr<sdbusplus::SdBusInterface> intf) : _intf(std::move(intf)), _msg(_intf->sd_bus_message_ref(m))
+    {
+    }
 
     /** @brief Conversion constructor for 'msgp_t'.
      *
      *  Takes increment ref-count of the msg-pointer and release when
      *  destructed.
      */
-    explicit message(msgp_t m) : _msg(sd_bus_message_ref(m))
+    explicit message(msgp_t m) : message(m, std::make_unique<sdbusplus::SdBusImpl>())
     {
     }
 
@@ -72,7 +82,7 @@ struct message
      *
      *  Takes ownership of the msg-pointer and releases it when done.
      */
-    message(msgp_t m, std::false_type) : _msg(m)
+    message(msgp_t m, std::false_type) : _intf(std::make_unique<sdbusplus::SdBusImpl>()), _msg(m)
     {
     }
 
@@ -95,7 +105,7 @@ struct message
      */
     template <typename... Args> void append(Args&&... args)
     {
-        sdbusplus::message::append(_msg.get(), std::forward<Args>(args)...);
+        sdbusplus::message::append(_intf.get(), _msg.get(), std::forward<Args>(args)...);
     }
 
     /** @brief Perform sd_bus_message_read, with automatic type deduction.
@@ -105,7 +115,7 @@ struct message
      */
     template <typename... Args> void read(Args&&... args)
     {
-        sdbusplus::message::read(_msg.get(), std::forward<Args>(args)...);
+        sdbusplus::message::read(_intf.get(), _msg.get(), std::forward<Args>(args)...);
     }
 
     /** @brief Get the dbus bus from the message. */
@@ -118,7 +128,7 @@ struct message
      */
     const char* get_signature()
     {
-        return sd_bus_message_get_signature(_msg.get(), true);
+        return _intf->sd_bus_message_get_signature(_msg.get(), true);
     }
 
     /** @brief Get the path of a message.
@@ -127,7 +137,7 @@ struct message
      */
     const char* get_path()
     {
-        return sd_bus_message_get_path(_msg.get());
+        return _intf->sd_bus_message_get_path(_msg.get());
     }
 
     /** @brief Get the interface of a message.
@@ -136,7 +146,7 @@ struct message
      */
     const char* get_interface()
     {
-        return sd_bus_message_get_interface(_msg.get());
+        return _intf->sd_bus_message_get_interface(_msg.get());
     }
 
     /** @brief Get the member of a message.
@@ -145,7 +155,7 @@ struct message
      */
     const char* get_member()
     {
-        return sd_bus_message_get_member(_msg.get());
+        return _intf->sd_bus_message_get_member(_msg.get());
     }
 
     /** @brief Get the destination of a message.
@@ -154,7 +164,7 @@ struct message
      */
     const char* get_destination()
     {
-        return sd_bus_message_get_destination(_msg.get());
+        return _intf->sd_bus_message_get_destination(_msg.get());
     }
 
     /** @brief Get the sender of a message.
@@ -163,7 +173,7 @@ struct message
      */
     const char* get_sender()
     {
-        return sd_bus_message_get_sender(_msg.get());
+        return _intf->sd_bus_message_get_sender(_msg.get());
     }
 
     /** @brief Check if message is a method error.
@@ -172,7 +182,7 @@ struct message
      */
     bool is_method_error()
     {
-        return sd_bus_message_is_method_error(_msg.get(), nullptr);
+        return _intf->sd_bus_message_is_method_error(_msg.get(), nullptr);
     }
 
     /** @brief Get the transaction cookie of a message.
@@ -182,7 +192,7 @@ struct message
     auto get_cookie()
     {
         uint64_t cookie;
-        sd_bus_message_get_cookie(_msg.get(), &cookie);
+        _intf->sd_bus_message_get_cookie(_msg.get(), &cookie);
         return cookie;
     }
 
@@ -195,7 +205,7 @@ struct message
      */
     bool is_method_call(const char* interface, const char* method)
     {
-        return sd_bus_message_is_method_call(_msg.get(), interface, method);
+        return _intf->sd_bus_message_is_method_call(_msg.get(), interface, method);
     }
 
     /** @brief Check if message is a signal for an interface/member.
@@ -205,7 +215,7 @@ struct message
      */
     bool is_signal(const char* interface, const char* member)
     {
-        return sd_bus_message_is_signal(_msg.get(), interface, member);
+        return _intf->sd_bus_message_is_signal(_msg.get(), interface, member);
     }
 
     /** @brief Create a 'method_return' type message from an existing message.
@@ -215,7 +225,7 @@ struct message
     message new_method_return()
     {
         msgp_t reply = nullptr;
-        sd_bus_message_new_method_return(this->get(), &reply);
+        _intf->sd_bus_message_new_method_return(this->get(), &reply);
 
         return message(reply, std::false_type());
     }
@@ -223,8 +233,8 @@ struct message
     /** @brief Perform a 'method-return' response call. */
     void method_return()
     {
-        auto b = sd_bus_message_get_bus(this->get());
-        sd_bus_send(b, this->get(), nullptr);
+        auto b = _intf->sd_bus_message_get_bus(this->get());
+        _intf->sd_bus_send(b, this->get(), nullptr);
     }
 
     /** @brief Perform a 'signal-send' call. */
@@ -241,6 +251,7 @@ struct message
     {
         return _msg.get();
     }
+    std::unique_ptr<sdbusplus::SdBusInterface> _intf;
     details::msg _msg;
 };
 

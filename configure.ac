@@ -133,6 +133,10 @@ AS_IF([test "x$enable_oe_sdk" == "xyes"],
     AC_SUBST([OESDK_TESTCASE_FLAGS], [$testcase_flags])
 )
 
+AC_ARG_ENABLE([boost],
+    AS_HELP_STRING([--enable-boost], [Enable building with boost.]))
+AM_CONDITIONAL(BOOST, [test "x$enable_boost" = "xyes"])
+
 # Create configured output
 AC_CONFIG_FILES([Makefile test/Makefile tools/Makefile tools/setup.py])
 AC_CONFIG_FILES([example/Makefile])

@@ -193,6 +193,15 @@ class message
         return _intf->sd_bus_message_is_method_error(_msg.get(), nullptr);
     }
 
+    /** @brief Get the errno from the message.
+     *
+     *  @return The errno of the message.
+     */
+    int get_errno()
+    {
+        return sd_bus_message_get_errno(_msg.get());
+    }
+
     /** @brief Get the transaction cookie of a message.
      *
      * @return The transaction cookie of a message.
@@ -254,12 +263,13 @@ class message
 
     friend struct sdbusplus::bus::bus;
 
-  private:
     /** @brief Get a pointer to the owned 'msgp_t'. */
     msgp_t get()
     {
         return _msg.get();
     }
+
+  private:
     sdbusplus::SdBusInterface* _intf;
     details::msg _msg;
 };

@@ -1,5 +1,26 @@
 noinst_PROGRAMS = calculator-server list-users
 
+if BOOST
+noinst_PROGRAMS += asio-example
+asio_example_SOURCES = asio-example.cpp
+asio_example_CXXFLAGS = \
+    $(SYSTEMD_CFLAGS) \
+    $(PTHREAD_CFLAGS) \
+    $(BOOST_CPPFLAGS) \
+    -DBOOST_ALL_NO_LIB \
+    -DBOOST_SYSTEM_NO_DEPRECATED \
+    -DBOOST_ERROR_CODE_HEADER_ONLY \
+    -I$(top_srcdir)
+
+asio_example_LDADD = \
+    $(SYSTEMD_LIBS) \
+    $(PTHREAD_LIBS) \
+    ../libsdbusplus.la
+
+asio_example_LDFLAGS = \
+    $(BOOST_LDFLAGS)
+endif
+
 calculator_server_generated_files = \
 	net/poettering/Calculator/server.hpp \
 	net/poettering/Calculator/server.cpp \

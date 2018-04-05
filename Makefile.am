@@ -5,6 +5,8 @@ if WANT_LIBSDBUSPLUS
 nobase_include_HEADERS = \
 	mapbox/recursive_wrapper.hpp \
 	mapbox/variant.hpp \
+	sdbusplus/asio/connection.hpp \
+	sdbusplus/asio/detail/async_send_handler.hpp \
 	sdbusplus/bus.hpp \
 	sdbusplus/bus/match.hpp \
 	sdbusplus/sdbus.hpp \
@@ -22,6 +24,7 @@ nobase_include_HEADERS = \
 	sdbusplus/server/object.hpp \
 	sdbusplus/slot.hpp \
 	sdbusplus/utility/container_traits.hpp \
+	sdbusplus/utility/read_into_tuple.hpp \
 	sdbusplus/utility/tuple_to_array.hpp \
 	sdbusplus/utility/type_traits.hpp \
 	sdbusplus/vtable.hpp

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <type_traits>
+#include <tuple>
 
 namespace sdbusplus
 {
@@ -19,6 +20,28 @@ using array_to_ptr_t = typename std::conditional_t<
     std::conditional_t<std::is_same<Tbase, std::remove_extent_t<T>>::value,
                        std::add_pointer_t<std::remove_extent_t<T>>, T>,
     T>;
+
+// Small helper class for stripping off the error code from the function
+// argument definitions so unpack can be called appropriately
+template <typename T> struct strip_first_arg
+{
+};
+
+template <typename FirstArg, typename... Rest>
+struct strip_first_arg<std::tuple<FirstArg, Rest...>>
+{
+    using type = std::tuple<Rest...>;
+};
+
+// helper class to remove const and reference from types
+template <typename T> struct decay_tuple
+{
+};
+
+template <typename... Args> struct decay_tuple<std::tuple<Args...>>
+{
+    using type = std::tuple<typename std::decay<Args>::type...>;
+};
 
 } // namespace utility
 

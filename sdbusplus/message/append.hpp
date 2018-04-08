@@ -187,7 +187,7 @@ template <> struct append_single<bool>
 };
 
 /** @brief Specialization of append_single for containers (ie vector, array,
- * set, map, ect) */
+ * set, map, etc) */
 template <typename T>
 struct append_single<T, std::enable_if_t<utility::has_const_iterator<T>::value>>
 {
@@ -267,7 +267,7 @@ template <typename... Args> struct append_single<variant<Args...>>
  *  @tparam Tuple - The tuple type to append.
  *  @param[in] t - The tuple value to append.
  *  @tparam I - The indexes of the tuple type Tuple.
- *  @param[in] [unamed] - unused index_sequence for type deduction of I.
+ *  @param[in] [unnamed] - unused index_sequence for type deduction of I.
  */
 template <typename Tuple, size_t... I>
 void append_tuple(sd_bus_message* m, Tuple&& t, std::index_sequence<I...>)

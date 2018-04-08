@@ -13,7 +13,7 @@ namespace object
 namespace details
 {
 
-/** Templates to allow multiple inheritence via template parameters.
+/** Templates to allow multiple inheritance via template parameters.
  *
  *  These allow an object to group multiple dbus interface bindings into a
  *  single class.

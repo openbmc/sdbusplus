@@ -295,7 +295,7 @@ template <typename... Args> struct read_single<variant<Args...>>
  *  @tparam Tuple - The tuple type to read.
  *  @param[out] t - The tuple references to read.
  *  @tparam I - The indexes of the tuple type Tuple.
- *  @param[in] [unamed] - unused index_sequence for type deduction of I.
+ *  @param[in] [unnamed] - unused index_sequence for type deduction of I.
  */
 template <typename Tuple, size_t... I>
 void read_tuple(sd_bus_message* m, Tuple&& t, std::index_sequence<I...>)

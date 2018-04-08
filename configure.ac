@@ -51,7 +51,7 @@ AM_CONDITIONAL([WANT_TRANSACTION], [test "x$enable_transaction" = "xyes"])
 
 # Checks for header files.
 AS_IF([test "x$enable_libsdbusplus" != "xno"],
-      [AC_CHECK_HEADER(systemd/sd-bus.h, ,[AC_MSG_ERROR([Could not find systemd/sd-bus.h...systemd developement package required])])])
+      [AC_CHECK_HEADER(systemd/sd-bus.h, ,[AC_MSG_ERROR([Could not find systemd/sd-bus.h...systemd development package required])])])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AS_IF([test "x$enable_libsdbusplus" != "xno"],

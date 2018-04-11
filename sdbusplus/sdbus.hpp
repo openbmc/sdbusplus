@@ -15,6 +15,9 @@ class SdBusInterface
  public:
   virtual ~SdBusInterface() {}
 
+  virtual int sd_bus_add_object_manager(
+      sd_bus *bus, sd_bus_slot **slot, const char *path) = 0;
+
   // https://github.com/systemd/systemd/blob/master/src/systemd/sd-bus.h
   virtual sd_bus_message* sd_bus_message_ref(sd_bus_message *m) = 0;
 
@@ -76,6 +79,12 @@ class SdBusImpl : public SdBusInterface
   ~SdBusImpl() = default;
   SdBusImpl(SdBusImpl&&) = default;
   SdBusImpl& operator=(SdBusImpl&&) = default;
+
+  int sd_bus_add_object_manager(
+      sd_bus *bus, sd_bus_slot **slot, const char *path) override
+  {
+      return ::sd_bus_add_object_manager(bus, slot, path);
+  }
 
   sd_bus_message* sd_bus_message_ref(sd_bus_message *m) override
   {

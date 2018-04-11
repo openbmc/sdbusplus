@@ -13,6 +13,8 @@ class SdBusMock : public SdBusInterface
  public:
   virtual ~SdBusMock() {};
 
+  MOCK_METHOD3(sd_bus_add_object_manager, int(sd_bus *, sd_bus_slot **, const char *));
+
   MOCK_METHOD1(sd_bus_message_ref, sd_bus_message*(sd_bus_message *));
   MOCK_METHOD3(sd_bus_message_append_basic, int(sd_bus_message *, char, const void *));
   MOCK_METHOD2(sd_bus_message_at_end, int(sd_bus_message *, int));

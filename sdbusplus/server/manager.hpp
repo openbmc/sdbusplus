@@ -1,7 +1,8 @@
 #pragma once
 
-#include <sdbusplus/slot.hpp>
 #include <sdbusplus/bus.hpp>
+#include <sdbusplus/sdbus.hpp>
+#include <sdbusplus/slot.hpp>
 
 namespace sdbusplus
 {
@@ -35,20 +36,28 @@ struct manager
     manager& operator=(manager&&) = default;
     ~manager() = default;
 
+    manager(sdbusplus::bus::bus& bus, const char* path,
+            std::unique_ptr<sdbusplus::SdBusInterface> intf)
+        : _intf(std::move(intf)), _slot(nullptr)
+    {
+        sd_bus_slot* slot = nullptr;
+        intf->sd_bus_add_object_manager(bus.get(), &slot, path);
+
+        _slot = decltype(_slot){slot};
+    }
+
     /** @brief Register an object manager at a path.
      *
      *  @param[in] bus - The bus to register on.
      *  @param[in] path - The path to register.
      */
-    manager(sdbusplus::bus::bus& bus, const char* path) : _slot(nullptr)
+    manager(sdbusplus::bus::bus& bus, const char* path)
+        : manager(bus, path, std::make_unique<sdbusplus::SdBusImpl>())
     {
-        sd_bus_slot* slot = nullptr;
-        sd_bus_add_object_manager(bus.get(), &slot, path);
-
-        _slot = decltype(_slot){slot};
     }
 
   private:
+    std::unique_ptr<sdbusplus::SdBusInterface> _intf;
     slot::slot _slot;
 };
 

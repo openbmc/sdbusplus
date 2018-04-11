@@ -1,7 +1,8 @@
 #pragma once
 
-#include <sdbusplus/slot.hpp>
 #include <sdbusplus/bus.hpp>
+#include <sdbusplus/sdbus.hpp>
+#include <sdbusplus/slot.hpp>
 
 namespace sdbusplus
 {
@@ -43,7 +44,9 @@ struct manager
     manager(sdbusplus::bus::bus& bus, const char* path) : _slot(nullptr)
     {
         sd_bus_slot* slot = nullptr;
-        sd_bus_add_object_manager(bus.get(), &slot, path);
+        sdbusplus::SdBusInterface* intf = bus.getInterface();
+
+        intf->sd_bus_add_object_manager(bus.get(), &slot, path);
 
         _slot = decltype(_slot){slot};
     }

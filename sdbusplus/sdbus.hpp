@@ -13,6 +13,9 @@ class SdBusInterface
     public:
         virtual ~SdBusInterface() {}
 
+        virtual int sd_bus_add_object_manager(
+            sd_bus *bus, sd_bus_slot **slot, const char *path) = 0;
+
         virtual int sd_bus_attach_event(sd_bus *bus, sd_event *e, int priority) = 0;
 
         virtual int sd_bus_call(sd_bus *bus, sd_bus_message *m, uint64_t usec,
@@ -107,6 +110,12 @@ class SdBusImpl : public SdBusInterface
     ~SdBusImpl() = default;
     SdBusImpl(SdBusImpl &&) = default;
     SdBusImpl &operator=(SdBusImpl &&) = default;
+
+    int sd_bus_add_object_manager(
+        sd_bus *bus, sd_bus_slot **slot, const char *path) override
+    {
+        return ::sd_bus_add_object_manager(bus, slot, path);
+    }
 
     int sd_bus_attach_event(sd_bus *bus, sd_event *e, int priority) override
     {

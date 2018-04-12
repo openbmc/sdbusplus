@@ -5,6 +5,8 @@ nobase_include_HEADERS = \
 	mapbox/variant.hpp \
 	sdbusplus/bus.hpp \
 	sdbusplus/bus/match.hpp \
+	sdbusplus/sdbus.hpp \
+	sdbusplus/test/sdbus_mock.hpp \
 	sdbusplus/exception.hpp \
 	sdbusplus/message.hpp \
 	sdbusplus/message/append.hpp \

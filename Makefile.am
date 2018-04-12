@@ -5,6 +5,8 @@ nobase_include_HEADERS = \
 	mapbox/variant.hpp \
 	sdbusplus/bus.hpp \
 	sdbusplus/bus/match.hpp \
+	sdbusplus/sdbus.hpp \
+	sdbusplus/test/sdbus_mock.hpp \
 	sdbusplus/exception.hpp \
 	sdbusplus/message.hpp \
 	sdbusplus/message/append.hpp \
@@ -23,7 +25,8 @@ nobase_include_HEADERS = \
 	sdbusplus/vtable.hpp
 
 LIBSDBUSPLUS_FILES = \
-	sdbusplus/exception.cpp
+	sdbusplus/exception.cpp \
+	sdbusplus/sdbus.cpp
 
 if WANT_TRANSACTION
 nobase_include_HEADERS += \

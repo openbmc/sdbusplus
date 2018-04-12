@@ -404,7 +404,7 @@ inline bus new_system()
 inline auto message::message::get_bus()
 {
     sd_bus* b = nullptr;
-    b = sd_bus_message_get_bus(_msg.get());
+    b = _intf->sd_bus_message_get_bus(_msg.get());
     return bus::bus(b);
 }
 

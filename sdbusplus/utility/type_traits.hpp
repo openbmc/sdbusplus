@@ -43,6 +43,21 @@ template <typename... Args> struct decay_tuple<std::tuple<Args...>>
     using type = std::tuple<typename std::decay<Args>::type...>;
 };
 
+// Small helper class for stripping off the first + last character of a char
+// array
+template <std::size_t N, std::size_t... Is>
+constexpr std::array<char, N - 2> strip_ends(const std::array<char, N>& s,
+                                             std::index_sequence<Is...>)
+{
+    return {(s[1 + Is])..., static_cast<char>(0)};
+};
+
+template <std::size_t N>
+constexpr std::array<char, N - 2> strip_ends(const std::array<char, N>& s)
+{
+    return strip_ends(s, std::make_index_sequence<N - 3>{});
+};
+
 } // namespace utility
 
 } // namespace sdbusplus

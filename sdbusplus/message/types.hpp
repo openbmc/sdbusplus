@@ -238,6 +238,11 @@ struct type_id<variant<Args...>> : tuple_type_id<SD_BUS_TYPE_VARIANT>
 {
 };
 
+template <> struct type_id<void>
+{
+    constexpr static auto value = std::make_tuple('\0');
+};
+
 template <typename T> constexpr auto type_id_single()
 {
     static_assert(!std::is_base_of<undefined_type_id, type_id<T>>::value,

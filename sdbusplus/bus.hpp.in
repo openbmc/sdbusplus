@@ -8,15 +8,42 @@
 #include <systemd/sd-bus.h>
 #include <systemd/sd-event.h>
 #include <sdbusplus/message.hpp>
+#include <sdbusplus/sdbus.hpp>
+
+extern sdbusplus::SdBusImpl sdbus_impl;
 
 namespace sdbusplus
 {
 
 // Forward declare.
-namespace server { namespace interface { struct interface; } }
-namespace server { namespace manager { struct manager; } }
-namespace server { namespace object { template<class...> struct object; } }
-namespace bus { namespace match { struct match; } }
+namespace server
+{
+namespace interface
+{
+struct interface;
+}
+} // namespace server
+namespace server
+{
+namespace manager
+{
+struct manager;
+}
+} // namespace server
+namespace server
+{
+namespace object
+{
+template <class...> struct object;
+}
+} // namespace server
+namespace bus
+{
+namespace match
+{
+struct match;
+}
+} // namespace bus
 
 namespace bus
 {
@@ -58,9 +85,8 @@ class Strv
 
         explicit Strv(const std::vector<std::string>& v)
         {
-            std::transform(v.begin(), v.end(),
-                           std::back_inserter(ptrs),
-                           [](const auto& i){ return i.c_str(); });
+            std::transform(v.begin(), v.end(), std::back_inserter(ptrs),
+                           [](const auto& i) { return i.c_str(); });
             ptrs.push_back(nullptr);
         }
 
@@ -70,7 +96,6 @@ class Strv
         }
 
     private:
-
         std::vector<const char*> ptrs;
 };
 
@@ -84,20 +109,23 @@ using bus = std::unique_ptr<sd_bus, BusDeleter>;
  */
 struct bus
 {
-        /* Define all of the basic class operations:
-         *     Not allowed:
-         *         - Default constructor to avoid nullptrs.
-         *         - Copy operations due to internal unique_ptr.
-         *     Allowed:
-         *         - Move operations.
-         *         - Destructor.
-         */
+    /* Define all of the basic class operations:
+     *     Not allowed:
+     *         - Default constructor to avoid nullptrs.
+     *         - Copy operations due to internal unique_ptr.
+     *     Allowed:
+     *         - Move operations.
+     *         - Destructor.
+     */
     bus() = delete;
     bus(const bus&) = delete;
     bus& operator=(const bus&) = delete;
+
     bus(bus&&) = default;
     bus& operator=(bus&&) = default;
     ~bus() = default;
+
+    bus(busp_t b, sdbusplus::SdBusInterface* intf);
 
     /** @brief Conversion constructor from 'busp_t'.
      *
@@ -114,7 +142,10 @@ struct bus
     bus(busp_t b, std::false_type);
 
     /** @brief Release ownership of the stored bus-pointer. */
-    busp_t release() { return _bus.release(); }
+    busp_t release()
+    {
+        return _bus.release();
+    }
 
     /** @brief Wait for new dbus messages or signals.
      *
@@ -122,23 +153,23 @@ struct bus
      */
     void wait(uint64_t timeout_us = ULLONG_MAX)
     {
-        sd_bus_wait(_bus.get(), timeout_us);
+        _intf->sd_bus_wait(_bus.get(), timeout_us);
     }
 
     /** @brief Process waiting dbus messages or signals. */
     auto process()
     {
         sd_bus_message* m = nullptr;
-        sd_bus_process(_bus.get(), &m);
+        _intf->sd_bus_process(_bus.get(), &m);
 
-        return message::message(m, std::false_type());
+        return message::message(m, _intf, std::false_type());
     }
 
     /** @brief Process waiting dbus messages or signals, discarding unhandled.
      */
     void process_discard()
     {
-        sd_bus_process(_bus.get(), nullptr);
+        _intf->sd_bus_process(_bus.get(), nullptr);
     }
 
     /** @brief Claim a service name on the dbus.
@@ -147,7 +178,7 @@ struct bus
      */
     void request_name(const char* service)
     {
-        sd_bus_request_name(_bus.get(), service, 0);
+        _intf->sd_bus_request_name(_bus.get(), service, 0);
     }
 
     /** @brief Create a method_call message.
@@ -163,10 +194,10 @@ struct bus
                          const char* interf, const char* method)
     {
         sd_bus_message* m = nullptr;
-        sd_bus_message_new_method_call(_bus.get(), &m, service, objpath,
-                                       interf, method);
+        _intf->sd_bus_message_new_method_call(_bus.get(), &m, service, objpath,
+                                              interf, method);
 
-        return message::message(m, std::false_type());
+        return message::message(m, _intf, std::false_type());
     }
 
     /** @brief Create a signal message.
@@ -180,9 +211,10 @@ struct bus
     auto new_signal(const char* objpath, const char* interf, const char* member)
     {
         sd_bus_message* m = nullptr;
-        sd_bus_message_new_signal(_bus.get(), &m, objpath, interf, member);
+        _intf->sd_bus_message_new_signal(_bus.get(), &m, objpath, interf,
+                                         member);
 
-        return message::message(m, std::false_type());
+        return message::message(m, _intf, std::false_type());
     }
 
     /** @brief Perform a message call.
@@ -195,9 +227,9 @@ struct bus
     auto call(message::message& m, uint64_t timeout_us = 0)
     {
         sd_bus_message* reply = nullptr;
-        sd_bus_call(_bus.get(), m.get(), timeout_us, nullptr, &reply);
+        _intf->sd_bus_call(_bus.get(), m.get(), timeout_us, nullptr, &reply);
 
-        return message::message(reply, std::false_type());
+        return message::message(reply, _intf, std::false_type());
     }
 
     /** @brief Perform a message call, ignoring the reply.
@@ -207,17 +239,17 @@ struct bus
      */
     void call_noreply(message::message& m, uint64_t timeout_us = 0)
     {
-        sd_bus_call(_bus.get(), m.get(), timeout_us, nullptr, nullptr);
+        _intf->sd_bus_call(_bus.get(), m.get(), timeout_us, nullptr, nullptr);
     }
 
     /** @brief Get the bus unique name. Ex: ":1.11".
-      *
-      * @return The bus unique name.
-      */
+     *
+     * @return The bus unique name.
+     */
     auto get_unique_name()
     {
         const char* unique = nullptr;
-        sd_bus_get_unique_name(_bus.get(), &unique);
+        _intf->sd_bus_get_unique_name(_bus.get(), &unique);
         return std::string(unique);
     }
 
@@ -228,19 +260,19 @@ struct bus
      */
     void attach_event(sd_event* event, int priority)
     {
-        sd_bus_attach_event(_bus.get(), event, priority);
+        _intf->sd_bus_attach_event(_bus.get(), event, priority);
     }
 
     /** @brief Detach the bus from its sd-event event loop object */
     void detach_event()
     {
-        sd_bus_detach_event(_bus.get());
+        _intf->sd_bus_detach_event(_bus.get());
     }
 
     /** @brief Get the sd-event event loop object of the bus */
     auto get_event()
     {
-        return sd_bus_get_event(_bus.get());
+        return _intf->sd_bus_get_event(_bus.get());
     }
 
     /** @brief Wrapper for sd_bus_emit_interfaces_added_strv
@@ -256,9 +288,8 @@ struct bus
                                const std::vector<std::string>& ifaces)
     {
         details::Strv s{ifaces};
-        sd_bus_emit_interfaces_added_strv(_bus.get(),
-                                          path,
-                                          static_cast<char**>(s));
+        _intf->sd_bus_emit_interfaces_added_strv(_bus.get(), path,
+                                                 static_cast<char**>(s));
     }
 
     /** @brief Wrapper for sd_bus_emit_interfaces_removed_strv
@@ -274,9 +305,8 @@ struct bus
                                  const std::vector<std::string>& ifaces)
     {
         details::Strv s{ifaces};
-        sd_bus_emit_interfaces_removed_strv(_bus.get(),
-                                            path,
-                                            static_cast<char**>(s));
+        _intf->sd_bus_emit_interfaces_removed_strv(_bus.get(), path,
+                                                   static_cast<char**>(s));
     }
 
     /** @brief Wrapper for sd_bus_emit_object_added
@@ -289,7 +319,7 @@ struct bus
      */
     void emit_object_added(const char* path)
     {
-        sd_bus_emit_object_added(_bus.get(), path);
+        _intf->sd_bus_emit_object_added(_bus.get(), path);
     }
 
     /** @brief Wrapper for sd_bus_emit_object_removed
@@ -302,7 +332,7 @@ struct bus
      */
     void emit_object_removed(const char* path)
     {
-        sd_bus_emit_object_removed(_bus.get(), path);
+        _intf->sd_bus_emit_object_removed(_bus.get(), path);
     }
 
     /** @brief Wrapper for sd_bus_list_names.
@@ -314,10 +344,10 @@ struct bus
     {
         char** names = nullptr;
 
-        sd_bus_list_names(_bus.get(), &names, nullptr);
+        _intf->sd_bus_list_names(_bus.get(), &names, nullptr);
 
         std::vector<std::string> result;
-        for(auto ptr = names; ptr && *ptr; ++ptr)
+        for (auto ptr = names; ptr && *ptr; ++ptr)
         {
             result.push_back(*ptr);
             free(*ptr);
@@ -329,16 +359,22 @@ struct bus
 
     friend struct server::interface::interface;
     friend struct server::manager::manager;
-    template<class... Args> friend struct server::object::object;
+    template <class... Args> friend struct server::object::object;
     friend struct match::match;
 
-    private:
-        busp_t get() { return _bus.get(); }
-        details::bus _bus;
+  private:
+    busp_t get()
+    {
+        return _bus.get();
+    }
+    sdbusplus::SdBusInterface* _intf;
+    details::bus _bus;
 };
 
-inline bus::bus(busp_t b) : _bus(sd_bus_ref(b))
+inline bus::bus(busp_t b, sdbusplus::SdBusInterface* intf) :
+    _intf(intf), _bus(_intf->sd_bus_ref(b))
 {
+    // We can leave this as the real deleter if we just use a null pointer.
     _bus.get_deleter().deleter = sd_bus_unref;
 
 #if @WANT_TRANSACTION@
@@ -354,8 +390,11 @@ inline bus::bus(busp_t b) : _bus(sd_bus_ref(b))
 #endif
 }
 
-inline bus::bus(busp_t b, std::false_type) : _bus(b)
+inline bus::bus(busp_t b) : _intf(&sdbus_impl), _bus(_intf->sd_bus_ref(b))
 {
+    // We can leave this as the real deleter if we just use a null pointer.
+    _bus.get_deleter().deleter = sd_bus_unref;
+
 #if @WANT_TRANSACTION@
     // Emitting object added causes a message to get the properties
     // which can trigger a 'transaction' in the server bindings.  If
@@ -369,6 +408,20 @@ inline bus::bus(busp_t b, std::false_type) : _bus(b)
 #endif
 }
 
+inline bus::bus(busp_t b, std::false_type) : _intf(&sdbus_impl), _bus(b)
+{
+#if @WANT_TRANSACTION@
+    // Emitting object added causes a message to get the properties
+    // which can trigger a 'transaction' in the server bindings.  If
+    // the bus isn't up far enough, this causes an assert deep in
+    // sd-bus code.  Get the 'unique_name' to ensure the bus is up far
+    // enough to avoid the assert.
+    if (b != nullptr)
+    {
+        get_unique_name();
+    }
+#endif
+}
 
 inline bus new_default()
 {
@@ -401,7 +454,7 @@ inline auto message::message::get_bus()
 {
     sd_bus* b = nullptr;
     b = _intf->sd_bus_message_get_bus(_msg.get());
-    return bus::bus(b);
+    return bus::bus(b, _intf);
 }
 
 } // namespace sdbusplus

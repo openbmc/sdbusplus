@@ -13,9 +13,29 @@ class SdBusInterface
   public:
     virtual ~SdBusInterface() = default;
 
-    // https://github.com/systemd/systemd/blob/master/src/systemd/sd-bus.h
-    virtual sd_bus_message *sd_bus_message_ref(sd_bus_message *m) = 0;
+    virtual int sd_bus_attach_event(sd_bus *bus, sd_event *e, int priority) = 0;
 
+    virtual int sd_bus_call(sd_bus *bus, sd_bus_message *m, uint64_t usec,
+                            sd_bus_error *ret_error,
+                            sd_bus_message **reply) = 0;
+
+    virtual int sd_bus_detach_event(sd_bus *bus) = 0;
+
+    virtual int sd_bus_emit_interfaces_added_strv(sd_bus *bus, const char *path,
+                                                  char **interfaces) = 0;
+    virtual int sd_bus_emit_interfaces_removed_strv(sd_bus *bus,
+                                                    const char *path,
+                                                    char **interfaces) = 0;
+    virtual int sd_bus_emit_object_added(sd_bus *bus, const char *path) = 0;
+    virtual int sd_bus_emit_object_removed(sd_bus *bus, const char *path) = 0;
+
+    virtual sd_event *sd_bus_get_event(sd_bus *bus) = 0;
+    virtual int sd_bus_get_unique_name(sd_bus *bus, const char **unique) = 0;
+
+    virtual int sd_bus_list_names(sd_bus *bus, char ***acquired,
+                                  char ***activatable) = 0;
+
+    // https://github.com/systemd/systemd/blob/master/src/systemd/sd-bus.h
     virtual int sd_bus_message_append_basic(sd_bus_message *message, char type,
                                             const void *value) = 0;
 
@@ -48,22 +68,46 @@ class SdBusInterface
                                          const char *interface,
                                          const char *member) = 0;
 
+    virtual int sd_bus_message_new_method_call(sd_bus *bus, sd_bus_message **m,
+                                               const char *destination,
+                                               const char *path,
+                                               const char *interface,
+                                               const char *member) = 0;
+
     virtual int sd_bus_message_new_method_return(sd_bus_message *call,
                                                  sd_bus_message **m) = 0;
 
+    virtual int sd_bus_message_new_signal(sd_bus *bus, sd_bus_message **m,
+                                          const char *path,
+                                          const char *interface,
+                                          const char *member) = 0;
+
+    virtual int sd_bus_message_open_container(sd_bus_message *m, char type,
+                                              const char *contents) = 0;
+
     virtual int sd_bus_message_read_basic(sd_bus_message *m, char type,
                                           void *p) = 0;
+
+    virtual sd_bus_message *sd_bus_message_ref(sd_bus_message *m) = 0;
 
     virtual int sd_bus_message_skip(sd_bus_message *m, const char *types) = 0;
 
     virtual int sd_bus_message_verify_type(sd_bus_message *m, char type,
                                            const char *contents) = 0;
 
+    virtual int sd_bus_process(sd_bus *bus, sd_bus_message **r) = 0;
+
+    virtual sd_bus *sd_bus_ref(sd_bus *bus) = 0;
+
+    virtual int sd_bus_request_name(sd_bus *bus, const char *name,
+                                    uint64_t flags) = 0;
+
     virtual int sd_bus_send(sd_bus *bus, sd_bus_message *m,
                             uint64_t *cookie) = 0;
 
-    virtual int sd_bus_message_open_container(sd_bus_message *m, char type,
-                                              const char *contents) = 0;
+    virtual sd_bus *sd_bus_unref(sd_bus *bus) = 0;
+
+    virtual int sd_bus_wait(sd_bus *bus, uint64_t timeout_usec) = 0;
 };
 
 class SdBusImpl : public SdBusInterface
@@ -76,9 +120,58 @@ class SdBusImpl : public SdBusInterface
     SdBusImpl(SdBusImpl &&) = default;
     SdBusImpl &operator=(SdBusImpl &&) = default;
 
-    sd_bus_message *sd_bus_message_ref(sd_bus_message *m) override
+    int sd_bus_attach_event(sd_bus *bus, sd_event *e, int priority) override
     {
-        return ::sd_bus_message_ref(m);
+        return ::sd_bus_attach_event(bus, e, priority);
+    }
+
+    int sd_bus_call(sd_bus *bus, sd_bus_message *m, uint64_t usec,
+                    sd_bus_error *ret_error, sd_bus_message **reply) override
+    {
+        return ::sd_bus_call(bus, m, usec, ret_error, reply);
+    }
+
+    int sd_bus_detach_event(sd_bus *bus) override
+    {
+        return ::sd_bus_detach_event(bus);
+    }
+
+    int sd_bus_emit_interfaces_added_strv(sd_bus *bus, const char *path,
+                                          char **interfaces) override
+    {
+        return ::sd_bus_emit_interfaces_added_strv(bus, path, interfaces);
+    }
+
+    int sd_bus_emit_interfaces_removed_strv(sd_bus *bus, const char *path,
+                                            char **interfaces) override
+    {
+        return ::sd_bus_emit_interfaces_removed_strv(bus, path, interfaces);
+    }
+
+    int sd_bus_emit_object_added(sd_bus *bus, const char *path) override
+    {
+        return ::sd_bus_emit_object_added(bus, path);
+    }
+
+    int sd_bus_emit_object_removed(sd_bus *bus, const char *path) override
+    {
+        return ::sd_bus_emit_object_removed(bus, path);
+    }
+
+    sd_event *sd_bus_get_event(sd_bus *bus) override
+    {
+        return ::sd_bus_get_event(bus);
+    }
+
+    int sd_bus_get_unique_name(sd_bus *bus, const char **unique) override
+    {
+        return ::sd_bus_get_unique_name(bus, unique);
+    }
+
+    int sd_bus_list_names(sd_bus *bus, char ***acquired,
+                          char ***activatable) override
+    {
+        return ::sd_bus_list_names(bus, acquired, activatable);
     }
 
     int sd_bus_message_append_basic(sd_bus_message *message, char type,
@@ -167,16 +260,43 @@ class SdBusImpl : public SdBusInterface
         return ::sd_bus_message_is_signal(m, interface, member);
     }
 
+    int sd_bus_message_new_method_call(sd_bus *bus, sd_bus_message **m,
+                                       const char *destination,
+                                       const char *path, const char *interface,
+                                       const char *member) override
+    {
+        return ::sd_bus_message_new_method_call(bus, m, destination, path,
+                                                interface, member);
+    }
+
     int sd_bus_message_new_method_return(sd_bus_message *call,
                                          sd_bus_message **m) override
     {
         return ::sd_bus_message_new_method_return(call, m);
     }
 
+    int sd_bus_message_new_signal(sd_bus *bus, sd_bus_message **m,
+                                  const char *path, const char *interface,
+                                  const char *member) override
+    {
+        return ::sd_bus_message_new_signal(bus, m, path, interface, member);
+    }
+
+    int sd_bus_message_open_container(sd_bus_message *m, char type,
+                                      const char *contents) override
+    {
+        return ::sd_bus_message_open_container(m, type, contents);
+    }
+
     int sd_bus_message_read_basic(sd_bus_message *m, char type,
                                   void *p) override
     {
         return ::sd_bus_message_read_basic(m, type, p);
+    }
+
+    sd_bus_message *sd_bus_message_ref(sd_bus_message *m) override
+    {
+        return ::sd_bus_message_ref(m);
     }
 
     int sd_bus_message_skip(sd_bus_message *m, const char *types) override
@@ -190,15 +310,35 @@ class SdBusImpl : public SdBusInterface
         return ::sd_bus_message_verify_type(m, type, contents);
     }
 
+    int sd_bus_process(sd_bus *bus, sd_bus_message **r) override
+    {
+        return ::sd_bus_process(bus, r);
+    }
+
+    sd_bus *sd_bus_ref(sd_bus *bus) override
+    {
+        return ::sd_bus_ref(bus);
+    }
+
+    int sd_bus_request_name(sd_bus *bus, const char *name,
+                            uint64_t flags) override
+    {
+        return ::sd_bus_request_name(bus, name, flags);
+    }
+
     int sd_bus_send(sd_bus *bus, sd_bus_message *m, uint64_t *cookie) override
     {
         return ::sd_bus_send(bus, m, cookie);
     }
 
-    int sd_bus_message_open_container(sd_bus_message *m, char type,
-                                      const char *contents) override
+    sd_bus *sd_bus_unref(sd_bus *bus) override
     {
-        return ::sd_bus_message_open_container(m, type, contents);
+        return ::sd_bus_unref(bus);
+    }
+
+    int sd_bus_wait(sd_bus *bus, uint64_t timeout_usec) override
+    {
+        return ::sd_bus_wait(bus, timeout_usec);
     }
 };
 

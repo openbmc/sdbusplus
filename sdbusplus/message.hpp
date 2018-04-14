@@ -76,8 +76,11 @@ class message
      *  Takes increment ref-count of the msg-pointer and release when
      *  destructed.
      */
-    explicit message(msgp_t m) :
-        message(m, &sdbus_impl)
+    explicit message(msgp_t m) : message(m, &sdbus_impl)
+    {
+    }
+
+    message(msgp_t m, sdbusplus::SdBusInterface* intf, std::false_type) : _intf(intf), _msg(m)
     {
     }
 
@@ -85,8 +88,7 @@ class message
      *
      *  Takes ownership of the msg-pointer and releases it when done.
      */
-    message(msgp_t m, std::false_type) :
-        _intf(&sdbus_impl), _msg(m)
+    message(msgp_t m, std::false_type) : _intf(&sdbus_impl), _msg(m)
     {
     }
 

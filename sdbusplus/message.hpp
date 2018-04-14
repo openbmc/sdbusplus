@@ -79,6 +79,11 @@ class message
     {
     }
 
+    message(msgp_t m, sdbusplus::SdBusInterface* intf, std::false_type) :
+        _intf(intf), _msg(m)
+    {
+    }
+
     /** @brief Constructor for 'msgp_t'.
      *
      *  Takes ownership of the msg-pointer and releases it when done.

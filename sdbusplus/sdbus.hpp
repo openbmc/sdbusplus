@@ -35,6 +35,9 @@ class SdBusInterface
         virtual int sd_bus_emit_properties_changed_strv(
             sd_bus *bus, const char *path, const char *interface, char **names) = 0;
 
+        virtual int sd_bus_error_set_const(
+            sd_bus_error *e, const char *name, const char *message) = 0;
+
         virtual sd_event *sd_bus_get_event(sd_bus *bus) = 0;
         virtual int sd_bus_get_unique_name(sd_bus *bus, const char **unique) = 0;
 
@@ -173,6 +176,12 @@ class SdBusImpl : public SdBusInterface
         const char *interface, char **names) override
     {
         return ::sd_bus_emit_properties_changed_strv(bus, path, interface, names);
+    }
+
+    int sd_bus_error_set_const(
+        sd_bus_error *e, const char *name, const char *message) override
+    {
+        return ::sd_bus_error_set_const(e, name, message);
     }
 
     sd_event *sd_bus_get_event(sd_bus *bus) override

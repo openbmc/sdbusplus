@@ -1,6 +1,7 @@
 #pragma once
 #include <tuple>
 #include <systemd/sd-bus.h>
+#include <sdbusplus/sdbus.hpp>
 #include <sdbusplus/server.hpp>
 <%
     namespaces = interface.name.split('.')
@@ -129,6 +130,7 @@ ${ m.cpp_prototype(loader, interface=interface, ptype='callback-header') }
         static const vtable::vtable_t _vtable[];
         sdbusplus::server::interface::interface
                 _${"_".join(interface.name.split('.'))}_interface;
+        sdbusplus::SdBusInterface *_intf;
 
     % for p in interface.properties:
         % if p.defaultValue:

@@ -357,6 +357,15 @@ class bus
             return result;
         }
 
+        /** @brief Get the SdBusInterface used by this bus.
+         *
+         *  @return A pointer to the SdBusInterface used by this bus.
+         */
+        sdbusplus::SdBusInterface* getInterface()
+        {
+            return _intf;
+        }
+
         friend struct server::interface::interface;
         friend struct server::manager::manager;
         template <class... Args> friend struct server::object::object;

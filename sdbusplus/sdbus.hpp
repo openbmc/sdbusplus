@@ -16,6 +16,11 @@ class SdBusInterface
         virtual int sd_bus_add_object_manager(
             sd_bus *bus, sd_bus_slot **slot, const char *path) = 0;
 
+        virtual int sd_bus_add_object_vtable(
+            sd_bus *bus, sd_bus_slot **slot, const char *path,
+            const char *interface, const sd_bus_vtable *vtable,
+            void *userdata) = 0;
+
         virtual int sd_bus_attach_event(sd_bus *bus, sd_event *e, int priority) = 0;
 
         virtual int sd_bus_call(sd_bus *bus, sd_bus_message *m, uint64_t usec,
@@ -27,6 +32,8 @@ class SdBusInterface
         virtual int sd_bus_emit_interfaces_removed_strv(sd_bus *bus, const char *path, char **interfaces) = 0;
         virtual int sd_bus_emit_object_added(sd_bus *bus, const char *path) = 0;
         virtual int sd_bus_emit_object_removed(sd_bus *bus, const char *path) = 0;
+        virtual int sd_bus_emit_properties_changed_strv(
+            sd_bus *bus, const char *path, const char *interface, char **names) = 0;
 
         virtual sd_event *sd_bus_get_event(sd_bus *bus) = 0;
         virtual int sd_bus_get_unique_name(sd_bus *bus, const char **unique) = 0;
@@ -117,6 +124,15 @@ class SdBusImpl : public SdBusInterface
         return ::sd_bus_add_object_manager(bus, slot, path);
     }
 
+    int sd_bus_add_object_vtable(
+        sd_bus *bus, sd_bus_slot **slot, const char *path,
+        const char *interface, const sd_bus_vtable *vtable,
+        void *userdata) override
+    {
+        return ::sd_bus_add_object_vtable(bus, slot, path,
+                                          interface, vtable, userdata);
+    }
+
     int sd_bus_attach_event(sd_bus *bus, sd_event *e, int priority) override
     {
         return ::sd_bus_attach_event(bus, e, priority);
@@ -150,6 +166,13 @@ class SdBusImpl : public SdBusInterface
     int sd_bus_emit_object_removed(sd_bus *bus, const char *path) override
     {
         return ::sd_bus_emit_object_removed(bus, path);
+    }
+
+    int sd_bus_emit_properties_changed_strv(
+        sd_bus *bus, const char *path,
+        const char *interface, char **names) override
+    {
+        return ::sd_bus_emit_properties_changed_strv(bus, path, interface, names);
     }
 
     sd_event *sd_bus_get_event(sd_bus *bus) override

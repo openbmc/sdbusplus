@@ -13,6 +13,9 @@ class SdBusMock : public SdBusInterface
         virtual ~SdBusMock(){};
 
         MOCK_METHOD3(sd_bus_add_object_manager, int(sd_bus *, sd_bus_slot **, const char *));
+        MOCK_METHOD6(sd_bus_add_object_vtable,
+                     int(sd_bus *, sd_bus_slot **, const char *,
+                         const char *, const sd_bus_vtable *, void *));
         MOCK_METHOD3(sd_bus_attach_event, int(sd_bus *, sd_event *, int));
         MOCK_METHOD5(sd_bus_call,
                      int(sd_bus *, sd_bus_message *, uint64_t,
@@ -25,6 +28,8 @@ class SdBusMock : public SdBusInterface
                      int(sd_bus *, const char *, char **));
         MOCK_METHOD2(sd_bus_emit_object_added, int(sd_bus *, const char *));
         MOCK_METHOD2(sd_bus_emit_object_removed, int(sd_bus *, const char *));
+        MOCK_METHOD4(sd_bus_emit_properties_changed_strv,
+                     int(sd_bus *, const char *, const char *, char **));
 
         MOCK_METHOD1(sd_bus_get_event, sd_event *(sd_bus *));
         MOCK_METHOD2(sd_bus_get_unique_name, int(sd_bus *, const char **));

@@ -1,5 +1,7 @@
 #pragma once
+
 #include <sdbusplus/bus.hpp>
+#include <sdbusplus/sdbus.hpp>
 
 namespace sdbusplus
 {
@@ -91,9 +93,10 @@ template <class... Args> struct object : details::compose<Args...>
      */
     object(bus::bus& bus, const char* path, bool deferSignal = false) :
         details::compose<Args...>(bus, path),
-        __sdbusplus_server_object_bus(bus.get()),
+        __sdbusplus_server_object_bus(bus.get(), bus.getInterface()),
         __sdbusplus_server_object_path(path),
-        __sdbusplus_server_object_emitremoved(false)
+        __sdbusplus_server_object_emitremoved(false),
+        __sdbusplus_server_object_intf(bus.getInterface())
     {
         if (!deferSignal)
         {
@@ -105,8 +108,9 @@ template <class... Args> struct object : details::compose<Args...>
     {
         if (__sdbusplus_server_object_emitremoved)
         {
-            sd_bus_emit_object_removed(__sdbusplus_server_object_bus.get(),
-                                       __sdbusplus_server_object_path.c_str());
+            __sdbusplus_server_object_intf->sd_bus_emit_object_removed(
+                __sdbusplus_server_object_bus.get(),
+                __sdbusplus_server_object_path.c_str());
         }
     }
 
@@ -115,8 +119,9 @@ template <class... Args> struct object : details::compose<Args...>
     {
         if (!__sdbusplus_server_object_emitremoved)
         {
-            sd_bus_emit_object_added(__sdbusplus_server_object_bus.get(),
-                                     __sdbusplus_server_object_path.c_str());
+            __sdbusplus_server_object_intf->sd_bus_emit_object_added(
+                __sdbusplus_server_object_bus.get(),
+                __sdbusplus_server_object_path.c_str());
             __sdbusplus_server_object_emitremoved = true;
         }
     }
@@ -129,6 +134,7 @@ template <class... Args> struct object : details::compose<Args...>
     bus::bus __sdbusplus_server_object_bus;
     std::string __sdbusplus_server_object_path;
     bool __sdbusplus_server_object_emitremoved;
+    SdBusInterface* __sdbusplus_server_object_intf;
 };
 
 } // namespace object

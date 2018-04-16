@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <sdbusplus/sdbus.hpp>
 #include <sdbusplus/server.hpp>
 #include <sdbusplus/exception.hpp>
 #include <${"/".join(interface.name.split('.') + [ 'server.hpp' ])}>
@@ -23,7 +24,7 @@ namespace server
 
 ${classname}::${classname}(bus::bus& bus, const char* path)
         : _${interface_instance()}(
-                bus, path, _interface, _vtable, this)
+                bus, path, _interface, _vtable, this), _intf(bus.getInterface())
 {
 }
 
@@ -61,9 +62,13 @@ int ${classname}::_callback_get_${p.name}(
 {
     using sdbusplus::server::binding::details::convertForMessage;
 
+    // TODO(venture): Can this except? I wouldn't think so.
+    auto o = static_cast<${classname}*>(context);
+
     try
     {
-        auto m = message::message(reply);
+        auto m = message::message(reply, o->_intf);
+
 #if @WANT_TRANSACTION@
         {
             auto tbus = m.get_bus();
@@ -73,12 +78,11 @@ int ${classname}::_callback_get_${p.name}(
         }
 #endif
 
-        auto o = static_cast<${classname}*>(context);
         m.append(convertForMessage(o->${p.camelCase}()));
     }
     catch(sdbusplus::internal_exception_t& e)
     {
-        sd_bus_error_set_const(error, e.name(), e.description());
+        o->_intf->sd_bus_error_set_const(error, e.name(), e.description());
         return -EINVAL;
     }
 
@@ -102,9 +106,12 @@ int ${classname}::_callback_set_${p.name}(
         const char* property, sd_bus_message* value, void* context,
         sd_bus_error* error)
 {
+    auto o = static_cast<${classname}*>(context);
+
     try
     {
-        auto m = message::message(value);
+        auto m = message::message(value, o->_intf);
+
 #if @WANT_TRANSACTION@
         {
             auto tbus = m.get_bus();
@@ -113,8 +120,6 @@ int ${classname}::_callback_set_${p.name}(
                 (std::hash<sdbusplus::server::transaction::Transaction>{}(t));
         }
 #endif
-
-        auto o = static_cast<${classname}*>(context);
 
         ${p.cppTypeMessage(interface.name)} v{};
         m.read(v);
@@ -127,7 +132,7 @@ convert${p.enum_name(interface.name)}FromString(v));
     }
     catch(sdbusplus::internal_exception_t& e)
     {
-        sd_bus_error_set_const(error, e.name(), e.description());
+        o->_intf->sd_bus_error_set_const(error, e.name(), e.description());
         return -EINVAL;
     }
 

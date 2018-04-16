@@ -5,6 +5,7 @@
 #include <sdbusplus/slot.hpp>
 #include <sdbusplus/vtable.hpp>
 #include <sdbusplus/bus.hpp>
+#include <sdbusplus/sdbus.hpp>
 
 namespace sdbusplus
 {
@@ -57,12 +58,12 @@ struct interface final
      */
     interface(sdbusplus::bus::bus& bus, const char* path, const char* interf,
               const sdbusplus::vtable::vtable_t* vtable, void* context) :
-        _bus(bus.get()),
-        _path(path), _interf(interf), _slot(nullptr)
+        _bus(bus.get(), bus.getInterface()),
+        _path(path), _interf(interf), _slot(nullptr), _intf(bus.getInterface())
     {
         sd_bus_slot* slot = nullptr;
-        sd_bus_add_object_vtable(_bus.get(), &slot, _path.c_str(),
-                                 _interf.c_str(), vtable, context);
+        _intf->sd_bus_add_object_vtable(_bus.get(), &slot, _path.c_str(),
+                                        _interf.c_str(), vtable, context);
 
         _slot = decltype(_slot){slot};
     }
@@ -82,8 +83,15 @@ struct interface final
      */
     void property_changed(const char* property)
     {
-        sd_bus_emit_properties_changed(_bus.get(), _path.c_str(),
-                                       _interf.c_str(), property, nullptr);
+        std::vector<std::string> values{property};
+        sdbusplus::bus::details::Strv p(values);
+
+        // Note: Converting to use _strv version, could also mock two pointer
+        // use-case explicitly.
+        _intf->sd_bus_emit_properties_changed_strv(_bus.get(),
+                                                   _path.c_str(),
+                                                   _interf.c_str(),
+                                                   static_cast<char**>(p));
     }
 
     bus::bus& bus()
@@ -100,6 +108,7 @@ struct interface final
     std::string _path;
     std::string _interf;
     slot::slot _slot;
+    SdBusInterface* _intf;
 };
 
 } // namespace interface

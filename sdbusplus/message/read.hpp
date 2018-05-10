@@ -1,6 +1,7 @@
 #pragma once
 
 #include <tuple>
+#include <sdbusplus/exception.hpp>
 #include <sdbusplus/message/types.hpp>
 #include <sdbusplus/utility/type_traits.hpp>
 #include <sdbusplus/utility/tuple_to_array.hpp>
@@ -130,7 +131,12 @@ template <typename S, typename Enable = void> struct read_single
                       "Non-basic types are not allowed.");
 
         constexpr auto dbusType = std::get<0>(types::type_id<T>());
-        intf->sd_bus_message_read_basic(m, dbusType, &t);
+        int r = intf->sd_bus_message_read_basic(m, dbusType, &t);
+        if (r < 0)
+        {
+            throw exception::SdBusError(
+                -r, "sd_bus_message_read_basic fundamental");
+        }
     }
 };
 
@@ -145,7 +151,11 @@ template <> struct read_single<std::string>
     {
         constexpr auto dbusType = std::get<0>(types::type_id<T>());
         const char* str = nullptr;
-        intf->sd_bus_message_read_basic(m, dbusType, &str);
+        int r = intf->sd_bus_message_read_basic(m, dbusType, &str);
+        if (r < 0)
+        {
+            throw exception::SdBusError(-r, "sd_bus_message_read_basic string");
+        }
         s = str;
     }
 };
@@ -158,7 +168,12 @@ template <typename T> struct read_single<details::string_wrapper<T>>
     {
         constexpr auto dbusType = std::get<0>(types::type_id<S>());
         const char* str = nullptr;
-        intf->sd_bus_message_read_basic(m, dbusType, &str);
+        int r = intf->sd_bus_message_read_basic(m, dbusType, &str);
+        if (r < 0)
+        {
+            throw exception::SdBusError(
+                -r, "sd_bus_message_read_basic string_wrapper");
+        }
         s.str = str;
     }
 };
@@ -171,7 +186,11 @@ template <> struct read_single<bool>
     {
         constexpr auto dbusType = std::get<0>(types::type_id<T>());
         int i = 0;
-        intf->sd_bus_message_read_basic(m, dbusType, &i);
+        int r = intf->sd_bus_message_read_basic(m, dbusType, &i);
+        if (r < 0)
+        {
+            throw exception::SdBusError(-r, "sd_bus_message_read_basic bool");
+        }
         b = (i != 0);
     }
 };
@@ -185,17 +204,32 @@ struct read_single<T,
     static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, S&& s)
     {
         constexpr auto dbusType = utility::tuple_to_array(types::type_id<T>());
-        intf->sd_bus_message_enter_container(m, SD_BUS_TYPE_ARRAY,
-                                             dbusType.data() + 1);
+        int r = intf->sd_bus_message_enter_container(m, SD_BUS_TYPE_ARRAY,
+                                                     dbusType.data() + 1);
+        if (r < 0)
+        {
+            throw exception::SdBusError(
+                -r, "sd_bus_message_enter_container emplace_back_container");
+        }
 
-        while (!intf->sd_bus_message_at_end(m, false))
+        while (!(r = intf->sd_bus_message_at_end(m, false)))
         {
             types::details::type_id_downcast_t<typename T::value_type> t;
             sdbusplus::message::read(intf, m, t);
             s.emplace_back(std::move(t));
         }
+        if (r < 0)
+        {
+            throw exception::SdBusError(
+                -r, "sd_bus_message_at_end emplace_back_container");
+        }
 
-        intf->sd_bus_message_exit_container(m);
+        r = intf->sd_bus_message_exit_container(m);
+        if (r < 0)
+        {
+            throw exception::SdBusError(
+                -r, "sd_bus_message_exit_container emplace_back_container");
+        }
     }
 };
 
@@ -207,17 +241,32 @@ struct read_single<T, std::enable_if_t<utility::has_emplace_method<T>::value>>
     static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, S&& s)
     {
         constexpr auto dbusType = utility::tuple_to_array(types::type_id<T>());
-        intf->sd_bus_message_enter_container(m, SD_BUS_TYPE_ARRAY,
-                                             dbusType.data() + 1);
+        int r = intf->sd_bus_message_enter_container(m, SD_BUS_TYPE_ARRAY,
+                                                     dbusType.data() + 1);
+        if (r < 0)
+        {
+            throw exception::SdBusError(
+                -r, "sd_bus_message_enter_container emplace_container");
+        }
 
-        while (!intf->sd_bus_message_at_end(m, false))
+        while (!(r = intf->sd_bus_message_at_end(m, false)))
         {
             types::details::type_id_downcast_t<typename T::value_type> t;
             sdbusplus::message::read(intf, m, t);
             s.emplace(std::move(t));
         }
+        if (r < 0)
+        {
+            throw exception::SdBusError(
+                -r, "sd_bus_message_at_end emplace_container");
+        }
 
-        intf->sd_bus_message_exit_container(m);
+        r = intf->sd_bus_message_exit_container(m);
+        if (r < 0)
+        {
+            throw exception::SdBusError(
+                -r, "sd_bus_message_exit_container emplace_container");
+        }
     }
 };
 
@@ -230,10 +279,22 @@ template <typename T1, typename T2> struct read_single<std::pair<T1, T2>>
         constexpr auto dbusType = utility::tuple_to_array(
             std::tuple_cat(types::type_id_nonull<T1>(), types::type_id<T2>()));
 
-        intf->sd_bus_message_enter_container(m, SD_BUS_TYPE_DICT_ENTRY,
-                                             dbusType.data());
+        int r = intf->sd_bus_message_enter_container(m, SD_BUS_TYPE_DICT_ENTRY,
+                                                     dbusType.data());
+        if (r < 0)
+        {
+            throw exception::SdBusError(-r,
+                                        "sd_bus_message_enter_container pair");
+        }
+
         sdbusplus::message::read(intf, m, s.first, s.second);
-        intf->sd_bus_message_exit_container(m);
+
+        r = intf->sd_bus_message_exit_container(m);
+        if (r < 0)
+        {
+            throw exception::SdBusError(-r,
+                                        "sd_bus_message_exit_container pair");
+        }
     }
 };
 
@@ -254,11 +315,23 @@ template <typename... Args> struct read_single<std::tuple<Args...>>
             types::type_id_nonull<Args...>(),
             std::make_tuple('\0') /* null terminator for C-string */));
 
-        intf->sd_bus_message_enter_container(m, SD_BUS_TYPE_STRUCT,
-                                             dbusType.data());
+        int r = intf->sd_bus_message_enter_container(m, SD_BUS_TYPE_STRUCT,
+                                                     dbusType.data());
+        if (r < 0)
+        {
+            throw exception::SdBusError(-r,
+                                        "sd_bus_message_enter_container tuple");
+        }
+
         _op(intf, m, std::forward<S>(s),
             std::make_index_sequence<sizeof...(Args)>());
-        intf->sd_bus_message_exit_container(m);
+
+        r = intf->sd_bus_message_exit_container(m);
+        if (r < 0)
+        {
+            throw exception::SdBusError(-r,
+                                        "sd_bus_message_exit_container tuple");
+        }
     }
 };
 
@@ -270,9 +343,14 @@ template <typename... Args> struct read_single<variant<Args...>>
     {
         constexpr auto dbusType = utility::tuple_to_array(types::type_id<S1>());
 
-        auto rc = intf->sd_bus_message_verify_type(m, SD_BUS_TYPE_VARIANT,
-                                                   dbusType.data());
-        if (0 >= rc)
+        int r = intf->sd_bus_message_verify_type(m, SD_BUS_TYPE_VARIANT,
+                                                 dbusType.data());
+        if (r < 0)
+        {
+            throw exception::SdBusError(
+                -r, "sd_bus_message_verify_type variant");
+        }
+        if (!r)
         {
             read<S, Args1...>(intf, m, s);
             return;
@@ -280,10 +358,22 @@ template <typename... Args> struct read_single<variant<Args...>>
 
         std::remove_reference_t<S1> s1;
 
-        intf->sd_bus_message_enter_container(m, SD_BUS_TYPE_VARIANT,
-                                             dbusType.data());
+        r = intf->sd_bus_message_enter_container(m, SD_BUS_TYPE_VARIANT,
+                                                 dbusType.data());
+        if (r < 0)
+        {
+            throw exception::SdBusError(
+                -r, "sd_bus_message_enter_container variant");
+        }
+
         sdbusplus::message::read(intf, m, s1);
-        intf->sd_bus_message_exit_container(m);
+
+        r = intf->sd_bus_message_exit_container(m);
+        if (r < 0)
+        {
+            throw exception::SdBusError(
+                -r, "sd_bus_message_exit_container variant");
+        }
 
         s = std::move(s1);
     }
@@ -291,7 +381,11 @@ template <typename... Args> struct read_single<variant<Args...>>
     template <typename S>
     static void read(sdbusplus::SdBusInterface* intf, sd_bus_message* m, S&& s)
     {
-        intf->sd_bus_message_skip(m, "v");
+        int r = intf->sd_bus_message_skip(m, "v");
+        if (r < 0)
+        {
+            throw exception::SdBusError(-r, "sd_bus_message_skip variant");
+        }
         s = std::remove_reference_t<S>{};
     }
 

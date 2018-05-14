@@ -1,4 +1,7 @@
-noinst_PROGRAMS = calculator-server list-users
+noinst_PROGRAMS = list-users
+
+if WANT_SDBUSPP
+noinst_PROGRAMS += calculator-server
 
 calculator_server_generated_files = \
 	net/poettering/Calculator/server.hpp \
@@ -8,6 +11,7 @@ calculator_server_generated_files = \
 
 calculator_markdown_generated_files = \
 	calculator.md
+endif
 
 calculator_server_SOURCES = \
 	calculator-server.cpp $(calculator_server_generated_files)

@@ -7,6 +7,7 @@
 #include <string>
 #include <systemd/sd-bus.h>
 #include <systemd/sd-event.h>
+#include <sdbusplus/exception.hpp>
 #include <sdbusplus/message.hpp>
 #include <sdbusplus/sdbus.hpp>
 
@@ -226,8 +227,14 @@ struct bus
      */
     auto call(message::message& m, uint64_t timeout_us = 0)
     {
+        sd_bus_error error = SD_BUS_ERROR_NULL;
         sd_bus_message* reply = nullptr;
-        _intf->sd_bus_call(_bus.get(), m.get(), timeout_us, nullptr, &reply);
+        int r = _intf->sd_bus_call(_bus.get(), m.get(), timeout_us, &error,
+                                   &reply);
+        if (r < 0)
+        {
+            throw exception::SdBusError(error, "sd_bus_call");
+        }
 
         return message::message(reply, _intf, std::false_type());
     }
@@ -239,7 +246,13 @@ struct bus
      */
     void call_noreply(message::message& m, uint64_t timeout_us = 0)
     {
-        _intf->sd_bus_call(_bus.get(), m.get(), timeout_us, nullptr, nullptr);
+        sd_bus_error error = SD_BUS_ERROR_NULL;
+        int r = _intf->sd_bus_call(_bus.get(), m.get(), timeout_us, &error,
+                                   nullptr);
+        if (r < 0)
+        {
+            throw exception::SdBusError(error, "sd_bus_call noreply");
+        }
     }
 
     /** @brief Get the bus unique name. Ex: ":1.11".

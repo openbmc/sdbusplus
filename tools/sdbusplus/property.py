@@ -164,3 +164,7 @@ class Property(NamedElement, Renderer):
     def markdown(self, loader):
         return self.render(loader, "property.mako.md", property=self,
                            post=str.strip)
+
+    def cpp_prototype(self, loader, interface, ptype):
+        return self.render(loader, "property.mako.prototype.hpp", property=self,
+                           interface=interface, ptype=ptype, post=str.rstrip)

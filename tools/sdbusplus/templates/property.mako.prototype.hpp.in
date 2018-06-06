@@ -1,0 +1,106 @@
+<%
+    namespaces = interface.name.split('.')
+    classname = namespaces.pop()
+
+    def interface_instance():
+        return "_".join(interface.name.split('.') + ['interface'])
+%>
+auto ${classname}::${property.camelCase}() const ->
+        ${property.cppTypeParam(interface.name)}
+{
+    return _${property.camelCase};
+}
+
+int ${classname}::_callback_get_${property.name}(
+        sd_bus* bus, const char* path, const char* interface,
+        const char* property, sd_bus_message* reply, void* context,
+        sd_bus_error* error)
+{
+    using sdbusplus::server::binding::details::convertForMessage;
+
+    // TODO(venture): Can this except? I wouldn't think so.
+    auto o = static_cast<${classname}*>(context);
+
+    try
+    {
+        auto m = message::message(reply, o->_intf);
+
+#if @WANT_TRANSACTION@
+        {
+            auto tbus = m.get_bus();
+            sdbusplus::server::transaction::Transaction t(tbus, m);
+            sdbusplus::server::transaction::set_id
+                (std::hash<sdbusplus::server::transaction::Transaction>{}(t));
+        }
+#endif
+
+        m.append(convertForMessage(o->${property.camelCase}()));
+    }
+    catch(sdbusplus::internal_exception_t& e)
+    {
+        o->_intf->sd_bus_error_set_const(error, e.name(), e.description());
+        return -EINVAL;
+    }
+
+    return true;
+}
+
+auto ${classname}::${property.camelCase}(${property.cppTypeParam(interface.name)} value) ->
+        ${property.cppTypeParam(interface.name)}
+{
+    if (_${property.camelCase} != value)
+    {
+        _${property.camelCase} = value;
+        _${interface_instance()}.property_changed("${property.name}");
+    }
+
+    return _${property.camelCase};
+}
+
+int ${classname}::_callback_set_${property.name}(
+        sd_bus* bus, const char* path, const char* interface,
+        const char* property, sd_bus_message* value, void* context,
+        sd_bus_error* error)
+{
+    auto o = static_cast<${classname}*>(context);
+
+    try
+    {
+        auto m = message::message(value, o->_intf);
+
+#if @WANT_TRANSACTION@
+        {
+            auto tbus = m.get_bus();
+            sdbusplus::server::transaction::Transaction t(tbus, m);
+            sdbusplus::server::transaction::set_id
+                (std::hash<sdbusplus::server::transaction::Transaction>{}(t));
+        }
+#endif
+
+        ${property.cppTypeMessage(interface.name)} v{};
+        m.read(v);
+    % if property.is_enum():
+        o->${property.camelCase}(${property.enum_namespace(interface.name)}\
+convert${property.enum_name(interface.name)}FromString(v));
+    % else:
+        o->${property.camelCase}(v);
+    % endif
+    }
+    catch(sdbusplus::internal_exception_t& e)
+    {
+        o->_intf->sd_bus_error_set_const(error, e.name(), e.description());
+        return -EINVAL;
+    }
+
+    return true;
+}
+
+namespace details
+{
+namespace ${classname}
+{
+static const auto _property_${property.name} =
+    utility::tuple_to_array(message::types::type_id<
+            ${property.cppTypeMessage(interface.name)}>());
+}
+}

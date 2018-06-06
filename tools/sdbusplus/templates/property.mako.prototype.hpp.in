@@ -4,7 +4,23 @@
 
     def interface_instance():
         return "_".join(interface.name.split('.') + ['interface'])
+
+    def error_namespace(e):
+        n = e.split('.');
+        n.pop(); # Remove error name.
+
+        n = map((lambda x: interface.name if x == "self" else x), n);
+        return '::'.join('.'.join(n).split('.'));
+
+    def error_name(e):
+        return e.split('.').pop();
+
+    def error_include(e):
+        l = error_namespace(e).split('::')
+        l.pop() # Remove "Error"
+        return '/'.join(l) + '/error.hpp';
 %>
+% if ptype == 'callback-cpp':
 auto ${classname}::${property.camelCase}() const ->
         ${property.cppTypeParam(interface.name)}
 {
@@ -41,6 +57,13 @@ int ${classname}::_callback_get_${property.name}(
         o->_intf->sd_bus_error_set_const(error, e.name(), e.description());
         return -EINVAL;
     }
+    % for e in property.errors:
+    catch(sdbusplus::${error_namespace(e)}::${error_name(e)}& e)
+    {
+        sd_bus_error_set_const(error, e.name(), e.description());
+        return -EINVAL;
+    }
+    % endfor
 
     return true;
 }
@@ -91,6 +114,13 @@ convert${property.enum_name(interface.name)}FromString(v));
         o->_intf->sd_bus_error_set_const(error, e.name(), e.description());
         return -EINVAL;
     }
+    % for e in property.errors:
+    catch(sdbusplus::${error_namespace(e)}::${error_name(e)}& e)
+    {
+        sd_bus_error_set_const(error, e.name(), e.description());
+        return -EINVAL;
+    }
+    % endfor
 
     return true;
 }
@@ -104,3 +134,8 @@ static const auto _property_${property.name} =
             ${property.cppTypeMessage(interface.name)}>());
 }
 }
+% elif ptype == 'callback-cpp-includes':
+        % for e in property.errors:
+#include <${error_include(e)}>
+        % endfor
+% endif

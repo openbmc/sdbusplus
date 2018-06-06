@@ -141,8 +141,9 @@ methods:
 ## Properties
 
 A property must have the YAML property `name` and `type` and may optionally
-have `description` and `default`.  The `default` defines the default value of
-the property.
+have `description`, `default`, and `errors`.  The `default` defines the default
+value of the property. See the `Methods` section above for more information on
+errors.
 
 Example:
 ```
@@ -152,6 +153,8 @@ properties:
       default: 52
       description: >
         The number of cards remaining in the deck.
+      errors:
+        - self.Error.InvalidNumber
 ```
 
 ## Signals

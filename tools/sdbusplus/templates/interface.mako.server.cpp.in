@@ -6,6 +6,9 @@
 % for m in interface.methods:
 ${ m.cpp_prototype(loader, interface=interface, ptype='callback-cpp-includes') }
 % endfor
+% for p in interface.properties:
+${ p.cpp_prototype(loader, interface=interface, ptype='callback-cpp-includes') }
+% endfor
 <%
     namespaces = interface.name.split('.')
     classname = namespaces.pop()

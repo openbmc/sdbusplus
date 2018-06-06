@@ -161,7 +161,11 @@ struct bus
     auto process()
     {
         sd_bus_message* m = nullptr;
-        _intf->sd_bus_process(_bus.get(), &m);
+        int r = _intf->sd_bus_process(_bus.get(), &m);
+        if (r < 0)
+        {
+            throw exception::SdBusError(-r, "sd_bus_process");
+        }
 
         return message::message(m, _intf, std::false_type());
     }
@@ -170,7 +174,11 @@ struct bus
      */
     void process_discard()
     {
-        _intf->sd_bus_process(_bus.get(), nullptr);
+        int r = _intf->sd_bus_process(_bus.get(), nullptr);
+        if (r < 0)
+        {
+            throw exception::SdBusError(-r, "sd_bus_process discard");
+        }
     }
 
     /** @brief Claim a service name on the dbus.

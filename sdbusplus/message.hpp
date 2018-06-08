@@ -263,7 +263,10 @@ class message
 
     friend struct sdbusplus::bus::bus;
 
-    /** @brief Get a pointer to the owned 'msgp_t'. */
+    /** @brief Get a pointer to the owned 'msgp_t'.
+     * This api should be used sparingly and carefully, as it opens a number of
+     * possibilities for race conditions, RAII destruction issues, and runtime
+     * problems when using the sd-bus c api.  Here be dragons. */
     msgp_t get()
     {
         return _msg.get();

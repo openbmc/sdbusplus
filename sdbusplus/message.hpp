@@ -254,12 +254,13 @@ class message
 
     friend struct sdbusplus::bus::bus;
 
-  private:
     /** @brief Get a pointer to the owned 'msgp_t'. */
     msgp_t get()
     {
         return _msg.get();
     }
+
+  private:
     sdbusplus::SdBusInterface* _intf;
     details::msg _msg;
 };

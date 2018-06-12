@@ -1,0 +1,8 @@
+Ok-To-Test+1: Jenkins <openbmc-ci-admin@ozlabs.org>
+Verified+1: Jenkins <openbmc-ci-admin@ozlabs.org>
+Code-Review+2: Brad Bishop <bradleyb@fuzziesquirrel.com>
+Submitted-by: Brad Bishop <bradleyb@fuzziesquirrel.com>
+Submitted-at: Tue, 12 Jun 2018 11:39:54 +0000
+Reviewed-on: https://gerrit.openbmc-project.xyz/11074
+Project: openbmc/sdbusplus
+Branch: refs/heads/master

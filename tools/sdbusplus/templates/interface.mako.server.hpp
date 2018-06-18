@@ -66,7 +66,8 @@ class ${classname}
          *  @param[in] vals - Map of property name to value for initialization.
          */
         ${classname}(bus::bus& bus, const char* path,
-                     const std::map<std::string, PropertiesVariant>& vals);
+                     const std::map<std::string, PropertiesVariant>& vals,
+                     bool skipSignal = false);
 
     % endif
     % for m in interface.methods:
@@ -80,6 +81,10 @@ ${ s.cpp_prototype(loader, interface=interface, ptype='header') }
     % for p in interface.properties:
         /** Get value of ${p.name} */
         virtual ${p.cppTypeParam(interface.name)} ${p.camelCase}() const;
+        /** Set value of ${p.name} with option to skip sending signal */
+        virtual ${p.cppTypeParam(interface.name)} \
+${p.camelCase}(${p.cppTypeParam(interface.name)} value,
+               bool skipSignal);
         /** Set value of ${p.name} */
         virtual ${p.cppTypeParam(interface.name)} \
 ${p.camelCase}(${p.cppTypeParam(interface.name)} value);
@@ -91,7 +96,8 @@ ${p.camelCase}(${p.cppTypeParam(interface.name)} value);
          *  @param[in] val - A variant containing the value to set.
          */
         void setPropertyByName(const std::string& _name,
-                               const PropertiesVariant& val);
+                               const PropertiesVariant& val,
+                               bool skipSignal = false);
 
         /** @brief Gets a property by name.
          *  @param[in] _name - A string representation of the property name.

@@ -33,12 +33,13 @@ ${classname}::${classname}(bus::bus& bus, const char* path)
 
     % if interface.properties:
 ${classname}::${classname}(bus::bus& bus, const char* path,
-                           const std::map<std::string, PropertiesVariant>& vals)
+                           const std::map<std::string, PropertiesVariant>& vals,
+                           bool skipSignal)
         : ${classname}(bus, path)
 {
     for (const auto& v : vals)
     {
-        setPropertyByName(v.first, v.second);
+        setPropertyByName(v.first, v.second, skipSignal);
     }
 }
 
@@ -57,14 +58,15 @@ ${ p.cpp_prototype(loader, interface=interface, ptype='callback-cpp') }
 
     % if interface.properties:
 void ${classname}::setPropertyByName(const std::string& _name,
-                                     const PropertiesVariant& val)
+                                     const PropertiesVariant& val,
+                                     bool skipSignal)
 {
         % for p in interface.properties:
     if (_name == "${p.name}")
     {
         auto& v = message::variant_ns::get<${p.cppTypeParam(interface.name)}>(\
 val);
-        ${p.camelCase}(v);
+        ${p.camelCase}(v, skipSignal);
         return;
     }
         % endfor

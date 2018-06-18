@@ -68,18 +68,27 @@ int ${classname}::_callback_get_${property.name}(
     return true;
 }
 
-auto ${classname}::${property.camelCase}(${property.cppTypeParam(interface.name)} value) ->
+auto ${classname}::${property.camelCase}(${property.cppTypeParam(interface.name)} value,
+                                         bool skipSignal) ->
         ${property.cppTypeParam(interface.name)}
 {
     if (_${property.camelCase} != value)
     {
         _${property.camelCase} = value;
-        _${interface_instance()}.property_changed("${property.name}");
+        if (!skipSignal)
+        {
+            _${interface_instance()}.property_changed("${property.name}");
+        }
     }
 
     return _${property.camelCase};
 }
 
+auto ${classname}::${property.camelCase}(${property.cppTypeParam(interface.name)} val) ->
+        ${property.cppTypeParam(interface.name)}
+{
+    return ${property.camelCase}(val, false);
+}
 int ${classname}::_callback_set_${property.name}(
         sd_bus* bus, const char* path, const char* interface,
         const char* property, sd_bus_message* value, void* context,

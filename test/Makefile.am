@@ -24,7 +24,8 @@ message_append_LDADD = $(gtest_ldadd) $(SYSTEMD_LIBS) $(PTHREAD_LIBS) $(top_buil
 check_PROGRAMS += message_read
 message_read_SOURCES = message/read.cpp
 message_read_CXXFLAGS = $(SYSTEMD_CFLAGS) $(PTHREAD_CFLAGS)
-message_read_LDADD = $(gtest_ldadd) $(SYSTEMD_LIBS) $(PTHREAD_LIBS) $(top_builddir)/sdbusplus/sdbus.o
+message_read_LDADD = $(gtest_ldadd) $(SYSTEMD_LIBS) $(PTHREAD_LIBS) \
+$(top_builddir)/sdbusplus/sdbus.o $(top_builddir)/sdbusplus/libsdbusplus_la-exception.lo
 
 check_PROGRAMS += message_native_types
 message_native_types_CXXFLAGS = $(PTHREAD_CFLAGS)

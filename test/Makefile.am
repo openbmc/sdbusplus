@@ -1,11 +1,14 @@
+@CODE_COVERAGE_RULES@
+
 if WANT_LIBSDBUSPLUS
 
 AM_CPPFLAGS = -I$(top_builddir) -I$(top_srcdir) $(GTEST_CPPFLAGS) \
-              $(SYSTEMD_CFLAGS)
-AM_CFLAGS = $(GTEST_CFLAGS) $(PTHREAD_CFLAGS)
-AM_CXXFLAGS = $(GTEST_CXXFLAGS) $(PTHREAD_CFLAGS)
+              $(SYSTEMD_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+AM_CFLAGS = $(GTEST_CFLAGS) $(PTHREAD_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+AM_CXXFLAGS = $(GTEST_CXXFLAGS) $(PTHREAD_CFLAGS) $(CODE_COVERAGE_CXXFLAGS)
 test_ldadd = -lgtest -lgtest_main $(OESDK_TESTCASE_FLAGS) $(PTHREAD_LIBS) \
-             $(top_builddir)/libsdbusplus.la $(SYSTEMD_LIBS)
+             $(top_builddir)/libsdbusplus.la $(SYSTEMD_LIBS) \
+			 $(CODE_COVERAGE_LIBS)
 check_PROGRAMS =
 
 TESTS = $(check_PROGRAMS)

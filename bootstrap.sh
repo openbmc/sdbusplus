@@ -14,5 +14,5 @@ case $1 in
         ;;
 esac
 
-autoreconf -i
+autoreconf -vfi
 echo 'Run "./configure ${CONFIGURE_FLAGS} && make"'

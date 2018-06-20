@@ -28,7 +28,8 @@ auto serverInit()
 // Thread to run the dbus server.
 void* server(void* b)
 {
-    auto bus = sdbusplus::bus::bus(reinterpret_cast<sdbusplus::bus::busp_t>(b));
+    auto bus = sdbusplus::bus::bus(reinterpret_cast<sdbusplus::bus::busp_t>(b),
+                                   std::false_type());
 
     while (1)
     {
@@ -58,12 +59,16 @@ void* server(void* b)
                           << std::endl;
             }
             // Reply to client.
-            sd_bus_reply_method_return(m.release(), nullptr);
+            auto sd_m = m.release();
+            sd_bus_reply_method_return(sd_m, nullptr);
+            sd_bus_message_unref(sd_m);
         }
         else if (m.is_method_call(INTERFACE, QUIT_METHOD))
         {
             // Reply and exit.
-            sd_bus_reply_method_return(m.release(), nullptr);
+            auto sd_m = m.release();
+            sd_bus_reply_method_return(sd_m, nullptr);
+            sd_bus_message_unref(sd_m);
             break;
         }
     }

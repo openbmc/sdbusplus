@@ -7,6 +7,18 @@ AC_CONFIG_AUX_DIR([build-aux])
 AM_INIT_AUTOMAKE([subdir-objects -Wall -Werror foreign dist-xz])
 AM_SILENT_RULES([yes])
 
+# Make sure the default CFLAGS of `-O2 -g` don't override CODE_COVERAGE_CFLAGS
+# It is important that this comes before AC_PROG_C{C,XX}, as we are attempting
+# to stop them from populating default CFLAGS and CXXFLAGS.
+AS_IF([test "x$enable_code_coverage" != "xno"], [
+    AS_IF([test "x${CXXFLAGS+set}" != "xset"], [
+        AC_SUBST(CXXFLAGS, [""])
+    ])
+    AS_IF([test "x${CFLAGS+set}" != "xset"], [
+        AC_SUBST(CFLAGS, [""])
+    ])
+])
+
 # Checks for programs.
 AC_PROG_CXX
 AC_PROG_CC
@@ -114,6 +126,10 @@ AS_IF([test "x$enable_tests" != "xno"], [
     ])
     AX_RESTORE_FLAGS_WITH_PREFIX(OLD, [LDFLAGS])
 ])
+
+# Code coverage
+AX_CODE_COVERAGE
+AM_EXTRA_RECURSIVE_TARGETS([check-code-coverage])
 
 AC_ARG_ENABLE([oe-sdk],
     AS_HELP_STRING([--enable-oe-sdk], [Link testcases absolutely against OE SDK so they can be ran within it.])

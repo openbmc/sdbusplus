@@ -2,6 +2,8 @@
 AC_PREREQ([2.69])
 AC_INIT([sdbusplus], [1.0], [https://github.com/openbmc/sdbusplus/issues])
 AC_CONFIG_HEADERS([config.h])
+AC_CONFIG_MACRO_DIRS([m4])
+AC_CONFIG_AUX_DIR([build-aux])
 AM_INIT_AUTOMAKE([subdir-objects -Wall -Werror foreign dist-xz])
 AM_SILENT_RULES([yes])
 

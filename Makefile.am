@@ -1,3 +1,5 @@
+ACLOCAL_AMFLAGS = -Im4
+
 if WANT_LIBSDBUSPLUS
 
 nobase_include_HEADERS = \

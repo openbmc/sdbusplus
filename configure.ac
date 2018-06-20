@@ -78,6 +78,18 @@ LT_INIT # Removes 'unrecognized options: --with-libtool-sysroot'
 AX_PTHREAD([GTEST_CPPFLAGS="-DGTEST_HAS_PTHREAD=1"],[GTEST_CPPFLAGS="-DGTEST_HAS_PTHREAD=0"])
 AC_SUBST(GTEST_CPPFLAGS)
 
+# Check for valgrind
+m4_foreach([vgtool], [valgrind_tool_list],
+    [AX_VALGRIND_DFLT(vgtool, [off])])
+AX_VALGRIND_DFLT([memcheck], [on])
+AX_VALGRIND_CHECK
+AM_EXTRA_RECURSIVE_TARGETS([check-valgrind])
+m4_foreach([vgtool], [valgrind_tool_list],
+    [AM_EXTRA_RECURSIVE_TARGETS([check-valgrind-]vgtool)])
+AS_IF([test "x$enable_valgrind" = "xyes"], [], [
+    AC_MSG_ERROR([Wanted valgrind support but valgrind was not found])
+])
+
 # Code coverage
 AX_CODE_COVERAGE
 AM_EXTRA_RECURSIVE_TARGETS([check-code-coverage])

@@ -5,6 +5,19 @@
 #include <unordered_map>
 #include <set>
 
+// Make sure even in non-debug mode we use asserts
+#undef assert
+#define assert(n)                                                              \
+    do                                                                         \
+    {                                                                          \
+        if (!(n))                                                              \
+        {                                                                      \
+            fprintf(stderr, "%s:%d %s: Assertion `%s` failed\n", __FILE__,     \
+                    __LINE__, __func__, #n);                                   \
+            abort();                                                           \
+        }                                                                      \
+    } while (0)
+
 // Global to share the dbus type string between client and server.
 static std::string verifyTypeString;
 

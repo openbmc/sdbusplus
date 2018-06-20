@@ -127,6 +127,15 @@ AS_IF([test "x$enable_tests" != "xno"], [
     AX_RESTORE_FLAGS_WITH_PREFIX(OLD, [LDFLAGS])
 ])
 
+# Check for valgrind
+m4_foreach([vgtool], [valgrind_tool_list],
+    [AX_VALGRIND_DFLT(vgtool, [off])])
+AX_VALGRIND_DFLT([memcheck], [on])
+AX_VALGRIND_CHECK
+AM_EXTRA_RECURSIVE_TARGETS([check-valgrind])
+m4_foreach([vgtool], [valgrind_tool_list],
+    [AM_EXTRA_RECURSIVE_TARGETS([check-valgrind-]vgtool)])
+
 # Code coverage
 AX_CODE_COVERAGE
 AM_EXTRA_RECURSIVE_TARGETS([check-code-coverage])

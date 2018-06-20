@@ -5,6 +5,18 @@
 #include <unordered_map>
 #include <set>
 
+// Make sure even in non-debug mode we use asserts
+#define TEST_ASSERT(n)                                                         \
+    do                                                                         \
+    {                                                                          \
+        if (!(n))                                                              \
+        {                                                                      \
+            fprintf(stderr, "%s:%d %s: Assertion `%s` failed\n", __FILE__,     \
+                    __LINE__, __func__, #n);                                   \
+            abort();                                                           \
+        }                                                                      \
+    } while (0)
+
 // Global to share the dbus type string between client and server.
 static std::string verifyTypeString;
 
@@ -45,7 +57,7 @@ void* server(void* b)
         if (m.is_method_call(INTERFACE, TEST_METHOD))
         {
             // Verify the message type matches what the test expects.
-            assert(verifyTypeString == m.get_signature());
+            TEST_ASSERT(verifyTypeString == m.get_signature());
 
             if (verifyCallback)
             {
@@ -100,7 +112,7 @@ void runTests()
             {
                 int32_t i = 0;
                 m.read(i);
-                assert(i == 1);
+                TEST_ASSERT(i == 1);
             }
         };
         verifyCallback = &verify::op;
@@ -120,8 +132,8 @@ void runTests()
             {
                 int32_t a = 0, b = 0;
                 m.read(a, b);
-                assert(a == 1);
-                assert(b == 1);
+                TEST_ASSERT(a == 1);
+                TEST_ASSERT(b == 1);
             }
         };
         verifyCallback = &verify::op;
@@ -141,11 +153,11 @@ void runTests()
             {
                 int32_t a = 0, b = 0, c = 0, d = 0, e = 0;
                 m.read(a, b, c, d, e);
-                assert(a == 1);
-                assert(b == 2);
-                assert(c == 3);
-                assert(d == 4);
-                assert(e == 5);
+                TEST_ASSERT(a == 1);
+                TEST_ASSERT(b == 2);
+                TEST_ASSERT(c == 3);
+                TEST_ASSERT(d == 4);
+                TEST_ASSERT(e == 5);
             }
         };
         verifyCallback = &verify::op;
@@ -169,12 +181,12 @@ void runTests()
                 bool t1, t2, f1, f2, f3;
                 double d;
                 m.read(t1, t2, f1, f2, f3, d);
-                assert(t1);
-                assert(t2);
-                assert(!f1);
-                assert(!f2);
-                assert(!f3);
-                assert(d == 1.1);
+                TEST_ASSERT(t1);
+                TEST_ASSERT(t2);
+                TEST_ASSERT(!f1);
+                TEST_ASSERT(!f2);
+                TEST_ASSERT(!f3);
+                TEST_ASSERT(d == 1.1);
             }
         };
         verifyCallback = &verify::op;
@@ -194,7 +206,7 @@ void runTests()
             {
                 const char* s = nullptr;
                 m.read(s);
-                assert(0 == strcmp("asdf", s));
+                TEST_ASSERT(0 == strcmp("asdf", s));
             }
         };
         verifyCallback = &verify::op;
@@ -217,12 +229,12 @@ void runTests()
                 int32_t a = 0, b = 0;
                 std::string s0, s1, s2, s3;
                 m.read(a, s0, s1, s2, s3, b);
-                assert(a == 1);
-                assert(b == 5);
-                assert(s0 == "asdf"s);
-                assert(s1 == "ASDF"s);
-                assert(s2 == "jkl;"s);
-                assert(s3 == "JKL:");
+                TEST_ASSERT(a == 1);
+                TEST_ASSERT(b == 5);
+                TEST_ASSERT(s0 == "asdf"s);
+                TEST_ASSERT(s1 == "ASDF"s);
+                TEST_ASSERT(s2 == "jkl;"s);
+                TEST_ASSERT(s3 == "JKL:");
             }
         };
         verifyCallback = &verify::op;
@@ -246,10 +258,10 @@ void runTests()
                 sdbusplus::message::object_path o;
                 sdbusplus::message::signature s;
                 m.read(a, o, s, b);
-                assert(a == 1);
-                assert(b == 4);
-                assert(std::string(o) == "/asdf"s);
-                assert(std::string(s) == "iii"s);
+                TEST_ASSERT(a == 1);
+                TEST_ASSERT(b == 4);
+                TEST_ASSERT(std::string(o) == "/asdf"s);
+                TEST_ASSERT(std::string(s) == "iii"s);
             }
         };
         verifyCallback = &verify::op;
@@ -271,12 +283,12 @@ void runTests()
                 int32_t a = 0;
                 std::vector<std::string> s;
                 m.read(a, s);
-                assert(a == 1);
-                assert(s[0] == "1");
-                assert(s[1] == "2");
-                assert(s[2] == "3");
+                TEST_ASSERT(a == 1);
+                TEST_ASSERT(s[0] == "1");
+                TEST_ASSERT(s[1] == "2");
+                TEST_ASSERT(s[2] == "3");
                 decltype(s) s2 = {"1", "2", "3"};
-                assert(s == s2);
+                TEST_ASSERT(s == s2);
             }
         };
         verifyCallback = &verify::op;
@@ -299,11 +311,11 @@ void runTests()
                 std::map<std::string, int> s{};
 
                 m.read(a, s, b);
-                assert(a == 1);
-                assert(s.size() == 2);
-                assert(s["asdf"] == 3);
-                assert(s["jkl;"] == 4);
-                assert(b == 2);
+                TEST_ASSERT(a == 1);
+                TEST_ASSERT(s.size() == 2);
+                TEST_ASSERT(s["asdf"] == 3);
+                TEST_ASSERT(s["jkl;"] == 4);
+                TEST_ASSERT(b == 2);
             }
         };
         verifyCallback = &verify::op;
@@ -326,11 +338,11 @@ void runTests()
                 std::unordered_map<std::string, int> s{};
 
                 m.read(a, s, b);
-                assert(a == 1);
-                assert(s.size() == 2);
-                assert(s["asdf"] == 3);
-                assert(s["jkl;"] == 4);
-                assert(b == 2);
+                TEST_ASSERT(a == 1);
+                TEST_ASSERT(s.size() == 2);
+                TEST_ASSERT(s["asdf"] == 3);
+                TEST_ASSERT(s["jkl;"] == 4);
+                TEST_ASSERT(b == 2);
             }
         };
         verifyCallback = &verify::op;
@@ -353,11 +365,11 @@ void runTests()
                 std::set<std::string> s{};
 
                 m.read(a, s, b);
-                assert(a == 1);
-                assert(s.size() == 2);
-                assert(s.find("asdf") != s.end());
-                assert(s.find("jkl;") != s.end());
-                assert(b == 2);
+                TEST_ASSERT(a == 1);
+                TEST_ASSERT(s.size() == 2);
+                TEST_ASSERT(s.find("asdf") != s.end());
+                TEST_ASSERT(s.find("jkl;") != s.end());
+                TEST_ASSERT(b == 2);
             }
         };
         verifyCallback = &verify::op;
@@ -380,9 +392,9 @@ void runTests()
                 std::tuple<int, double, std::string> c{};
 
                 m.read(a, c, b);
-                assert(a == 1);
-                assert(b == 2);
-                assert(c == std::make_tuple(3, 4.1, "asdf"s));
+                TEST_ASSERT(a == 1);
+                TEST_ASSERT(b == 2);
+                TEST_ASSERT(c == std::make_tuple(3, 4.1, "asdf"s));
             }
         };
         verifyCallback = &verify::op;
@@ -405,10 +417,10 @@ void runTests()
                 sdbusplus::message::variant<int, double> a1{}, a2{};
 
                 m.read(a, a1, a2, b);
-                assert(a == 1);
-                assert(a1 == 3.1);
-                assert(a2 == 4);
-                assert(b == 2);
+                TEST_ASSERT(a == 1);
+                TEST_ASSERT(a1 == 3.1);
+                TEST_ASSERT(a2 == 4);
+                TEST_ASSERT(b == 2);
             }
         };
         verifyCallback = &verify::op;
@@ -431,10 +443,10 @@ void runTests()
                 sdbusplus::message::variant<uint8_t, double> a1{}, a2{};
 
                 m.read(a, a1, a2, b);
-                assert(a == 1);
-                assert(a1 == 3.1);
-                assert(a2 == uint8_t());
-                assert(b == 2);
+                TEST_ASSERT(a == 1);
+                TEST_ASSERT(a1 == 3.1);
+                TEST_ASSERT(a2 == uint8_t());
+                TEST_ASSERT(b == 2);
             }
         };
         verifyCallback = &verify::op;
@@ -459,10 +471,10 @@ void runTests()
                     a1{};
 
                 m.read(a, a1, b);
-                assert(a == 1);
-                assert(a1["asdf"] == 3);
-                assert(a1["jkl;"] == 4.1);
-                assert(b == 2);
+                TEST_ASSERT(a == 1);
+                TEST_ASSERT(a1["asdf"] == 3);
+                TEST_ASSERT(a1["jkl;"] == 4.1);
+                TEST_ASSERT(b == 2);
             }
         };
         verifyCallback = &verify::op;

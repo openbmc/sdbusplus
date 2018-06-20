@@ -28,7 +28,8 @@ auto serverInit()
 // Thread to run the dbus server.
 void* server(void* b)
 {
-    auto bus = sdbusplus::bus::bus(reinterpret_cast<sdbusplus::bus::busp_t>(b));
+    auto bus = sdbusplus::bus::bus(reinterpret_cast<sdbusplus::bus::busp_t>(b),
+                                   std::false_type());
 
     while (1)
     {
@@ -62,8 +63,11 @@ void* server(void* b)
         {
             // Reply and exit.
             sd_bus_reply_method_return(m, nullptr);
+            sd_bus_message_unref(m);
             break;
         }
+
+        sd_bus_message_unref(m);
     }
 
     return nullptr;

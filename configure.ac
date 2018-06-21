@@ -64,9 +64,56 @@ AX_APPEND_COMPILE_FLAGS([-Wall -Werror], [CXXFLAGS])
 # Checks for library functions.
 LT_INIT # Removes 'unrecognized options: --with-libtool-sysroot'
 
+# Make it possible for users to choose if they want test support
+# explicitly or not at all
+AC_ARG_ENABLE([tests], [Whether we should build test cases])
+
+# Legacy tests require pthread support
+AS_IF([test "x$enable_tests" != "xno"], [
+    AX_PTHREAD([], [
+        AS_IF([test "x$enable_tests" != "xyes"], [
+            AC_MSG_ERROR([Testing enabled but could not find pthreads])
+        ])
+    ])
+])
+
 # Check/set gtest specific functions.
-AX_PTHREAD([GTEST_CPPFLAGS="-DGTEST_HAS_PTHREAD=1"],[GTEST_CPPFLAGS="-DGTEST_HAS_PTHREAD=0"])
-AC_SUBST(GTEST_CPPFLAGS)
+AS_IF([test "x$enable_tests" != "xno"], [
+    PKG_CHECK_MODULES([GTEST], [gtest])
+
+    AX_SAVE_FLAGS_WITH_PREFIX(OLD, [CPPFLAGS])
+    AX_APPEND_COMPILE_FLAGS([$GTEST_CFLAGS], [CPPFLAGS])
+    AC_LANG_PUSH([C++])
+    AC_CHECK_HEADERS([gtest/gtest.h], [
+        AS_IF([test "x$GTEST_CFLAGS" = "x"], [
+            AS_IF([test "x$PTHREAD_CFLAGS" = "x"], [
+                AX_APPEND_COMPILE_FLAGS(["-DGTEST_HAS_PTHREAD=0"], [GTEST_CFLAGS])
+            ], [
+                AX_APPEND_COMPILE_FLAGS(["-DGTEST_HAS_PTHREAD=1"], [GTEST_CFLAGS])
+                AX_APPEND_COMPILE_FLAGS([$PTHREAD_CFLAGS], [GTEST_CFLAGS])
+            ])
+        ])
+    ], [
+        AS_IF([test "x$enable_tests" = "xyes"], [
+            AC_MSG_ERROR([Testing enabled but could not find gtest/gtest.h])
+        ])
+    ])
+    AC_LANG_POP([C++])
+    AX_RESTORE_FLAGS_WITH_PREFIX(OLD, [CPPFLAGS])
+
+    AX_SAVE_FLAGS_WITH_PREFIX(OLD, [LDFLAGS])
+    AX_APPEND_COMPILE_FLAGS([$GTEST_LIBS], [LDFLAGS])
+    AC_CHECK_LIB([gtest], [main], [
+        AS_IF([test "x$GTEST_LIBS" = "x"], [
+            AX_APPEND_COMPILE_FLAGS([-lgtest], [GTEST_LIBS])
+        ])
+    ], [
+        AS_IF([test "x$enable_tests" = "xyes"], [
+            AC_MSG_ERROR([Testing enabled but couldn't find gtest libs])
+        ])
+    ])
+    AX_RESTORE_FLAGS_WITH_PREFIX(OLD, [LDFLAGS])
+])
 
 AC_ARG_ENABLE([oe-sdk],
     AS_HELP_STRING([--enable-oe-sdk], [Link testcases absolutely against OE SDK so they can be ran within it.])

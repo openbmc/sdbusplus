@@ -1,7 +1,7 @@
 if WANT_LIBSDBUSPLUS
 
-AM_CPPFLAGS = -I$(top_srcdir) $(GTEST_CPPFLAGS)
-gtest_ldadd = -lgtest -lgtest_main $(OESDK_TESTCASE_FLAGS) $(PTHREAD_LIBS)
+AM_CPPFLAGS = -I$(top_srcdir) $(GTEST_CFLAGS)
+gtest_ldadd = $(GTEST_LIBS) -lgtest_main $(OESDK_TESTCASE_FLAGS) $(PTHREAD_LIBS)
 check_PROGRAMS =
 
 TESTS = $(check_PROGRAMS)

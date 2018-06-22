@@ -1,10 +1,10 @@
 #pragma once
 
 #include <algorithm>
-#include <memory>
 #include <climits>
-#include <vector>
+#include <memory>
 #include <string>
+#include <vector>
 #include <systemd/sd-bus.h>
 #include <systemd/sd-event.h>
 #include <sdbusplus/message.hpp>

@@ -1,9 +1,12 @@
 #pragma once
 
 #include <exception>
+#include <sdbusplus/sdbus.hpp>
 #include <string>
 #include <system_error>
 #include <systemd/sd-bus.h>
+
+extern sdbusplus::SdBusImpl sdbus_impl;
 
 namespace sdbusplus
 {
@@ -29,9 +32,11 @@ class SdBusError final : public internal_exception, public std::system_error
 {
   public:
     /** Errno must be positive */
-    SdBusError(int error, const char* prefix);
+    SdBusError(int error, const char* prefix,
+               SdBusInterface* intf = &sdbus_impl);
     /** Becomes the owner of the error */
-    SdBusError(sd_bus_error error, const char* prefix);
+    SdBusError(sd_bus_error error, const char* prefix,
+               SdBusInterface* intf = &sdbus_impl);
 
     SdBusError(const SdBusError&) = delete;
     SdBusError& operator=(const SdBusError&) = delete;
@@ -46,6 +51,7 @@ class SdBusError final : public internal_exception, public std::system_error
   private:
     sd_bus_error error;
     std::string full_message;
+    SdBusInterface* intf;
 
     /** Populates the full_message from the stored
      *  error and the passed in prefix. */

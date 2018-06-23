@@ -52,8 +52,7 @@ utility_tuple_to_array_LDADD = $(gtest_ldadd)
 
 check_PROGRAMS += utility_type_traits
 utility_type_traits_SOURCES = utility/type_traits.cpp
-utility_type_traits_CXXFLAGS = $(legacy_test_cxxflags)
-utility_type_traits_LDADD = $(legacy_test_ldadd)
+utility_type_traits_LDADD = $(gtest_ldadd)
 
 check_PROGRAMS += vtable_vtable
 vtable_vtable_SOURCES = vtable/vtable.cpp vtable/vtable_c.c

@@ -3,12 +3,13 @@
 if WANT_LIBSDBUSPLUS
 
 AM_CPPFLAGS = -I$(top_builddir) -I$(top_srcdir) \
-              $(GTEST_CFLAGS) $(SYSTEMD_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+              $(GTEST_CFLAGS) $(GMOCK_CFLAGS) $(SYSTEMD_CFLAGS) \
+              $(CODE_COVERAGE_CPPFLAGS)
 AM_CFLAGS = $(CODE_COVERAGE_CFLAGS)
 AM_CXXFLAGS = $(CODE_COVERAGE_CXXFLAGS)
 test_ldadd = $(top_builddir)/libsdbusplus.la $(SYSTEMD_LIBS) \
              $(OESDK_TESTCASE_FLAGS) $(CODE_COVERAGE_LIBS)
-gtest_ldadd = $(test_ldadd) $(GTEST_LIBS) -lgtest_main
+gtest_ldadd = $(test_ldadd) $(GTEST_LIBS) $(GMOCK_LIBS) -lgmock_main
 legacy_test_cxxflags = $(AM_CXXFLAGS) $(PTHREAD_CFLAGS)
 legacy_test_ldadd = $(test_ldadd) $(PTHREAD_LIBS)
 

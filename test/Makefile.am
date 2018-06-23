@@ -30,8 +30,7 @@ exception_sdbus_error_LDADD = $(gtest_ldadd)
 
 check_PROGRAMS += message_append
 message_append_SOURCES = message/append.cpp
-message_append_CXXFLAGS = $(legacy_test_cxxflags)
-message_append_LDADD = $(legacy_test_ldadd)
+message_append_LDADD = $(gtest_ldadd)
 
 check_PROGRAMS += message_read
 message_read_SOURCES = message/read.cpp

@@ -1,5 +1,8 @@
 #include <sdbusplus/exception.hpp>
 #include <sdbusplus/sdbus.hpp>
+#include <stdexcept>
+#include <system_error>
+#include <utility>
 
 extern sdbusplus::SdBusImpl sdbus_impl;
 
@@ -12,10 +15,14 @@ SdBusError::SdBusError(int error, const char* prefix, SdBusInterface* intf) :
     std::system_error(error, std::generic_category()), error(SD_BUS_ERROR_NULL),
     intf(intf)
 {
-    if (error == ENOMEM ||
-        intf->sd_bus_error_set_errno(&this->error, error) == -ENOMEM)
+    // We can't check the output of intf->sd_bus_error_set_errno() because
+    // it returns the input errorcode. We don't want to try and guess
+    // possible error statuses. Instead, check to see if the error was
+    // constructed to determine success.
+    intf->sd_bus_error_set_errno(&this->error, error);
+    if (!intf->sd_bus_error_is_set(&this->error))
     {
-        throw std::bad_alloc();
+        throw std::runtime_error("Failed to create SdBusError");
     }
 
     populateMessage(prefix);

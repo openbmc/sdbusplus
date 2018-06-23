@@ -21,12 +21,15 @@ SdBusError::SdBusError(int error, const char* prefix, SdBusInterface* intf) :
     populateMessage(prefix);
 }
 
-SdBusError::SdBusError(sd_bus_error error, const char* prefix,
+SdBusError::SdBusError(sd_bus_error* error, const char* prefix,
                        SdBusInterface* intf) :
-    std::system_error(intf->sd_bus_error_get_errno(&error),
+    std::system_error(intf->sd_bus_error_get_errno(error),
                       std::generic_category()),
-    error(error), intf(intf)
+    error(*error), intf(intf)
 {
+    // We own the error so remove the caller's reference
+    *error = SD_BUS_ERROR_NULL;
+
     populateMessage(prefix);
 }
 

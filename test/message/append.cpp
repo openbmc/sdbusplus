@@ -1,683 +1,384 @@
-#include <iostream>
-#include <cassert>
+#include <array>
+#include <gtest/gtest.h>
+#include <gmock/gmock.h>
+#include <map>
 #include <sdbusplus/message.hpp>
-#include <sdbusplus/bus.hpp>
-#include <unordered_map>
+#include <sdbusplus/test/sdbus_mock.hpp>
 #include <set>
+#include <string>
+#include <systemd/sd-bus-protocol.h>
+#include <tuple>
+#include <unordered_map>
+#include <vector>
 
-// Make sure even in non-debug mode we use asserts
-#define TEST_ASSERT(n)                                                         \
-    do                                                                         \
-    {                                                                          \
-        if (!(n))                                                              \
-        {                                                                      \
-            fprintf(stderr, "%s:%d %s: Assertion `%s` failed\n", __FILE__,     \
-                    __LINE__, __func__, #n);                                   \
-            abort();                                                           \
-        }                                                                      \
-    } while (0)
-
-// Global to share the dbus type string between client and server.
-static std::string verifyTypeString;
-
-using verifyCallback_t = void (*)(sd_bus_message*);
-verifyCallback_t verifyCallback = nullptr;
-
-static constexpr auto SERVICE = "sdbusplus.test.message.append";
-static constexpr auto INTERFACE = SERVICE;
-static constexpr auto TEST_METHOD = "test";
-static constexpr auto QUIT_METHOD = "quit";
-
-// Open up the sdbus and claim SERVICE name.
-auto serverInit()
+namespace
 {
-    auto b = sdbusplus::bus::new_default();
-    b.request_name(SERVICE);
 
-    return std::move(b);
+using testing::Eq;
+using testing::MatcherCast;
+using testing::Pointee;
+using testing::Return;
+using testing::SafeMatcherCast;
+using testing::StrEq;
+
+class AppendTest : public testing::Test
+{
+  protected:
+    testing::StrictMock<sdbusplus::SdBusMock> mock;
+
+    void SetUp() override
+    {
+        EXPECT_CALL(mock, sd_bus_message_new_method_call(testing::_, testing::_,
+                                                         nullptr, nullptr,
+                                                         nullptr, nullptr))
+            .WillRepeatedly(Return(0));
+    };
+
+    sdbusplus::message::message new_message()
+    {
+        return sdbusplus::get_mocked_new(&mock).new_method_call(
+            nullptr, nullptr, nullptr, nullptr);
+    }
+
+    template <typename T> void expect_basic(char type, T val)
+    {
+        EXPECT_CALL(mock,
+                    sd_bus_message_append_basic(
+                        nullptr, type,
+                        MatcherCast<const void *>(
+                            SafeMatcherCast<const T *>(Pointee(Eq(val))))))
+            .WillOnce(Return(0));
+    }
+
+    void expect_basic_string(char type, const char *str)
+    {
+        EXPECT_CALL(mock, sd_bus_message_append_basic(
+                              nullptr, type,
+                              MatcherCast<const void *>(
+                                  SafeMatcherCast<const char *>(StrEq(str)))))
+            .WillOnce(Return(0));
+    }
+
+    void expect_open_container(char type, const char *contents)
+    {
+        EXPECT_CALL(
+            mock, sd_bus_message_open_container(nullptr, type, StrEq(contents)))
+            .WillOnce(Return(0));
+    }
+
+    void expect_close_container()
+    {
+        EXPECT_CALL(mock, sd_bus_message_close_container(nullptr))
+            .WillOnce(Return(0));
+    }
+};
+
+TEST_F(AppendTest, RValueInt)
+{
+    expect_basic<int>(SD_BUS_TYPE_INT32, 1);
+    new_message().append(1);
 }
 
-// Thread to run the dbus server.
-void* server(void* b)
+TEST_F(AppendTest, LValueInt)
 {
-    auto bus = sdbusplus::bus::bus(reinterpret_cast<sdbusplus::bus::busp_t>(b),
-                                   std::false_type());
+    const int a = 1;
+    expect_basic<int>(SD_BUS_TYPE_INT32, a);
+    new_message().append(a);
+}
 
-    while (1)
+TEST_F(AppendTest, XValueInt)
+{
+    int a = 1;
+    expect_basic<int>(SD_BUS_TYPE_INT32, a);
+    new_message().append(std::move(a));
+}
+
+TEST_F(AppendTest, RValueBool)
+{
+    expect_basic<int>(SD_BUS_TYPE_BOOLEAN, true);
+    new_message().append(true);
+}
+
+TEST_F(AppendTest, LValueBool)
+{
+    const bool a = false;
+    expect_basic<int>(SD_BUS_TYPE_BOOLEAN, false);
+    new_message().append(a);
+}
+
+TEST_F(AppendTest, XValueBool)
+{
+    bool a = false;
+    expect_basic<int>(SD_BUS_TYPE_BOOLEAN, false);
+    new_message().append(std::move(a));
+}
+
+TEST_F(AppendTest, RValueDouble)
+{
+    expect_basic<double>(SD_BUS_TYPE_DOUBLE, 1.1);
+    new_message().append(1.1);
+}
+
+TEST_F(AppendTest, LValueDouble)
+{
+    const double a = 1.1;
+    expect_basic<double>(SD_BUS_TYPE_DOUBLE, a);
+    new_message().append(a);
+}
+
+TEST_F(AppendTest, XValueDouble)
+{
+    double a = 1.1;
+    expect_basic<double>(SD_BUS_TYPE_DOUBLE, a);
+    new_message().append(std::move(a));
+}
+
+TEST_F(AppendTest, RValueCString)
+{
+    expect_basic_string(SD_BUS_TYPE_STRING, "asdf");
+    new_message().append("asdf");
+}
+
+TEST_F(AppendTest, LValueCString)
+{
+    const char *const s = "asdf";
+    expect_basic_string(SD_BUS_TYPE_STRING, s);
+    new_message().append(s);
+}
+
+TEST_F(AppendTest, XValueCString)
+{
+    const char *s = "asdf";
+    expect_basic_string(SD_BUS_TYPE_STRING, s);
+    new_message().append(std::move(s));
+}
+
+TEST_F(AppendTest, RValueString)
+{
+    expect_basic_string(SD_BUS_TYPE_STRING, "asdf");
+    new_message().append(std::string{"asdf"});
+}
+
+TEST_F(AppendTest, LValueString)
+{
+    std::string s{"asdf"};
+    expect_basic_string(SD_BUS_TYPE_STRING, s.c_str());
+    new_message().append(s);
+}
+
+TEST_F(AppendTest, XValueString)
+{
+    std::string s{"asdf"};
+    expect_basic_string(SD_BUS_TYPE_STRING, s.c_str());
+    new_message().append(std::move(s));
+}
+
+TEST_F(AppendTest, ObjectPath)
+{
+    sdbusplus::message::object_path o{"/asdf"};
+    expect_basic_string(SD_BUS_TYPE_OBJECT_PATH, o.str.c_str());
+    new_message().append(o);
+}
+
+TEST_F(AppendTest, Signature)
+{
+    sdbusplus::message::signature g{"ii"};
+    expect_basic_string(SD_BUS_TYPE_SIGNATURE, g.str.c_str());
+    new_message().append(g);
+}
+
+TEST_F(AppendTest, CombinedBasic)
+{
+    const int c = 3;
+    const std::string s1{"fdsa"};
+    const char *const s2 = "asdf";
+
     {
-        // Wait for messages.
-        auto m = bus.process().release();
+        testing::InSequence seq;
+        expect_basic<int>(SD_BUS_TYPE_INT32, 1);
+        expect_basic<double>(SD_BUS_TYPE_DOUBLE, 2.2);
+        expect_basic<int>(SD_BUS_TYPE_INT32, c);
+        expect_basic_string(SD_BUS_TYPE_STRING, s1.c_str());
+        expect_basic<int>(SD_BUS_TYPE_BOOLEAN, false);
+        expect_basic_string(SD_BUS_TYPE_STRING, s2);
+    }
+    new_message().append(1, 2.2, c, s1, false, s2);
+}
 
-        if (m == nullptr)
+TEST_F(AppendTest, Array)
+{
+    const std::array<double, 4> a{1.1, 2.2, 3.3, 4.4};
+
+    {
+        testing::InSequence seq;
+        expect_open_container(SD_BUS_TYPE_ARRAY, "d");
+        for (const auto &i : a)
         {
-            bus.wait();
-            continue;
+            expect_basic<double>(SD_BUS_TYPE_DOUBLE, i);
         }
+        expect_close_container();
+    }
+    new_message().append(a);
+}
 
-        if (sd_bus_message_is_method_call(m, INTERFACE, TEST_METHOD))
+TEST_F(AppendTest, Vector)
+{
+    const std::vector<int> v{1, 2, 3, 4};
+
+    {
+        testing::InSequence seq;
+        expect_open_container(SD_BUS_TYPE_ARRAY, "i");
+        for (const auto &i : v)
         {
-            // Verify the message type matches what the test expects.
-            TEST_ASSERT(verifyTypeString ==
-                        sd_bus_message_get_signature(m, true));
-            if (verifyCallback)
+            expect_basic<int>(SD_BUS_TYPE_INT32, i);
+        }
+        expect_close_container();
+    }
+    new_message().append(v);
+}
+
+TEST_F(AppendTest, Set)
+{
+    const std::set<std::string> s{"one", "two", "eight"};
+
+    {
+        testing::InSequence seq;
+        expect_open_container(SD_BUS_TYPE_ARRAY, "s");
+        for (const auto &i : s)
+        {
+            expect_basic_string(SD_BUS_TYPE_STRING, i.c_str());
+        }
+        expect_close_container();
+    }
+    new_message().append(s);
+}
+
+TEST_F(AppendTest, Map)
+{
+    const std::map<int, std::string> m{
+        {1, "a"},
+        {2, "bc"},
+        {3, "def"},
+        {4, "ghij"},
+    };
+
+    {
+        testing::InSequence seq;
+        expect_open_container(SD_BUS_TYPE_ARRAY, "{is}");
+        for (const auto &i : m)
+        {
+            expect_open_container(SD_BUS_TYPE_DICT_ENTRY, "is");
+            expect_basic<int>(SD_BUS_TYPE_INT32, i.first);
+            expect_basic_string(SD_BUS_TYPE_STRING, i.second.c_str());
+            expect_close_container();
+        }
+        expect_close_container();
+    }
+    new_message().append(m);
+}
+
+TEST_F(AppendTest, UnorderedMap)
+{
+    const std::unordered_map<int, bool> m{
+        {1, false},
+        {2, true},
+        {3, true},
+        {4, false},
+    };
+
+    {
+        testing::InSequence seq;
+        expect_open_container(SD_BUS_TYPE_ARRAY, "{ib}");
+        for (const auto &i : m)
+        {
+            expect_open_container(SD_BUS_TYPE_DICT_ENTRY, "ib");
+            expect_basic<int>(SD_BUS_TYPE_INT32, i.first);
+            expect_basic<int>(SD_BUS_TYPE_BOOLEAN, i.second);
+            expect_close_container();
+        }
+        expect_close_container();
+    }
+    new_message().append(m);
+}
+
+TEST_F(AppendTest, Tuple)
+{
+    const std::tuple<int, std::string, bool> t{5, "asdf", false};
+
+    {
+        testing::InSequence seq;
+        expect_open_container(SD_BUS_TYPE_STRUCT, "isb");
+        expect_basic<int>(SD_BUS_TYPE_INT32, std::get<0>(t));
+        expect_basic_string(SD_BUS_TYPE_STRING, std::get<1>(t).c_str());
+        expect_basic<int>(SD_BUS_TYPE_BOOLEAN, std::get<2>(t));
+        expect_close_container();
+    }
+    new_message().append(t);
+}
+
+TEST_F(AppendTest, Variant)
+{
+    const bool b1 = false;
+    const std::string s2{"asdf"};
+    const sdbusplus::message::variant<int, std::string, bool> v1{b1}, v2{s2};
+
+    {
+        testing::InSequence seq;
+        expect_open_container(SD_BUS_TYPE_VARIANT, "b");
+        expect_basic<int>(SD_BUS_TYPE_BOOLEAN, b1);
+        expect_close_container();
+        expect_open_container(SD_BUS_TYPE_VARIANT, "s");
+        expect_basic_string(SD_BUS_TYPE_STRING, s2.c_str());
+        expect_close_container();
+    }
+    new_message().append(v1, v2);
+}
+
+TEST_F(AppendTest, LargeCombo)
+{
+    std::vector<std::array<std::string, 3>> vas{{"a", "b", "c"},
+                                                {"d", "", "e"}};
+    std::map<std::string, sdbusplus::message::variant<int, double>> msv = {
+        {"a", 3.3}, {"b", 1}, {"c", 4.4}};
+
+    {
+        testing::InSequence seq;
+
+        expect_open_container(SD_BUS_TYPE_ARRAY, "as");
+        for (const auto &as : vas)
+        {
+            expect_open_container(SD_BUS_TYPE_ARRAY, "s");
+            for (const auto &s : as)
             {
-                verifyCallback(m);
-                verifyCallback = nullptr;
+                expect_basic_string(SD_BUS_TYPE_STRING, s.c_str());
+            }
+            expect_close_container();
+        }
+        expect_close_container();
+
+        expect_open_container(SD_BUS_TYPE_ARRAY, "{sv}");
+        for (const auto &sv : msv)
+        {
+            expect_open_container(SD_BUS_TYPE_DICT_ENTRY, "sv");
+            expect_basic_string(SD_BUS_TYPE_STRING, sv.first.c_str());
+            if (sv.second.is<int>())
+            {
+                expect_open_container(SD_BUS_TYPE_VARIANT, "i");
+                expect_basic<int>(SD_BUS_TYPE_INT32, sv.second.get<int>());
+                expect_close_container();
             }
             else
             {
-                std::cout << "Warning: No verification for " << verifyTypeString
-                          << std::endl;
+                expect_open_container(SD_BUS_TYPE_VARIANT, "d");
+                expect_basic<double>(SD_BUS_TYPE_DOUBLE,
+                                     sv.second.get<double>());
+                expect_close_container();
             }
-            // Reply to client.
-            sd_bus_reply_method_return(m, nullptr);
+            expect_close_container();
         }
-        else if (sd_bus_message_is_method_call(m, INTERFACE, QUIT_METHOD))
-        {
-            // Reply and exit.
-            sd_bus_reply_method_return(m, nullptr);
-            sd_bus_message_unref(m);
-            break;
-        }
-
-        sd_bus_message_unref(m);
+        expect_close_container();
     }
-
-    return nullptr;
+    new_message().append(vas, msv);
 }
 
-auto newMethodCall__test(sdbusplus::bus::bus& b)
-{
-    // Allocate a method-call message for INTERFACE,TEST_METHOD.
-    return b.new_method_call(SERVICE, "/", INTERFACE, TEST_METHOD);
-}
-
-void runTests()
-{
-    using namespace std::literals;
-
-    auto b = sdbusplus::bus::new_default();
-
-    // Test r-value int.
-    {
-        auto m = newMethodCall__test(b);
-        m.append(1);
-        verifyTypeString = "i";
-
-        struct verify
-        {
-            static void op(sd_bus_message* m)
-            {
-                int32_t i = 0;
-                sd_bus_message_read_basic(m, 'i', &i);
-                TEST_ASSERT(i == 1);
-            }
-        };
-        verifyCallback = &verify::op;
-
-        b.call_noreply(m);
-    }
-    // Test l-value int.
-    {
-        auto m = newMethodCall__test(b);
-        int a = 1;
-        m.append(a, a);
-        verifyTypeString = "ii";
-
-        struct verify
-        {
-            static void op(sd_bus_message* m)
-            {
-                int32_t a = 0, b = 0;
-                sd_bus_message_read(m, "ii", &a, &b);
-                TEST_ASSERT(a == 1);
-                TEST_ASSERT(b == 1);
-            }
-        };
-        verifyCallback = &verify::op;
-
-        b.call_noreply(m);
-    }
-
-    // Test multiple ints.
-    {
-        auto m = newMethodCall__test(b);
-        m.append(1, 2, 3, 4, 5);
-        verifyTypeString = "iiiii";
-
-        struct verify
-        {
-            static void op(sd_bus_message* m)
-            {
-                int32_t a = 0, b = 0, c = 0, d = 0, e = 0;
-                sd_bus_message_read(m, "iiiii", &a, &b, &c, &d, &e);
-                TEST_ASSERT(a == 1);
-                TEST_ASSERT(b == 2);
-                TEST_ASSERT(c == 3);
-                TEST_ASSERT(d == 4);
-                TEST_ASSERT(e == 5);
-            }
-        };
-        verifyCallback = &verify::op;
-
-        b.call_noreply(m);
-    }
-
-    // Test double and bool.
-    {
-        auto m = newMethodCall__test(b);
-        bool t = true;
-        bool f = false;
-        bool f2 = false;
-        m.append(t, true, f, std::move(f2), false, 1.1);
-        verifyTypeString = "bbbbbd";
-
-        struct verify
-        {
-            static void op(sd_bus_message* m)
-            {
-                bool t1, t2, f1, f2, f3;
-                double d;
-                sd_bus_message_read(m, "bbbbbd", &t1, &t2, &f1, &f2, &f3, &d);
-                TEST_ASSERT(t1);
-                TEST_ASSERT(t2);
-                TEST_ASSERT(!f1);
-                TEST_ASSERT(!f2);
-                TEST_ASSERT(!f3);
-                TEST_ASSERT(d == 1.1);
-            }
-        };
-        verifyCallback = &verify::op;
-
-        b.call_noreply(m);
-    }
-
-    // Test r-value string.
-    {
-        auto m = newMethodCall__test(b);
-        m.append("asdf"s);
-        verifyTypeString = "s";
-
-        struct verify
-        {
-            static void op(sd_bus_message* m)
-            {
-                const char* s = nullptr;
-                sd_bus_message_read_basic(m, 's', &s);
-                TEST_ASSERT(0 == strcmp("asdf", s));
-            }
-        };
-        verifyCallback = &verify::op;
-
-        b.call_noreply(m);
-    }
-
-    // Test const string owned by const struct.  openbmc/openbmc#1025
-    {
-        struct
-        {
-            const char* foo;
-
-            void insert(sdbusplus::message::message& m)
-            {
-                m.append(foo);
-            }
-        } s;
-
-        auto m = newMethodCall__test(b);
-        s.foo = "1234";
-        s.insert(m);
-
-        verifyTypeString = "s";
-
-        struct verify
-        {
-            static void op(sd_bus_message* m)
-            {
-                const char* s = nullptr;
-                sd_bus_message_read_basic(m, 's', &s);
-                TEST_ASSERT(0 == strcmp("1234", s));
-            }
-        };
-        verifyCallback = &verify::op;
-
-        b.call_noreply(m);
-    }
-
-    // Test multiple strings, various forms.
-    {
-        auto m = newMethodCall__test(b);
-        auto str = "jkl;"s;
-        auto str2 = "JKL:"s;
-        const char* str3 = "1234";
-        const char* const str4 = "5678";
-        const auto str5 = "!@#$";
-        m.append(1, "asdf", "ASDF"s, str, std::move(str2), str3, str4, str5, 5);
-        verifyTypeString = "isssssssi";
-
-        struct verify
-        {
-            static void op(sd_bus_message* m)
-            {
-                int32_t a = 0, b = 0;
-                const char *s0 = nullptr, *s1 = nullptr, *s2 = nullptr,
-                           *s3 = nullptr, *s4 = nullptr, *s5 = nullptr,
-                           *s6 = nullptr;
-                sd_bus_message_read(m, "isssssssi", &a, &s0, &s1, &s2, &s3, &s4,
-                                    &s5, &s6, &b);
-                TEST_ASSERT(a == 1);
-                TEST_ASSERT(b == 5);
-                TEST_ASSERT(0 == strcmp("asdf", s0));
-                TEST_ASSERT(0 == strcmp("ASDF", s1));
-                TEST_ASSERT(0 == strcmp("jkl;", s2));
-                TEST_ASSERT(0 == strcmp("JKL:", s3));
-                TEST_ASSERT(0 == strcmp("1234", s4));
-                TEST_ASSERT(0 == strcmp("5678", s5));
-                TEST_ASSERT(0 == strcmp("!@#$", s6));
-                TEST_ASSERT(b == 5);
-            }
-        };
-        verifyCallback = &verify::op;
-
-        b.call_noreply(m);
-    }
-
-    // Test object_path and signature.
-    {
-        auto m = newMethodCall__test(b);
-        auto o = sdbusplus::message::object_path("/asdf");
-        auto s = sdbusplus::message::signature("iii");
-        m.append(1, o, s, 4);
-        verifyTypeString = "iogi";
-
-        struct verify
-        {
-            static void op(sd_bus_message* m)
-            {
-                int32_t a = 0, b = 0;
-                const char *s0 = nullptr, *s1 = nullptr;
-                sd_bus_message_read(m, "iogi", &a, &s0, &s1, &b);
-                TEST_ASSERT(a == 1);
-                TEST_ASSERT(b == 4);
-                TEST_ASSERT(0 == strcmp("/asdf", s0));
-                TEST_ASSERT(0 == strcmp("iii", s1));
-            }
-        };
-        verifyCallback = &verify::op;
-
-        b.call_noreply(m);
-    }
-
-    // Test vector.
-    {
-        auto m = newMethodCall__test(b);
-        std::vector<std::string> s{"1", "2", "3"};
-        m.append(1, s, 2);
-        verifyTypeString = "iasi";
-
-        struct verify
-        {
-            static void op(sd_bus_message* m)
-            {
-                int32_t a = 0;
-                sd_bus_message_read(m, "i", &a);
-                TEST_ASSERT(a == 1);
-
-                auto rc =
-                    sd_bus_message_enter_container(m, SD_BUS_TYPE_ARRAY, "s");
-                TEST_ASSERT(0 <= rc);
-
-                const char* s = nullptr;
-                sd_bus_message_read_basic(m, 's', &s);
-                TEST_ASSERT(0 == strcmp("1", s));
-                sd_bus_message_read_basic(m, 's', &s);
-                TEST_ASSERT(0 == strcmp("2", s));
-                sd_bus_message_read_basic(m, 's', &s);
-                TEST_ASSERT(0 == strcmp("3", s));
-                TEST_ASSERT(1 == sd_bus_message_at_end(m, false));
-
-                sd_bus_message_exit_container(m);
-
-                sd_bus_message_read(m, "i", &a);
-                TEST_ASSERT(a == 2);
-            }
-        };
-        verifyCallback = &verify::op;
-
-        b.call_noreply(m);
-    }
-
-    // Test map.
-    {
-        auto m = newMethodCall__test(b);
-        std::map<std::string, int> s = {{"asdf", 3}, {"jkl;", 4}};
-        m.append(1, s, 2);
-        verifyTypeString = "ia{si}i";
-
-        struct verify
-        {
-            static void op(sd_bus_message* m)
-            {
-                int32_t a = 0;
-                sd_bus_message_read(m, "i", &a);
-                TEST_ASSERT(a == 1);
-
-                auto rc = sd_bus_message_enter_container(m, SD_BUS_TYPE_ARRAY,
-                                                         "{si}");
-                TEST_ASSERT(0 <= rc);
-
-                rc = sd_bus_message_enter_container(m, SD_BUS_TYPE_DICT_ENTRY,
-                                                    "si");
-                TEST_ASSERT(0 <= rc);
-
-                const char* s = nullptr;
-                sd_bus_message_read_basic(m, 's', &s);
-                TEST_ASSERT(0 == strcmp("asdf", s));
-                sd_bus_message_read_basic(m, 'i', &a);
-                TEST_ASSERT(a == 3);
-
-                TEST_ASSERT(1 == sd_bus_message_at_end(m, false));
-                sd_bus_message_exit_container(m);
-
-                rc = sd_bus_message_enter_container(m, SD_BUS_TYPE_DICT_ENTRY,
-                                                    "si");
-                TEST_ASSERT(0 <= rc);
-
-                sd_bus_message_read_basic(m, 's', &s);
-                TEST_ASSERT(0 == strcmp("jkl;", s));
-                sd_bus_message_read_basic(m, 'i', &a);
-                TEST_ASSERT(a == 4);
-
-                TEST_ASSERT(1 == sd_bus_message_at_end(m, false));
-                sd_bus_message_exit_container(m);
-
-                TEST_ASSERT(1 == sd_bus_message_at_end(m, false));
-                sd_bus_message_exit_container(m);
-
-                sd_bus_message_read(m, "i", &a);
-                TEST_ASSERT(a == 2);
-            }
-        };
-        verifyCallback = &verify::op;
-
-        b.call_noreply(m);
-    }
-
-    // Test unordered_map.
-    {
-        auto m = newMethodCall__test(b);
-        std::unordered_map<std::string, int> s = {{"asdf", 3}, {"jkl;", 4}};
-        m.append(1, s, 2);
-        verifyTypeString = "ia{si}i";
-
-        struct verify
-        {
-            static void op(sd_bus_message* m)
-            {
-                int32_t a = 0;
-                sd_bus_message_read(m, "i", &a);
-                TEST_ASSERT(a == 1);
-
-                auto rc = sd_bus_message_enter_container(m, SD_BUS_TYPE_ARRAY,
-                                                         "{si}");
-                TEST_ASSERT(0 <= rc);
-
-                rc = sd_bus_message_enter_container(m, SD_BUS_TYPE_DICT_ENTRY,
-                                                    "si");
-                TEST_ASSERT(0 <= rc);
-
-                const char* s = nullptr;
-                sd_bus_message_read_basic(m, 's', &s);
-                sd_bus_message_read_basic(m, 'i', &a);
-                TEST_ASSERT((0 == strcmp("asdf", s) && a == 3) ||
-                            (a = 4 && 0 == strcmp("jkl;", s)));
-
-                TEST_ASSERT(1 == sd_bus_message_at_end(m, false));
-                sd_bus_message_exit_container(m);
-
-                rc = sd_bus_message_enter_container(m, SD_BUS_TYPE_DICT_ENTRY,
-                                                    "si");
-                TEST_ASSERT(0 <= rc);
-
-                sd_bus_message_read_basic(m, 's', &s);
-                sd_bus_message_read_basic(m, 'i', &a);
-                TEST_ASSERT((0 == strcmp("asdf", s) && a == 3) ||
-                            (a = 4 && 0 == strcmp("jkl;", s)));
-
-                TEST_ASSERT(1 == sd_bus_message_at_end(m, false));
-                sd_bus_message_exit_container(m);
-
-                TEST_ASSERT(1 == sd_bus_message_at_end(m, false));
-                sd_bus_message_exit_container(m);
-
-                sd_bus_message_read(m, "i", &a);
-                TEST_ASSERT(a == 2);
-            }
-        };
-        verifyCallback = &verify::op;
-
-        b.call_noreply(m);
-    }
-
-    // Test set.
-    {
-        auto m = newMethodCall__test(b);
-        std::set<std::string> s = {{"asdf"}, {"jkl;"}};
-        m.append(1, s, 2);
-        verifyTypeString = "iasi";
-
-        struct verify
-        {
-            static void op(sd_bus_message* m)
-            {
-                int32_t a = 0;
-                sd_bus_message_read(m, "i", &a);
-                TEST_ASSERT(a == 1);
-
-                auto rc =
-                    sd_bus_message_enter_container(m, SD_BUS_TYPE_ARRAY, "s");
-                TEST_ASSERT(0 <= rc);
-
-                const char* s = nullptr;
-                sd_bus_message_read_basic(m, 's', &s);
-                TEST_ASSERT(0 == strcmp("asdf", s));
-
-                sd_bus_message_read_basic(m, 's', &s);
-                TEST_ASSERT(0 == strcmp("jkl;", s));
-
-                TEST_ASSERT(1 == sd_bus_message_at_end(m, false));
-                sd_bus_message_exit_container(m);
-
-                sd_bus_message_read(m, "i", &a);
-                TEST_ASSERT(a == 2);
-            }
-        };
-        verifyCallback = &verify::op;
-
-        b.call_noreply(m);
-    }
-
-    // Test array.
-    {
-        auto m = newMethodCall__test(b);
-        std::array<std::string, 3> s{"1", "2", "3"};
-        m.append(1, s, 2);
-        verifyTypeString = "iasi";
-
-        struct verify
-        {
-            static void op(sd_bus_message* m)
-            {
-                int32_t a = 0;
-                sd_bus_message_read(m, "i", &a);
-                TEST_ASSERT(a == 1);
-
-                auto rc =
-                    sd_bus_message_enter_container(m, SD_BUS_TYPE_ARRAY, "s");
-                TEST_ASSERT(0 <= rc);
-
-                const char* s = nullptr;
-                sd_bus_message_read_basic(m, 's', &s);
-                TEST_ASSERT(0 == strcmp("1", s));
-                sd_bus_message_read_basic(m, 's', &s);
-                TEST_ASSERT(0 == strcmp("2", s));
-                sd_bus_message_read_basic(m, 's', &s);
-                TEST_ASSERT(0 == strcmp("3", s));
-                TEST_ASSERT(1 == sd_bus_message_at_end(m, false));
-
-                sd_bus_message_exit_container(m);
-
-                sd_bus_message_read(m, "i", &a);
-                TEST_ASSERT(a == 2);
-            }
-        };
-        verifyCallback = &verify::op;
-
-        b.call_noreply(m);
-    }
-
-    // Test tuple.
-    {
-        auto m = newMethodCall__test(b);
-        std::tuple<int, double, std::string> a{3, 4.1, "asdf"};
-        m.append(1, a, 2);
-        verifyTypeString = "i(ids)i";
-
-        struct verify
-        {
-            static void op(sd_bus_message* m)
-            {
-                int32_t a = 0;
-                double b = 0;
-                const char* c = nullptr;
-
-                sd_bus_message_read(m, "i", &a);
-                TEST_ASSERT(a == 1);
-
-                auto rc = sd_bus_message_enter_container(m, SD_BUS_TYPE_STRUCT,
-                                                         "ids");
-                TEST_ASSERT(0 <= rc);
-
-                sd_bus_message_read(m, "ids", &a, &b, &c);
-                TEST_ASSERT(a == 3);
-                TEST_ASSERT(b == 4.1);
-                TEST_ASSERT(0 == strcmp(c, "asdf"));
-
-                sd_bus_message_exit_container(m);
-
-                sd_bus_message_read(m, "i", &a);
-                TEST_ASSERT(a == 2);
-            }
-        };
-        verifyCallback = &verify::op;
-
-        b.call_noreply(m);
-    }
-
-    // Test variant.
-    {
-        auto m = newMethodCall__test(b);
-        sdbusplus::message::variant<int, double> a1{3.1}, a2{4};
-        m.append(1, a1, a2, 2);
-        verifyTypeString = "ivvi";
-
-        struct verify
-        {
-            static void op(sd_bus_message* m)
-            {
-                int32_t a = 0;
-                double b = 0;
-
-                sd_bus_message_read(m, "i", &a);
-                TEST_ASSERT(a == 1);
-
-                sd_bus_message_enter_container(m, SD_BUS_TYPE_VARIANT, "d");
-                sd_bus_message_read(m, "d", &b);
-                TEST_ASSERT(b == 3.1);
-                sd_bus_message_exit_container(m);
-
-                sd_bus_message_enter_container(m, SD_BUS_TYPE_VARIANT, "i");
-                sd_bus_message_read(m, "i", &a);
-                TEST_ASSERT(a == 4);
-                sd_bus_message_exit_container(m);
-
-                sd_bus_message_read(m, "i", &a);
-                TEST_ASSERT(a == 2);
-            }
-        };
-        verifyCallback = &verify::op;
-
-        b.call_noreply(m);
-    }
-
-    // Test map-variant.
-    {
-        auto m = newMethodCall__test(b);
-        std::map<std::string, sdbusplus::message::variant<int, double>> a1 = {
-            {"asdf", 3}, {"jkl;", 4.1}};
-        m.append(1, a1, 2);
-        verifyTypeString = "ia{sv}i";
-
-        struct verify
-        {
-            static void op(sd_bus_message* m)
-            {
-                int32_t a = 0;
-                double b = 0;
-                const char* c = nullptr;
-
-                sd_bus_message_read(m, "i", &a);
-                TEST_ASSERT(a == 1);
-
-                sd_bus_message_enter_container(m, SD_BUS_TYPE_ARRAY, "{sv}");
-                sd_bus_message_enter_container(m, SD_BUS_TYPE_DICT_ENTRY, "sv");
-                sd_bus_message_read(m, "s", &c);
-                TEST_ASSERT(0 == strcmp("asdf", c));
-                sd_bus_message_enter_container(m, SD_BUS_TYPE_VARIANT, "i");
-                sd_bus_message_read(m, "i", &a);
-                TEST_ASSERT(a == 3);
-                sd_bus_message_exit_container(m);
-                sd_bus_message_exit_container(m);
-                sd_bus_message_enter_container(m, SD_BUS_TYPE_DICT_ENTRY, "sv");
-                sd_bus_message_read(m, "s", &c);
-                TEST_ASSERT(0 == strcmp("jkl;", c));
-                sd_bus_message_enter_container(m, SD_BUS_TYPE_VARIANT, "d");
-                sd_bus_message_read(m, "d", &b);
-                TEST_ASSERT(b == 4.1);
-                sd_bus_message_exit_container(m);
-                sd_bus_message_exit_container(m);
-                sd_bus_message_exit_container(m);
-
-                sd_bus_message_read(m, "i", &a);
-                TEST_ASSERT(a == 2);
-            }
-        };
-        verifyCallback = &verify::op;
-
-        b.call_noreply(m);
-    }
-
-    // Shutdown server.
-    {
-        auto m = b.new_method_call(SERVICE, "/", INTERFACE, QUIT_METHOD);
-        b.call_noreply(m);
-    }
-}
-
-int main()
-{
-
-    // Initialize and start server thread.
-    pthread_t t;
-    {
-        auto b = serverInit();
-        pthread_create(&t, NULL, server, b.release());
-    }
-
-    runTests();
-
-    // Wait for server thread to exit.
-    pthread_join(t, NULL);
-
-    return 0;
-}
+} // namespace

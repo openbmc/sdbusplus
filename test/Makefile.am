@@ -24,6 +24,10 @@ check_PROGRAMS += bus_match
 bus_match_SOURCES = bus/match.cpp
 bus_match_LDADD = $(gtest_ldadd)
 
+check_PROGRAMS += exception_sdbus_error
+exception_sdbus_error_SOURCES = exception/sdbus_error.cpp
+exception_sdbus_error_LDADD = $(gtest_ldadd)
+
 check_PROGRAMS += message_append
 message_append_SOURCES = message/append.cpp
 message_append_CXXFLAGS = $(legacy_test_cxxflags)

@@ -92,6 +92,7 @@ AS_IF([test "x$enable_tests" != "xno"], [
 # Check/set gtest specific functions.
 AS_IF([test "x$enable_tests" != "xno"], [
     PKG_CHECK_MODULES([GTEST], [gtest])
+    PKG_CHECK_MODULES([GMOCK], [gmock])
 
     AX_SAVE_FLAGS_WITH_PREFIX(OLD, [CPPFLAGS])
     AX_APPEND_COMPILE_FLAGS([$GTEST_CFLAGS], [CPPFLAGS])
@@ -113,6 +114,17 @@ AS_IF([test "x$enable_tests" != "xno"], [
     AC_LANG_POP([C++])
     AX_RESTORE_FLAGS_WITH_PREFIX(OLD, [CPPFLAGS])
 
+    AX_SAVE_FLAGS_WITH_PREFIX(OLD, [CPPFLAGS])
+    AX_APPEND_COMPILE_FLAGS([$GMOCK_CFLAGS], [CPPFLAGS])
+    AC_LANG_PUSH([C++])
+	AC_CHECK_HEADERS([gmock/gmock.h], [], [
+        AS_IF([test "x$enable_tests" = "xyes"], [
+            AC_MSG_ERROR([Testing enabled but could not find gmock/gmock.h])
+        ])
+	])
+    AC_LANG_POP([C++])
+    AX_RESTORE_FLAGS_WITH_PREFIX(OLD, [CPPFLAGS])
+
     AX_SAVE_FLAGS_WITH_PREFIX(OLD, [LDFLAGS])
     AX_APPEND_COMPILE_FLAGS([$GTEST_LIBS], [LDFLAGS])
     AC_CHECK_LIB([gtest], [main], [
@@ -122,6 +134,19 @@ AS_IF([test "x$enable_tests" != "xno"], [
     ], [
         AS_IF([test "x$enable_tests" = "xyes"], [
             AC_MSG_ERROR([Testing enabled but couldn't find gtest libs])
+        ])
+    ])
+    AX_RESTORE_FLAGS_WITH_PREFIX(OLD, [LDFLAGS])
+
+    AX_SAVE_FLAGS_WITH_PREFIX(OLD, [LDFLAGS])
+    AX_APPEND_COMPILE_FLAGS([$GMOCK_LIBS], [LDFLAGS])
+    AC_CHECK_LIB([gmock], [main], [
+        AS_IF([test "x$GMOCK_LIBS" = "x"], [
+            AX_APPEND_COMPILE_FLAGS([-lgmock], [GMOCK_LIBS])
+        ])
+    ], [
+        AS_IF([test "x$enable_tests" = "xyes"], [
+            AC_MSG_ERROR([Testing enabled but couldn't find gmock libs])
         ])
     ])
     AX_RESTORE_FLAGS_WITH_PREFIX(OLD, [LDFLAGS])

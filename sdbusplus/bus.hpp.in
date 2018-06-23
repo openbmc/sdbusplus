@@ -249,7 +249,7 @@ struct bus
                                    &reply);
         if (r < 0)
         {
-            throw exception::SdBusError(error, "sd_bus_call");
+            throw exception::SdBusError(&error, "sd_bus_call");
         }
 
         return message::message(reply, _intf, std::false_type());
@@ -267,7 +267,7 @@ struct bus
                                    nullptr);
         if (r < 0)
         {
-            throw exception::SdBusError(error, "sd_bus_call noreply");
+            throw exception::SdBusError(&error, "sd_bus_call noreply");
         }
     }
 

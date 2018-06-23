@@ -40,7 +40,8 @@ SdBusError::SdBusError(sd_bus_error* error, const char* prefix,
     populateMessage(prefix);
 }
 
-SdBusError::SdBusError(SdBusError&& other)
+SdBusError::SdBusError(SdBusError&& other) :
+    std::system_error(std::move(other)), error(SD_BUS_ERROR_NULL)
 {
     move(std::move(other));
 }
@@ -49,6 +50,7 @@ SdBusError& SdBusError::operator=(SdBusError&& other)
 {
     if (this != &other)
     {
+        std::system_error::operator=(std::move(other));
         move(std::move(other));
     }
     return *this;

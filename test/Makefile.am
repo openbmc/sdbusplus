@@ -10,8 +10,6 @@ AM_CXXFLAGS = $(CODE_COVERAGE_CXXFLAGS)
 test_ldadd = $(top_builddir)/libsdbusplus.la $(SYSTEMD_LIBS) \
              $(OESDK_TESTCASE_FLAGS) $(CODE_COVERAGE_LIBS)
 gtest_ldadd = $(test_ldadd) $(GTEST_LIBS) $(GMOCK_LIBS) -lgmock_main
-legacy_test_cxxflags = $(AM_CXXFLAGS) $(PTHREAD_CFLAGS)
-legacy_test_ldadd = $(test_ldadd) $(PTHREAD_LIBS)
 
 check_PROGRAMS =
 TESTS = $(check_PROGRAMS)
@@ -34,8 +32,7 @@ message_append_LDADD = $(gtest_ldadd)
 
 check_PROGRAMS += message_read
 message_read_SOURCES = message/read.cpp
-message_read_CXXFLAGS = $(legacy_test_cxxflags)
-message_read_LDADD = $(legacy_test_ldadd)
+message_read_LDADD = $(gtest_ldadd)
 
 check_PROGRAMS += message_native_types
 message_native_types_SOURCES = message/native_types.cpp

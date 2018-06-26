@@ -1,6 +1,8 @@
+#include <cerrno>
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 #include <map>
+#include <sdbusplus/exception.hpp>
 #include <sdbusplus/message.hpp>
 #include <sdbusplus/test/sdbus_mock.hpp>
 #include <set>
@@ -42,6 +44,12 @@ class ReadTest : public testing::Test
             nullptr, nullptr, nullptr, nullptr);
     }
 
+    void expect_basic_error(char type, int ret)
+    {
+        EXPECT_CALL(mock, sd_bus_message_read_basic(nullptr, type, testing::_))
+            .WillOnce(Return(ret));
+    }
+
     template <typename T> void expect_basic(char type, T val)
     {
         EXPECT_CALL(mock, sd_bus_message_read_basic(nullptr, type, testing::_))
@@ -61,23 +69,23 @@ class ReadTest : public testing::Test
             .WillOnce(Return(ret));
     }
 
-    void expect_skip(const char *contents)
+    void expect_skip(const char *contents, int ret = 0)
     {
         EXPECT_CALL(mock, sd_bus_message_skip(nullptr, StrEq(contents)))
-            .WillOnce(Return(0));
+            .WillOnce(Return(ret));
     }
 
-    void expect_enter_container(char type, const char *contents)
+    void expect_enter_container(char type, const char *contents, int ret = 0)
     {
         EXPECT_CALL(mock, sd_bus_message_enter_container(nullptr, type,
                                                          StrEq(contents)))
-            .WillOnce(Return(0));
+            .WillOnce(Return(ret));
     }
 
-    void expect_exit_container()
+    void expect_exit_container(int ret = 0)
     {
         EXPECT_CALL(mock, sd_bus_message_exit_container(nullptr))
-            .WillOnce(Return(0));
+            .WillOnce(Return(ret));
     }
 };
 
@@ -171,6 +179,34 @@ TEST_F(ReadTest, CombinedBasic)
     EXPECT_EQ(d, ret_d);
 }
 
+TEST_F(ReadTest, BasicError)
+{
+    expect_basic_error(SD_BUS_TYPE_INT32, -EINVAL);
+    int ret;
+    EXPECT_THROW(new_message().read(ret), sdbusplus::exception::SdBusError);
+}
+
+TEST_F(ReadTest, BasicStringError)
+{
+    expect_basic_error(SD_BUS_TYPE_STRING, -EINVAL);
+    std::string ret;
+    EXPECT_THROW(new_message().read(ret), sdbusplus::exception::SdBusError);
+}
+
+TEST_F(ReadTest, BasicStringWrapperError)
+{
+    expect_basic_error(SD_BUS_TYPE_SIGNATURE, -EINVAL);
+    sdbusplus::message::signature ret;
+    EXPECT_THROW(new_message().read(ret), sdbusplus::exception::SdBusError);
+}
+
+TEST_F(ReadTest, BasicBoolError)
+{
+    expect_basic_error(SD_BUS_TYPE_BOOLEAN, -EINVAL);
+    bool ret;
+    EXPECT_THROW(new_message().read(ret), sdbusplus::exception::SdBusError);
+}
+
 TEST_F(ReadTest, Vector)
 {
     const std::vector<int> vi{1, 2, 3, 4};
@@ -190,6 +226,48 @@ TEST_F(ReadTest, Vector)
     std::vector<int> ret_vi;
     new_message().read(ret_vi);
     EXPECT_EQ(vi, ret_vi);
+}
+
+TEST_F(ReadTest, VectorEnterError)
+{
+    {
+        testing::InSequence seq;
+        expect_enter_container(SD_BUS_TYPE_ARRAY, "i", -EINVAL);
+    }
+
+    std::vector<int> ret;
+    EXPECT_THROW(new_message().read(ret), sdbusplus::exception::SdBusError);
+}
+
+TEST_F(ReadTest, VectorIterError)
+{
+    {
+        testing::InSequence seq;
+        expect_enter_container(SD_BUS_TYPE_ARRAY, "i");
+        expect_at_end(false, 0);
+        expect_basic<int>(SD_BUS_TYPE_INT32, 1);
+        expect_at_end(false, -EINVAL);
+    }
+
+    std::vector<int> ret;
+    EXPECT_THROW(new_message().read(ret), sdbusplus::exception::SdBusError);
+}
+
+TEST_F(ReadTest, VectorExitError)
+{
+    {
+        testing::InSequence seq;
+        expect_enter_container(SD_BUS_TYPE_ARRAY, "i");
+        expect_at_end(false, 0);
+        expect_basic<int>(SD_BUS_TYPE_INT32, 1);
+        expect_at_end(false, 0);
+        expect_basic<int>(SD_BUS_TYPE_INT32, 2);
+        expect_at_end(false, 1);
+        expect_exit_container(-EINVAL);
+    }
+
+    std::vector<int> ret;
+    EXPECT_THROW(new_message().read(ret), sdbusplus::exception::SdBusError);
 }
 
 TEST_F(ReadTest, Set)
@@ -242,6 +320,81 @@ TEST_F(ReadTest, Map)
     EXPECT_EQ(mis, ret_mis);
 }
 
+TEST_F(ReadTest, MapEnterError)
+{
+    {
+        testing::InSequence seq;
+        expect_enter_container(SD_BUS_TYPE_ARRAY, "{si}", -EINVAL);
+    }
+
+    std::map<std::string, int> ret;
+    EXPECT_THROW(new_message().read(ret), sdbusplus::exception::SdBusError);
+}
+
+TEST_F(ReadTest, MapEntryEnterError)
+{
+    {
+        testing::InSequence seq;
+        expect_enter_container(SD_BUS_TYPE_ARRAY, "{si}");
+        expect_at_end(false, 0);
+        expect_enter_container(SD_BUS_TYPE_DICT_ENTRY, "si", -EINVAL);
+    }
+
+    std::map<std::string, int> ret;
+    EXPECT_THROW(new_message().read(ret), sdbusplus::exception::SdBusError);
+}
+
+TEST_F(ReadTest, MapEntryExitError)
+{
+    {
+        testing::InSequence seq;
+        expect_enter_container(SD_BUS_TYPE_ARRAY, "{si}");
+        expect_at_end(false, 0);
+        expect_enter_container(SD_BUS_TYPE_DICT_ENTRY, "si");
+        expect_basic<const char *>(SD_BUS_TYPE_STRING, "ab");
+        expect_basic<int>(SD_BUS_TYPE_INT32, 1);
+        expect_exit_container(-EINVAL);
+    }
+
+    std::map<std::string, int> ret;
+    EXPECT_THROW(new_message().read(ret), sdbusplus::exception::SdBusError);
+}
+
+TEST_F(ReadTest, MapIterError)
+{
+    {
+        testing::InSequence seq;
+        expect_enter_container(SD_BUS_TYPE_ARRAY, "{si}");
+        expect_at_end(false, 0);
+        expect_enter_container(SD_BUS_TYPE_DICT_ENTRY, "si");
+        expect_basic<const char *>(SD_BUS_TYPE_STRING, "ab");
+        expect_basic<int>(SD_BUS_TYPE_INT32, 1);
+        expect_exit_container();
+        expect_at_end(false, -EINVAL);
+    }
+
+    std::map<std::string, int> ret;
+    EXPECT_THROW(new_message().read(ret), sdbusplus::exception::SdBusError);
+}
+
+TEST_F(ReadTest, MapExitError)
+{
+    {
+        testing::InSequence seq;
+        expect_enter_container(SD_BUS_TYPE_ARRAY, "{si}");
+        expect_at_end(false, 0);
+        expect_enter_container(SD_BUS_TYPE_DICT_ENTRY, "si");
+        expect_basic<const char *>(SD_BUS_TYPE_STRING, "ab");
+        expect_basic<int>(SD_BUS_TYPE_INT32, 1);
+        expect_exit_container();
+        expect_at_end(false, 1);
+        expect_exit_container(-EINVAL);
+    }
+
+    std::map<std::string, int> ret;
+    EXPECT_THROW(new_message().read(ret), sdbusplus::exception::SdBusError);
+}
+
 TEST_F(ReadTest, UnorderedMap)
 {
     const std::unordered_map<int, std::string> mis{
@@ -290,6 +443,32 @@ TEST_F(ReadTest, Tuple)
     EXPECT_EQ(tisb, ret_tisb);
 }
 
+TEST_F(ReadTest, TupleEnterError)
+{
+    {
+        testing::InSequence seq;
+        expect_enter_container(SD_BUS_TYPE_STRUCT, "bis", -EINVAL);
+    }
+
+    std::tuple<bool, int, std::string> ret;
+    EXPECT_THROW(new_message().read(ret), sdbusplus::exception::SdBusError);
+}
+
+TEST_F(ReadTest, TupleExitError)
+{
+    {
+        testing::InSequence seq;
+        expect_enter_container(SD_BUS_TYPE_STRUCT, "bis");
+        expect_basic<int>(SD_BUS_TYPE_BOOLEAN, false);
+        expect_basic<int>(SD_BUS_TYPE_INT32, 1);
+        expect_basic<const char *>(SD_BUS_TYPE_STRING, "ab");
+        expect_exit_container(-EINVAL);
+    }
+
+    std::tuple<bool, int, std::string> ret;
+    EXPECT_THROW(new_message().read(ret), sdbusplus::exception::SdBusError);
+}
+
 TEST_F(ReadTest, Variant)
 {
     const bool b1 = false;
@@ -317,6 +496,17 @@ TEST_F(ReadTest, Variant)
     EXPECT_EQ(v2, ret_v2);
 }
 
+TEST_F(ReadTest, VariantVerifyError)
+{
+    {
+        testing::InSequence seq;
+        expect_verify_type(SD_BUS_TYPE_VARIANT, "i", -EINVAL);
+    }
+
+    sdbusplus::message::variant<int, bool> ret;
+    EXPECT_THROW(new_message().read(ret), sdbusplus::exception::SdBusError);
+}
+
 TEST_F(ReadTest, VariantSkipUnmatched)
 {
     {
@@ -325,8 +515,48 @@ TEST_F(ReadTest, VariantSkipUnmatched)
         expect_verify_type(SD_BUS_TYPE_VARIANT, "b", false);
         expect_skip("v");
     }
+
     sdbusplus::message::variant<int, bool> ret;
     new_message().read(ret);
+}
+
+TEST_F(ReadTest, VariantSkipError)
+{
+    {
+        testing::InSequence seq;
+        expect_verify_type(SD_BUS_TYPE_VARIANT, "i", false);
+        expect_verify_type(SD_BUS_TYPE_VARIANT, "b", false);
+        expect_skip("v", -EINVAL);
+    }
+
+    sdbusplus::message::variant<int, bool> ret;
+    EXPECT_THROW(new_message().read(ret), sdbusplus::exception::SdBusError);
+}
+
+TEST_F(ReadTest, VariantEnterError)
+{
+    {
+        testing::InSequence seq;
+        expect_verify_type(SD_BUS_TYPE_VARIANT, "i", true);
+        expect_enter_container(SD_BUS_TYPE_VARIANT, "i", -EINVAL);
+    }
+
+    sdbusplus::message::variant<int, bool> ret;
+    EXPECT_THROW(new_message().read(ret), sdbusplus::exception::SdBusError);
+}
+
+TEST_F(ReadTest, VariantExitError)
+{
+    {
+        testing::InSequence seq;
+        expect_verify_type(SD_BUS_TYPE_VARIANT, "i", true);
+        expect_enter_container(SD_BUS_TYPE_VARIANT, "i");
+        expect_basic<int>(SD_BUS_TYPE_INT32, 10);
+        expect_exit_container(-EINVAL);
+    }
+
+    sdbusplus::message::variant<int, bool> ret;
+    EXPECT_THROW(new_message().read(ret), sdbusplus::exception::SdBusError);
 }
 
 TEST_F(ReadTest, LargeCombo)

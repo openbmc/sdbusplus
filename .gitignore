@@ -1,4 +1,65 @@
+# Python build artifacts
 *.swp
 __pycache__
 *.pyc
 *.pyo
+/tools/build
+/tools/setup.py
+
+# Test suite logs
+*.log
+
+# Code Coverage
+*.gcda
+*.gcno
+*.trs
+*-coverage*
+
+# Compiler
+*.o
+
+# Libtool
+*.la
+*.lo
+
+# Autotools
+.deps
+.dirstamp
+.libs
+/aclocal.m4
+/build-aux
+/config.h
+/config.h.in
+/config.h.in~
+/config.log
+/config.status
+/configure
+/m4
+/libtool
+Makefile
+Makefile.in
+/stamp-h1
+
+# Custom generated files
+/example/calculator.md
+/example/net/poettering/Calculator
+/sdbusplus.pc
+/sdbusplus/bus.hpp
+/sdbusplus/server.hpp
+/tools/sdbusplus/templates/interface.mako.server.cpp
+/tools/sdbusplus/templates/method.mako.prototype.hpp
+/tools/sdbusplus/templates/property.mako.prototype.hpp
+
+# Output binaries
+/example/calculator-server
+/example/list-users
+/test/bus_list_names
+/test/bus_match
+/test/exception_sdbus_error
+/test/message_append
+/test/message_native_types
+/test/message_read
+/test/message_types
+/test/utility_tuple_to_array
+/test/utility_type_traits
+/test/vtable_vtable

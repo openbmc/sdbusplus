@@ -61,6 +61,12 @@ class ReadTest : public testing::Test
             .WillOnce(Return(ret));
     }
 
+    void expect_skip(const char *contents)
+    {
+        EXPECT_CALL(mock, sd_bus_message_skip(nullptr, StrEq(contents)))
+            .WillOnce(Return(0));
+    }
+
     void expect_enter_container(char type, const char *contents)
     {
         EXPECT_CALL(mock, sd_bus_message_enter_container(nullptr, type,
@@ -309,6 +315,18 @@ TEST_F(ReadTest, Variant)
     new_message().read(ret_v1, ret_v2);
     EXPECT_EQ(v1, ret_v1);
     EXPECT_EQ(v2, ret_v2);
+}
+
+TEST_F(ReadTest, VariantSkipUnmatched)
+{
+    {
+        testing::InSequence seq;
+        expect_verify_type(SD_BUS_TYPE_VARIANT, "i", false);
+        expect_verify_type(SD_BUS_TYPE_VARIANT, "b", false);
+        expect_skip("v");
+    }
+    sdbusplus::message::variant<int, bool> ret;
+    new_message().read(ret);
 }
 
 TEST_F(ReadTest, LargeCombo)

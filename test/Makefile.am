@@ -9,22 +9,29 @@ TESTS = $(check_PROGRAMS)
 check_PROGRAMS += bus_list_names
 bus_list_names_CXXFLAGS = $(PTHREAD_CFLAGS)
 bus_list_names_SOURCES = bus/list_names.cpp
-bus_list_names_LDADD = $(gtest_ldadd) $(SYSTEMD_LIBS) $(top_builddir)/sdbusplus/sdbus.o
+bus_list_names_LDADD = $(gtest_ldadd) $(SYSTEMD_LIBS) \
+		       $(top_builddir)/sdbusplus/sdbus.o
 
 check_PROGRAMS += bus_match
 bus_match_CXXFLAGS = $(PTHREAD_CFLAGS)
 bus_match_SOURCES = bus/match.cpp
-bus_match_LDADD = $(gtest_ldadd) $(SYSTEMD_LIBS) $(top_builddir)/sdbusplus/sdbus.o
+bus_match_LDADD = $(gtest_ldadd) $(SYSTEMD_LIBS) \
+		  $(top_builddir)/sdbusplus/sdbus.o \
+		  $(top_builddir)/sdbusplus/exception.o
 
 check_PROGRAMS += message_append
 message_append_SOURCES = message/append.cpp
 message_append_CXXFLAGS = $(SYSTEMD_CFLAGS) $(PTHREAD_CFLAGS)
-message_append_LDADD = $(gtest_ldadd) $(SYSTEMD_LIBS) $(PTHREAD_LIBS) $(top_builddir)/sdbusplus/sdbus.o
+message_append_LDADD = $(gtest_ldadd) $(SYSTEMD_LIBS) $(PTHREAD_LIBS) \
+		       $(top_builddir)/sdbusplus/sdbus.o \
+		       $(top_builddir)/sdbusplus/exception.o
 
 check_PROGRAMS += message_read
 message_read_SOURCES = message/read.cpp
 message_read_CXXFLAGS = $(SYSTEMD_CFLAGS) $(PTHREAD_CFLAGS)
-message_read_LDADD = $(gtest_ldadd) $(SYSTEMD_LIBS) $(PTHREAD_LIBS) $(top_builddir)/sdbusplus/sdbus.o
+message_read_LDADD = $(gtest_ldadd) $(SYSTEMD_LIBS) $(PTHREAD_LIBS) \
+		     $(top_builddir)/sdbusplus/sdbus.o \
+		     $(top_builddir)/sdbusplus/exception.o
 
 check_PROGRAMS += message_native_types
 message_native_types_CXXFLAGS = $(PTHREAD_CFLAGS)

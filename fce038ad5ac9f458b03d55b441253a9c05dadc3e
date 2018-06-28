@@ -1,0 +1,9 @@
+Code-Review+1: Adriana Kobylak <anoo@linux.ibm.com>
+Code-Review+2: Brad Bishop <bradleyb@fuzziesquirrel.com>
+Ok-To-Test+1: Jenkins <openbmc-ci-admin@ozlabs.org>
+Verified+1: Jenkins <openbmc-ci-admin@ozlabs.org>
+Submitted-by: James Feist <james.feist@linux.intel.com>
+Submitted-at: Thu, 28 Jun 2018 18:00:10 +0000
+Reviewed-on: https://gerrit.openbmc-project.xyz/10466
+Project: openbmc/sdbusplus
+Branch: refs/heads/master

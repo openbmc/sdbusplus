@@ -136,6 +136,11 @@ class dbus_interface
     {
         vtable_.emplace_back(vtable::start());
     }
+    ~dbus_interface()
+    {
+        conn_->emit_interfaces_removed(path_.c_str(),
+                                       std::vector<std::string>{name_});
+    }
 
     // default getter and setter
     template <typename PropertyType>
@@ -425,7 +430,8 @@ class dbus_interface
             static_cast<sdbusplus::bus::bus &>(*conn_), path_.c_str(),
             name_.c_str(), static_cast<const sd_bus_vtable *>(&vtable_[0]),
             this);
-
+        conn_->emit_interfaces_added(path_.c_str(),
+                                     std::vector<std::string>{name_});
         for (const std::string &name : propertyNames_)
         {
             signal_property(name);

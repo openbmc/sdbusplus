@@ -387,4 +387,6 @@ class SdBusImpl : public SdBusInterface
     }
 };
 
+extern SdBusImpl sdbus_impl;
+
 } // namespace sdbusplus

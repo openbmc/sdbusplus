@@ -11,8 +11,6 @@
 #include <sdbusplus/message.hpp>
 #include <sdbusplus/sdbus.hpp>
 
-extern sdbusplus::SdBusImpl sdbus_impl;
-
 namespace sdbusplus
 {
 

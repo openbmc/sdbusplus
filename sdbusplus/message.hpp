@@ -8,8 +8,6 @@
 #include <sdbusplus/message/native_types.hpp>
 #include <sdbusplus/sdbus.hpp>
 
-extern sdbusplus::SdBusImpl sdbus_impl;
-
 namespace sdbusplus
 {
 

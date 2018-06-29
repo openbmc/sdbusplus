@@ -197,7 +197,7 @@ class message
      */
     int get_errno()
     {
-        return sd_bus_message_get_errno(_msg.get());
+        return _intf->sd_bus_message_get_errno(_msg.get());
     }
 
     /** @brief Get the transaction cookie of a message.

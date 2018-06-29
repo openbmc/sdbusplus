@@ -46,6 +46,7 @@ class SdBusInterface
                                        const char *message) = 0;
 
     virtual sd_event *sd_bus_get_event(sd_bus *bus) = 0;
+    virtual int sd_bus_get_fd(sd_bus *bus) = 0;
     virtual int sd_bus_get_unique_name(sd_bus *bus, const char **unique) = 0;
 
     virtual int sd_bus_list_names(sd_bus *bus, char ***acquired,
@@ -74,6 +75,7 @@ class SdBusInterface
     virtual const char *sd_bus_message_get_sender(sd_bus_message *m) = 0;
     virtual const char *sd_bus_message_get_signature(sd_bus_message *m,
                                                      int complete) = 0;
+    virtual int sd_bus_message_get_errno(sd_bus_message *m) = 0;
 
     virtual int sd_bus_message_is_method_call(sd_bus_message *m,
                                               const char *interface,
@@ -208,6 +210,11 @@ class SdBusImpl : public SdBusInterface
         return ::sd_bus_get_event(bus);
     }
 
+    int sd_bus_get_fd(sd_bus *bus) override
+    {
+        return ::sd_bus_get_fd(bus);
+    }
+
     int sd_bus_get_unique_name(sd_bus *bus, const char **unique) override
     {
         return ::sd_bus_get_unique_name(bus, unique);
@@ -285,6 +292,11 @@ class SdBusImpl : public SdBusInterface
                                              int complete) override
     {
         return ::sd_bus_message_get_signature(m, complete);
+    }
+
+    int sd_bus_message_get_errno(sd_bus_message *m) override
+    {
+        return ::sd_bus_message_get_errno(m);
     }
 
     int sd_bus_message_is_method_call(sd_bus_message *m, const char *interface,

@@ -79,7 +79,7 @@ AS_IF([test "x$enable_tests" != "xno"], [
 
 # Check/set gtest specific functions.
 AS_IF([test "x$enable_tests" != "xno"], [
-    PKG_CHECK_MODULES([GTEST], [gtest])
+    PKG_CHECK_MODULES([GTEST], [gtest], [], [true])
 
     AX_SAVE_FLAGS_WITH_PREFIX(OLD, [CPPFLAGS])
     AX_APPEND_COMPILE_FLAGS([$GTEST_CFLAGS], [CPPFLAGS])

@@ -281,7 +281,7 @@ struct bus
     }
 
     auto get_fd(){
-        return sd_bus_get_fd(_bus.get());
+        return _intf->sd_bus_get_fd(_bus.get());
     }
 
     /** @brief Attach the bus with a sd-event event loop object.

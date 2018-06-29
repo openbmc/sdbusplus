@@ -35,6 +35,7 @@ class SdBusMock : public SdBusInterface
                  int(sd_bus_error *, const char *, const char *));
 
     MOCK_METHOD1(sd_bus_get_event, sd_event *(sd_bus *));
+    MOCK_METHOD1(sd_bus_get_fd, int(sd_bus *));
     MOCK_METHOD2(sd_bus_get_unique_name, int(sd_bus *, const char **));
 
     MOCK_METHOD3(sd_bus_list_names, int(sd_bus *, char ***, char ***));
@@ -57,6 +58,7 @@ class SdBusMock : public SdBusInterface
     MOCK_METHOD1(sd_bus_message_get_sender, const char *(sd_bus_message *));
     MOCK_METHOD2(sd_bus_message_get_signature,
                  const char *(sd_bus_message *, int));
+    MOCK_METHOD1(sd_bus_message_get_errno, int(sd_bus_message *));
 
     MOCK_METHOD3(sd_bus_message_is_method_call,
                  int(sd_bus_message *, const char *, const char *));

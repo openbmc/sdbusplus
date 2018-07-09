@@ -1,10 +1,7 @@
 #include <sdbusplus/exception.hpp>
-#include <sdbusplus/sdbus.hpp>
 #include <stdexcept>
 #include <system_error>
 #include <utility>
-
-extern sdbusplus::SdBusImpl sdbus_impl;
 
 namespace sdbusplus
 {

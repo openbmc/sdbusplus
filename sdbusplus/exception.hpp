@@ -6,8 +6,6 @@
 #include <system_error>
 #include <systemd/sd-bus.h>
 
-extern sdbusplus::SdBusImpl sdbus_impl;
-
 namespace sdbusplus
 {
 

@@ -43,13 +43,13 @@ class connection : public sdbusplus::bus::bus
         sdbusplus::bus::bus(sdbusplus::bus::new_system()), io_(io), socket(io_)
     {
         socket.assign(get_fd());
-        do_read();
+        read_wait();
     }
     connection(boost::asio::io_service& io, sd_bus* bus) :
         sdbusplus::bus::bus(bus), io_(io), socket(io_)
     {
         socket.assign(get_fd());
-        do_read();
+        read_wait();
     }
     ~connection()
     {
@@ -111,14 +111,33 @@ class connection : public sdbusplus::bus::bus
     boost::asio::io_service& io_;
     boost::asio::posix::stream_descriptor socket;
 
-    void do_read(void)
+    void read_wait()
     {
         socket.async_read_some(
             boost::asio::null_buffers(),
             [&](const boost::system::error_code& ec, std::size_t) {
-                process_discard();
-                do_read();
+                if (process_discard())
+                {
+                    read_immediate();
+                }
+                else
+                {
+                    read_wait();
+                }
             });
+    }
+    void read_immediate()
+    {
+        io_.post([&] {
+            if (process_discard())
+            {
+                read_immediate();
+            }
+            else
+            {
+                read_wait();
+            }
+        });
     }
 };
 

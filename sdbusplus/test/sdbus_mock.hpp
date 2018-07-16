@@ -102,7 +102,7 @@ class SdBusMock : public SdBusInterface
     MOCK_METHOD2(sd_bus_wait, int(sd_bus *, uint64_t));
 };
 
-bus::bus get_mocked_new(SdBusMock *sdbus)
+inline bus::bus get_mocked_new(SdBusMock *sdbus)
 {
     using ::testing::IsNull;
     using ::testing::Return;

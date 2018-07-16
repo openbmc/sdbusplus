@@ -170,13 +170,14 @@ struct bus
 
     /** @brief Process waiting dbus messages or signals, discarding unhandled.
      */
-    void process_discard()
+    int process_discard()
     {
         int r = _intf->sd_bus_process(_bus.get(), nullptr);
         if (r < 0)
         {
             throw exception::SdBusError(-r, "sd_bus_process discard");
         }
+        return r;
     }
 
     /** @brief Claim a service name on the dbus.

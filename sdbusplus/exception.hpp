@@ -26,7 +26,7 @@ struct internal_exception : public exception
 };
 
 /** Exception for when an underlying sd_bus method call fails. */
-class SdBusError final : public internal_exception, public std::system_error
+class SdBusError final : public internal_exception
 {
   public:
     /** Errno must be positive */

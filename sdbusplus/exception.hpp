@@ -3,7 +3,6 @@
 #include <exception>
 #include <sdbusplus/sdbus.hpp>
 #include <string>
-#include <system_error>
 #include <systemd/sd-bus.h>
 
 namespace sdbusplus
@@ -26,7 +25,7 @@ struct internal_exception : public exception
 };
 
 /** Exception for when an underlying sd_bus method call fails. */
-class SdBusError final : public internal_exception, public std::system_error
+class SdBusError final : public internal_exception
 {
   public:
     /** Errno must be positive */

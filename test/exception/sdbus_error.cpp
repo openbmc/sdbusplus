@@ -4,7 +4,6 @@
 #include <sdbusplus/test/sdbus_mock.hpp>
 #include <stdexcept>
 #include <string>
-#include <system_error>
 #include <systemd/sd-bus.h>
 #include <utility>
 
@@ -17,11 +16,6 @@ namespace
 using sdbusplus::exception::SdBusError;
 using testing::Return;
 using testing::_;
-
-std::error_code errnoToErrorCode(int error)
-{
-    return std::error_code(error, std::generic_category());
-}
 
 TEST(SdBusError, BasicErrno)
 {
@@ -40,8 +34,6 @@ TEST(SdBusError, BasicErrno)
     sdbusplus::exception::exception& sdbusErr = err;
     EXPECT_EQ(std::string{error.name}, sdbusErr.name());
     EXPECT_EQ(std::string{error.message}, sdbusErr.description());
-    std::system_error& systemErr = err;
-    EXPECT_EQ(errnoToErrorCode(errorVal), systemErr.code());
     std::exception& stdErr = sdbusErr;
     EXPECT_EQ(prefix + ": " + error.name + ": " + error.message, stdErr.what());
 
@@ -89,7 +81,6 @@ TEST(SdBusError, Move)
         EXPECT_EQ(name, err.name());
         EXPECT_EQ(message, err.description());
         EXPECT_EQ(what, err.what());
-        EXPECT_EQ(errnoToErrorCode(errorVal), err.code());
 
         // Move our SdBusError to a new one
         SdBusError errNew(std::move(err));
@@ -103,7 +94,6 @@ TEST(SdBusError, Move)
         EXPECT_EQ(name, errNew.name());
         EXPECT_EQ(message, errNew.description());
         EXPECT_EQ(what, errNew.what());
-        EXPECT_EQ(errnoToErrorCode(errorVal), errNew.code());
 
         // Move our SdBusError using the operator=()
         errFinal = std::move(errNew);
@@ -118,7 +108,6 @@ TEST(SdBusError, Move)
     EXPECT_EQ(name, errFinal.name());
     EXPECT_EQ(message, errFinal.description());
     EXPECT_EQ(what, errFinal.what());
-    EXPECT_EQ(errnoToErrorCode(errorVal), errFinal.code());
 
     sd_bus_error_free(&error);
 }
@@ -147,7 +136,6 @@ TEST(SdBusError, BasicError)
     EXPECT_EQ(name, err.name());
     EXPECT_EQ(description, err.description());
     EXPECT_EQ(prefix + ": " + name + ": " + description, err.what());
-    EXPECT_EQ(errnoToErrorCode(errorVal), err.code());
 }
 
 } // namespace

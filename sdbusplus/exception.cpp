@@ -1,6 +1,5 @@
 #include <sdbusplus/exception.hpp>
 #include <stdexcept>
-#include <system_error>
 #include <utility>
 
 namespace sdbusplus
@@ -9,8 +8,7 @@ namespace exception
 {
 
 SdBusError::SdBusError(int error, const char* prefix, SdBusInterface* intf) :
-    std::system_error(error, std::generic_category()), error(SD_BUS_ERROR_NULL),
-    intf(intf)
+    error(SD_BUS_ERROR_NULL), intf(intf)
 {
     // We can't check the output of intf->sd_bus_error_set_errno() because
     // it returns the input errorcode. We don't want to try and guess
@@ -27,8 +25,6 @@ SdBusError::SdBusError(int error, const char* prefix, SdBusInterface* intf) :
 
 SdBusError::SdBusError(sd_bus_error* error, const char* prefix,
                        SdBusInterface* intf) :
-    std::system_error(intf->sd_bus_error_get_errno(error),
-                      std::generic_category()),
     error(*error), intf(intf)
 {
     // We own the error so remove the caller's reference
@@ -38,7 +34,7 @@ SdBusError::SdBusError(sd_bus_error* error, const char* prefix,
 }
 
 SdBusError::SdBusError(SdBusError&& other) :
-    std::system_error(std::move(other)), error(SD_BUS_ERROR_NULL)
+    error(SD_BUS_ERROR_NULL)
 {
     move(std::move(other));
 }
@@ -47,7 +43,6 @@ SdBusError& SdBusError::operator=(SdBusError&& other)
 {
     if (this != &other)
     {
-        std::system_error::operator=(std::move(other));
         move(std::move(other));
     }
     return *this;

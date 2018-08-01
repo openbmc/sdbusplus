@@ -4,7 +4,6 @@
 #include <sdbusplus/test/sdbus_mock.hpp>
 #include <stdexcept>
 #include <string>
-#include <system_error>
 #include <systemd/sd-bus.h>
 #include <utility>
 
@@ -40,8 +39,6 @@ TEST(SdBusError, BasicErrno)
     sdbusplus::exception::exception& sdbusErr = err;
     EXPECT_EQ(std::string{error.name}, sdbusErr.name());
     EXPECT_EQ(std::string{error.message}, sdbusErr.description());
-    std::system_error& systemErr = err;
-    EXPECT_EQ(errnoToErrorCode(errorVal), systemErr.code());
     std::exception& stdErr = sdbusErr;
     EXPECT_EQ(prefix + ": " + error.name + ": " + error.message, stdErr.what());
 

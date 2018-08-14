@@ -7,7 +7,7 @@
 #include <systemd/sd-bus.h>
 #include <utility>
 
-// Needed for constuctor error testing
+// Needed for constructor error testing
 extern sdbusplus::SdBusImpl sdbus_impl;
 
 namespace

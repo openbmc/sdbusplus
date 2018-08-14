@@ -101,7 +101,7 @@ class connection : public sdbusplus::bus::bus
                 }
             }
             // Note.  Callback is called whether or not the unpack was
-            // sucessful to allow the user to implement their own handling
+            // successful to allow the user to implement their own handling
             auto response = std::tuple_cat(std::make_tuple(ec), responseData);
             std::experimental::apply(handler, response);
         });

@@ -53,6 +53,8 @@ properties:
     - name: Status
       type: enum[self.State]
       default: Success
+      flags:
+        - const
       description: >
         The current state of the Calculator.
     - name: Owner

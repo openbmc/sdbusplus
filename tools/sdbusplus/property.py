@@ -8,6 +8,7 @@ class Property(NamedElement, Renderer):
         self.typeName = kwargs.pop('type', None)
         self.cppTypeName = self.parse_cpp_type(self.typeName)
         self.defaultValue = kwargs.pop('default', None)
+        self.flags = kwargs.pop('flags', [])
         self.errors = kwargs.pop('errors', [])
 
         super(Property, self).__init__(**kwargs)

@@ -141,9 +141,12 @@ methods:
 ## Properties
 
 A property must have the YAML property `name` and `type` and may optionally
-have `description`, `default`, and `errors`.  The `default` defines the default
-value of the property. See the `Methods` section above for more information on
-errors.
+have `description`, `flags`, `default`, and `errors`.  The `default` defines the
+default value of the property. See the `Methods` section above for more
+information on errors.
+The only current supported value for `flags` is `const`, which corresponds to
+SD_BUS_VTABLE_PROPERTY_CONST, making the property read-only via D-Bus but
+still writable by the app implementing it.
 
 Example:
 ```
@@ -151,6 +154,8 @@ properties:
     - name: CardsRemaining
       type: uint32
       default: 52
+      flags:
+        - const
       description: >
         The number of cards remaining in the deck.
       errors:

@@ -10,14 +10,13 @@ AM_SILENT_RULES([yes])
 # Make sure the default CFLAGS of `-O2 -g` don't override CODE_COVERAGE_CFLAGS
 # It is important that this comes before AC_PROG_C{C,XX}, as we are attempting
 # to stop them from populating default CFLAGS and CXXFLAGS.
-AS_IF([test "$enable_testing" != "xno"], [
-    AS_IF([test "x$enable_code_coverage" = "xyes"], [
-        AS_IF([test "x${CXXFLAGS+set}" != "xset"], [
-            AC_SUBST(CXXFLAGS, [""])
-        ])
-        AS_IF([test "x${CFLAGS+set}" != "xset"], [
-           AC_SUBST(CFLAGS, [""])
-        ])
+AS_IF([test "x$enable_tests" = "xno"], [enable_code_coverage=no])
+AS_IF([test "x$enable_code_coverage" != "xno"], [
+    AS_IF([test "x${CXXFLAGS+set}" != "xset"], [
+        AC_SUBST(CXXFLAGS, [""])
+    ])
+    AS_IF([test "x${CFLAGS+set}" != "xset"], [
+        AC_SUBST(CFLAGS, [""])
     ])
 ])
 
@@ -147,21 +146,18 @@ AS_IF([test "x$enable_tests" != "xno"], [
 ])
 
 # Check for valgrind
-AS_IF([test "x$enable_tests" != "xno"], [
-    m4_foreach([vgtool], [valgrind_tool_list],
-        [AX_VALGRIND_DFLT(vgtool, [off])])
-    AX_VALGRIND_DFLT([memcheck], [on])
-    AX_VALGRIND_CHECK
-    AM_EXTRA_RECURSIVE_TARGETS([check-valgrind])
-    m4_foreach([vgtool], [valgrind_tool_list],
-        [AM_EXTRA_RECURSIVE_TARGETS([check-valgrind-]vgtool)])
-])
+AS_IF([test "x$enable_tests" = "xno"], [enable_valgrind=no])
+m4_foreach([vgtool], [valgrind_tool_list],
+	[AX_VALGRIND_DFLT(vgtool, [off])])
+AX_VALGRIND_DFLT([memcheck], [on])
+AX_VALGRIND_CHECK
+AM_EXTRA_RECURSIVE_TARGETS([check-valgrind])
+m4_foreach([vgtool], [valgrind_tool_list],
+	[AM_EXTRA_RECURSIVE_TARGETS([check-valgrind-]vgtool)])
 
 # Code coverage
-AS_IF([test "x$enable_tests" != "xno"], [
-    AX_CODE_COVERAGE
-    AM_EXTRA_RECURSIVE_TARGETS([check-code-coverage])
-])
+AX_CODE_COVERAGE
+AM_EXTRA_RECURSIVE_TARGETS([check-code-coverage])
 
 AC_ARG_ENABLE([oe-sdk],
     AS_HELP_STRING([--enable-oe-sdk], [Link testcases absolutely against OE SDK so they can be ran within it.])

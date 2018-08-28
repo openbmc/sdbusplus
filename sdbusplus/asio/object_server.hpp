@@ -38,17 +38,8 @@ class callback_method_instance : public callback
     }
     int call(message::message &m) override
     {
-        InputTupleType inputArgs;
-        if (!utility::read_into_tuple(inputArgs, m))
-        {
-            return -EINVAL;
-        }
-
-        auto ret = m.new_method_return();
-        callFunction<ResultType>(ret, inputArgs);
-        ret.method_return();
-        return 1;
-    };
+        return expandCall<CallbackType>(m);
+    }
 
   private:
     using CallbackSignature = boost::callable_traits::args_t<CallbackType>;
@@ -69,6 +60,52 @@ class callback_method_instance : public callback
     {
         std::experimental::apply(func_, inputArgs);
     }
+    // optional message-first-argument callback
+    template <typename T>
+    std::enable_if_t<
+        std::is_same<
+            typename utility::get_first_arg<typename utility::decay_tuple<
+                boost::callable_traits::args_t<T>>::type>::type,
+            message::message>::value,
+        int>
+        expandCall(message::message &m)
+    {
+        using DbusTupleType =
+            typename utility::strip_first_arg<InputTupleType>::type;
+        DbusTupleType dbusArgs;
+        if (!utility::read_into_tuple(dbusArgs, m))
+        {
+            return -EINVAL;
+        }
+
+        auto ret = m.new_method_return();
+        InputTupleType inputArgs =
+            std::tuple_cat(std::forward_as_tuple(std::move(m)), dbusArgs);
+        callFunction<ResultType>(ret, inputArgs);
+        ret.method_return();
+        return 1;
+    };
+    // normal dbus-types-only callback
+    template <typename T>
+    std::enable_if_t<
+        !std::is_same<
+            typename utility::get_first_arg<typename utility::decay_tuple<
+                boost::callable_traits::args_t<T>>::type>::type,
+            message::message>::value,
+        int>
+        expandCall(message::message &m)
+    {
+        InputTupleType inputArgs;
+        if (!utility::read_into_tuple(inputArgs, m))
+        {
+            return -EINVAL;
+        }
+
+        auto ret = m.new_method_return();
+        callFunction<ResultType>(ret, inputArgs);
+        ret.method_return();
+        return 1;
+    };
 };
 
 template <typename PropertyType, typename CallbackType>
@@ -285,7 +322,48 @@ class dbus_interface
     }
 
     template <typename CallbackType>
-    bool register_method(const std::string &name, CallbackType &&handler)
+    std::enable_if_t<
+        std::is_same<
+            typename utility::get_first_arg<typename utility::decay_tuple<
+                boost::callable_traits::args_t<CallbackType>>::type>::type,
+            message::message>::value,
+        bool>
+        register_method(const std::string &name, CallbackType &&handler)
+    {
+        using CallbackSignature = typename utility::strip_first_arg<
+            boost::callable_traits::args_t<CallbackType>>::type;
+        using InputTupleType =
+            typename utility::decay_tuple<CallbackSignature>::type;
+        using ResultType = boost::callable_traits::return_type_t<CallbackType>;
+
+        if (initialized_)
+        {
+            return false;
+        }
+        static const auto argType = utility::strip_ends(
+            utility::tuple_to_array(message::types::type_id<InputTupleType>()));
+        static const auto resultType =
+            utility::tuple_to_array(message::types::type_id<ResultType>());
+
+        auto nameItr = methodNames_.emplace(methodNames_.end(), name);
+
+        callbacksMethod_[name] =
+            std::make_unique<callback_method_instance<CallbackType>>(
+                std::move(handler));
+
+        vtable_.emplace_back(vtable::method(nameItr->c_str(), argType.data(),
+                                            resultType.data(), method_handler));
+        return true;
+    }
+
+    template <typename CallbackType>
+    std::enable_if_t<
+        !std::is_same<
+            typename utility::get_first_arg<typename utility::decay_tuple<
+                boost::callable_traits::args_t<CallbackType>>::type>::type,
+            message::message>::value,
+        bool>
+        register_method(const std::string &name, CallbackType &&handler)
     {
         using CallbackSignature = boost::callable_traits::args_t<CallbackType>;
         using InputTupleType =

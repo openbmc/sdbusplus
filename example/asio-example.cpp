@@ -12,6 +12,11 @@ int foo(int test)
     return ++test;
 }
 
+int methodWithMessage(sdbusplus::message::message& m, int test)
+{
+    return ++test;
+}
+
 int main()
 {
     using GetSubTreeType = std::vector<std::pair<
@@ -60,7 +65,6 @@ int main()
             {
                 std::cout << item.first << "\n";
             }
-
         },
         "xyz.openbmc_project.ObjectMapper",
         "/xyz/openbmc_project/object_mapper",
@@ -114,6 +118,8 @@ int main()
     });
 
     iface->register_method("TestFunction", foo);
+
+    iface->register_method("TestMethodWithMessage", methodWithMessage);
 
     iface->initialize();
     iface->set_property("int", 45);

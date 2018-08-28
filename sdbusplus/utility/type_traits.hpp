@@ -33,6 +33,17 @@ struct strip_first_arg<std::tuple<FirstArg, Rest...>>
     using type = std::tuple<Rest...>;
 };
 
+// matching helper class to only return the first type
+template <typename T> struct get_first_arg
+{
+};
+
+template <typename FirstArg, typename... Rest>
+struct get_first_arg<std::tuple<FirstArg, Rest...>>
+{
+    using type = FirstArg;
+};
+
 // helper class to remove const and reference from types
 template <typename T> struct decay_tuple
 {

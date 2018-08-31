@@ -24,7 +24,7 @@ using testing::StrEq;
 ACTION_TEMPLATE(AssignReadVal, HAS_1_TEMPLATE_PARAMS(typename, T),
                 AND_1_VALUE_PARAMS(val))
 {
-    *static_cast<T *>(arg2) = val;
+    *static_cast<T*>(arg2) = val;
 }
 
 class ReadTest : public testing::Test
@@ -59,7 +59,7 @@ class ReadTest : public testing::Test
             .WillOnce(DoAll(AssignReadVal<T>(val), Return(0)));
     }
 
-    void expect_verify_type(char type, const char *contents, int ret)
+    void expect_verify_type(char type, const char* contents, int ret)
     {
         EXPECT_CALL(mock,
                     sd_bus_message_verify_type(nullptr, type, StrEq(contents)))
@@ -72,13 +72,13 @@ class ReadTest : public testing::Test
             .WillOnce(Return(ret));
     }
 
-    void expect_skip(const char *contents, int ret = 0)
+    void expect_skip(const char* contents, int ret = 0)
     {
         EXPECT_CALL(mock, sd_bus_message_skip(nullptr, StrEq(contents)))
             .WillOnce(Return(ret));
     }
 
-    void expect_enter_container(char type, const char *contents, int ret = 0)
+    void expect_enter_container(char type, const char* contents, int ret = 0)
     {
         EXPECT_CALL(mock, sd_bus_message_enter_container(nullptr, type,
                                                          StrEq(contents)))
@@ -121,17 +121,17 @@ TEST_F(ReadTest, Double)
 
 TEST_F(ReadTest, CString)
 {
-    const char *const s = "asdf";
-    expect_basic<const char *>(SD_BUS_TYPE_STRING, s);
-    const char *ret;
+    const char* const s = "asdf";
+    expect_basic<const char*>(SD_BUS_TYPE_STRING, s);
+    const char* ret;
     new_message().read(ret);
     EXPECT_EQ(s, ret);
 }
 
 TEST_F(ReadTest, String)
 {
-    const char *const s = "fsda";
-    expect_basic<const char *>(SD_BUS_TYPE_STRING, s);
+    const char* const s = "fsda";
+    expect_basic<const char*>(SD_BUS_TYPE_STRING, s);
     std::string ret;
     new_message().read(ret);
     // Pointer comparison here is intentional as we don't expect a copy
@@ -140,8 +140,8 @@ TEST_F(ReadTest, String)
 
 TEST_F(ReadTest, ObjectPath)
 {
-    const char *const s = "/fsda";
-    expect_basic<const char *>(SD_BUS_TYPE_OBJECT_PATH, s);
+    const char* const s = "/fsda";
+    expect_basic<const char*>(SD_BUS_TYPE_OBJECT_PATH, s);
     sdbusplus::message::object_path ret;
     new_message().read(ret);
     EXPECT_EQ(s, ret.str);
@@ -149,8 +149,8 @@ TEST_F(ReadTest, ObjectPath)
 
 TEST_F(ReadTest, Signature)
 {
-    const char *const s = "{ii}";
-    expect_basic<const char *>(SD_BUS_TYPE_SIGNATURE, s);
+    const char* const s = "{ii}";
+    expect_basic<const char*>(SD_BUS_TYPE_SIGNATURE, s);
     sdbusplus::message::signature ret;
     new_message().read(ret);
     EXPECT_EQ(s, ret.str);
@@ -159,20 +159,20 @@ TEST_F(ReadTest, Signature)
 TEST_F(ReadTest, CombinedBasic)
 {
     const double a = 2.2;
-    const char *const b = "ijkd";
+    const char* const b = "ijkd";
     const bool c = false;
     const int d = 18;
 
     {
         testing::InSequence seq;
         expect_basic<double>(SD_BUS_TYPE_DOUBLE, a);
-        expect_basic<const char *>(SD_BUS_TYPE_STRING, b);
+        expect_basic<const char*>(SD_BUS_TYPE_STRING, b);
         expect_basic<int>(SD_BUS_TYPE_BOOLEAN, c);
         expect_basic<int>(SD_BUS_TYPE_INT32, d);
     }
 
     double ret_a;
-    const char *ret_b;
+    const char* ret_b;
     bool ret_c;
     int ret_d;
     new_message().read(ret_a, ret_b, ret_c, ret_d);
@@ -217,7 +217,7 @@ TEST_F(ReadTest, Vector)
     {
         testing::InSequence seq;
         expect_enter_container(SD_BUS_TYPE_ARRAY, "i");
-        for (const auto &i : vi)
+        for (const auto& i : vi)
         {
             expect_at_end(false, 0);
             expect_basic<int>(SD_BUS_TYPE_INT32, i);
@@ -280,10 +280,10 @@ TEST_F(ReadTest, Set)
     {
         testing::InSequence seq;
         expect_enter_container(SD_BUS_TYPE_ARRAY, "s");
-        for (const auto &s : ss)
+        for (const auto& s : ss)
         {
             expect_at_end(false, 0);
-            expect_basic<const char *>(SD_BUS_TYPE_STRING, s.c_str());
+            expect_basic<const char*>(SD_BUS_TYPE_STRING, s.c_str());
         }
         expect_at_end(false, 1);
         expect_exit_container();
@@ -306,12 +306,12 @@ TEST_F(ReadTest, Map)
     {
         testing::InSequence seq;
         expect_enter_container(SD_BUS_TYPE_ARRAY, "{is}");
-        for (const auto &is : mis)
+        for (const auto& is : mis)
         {
             expect_at_end(false, 0);
             expect_enter_container(SD_BUS_TYPE_DICT_ENTRY, "is");
             expect_basic<int>(SD_BUS_TYPE_INT32, is.first);
-            expect_basic<const char *>(SD_BUS_TYPE_STRING, is.second.c_str());
+            expect_basic<const char*>(SD_BUS_TYPE_STRING, is.second.c_str());
             expect_exit_container();
         }
         expect_at_end(false, 1);
@@ -354,7 +354,7 @@ TEST_F(ReadTest, MapEntryExitError)
         expect_enter_container(SD_BUS_TYPE_ARRAY, "{si}");
         expect_at_end(false, 0);
         expect_enter_container(SD_BUS_TYPE_DICT_ENTRY, "si");
-        expect_basic<const char *>(SD_BUS_TYPE_STRING, "ab");
+        expect_basic<const char*>(SD_BUS_TYPE_STRING, "ab");
         expect_basic<int>(SD_BUS_TYPE_INT32, 1);
         expect_exit_container(-EINVAL);
     }
@@ -370,7 +370,7 @@ TEST_F(ReadTest, MapIterError)
         expect_enter_container(SD_BUS_TYPE_ARRAY, "{si}");
         expect_at_end(false, 0);
         expect_enter_container(SD_BUS_TYPE_DICT_ENTRY, "si");
-        expect_basic<const char *>(SD_BUS_TYPE_STRING, "ab");
+        expect_basic<const char*>(SD_BUS_TYPE_STRING, "ab");
         expect_basic<int>(SD_BUS_TYPE_INT32, 1);
         expect_exit_container();
         expect_at_end(false, -EINVAL);
@@ -387,7 +387,7 @@ TEST_F(ReadTest, MapExitError)
         expect_enter_container(SD_BUS_TYPE_ARRAY, "{si}");
         expect_at_end(false, 0);
         expect_enter_container(SD_BUS_TYPE_DICT_ENTRY, "si");
-        expect_basic<const char *>(SD_BUS_TYPE_STRING, "ab");
+        expect_basic<const char*>(SD_BUS_TYPE_STRING, "ab");
         expect_basic<int>(SD_BUS_TYPE_INT32, 1);
         expect_exit_container();
         expect_at_end(false, 1);
@@ -410,12 +410,12 @@ TEST_F(ReadTest, UnorderedMap)
     {
         testing::InSequence seq;
         expect_enter_container(SD_BUS_TYPE_ARRAY, "{is}");
-        for (const auto &is : mis)
+        for (const auto& is : mis)
         {
             expect_at_end(false, 0);
             expect_enter_container(SD_BUS_TYPE_DICT_ENTRY, "is");
             expect_basic<int>(SD_BUS_TYPE_INT32, is.first);
-            expect_basic<const char *>(SD_BUS_TYPE_STRING, is.second.c_str());
+            expect_basic<const char*>(SD_BUS_TYPE_STRING, is.second.c_str());
             expect_exit_container();
         }
         expect_at_end(false, 1);
@@ -435,8 +435,8 @@ TEST_F(ReadTest, Tuple)
         testing::InSequence seq;
         expect_enter_container(SD_BUS_TYPE_STRUCT, "isb");
         expect_basic<int>(SD_BUS_TYPE_INT32, std::get<0>(tisb));
-        expect_basic<const char *>(SD_BUS_TYPE_STRING,
-                                   std::get<1>(tisb).c_str());
+        expect_basic<const char*>(SD_BUS_TYPE_STRING,
+                                  std::get<1>(tisb).c_str());
         expect_basic<int>(SD_BUS_TYPE_BOOLEAN, std::get<2>(tisb));
         expect_exit_container();
     }
@@ -464,7 +464,7 @@ TEST_F(ReadTest, TupleExitError)
         expect_enter_container(SD_BUS_TYPE_STRUCT, "bis");
         expect_basic<int>(SD_BUS_TYPE_BOOLEAN, false);
         expect_basic<int>(SD_BUS_TYPE_INT32, 1);
-        expect_basic<const char *>(SD_BUS_TYPE_STRING, "ab");
+        expect_basic<const char*>(SD_BUS_TYPE_STRING, "ab");
         expect_exit_container(-EINVAL);
     }
 
@@ -489,7 +489,7 @@ TEST_F(ReadTest, Variant)
         expect_verify_type(SD_BUS_TYPE_VARIANT, "i", false);
         expect_verify_type(SD_BUS_TYPE_VARIANT, "s", true);
         expect_enter_container(SD_BUS_TYPE_VARIANT, "s");
-        expect_basic<const char *>(SD_BUS_TYPE_STRING, s2.c_str());
+        expect_basic<const char*>(SD_BUS_TYPE_STRING, s2.c_str());
         expect_exit_container();
     }
 
@@ -575,14 +575,14 @@ TEST_F(ReadTest, LargeCombo)
         testing::InSequence seq;
 
         expect_enter_container(SD_BUS_TYPE_ARRAY, "as");
-        for (const auto &as : vas)
+        for (const auto& as : vas)
         {
             expect_at_end(false, 0);
             expect_enter_container(SD_BUS_TYPE_ARRAY, "s");
-            for (const auto &s : as)
+            for (const auto& s : as)
             {
                 expect_at_end(false, 0);
-                expect_basic<const char *>(SD_BUS_TYPE_STRING, s.c_str());
+                expect_basic<const char*>(SD_BUS_TYPE_STRING, s.c_str());
             }
             expect_at_end(false, 1);
             expect_exit_container();
@@ -591,11 +591,11 @@ TEST_F(ReadTest, LargeCombo)
         expect_exit_container();
 
         expect_enter_container(SD_BUS_TYPE_ARRAY, "{sv}");
-        for (const auto &sv : msv)
+        for (const auto& sv : msv)
         {
             expect_at_end(false, 0);
             expect_enter_container(SD_BUS_TYPE_DICT_ENTRY, "sv");
-            expect_basic<const char *>(SD_BUS_TYPE_STRING, sv.first.c_str());
+            expect_basic<const char*>(SD_BUS_TYPE_STRING, sv.first.c_str());
             if (sv.second.is<int>())
             {
                 expect_verify_type(SD_BUS_TYPE_VARIANT, "i", true);

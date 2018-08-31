@@ -45,24 +45,23 @@ class AppendTest : public testing::Test
     template <typename T>
     void expect_basic(char type, T val)
     {
-        EXPECT_CALL(mock,
-                    sd_bus_message_append_basic(
-                        nullptr, type,
-                        MatcherCast<const void *>(
-                            SafeMatcherCast<const T *>(Pointee(Eq(val))))))
+        EXPECT_CALL(mock, sd_bus_message_append_basic(
+                              nullptr, type,
+                              MatcherCast<const void*>(
+                                  SafeMatcherCast<const T*>(Pointee(Eq(val))))))
             .WillOnce(Return(0));
     }
 
-    void expect_basic_string(char type, const char *str)
+    void expect_basic_string(char type, const char* str)
     {
         EXPECT_CALL(mock, sd_bus_message_append_basic(
                               nullptr, type,
-                              MatcherCast<const void *>(
-                                  SafeMatcherCast<const char *>(StrEq(str)))))
+                              MatcherCast<const void*>(
+                                  SafeMatcherCast<const char*>(StrEq(str)))))
             .WillOnce(Return(0));
     }
 
-    void expect_open_container(char type, const char *contents)
+    void expect_open_container(char type, const char* contents)
     {
         EXPECT_CALL(
             mock, sd_bus_message_open_container(nullptr, type, StrEq(contents)))
@@ -144,14 +143,14 @@ TEST_F(AppendTest, RValueCString)
 
 TEST_F(AppendTest, LValueCString)
 {
-    const char *const s = "asdf";
+    const char* const s = "asdf";
     expect_basic_string(SD_BUS_TYPE_STRING, s);
     new_message().append(s);
 }
 
 TEST_F(AppendTest, XValueCString)
 {
-    const char *s = "asdf";
+    const char* s = "asdf";
     expect_basic_string(SD_BUS_TYPE_STRING, s);
     new_message().append(std::move(s));
 }
@@ -194,7 +193,7 @@ TEST_F(AppendTest, CombinedBasic)
 {
     const int c = 3;
     const std::string s1{"fdsa"};
-    const char *const s2 = "asdf";
+    const char* const s2 = "asdf";
 
     {
         testing::InSequence seq;
@@ -215,7 +214,7 @@ TEST_F(AppendTest, Array)
     {
         testing::InSequence seq;
         expect_open_container(SD_BUS_TYPE_ARRAY, "d");
-        for (const auto &i : a)
+        for (const auto& i : a)
         {
             expect_basic<double>(SD_BUS_TYPE_DOUBLE, i);
         }
@@ -231,7 +230,7 @@ TEST_F(AppendTest, Vector)
     {
         testing::InSequence seq;
         expect_open_container(SD_BUS_TYPE_ARRAY, "i");
-        for (const auto &i : v)
+        for (const auto& i : v)
         {
             expect_basic<int>(SD_BUS_TYPE_INT32, i);
         }
@@ -247,7 +246,7 @@ TEST_F(AppendTest, Set)
     {
         testing::InSequence seq;
         expect_open_container(SD_BUS_TYPE_ARRAY, "s");
-        for (const auto &i : s)
+        for (const auto& i : s)
         {
             expect_basic_string(SD_BUS_TYPE_STRING, i.c_str());
         }
@@ -268,7 +267,7 @@ TEST_F(AppendTest, Map)
     {
         testing::InSequence seq;
         expect_open_container(SD_BUS_TYPE_ARRAY, "{is}");
-        for (const auto &i : m)
+        for (const auto& i : m)
         {
             expect_open_container(SD_BUS_TYPE_DICT_ENTRY, "is");
             expect_basic<int>(SD_BUS_TYPE_INT32, i.first);
@@ -292,7 +291,7 @@ TEST_F(AppendTest, UnorderedMap)
     {
         testing::InSequence seq;
         expect_open_container(SD_BUS_TYPE_ARRAY, "{ib}");
-        for (const auto &i : m)
+        for (const auto& i : m)
         {
             expect_open_container(SD_BUS_TYPE_DICT_ENTRY, "ib");
             expect_basic<int>(SD_BUS_TYPE_INT32, i.first);
@@ -348,10 +347,10 @@ TEST_F(AppendTest, LargeCombo)
         testing::InSequence seq;
 
         expect_open_container(SD_BUS_TYPE_ARRAY, "as");
-        for (const auto &as : vas)
+        for (const auto& as : vas)
         {
             expect_open_container(SD_BUS_TYPE_ARRAY, "s");
-            for (const auto &s : as)
+            for (const auto& s : as)
             {
                 expect_basic_string(SD_BUS_TYPE_STRING, s.c_str());
             }
@@ -360,7 +359,7 @@ TEST_F(AppendTest, LargeCombo)
         expect_close_container();
 
         expect_open_container(SD_BUS_TYPE_ARRAY, "{sv}");
-        for (const auto &sv : msv)
+        for (const auto& sv : msv)
         {
             expect_open_container(SD_BUS_TYPE_DICT_ENTRY, "sv");
             expect_basic_string(SD_BUS_TYPE_STRING, sv.first.c_str());

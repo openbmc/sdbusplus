@@ -13,123 +13,123 @@ class SdBusInterface
   public:
     virtual ~SdBusInterface() = default;
 
-    virtual int sd_bus_add_object_manager(sd_bus *bus, sd_bus_slot **slot,
-                                          const char *path) = 0;
+    virtual int sd_bus_add_object_manager(sd_bus* bus, sd_bus_slot** slot,
+                                          const char* path) = 0;
 
-    virtual int sd_bus_add_object_vtable(sd_bus *bus, sd_bus_slot **slot,
-                                         const char *path,
-                                         const char *interface,
-                                         const sd_bus_vtable *vtable,
-                                         void *userdata) = 0;
+    virtual int sd_bus_add_object_vtable(sd_bus* bus, sd_bus_slot** slot,
+                                         const char* path,
+                                         const char* interface,
+                                         const sd_bus_vtable* vtable,
+                                         void* userdata) = 0;
 
-    virtual int sd_bus_attach_event(sd_bus *bus, sd_event *e, int priority) = 0;
+    virtual int sd_bus_attach_event(sd_bus* bus, sd_event* e, int priority) = 0;
 
-    virtual int sd_bus_call(sd_bus *bus, sd_bus_message *m, uint64_t usec,
-                            sd_bus_error *ret_error,
-                            sd_bus_message **reply) = 0;
+    virtual int sd_bus_call(sd_bus* bus, sd_bus_message* m, uint64_t usec,
+                            sd_bus_error* ret_error,
+                            sd_bus_message** reply) = 0;
 
-    virtual int sd_bus_detach_event(sd_bus *bus) = 0;
+    virtual int sd_bus_detach_event(sd_bus* bus) = 0;
 
-    virtual int sd_bus_emit_interfaces_added_strv(sd_bus *bus, const char *path,
-                                                  char **interfaces) = 0;
-    virtual int sd_bus_emit_interfaces_removed_strv(sd_bus *bus,
-                                                    const char *path,
-                                                    char **interfaces) = 0;
-    virtual int sd_bus_emit_object_added(sd_bus *bus, const char *path) = 0;
-    virtual int sd_bus_emit_object_removed(sd_bus *bus, const char *path) = 0;
-    virtual int sd_bus_emit_properties_changed_strv(sd_bus *bus,
-                                                    const char *path,
-                                                    const char *interface,
-                                                    char **names) = 0;
+    virtual int sd_bus_emit_interfaces_added_strv(sd_bus* bus, const char* path,
+                                                  char** interfaces) = 0;
+    virtual int sd_bus_emit_interfaces_removed_strv(sd_bus* bus,
+                                                    const char* path,
+                                                    char** interfaces) = 0;
+    virtual int sd_bus_emit_object_added(sd_bus* bus, const char* path) = 0;
+    virtual int sd_bus_emit_object_removed(sd_bus* bus, const char* path) = 0;
+    virtual int sd_bus_emit_properties_changed_strv(sd_bus* bus,
+                                                    const char* path,
+                                                    const char* interface,
+                                                    char** names) = 0;
 
-    virtual int sd_bus_error_set_const(sd_bus_error *e, const char *name,
-                                       const char *message) = 0;
-    virtual int sd_bus_error_get_errno(const sd_bus_error *e) = 0;
-    virtual int sd_bus_error_set_errno(sd_bus_error *e, int error) = 0;
-    virtual int sd_bus_error_is_set(const sd_bus_error *e) = 0;
-    virtual void sd_bus_error_free(sd_bus_error *e) = 0;
+    virtual int sd_bus_error_set_const(sd_bus_error* e, const char* name,
+                                       const char* message) = 0;
+    virtual int sd_bus_error_get_errno(const sd_bus_error* e) = 0;
+    virtual int sd_bus_error_set_errno(sd_bus_error* e, int error) = 0;
+    virtual int sd_bus_error_is_set(const sd_bus_error* e) = 0;
+    virtual void sd_bus_error_free(sd_bus_error* e) = 0;
 
-    virtual sd_event *sd_bus_get_event(sd_bus *bus) = 0;
-    virtual int sd_bus_get_fd(sd_bus *bus) = 0;
-    virtual int sd_bus_get_unique_name(sd_bus *bus, const char **unique) = 0;
+    virtual sd_event* sd_bus_get_event(sd_bus* bus) = 0;
+    virtual int sd_bus_get_fd(sd_bus* bus) = 0;
+    virtual int sd_bus_get_unique_name(sd_bus* bus, const char** unique) = 0;
 
-    virtual int sd_bus_list_names(sd_bus *bus, char ***acquired,
-                                  char ***activatable) = 0;
+    virtual int sd_bus_list_names(sd_bus* bus, char*** acquired,
+                                  char*** activatable) = 0;
 
     // https://github.com/systemd/systemd/blob/master/src/systemd/sd-bus.h
-    virtual int sd_bus_message_append_basic(sd_bus_message *message, char type,
-                                            const void *value) = 0;
+    virtual int sd_bus_message_append_basic(sd_bus_message* message, char type,
+                                            const void* value) = 0;
 
-    virtual int sd_bus_message_at_end(sd_bus_message *m, int complete) = 0;
+    virtual int sd_bus_message_at_end(sd_bus_message* m, int complete) = 0;
 
-    virtual int sd_bus_message_close_container(sd_bus_message *m) = 0;
+    virtual int sd_bus_message_close_container(sd_bus_message* m) = 0;
 
-    virtual int sd_bus_message_enter_container(sd_bus_message *m, char type,
-                                               const char *contents) = 0;
+    virtual int sd_bus_message_enter_container(sd_bus_message* m, char type,
+                                               const char* contents) = 0;
 
-    virtual int sd_bus_message_exit_container(sd_bus_message *m) = 0;
+    virtual int sd_bus_message_exit_container(sd_bus_message* m) = 0;
 
-    virtual sd_bus *sd_bus_message_get_bus(sd_bus_message *m) = 0;
-    virtual int sd_bus_message_get_cookie(sd_bus_message *m,
-                                          uint64_t *cookie) = 0;
-    virtual const char *sd_bus_message_get_destination(sd_bus_message *m) = 0;
-    virtual const char *sd_bus_message_get_interface(sd_bus_message *m) = 0;
-    virtual const char *sd_bus_message_get_member(sd_bus_message *m) = 0;
-    virtual const char *sd_bus_message_get_path(sd_bus_message *m) = 0;
-    virtual const char *sd_bus_message_get_sender(sd_bus_message *m) = 0;
-    virtual const char *sd_bus_message_get_signature(sd_bus_message *m,
+    virtual sd_bus* sd_bus_message_get_bus(sd_bus_message* m) = 0;
+    virtual int sd_bus_message_get_cookie(sd_bus_message* m,
+                                          uint64_t* cookie) = 0;
+    virtual const char* sd_bus_message_get_destination(sd_bus_message* m) = 0;
+    virtual const char* sd_bus_message_get_interface(sd_bus_message* m) = 0;
+    virtual const char* sd_bus_message_get_member(sd_bus_message* m) = 0;
+    virtual const char* sd_bus_message_get_path(sd_bus_message* m) = 0;
+    virtual const char* sd_bus_message_get_sender(sd_bus_message* m) = 0;
+    virtual const char* sd_bus_message_get_signature(sd_bus_message* m,
                                                      int complete) = 0;
-    virtual int sd_bus_message_get_errno(sd_bus_message *m) = 0;
+    virtual int sd_bus_message_get_errno(sd_bus_message* m) = 0;
 
-    virtual int sd_bus_message_is_method_call(sd_bus_message *m,
-                                              const char *interface,
-                                              const char *member) = 0;
-    virtual int sd_bus_message_is_method_error(sd_bus_message *m,
-                                               const char *name) = 0;
-    virtual int sd_bus_message_is_signal(sd_bus_message *m,
-                                         const char *interface,
-                                         const char *member) = 0;
+    virtual int sd_bus_message_is_method_call(sd_bus_message* m,
+                                              const char* interface,
+                                              const char* member) = 0;
+    virtual int sd_bus_message_is_method_error(sd_bus_message* m,
+                                               const char* name) = 0;
+    virtual int sd_bus_message_is_signal(sd_bus_message* m,
+                                         const char* interface,
+                                         const char* member) = 0;
 
-    virtual int sd_bus_message_new_method_call(sd_bus *bus, sd_bus_message **m,
-                                               const char *destination,
-                                               const char *path,
-                                               const char *interface,
-                                               const char *member) = 0;
+    virtual int sd_bus_message_new_method_call(sd_bus* bus, sd_bus_message** m,
+                                               const char* destination,
+                                               const char* path,
+                                               const char* interface,
+                                               const char* member) = 0;
 
-    virtual int sd_bus_message_new_method_return(sd_bus_message *call,
-                                                 sd_bus_message **m) = 0;
+    virtual int sd_bus_message_new_method_return(sd_bus_message* call,
+                                                 sd_bus_message** m) = 0;
 
-    virtual int sd_bus_message_new_signal(sd_bus *bus, sd_bus_message **m,
-                                          const char *path,
-                                          const char *interface,
-                                          const char *member) = 0;
+    virtual int sd_bus_message_new_signal(sd_bus* bus, sd_bus_message** m,
+                                          const char* path,
+                                          const char* interface,
+                                          const char* member) = 0;
 
-    virtual int sd_bus_message_open_container(sd_bus_message *m, char type,
-                                              const char *contents) = 0;
+    virtual int sd_bus_message_open_container(sd_bus_message* m, char type,
+                                              const char* contents) = 0;
 
-    virtual int sd_bus_message_read_basic(sd_bus_message *m, char type,
-                                          void *p) = 0;
+    virtual int sd_bus_message_read_basic(sd_bus_message* m, char type,
+                                          void* p) = 0;
 
-    virtual sd_bus_message *sd_bus_message_ref(sd_bus_message *m) = 0;
+    virtual sd_bus_message* sd_bus_message_ref(sd_bus_message* m) = 0;
 
-    virtual int sd_bus_message_skip(sd_bus_message *m, const char *types) = 0;
+    virtual int sd_bus_message_skip(sd_bus_message* m, const char* types) = 0;
 
-    virtual int sd_bus_message_verify_type(sd_bus_message *m, char type,
-                                           const char *contents) = 0;
+    virtual int sd_bus_message_verify_type(sd_bus_message* m, char type,
+                                           const char* contents) = 0;
 
-    virtual int sd_bus_process(sd_bus *bus, sd_bus_message **r) = 0;
+    virtual int sd_bus_process(sd_bus* bus, sd_bus_message** r) = 0;
 
-    virtual sd_bus *sd_bus_ref(sd_bus *bus) = 0;
+    virtual sd_bus* sd_bus_ref(sd_bus* bus) = 0;
 
-    virtual int sd_bus_request_name(sd_bus *bus, const char *name,
+    virtual int sd_bus_request_name(sd_bus* bus, const char* name,
                                     uint64_t flags) = 0;
 
-    virtual int sd_bus_send(sd_bus *bus, sd_bus_message *m,
-                            uint64_t *cookie) = 0;
+    virtual int sd_bus_send(sd_bus* bus, sd_bus_message* m,
+                            uint64_t* cookie) = 0;
 
-    virtual sd_bus *sd_bus_unref(sd_bus *bus) = 0;
+    virtual sd_bus* sd_bus_unref(sd_bus* bus) = 0;
 
-    virtual int sd_bus_wait(sd_bus *bus, uint64_t timeout_usec) = 0;
+    virtual int sd_bus_wait(sd_bus* bus, uint64_t timeout_usec) = 0;
 };
 
 class SdBusImpl : public SdBusInterface
@@ -137,287 +137,287 @@ class SdBusImpl : public SdBusInterface
   public:
     SdBusImpl() = default;
     ~SdBusImpl() = default;
-    SdBusImpl(const SdBusImpl &) = default;
-    SdBusImpl &operator=(const SdBusImpl &) = default;
-    SdBusImpl(SdBusImpl &&) = default;
-    SdBusImpl &operator=(SdBusImpl &&) = default;
+    SdBusImpl(const SdBusImpl&) = default;
+    SdBusImpl& operator=(const SdBusImpl&) = default;
+    SdBusImpl(SdBusImpl&&) = default;
+    SdBusImpl& operator=(SdBusImpl&&) = default;
 
-    int sd_bus_add_object_manager(sd_bus *bus, sd_bus_slot **slot,
-                                  const char *path) override
+    int sd_bus_add_object_manager(sd_bus* bus, sd_bus_slot** slot,
+                                  const char* path) override
     {
         return ::sd_bus_add_object_manager(bus, slot, path);
     }
 
-    int sd_bus_add_object_vtable(sd_bus *bus, sd_bus_slot **slot,
-                                 const char *path, const char *interface,
-                                 const sd_bus_vtable *vtable,
-                                 void *userdata) override
+    int sd_bus_add_object_vtable(sd_bus* bus, sd_bus_slot** slot,
+                                 const char* path, const char* interface,
+                                 const sd_bus_vtable* vtable,
+                                 void* userdata) override
     {
         return ::sd_bus_add_object_vtable(bus, slot, path, interface, vtable,
                                           userdata);
     }
 
-    int sd_bus_attach_event(sd_bus *bus, sd_event *e, int priority) override
+    int sd_bus_attach_event(sd_bus* bus, sd_event* e, int priority) override
     {
         return ::sd_bus_attach_event(bus, e, priority);
     }
 
-    int sd_bus_call(sd_bus *bus, sd_bus_message *m, uint64_t usec,
-                    sd_bus_error *ret_error, sd_bus_message **reply) override
+    int sd_bus_call(sd_bus* bus, sd_bus_message* m, uint64_t usec,
+                    sd_bus_error* ret_error, sd_bus_message** reply) override
     {
         return ::sd_bus_call(bus, m, usec, ret_error, reply);
     }
 
-    int sd_bus_detach_event(sd_bus *bus) override
+    int sd_bus_detach_event(sd_bus* bus) override
     {
         return ::sd_bus_detach_event(bus);
     }
 
-    int sd_bus_emit_interfaces_added_strv(sd_bus *bus, const char *path,
-                                          char **interfaces) override
+    int sd_bus_emit_interfaces_added_strv(sd_bus* bus, const char* path,
+                                          char** interfaces) override
     {
         return ::sd_bus_emit_interfaces_added_strv(bus, path, interfaces);
     }
 
-    int sd_bus_emit_interfaces_removed_strv(sd_bus *bus, const char *path,
-                                            char **interfaces) override
+    int sd_bus_emit_interfaces_removed_strv(sd_bus* bus, const char* path,
+                                            char** interfaces) override
     {
         return ::sd_bus_emit_interfaces_removed_strv(bus, path, interfaces);
     }
 
-    int sd_bus_emit_object_added(sd_bus *bus, const char *path) override
+    int sd_bus_emit_object_added(sd_bus* bus, const char* path) override
     {
         return ::sd_bus_emit_object_added(bus, path);
     }
 
-    int sd_bus_emit_object_removed(sd_bus *bus, const char *path) override
+    int sd_bus_emit_object_removed(sd_bus* bus, const char* path) override
     {
         return ::sd_bus_emit_object_removed(bus, path);
     }
 
-    int sd_bus_emit_properties_changed_strv(sd_bus *bus, const char *path,
-                                            const char *interface,
-                                            char **names) override
+    int sd_bus_emit_properties_changed_strv(sd_bus* bus, const char* path,
+                                            const char* interface,
+                                            char** names) override
     {
         return ::sd_bus_emit_properties_changed_strv(bus, path, interface,
                                                      names);
     }
 
-    int sd_bus_error_set_const(sd_bus_error *e, const char *name,
-                               const char *message) override
+    int sd_bus_error_set_const(sd_bus_error* e, const char* name,
+                               const char* message) override
     {
         return ::sd_bus_error_set_const(e, name, message);
     }
 
-    int sd_bus_error_get_errno(const sd_bus_error *e) override
+    int sd_bus_error_get_errno(const sd_bus_error* e) override
     {
         return ::sd_bus_error_get_errno(e);
     }
 
-    int sd_bus_error_set_errno(sd_bus_error *e, int error) override
+    int sd_bus_error_set_errno(sd_bus_error* e, int error) override
     {
         return ::sd_bus_error_set_errno(e, error);
     }
 
-    int sd_bus_error_is_set(const sd_bus_error *e) override
+    int sd_bus_error_is_set(const sd_bus_error* e) override
     {
         return ::sd_bus_error_is_set(e);
     }
 
-    void sd_bus_error_free(sd_bus_error *e) override
+    void sd_bus_error_free(sd_bus_error* e) override
     {
         return ::sd_bus_error_free(e);
     }
 
-    sd_event *sd_bus_get_event(sd_bus *bus) override
+    sd_event* sd_bus_get_event(sd_bus* bus) override
     {
         return ::sd_bus_get_event(bus);
     }
 
-    int sd_bus_get_fd(sd_bus *bus) override
+    int sd_bus_get_fd(sd_bus* bus) override
     {
         return ::sd_bus_get_fd(bus);
     }
 
-    int sd_bus_get_unique_name(sd_bus *bus, const char **unique) override
+    int sd_bus_get_unique_name(sd_bus* bus, const char** unique) override
     {
         return ::sd_bus_get_unique_name(bus, unique);
     }
 
-    int sd_bus_list_names(sd_bus *bus, char ***acquired,
-                          char ***activatable) override
+    int sd_bus_list_names(sd_bus* bus, char*** acquired,
+                          char*** activatable) override
     {
         return ::sd_bus_list_names(bus, acquired, activatable);
     }
 
-    int sd_bus_message_append_basic(sd_bus_message *message, char type,
-                                    const void *value) override
+    int sd_bus_message_append_basic(sd_bus_message* message, char type,
+                                    const void* value) override
     {
         return ::sd_bus_message_append_basic(message, type, value);
     }
 
-    int sd_bus_message_at_end(sd_bus_message *m, int complete) override
+    int sd_bus_message_at_end(sd_bus_message* m, int complete) override
     {
         return ::sd_bus_message_at_end(m, complete);
     }
 
-    int sd_bus_message_close_container(sd_bus_message *m) override
+    int sd_bus_message_close_container(sd_bus_message* m) override
     {
         return ::sd_bus_message_close_container(m);
     }
 
-    int sd_bus_message_enter_container(sd_bus_message *m, char type,
-                                       const char *contents) override
+    int sd_bus_message_enter_container(sd_bus_message* m, char type,
+                                       const char* contents) override
     {
         return ::sd_bus_message_enter_container(m, type, contents);
     }
 
-    int sd_bus_message_exit_container(sd_bus_message *m) override
+    int sd_bus_message_exit_container(sd_bus_message* m) override
     {
         return ::sd_bus_message_exit_container(m);
     }
 
-    sd_bus *sd_bus_message_get_bus(sd_bus_message *m) override
+    sd_bus* sd_bus_message_get_bus(sd_bus_message* m) override
     {
         return ::sd_bus_message_get_bus(m);
     }
 
-    int sd_bus_message_get_cookie(sd_bus_message *m, uint64_t *cookie) override
+    int sd_bus_message_get_cookie(sd_bus_message* m, uint64_t* cookie) override
     {
         return ::sd_bus_message_get_cookie(m, cookie);
     }
 
-    const char *sd_bus_message_get_destination(sd_bus_message *m) override
+    const char* sd_bus_message_get_destination(sd_bus_message* m) override
     {
         return ::sd_bus_message_get_destination(m);
     }
 
-    const char *sd_bus_message_get_interface(sd_bus_message *m) override
+    const char* sd_bus_message_get_interface(sd_bus_message* m) override
     {
         return ::sd_bus_message_get_interface(m);
     }
 
-    const char *sd_bus_message_get_member(sd_bus_message *m) override
+    const char* sd_bus_message_get_member(sd_bus_message* m) override
     {
         return ::sd_bus_message_get_member(m);
     }
 
-    const char *sd_bus_message_get_path(sd_bus_message *m) override
+    const char* sd_bus_message_get_path(sd_bus_message* m) override
     {
         return ::sd_bus_message_get_path(m);
     }
 
-    const char *sd_bus_message_get_sender(sd_bus_message *m) override
+    const char* sd_bus_message_get_sender(sd_bus_message* m) override
     {
         return ::sd_bus_message_get_sender(m);
     }
 
-    const char *sd_bus_message_get_signature(sd_bus_message *m,
+    const char* sd_bus_message_get_signature(sd_bus_message* m,
                                              int complete) override
     {
         return ::sd_bus_message_get_signature(m, complete);
     }
 
-    int sd_bus_message_get_errno(sd_bus_message *m) override
+    int sd_bus_message_get_errno(sd_bus_message* m) override
     {
         return ::sd_bus_message_get_errno(m);
     }
 
-    int sd_bus_message_is_method_call(sd_bus_message *m, const char *interface,
-                                      const char *member) override
+    int sd_bus_message_is_method_call(sd_bus_message* m, const char* interface,
+                                      const char* member) override
     {
         return ::sd_bus_message_is_method_call(m, interface, member);
     }
 
-    int sd_bus_message_is_method_error(sd_bus_message *m,
-                                       const char *name) override
+    int sd_bus_message_is_method_error(sd_bus_message* m,
+                                       const char* name) override
     {
         return ::sd_bus_message_is_method_error(m, name);
     }
 
-    int sd_bus_message_is_signal(sd_bus_message *m, const char *interface,
-                                 const char *member) override
+    int sd_bus_message_is_signal(sd_bus_message* m, const char* interface,
+                                 const char* member) override
     {
         return ::sd_bus_message_is_signal(m, interface, member);
     }
 
-    int sd_bus_message_new_method_call(sd_bus *bus, sd_bus_message **m,
-                                       const char *destination,
-                                       const char *path, const char *interface,
-                                       const char *member) override
+    int sd_bus_message_new_method_call(sd_bus* bus, sd_bus_message** m,
+                                       const char* destination,
+                                       const char* path, const char* interface,
+                                       const char* member) override
     {
         return ::sd_bus_message_new_method_call(bus, m, destination, path,
                                                 interface, member);
     }
 
-    int sd_bus_message_new_method_return(sd_bus_message *call,
-                                         sd_bus_message **m) override
+    int sd_bus_message_new_method_return(sd_bus_message* call,
+                                         sd_bus_message** m) override
     {
         return ::sd_bus_message_new_method_return(call, m);
     }
 
-    int sd_bus_message_new_signal(sd_bus *bus, sd_bus_message **m,
-                                  const char *path, const char *interface,
-                                  const char *member) override
+    int sd_bus_message_new_signal(sd_bus* bus, sd_bus_message** m,
+                                  const char* path, const char* interface,
+                                  const char* member) override
     {
         return ::sd_bus_message_new_signal(bus, m, path, interface, member);
     }
 
-    int sd_bus_message_open_container(sd_bus_message *m, char type,
-                                      const char *contents) override
+    int sd_bus_message_open_container(sd_bus_message* m, char type,
+                                      const char* contents) override
     {
         return ::sd_bus_message_open_container(m, type, contents);
     }
 
-    int sd_bus_message_read_basic(sd_bus_message *m, char type,
-                                  void *p) override
+    int sd_bus_message_read_basic(sd_bus_message* m, char type,
+                                  void* p) override
     {
         return ::sd_bus_message_read_basic(m, type, p);
     }
 
-    sd_bus_message *sd_bus_message_ref(sd_bus_message *m) override
+    sd_bus_message* sd_bus_message_ref(sd_bus_message* m) override
     {
         return ::sd_bus_message_ref(m);
     }
 
-    int sd_bus_message_skip(sd_bus_message *m, const char *types) override
+    int sd_bus_message_skip(sd_bus_message* m, const char* types) override
     {
         return ::sd_bus_message_skip(m, types);
     }
 
-    int sd_bus_message_verify_type(sd_bus_message *m, char type,
-                                   const char *contents) override
+    int sd_bus_message_verify_type(sd_bus_message* m, char type,
+                                   const char* contents) override
     {
         return ::sd_bus_message_verify_type(m, type, contents);
     }
 
-    int sd_bus_process(sd_bus *bus, sd_bus_message **r) override
+    int sd_bus_process(sd_bus* bus, sd_bus_message** r) override
     {
         return ::sd_bus_process(bus, r);
     }
 
-    sd_bus *sd_bus_ref(sd_bus *bus) override
+    sd_bus* sd_bus_ref(sd_bus* bus) override
     {
         return ::sd_bus_ref(bus);
     }
 
-    int sd_bus_request_name(sd_bus *bus, const char *name,
+    int sd_bus_request_name(sd_bus* bus, const char* name,
                             uint64_t flags) override
     {
         return ::sd_bus_request_name(bus, name, flags);
     }
 
-    int sd_bus_send(sd_bus *bus, sd_bus_message *m, uint64_t *cookie) override
+    int sd_bus_send(sd_bus* bus, sd_bus_message* m, uint64_t* cookie) override
     {
         return ::sd_bus_send(bus, m, cookie);
     }
 
-    sd_bus *sd_bus_unref(sd_bus *bus) override
+    sd_bus* sd_bus_unref(sd_bus* bus) override
     {
         return ::sd_bus_unref(bus);
     }
 
-    int sd_bus_wait(sd_bus *bus, uint64_t timeout_usec) override
+    int sd_bus_wait(sd_bus* bus, uint64_t timeout_usec) override
     {
         return ::sd_bus_wait(bus, timeout_usec);
     }

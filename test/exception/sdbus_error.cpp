@@ -14,8 +14,8 @@ namespace
 {
 
 using sdbusplus::exception::SdBusError;
-using testing::Return;
 using testing::_;
+using testing::Return;
 
 TEST(SdBusError, BasicErrno)
 {

@@ -21,7 +21,7 @@ template <typename T> T&& convertForMessage(T&& t)
 {
     return std::forward<T>(t);
 }
-}
-}
-}
-}
+} // namespace details
+} // namespace binding
+} // namespace server
+} // namespace sdbusplus

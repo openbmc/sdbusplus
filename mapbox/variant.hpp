@@ -1058,7 +1058,7 @@ auto VARIANT_INLINE apply_visitor(F&& f, V& v0, V& v1)
     return V::binary_visit(v0, v1, std::forward<F>(f));
 }
 
-    // getter interface
+// getter interface
 
 #ifdef HAS_EXCEPTIONS
 template <typename ResultType, typename T>

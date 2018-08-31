@@ -1,7 +1,8 @@
 #pragma once
 
-#include <memory>
 #include <systemd/sd-bus.h>
+
+#include <memory>
 
 namespace sdbusplus
 {

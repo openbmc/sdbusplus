@@ -1,4 +1,5 @@
 #include <sdbusplus/vtable.hpp>
+
 #include <gtest/gtest.h>
 
 static const sdbusplus::vtable::vtable_t example[] = {

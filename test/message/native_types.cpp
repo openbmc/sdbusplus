@@ -1,8 +1,9 @@
-#include <gtest/gtest.h>
-#include <sdbusplus/message.hpp>
-#include <vector>
 #include <map>
+#include <sdbusplus/message.hpp>
 #include <unordered_map>
+#include <vector>
+
+#include <gtest/gtest.h>
 
 /* Suite tests that object_path and signature can be cleanly converted to
  * and from strings and used as container parameters.

@@ -1,11 +1,12 @@
 #pragma once
 
-#include <tuple>
+#include <systemd/sd-bus.h>
+
 #include <sdbusplus/exception.hpp>
 #include <sdbusplus/message/types.hpp>
-#include <sdbusplus/utility/type_traits.hpp>
 #include <sdbusplus/utility/tuple_to_array.hpp>
-#include <systemd/sd-bus.h>
+#include <sdbusplus/utility/type_traits.hpp>
+#include <tuple>
 
 namespace sdbusplus
 {

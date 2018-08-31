@@ -1,7 +1,7 @@
 #include <iostream>
-#include <sdbusplus/server.hpp>
-#include <net/poettering/Calculator/server.hpp>
 #include <net/poettering/Calculator/error.hpp>
+#include <net/poettering/Calculator/server.hpp>
+#include <sdbusplus/server.hpp>
 
 using Calculator_inherit =
     sdbusplus::server::object_t<sdbusplus::net::poettering::server::Calculator>;

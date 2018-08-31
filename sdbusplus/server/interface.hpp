@@ -1,11 +1,12 @@
 #pragma once
 
-#include <string>
 #include <systemd/sd-bus.h>
-#include <sdbusplus/slot.hpp>
-#include <sdbusplus/vtable.hpp>
+
 #include <sdbusplus/bus.hpp>
 #include <sdbusplus/sdbus.hpp>
+#include <sdbusplus/slot.hpp>
+#include <sdbusplus/vtable.hpp>
+#include <string>
 
 namespace sdbusplus
 {

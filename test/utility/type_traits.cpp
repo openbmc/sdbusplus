@@ -1,6 +1,7 @@
-#include <gtest/gtest.h>
 #include <sdbusplus/utility/type_traits.hpp>
 #include <type_traits>
+
+#include <gtest/gtest.h>
 
 namespace
 {

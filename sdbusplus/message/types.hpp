@@ -1,15 +1,15 @@
 #pragma once
 
-#include <tuple>
-#include <string>
-#include <vector>
-#include <map>
-#include <mapbox/variant.hpp>
 #include <systemd/sd-bus.h>
 
+#include <map>
+#include <mapbox/variant.hpp>
+#include <sdbusplus/message/native_types.hpp>
 #include <sdbusplus/utility/container_traits.hpp>
 #include <sdbusplus/utility/type_traits.hpp>
-#include <sdbusplus/message/native_types.hpp>
+#include <string>
+#include <tuple>
+#include <vector>
 
 namespace sdbusplus
 {

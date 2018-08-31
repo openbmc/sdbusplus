@@ -48,6 +48,20 @@ DisableFormat:   false
 ExperimentalAutoDetectBinPacking: false
 FixNamespaceComments: true
 ForEachMacros:   [ foreach, Q_FOREACH, BOOST_FOREACH ]
+IncludeBlocks: Regroup
+IncludeCategories:
+  - Regex:           '^[<"](gtest|gmock)'
+    Priority:        5
+  - Regex:           '^"config.h"'
+    Priority:        -1
+  - Regex:           '^".*\.hpp"'
+    Priority:        1
+  - Regex:           '^<.*\.h>'
+    Priority:        2
+  - Regex:           '^<.*'
+    Priority:        3
+  - Regex:           '.*'
+    Priority:        4
 IndentCaseLabels: true
 IndentWidth:     4
 IndentWrappedFunctionNames: true
@@ -67,7 +81,7 @@ PenaltyExcessCharacter: 1000000
 PenaltyReturnTypeOnItsOwnLine: 60
 PointerAlignment: Right
 ReflowComments:  true
-SortIncludes:    false
+SortIncludes:    true
 SpaceAfterCStyleCast: false
 SpaceBeforeAssignmentOperators: true
 SpaceBeforeParens: ControlStatements

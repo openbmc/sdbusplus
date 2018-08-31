@@ -1,5 +1,6 @@
-#include <gtest/gtest.h>
 #include <sdbusplus/bus.hpp>
+
+#include <gtest/gtest.h>
 
 constexpr auto this_name = "xyz.openbmc_project.sdbusplus.test.ListNames";
 

@@ -2,7 +2,8 @@
 #define MAPBOX_UTIL_VARIANT_HPP
 
 #include <cassert>
-#include <cstddef>   // size_t
+#include <cstddef> // size_t
+#include <mapbox/recursive_wrapper.hpp>
 #include <new>       // operator new
 #include <stdexcept> // runtime_error
 #include <string>
@@ -10,8 +11,6 @@
 #include <type_traits>
 #include <typeinfo>
 #include <utility>
-
-#include <mapbox/recursive_wrapper.hpp>
 
 // clang-format off
 // [[deprecated]] is only available in C++14, use this for the time being

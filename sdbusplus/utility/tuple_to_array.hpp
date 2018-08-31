@@ -1,8 +1,8 @@
 #pragma once
 
-#include <utility>
-#include <tuple>
 #include <array>
+#include <tuple>
+#include <utility>
 
 namespace sdbusplus
 {

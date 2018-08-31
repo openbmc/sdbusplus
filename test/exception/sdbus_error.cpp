@@ -1,11 +1,13 @@
+#include <systemd/sd-bus.h>
+
 #include <cstdlib>
-#include <gtest/gtest.h>
 #include <sdbusplus/exception.hpp>
 #include <sdbusplus/test/sdbus_mock.hpp>
 #include <stdexcept>
 #include <string>
-#include <systemd/sd-bus.h>
 #include <utility>
+
+#include <gtest/gtest.h>
 
 // Needed for constructor error testing
 extern sdbusplus::SdBusImpl sdbus_impl;

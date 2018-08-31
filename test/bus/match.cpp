@@ -1,6 +1,7 @@
-#include <gtest/gtest.h>
 #include <sdbusplus/bus.hpp>
 #include <sdbusplus/bus/match.hpp>
+
+#include <gtest/gtest.h>
 
 class Match : public ::testing::Test
 {

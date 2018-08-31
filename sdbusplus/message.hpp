@@ -1,12 +1,13 @@
 #pragma once
 
-#include <memory>
-#include <type_traits>
 #include <systemd/sd-bus.h>
+
+#include <memory>
 #include <sdbusplus/message/append.hpp>
-#include <sdbusplus/message/read.hpp>
 #include <sdbusplus/message/native_types.hpp>
+#include <sdbusplus/message/read.hpp>
 #include <sdbusplus/sdbus.hpp>
+#include <type_traits>
 
 namespace sdbusplus
 {

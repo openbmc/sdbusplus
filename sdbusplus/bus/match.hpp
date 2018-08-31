@@ -2,10 +2,10 @@
 
 #include <functional>
 #include <memory>
-#include <string>
-#include <sdbusplus/slot.hpp>
 #include <sdbusplus/bus.hpp>
 #include <sdbusplus/message.hpp>
+#include <sdbusplus/slot.hpp>
+#include <string>
 
 namespace sdbusplus
 {

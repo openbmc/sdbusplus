@@ -1,9 +1,10 @@
 #pragma once
 
+#include <systemd/sd-bus.h>
+
 #include <exception>
 #include <sdbusplus/sdbus.hpp>
 #include <string>
-#include <systemd/sd-bus.h>
 
 namespace sdbusplus
 {

@@ -1,15 +1,17 @@
+#include <systemd/sd-bus-protocol.h>
+
 #include <array>
-#include <gtest/gtest.h>
-#include <gmock/gmock.h>
 #include <map>
 #include <sdbusplus/message.hpp>
 #include <sdbusplus/test/sdbus_mock.hpp>
 #include <set>
 #include <string>
-#include <systemd/sd-bus-protocol.h>
 #include <tuple>
 #include <unordered_map>
 #include <vector>
+
+#include <gmock/gmock.h>
+#include <gtest/gtest.h>
 
 namespace
 {

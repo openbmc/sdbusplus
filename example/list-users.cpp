@@ -1,6 +1,6 @@
-#include <sdbusplus/bus.hpp>
-#include <iostream>
 #include <cstdint>
+#include <iostream>
+#include <sdbusplus/bus.hpp>
 
 /** An example dbus client application.
  *  Calls org.freedesktop.login1's ListUsers interface to find all active

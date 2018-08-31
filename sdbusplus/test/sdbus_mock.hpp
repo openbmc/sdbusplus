@@ -1,9 +1,9 @@
 #pragma once
 
-#include "gmock/gmock.h"
-
 #include <sdbusplus/bus.hpp>
 #include <sdbusplus/sdbus.hpp>
+
+#include "gmock/gmock.h"
 
 namespace sdbusplus
 {

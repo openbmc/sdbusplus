@@ -1,6 +1,7 @@
-#include <gtest/gtest.h>
 #include <sdbusplus/message/types.hpp>
 #include <sdbusplus/utility/tuple_to_array.hpp>
+
+#include <gtest/gtest.h>
 
 template <typename... Args> auto dbus_string(Args&&... args)
 {

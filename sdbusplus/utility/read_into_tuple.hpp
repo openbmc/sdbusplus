@@ -15,8 +15,8 @@
 */
 
 #pragma once
-#include <tuple>
 #include <sdbusplus/message.hpp>
+#include <tuple>
 
 namespace sdbusplus
 {

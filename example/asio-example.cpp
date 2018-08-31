@@ -1,11 +1,11 @@
-#include <iostream>
-#include <ctime>
+#include <boost/asio.hpp>
 #include <chrono>
-#include <sdbusplus/bus.hpp>
-#include <sdbusplus/server.hpp>
+#include <ctime>
+#include <iostream>
 #include <sdbusplus/asio/connection.hpp>
 #include <sdbusplus/asio/object_server.hpp>
-#include <boost/asio.hpp>
+#include <sdbusplus/bus.hpp>
+#include <sdbusplus/server.hpp>
 
 int foo(int test)
 {

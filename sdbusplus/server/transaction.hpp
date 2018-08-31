@@ -1,7 +1,7 @@
 #pragma once
 
-#include <thread>
 #include <sdbusplus/bus.hpp>
+#include <thread>
 
 namespace sdbusplus
 {

@@ -52,7 +52,8 @@ class ReadTest : public testing::Test
             .WillOnce(Return(ret));
     }
 
-    template <typename T> void expect_basic(char type, T val)
+    template <typename T>
+    void expect_basic(char type, T val)
     {
         EXPECT_CALL(mock, sd_bus_message_read_basic(nullptr, type, testing::_))
             .WillOnce(DoAll(AssignReadVal<T>(val), Return(0)));

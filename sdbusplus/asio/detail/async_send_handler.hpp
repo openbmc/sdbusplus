@@ -27,7 +27,8 @@ namespace asio
 {
 namespace detail
 {
-template <typename Handler> struct async_send_handler
+template <typename Handler>
+struct async_send_handler
 {
     Handler handler_;
     async_send_handler(Handler&& handler) : handler_(std::move(handler))

@@ -52,19 +52,23 @@ struct can_read_multiple : std::true_type
 {
 };
 // std::string needs a char* conversion.
-template <> struct can_read_multiple<std::string> : std::false_type
+template <>
+struct can_read_multiple<std::string> : std::false_type
 {
 };
 // object_path needs a char* conversion.
-template <> struct can_read_multiple<object_path> : std::false_type
+template <>
+struct can_read_multiple<object_path> : std::false_type
 {
 };
 // signature needs a char* conversion.
-template <> struct can_read_multiple<signature> : std::false_type
+template <>
+struct can_read_multiple<signature> : std::false_type
 {
 };
 // bool needs to be resized to int, per sdbus documentation.
-template <> struct can_read_multiple<bool> : std::false_type
+template <>
+struct can_read_multiple<bool> : std::false_type
 {
 };
 
@@ -103,10 +107,12 @@ struct can_read_multiple<variant<Args...>> : std::false_type
  *
  *  @tparam S - Type of element to read.
  */
-template <typename S, typename Enable = void> struct read_single
+template <typename S, typename Enable = void>
+struct read_single
 {
     // Downcast
-    template <typename T> using Td = types::details::type_id_downcast_t<T>;
+    template <typename T>
+    using Td = types::details::type_id_downcast_t<T>;
 
     /** @brief Do the operation to read element.
      *
@@ -145,7 +151,8 @@ template <typename T>
 using read_single_t = read_single<types::details::type_id_downcast_t<T>>;
 
 /** @brief Specialization of read_single for std::strings. */
-template <> struct read_single<std::string>
+template <>
+struct read_single<std::string>
 {
     template <typename T>
     static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, T&& s)
@@ -162,7 +169,8 @@ template <> struct read_single<std::string>
 };
 
 /** @brief Specialization of read_single for details::string_wrapper. */
-template <typename T> struct read_single<details::string_wrapper<T>>
+template <typename T>
+struct read_single<details::string_wrapper<T>>
 {
     template <typename S>
     static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, S&& s)
@@ -180,7 +188,8 @@ template <typename T> struct read_single<details::string_wrapper<T>>
 };
 
 /** @brief Specialization of read_single for bools. */
-template <> struct read_single<bool>
+template <>
+struct read_single<bool>
 {
     template <typename T>
     static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, T&& b)
@@ -272,7 +281,8 @@ struct read_single<T, std::enable_if_t<utility::has_emplace_method<T>::value>>
 };
 
 /** @brief Specialization of read_single for std::pairs. */
-template <typename T1, typename T2> struct read_single<std::pair<T1, T2>>
+template <typename T1, typename T2>
+struct read_single<std::pair<T1, T2>>
 {
     template <typename S>
     static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, S&& s)
@@ -300,7 +310,8 @@ template <typename T1, typename T2> struct read_single<std::pair<T1, T2>>
 };
 
 /** @brief Specialization of read_single for std::tuples. */
-template <typename... Args> struct read_single<std::tuple<Args...>>
+template <typename... Args>
+struct read_single<std::tuple<Args...>>
 {
     template <typename S, std::size_t... I>
     static void _op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, S&& s,
@@ -337,7 +348,8 @@ template <typename... Args> struct read_single<std::tuple<Args...>>
 };
 
 /** @brief Specialization of read_single for std::variant. */
-template <typename... Args> struct read_single<variant<Args...>>
+template <typename... Args>
+struct read_single<variant<Args...>>
 {
     template <typename S, typename S1, typename... Args1>
     static void read(sdbusplus::SdBusInterface* intf, sd_bus_message* m, S&& s)
@@ -404,7 +416,8 @@ static void tuple_item_read(sdbusplus::SdBusInterface* intf, sd_bus_message* m,
     sdbusplus::message::read(intf, m, t);
 }
 
-template <int Index> struct ReadHelper
+template <int Index>
+struct ReadHelper
 {
     template <typename... Fields>
     static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m,
@@ -418,7 +431,8 @@ template <int Index> struct ReadHelper
     }
 };
 
-template <> struct ReadHelper<1>
+template <>
+struct ReadHelper<1>
 {
     template <typename... Fields>
     static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m,

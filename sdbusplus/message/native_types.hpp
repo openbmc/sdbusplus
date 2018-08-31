@@ -13,7 +13,8 @@ namespace details
 
 /** Simple wrapper class for std::string to allow conversion to and from an
  *  alternative typename. */
-template <typename T> struct string_wrapper
+template <typename T>
+struct string_wrapper
 {
     std::string str;
 

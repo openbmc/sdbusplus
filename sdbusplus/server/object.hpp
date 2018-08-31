@@ -20,7 +20,8 @@ namespace details
  *  These allow an object to group multiple dbus interface bindings into a
  *  single class.
  */
-template <class T, class... Rest> struct compose_impl : T, compose_impl<Rest...>
+template <class T, class... Rest>
+struct compose_impl : T, compose_impl<Rest...>
 {
     compose_impl(bus::bus& bus, const char* path) :
         T(bus, path), compose_impl<Rest...>(bus, path)
@@ -29,7 +30,8 @@ template <class T, class... Rest> struct compose_impl : T, compose_impl<Rest...>
 };
 
 /** Specialization for single element. */
-template <class T> struct compose_impl<T> : T
+template <class T>
+struct compose_impl<T> : T
 {
     compose_impl(bus::bus& bus, const char* path) : T(bus, path)
     {
@@ -37,7 +39,8 @@ template <class T> struct compose_impl<T> : T
 };
 
 /** Default compose operation for variadic arguments. */
-template <class... Args> struct compose : compose_impl<Args...>
+template <class... Args>
+struct compose : compose_impl<Args...>
 {
     compose(bus::bus& bus, const char* path) : compose_impl<Args...>(bus, path)
     {
@@ -45,7 +48,8 @@ template <class... Args> struct compose : compose_impl<Args...>
 };
 
 /** Specialization for zero variadic arguments. */
-template <> struct compose<>
+template <>
+struct compose<>
 {
     compose(bus::bus& bus, const char* path)
     {
@@ -66,7 +70,8 @@ template <> struct compose<>
  *  'sd_bus_emit_object_removed' signals are emitted.
  *
  */
-template <class... Args> struct object : details::compose<Args...>
+template <class... Args>
+struct object : details::compose<Args...>
 {
     /* Define all of the basic class operations:
      *     Not allowed:
@@ -139,7 +144,8 @@ template <class... Args> struct object : details::compose<Args...>
 
 } // namespace object
 
-template <class... Args> using object_t = object::object<Args...>;
+template <class... Args>
+using object_t = object::object<Args...>;
 
 } // namespace server
 } // namespace sdbusplus

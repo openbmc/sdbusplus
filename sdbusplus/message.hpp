@@ -108,7 +108,8 @@ class message
      *  @tparam ...Args - Type of items to append to message.
      *  @param[in] args - Items to append to message.
      */
-    template <typename... Args> void append(Args&&... args)
+    template <typename... Args>
+    void append(Args&&... args)
     {
         sdbusplus::message::append(_intf, _msg.get(),
                                    std::forward<Args>(args)...);
@@ -119,7 +120,8 @@ class message
      *  @tparam ...Args - Type of items to read from message.
      *  @param[out] args - Items to read from message.
      */
-    template <typename... Args> void read(Args&&... args)
+    template <typename... Args>
+    void read(Args&&... args)
     {
         sdbusplus::message::read(_intf, _msg.get(),
                                  std::forward<Args>(args)...);

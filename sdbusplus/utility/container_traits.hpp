@@ -11,7 +11,8 @@ namespace utility
  *
  *  @value A value as to whether or not the type supports iteration
  */
-template <typename T> struct has_const_iterator
+template <typename T>
+struct has_const_iterator
 {
   private:
     typedef char yes;
@@ -22,7 +23,8 @@ template <typename T> struct has_const_iterator
 
     template <typename C>
     static constexpr yes test(typename C::const_iterator*);
-    template <typename C> static constexpr no test(...);
+    template <typename C>
+    static constexpr no test(...);
 
   public:
     static constexpr bool value = sizeof(test<T>(0)) == sizeof(yes);
@@ -34,7 +36,8 @@ template <typename T> struct has_const_iterator
  *
  *  @value A value as to whether or not the type has an emplace method
  */
-template <typename T> struct has_emplace_method
+template <typename T>
+struct has_emplace_method
 {
   private:
     struct dummy
@@ -45,7 +48,8 @@ template <typename T> struct has_emplace_method
     static constexpr auto test(P* p)
         -> decltype(std::declval<C>().emplace(*p), std::true_type());
 
-    template <typename, typename> static std::false_type test(...);
+    template <typename, typename>
+    static std::false_type test(...);
 
   public:
     static constexpr bool value =
@@ -59,7 +63,8 @@ template <typename T> struct has_emplace_method
  *
  *  @value A value as to whether or not the type has an emplace_back method
  */
-template <typename T> struct has_emplace_back_method
+template <typename T>
+struct has_emplace_back_method
 {
   private:
     struct dummy
@@ -70,7 +75,8 @@ template <typename T> struct has_emplace_back_method
     static constexpr auto test(P* p)
         -> decltype(std::declval<C>().emplace_back(*p), std::true_type());
 
-    template <typename, typename> static std::false_type test(...);
+    template <typename, typename>
+    static std::false_type test(...);
 
   public:
     static constexpr bool value =

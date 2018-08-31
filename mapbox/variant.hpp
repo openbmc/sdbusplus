@@ -78,7 +78,8 @@ class bad_variant_access : public std::runtime_error
 
 }; // class bad_variant_access
 
-template <typename R = void> struct MAPBOX_VARIANT_DEPRECATED static_visitor
+template <typename R = void>
+struct MAPBOX_VARIANT_DEPRECATED static_visitor
 {
     using result_type = R;
 
@@ -96,7 +97,8 @@ namespace detail
 
 static constexpr std::size_t invalid_value = std::size_t(-1);
 
-template <typename T, typename... Types> struct direct_type;
+template <typename T, typename... Types>
+struct direct_type;
 
 template <typename T, typename First, typename... Types>
 struct direct_type<T, First, Types...>
@@ -106,7 +108,8 @@ struct direct_type<T, First, Types...>
                                              : direct_type<T, Types...>::index;
 };
 
-template <typename T> struct direct_type<T>
+template <typename T>
+struct direct_type<T>
 {
     static constexpr std::size_t index = invalid_value;
 };
@@ -117,11 +120,13 @@ using std::disjunction;
 
 #else
 
-template <typename...> struct disjunction : std::false_type
+template <typename...>
+struct disjunction : std::false_type
 {
 };
 
-template <typename B1> struct disjunction<B1> : B1
+template <typename B1>
+struct disjunction<B1> : B1
 {
 };
 
@@ -138,7 +143,8 @@ struct disjunction<B1, Bs...>
 
 #endif
 
-template <typename T, typename... Types> struct convertible_type;
+template <typename T, typename... Types>
+struct convertible_type;
 
 template <typename T, typename First, typename... Types>
 struct convertible_type<T, First, Types...>
@@ -151,12 +157,14 @@ struct convertible_type<T, First, Types...>
             : convertible_type<T, Types...>::index;
 };
 
-template <typename T> struct convertible_type<T>
+template <typename T>
+struct convertible_type<T>
 {
     static constexpr std::size_t index = invalid_value;
 };
 
-template <typename T, typename... Types> struct value_traits
+template <typename T, typename... Types>
+struct value_traits
 {
     using value_type = typename std::remove_const<
         typename std::remove_reference<T>::type>::type;
@@ -173,7 +181,8 @@ template <typename T, typename... Types> struct value_traits
         typename std::tuple_element<tindex, std::tuple<void, Types...>>::type;
 };
 
-template <typename T, typename R = void> struct enable_if_type
+template <typename T, typename R = void>
+struct enable_if_type
 {
     using type = R;
 };
@@ -204,9 +213,11 @@ struct result_of_binary_visit<
     using type = typename F::result_type;
 };
 
-template <std::size_t arg1, std::size_t... others> struct static_max;
+template <std::size_t arg1, std::size_t... others>
+struct static_max;
 
-template <std::size_t arg> struct static_max<arg>
+template <std::size_t arg>
+struct static_max<arg>
 {
     static const std::size_t value = arg;
 };
@@ -219,9 +230,11 @@ struct static_max<arg1, arg2, others...>
                                          : static_max<arg2, others...>::value;
 };
 
-template <typename... Types> struct variant_helper;
+template <typename... Types>
+struct variant_helper;
 
-template <typename T, typename... Types> struct variant_helper<T, Types...>
+template <typename T, typename... Types>
+struct variant_helper<T, Types...>
 {
     VARIANT_INLINE static void destroy(const std::size_t type_index, void* data)
     {
@@ -264,7 +277,8 @@ template <typename T, typename... Types> struct variant_helper<T, Types...>
     }
 };
 
-template <> struct variant_helper<>
+template <>
+struct variant_helper<>
 {
     VARIANT_INLINE static void destroy(const std::size_t, void*)
     {
@@ -277,7 +291,8 @@ template <> struct variant_helper<>
     }
 };
 
-template <typename T> struct unwrapper
+template <typename T>
+struct unwrapper
 {
     static T const& apply_const(T const& obj)
     {
@@ -289,7 +304,8 @@ template <typename T> struct unwrapper
     }
 };
 
-template <typename T> struct unwrapper<recursive_wrapper<T>>
+template <typename T>
+struct unwrapper<recursive_wrapper<T>>
 {
     static auto apply_const(recursive_wrapper<T> const& obj) ->
         typename recursive_wrapper<T>::type const&
@@ -303,7 +319,8 @@ template <typename T> struct unwrapper<recursive_wrapper<T>>
     }
 };
 
-template <typename T> struct unwrapper<std::reference_wrapper<T>>
+template <typename T>
+struct unwrapper<std::reference_wrapper<T>>
 {
     static auto apply_const(std::reference_wrapper<T> const& obj) ->
         typename std::reference_wrapper<T>::type const&
@@ -549,7 +566,8 @@ struct binary_dispatcher<F, V, R, T>
 // comparator functors
 struct equal_comp
 {
-    template <typename T> bool operator()(T const& lhs, T const& rhs) const
+    template <typename T>
+    bool operator()(T const& lhs, T const& rhs) const
     {
         return lhs == rhs;
     }
@@ -557,13 +575,15 @@ struct equal_comp
 
 struct less_comp
 {
-    template <typename T> bool operator()(T const& lhs, T const& rhs) const
+    template <typename T>
+    bool operator()(T const& lhs, T const& rhs) const
     {
         return lhs < rhs;
     }
 };
 
-template <typename Variant, typename Comp> class comparer
+template <typename Variant, typename Comp>
+class comparer
 {
   public:
     explicit comparer(Variant const& lhs) noexcept : lhs_(lhs)
@@ -571,7 +591,8 @@ template <typename Variant, typename Comp> class comparer
     }
     comparer& operator=(comparer const&) = delete;
     // visitor
-    template <typename T> bool operator()(T const& rhs_content) const
+    template <typename T>
+    bool operator()(T const& rhs_content) const
     {
         T const& lhs_content = lhs_.template get_unchecked<T>();
         return Comp()(lhs_content, rhs_content);
@@ -587,7 +608,8 @@ struct no_init
 {
 };
 
-template <typename... Types> class variant
+template <typename... Types>
+class variant
 {
     static_assert(sizeof...(Types) > 0,
                   "Template parameter type list of variant can not be empty");
@@ -1067,7 +1089,8 @@ auto get(T& var) -> decltype(var.template get<ResultType>())
 }
 #endif
 
-template <typename ResultType, typename T> ResultType& get_unchecked(T& var)
+template <typename ResultType, typename T>
+ResultType& get_unchecked(T& var)
 {
     return var.template get_unchecked<ResultType>();
 }

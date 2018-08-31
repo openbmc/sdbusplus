@@ -53,19 +53,23 @@ struct can_append_multiple : std::true_type
 {
 };
 // std::string needs a c_str() call.
-template <> struct can_append_multiple<std::string> : std::false_type
+template <>
+struct can_append_multiple<std::string> : std::false_type
 {
 };
 // object_path needs a c_str() call.
-template <> struct can_append_multiple<object_path> : std::false_type
+template <>
+struct can_append_multiple<object_path> : std::false_type
 {
 };
 // signature needs a c_str() call.
-template <> struct can_append_multiple<signature> : std::false_type
+template <>
+struct can_append_multiple<signature> : std::false_type
 {
 };
 // bool needs to be resized to int, per sdbus documentation.
-template <> struct can_append_multiple<bool> : std::false_type
+template <>
+struct can_append_multiple<bool> : std::false_type
 {
 };
 // std::vector/map/unordered_map/set need loops
@@ -99,10 +103,12 @@ struct can_append_multiple<variant<Args...>> : std::false_type
  *
  *  @tparam S - Type of element to append.
  */
-template <typename S, typename Enable = void> struct append_single
+template <typename S, typename Enable = void>
+struct append_single
 {
     // Downcast
-    template <typename T> using Td = types::details::type_id_downcast_t<T>;
+    template <typename T>
+    using Td = types::details::type_id_downcast_t<T>;
 
     // sd_bus_message_append_basic expects a T* (cast to void*) for most types,
     // so t& is appropriate.  In the case of char*, it expects the void* is
@@ -110,16 +116,19 @@ template <typename S, typename Enable = void> struct append_single
     //
     // Use these helper templates 'address_of(t)' in place of '&t' to
     // handle both cases.
-    template <typename T> static auto address_of_helper(T&& t, std::false_type)
+    template <typename T>
+    static auto address_of_helper(T&& t, std::false_type)
     {
         return &t;
     }
-    template <typename T> static auto address_of_helper(T&& t, std::true_type)
+    template <typename T>
+    static auto address_of_helper(T&& t, std::true_type)
     {
         return t;
     }
 
-    template <typename T> static auto address_of(T&& t)
+    template <typename T>
+    static auto address_of(T&& t)
     {
         return address_of_helper(std::forward<T>(t),
                                  std::is_pointer<std::remove_reference_t<T>>());
@@ -158,7 +167,8 @@ template <typename T>
 using append_single_t = append_single<types::details::type_id_downcast_t<T>>;
 
 /** @brief Specialization of append_single for std::strings. */
-template <> struct append_single<std::string>
+template <>
+struct append_single<std::string>
 {
     template <typename T>
     static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, T&& s)
@@ -169,7 +179,8 @@ template <> struct append_single<std::string>
 };
 
 /** @brief Specialization of append_single for details::string_wrapper. */
-template <typename T> struct append_single<details::string_wrapper<T>>
+template <typename T>
+struct append_single<details::string_wrapper<T>>
 {
     template <typename S>
     static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, S&& s)
@@ -180,7 +191,8 @@ template <typename T> struct append_single<details::string_wrapper<T>>
 };
 
 /** @brief Specialization of append_single for bool. */
-template <> struct append_single<bool>
+template <>
+struct append_single<bool>
 {
     template <typename T>
     static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, T&& b)
@@ -212,7 +224,8 @@ struct append_single<T, std::enable_if_t<utility::has_const_iterator<T>::value>>
 };
 
 /** @brief Specialization of append_single for std::pairs. */
-template <typename T1, typename T2> struct append_single<std::pair<T1, T2>>
+template <typename T1, typename T2>
+struct append_single<std::pair<T1, T2>>
 {
     template <typename S>
     static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, S&& s)
@@ -228,7 +241,8 @@ template <typename T1, typename T2> struct append_single<std::pair<T1, T2>>
 };
 
 /** @brief Specialization of append_single for std::tuples. */
-template <typename... Args> struct append_single<std::tuple<Args...>>
+template <typename... Args>
+struct append_single<std::tuple<Args...>>
 {
     template <typename S, std::size_t... I>
     static void _op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, S&& s,
@@ -253,7 +267,8 @@ template <typename... Args> struct append_single<std::tuple<Args...>>
 };
 
 /** @brief Specialization of append_single for std::variant. */
-template <typename... Args> struct append_single<variant<Args...>>
+template <typename... Args>
+struct append_single<variant<Args...>>
 {
     template <typename S, typename = std::enable_if_t<0 < sizeof...(Args)>>
     static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, S&& s)
@@ -279,7 +294,8 @@ static void tuple_item_append(sdbusplus::SdBusInterface* intf,
     sdbusplus::message::append(intf, m, t);
 }
 
-template <int Index> struct AppendHelper
+template <int Index>
+struct AppendHelper
 {
     template <typename... Fields>
     static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m,
@@ -293,7 +309,8 @@ template <int Index> struct AppendHelper
     }
 };
 
-template <> struct AppendHelper<1>
+template <>
+struct AppendHelper<1>
 {
     template <typename... Fields>
     static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m,

@@ -46,7 +46,8 @@ namespace std
 {
 
 /** @ brief Overload of std::hash for sdbusplus::bus::bus */
-template <> struct hash<sdbusplus::bus::bus>
+template <>
+struct hash<sdbusplus::bus::bus>
 {
     auto operator()(sdbusplus::bus::bus& b) const
     {
@@ -56,7 +57,8 @@ template <> struct hash<sdbusplus::bus::bus>
 };
 
 /** @ brief Overload of std::hash for sdbusplus::message::message */
-template <> struct hash<sdbusplus::message::message>
+template <>
+struct hash<sdbusplus::message::message>
 {
     auto operator()(sdbusplus::message::message& m) const
     {
@@ -66,7 +68,8 @@ template <> struct hash<sdbusplus::message::message>
 };
 
 /** @ brief Overload of std::hash for Transaction */
-template <> struct hash<sdbusplus::server::transaction::Transaction>
+template <>
+struct hash<sdbusplus::server::transaction::Transaction>
 {
     auto operator()(sdbusplus::server::transaction::Transaction const& t) const
     {
@@ -80,7 +83,8 @@ template <> struct hash<sdbusplus::server::transaction::Transaction>
 };
 
 /** @ brief Overload of std::hash for details::Transaction */
-template <> struct hash<sdbusplus::server::transaction::details::Transaction>
+template <>
+struct hash<sdbusplus::server::transaction::details::Transaction>
 {
     auto operator()(
         sdbusplus::server::transaction::details::Transaction const& t) const

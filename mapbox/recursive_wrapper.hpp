@@ -20,7 +20,8 @@ namespace mapbox
 namespace util
 {
 
-template <typename T> class recursive_wrapper
+template <typename T>
+class recursive_wrapper
 {
 
     T* p_;

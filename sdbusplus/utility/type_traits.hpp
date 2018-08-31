@@ -23,7 +23,8 @@ using array_to_ptr_t = typename std::conditional_t<
 
 // Small helper class for stripping off the error code from the function
 // argument definitions so unpack can be called appropriately
-template <typename T> struct strip_first_arg
+template <typename T>
+struct strip_first_arg
 {
 };
 
@@ -34,7 +35,8 @@ struct strip_first_arg<std::tuple<FirstArg, Rest...>>
 };
 
 // matching helper class to only return the first type
-template <typename T> struct get_first_arg
+template <typename T>
+struct get_first_arg
 {
 };
 
@@ -45,11 +47,13 @@ struct get_first_arg<std::tuple<FirstArg, Rest...>>
 };
 
 // helper class to remove const and reference from types
-template <typename T> struct decay_tuple
+template <typename T>
+struct decay_tuple
 {
 };
 
-template <typename... Args> struct decay_tuple<std::tuple<Args...>>
+template <typename... Args>
+struct decay_tuple<std::tuple<Args...>>
 {
     using type = std::tuple<typename std::decay<Args>::type...>;
 };

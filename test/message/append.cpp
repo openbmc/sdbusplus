@@ -42,7 +42,8 @@ class AppendTest : public testing::Test
             nullptr, nullptr, nullptr, nullptr);
     }
 
-    template <typename T> void expect_basic(char type, T val)
+    template <typename T>
+    void expect_basic(char type, T val)
     {
         EXPECT_CALL(mock,
                     sd_bus_message_append_basic(

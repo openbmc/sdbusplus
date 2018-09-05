@@ -6,6 +6,8 @@
 #include <sdbusplus/asio/object_server.hpp>
 #include <sdbusplus/bus.hpp>
 #include <sdbusplus/server.hpp>
+#include <sdbusplus/timer.hpp>
+
 
 int foo(int test)
 {
@@ -123,6 +125,12 @@ int main()
 
     iface->initialize();
     iface->set_property("int", 45);
+
+    // sd_events work too using the default event loop
+    phosphor::Timer t([]() { std::cerr << "*** tick ***\n"; });
+    t.start(std::chrono::microseconds(1000000));
+    conn->enable_sd_events();
+
     io.run();
 
     return 0;

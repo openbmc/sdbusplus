@@ -31,6 +31,106 @@ namespace sdbusplus
 namespace asio
 {
 
+namespace details
+{
+
+/* A simple class to integrate the sd_event_loop into the boost::asio io_service
+ * in case a boost::asio user needs sd_events
+ */
+class sd_event_wrapper
+{
+  public:
+    sd_event_wrapper(boost::asio::io_service& io) :
+        evt(nullptr), descriptor(io), io(io)
+    {
+        sd_event_default(&evt);
+        if (evt)
+        {
+            descriptor.assign(sd_event_get_fd(evt));
+            async_run();
+        }
+    }
+    sd_event_wrapper(sd_event* evt, boost::asio::io_service& io) :
+        evt(evt), descriptor(io), io(io)
+    {
+        sd_event_ref(evt);
+        if (evt)
+        {
+            descriptor.assign(sd_event_get_fd(evt));
+            async_run();
+        }
+    }
+    ~sd_event_wrapper()
+    {
+        sd_event_unref(evt);
+    }
+    // process one event step in the queue
+    // return true if the queue is still alive
+    void run()
+    {
+        int ret;
+        int state = sd_event_get_state(evt);
+        switch (state)
+        {
+            case SD_EVENT_INITIAL:
+                ret = sd_event_prepare(evt);
+                if (ret > 0)
+                {
+                    async_run();
+                }
+                else if (ret == 0)
+                {
+                    async_wait();
+                }
+                break;
+            case SD_EVENT_ARMED:
+                ret = sd_event_wait(evt, 0);
+                if (ret >= 0)
+                {
+                    async_run();
+                }
+                break;
+            case SD_EVENT_PENDING:
+                ret = sd_event_dispatch(evt);
+                if (ret > 0)
+                {
+                    async_run();
+                }
+                break;
+            case SD_EVENT_FINISHED:
+                break;
+            default:
+                // throw something?
+                // doing nothing will break out of the async loop
+                break;
+        }
+    }
+    sd_event* get() const
+    {
+        return evt;
+    }
+
+  private:
+    void async_run()
+    {
+        io.post([this]() { run(); });
+    }
+    void async_wait()
+    {
+        descriptor.async_wait(boost::asio::posix::stream_descriptor::wait_read,
+                              [this](const boost::system::error_code& error) {
+                                  if (!error)
+                                  {
+                                      run();
+                                  }
+                              });
+    }
+    sd_event* evt;
+    boost::asio::posix::stream_descriptor descriptor;
+    boost::asio::io_service& io;
+};
+} // namespace details
+
 /// Root D-Bus IO object
 /**
  * A connection to a bus, through which messages may be sent or received.
@@ -40,13 +140,14 @@ class connection : public sdbusplus::bus::bus
   public:
     // default to system bus
     connection(boost::asio::io_service& io) :
-        sdbusplus::bus::bus(sdbusplus::bus::new_system()), io_(io), socket(io_)
+        sdbusplus::bus::bus(sdbusplus::bus::new_system()), io_(io), socket(io_),
+        sd_events(nullptr)
     {
         socket.assign(get_fd());
         read_wait();
     }
     connection(boost::asio::io_service& io, sd_bus* bus) :
-        sdbusplus::bus::bus(bus), io_(io), socket(io_)
+        sdbusplus::bus::bus(bus), io_(io), socket(io_), sd_events(nullptr)
     {
         socket.assign(get_fd());
         read_wait();
@@ -57,6 +158,15 @@ class connection : public sdbusplus::bus::bus
         // sd_bus object to avoid a double close()  Ignore return codes here,
         // because there's nothing we can do about errors
         socket.release();
+    }
+
+    void enable_sd_events(sd_event* evt = nullptr)
+    {
+        if (!evt)
+        {
+            sd_event_default(&evt);
+        }
+        sd_events = std::make_unique<details::sd_event_wrapper>(evt, io_);
     }
 
     template <typename MessageHandler>
@@ -110,6 +220,7 @@ class connection : public sdbusplus::bus::bus
   private:
     boost::asio::io_service& io_;
     boost::asio::posix::stream_descriptor socket;
+    std::unique_ptr<details::sd_event_wrapper> sd_events;
 
     void read_wait()
     {

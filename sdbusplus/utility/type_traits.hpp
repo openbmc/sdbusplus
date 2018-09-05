@@ -38,6 +38,7 @@ struct strip_first_arg<std::tuple<FirstArg, Rest...>>
 template <typename T>
 struct get_first_arg
 {
+    using type = void;
 };
 
 template <typename FirstArg, typename... Rest>

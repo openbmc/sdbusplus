@@ -125,6 +125,10 @@ std::string convertForMessage(${classname}::${e.name} v)
             std::begin(mapping${classname}${e.name}),
             std::end(mapping${classname}${e.name}),
             [v](auto& e){ return v == std::get<1>(e); });
+    if (i == std::end(mapping${classname}${e.name}))
+    {
+        throw std::invalid_argument(std::to_string(static_cast<int>(v)));
+    }
     return std::get<0>(*i);
 }
     % endfor

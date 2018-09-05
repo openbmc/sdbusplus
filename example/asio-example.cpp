@@ -17,6 +17,11 @@ int methodWithMessage(sdbusplus::message::message& m, int test)
     return ++test;
 }
 
+int voidBar(void)
+{
+    return 42;
+}
+
 int main()
 {
     using GetSubTreeType = std::vector<std::pair<
@@ -120,6 +125,8 @@ int main()
     iface->register_method("TestFunction", foo);
 
     iface->register_method("TestMethodWithMessage", methodWithMessage);
+
+    iface->register_method("VoidFunctionReturnsInt", voidBar);
 
     iface->initialize();
     iface->set_property("int", 45);

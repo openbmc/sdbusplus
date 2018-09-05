@@ -4,8 +4,10 @@
 #include <iostream>
 #include <sdbusplus/asio/connection.hpp>
 #include <sdbusplus/asio/object_server.hpp>
+#include <sdbusplus/asio/sd_event.hpp>
 #include <sdbusplus/bus.hpp>
 #include <sdbusplus/server.hpp>
+#include <sdbusplus/timer.hpp>
 
 int foo(int test)
 {
@@ -123,6 +125,15 @@ int main()
 
     iface->initialize();
     iface->set_property("int", 45);
+
+    // sd_events work too using the default event loop
+    phosphor::Timer t1([]() { std::cerr << "*** tock ***\n"; });
+    t1.start(std::chrono::microseconds(1000000));
+    phosphor::Timer t2([]() { std::cerr << "*** tick ***\n"; });
+    t2.start(std::chrono::microseconds(500000), true);
+    // add the sd_event wrapper to the io object
+    sdbusplus::asio::sd_event_wrapper sdEvents(io);
+
     io.run();
 
     return 0;

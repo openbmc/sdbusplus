@@ -24,6 +24,7 @@ nobase_include_HEADERS = \
 	sdbusplus/server/manager.hpp \
 	sdbusplus/server/object.hpp \
 	sdbusplus/slot.hpp \
+	sdbusplus/timer.hpp \
 	sdbusplus/utility/container_traits.hpp \
 	sdbusplus/utility/read_into_tuple.hpp \
 	sdbusplus/utility/tuple_to_array.hpp \

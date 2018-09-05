@@ -8,6 +8,7 @@ nobase_include_HEADERS = \
 	sdbusplus/asio/connection.hpp \
 	sdbusplus/asio/object_server.hpp \
 	sdbusplus/asio/detail/async_send_handler.hpp \
+	sdbusplus/asio/sd_event.hpp \
 	sdbusplus/bus.hpp \
 	sdbusplus/bus/match.hpp \
 	sdbusplus/sdbus.hpp \

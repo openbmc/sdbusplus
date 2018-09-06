@@ -10,7 +10,7 @@ AM_CFLAGS = $(CODE_COVERAGE_CFLAGS)
 AM_CXXFLAGS = $(CODE_COVERAGE_CXXFLAGS)
 test_ldadd = $(top_builddir)/libsdbusplus.la $(SYSTEMD_LIBS) \
              $(OESDK_TESTCASE_FLAGS) $(CODE_COVERAGE_LIBS)
-gtest_ldadd = $(test_ldadd) $(GTEST_LIBS) $(GMOCK_LIBS) -lgmock_main
+gtest_ldadd = $(test_ldadd) $(GTEST_LIBS) $(GMOCK_LIBS) -lgmock_main -lpthread
 
 check_PROGRAMS =
 TESTS = $(check_PROGRAMS)
@@ -54,5 +54,9 @@ utility_type_traits_LDADD = $(gtest_ldadd)
 check_PROGRAMS += vtable_vtable
 vtable_vtable_SOURCES = vtable/vtable.cpp vtable/vtable_c.c
 vtable_vtable_LDADD = $(gtest_ldadd)
+
+check_PROGRAMS += timer
+timer_SOURCES = timer.cpp
+timer_LDADD = $(gtest_ldadd)
 
 endif

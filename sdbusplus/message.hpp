@@ -2,7 +2,9 @@
 
 #include <systemd/sd-bus.h>
 
+#include <experimental/optional>
 #include <memory>
+#include <sdbusplus/exception.hpp>
 #include <sdbusplus/message/append.hpp>
 #include <sdbusplus/message/native_types.hpp>
 #include <sdbusplus/message/read.hpp>
@@ -201,6 +203,20 @@ class message
     int get_errno()
     {
         return _intf->sd_bus_message_get_errno(_msg.get());
+    }
+
+    /** @brief Get the error from the message.
+     *
+     *  @return The error of the message if it exists.
+     */
+    std::experimental::optional<exception::SdBusError> get_error()
+    {
+        const sd_bus_error* error = _intf->sd_bus_message_get_error(_msg.get());
+        if (error != nullptr)
+        {
+            return exception::SdBusError(error, "message error");
+        }
+        return std::experimental::nullopt;
     }
 
     /** @brief Get the transaction cookie of a message.

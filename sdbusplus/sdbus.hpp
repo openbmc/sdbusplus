@@ -42,6 +42,7 @@ class SdBusInterface
                                                     const char* interface,
                                                     char** names) = 0;
 
+    virtual int sd_bus_error_copy(sd_bus_error* d, const sd_bus_error* e) = 0;
     virtual int sd_bus_error_set_const(sd_bus_error* e, const char* name,
                                        const char* message) = 0;
     virtual int sd_bus_error_get_errno(const sd_bus_error* e) = 0;
@@ -201,6 +202,11 @@ class SdBusImpl : public SdBusInterface
     {
         return ::sd_bus_emit_properties_changed_strv(bus, path, interface,
                                                      names);
+    }
+
+    int sd_bus_error_copy(sd_bus_error* d, const sd_bus_error* e) override
+    {
+        return ::sd_bus_error_copy(d, e);
     }
 
     int sd_bus_error_set_const(sd_bus_error* e, const char* name,

@@ -9,6 +9,7 @@
 #include <string>
 #include <systemd/sd-bus.h>
 #include <systemd/sd-event.h>
+#include <utility>
 #include <vector>
 
 namespace sdbusplus
@@ -254,6 +255,25 @@ struct bus
         return message::message(reply, _intf, std::false_type());
     }
 
+    /** @brief Perform a message call and verify that the method did not
+	 *         throw an error.
+     *
+     *  @param[in] m - The method_call message.
+     *  @param[in] timeout_us - The timeout for the method call.
+     *
+     *  @return The response message.
+     */
+	auto call_check_error(message::message& m, uint64_t timeout_us = 0)
+	{
+		auto reply = call(m, timeout_us);
+		auto maybe_error = reply.get_error();
+		if (maybe_error)
+		{
+			throw std::move(*maybe_error);
+		}
+		return reply;
+	}
+
     /** @brief Perform a message call, ignoring the reply.
      *
      *  @param[in] m - The method_call message.
@@ -269,6 +289,24 @@ struct bus
             throw exception::SdBusError(&error, "sd_bus_call noreply");
         }
     }
+
+    /** @brief Perform a message call, ignoring the reply and any errors
+	 *         in the dbus stack.
+     *
+     *  @param[in] m - The method_call message.
+     *  @param[in] timeout_us - The timeout for the method call.
+     */
+	void call_noreply_noerror(message::message& m, uint64_t timeout_us = 0)
+	{
+		try
+		{
+			call_noreply(m, timeout_us);
+		}
+		catch(exception::SdBusError&)
+		{
+			// Intentionally ignoring these sd_bus errors
+		}
+	}
 
     /** @brief Get the bus unique name. Ex: ":1.11".
      *

@@ -63,6 +63,8 @@ class SdBusMock : public SdBusInterface
     MOCK_METHOD1(sd_bus_message_get_sender, const char*(sd_bus_message*));
     MOCK_METHOD2(sd_bus_message_get_signature,
                  const char*(sd_bus_message*, int));
+    MOCK_METHOD1(sd_bus_message_get_error,
+                 const sd_bus_error*(sd_bus_message*));
     MOCK_METHOD1(sd_bus_message_get_errno, int(sd_bus_message*));
 
     MOCK_METHOD3(sd_bus_message_is_method_call,

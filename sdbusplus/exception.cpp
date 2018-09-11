@@ -34,6 +34,20 @@ SdBusError::SdBusError(sd_bus_error* error, const char* prefix,
     populateMessage(prefix);
 }
 
+SdBusError::SdBusError(const sd_bus_error* error, const char* prefix,
+                       SdBusInterface* intf) :
+    error(SD_BUS_ERROR_NULL),
+    intf(intf)
+{
+    int r = intf->sd_bus_error_copy(&this->error, error);
+    if (r < 0)
+    {
+        throw SdBusError(-r, "Failed to create SdBusError");
+    }
+
+    populateMessage(prefix);
+}
+
 SdBusError::SdBusError(SdBusError&& other) : error(SD_BUS_ERROR_NULL)
 {
     move(std::move(other));

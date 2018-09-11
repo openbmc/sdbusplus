@@ -35,6 +35,9 @@ class SdBusError final : public internal_exception
     /** Becomes the owner of the error */
     SdBusError(sd_bus_error* error, const char* prefix,
                SdBusInterface* intf = &sdbus_impl);
+    /** Copies the error */
+    SdBusError(const sd_bus_error* error, const char* prefix,
+               SdBusInterface* intf = &sdbus_impl);
 
     SdBusError(const SdBusError&) = delete;
     SdBusError& operator=(const SdBusError&) = delete;

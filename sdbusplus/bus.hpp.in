@@ -270,6 +270,24 @@ struct bus
         }
     }
 
+    /** @brief Perform a message call, ignoring the reply and any errors
+     *         in the dbus stack.
+     *
+     *  @param[in] m - The method_call message.
+     *  @param[in] timeout_us - The timeout for the method call.
+     */
+    void call_noreply_noerror(message::message& m, uint64_t timeout_us = 0)
+    {
+        try
+        {
+            call_noreply(m, timeout_us);
+        }
+        catch (exception::SdBusError&)
+        {
+            // Intentionally ignoring these sd_bus errors
+        }
+    }
+
     /** @brief Get the bus unique name. Ex: ":1.11".
      *
      * @return The bus unique name.

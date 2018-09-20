@@ -99,3 +99,27 @@ sdbus++ error markdown org.freedesktop.Example >> \
 ```
 
 See the `example/Makefile.am` for more details.
+
+## Installing sdbusplus on custom distributions
+
+Installation of sdbusplus bindings on a custom distribution requires few
+packages to be installed prior. Although these packages are same for several
+distributions but the names of these packages do change. Below are packages
+needed for Ubuntu and Fedora.
+
+### Installation on Ubuntu
+
+```
+sudo apt install git autoconf libtool pkg-config g++ autoconf-archive libsystemd-dev python python-yaml python-mako python-inflection
+```
+
+### Installation on Fedora
+
+```
+sudo dnf install git autoconf libtool gcc-c++ pkgconfig autoconf-archive systemd-devel python python-pip python-yaml python-mako
+```
+Install the inflection package using the pip utility(on fedora)
+```
+pip install inflection
+```
+

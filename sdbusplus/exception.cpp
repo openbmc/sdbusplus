@@ -68,6 +68,11 @@ const char* SdBusError::what() const noexcept
     return full_message.c_str();
 }
 
+int SdBusError::errno() const noexcept
+{
+    return intf->sd_bus_error_get_errno(&this->error);
+}
+
 void SdBusError::populateMessage(const char* prefix)
 {
     full_message = prefix;

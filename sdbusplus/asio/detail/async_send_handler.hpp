@@ -45,10 +45,11 @@ struct async_send_handler
             sd_bus_call_async(conn, NULL, mesg.get(), &callback, context, 0);
         if (ec < 0)
         {
+            // add a deleter to context because handler may throw
+            std::unique_ptr<async_send_handler> safe_context(context);
             auto err =
                 make_error_code(static_cast<boost::system::errc::errc_t>(ec));
             context->handler_(err, mesg);
-            delete context;
         }
     }
     static int callback(sd_bus_message* mesg, void* userdata,

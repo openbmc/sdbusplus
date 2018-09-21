@@ -34,6 +34,8 @@ TEST(SdBusError, BasicErrno)
 
     // Make sure inheritance is defined correctly
     sdbusplus::exception::exception& sdbusErr = err;
+    SdBusError& errNew = err;
+    EXPECT_EQ(errorVal, errNew.get_errno());
     EXPECT_EQ(std::string{error.name}, sdbusErr.name());
     EXPECT_EQ(std::string{error.message}, sdbusErr.description());
     std::exception& stdErr = sdbusErr;
@@ -80,6 +82,7 @@ TEST(SdBusError, Move)
         // Build our first SdBusError
         SdBusError err(errorVal, prefix.c_str());
 
+        EXPECT_EQ(errorVal, err.get_errno());
         EXPECT_EQ(name, err.name());
         EXPECT_EQ(message, err.description());
         EXPECT_EQ(what, err.what());
@@ -88,11 +91,13 @@ TEST(SdBusError, Move)
         SdBusError errNew(std::move(err));
 
         // Ensure the old object was cleaned up
+        EXPECT_EQ(0, err.get_errno());
         EXPECT_EQ(nullptr, err.name());
         EXPECT_EQ(nullptr, err.description());
         EXPECT_EQ(std::string{}, err.what());
 
         // Ensure our new object has the same data but moved
+        EXPECT_EQ(errorVal, errNew.get_errno());
         EXPECT_EQ(name, errNew.name());
         EXPECT_EQ(message, errNew.description());
         EXPECT_EQ(what, errNew.what());
@@ -101,12 +106,14 @@ TEST(SdBusError, Move)
         errFinal = std::move(errNew);
 
         // Ensure the old object was cleaned up
+        EXPECT_EQ(0, errNew.get_errno());
         EXPECT_EQ(nullptr, errNew.name());
         EXPECT_EQ(nullptr, errNew.description());
         EXPECT_EQ(std::string{}, errNew.what());
     }
 
     // Ensure our new object has the same data but moved
+    EXPECT_EQ(errorVal, errFinal.get_errno());
     EXPECT_EQ(name, errFinal.name());
     EXPECT_EQ(message, errFinal.description());
     EXPECT_EQ(what, errFinal.what());
@@ -124,6 +131,7 @@ TEST(SdBusError, BasicError)
     sd_bus_error_set(&error, name.c_str(), description.c_str());
     EXPECT_TRUE(sd_bus_error_is_set(&error));
     const char* nameBeforeMove = error.name;
+    const int errorVal = sd_bus_error_get_errno(&error);
     SdBusError err(&error, prefix.c_str());
 
     // We expect a move not copy
@@ -134,6 +142,7 @@ TEST(SdBusError, BasicError)
     sd_bus_error_free(&error);
     sd_bus_error_free(&error);
 
+    EXPECT_EQ(errorVal, err.get_errno());
     EXPECT_EQ(name, err.name());
     EXPECT_EQ(description, err.description());
     EXPECT_EQ(prefix + ": " + name + ": " + description, err.what());

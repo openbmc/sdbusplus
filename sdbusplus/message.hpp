@@ -2,6 +2,7 @@
 
 #include <systemd/sd-bus.h>
 
+#include <cassert>
 #include <memory>
 #include <sdbusplus/message/append.hpp>
 #include <sdbusplus/message/native_types.hpp>
@@ -49,17 +50,13 @@ using msg = std::unique_ptr<sd_bus_message, MsgDeleter>;
 class message
 {
     /* Define all of the basic class operations:
-     *     Not allowed:
-     *         - Default constructor to avoid nullptrs.
-     *         - Copy operations due to internal unique_ptr.
      *     Allowed:
+     *         - Default constructor (requires checks for _msg == nullptr)
+     *         - Copy operations.
      *         - Move operations.
      *         - Destructor.
      */
   public:
-    message() = delete;
-    message(const message&) = delete;
-    message& operator=(const message&) = delete;
     message(message&&) = default;
     message& operator=(message&&) = default;
     ~message() = default;
@@ -74,7 +71,7 @@ class message
      *  Takes increment ref-count of the msg-pointer and release when
      *  destructed.
      */
-    explicit message(msgp_t m) : message(m, &sdbus_impl)
+    explicit message(msgp_t m = nullptr) : message(m, &sdbus_impl)
     {
     }
 
@@ -89,6 +86,26 @@ class message
      */
     message(msgp_t m, std::false_type) : _intf(&sdbus_impl), _msg(m)
     {
+    }
+
+    /** @brief Copy constructor for 'message'.
+     *
+     *  Copies the message class and increments the ref on _msg
+     */
+    message(const message& other) :
+        _intf(other._intf), _msg(sd_bus_message_ref(other._msg.get()))
+    {
+    }
+
+    /** @brief Assignment operator for 'message'.
+     *
+     *  Copies the message class and increments the ref on _msg
+     */
+    message& operator=(const message& other)
+    {
+        _msg.reset(sd_bus_message_ref(other._msg.get()));
+        _intf = other._intf;
+        return *this;
     }
 
     /** @brief Release ownership of the stored msg-pointer. */
@@ -111,6 +128,7 @@ class message
     template <typename... Args>
     void append(Args&&... args)
     {
+        assert(_msg);
         sdbusplus::message::append(_intf, _msg.get(),
                                    std::forward<Args>(args)...);
     }
@@ -123,6 +141,7 @@ class message
     template <typename... Args>
     void read(Args&&... args)
     {
+        assert(_msg);
         sdbusplus::message::read(_intf, _msg.get(),
                                  std::forward<Args>(args)...);
     }
@@ -137,6 +156,7 @@ class message
      */
     const char* get_signature()
     {
+        assert(_msg);
         return _intf->sd_bus_message_get_signature(_msg.get(), true);
     }
 
@@ -146,6 +166,7 @@ class message
      */
     const char* get_path()
     {
+        assert(_msg);
         return _intf->sd_bus_message_get_path(_msg.get());
     }
 
@@ -155,6 +176,7 @@ class message
      */
     const char* get_interface()
     {
+        assert(_msg);
         return _intf->sd_bus_message_get_interface(_msg.get());
     }
 
@@ -164,6 +186,7 @@ class message
      */
     const char* get_member()
     {
+        assert(_msg);
         return _intf->sd_bus_message_get_member(_msg.get());
     }
 
@@ -173,6 +196,7 @@ class message
      */
     const char* get_destination()
     {
+        assert(_msg);
         return _intf->sd_bus_message_get_destination(_msg.get());
     }
 
@@ -182,6 +206,7 @@ class message
      */
     const char* get_sender()
     {
+        assert(_msg);
         return _intf->sd_bus_message_get_sender(_msg.get());
     }
 
@@ -191,6 +216,7 @@ class message
      */
     bool is_method_error()
     {
+        assert(_msg);
         return _intf->sd_bus_message_is_method_error(_msg.get(), nullptr);
     }
 
@@ -200,6 +226,7 @@ class message
      */
     int get_errno()
     {
+        assert(_msg);
         return _intf->sd_bus_message_get_errno(_msg.get());
     }
 
@@ -209,6 +236,7 @@ class message
      */
     auto get_cookie()
     {
+        assert(_msg);
         uint64_t cookie;
         _intf->sd_bus_message_get_cookie(_msg.get(), &cookie);
         return cookie;
@@ -223,6 +251,7 @@ class message
      */
     bool is_method_call(const char* interface, const char* method)
     {
+        assert(_msg);
         return _intf->sd_bus_message_is_method_call(_msg.get(), interface,
                                                     method);
     }
@@ -234,6 +263,7 @@ class message
      */
     bool is_signal(const char* interface, const char* member)
     {
+        assert(_msg);
         return _intf->sd_bus_message_is_signal(_msg.get(), interface, member);
     }
 

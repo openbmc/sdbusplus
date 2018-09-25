@@ -16,6 +16,7 @@
 #pragma once
 
 #include <boost/asio.hpp>
+#include <boost/asio/spawn.hpp>
 #include <boost/callable_traits.hpp>
 #include <chrono>
 #include <experimental/tuple>
@@ -59,10 +60,23 @@ class connection : public sdbusplus::bus::bus
         socket.release();
     }
 
+    /** @brief Perform an asynchronous send of a message, executing the handler
+     *         upon return and return
+     *
+     *  @param[in] m - A message ready to send
+     *  @param[in] handler - handler to execute upon completion; this may be an
+     *                       asio::yield_context to execute asynchronously as a
+     *                       coroutine
+     *
+     *  @return If a yield context is passed as the handler, the return type is
+     *          a message. If a function object is passed in as the handler,
+     *          the return type is the result of the handler registration,
+     *          while the resulting message will get passed into the handler.
+     */
     template <typename MessageHandler>
     inline BOOST_ASIO_INITFN_RESULT_TYPE(MessageHandler,
                                          void(boost::system::error_code,
-                                              message::message))
+                                              message::message&))
         async_send(message::message& m, MessageHandler&& handler)
     {
         boost::asio::async_completion<
@@ -75,6 +89,25 @@ class connection : public sdbusplus::bus::bus
         return init.result.get();
     }
 
+    /** @brief Perform an asynchronous method call, with input parameter packing
+     *         and return value unpacking
+     *
+     *  @param[in] handler - A function object that is to be called as a
+     *                       continuation for the async dbus method call. The
+     *                       arguments to parse on the return are deduced from
+     *                       the handler's signature and then passed in along
+     *                       with an error code.
+     *  @param[in] service - The service to call.
+     *  @param[in] objpath - The object's path for the call.
+     *  @param[in] interf - The object's interface to call.
+     *  @param[in] method - The object's method to call.
+     *  @param[in] a... - Optional parameters for the method call.
+     *
+     *  @return immediate return of the internal handler registration. The
+     *          result of the actual asynchronous call will get unpacked from
+     *          the message and passed into the handler when the call is
+     *          complete.
+     */
     template <typename MessageHandler, typename... InputArgs>
     auto async_method_call(MessageHandler handler, const std::string& service,
                            const std::string& objpath,
@@ -105,6 +138,36 @@ class connection : public sdbusplus::bus::bus
             auto response = std::tuple_cat(std::make_tuple(ec), responseData);
             std::experimental::apply(handler, response);
         });
+    }
+
+    /** @brief Perform an asynchronous method call, with input parameter packing
+     *         and return value unpacking
+     *
+     *  @param[in] yield - A yield context to async block upon. To catch errors
+     *                     for the call, call this function with 'yield[ec]',
+     *                     thus attaching an error code to the yield context
+     *  @param[in] service - The service to call.
+     *  @param[in] objpath - The object's path for the call.
+     *  @param[in] interf - The object's interface to call.
+     *  @param[in] method - The object's method to call.
+     *  @param[in] a... - Optional parameters for the method call.
+     *
+     *  @return Unpacked values of std::tuple<RetTypes...>
+     */
+    template <typename... RetTypes, typename YieldCtx, typename... InputArgs>
+    std::enable_if_t<std::is_same<YieldCtx, boost::asio::yield_context>::value,
+                     std::tuple<RetTypes...>>
+        async_method_call(YieldCtx yield, const std::string& service,
+                          const std::string& objpath, const std::string& interf,
+                          const std::string& method, const InputArgs&... a)
+    {
+        message::message m = new_method_call(service.c_str(), objpath.c_str(),
+                                             interf.c_str(), method.c_str());
+        m.append(a...);
+        message::message r = async_send(m, yield);
+        std::tuple<RetTypes...> responseData;
+        utility::read_into_tuple(responseData, r);
+        return responseData;
     }
 
   private:

@@ -9,6 +9,13 @@ namespace sdbusplus
 namespace utility
 {
 
+/** @brief Retrieve the first type from a parameter pack
+ *
+ * @tparam Types - the parameter pack
+ */
+template <typename... Types>
+using first_type = std::tuple_element_t<0, std::tuple<Types...>>;
+
 /** @brief Convert T[N] to T* if is_same<Tbase,T>
  *
  *  @tparam Tbase - The base type expected.

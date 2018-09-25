@@ -1,4 +1,5 @@
 #include <boost/asio.hpp>
+#include <boost/asio/spawn.hpp>
 #include <chrono>
 #include <ctime>
 #include <iostream>
@@ -23,6 +24,27 @@ int voidBar(void)
 {
     return 42;
 }
+
+#ifdef USE_COROUTINE
+void do_start_async_method_call(
+    std::shared_ptr<sdbusplus::asio::connection> conn,
+    boost::asio::yield_context yield)
+{
+    boost::system::error_code ec;
+    auto testValue = conn->async_method_call<std::tuple<std::string>>(
+        yield[ec], "xyz.openbmc_project.asio-test", "/xyz/openbmc_project/test",
+        "xyz.openbmc_project.test", "TestMethod", int32_t(42));
+    if (!ec && std::get<std::string>(testValue) == "success: 42")
+    {
+        std::cout << "async_method_call serialized via yield OK!\n";
+    }
+    else
+    {
+        std::cout << "ec = " << ec << ": " << std::get<std::string>(testValue)
+                  << "\n";
+    }
+}
+#endif
 
 int main()
 {
@@ -141,6 +163,13 @@ int main()
     // add the sd_event wrapper to the io object
     sdbusplus::asio::sd_event_wrapper sdEvents(io);
 
+#ifdef USE_COROUTINE
+    // set up a client to make an async call to the server
+    // using coroutines (userspace cooperative multitasking)
+    boost::asio::spawn(io, [conn](boost::asio::yield_context yield) {
+        do_start_async_method_call(conn, yield);
+    });
+#endif
     io.run();
 
     return 0;

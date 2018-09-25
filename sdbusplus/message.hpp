@@ -49,17 +49,13 @@ using msg = std::unique_ptr<sd_bus_message, MsgDeleter>;
 class message
 {
     /* Define all of the basic class operations:
-     *     Not allowed:
-     *         - Default constructor to avoid nullptrs.
-     *         - Copy operations due to internal unique_ptr.
      *     Allowed:
+     *         - Default constructor
+     *         - Copy operations.
      *         - Move operations.
      *         - Destructor.
      */
   public:
-    message() = delete;
-    message(const message&) = delete;
-    message& operator=(const message&) = delete;
     message(message&&) = default;
     message& operator=(message&&) = default;
     ~message() = default;
@@ -74,7 +70,7 @@ class message
      *  Takes increment ref-count of the msg-pointer and release when
      *  destructed.
      */
-    explicit message(msgp_t m) : message(m, &sdbus_impl)
+    explicit message(msgp_t m = nullptr) : message(m, &sdbus_impl)
     {
     }
 
@@ -89,6 +85,26 @@ class message
      */
     message(msgp_t m, std::false_type) : _intf(&sdbus_impl), _msg(m)
     {
+    }
+
+    /** @brief Copy constructor for 'message'.
+     *
+     *  Copies the message class and increments the ref on _msg
+     */
+    message(const message& other) :
+        _intf(other._intf), _msg(sd_bus_message_ref(other._msg.get()))
+    {
+    }
+
+    /** @brief Assignment operator for 'message'.
+     *
+     *  Copies the message class and increments the ref on _msg
+     */
+    message& operator=(const message& other)
+    {
+        _msg.reset(sd_bus_message_ref(other._msg.get()));
+        _intf = other._intf;
+        return *this;
     }
 
     /** @brief Release ownership of the stored msg-pointer. */

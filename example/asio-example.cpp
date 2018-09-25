@@ -1,4 +1,5 @@
 #include <boost/asio.hpp>
+#include <boost/asio/spawn.hpp>
 #include <chrono>
 #include <ctime>
 #include <iostream>
@@ -9,6 +10,7 @@
 #include <sdbusplus/server.hpp>
 #include <sdbusplus/timer.hpp>
 
+using variant = sdbusplus::message::variant<int, std::string>;
 int foo(int test)
 {
     return ++test;
@@ -22,6 +24,48 @@ int methodWithMessage(sdbusplus::message::message& m, int test)
 int voidBar(void)
 {
     return 42;
+}
+
+void do_start_async_method_call_one(
+    std::shared_ptr<sdbusplus::asio::connection> conn,
+    boost::asio::yield_context yield)
+{
+    boost::system::error_code ec;
+    variant testValue;
+    testValue = conn->yield_method_call<variant>(
+        yield[ec], "xyz.openbmc_project.asio-test", "/xyz/openbmc_project/test",
+        "org.freedesktop.DBus.Properties", "Get", "xyz.openbmc_project.test",
+        "int");
+    if (!ec && testValue.get<int>() == 45)
+    {
+        std::cout << "async call to Properties.Get serialized via yield OK!\n";
+    }
+    else
+    {
+        std::cout << "ec = " << ec << ": " << testValue.get<int>() << "\n";
+    }
+}
+
+void do_start_async_method_call_two(
+    std::shared_ptr<sdbusplus::asio::connection> conn,
+    boost::asio::yield_context yield)
+{
+    boost::system::error_code ec;
+    int32_t testCount;
+    std::string testValue;
+    std::tie(testCount, testValue) =
+        conn->yield_method_call<std::tuple<int32_t, std::string>>(
+            yield[ec], "xyz.openbmc_project.asio-test",
+            "/xyz/openbmc_project/test", "xyz.openbmc_project.test",
+            "TestMethod", int32_t(42));
+    if (!ec && testCount == 42 && testValue == "success: 42")
+    {
+        std::cout << "async call to TestMethod serialized via yield OK!\n";
+    }
+    else
+    {
+        std::cout << "ec = " << ec << ": " << testValue << "\n";
+    }
 }
 
 int main()
@@ -121,7 +165,8 @@ int main()
 
     // test method creation
     iface->register_method("TestMethod", [](const int32_t& callCount) {
-        return "success: " + std::to_string(callCount);
+        return std::make_tuple(callCount,
+                               "success: " + std::to_string(callCount));
     });
 
     iface->register_method("TestFunction", foo);
@@ -141,6 +186,14 @@ int main()
     // add the sd_event wrapper to the io object
     sdbusplus::asio::sd_event_wrapper sdEvents(io);
 
+    // set up a client to make an async call to the server
+    // using coroutines (userspace cooperative multitasking)
+    boost::asio::spawn(io, [conn](boost::asio::yield_context yield) {
+        do_start_async_method_call_one(conn, yield);
+    });
+    boost::asio::spawn(io, [conn](boost::asio::yield_context yield) {
+        do_start_async_method_call_two(conn, yield);
+    });
     io.run();
 
     return 0;

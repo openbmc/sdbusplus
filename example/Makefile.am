@@ -1,4 +1,8 @@
-noinst_PROGRAMS = calculator-server list-users
+noinst_PROGRAMS = list-users
+
+list_users_SOURCES = list-users.cpp
+list_users_CXXFLAGS = $(SYSTEMD_CFLAGS) -I$(top_srcdir)
+list_users_LDADD = $(SYSTEMD_LIBS) ../libsdbusplus.la
 
 if BOOST
 noinst_PROGRAMS += asio-example
@@ -23,6 +27,8 @@ asio_example_LDFLAGS = \
     $(BOOST_LDFLAGS)
 endif
 
+if WANT_SDBUSPP
+noinst_PROGRAMS += calculator-server
 calculator_server_generated_files = \
 	net/poettering/Calculator/server.hpp \
 	net/poettering/Calculator/server.cpp \
@@ -36,10 +42,6 @@ calculator_server_SOURCES = \
 	calculator-server.cpp $(calculator_server_generated_files)
 calculator_server_CXXFLAGS = $(SYSTEMD_CFLAGS) -I$(top_srcdir)
 calculator_server_LDADD = $(SYSTEMD_LIBS) ../libsdbusplus.la
-
-list_users_SOURCES = list-users.cpp
-list_users_CXXFLAGS = $(SYSTEMD_CFLAGS) -I$(top_srcdir)
-list_users_LDADD = $(SYSTEMD_LIBS) ../libsdbusplus.la
 
 BUILT_SOURCES = \
 	$(calculator_server_generated_files) \
@@ -80,3 +82,4 @@ calculator.md:
 	@top_srcdir@/tools/sdbus++ \
 	    -r $(srcdir) -t $(top_builddir)/tools/sdbusplus/templates \
 	    error markdown net.poettering.Calculator >> $@
+endif

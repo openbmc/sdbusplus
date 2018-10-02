@@ -15,6 +15,12 @@
 */
 #pragma once
 
+#ifndef BOOST_COROUTINES_NO_DEPRECATION_WARNING
+// users should define this if they directly include boost/asio/spawn.hpp,
+// but by defining it here, warnings won't cause problems with a compile
+#define BOOST_COROUTINES_NO_DEPRECATION_WARNING
+#endif
+
 #include <boost/asio.hpp>
 #include <boost/asio/spawn.hpp>
 #include <boost/callable_traits.hpp>
@@ -194,6 +200,11 @@ class connection : public sdbusplus::bus::bus
             r.read(responseData);
             return responseData;
         }
+    }
+
+    boost::asio::io_service& io()
+    {
+        return io_;
     }
 
   private:

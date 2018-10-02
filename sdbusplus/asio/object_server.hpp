@@ -1,14 +1,23 @@
 #pragma once
 
+#ifndef BOOST_COROUTINES_NO_DEPRECATION_WARNING
+// users should define this if they directly include boost/asio/spawn.hpp,
+// but by defining it here, warnings won't cause problems with a compile
+#define BOOST_COROUTINES_NO_DEPRECATION_WARNING
+#endif
+
 #include <boost/any.hpp>
+#include <boost/asio/spawn.hpp>
 #include <boost/container/flat_map.hpp>
 #include <list>
+#include <optional>
 #include <sdbusplus/asio/connection.hpp>
 #include <sdbusplus/exception.hpp>
 #include <sdbusplus/message/read.hpp>
 #include <sdbusplus/message/types.hpp>
 #include <sdbusplus/server.hpp>
 #include <sdbusplus/utility/tuple_to_array.hpp>
+#include <sdbusplus/utility/type_traits.hpp>
 
 namespace sdbusplus
 {
@@ -30,10 +39,64 @@ class callback_set
 };
 
 template <typename T>
+using FirstArgIsYield =
+    std::is_same<typename utility::get_first_arg<typename utility::decay_tuple<
+                     boost::callable_traits::args_t<T>>::type>::type,
+                 boost::asio::yield_context>;
+
+template <typename T>
 using FirstArgIsMessage =
     std::is_same<typename utility::get_first_arg<typename utility::decay_tuple<
                      boost::callable_traits::args_t<T>>::type>::type,
                  message::message>;
+
+template <typename T>
+using SecondArgIsMessage = std::is_same<
+    typename utility::get_first_arg<
+        typename utility::strip_first_arg<typename utility::decay_tuple<
+            boost::callable_traits::args_t<T>>::type>::type>::type,
+    message::message>;
+template <typename T>
+static constexpr bool callbackYields = FirstArgIsYield<T>::value;
+template <typename T>
+static constexpr bool callbackWantsMessage = (FirstArgIsMessage<T>::value ||
+                                              SecondArgIsMessage<T>::value);
+
+#ifdef __cpp_if_constexpr
+namespace details
+{
+// small helper class to count the number of non-dbus arguments
+// to a registered dbus function (like message::message or yield_context)
+// so the registered signature can omit them
+template <typename FirstArg, typename... Rest>
+struct NonDbusArgsCount;
+
+template <>
+struct NonDbusArgsCount<std::tuple<>>
+{
+    constexpr static std::size_t size()
+    {
+        return 0;
+    }
+};
+template <typename FirstArg, typename... OtherArgs>
+struct NonDbusArgsCount<std::tuple<FirstArg, OtherArgs...>>
+{
+    constexpr static std::size_t size()
+    {
+        if constexpr (std::is_same<FirstArg, message::message>::value ||
+                      std::is_same<FirstArg, boost::asio::yield_context>::value)
+        {
+            return 1 + NonDbusArgsCount<std::tuple<OtherArgs...>>::size();
+        }
+        else
+        {
+            return NonDbusArgsCount<std::tuple<OtherArgs...>>::size();
+        }
+    }
+};
+} // namespace details
+#endif // __cpp_if_constexpr
 
 template <typename CallbackType>
 class callback_method_instance : public callback
@@ -44,7 +107,7 @@ class callback_method_instance : public callback
     }
     int call(message::message& m) override
     {
-        return expandCall<CallbackType>(m);
+        return expandCall(m);
     }
 
   private:
@@ -66,30 +129,37 @@ class callback_method_instance : public callback
     {
         std::experimental::apply(func_, inputArgs);
     }
+#ifdef __cpp_if_constexpr
     // optional message-first-argument callback
-    template <typename T>
-    std::enable_if_t<FirstArgIsMessage<T>::value, int>
-        expandCall(message::message& m)
+    int expandCall(message::message& m)
     {
-        using DbusTupleType =
-            typename utility::strip_first_arg<InputTupleType>::type;
+        using DbusTupleType = typename utility::strip_first_n_args<
+            details::NonDbusArgsCount<InputTupleType>::size(),
+            InputTupleType>::type;
+
         DbusTupleType dbusArgs;
         if (!utility::read_into_tuple(dbusArgs, m))
         {
             return -EINVAL;
         }
-
         auto ret = m.new_method_return();
-        InputTupleType inputArgs =
-            std::tuple_cat(std::forward_as_tuple(std::move(m)), dbusArgs);
-        callFunction<ResultType>(ret, inputArgs);
+        std::optional<InputTupleType> inputArgs;
+        if constexpr (callbackWantsMessage<CallbackType>)
+        {
+            inputArgs.emplace(
+                std::tuple_cat(std::forward_as_tuple(std::move(m)), dbusArgs));
+        }
+        else
+        {
+            inputArgs.emplace(dbusArgs);
+        }
+        callFunction<ResultType>(ret, *inputArgs);
         ret.method_return();
         return 1;
     };
+#else
     // normal dbus-types-only callback
-    template <typename T>
-    std::enable_if_t<!FirstArgIsMessage<T>::value, int>
-        expandCall(message::message& m)
+    int expandCall(message::message& m)
     {
         InputTupleType inputArgs;
         if (!utility::read_into_tuple(inputArgs, m))
@@ -102,7 +172,85 @@ class callback_method_instance : public callback
         ret.method_return();
         return 1;
     };
+#endif
 };
+
+#ifdef __cpp_if_constexpr
+template <typename CallbackType>
+class coroutine_method_instance : public callback
+{
+  public:
+    coroutine_method_instance(boost::asio::io_service& io,
+                              CallbackType&& func) :
+        io_(io),
+        func_(std::move(func))
+    {
+    }
+    int call(message::message& m) override
+    {
+        // make a copy of m to move into the coroutine
+        message::message b{m};
+        // spawn off a new coroutine to handle the method call
+        boost::asio::spawn(
+            io_, [this, b = std::move(b)](boost::asio::yield_context yield) {
+                message::message mcpy{std::move(b)};
+                expandCall(yield, mcpy);
+            });
+        return 1;
+    }
+
+  private:
+    using CallbackSignature = boost::callable_traits::args_t<CallbackType>;
+    using InputTupleType =
+        typename utility::decay_tuple<CallbackSignature>::type;
+    using ResultType = boost::callable_traits::return_type_t<CallbackType>;
+    boost::asio::io_service& io_;
+    CallbackType func_;
+    template <typename T>
+    std::enable_if_t<!std::is_void<T>::value, void>
+        callFunction(message::message& m, InputTupleType& inputArgs)
+    {
+        ResultType r = std::experimental::apply(func_, inputArgs);
+        m.append(r);
+    }
+    template <typename T>
+    std::enable_if_t<std::is_void<T>::value, void>
+        callFunction(message::message& m, InputTupleType& inputArgs)
+    {
+        std::experimental::apply(func_, inputArgs);
+    }
+    // co-routine body for call
+    void expandCall(boost::asio::yield_context yield, message::message& m)
+    {
+        using DbusTupleType = typename utility::strip_first_n_args<
+            details::NonDbusArgsCount<InputTupleType>::size(),
+            InputTupleType>::type;
+        DbusTupleType dbusArgs;
+        if (!utility::read_into_tuple(dbusArgs, m))
+        {
+            auto ret = m.new_method_errno(-EINVAL);
+            ret.method_return();
+            return;
+        }
+
+        auto ret = m.new_method_return();
+        std::optional<InputTupleType> inputArgs;
+        if constexpr (callbackWantsMessage<CallbackType>)
+        {
+            inputArgs.emplace(
+                std::tuple_cat(std::forward_as_tuple(std::move(yield)),
+                               std::forward_as_tuple(std::move(m)), dbusArgs));
+        }
+        else
+        {
+            inputArgs.emplace(std::tuple_cat(
+                std::forward_as_tuple(std::move(yield)), dbusArgs));
+        }
+        callFunction<ResultType>(ret, *inputArgs);
+        ret.method_return();
+    };
+};
+#endif // __cpp_if_constexpr
 
 template <typename PropertyType, typename CallbackType>
 class callback_get_instance : public callback
@@ -317,12 +465,14 @@ class dbus_interface
         return false;
     }
 
+#ifdef __cpp_if_constexpr
     template <typename CallbackType>
-    std::enable_if_t<FirstArgIsMessage<CallbackType>::value, bool>
-        register_method(const std::string& name, CallbackType&& handler)
+    bool register_method(const std::string& name, CallbackType&& handler)
     {
-        using CallbackSignature = typename utility::strip_first_arg<
-            boost::callable_traits::args_t<CallbackType>>::type;
+        using ActualSignature = boost::callable_traits::args_t<CallbackType>;
+        using CallbackSignature = typename utility::strip_first_n_args<
+            details::NonDbusArgsCount<ActualSignature>::size(),
+            ActualSignature>::type;
         using InputTupleType =
             typename utility::decay_tuple<CallbackSignature>::type;
         using ResultType = boost::callable_traits::return_type_t<CallbackType>;
@@ -338,18 +488,28 @@ class dbus_interface
 
         auto nameItr = methodNames_.emplace(methodNames_.end(), name);
 
-        callbacksMethod_[name] =
-            std::make_unique<callback_method_instance<CallbackType>>(
-                std::move(handler));
+        if constexpr (callbackYields<CallbackType>)
+        {
+            callbacksMethod_[name] =
+                std::make_unique<coroutine_method_instance<CallbackType>>(
+                    conn_->io(), std::move(handler));
+        }
+        else
+        {
+            callbacksMethod_[name] =
+                std::make_unique<callback_method_instance<CallbackType>>(
+                    std::move(handler));
+        }
 
         vtable_.emplace_back(vtable::method(nameItr->c_str(), argType.data(),
                                             resultType.data(), method_handler));
         return true;
     }
-
+#else  // __cpp_if_constexpr not available
+       // without __cpp_if_constexpr, no support for message or yield in
+       // callback
     template <typename CallbackType>
-    std::enable_if_t<!FirstArgIsMessage<CallbackType>::value, bool>
-        register_method(const std::string& name, CallbackType&& handler)
+    bool register_method(const std::string& name, CallbackType&& handler)
     {
         using CallbackSignature = boost::callable_traits::args_t<CallbackType>;
         using InputTupleType =
@@ -375,6 +535,7 @@ class dbus_interface
                                             resultType.data(), method_handler));
         return true;
     }
+#endif // __cpp_if_constexpr
 
     static int get_handler(sd_bus* bus, const char* path, const char* interface,
                            const char* property, sd_bus_message* reply,

@@ -70,7 +70,7 @@ AS_IF([test "x$enable_libsdbusplus" != "xno"],
 
 # Checks for typedefs, structures, and compiler characteristics.
 AS_IF([test "x$enable_libsdbusplus" != "xno"],
-      [AX_CXX_COMPILE_STDCXX_14([noext])])
+      [AX_CXX_COMPILE_STDCXX_17([noext])])
 AX_APPEND_COMPILE_FLAGS([-Wall -Werror], [CFLAGS])
 AX_APPEND_COMPILE_FLAGS([-Wall -Werror], [CXXFLAGS])
 

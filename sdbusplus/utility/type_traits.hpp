@@ -21,18 +21,30 @@ using array_to_ptr_t = typename std::conditional_t<
                        std::add_pointer_t<std::remove_extent_t<T>>, T>,
     T>;
 
-// Small helper class for stripping off the error code from the function
-// argument definitions so unpack can be called appropriately
-template <typename T>
-struct strip_first_arg
+template <std::size_t N, typename FirstArg, typename... Rest>
+struct strip_first_n_args;
+
+template <std::size_t N, typename FirstArg, typename... Rest>
+struct strip_first_n_args<N, std::tuple<FirstArg, Rest...>>
+    : strip_first_n_args<N - 1, std::tuple<Rest...>>
 {
 };
 
 template <typename FirstArg, typename... Rest>
-struct strip_first_arg<std::tuple<FirstArg, Rest...>>
+struct strip_first_n_args<0, std::tuple<FirstArg, Rest...>>
 {
-    using type = std::tuple<Rest...>;
+    using type = std::tuple<FirstArg, Rest...>;
 };
+template <std::size_t N>
+struct strip_first_n_args<N, std::tuple<>>
+{
+    using type = std::tuple<>;
+};
+
+// Small helper class for stripping off the error code from the function
+// argument definitions so unpack can be called appropriately
+template <typename T>
+using strip_first_arg = strip_first_n_args<1, T>;
 
 // matching helper class to only return the first type
 template <typename T>

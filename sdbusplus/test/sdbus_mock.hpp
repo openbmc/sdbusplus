@@ -78,6 +78,10 @@ class SdBusMock : public SdBusInterface
     MOCK_METHOD2(sd_bus_message_new_method_return,
                  int(sd_bus_message*, sd_bus_message**));
 
+    MOCK_METHOD4(sd_bus_message_new_method_errno,
+                 int(sd_bus_message* call, sd_bus_message** m, int error,
+                     const sd_bus_error* p));
+
     MOCK_METHOD5(sd_bus_message_new_signal,
                  int(sd_bus*, sd_bus_message**, const char*, const char*,
                      const char*));

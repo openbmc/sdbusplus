@@ -265,6 +265,20 @@ class message
         return message(reply, std::false_type());
     }
 
+    /** @brief Create a 'method_error' type message from an existing message.
+     *
+     *  @param[in] error - integer error number
+     *  @return method-error message.
+     */
+    message new_method_errno(int error)
+    {
+        msgp_t reply = nullptr;
+        _intf->sd_bus_message_new_method_errno(this->get(), &reply, error,
+                                               nullptr);
+
+        return message(reply, std::false_type());
+    }
+
     /** @brief Perform a 'method-return' response call. */
     void method_return()
     {

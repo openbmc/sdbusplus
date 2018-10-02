@@ -171,6 +171,11 @@ class connection : public sdbusplus::bus::bus
         return responseData;
     }
 
+    boost::asio::io_service& io()
+    {
+        return io_;
+    }
+
   private:
     boost::asio::io_service& io_;
     boost::asio::posix::stream_descriptor socket;

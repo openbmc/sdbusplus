@@ -7,22 +7,47 @@
 #include <sdbusplus/asio/object_server.hpp>
 #include <sdbusplus/asio/sd_event.hpp>
 #include <sdbusplus/bus.hpp>
+#include <sdbusplus/exception.hpp>
 #include <sdbusplus/server.hpp>
 #include <sdbusplus/timer.hpp>
 
 using variant = sdbusplus::message::variant<int, std::string>;
+
 int foo(int test)
 {
+    std::cout << "foo(" << test << ") -> " << (test + 1) << "\n";
     return ++test;
+}
+
+// called from coroutine context, can make yielding dbus calls
+int fooYield(boost::asio::yield_context yield,
+             std::shared_ptr<sdbusplus::asio::connection> conn, int test)
+{
+    // fetch the real value from testFunction
+    boost::system::error_code ec;
+    std::cout << "fooYield(yield, " << test << ")...\n";
+    int testCount = conn->yield_method_call<int>(
+        yield[ec], "xyz.openbmc_project.asio-test", "/xyz/openbmc_project/test",
+        "xyz.openbmc_project.test", "TestFunction", test);
+    if (ec || testCount != (test + 1))
+    {
+        std::cout << "call to foo failed: ec = " << ec << '\n';
+        return -1;
+    }
+    std::cout << "yielding call to foo OK! (-> " << testCount << ")\n";
+    return testCount;
 }
 
 int methodWithMessage(sdbusplus::message::message& m, int test)
 {
+    std::cout << "methodWithMessage(m, " << test << ") -> " << (test + 1)
+              << "\n";
     return ++test;
 }
 
 int voidBar(void)
 {
+    std::cout << "voidBar() -> 42\n";
     return 42;
 }
 
@@ -68,59 +93,38 @@ void do_start_async_method_call_two(
     }
 }
 
-int main()
+void do_start_async_to_yield(std::shared_ptr<sdbusplus::asio::connection> conn,
+                             boost::asio::yield_context yield)
 {
-    using GetSubTreeType = std::vector<std::pair<
-        std::string,
-        std::vector<std::pair<std::string, std::vector<std::string>>>>>;
-    using message = sdbusplus::message::message;
+    boost::system::error_code ec;
+    int testValue = 0;
+    try
+    {
+        testValue = conn->yield_method_call<int>(
+            yield[ec], "xyz.openbmc_project.asio-test",
+            "/xyz/openbmc_project/test", "xyz.openbmc_project.test",
+            "TestYieldFunction", int(41));
+    }
+    catch (sdbusplus::exception::SdBusError& e)
+    {
+        std::cout << "oops: " << e.what() << "\n";
+    }
+    if (!ec && testValue == 42)
+    {
+        std::cout
+            << "yielding call to TestYieldFunction serialized via yield OK!\n";
+    }
+    else
+    {
+        std::cout << "ec = " << ec << ": " << testValue << "\n";
+    }
+}
+
+int server()
+{
     // setup connection to dbus
     boost::asio::io_service io;
     auto conn = std::make_shared<sdbusplus::asio::connection>(io);
-
-    // test async method call and async send
-    auto mesg =
-        conn->new_method_call("xyz.openbmc_project.ObjectMapper",
-                              "/xyz/openbmc_project/object_mapper",
-                              "xyz.openbmc_project.ObjectMapper", "GetSubTree");
-
-    static const auto depth = 2;
-    static const std::vector<std::string> interfaces = {
-        "xyz.openbmc_project.Sensor.Value"};
-    mesg.append("/xyz/openbmc_project/Sensors", depth, interfaces);
-
-    conn->async_send(mesg, [](boost::system::error_code ec, message& ret) {
-        std::cout << "async_send callback\n";
-        if (ec || ret.is_method_error())
-        {
-            std::cerr << "error with async_send\n";
-            return;
-        }
-        GetSubTreeType data;
-        ret.read(data);
-        for (auto& item : data)
-        {
-            std::cout << item.first << "\n";
-        }
-    });
-
-    conn->async_method_call(
-        [](boost::system::error_code ec, GetSubTreeType& subtree) {
-            std::cout << "async_method_call callback\n";
-            if (ec)
-            {
-                std::cerr << "error with async_method_call\n";
-                return;
-            }
-            for (auto& item : subtree)
-            {
-                std::cout << item.first << "\n";
-            }
-        },
-        "xyz.openbmc_project.ObjectMapper",
-        "/xyz/openbmc_project/object_mapper",
-        "xyz.openbmc_project.ObjectMapper", "GetSubTree",
-        "/org/openbmc/control", 2, std::vector<std::string>());
 
     // test object server
     conn->request_name("xyz.openbmc_project.asio-test");
@@ -171,12 +175,97 @@ int main()
 
     iface->register_method("TestFunction", foo);
 
+    // fooYield has boost::asio::yield_context as first argument
+    // so will be executed in coroutine context if called
+    iface->register_method("TestYieldFunction",
+                           [conn](boost::asio::yield_context yield, int val) {
+                               return fooYield(yield, conn, val);
+                           });
+
     iface->register_method("TestMethodWithMessage", methodWithMessage);
 
     iface->register_method("VoidFunctionReturnsInt", voidBar);
 
     iface->initialize();
-    iface->set_property("int", 45);
+
+    io.run();
+
+    return 0;
+}
+
+int client()
+{
+    using GetSubTreeType = std::vector<std::pair<
+        std::string,
+        std::vector<std::pair<std::string, std::vector<std::string>>>>>;
+    using message = sdbusplus::message::message;
+
+    // setup connection to dbus
+    boost::asio::io_service io;
+    auto conn = std::make_shared<sdbusplus::asio::connection>(io);
+
+    int ready = 0;
+    while (!ready)
+    {
+        auto readyMsg = conn->new_method_call(
+            "xyz.openbmc_project.asio-test", "/xyz/openbmc_project/test",
+            "xyz.openbmc_project.test", "VoidFunctionReturnsInt");
+        try
+        {
+            message intMsg = conn->call(readyMsg);
+            intMsg.read(ready);
+        }
+        catch (sdbusplus::exception::SdBusError& e)
+        {
+            ready = 0;
+            // pause to give the server a chance to start up
+            usleep(10000);
+        }
+    }
+
+    // test async method call and async send
+    auto mesg =
+        conn->new_method_call("xyz.openbmc_project.ObjectMapper",
+                              "/xyz/openbmc_project/object_mapper",
+                              "xyz.openbmc_project.ObjectMapper", "GetSubTree");
+
+    static const auto depth = 2;
+    static const std::vector<std::string> interfaces = {
+        "xyz.openbmc_project.Sensor.Value"};
+    mesg.append("/xyz/openbmc_project/Sensors", depth, interfaces);
+
+    conn->async_send(mesg, [](boost::system::error_code ec, message& ret) {
+        std::cout << "async_send callback\n";
+        if (ec || ret.is_method_error())
+        {
+            std::cerr << "error with async_send\n";
+            return;
+        }
+        GetSubTreeType data;
+        ret.read(data);
+        for (auto& item : data)
+        {
+            std::cout << item.first << "\n";
+        }
+    });
+
+    conn->async_method_call(
+        [](boost::system::error_code ec, GetSubTreeType& subtree) {
+            std::cout << "async_method_call callback\n";
+            if (ec)
+            {
+                std::cerr << "error with async_method_call\n";
+                return;
+            }
+            for (auto& item : subtree)
+            {
+                std::cout << item.first << "\n";
+            }
+        },
+        "xyz.openbmc_project.ObjectMapper",
+        "/xyz/openbmc_project/object_mapper",
+        "xyz.openbmc_project.ObjectMapper", "GetSubTree",
+        "/org/openbmc/control", 2, std::vector<std::string>());
 
     // sd_events work too using the default event loop
     phosphor::Timer t1([]() { std::cerr << "*** tock ***\n"; });
@@ -194,7 +283,51 @@ int main()
     boost::asio::spawn(io, [conn](boost::asio::yield_context yield) {
         do_start_async_method_call_two(conn, yield);
     });
+    boost::asio::spawn(io, [conn](boost::asio::yield_context yield) {
+        do_start_async_to_yield(conn, yield);
+    });
+
+    conn->async_method_call(
+        [](boost::system::error_code ec, int32_t testValue) {
+            if (ec)
+            {
+                std::cerr << "TestYieldFunction returned error with "
+                             "async_method_call (ec = "
+                          << ec << ")\n";
+                return;
+            }
+            std::cout << "TestYieldFunction return " << testValue << "\n";
+        },
+        "xyz.openbmc_project.asio-test", "/xyz/openbmc_project/test",
+        "xyz.openbmc_project.test", "TestYieldFunction", int32_t(41));
     io.run();
 
     return 0;
+}
+
+int main(int argc, const char* argv[])
+{
+    if (argc == 1)
+    {
+        int pid = fork();
+        if (pid == 0)
+        {
+            return client();
+        }
+        else if (pid > 0)
+        {
+            return server();
+        }
+        return pid;
+    }
+    if (std::string(argv[1]) == "--server")
+    {
+        return server();
+    }
+    if (std::string(argv[1]) == "--client")
+    {
+        return client();
+    }
+    std::cout << "usage: " << argv[0] << " [--server | --client]\n";
+    return -1;
 }

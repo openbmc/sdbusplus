@@ -226,7 +226,11 @@ class message
     auto get_cookie()
     {
         uint64_t cookie;
-        _intf->sd_bus_message_get_cookie(_msg.get(), &cookie);
+        int r = _intf->sd_bus_message_get_cookie(_msg.get(), &cookie);
+        if (r < 0)
+        {
+            throw exception::SdBusError(-r, "sd_bus_message_get_cookie");
+        }
         return cookie;
     }
 
@@ -260,7 +264,11 @@ class message
     message new_method_return()
     {
         msgp_t reply = nullptr;
-        _intf->sd_bus_message_new_method_return(this->get(), &reply);
+        int r = _intf->sd_bus_message_new_method_return(this->get(), &reply);
+        if (r < 0)
+        {
+            throw exception::SdBusError(-r, "sd_bus_message_new_method_return");
+        }
 
         return message(reply, std::false_type());
     }
@@ -287,7 +295,11 @@ class message
     void method_return()
     {
         auto b = _intf->sd_bus_message_get_bus(this->get());
-        _intf->sd_bus_send(b, this->get(), nullptr);
+        int r = _intf->sd_bus_send(b, this->get(), nullptr);
+        if (r < 0)
+        {
+            throw exception::SdBusError(-r, "sd_bus_send");
+        }
     }
 
     /** @brief Perform a 'signal-send' call. */

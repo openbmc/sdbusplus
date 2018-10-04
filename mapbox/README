@@ -1,3 +1,0 @@
-This implementation of variant came from http://github.com/mapbox/variant.  As
-soon as GCC7 with C++17 support is available, we should move to the
-std::variant implementation instead.

@@ -186,7 +186,11 @@ struct bus
      */
     void request_name(const char* service)
     {
-        _intf->sd_bus_request_name(_bus.get(), service, 0);
+        int r = _intf->sd_bus_request_name(_bus.get(), service, 0);
+        if (r < 0)
+        {
+            throw exception::SdBusError(-r, "request_name");
+        }
     }
 
     /** @brief Create a method_call message.

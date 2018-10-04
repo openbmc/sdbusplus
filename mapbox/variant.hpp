@@ -1079,6 +1079,16 @@ auto VARIANT_INLINE apply_visitor(F&& f, V& v0, V& v1)
     return V::binary_visit(v0, v1, std::forward<F>(f));
 }
 
+// is interface
+
+#ifdef HAS_EXCEPTIONS
+template <typename ResultType, typename T>
+auto holds_alternative(T const& var) -> decltype(var.template is<ResultType>())
+{
+    return var.template is<ResultType>();
+}
+#endif
+
 // getter interface
 
 #ifdef HAS_EXCEPTIONS

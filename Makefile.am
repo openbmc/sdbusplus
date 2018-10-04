@@ -3,8 +3,6 @@ ACLOCAL_AMFLAGS = -Im4
 if WANT_LIBSDBUSPLUS
 
 nobase_include_HEADERS = \
-	mapbox/recursive_wrapper.hpp \
-	mapbox/variant.hpp \
 	sdbusplus/asio/connection.hpp \
 	sdbusplus/asio/object_server.hpp \
 	sdbusplus/asio/detail/async_send_handler.hpp \

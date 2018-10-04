@@ -283,7 +283,7 @@ struct append_single<variant<Args...>>
             intf->sd_bus_message_close_container(m);
         };
 
-        std::remove_reference_t<S>::visit(s, apply);
+        std::visit(apply, s);
     }
 };
 

@@ -3,12 +3,12 @@
 #include <systemd/sd-bus.h>
 
 #include <map>
-#include <mapbox/variant.hpp>
 #include <sdbusplus/message/native_types.hpp>
 #include <sdbusplus/utility/container_traits.hpp>
 #include <sdbusplus/utility/type_traits.hpp>
 #include <string>
 #include <tuple>
+#include <variant>
 #include <vector>
 
 namespace sdbusplus
@@ -17,7 +17,7 @@ namespace sdbusplus
 namespace message
 {
 
-namespace variant_ns = mapbox::util;
+namespace variant_ns = std;
 
 template <typename... Args>
 using variant = variant_ns::variant<Args...>;

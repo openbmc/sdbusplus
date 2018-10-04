@@ -16,6 +16,7 @@
 namespace
 {
 
+namespace variant_ns = sdbusplus::message::variant_ns;
 using testing::Eq;
 using testing::MatcherCast;
 using testing::Pointee;
@@ -363,17 +364,18 @@ TEST_F(AppendTest, LargeCombo)
         {
             expect_open_container(SD_BUS_TYPE_DICT_ENTRY, "sv");
             expect_basic_string(SD_BUS_TYPE_STRING, sv.first.c_str());
-            if (sv.second.is<int>())
+            if (variant_ns::holds_alternative<int>(sv.second))
             {
                 expect_open_container(SD_BUS_TYPE_VARIANT, "i");
-                expect_basic<int>(SD_BUS_TYPE_INT32, sv.second.get<int>());
+                expect_basic<int>(SD_BUS_TYPE_INT32,
+                                  variant_ns::get<int>(sv.second));
                 expect_close_container();
             }
             else
             {
                 expect_open_container(SD_BUS_TYPE_VARIANT, "d");
                 expect_basic<double>(SD_BUS_TYPE_DOUBLE,
-                                     sv.second.get<double>());
+                                     variant_ns::get<double>(sv.second));
                 expect_close_container();
             }
             expect_close_container();

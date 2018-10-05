@@ -52,6 +52,11 @@ template <typename T, typename Enable = void>
 struct can_append_multiple : std::true_type
 {
 };
+// unix_fd's int needs to be wrapped.
+template <>
+struct can_append_multiple<unix_fd> : std::false_type
+{
+};
 // std::string needs a c_str() call.
 template <>
 struct can_append_multiple<std::string> : std::false_type
@@ -165,6 +170,21 @@ struct append_single
 
 template <typename T>
 using append_single_t = append_single<types::details::type_id_downcast_t<T>>;
+
+/** @brief Specialization of append_single for details::unix_fd. */
+template <>
+struct append_single<details::unix_fd_type>
+{
+    template <typename T>
+    static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, T&& s)
+    {
+        constexpr auto dbusType = std::get<0>(types::type_id<T>());
+        intf->sd_bus_message_append_basic(m, dbusType, &s.fd);
+
+        // sd-bus now owns the file descriptor
+        s.fd = -1;
+    }
+};
 
 /** @brief Specialization of append_single for std::strings. */
 template <>

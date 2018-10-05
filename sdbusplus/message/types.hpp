@@ -219,6 +219,10 @@ struct type_id<char*> : tuple_type_id<SD_BUS_TYPE_STRING>
 {
 };
 template <>
+struct type_id<unix_fd> : tuple_type_id<SD_BUS_TYPE_UNIX_FD>
+{
+};
+template <>
 struct type_id<std::string> : tuple_type_id<SD_BUS_TYPE_STRING>
 {
 };

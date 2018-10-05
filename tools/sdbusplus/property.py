@@ -114,6 +114,7 @@ class Property(NamedElement, Renderer):
             'int64': {'cppName': 'int64_t', 'params': 0},
             'uint64': {'cppName': 'uint64_t', 'params': 0},
             'double': {'cppName': 'double', 'params': 0},
+            'unixfd': {'cppName': 'sdbusplus::message::unix_fd', 'params': 0},
             'string': {'cppName': 'std::string', 'params': 0},
             'path': {'cppName': 'sdbusplus::message::object_path',
                      'params': 0},

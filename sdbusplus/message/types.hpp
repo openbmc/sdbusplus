@@ -17,11 +17,6 @@ namespace sdbusplus
 namespace message
 {
 
-namespace variant_ns = std;
-
-template <typename... Args>
-using variant = variant_ns::variant<Args...>;
-
 namespace types
 {
 
@@ -260,7 +255,7 @@ struct type_id<std::tuple<Args...>>
 };
 
 template <typename... Args>
-struct type_id<variant<Args...>> : tuple_type_id<SD_BUS_TYPE_VARIANT>
+struct type_id<std::variant<Args...>> : tuple_type_id<SD_BUS_TYPE_VARIANT>
 {
 };
 

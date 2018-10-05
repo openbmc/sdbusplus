@@ -1,8 +1,12 @@
 #pragma once
-#include <tuple>
+#include <map>
 #include <systemd/sd-bus.h>
 #include <sdbusplus/sdbus.hpp>
 #include <sdbusplus/server.hpp>
+#include <string>
+#include <tuple>
+#include <variant>
+
 <%
     namespaces = interface.name.split('.')
     classname = namespaces.pop()
@@ -55,7 +59,7 @@ class ${classname}
     % endfor
 
     % if interface.properties:
-        using PropertiesVariant = sdbusplus::message::variant<
+        using PropertiesVariant = std::variant<
                 ${",\n                ".join(setOfPropertyTypes())}>;
 
         /** @brief Constructor to initialize the object from a map of

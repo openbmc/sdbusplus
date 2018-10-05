@@ -80,6 +80,12 @@ struct object_path_type
 struct signature_type
 {
 };
+/** Typename for sdbus UNIX_FD types. */
+struct unix_fd_type {
+    int fd;
+
+    operator int32_t() const { return fd; }
+};
 
 } // namespace details
 
@@ -87,6 +93,7 @@ struct signature_type
 using object_path = details::string_wrapper<details::object_path_type>;
 /** std::string wrapper for SIGNATURE. */
 using signature = details::string_wrapper<details::signature_type>;
+using unix_fd = details::unix_fd_type;
 
 } // namespace message
 } // namespace sdbusplus

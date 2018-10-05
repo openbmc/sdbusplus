@@ -1,0 +1,8 @@
+Ok-To-Test+1: Jenkins <openbmc-ci-admin@ozlabs.org>
+Verified+1: Jenkins <openbmc-ci-admin@ozlabs.org>
+Code-Review+2: William A. Kennington III <wak@google.com>
+Submitted-by: William A. Kennington III <wak@google.com>
+Submitted-at: Fri, 05 Oct 2018 09:11:34 +0000
+Reviewed-on: https://gerrit.openbmc-project.xyz/13493
+Project: openbmc/sdbusplus
+Branch: refs/heads/master

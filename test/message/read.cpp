@@ -9,6 +9,7 @@
 #include <string>
 #include <tuple>
 #include <unordered_map>
+#include <variant>
 #include <vector>
 
 #include <gmock/gmock.h>
@@ -17,7 +18,6 @@
 namespace
 {
 
-namespace variant_ns = sdbusplus::message::variant_ns;
 using testing::DoAll;
 using testing::Return;
 using testing::StrEq;
@@ -477,7 +477,7 @@ TEST_F(ReadTest, Variant)
 {
     const bool b1 = false;
     const std::string s2{"asdf"};
-    const sdbusplus::message::variant<int, std::string, bool> v1{b1}, v2{s2};
+    const std::variant<int, std::string, bool> v1{b1}, v2{s2};
 
     {
         testing::InSequence seq;
@@ -494,7 +494,7 @@ TEST_F(ReadTest, Variant)
         expect_exit_container();
     }
 
-    sdbusplus::message::variant<int, std::string, bool> ret_v1, ret_v2;
+    std::variant<int, std::string, bool> ret_v1, ret_v2;
     new_message().read(ret_v1, ret_v2);
     EXPECT_EQ(v1, ret_v1);
     EXPECT_EQ(v2, ret_v2);
@@ -507,7 +507,7 @@ TEST_F(ReadTest, VariantVerifyError)
         expect_verify_type(SD_BUS_TYPE_VARIANT, "i", -EINVAL);
     }
 
-    sdbusplus::message::variant<int, bool> ret;
+    std::variant<int, bool> ret;
     EXPECT_THROW(new_message().read(ret), sdbusplus::exception::SdBusError);
 }
 
@@ -520,7 +520,7 @@ TEST_F(ReadTest, VariantSkipUnmatched)
         expect_skip("v");
     }
 
-    sdbusplus::message::variant<int, bool> ret;
+    std::variant<int, bool> ret;
     new_message().read(ret);
 }
 
@@ -533,7 +533,7 @@ TEST_F(ReadTest, VariantSkipError)
         expect_skip("v", -EINVAL);
     }
 
-    sdbusplus::message::variant<int, bool> ret;
+    std::variant<int, bool> ret;
     EXPECT_THROW(new_message().read(ret), sdbusplus::exception::SdBusError);
 }
 
@@ -545,7 +545,7 @@ TEST_F(ReadTest, VariantEnterError)
         expect_enter_container(SD_BUS_TYPE_VARIANT, "i", -EINVAL);
     }
 
-    sdbusplus::message::variant<int, bool> ret;
+    std::variant<int, bool> ret;
     EXPECT_THROW(new_message().read(ret), sdbusplus::exception::SdBusError);
 }
 
@@ -559,7 +559,7 @@ TEST_F(ReadTest, VariantExitError)
         expect_exit_container(-EINVAL);
     }
 
-    sdbusplus::message::variant<int, bool> ret;
+    std::variant<int, bool> ret;
     EXPECT_THROW(new_message().read(ret), sdbusplus::exception::SdBusError);
 }
 
@@ -569,8 +569,8 @@ TEST_F(ReadTest, LargeCombo)
         {"a", "b", "c"},
         {"d", "", "e"},
     };
-    const std::map<std::string, sdbusplus::message::variant<int, double>> msv =
-        {{"a", 3.3}, {"b", 1}, {"c", 4.4}};
+    const std::map<std::string, std::variant<int, double>> msv = {
+        {"a", 3.3}, {"b", 1}, {"c", 4.4}};
 
     {
         testing::InSequence seq;
@@ -597,12 +597,11 @@ TEST_F(ReadTest, LargeCombo)
             expect_at_end(false, 0);
             expect_enter_container(SD_BUS_TYPE_DICT_ENTRY, "sv");
             expect_basic<const char*>(SD_BUS_TYPE_STRING, sv.first.c_str());
-            if (variant_ns::holds_alternative<int>(sv.second))
+            if (std::holds_alternative<int>(sv.second))
             {
                 expect_verify_type(SD_BUS_TYPE_VARIANT, "i", true);
                 expect_enter_container(SD_BUS_TYPE_VARIANT, "i");
-                expect_basic<int>(SD_BUS_TYPE_INT32,
-                                  variant_ns::get<int>(sv.second));
+                expect_basic<int>(SD_BUS_TYPE_INT32, std::get<int>(sv.second));
                 expect_exit_container();
             }
             else
@@ -611,7 +610,7 @@ TEST_F(ReadTest, LargeCombo)
                 expect_verify_type(SD_BUS_TYPE_VARIANT, "d", true);
                 expect_enter_container(SD_BUS_TYPE_VARIANT, "d");
                 expect_basic<double>(SD_BUS_TYPE_DOUBLE,
-                                     variant_ns::get<double>(sv.second));
+                                     std::get<double>(sv.second));
                 expect_exit_container();
             }
             expect_exit_container();
@@ -621,7 +620,7 @@ TEST_F(ReadTest, LargeCombo)
     }
 
     std::vector<std::set<std::string>> ret_vas;
-    std::map<std::string, sdbusplus::message::variant<int, double>> ret_msv;
+    std::map<std::string, std::variant<int, double>> ret_msv;
     new_message().read(ret_vas, ret_msv);
     EXPECT_EQ(vas, ret_vas);
     EXPECT_EQ(msv, ret_msv);

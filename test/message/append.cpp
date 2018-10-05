@@ -8,6 +8,7 @@
 #include <string>
 #include <tuple>
 #include <unordered_map>
+#include <variant>
 #include <vector>
 
 #include <gmock/gmock.h>
@@ -16,7 +17,6 @@
 namespace
 {
 
-namespace variant_ns = sdbusplus::message::variant_ns;
 using testing::Eq;
 using testing::MatcherCast;
 using testing::Pointee;
@@ -323,7 +323,7 @@ TEST_F(AppendTest, Variant)
 {
     const bool b1 = false;
     const std::string s2{"asdf"};
-    const sdbusplus::message::variant<int, std::string, bool> v1{b1}, v2{s2};
+    const std::variant<int, std::string, bool> v1{b1}, v2{s2};
 
     {
         testing::InSequence seq;
@@ -341,7 +341,7 @@ TEST_F(AppendTest, LargeCombo)
 {
     std::vector<std::array<std::string, 3>> vas{{"a", "b", "c"},
                                                 {"d", "", "e"}};
-    std::map<std::string, sdbusplus::message::variant<int, double>> msv = {
+    std::map<std::string, std::variant<int, double>> msv = {
         {"a", 3.3}, {"b", 1}, {"c", 4.4}};
 
     {
@@ -364,18 +364,17 @@ TEST_F(AppendTest, LargeCombo)
         {
             expect_open_container(SD_BUS_TYPE_DICT_ENTRY, "sv");
             expect_basic_string(SD_BUS_TYPE_STRING, sv.first.c_str());
-            if (variant_ns::holds_alternative<int>(sv.second))
+            if (std::holds_alternative<int>(sv.second))
             {
                 expect_open_container(SD_BUS_TYPE_VARIANT, "i");
-                expect_basic<int>(SD_BUS_TYPE_INT32,
-                                  variant_ns::get<int>(sv.second));
+                expect_basic<int>(SD_BUS_TYPE_INT32, std::get<int>(sv.second));
                 expect_close_container();
             }
             else
             {
                 expect_open_container(SD_BUS_TYPE_VARIANT, "d");
                 expect_basic<double>(SD_BUS_TYPE_DOUBLE,
-                                     variant_ns::get<double>(sv.second));
+                                     std::get<double>(sv.second));
                 expect_close_container();
             }
             expect_close_container();

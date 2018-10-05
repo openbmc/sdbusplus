@@ -51,6 +51,11 @@ template <typename T, typename Enable = void>
 struct can_read_multiple : std::true_type
 {
 };
+// unix_fd's int needs to be wrapped
+template <>
+struct can_read_multiple<unix_fd> : std::false_type
+{
+};
 // std::string needs a char* conversion.
 template <>
 struct can_read_multiple<std::string> : std::false_type
@@ -149,6 +154,23 @@ struct read_single
 
 template <typename T>
 using read_single_t = read_single<types::details::type_id_downcast_t<T>>;
+
+/** @brief Specialization of read_single for details::unix_fd. */
+template <>
+struct read_single<details::unix_fd_type>
+{
+    template <typename T>
+    static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, T&& s)
+    {
+        constexpr auto dbusType = std::get<0>(types::type_id<T>());
+        int r = intf->sd_bus_message_read_basic(m, dbusType, &s.fd);
+        if (r < 0)
+        {
+            throw exception::SdBusError(-r,
+                                        "sd_bus_message_read_basic unix_fd");
+        }
+    }
+};
 
 /** @brief Specialization of read_single for std::strings. */
 template <>

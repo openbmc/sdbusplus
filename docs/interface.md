@@ -78,6 +78,7 @@ but listed using lowercases: `int64` instead of `INT64` or C++ `int64_t`.
 * ...
 * uint64
 * double
+* unixfd
 * string
 * object_path
 * signature

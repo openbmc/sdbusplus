@@ -8,6 +8,8 @@
 #include <sdbusplus/utility/tuple_to_array.hpp>
 #include <sdbusplus/utility/type_traits.hpp>
 #include <tuple>
+#include <type_traits>
+#include <variant>
 
 namespace sdbusplus
 {
@@ -91,7 +93,7 @@ struct can_append_multiple<std::tuple<Args...>> : std::false_type
 };
 // variant needs to be broken down into components.
 template <typename... Args>
-struct can_append_multiple<variant<Args...>> : std::false_type
+struct can_append_multiple<std::variant<Args...>> : std::false_type
 {
 };
 
@@ -268,7 +270,7 @@ struct append_single<std::tuple<Args...>>
 
 /** @brief Specialization of append_single for std::variant. */
 template <typename... Args>
-struct append_single<variant<Args...>>
+struct append_single<std::variant<Args...>>
 {
     template <typename S, typename = std::enable_if_t<0 < sizeof...(Args)>>
     static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, S&& s)

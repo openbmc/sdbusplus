@@ -163,13 +163,13 @@ ${returns_as_tuple_index("r",pre="convertForMessage(",post=")")});
     }
     catch(sdbusplus::internal_exception_t& e)
     {
-        sd_bus_error_set_const(error, e.name(), e.description());
+        sd_bus_error_set(error, e.name(), e.description());
         return -EINVAL;
     }
     % for e in method.errors:
     catch(sdbusplus::${error_namespace(e)}::${error_name(e)}& e)
     {
-        sd_bus_error_set_const(error, e.name(), e.description());
+        sd_bus_error_set(error, e.name(), e.description());
         return -EINVAL;
     }
     % endfor

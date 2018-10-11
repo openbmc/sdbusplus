@@ -54,13 +54,13 @@ int ${classname}::_callback_get_${property.name}(
     }
     catch(sdbusplus::internal_exception_t& e)
     {
-        o->_intf->sd_bus_error_set_const(error, e.name(), e.description());
+        o->_intf->sd_bus_error_set(error, e.name(), e.description());
         return -EINVAL;
     }
     % for e in property.errors:
     catch(sdbusplus::${error_namespace(e)}::${error_name(e)}& e)
     {
-        o->_intf->sd_bus_error_set_const(error, e.name(), e.description());
+        o->_intf->sd_bus_error_set(error, e.name(), e.description());
         return -EINVAL;
     }
     % endfor
@@ -120,13 +120,13 @@ convert${property.enum_name(interface.name)}FromString(v));
     }
     catch(sdbusplus::internal_exception_t& e)
     {
-        o->_intf->sd_bus_error_set_const(error, e.name(), e.description());
+        o->_intf->sd_bus_error_set(error, e.name(), e.description());
         return -EINVAL;
     }
     % for e in property.errors:
     catch(sdbusplus::${error_namespace(e)}::${error_name(e)}& e)
     {
-        o->_intf->sd_bus_error_set_const(error, e.name(), e.description());
+        o->_intf->sd_bus_error_set(error, e.name(), e.description());
         return -EINVAL;
     }
     % endfor

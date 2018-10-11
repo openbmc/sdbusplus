@@ -395,7 +395,7 @@ class dbus_interface
 
             catch (sdbusplus::exception_t& e)
             {
-                sd_bus_error_set_const(error, e.name(), e.description());
+                sd_bus_error_set(error, e.name(), e.description());
                 return -EINVAL;
             }
             catch (...)
@@ -432,7 +432,7 @@ class dbus_interface
 
             catch (sdbusplus::exception_t& e)
             {
-                sd_bus_error_set_const(error, e.name(), e.description());
+                sd_bus_error_set(error, e.name(), e.description());
                 return -EINVAL;
             }
             catch (...)
@@ -467,7 +467,7 @@ class dbus_interface
 
             catch (sdbusplus::exception_t& e)
             {
-                sd_bus_error_set_const(error, e.name(), e.description());
+                sd_bus_error_set(error, e.name(), e.description());
                 return -EINVAL;
             }
             catch (...)

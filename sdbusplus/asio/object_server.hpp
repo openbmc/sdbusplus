@@ -395,8 +395,7 @@ class dbus_interface
 
             catch (sdbusplus::exception_t& e)
             {
-                sd_bus_error_set(error, e.name(), e.description());
-                return -EINVAL;
+                return sd_bus_error_set(error, e.name(), e.description());
             }
             catch (...)
             {
@@ -404,8 +403,7 @@ class dbus_interface
             }
 #endif
         }
-        sd_bus_error_set_const(error, SD_BUS_ERROR_INVALID_ARGS, NULL);
-        return -EINVAL;
+        return sd_bus_error_set_const(error, SD_BUS_ERROR_INVALID_ARGS, NULL);
     }
 
     static int set_handler(sd_bus* bus, const char* path, const char* interface,
@@ -432,8 +430,7 @@ class dbus_interface
 
             catch (sdbusplus::exception_t& e)
             {
-                sd_bus_error_set(error, e.name(), e.description());
-                return -EINVAL;
+                return sd_bus_error_set(error, e.name(), e.description());
             }
             catch (...)
             {
@@ -441,8 +438,7 @@ class dbus_interface
             }
 #endif
         }
-        sd_bus_error_set_const(error, SD_BUS_ERROR_INVALID_ARGS, NULL);
-        return -EINVAL;
+        return sd_bus_error_set_const(error, SD_BUS_ERROR_INVALID_ARGS, NULL);
     }
 
     static int method_handler(sd_bus_message* m, void* userdata,
@@ -467,8 +463,7 @@ class dbus_interface
 
             catch (sdbusplus::exception_t& e)
             {
-                sd_bus_error_set(error, e.name(), e.description());
-                return -EINVAL;
+                return sd_bus_error_set(error, e.name(), e.description());
             }
             catch (...)
             {
@@ -476,8 +471,7 @@ class dbus_interface
             }
 #endif
         }
-        sd_bus_error_set_const(error, SD_BUS_ERROR_INVALID_ARGS, NULL);
-        return -EINVAL;
+        return sd_bus_error_set_const(error, SD_BUS_ERROR_INVALID_ARGS, NULL);
     }
 
     bool initialize()

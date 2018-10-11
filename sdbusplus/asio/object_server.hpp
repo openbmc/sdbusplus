@@ -204,6 +204,10 @@ class dbus_interface
             PropertyType,
             std::function<int(const PropertyType&, PropertyType&)>>>(
             propertyPtr, [](const PropertyType& req, PropertyType& old) {
+                if (old == req)
+                {
+                    return 0;
+                }
                 old = req;
                 return 1;
             });

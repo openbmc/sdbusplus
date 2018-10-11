@@ -32,6 +32,8 @@ class SdBusMock : public SdBusInterface
     MOCK_METHOD4(sd_bus_emit_properties_changed_strv,
                  int(sd_bus*, const char*, const char*, char**));
 
+    MOCK_METHOD3(sd_bus_error_set,
+                 int(sd_bus_error*, const char*, const char*));
     MOCK_METHOD3(sd_bus_error_set_const,
                  int(sd_bus_error*, const char*, const char*));
     MOCK_METHOD1(sd_bus_error_get_errno, int(const sd_bus_error*));

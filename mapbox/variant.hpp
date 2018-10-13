@@ -1079,6 +1079,14 @@ auto VARIANT_INLINE apply_visitor(F&& f, V& v0, V& v1)
     return V::binary_visit(v0, v1, std::forward<F>(f));
 }
 
+// Needed for compatibility with std::variant
+template <typename... Args>
+constexpr auto visit(Args&&... args)
+    -> decltype(apply_visitor(std::forward<Args>(args)...))
+{
+    return apply_visitor(std::forward<Args>(args)...);
+}
+
 // is interface
 
 #ifdef HAS_EXCEPTIONS

@@ -60,6 +60,7 @@ Makefile.in
 /test/message_native_types
 /test/message_read
 /test/message_types
+/test/timer
 /test/utility_tuple_to_array
 /test/utility_type_traits
 /test/vtable_vtable

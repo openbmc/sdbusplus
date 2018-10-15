@@ -1,6 +1,10 @@
 #pragma once
 
+#include <systemd/sd-bus.h>
+
+#include <chrono>
 #include <sdbusplus/bus.hpp>
+#include <stdexcept>
 #include <thread>
 
 namespace sdbusplus
@@ -62,8 +66,27 @@ struct hash<sdbusplus::message::message>
 {
     auto operator()(sdbusplus::message::message& m) const
     {
-        auto cookie = m.get_cookie();
-        return std::hash<uint64_t>{}(cookie);
+        switch (m.get_type())
+        {
+            // Reply messages will always embed the cookie of the original
+            // message in a separate location. We want to use this cookie
+            // to correlate messages as one transaction.
+            case SD_BUS_MESSAGE_METHOD_RETURN:
+            case SD_BUS_MESSAGE_METHOD_ERROR:
+                return std::hash<uint64_t>{}(m.get_reply_cookie());
+            // Method calls will have the cookie in the header when sealed.
+            // Since we are on the server side that should always be the case.
+            case SD_BUS_MESSAGE_METHOD_CALL:
+                return std::hash<uint64_t>{}(m.get_cookie());
+            // Outgoing signals don't have a cookie so we need to use
+            // something else as an id. Just use a monotonic unique one.
+            case SD_BUS_MESSAGE_SIGNAL:
+                return std::hash<uint64_t>{}(std::chrono::steady_clock::now()
+                                                 .time_since_epoch()
+                                                 .count());
+            default:
+                throw std::runtime_error("hash message: Unknown message type");
+        }
     }
 };
 

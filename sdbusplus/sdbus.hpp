@@ -75,6 +75,8 @@ class SdBusInterface
     virtual int sd_bus_message_get_type(sd_bus_message* m, uint8_t* type) = 0;
     virtual int sd_bus_message_get_cookie(sd_bus_message* m,
                                           uint64_t* cookie) = 0;
+    virtual int sd_bus_message_get_reply_cookie(sd_bus_message* m,
+                                                uint64_t* cookie) = 0;
     virtual const char* sd_bus_message_get_destination(sd_bus_message* m) = 0;
     virtual const char* sd_bus_message_get_interface(sd_bus_message* m) = 0;
     virtual const char* sd_bus_message_get_member(sd_bus_message* m) = 0;
@@ -303,6 +305,12 @@ class SdBusImpl : public SdBusInterface
     int sd_bus_message_get_cookie(sd_bus_message* m, uint64_t* cookie) override
     {
         return ::sd_bus_message_get_cookie(m, cookie);
+    }
+
+    int sd_bus_message_get_reply_cookie(sd_bus_message* m,
+                                        uint64_t* cookie) override
+    {
+        return ::sd_bus_message_get_reply_cookie(m, cookie);
     }
 
     const char* sd_bus_message_get_destination(sd_bus_message* m) override

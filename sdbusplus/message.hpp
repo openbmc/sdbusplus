@@ -219,6 +219,21 @@ class message
         return _intf->sd_bus_message_get_errno(_msg.get());
     }
 
+    /** @brief Get the type of a message.
+     *
+     * @return The type of message.
+     */
+    auto get_type()
+    {
+        uint8_t type;
+        int r = _intf->sd_bus_message_get_type(_msg.get(), &type);
+        if (r < 0)
+        {
+            throw exception::SdBusError(-r, "sd_bus_message_get_type");
+        }
+        return type;
+    }
+
     /** @brief Get the transaction cookie of a message.
      *
      * @return The transaction cookie of a message.

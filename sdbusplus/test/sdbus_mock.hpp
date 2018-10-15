@@ -56,6 +56,7 @@ class SdBusMock : public SdBusInterface
     MOCK_METHOD1(sd_bus_message_exit_container, int(sd_bus_message*));
 
     MOCK_METHOD1(sd_bus_message_get_bus, sd_bus*(sd_bus_message*));
+    MOCK_METHOD2(sd_bus_message_get_type, int(sd_bus_message*, uint8_t*));
     MOCK_METHOD2(sd_bus_message_get_cookie, int(sd_bus_message*, uint64_t*));
     MOCK_METHOD1(sd_bus_message_get_destination, const char*(sd_bus_message*));
     MOCK_METHOD1(sd_bus_message_get_interface, const char*(sd_bus_message*));

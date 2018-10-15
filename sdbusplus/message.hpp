@@ -249,6 +249,21 @@ class message
         return cookie;
     }
 
+    /** @brief Get the reply cookie of a message.
+     *
+     * @return The reply cookie of a message.
+     */
+    auto get_reply_cookie()
+    {
+        uint64_t cookie;
+        int r = _intf->sd_bus_message_get_reply_cookie(_msg.get(), &cookie);
+        if (r < 0)
+        {
+            throw exception::SdBusError(-r, "sd_bus_message_get_reply_cookie");
+        }
+        return cookie;
+    }
+
     /** @brief Check if message is a method call for an interface/method.
      *
      *  @param[in] interface - The interface to match.

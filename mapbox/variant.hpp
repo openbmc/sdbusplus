@@ -1113,6 +1113,16 @@ ResultType& get_unchecked(T& var)
     return var.template get_unchecked<ResultType>();
 }
 
+template <typename ResultType, typename... Types>
+std::add_pointer_t<ResultType> get_if(variant<Types...>* v)
+{
+    if (v == nullptr || !v->template is<ResultType>())
+    {
+        return nullptr;
+    }
+    return &v->template get_unchecked<ResultType>();
+}
+
 #ifdef HAS_EXCEPTIONS
 template <typename ResultType, typename T>
 auto get(T const& var) -> decltype(var.template get<ResultType>())
@@ -1126,6 +1136,17 @@ ResultType const& get_unchecked(T const& var)
 {
     return var.template get_unchecked<ResultType>();
 }
+
+template <typename ResultType, typename... Types>
+std::add_pointer_t<const ResultType> get_if(const variant<Types...>* v)
+{
+    if (v == nullptr || !v->template is<ResultType>())
+    {
+        return nullptr;
+    }
+    return &v->template get_unchecked<ResultType>();
+}
+
 } // namespace util
 } // namespace mapbox
 

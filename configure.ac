@@ -6,6 +6,7 @@ AC_CONFIG_MACRO_DIRS([m4])
 AC_CONFIG_AUX_DIR([build-aux])
 AM_INIT_AUTOMAKE([subdir-objects -Wall -Werror foreign dist-xz])
 AM_SILENT_RULES([yes])
+AC_LANG([C++])
 
 # Make sure the default CFLAGS of `-O2 -g` don't override CODE_COVERAGE_CFLAGS
 # It is important that this comes before AC_PROG_C{C,XX}, as we are attempting
@@ -89,7 +90,6 @@ AS_IF([test "x$enable_tests" != "xno"], [
 
     AX_SAVE_FLAGS_WITH_PREFIX(OLD, [CPPFLAGS])
     AX_APPEND_COMPILE_FLAGS([$GTEST_CFLAGS], [CPPFLAGS])
-    AC_LANG_PUSH([C++])
     AC_CHECK_HEADERS([gtest/gtest.h], [
         AS_IF([test "x$GTEST_CFLAGS" = "x"], [
             AS_IF([test "x$PTHREAD_CFLAGS" = "x"], [
@@ -104,18 +104,15 @@ AS_IF([test "x$enable_tests" != "xno"], [
             AC_MSG_ERROR([Testing enabled but could not find gtest/gtest.h])
         ])
     ])
-    AC_LANG_POP([C++])
     AX_RESTORE_FLAGS_WITH_PREFIX(OLD, [CPPFLAGS])
 
     AX_SAVE_FLAGS_WITH_PREFIX(OLD, [CPPFLAGS])
     AX_APPEND_COMPILE_FLAGS([$GMOCK_CFLAGS], [CPPFLAGS])
-    AC_LANG_PUSH([C++])
     AC_CHECK_HEADERS([gmock/gmock.h], [], [
         AS_IF([test "x$enable_tests" = "xyes"], [
             AC_MSG_ERROR([Testing enabled but could not find gmock/gmock.h])
         ])
     ])
-    AC_LANG_POP([C++])
     AX_RESTORE_FLAGS_WITH_PREFIX(OLD, [CPPFLAGS])
 
     AX_SAVE_FLAGS_WITH_PREFIX(OLD, [LDFLAGS])

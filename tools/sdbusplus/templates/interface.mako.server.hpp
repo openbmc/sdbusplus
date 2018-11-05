@@ -88,6 +88,13 @@ ${p.camelCase}(${p.cppTypeParam(interface.name)} value,
         /** Set value of ${p.name} */
         virtual ${p.cppTypeParam(interface.name)} \
 ${p.camelCase}(${p.cppTypeParam(interface.name)} value);
+
+        % if p.cppTypeParam(interface.name).startswith("std::"):
+        /** Set value of ${p.name}  */
+        virtual ${p.cppTypeParam(interface.name)} \
+${p.camelCase}_cf(const ${p.cppTypeParam(interface.name)}& value);
+        % endif
+
     % endfor
 
     % if interface.properties:

@@ -66,6 +66,36 @@ int ${classname}::_callback_get_${property.name}(
     return true;
 }
 
+% if property.cppTypeParam(interface.name).startswith("std::"):
+auto ${classname}::${property.camelCase}_cf(const ${property.cppTypeParam(interface.name)}& value,
+                                         bool skipSignal) ->
+        ${property.cppTypeParam(interface.name)}
+{
+    if (_${property.camelCase} != value)
+    {
+        _${property.camelCase} = value;
+        if (!skipSignal)
+        {
+            _${interface_instance()}.property_changed("${property.name}");
+        }
+    }
+
+    return _${property.camelCase};
+}
+
+auto ${classname}::${property.camelCase}(${property.cppTypeParam(interface.name)} val,
+                                         bool skipSignal) ->
+        ${property.cppTypeParam(interface.name)}
+{
+    return ${property.camelCase}_cf(val, skipSignal);
+}
+
+auto ${classname}::${property.camelCase}(${property.cppTypeParam(interface.name)} val) ->
+        ${property.cppTypeParam(interface.name)}
+{
+    return ${property.camelCase}_cf(val, false);
+}
+% else:
 auto ${classname}::${property.camelCase}(${property.cppTypeParam(interface.name)} value,
                                          bool skipSignal) ->
         ${property.cppTypeParam(interface.name)}
@@ -87,6 +117,8 @@ auto ${classname}::${property.camelCase}(${property.cppTypeParam(interface.name)
 {
     return ${property.camelCase}(val, false);
 }
+% endif
+
 int ${classname}::_callback_set_${property.name}(
         sd_bus* bus, const char* path, const char* interface,
         const char* property, sd_bus_message* value, void* context,

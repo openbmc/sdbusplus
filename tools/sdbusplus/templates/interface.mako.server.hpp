@@ -81,6 +81,15 @@ ${ s.cpp_prototype(loader, interface=interface, ptype='header') }
     % for p in interface.properties:
         /** Get value of ${p.name} */
         virtual ${p.cppTypeParam(interface.name)} ${p.camelCase}() const;
+        % if p.cppTypeParam(interface.name).startswith("std::"):
+        /** Set value of ${p.name} with option to skip sending signal */
+        virtual ${p.cppTypeParam(interface.name)} \
+${p.camelCase}(const ${p.cppTypeParam(interface.name)}& value,
+               bool skipSignal);
+        /** Set value of ${p.name} */
+        virtual ${p.cppTypeParam(interface.name)} \
+${p.camelCase}(const ${p.cppTypeParam(interface.name)}& value);
+        % else:
         /** Set value of ${p.name} with option to skip sending signal */
         virtual ${p.cppTypeParam(interface.name)} \
 ${p.camelCase}(${p.cppTypeParam(interface.name)} value,
@@ -88,6 +97,7 @@ ${p.camelCase}(${p.cppTypeParam(interface.name)} value,
         /** Set value of ${p.name} */
         virtual ${p.cppTypeParam(interface.name)} \
 ${p.camelCase}(${p.cppTypeParam(interface.name)} value);
+        % endif
     % endfor
 
     % if interface.properties:

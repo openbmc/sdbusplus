@@ -87,6 +87,15 @@ auto ${classname}::${property.camelCase}(${property.cppTypeParam(interface.name)
 {
     return ${property.camelCase}(val, false);
 }
+
+% if property.cppTypeParam(interface.name).startswith("std::"):
+auto ${classname}::${property.camelCase}_cf(const ${property.cppTypeParam(interface.name)}& val) ->
+        ${property.cppTypeParam(interface.name)}
+{
+    return ${property.camelCase}(val, false);
+}
+% endif
+
 int ${classname}::_callback_set_${property.name}(
         sd_bus* bus, const char* path, const char* interface,
         const char* property, sd_bus_message* value, void* context,

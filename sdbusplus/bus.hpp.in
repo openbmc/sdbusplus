@@ -490,13 +490,31 @@ inline bus::bus(busp_t b, std::false_type) : _intf(&sdbus_impl), _bus(b)
 #endif
 }
 
+/* Create a new default connection: system bus if root, session bus if user */
 inline bus new_default()
 {
     sd_bus* b = nullptr;
-    sd_bus_open(&b);
+    sd_bus_default(&b);
     return bus(b, std::false_type());
 }
 
+/* Create a new default connection to the session bus */
+inline bus new_default_user()
+{
+    sd_bus* b = nullptr;
+    sd_bus_default_user(&b);
+    return bus(b, std::false_type());
+}
+
+/* Create a new default connection to the system bus */
+inline bus new_default_system()
+{
+    sd_bus* b = nullptr;
+    sd_bus_default_system(&b);
+    return bus(b, std::false_type());
+}
+
+/* WARNING: THESE ARE NOT THE FUNCTIONS YOU ARE LOOKING FOR! */
 inline bus new_user()
 {
     sd_bus* b = nullptr;

@@ -25,7 +25,7 @@ type-safety and memory leak protection afforded by modern C++ practices.
 
 Consider the following code:
 ```
-auto b = bus::new_system();
+auto b = bus::new_default_system();
 auto m = b.new_method_call("org.freedesktop.login1",
                            "/org/freedesktop/login1",
                            "org.freedesktop.login1.Manager",

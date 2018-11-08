@@ -47,7 +47,8 @@ class connection : public sdbusplus::bus::bus
   public:
     // default to system bus
     connection(boost::asio::io_service& io) :
-        sdbusplus::bus::bus(sdbusplus::bus::new_system()), io_(io), socket(io_)
+        sdbusplus::bus::bus(sdbusplus::bus::new_default_system()), io_(io),
+        socket(io_)
     {
         socket.assign(get_fd());
         read_wait();

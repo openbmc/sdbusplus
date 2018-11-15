@@ -38,6 +38,13 @@ class callback_set
     virtual int set(const boost::any& value) = 0;
 };
 
+enum PropertyReturnValue
+{
+    setPropertyFail = 0,
+    setPropertySuccess = 1,
+    setPropertySuccessSkipSignal = 2,
+};
+
 template <typename T>
 using FirstArgIsYield =
     std::is_same<typename utility::get_first_arg<typename utility::decay_tuple<
@@ -293,11 +300,29 @@ class callback_set_instance : public callback_set
         PropertyType input;
         m.read(input);
 
-        return func_(input, *value_);
+        auto oldValue = *value_;
+        if (func_(input, *value_))
+        {
+            if (oldValue == *value_)
+            {
+                return setPropertySuccessSkipSignal;
+            }
+            return setPropertySuccess;
+        }
+        return setPropertyFail;
     }
     int set(const boost::any& value)
     {
-        return func_(boost::any_cast<PropertyType>(value), *value_);
+        auto oldValue = *value_;
+        if (func_(boost::any_cast<PropertyType>(value), *value_))
+        {
+            if (oldValue == *value_)
+            {
+                return setPropertySuccessSkipSignal;
+            }
+            return setPropertySuccess;
+        }
+        return setPropertyFail;
     }
 
   private:
@@ -356,10 +381,6 @@ class dbus_interface
             PropertyType,
             std::function<int(const PropertyType&, PropertyType&)>>>(
             propertyPtr, [](const PropertyType& req, PropertyType& old) {
-                if (old == req)
-                {
-                    return 0;
-                }
                 old = req;
                 return 1;
             });
@@ -463,12 +484,15 @@ class dbus_interface
         auto func = callbacksSet_.find(name);
         if (func != callbacksSet_.end())
         {
-            if (func->second->set(value) != 1)
+            auto status = func->second->set(value);
+            if (status >= setPropertySuccess)
             {
-                return false;
+                if (status != setPropertySuccessSkipSignal)
+                {
+                    signal_property(name);
+                }
+                return true;
             }
-            signal_property(name);
-            return true;
         }
         return false;
     }
@@ -589,11 +613,15 @@ class dbus_interface
             {
 #endif
                 int status = func->second->call(mesg);
-                if (status == 1)
+                if (status >= setPropertySuccess)
                 {
-                    data->signal_property(property);
-                    return status;
+                    if (status != setPropertySuccessSkipSignal)
+                    {
+                        data->signal_property(property);
+                    }
+                    return true;
                 }
+                return false;
 #ifdef __EXCEPTIONS
             }
 

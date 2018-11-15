@@ -31,11 +31,19 @@ class callback
   public:
     virtual int call(message::message& m) = 0;
 };
+
+enum class SetPropertyReturnValue : size_t
+{
+    fail = 0,
+    valueUpdated,
+    sameValueUpdated,
+};
+
 class callback_set
 {
   public:
-    virtual int call(message::message& m) = 0;
-    virtual int set(const boost::any& value) = 0;
+    virtual SetPropertyReturnValue call(message::message& m) = 0;
+    virtual SetPropertyReturnValue set(const boost::any& value) = 0;
 };
 
 template <typename T>
@@ -288,16 +296,34 @@ class callback_set_instance : public callback_set
         func_(std::move(func))
     {
     }
-    int call(message::message& m) override
+    SetPropertyReturnValue call(message::message& m) override
     {
         PropertyType input;
         m.read(input);
 
-        return func_(input, *value_);
+        auto oldValue = *value_;
+        if (func_(input, *value_))
+        {
+            if (oldValue == *value_)
+            {
+                return SetPropertyReturnValue::sameValueUpdated;
+            }
+            return SetPropertyReturnValue::valueUpdated;
+        }
+        return SetPropertyReturnValue::fail;
     }
-    int set(const boost::any& value)
+    SetPropertyReturnValue set(const boost::any& value)
     {
-        return func_(boost::any_cast<PropertyType>(value), *value_);
+        auto oldValue = *value_;
+        if (func_(boost::any_cast<PropertyType>(value), *value_))
+        {
+            if (oldValue == *value_)
+            {
+                return SetPropertyReturnValue::sameValueUpdated;
+            }
+            return SetPropertyReturnValue::valueUpdated;
+        }
+        return SetPropertyReturnValue::fail;
     }
 
   private:
@@ -356,10 +382,6 @@ class dbus_interface
             PropertyType,
             std::function<int(const PropertyType&, PropertyType&)>>>(
             propertyPtr, [](const PropertyType& req, PropertyType& old) {
-                if (old == req)
-                {
-                    return 0;
-                }
                 old = req;
                 return 1;
             });
@@ -463,12 +485,16 @@ class dbus_interface
         auto func = callbacksSet_.find(name);
         if (func != callbacksSet_.end())
         {
-            if (func->second->set(value) != 1)
+            SetPropertyReturnValue status = func->second->set(value);
+            if ((status == SetPropertyReturnValue::valueUpdated) ||
+                (status == SetPropertyReturnValue::sameValueUpdated))
             {
-                return false;
+                if (status != SetPropertyReturnValue::sameValueUpdated)
+                {
+                    signal_property(name);
+                }
+                return true;
             }
-            signal_property(name);
-            return true;
         }
         return false;
     }
@@ -588,12 +614,17 @@ class dbus_interface
             try
             {
 #endif
-                int status = func->second->call(mesg);
-                if (status == 1)
+                SetPropertyReturnValue status = func->second->call(mesg);
+                if ((status == SetPropertyReturnValue::valueUpdated) ||
+                    (status == SetPropertyReturnValue::sameValueUpdated))
                 {
-                    data->signal_property(property);
-                    return status;
+                    if (status != SetPropertyReturnValue::sameValueUpdated)
+                    {
+                        data->signal_property(property);
+                    }
+                    return true;
                 }
+                return false;
 #ifdef __EXCEPTIONS
             }
 

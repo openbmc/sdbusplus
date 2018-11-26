@@ -6,7 +6,11 @@
 #include <sdbusplus/message/types.hpp>
 #include <sdbusplus/utility/tuple_to_array.hpp>
 #include <sdbusplus/utility/type_traits.hpp>
+#include <string>
 #include <tuple>
+#include <type_traits>
+#include <utility>
+#include <variant>
 
 namespace sdbusplus
 {
@@ -100,7 +104,7 @@ struct can_read_multiple<std::tuple<Args...>> : std::false_type
 };
 // variant needs to be broken down into components.
 template <typename... Args>
-struct can_read_multiple<variant<Args...>> : std::false_type
+struct can_read_multiple<std::variant<Args...>> : std::false_type
 {
 };
 
@@ -371,7 +375,7 @@ struct read_single<std::tuple<Args...>>
 
 /** @brief Specialization of read_single for std::variant. */
 template <typename... Args>
-struct read_single<variant<Args...>>
+struct read_single<std::variant<Args...>>
 {
     template <typename S, typename S1, typename... Args1>
     static void read(sdbusplus::SdBusInterface* intf, sd_bus_message* m, S&& s)

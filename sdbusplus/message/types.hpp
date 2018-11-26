@@ -264,7 +264,7 @@ struct type_id<std::tuple<Args...>>
 };
 
 template <typename... Args>
-struct type_id<variant<Args...>> : tuple_type_id<SD_BUS_TYPE_VARIANT>
+struct type_id<std::variant<Args...>> : tuple_type_id<SD_BUS_TYPE_VARIANT>
 {
 };
 

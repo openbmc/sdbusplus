@@ -1,8 +1,11 @@
 #pragma once
-#include <tuple>
-#include <systemd/sd-bus.h>
+#include <map>
+#include <string>
 #include <sdbusplus/sdbus.hpp>
 #include <sdbusplus/server.hpp>
+#include <systemd/sd-bus.h>
+#include <tuple>
+#include <variant>
 % for m in interface.methods + interface.properties + interface.signals:
 ${ m.cpp_prototype(loader, interface=interface, ptype='callback-hpp-includes') }
 % endfor
@@ -58,7 +61,7 @@ class ${classname}
     % endfor
 
     % if interface.properties:
-        using PropertiesVariant = sdbusplus::message::variant<
+        using PropertiesVariant = std::variant<
                 ${",\n                ".join(setOfPropertyTypes())}>;
 
         /** @brief Constructor to initialize the object from a map of

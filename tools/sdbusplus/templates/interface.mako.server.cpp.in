@@ -1,7 +1,12 @@
 #include <algorithm>
+#include <map>
 #include <sdbusplus/sdbus.hpp>
 #include <sdbusplus/server.hpp>
 #include <sdbusplus/exception.hpp>
+#include <string>
+#include <tuple>
+#include <variant>
+
 #include <${"/".join(interface.name.split('.') + [ 'server.hpp' ])}>
 % for m in interface.methods + interface.properties + interface.signals:
 ${ m.cpp_prototype(loader, interface=interface, ptype='callback-cpp-includes') }
@@ -61,7 +66,7 @@ void ${classname}::setPropertyByName(const std::string& _name,
         % for p in interface.properties:
     if (_name == "${p.name}")
     {
-        auto& v = message::variant_ns::get<${p.cppTypeParam(interface.name)}>(\
+        auto& v = std::get<${p.cppTypeParam(interface.name)}>(\
 val);
         ${p.camelCase}(v, skipSignal);
         return;

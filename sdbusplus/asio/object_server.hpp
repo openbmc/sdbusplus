@@ -665,9 +665,15 @@ class dbus_interface
         }
         return true;
     }
-    void signal_property(const std::string& name)
+
+    bool signal_property(const std::string& name)
     {
+        if (!initialized_)
+        {
+            return false;
+        }
         interface_->property_changed(name.c_str());
+        return true;
     }
 
     std::string get_object_path(void)

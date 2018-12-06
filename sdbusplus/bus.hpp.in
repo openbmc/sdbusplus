@@ -1,5 +1,8 @@
 #pragma once
 
+#include <systemd/sd-bus.h>
+#include <systemd/sd-event.h>
+
 #include <algorithm>
 #include <climits>
 #include <memory>
@@ -7,8 +10,6 @@
 #include <sdbusplus/message.hpp>
 #include <sdbusplus/sdbus.hpp>
 #include <string>
-#include <systemd/sd-bus.h>
-#include <systemd/sd-event.h>
 #include <vector>
 
 namespace sdbusplus
@@ -33,7 +34,8 @@ namespace server
 {
 namespace object
 {
-template <class...> struct object;
+template <class...>
+struct object;
 }
 } // namespace server
 namespace bus
@@ -74,28 +76,28 @@ struct BusDeleter
 /** @brief Convert a vector of strings to c-style char** array. */
 class Strv
 {
-    public:
-        ~Strv() = default;
-        Strv() = delete;
-        Strv(const Strv&) = delete;
-        Strv& operator=(const Strv&) = delete;
-        Strv(Strv&&) = default;
-        Strv& operator=(Strv&&) = default;
+  public:
+    ~Strv() = default;
+    Strv() = delete;
+    Strv(const Strv&) = delete;
+    Strv& operator=(const Strv&) = delete;
+    Strv(Strv&&) = default;
+    Strv& operator=(Strv&&) = default;
 
-        explicit Strv(const std::vector<std::string>& v)
-        {
-            std::transform(v.begin(), v.end(), std::back_inserter(ptrs),
-                           [](const auto& i) { return i.c_str(); });
-            ptrs.push_back(nullptr);
-        }
+    explicit Strv(const std::vector<std::string>& v)
+    {
+        std::transform(v.begin(), v.end(), std::back_inserter(ptrs),
+                       [](const auto& i) { return i.c_str(); });
+        ptrs.push_back(nullptr);
+    }
 
-        explicit operator char**()
-        {
-            return const_cast<char**>(&ptrs.front());
-        }
+    explicit operator char**()
+    {
+        return const_cast<char**>(&ptrs.front());
+    }
 
-    private:
-        std::vector<const char*> ptrs;
+  private:
+    std::vector<const char*> ptrs;
 };
 
 /* @brief Alias 'bus' to a unique_ptr type for auto-release. */
@@ -252,8 +254,8 @@ struct bus
     {
         sd_bus_error error = SD_BUS_ERROR_NULL;
         sd_bus_message* reply = nullptr;
-        int r = _intf->sd_bus_call(_bus.get(), m.get(), timeout_us, &error,
-                                   &reply);
+        int r =
+            _intf->sd_bus_call(_bus.get(), m.get(), timeout_us, &error, &reply);
         if (r < 0)
         {
             throw exception::SdBusError(&error, "sd_bus_call");
@@ -307,7 +309,8 @@ struct bus
         return std::string(unique);
     }
 
-    auto get_fd(){
+    auto get_fd()
+    {
         return _intf->sd_bus_get_fd(_bus.get());
     }
 
@@ -426,7 +429,8 @@ struct bus
 
     friend struct server::interface::interface;
     friend struct server::manager::manager;
-    template <class... Args> friend struct server::object::object;
+    template <class... Args>
+    friend struct server::object::object;
     friend struct match::match;
 
   protected:

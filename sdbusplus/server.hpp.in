@@ -9,14 +9,13 @@ namespace server
 {
 namespace match = bus::match;
 using match_t = bus::match_t;
-} // server
-} // sdbusplus
-#include <sdbusplus/vtable.hpp>
-
+} // namespace server
+} // namespace sdbusplus
+#include <sdbusplus/server/bindings.hpp>
 #include <sdbusplus/server/interface.hpp>
 #include <sdbusplus/server/manager.hpp>
 #include <sdbusplus/server/object.hpp>
-#include <sdbusplus/server/bindings.hpp>
+#include <sdbusplus/vtable.hpp>
 #if @WANT_TRANSACTION@
 #include <sdbusplus/server/transaction.hpp>
 #endif

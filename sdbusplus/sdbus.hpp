@@ -137,6 +137,7 @@ class SdBusInterface
                             uint64_t* cookie) = 0;
 
     virtual sd_bus* sd_bus_unref(sd_bus* bus) = 0;
+    virtual sd_bus* sd_bus_flush_close_unref(sd_bus* bus) = 0;
 
     virtual int sd_bus_wait(sd_bus* bus, uint64_t timeout_usec) = 0;
 };
@@ -448,6 +449,11 @@ class SdBusImpl : public SdBusInterface
     sd_bus* sd_bus_unref(sd_bus* bus) override
     {
         return ::sd_bus_unref(bus);
+    }
+
+    sd_bus* sd_bus_flush_close_unref(sd_bus* bus) override
+    {
+        return ::sd_bus_flush_close_unref(bus);
     }
 
     int sd_bus_wait(sd_bus* bus, uint64_t timeout_usec) override

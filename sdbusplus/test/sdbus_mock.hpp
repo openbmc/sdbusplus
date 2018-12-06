@@ -106,6 +106,7 @@ class SdBusMock : public SdBusInterface
     MOCK_METHOD3(sd_bus_request_name, int(sd_bus*, const char*, uint64_t));
     MOCK_METHOD3(sd_bus_send, int(sd_bus*, sd_bus_message*, uint64_t*));
     MOCK_METHOD1(sd_bus_unref, sd_bus*(sd_bus*));
+    MOCK_METHOD1(sd_bus_flush_close_unref, sd_bus*(sd_bus*));
     MOCK_METHOD2(sd_bus_wait, int(sd_bus*, uint64_t));
 };
 

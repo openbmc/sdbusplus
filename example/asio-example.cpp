@@ -65,13 +65,15 @@ void do_start_async_method_call_one(
         yield[ec], "xyz.openbmc_project.asio-test", "/xyz/openbmc_project/test",
         "org.freedesktop.DBus.Properties", "Get", "xyz.openbmc_project.test",
         "int");
-    if (!ec && testValue.get<int>() == 24)
+    if (!ec && sdbusplus::message::variant_ns::get<int>(testValue) == 24)
     {
         std::cout << "async call to Properties.Get serialized via yield OK!\n";
     }
     else
     {
-        std::cout << "ec = " << ec << ": " << testValue.get<int>() << "\n";
+        std::cout << "ec = " << ec << ": "
+                  << sdbusplus::message::variant_ns::get<int>(testValue)
+                  << "\n";
     }
     conn->yield_method_call<void>(
         yield[ec], "xyz.openbmc_project.asio-test", "/xyz/openbmc_project/test",
@@ -81,13 +83,15 @@ void do_start_async_method_call_one(
         yield[ec], "xyz.openbmc_project.asio-test", "/xyz/openbmc_project/test",
         "org.freedesktop.DBus.Properties", "Get", "xyz.openbmc_project.test",
         "int");
-    if (!ec && testValue.get<int>() == 42)
+    if (!ec && sdbusplus::message::variant_ns::get<int>(testValue) == 42)
     {
         std::cout << "async call to Properties.Get serialized via yield OK!\n";
     }
     else
     {
-        std::cout << "ec = " << ec << ": " << testValue.get<int>() << "\n";
+        std::cout << "ec = " << ec << ": "
+                  << sdbusplus::message::variant_ns::get<int>(testValue)
+                  << "\n";
     }
 }
 

@@ -65,12 +65,19 @@ namespace details
 /** @brief unique_ptr functor to release a bus reference. */
 struct BusDeleter
 {
-    void operator()(sd_bus* ptr) const
+    BusDeleter() = delete;
+    explicit BusDeleter(SdBusInterface* interface) : m_interface(interface)
     {
-        deleter(ptr);
     }
 
-    decltype(&sd_bus_flush_close_unref) deleter = sd_bus_flush_close_unref;
+    void operator()(sd_bus* ptr) const
+    {
+        (m_interface->*deleter)(ptr);
+    }
+
+    SdBusInterface* m_interface;
+    decltype(&SdBusInterface::sd_bus_flush_close_unref) deleter =
+        &SdBusInterface::sd_bus_flush_close_unref;
 };
 
 /** @brief Convert a vector of strings to c-style char** array. */
@@ -443,10 +450,9 @@ struct bus
 };
 
 inline bus::bus(busp_t b, sdbusplus::SdBusInterface* intf) :
-    _intf(intf), _bus(_intf->sd_bus_ref(b))
+    _intf(intf), _bus(_intf->sd_bus_ref(b), details::BusDeleter(intf))
 {
-    // We can leave this as the real deleter if we just use a null pointer.
-    _bus.get_deleter().deleter = sd_bus_unref;
+    _bus.get_deleter().deleter = &SdBusInterface::sd_bus_unref;
 
 #if @WANT_TRANSACTION@
     // Emitting object added causes a message to get the properties
@@ -461,10 +467,11 @@ inline bus::bus(busp_t b, sdbusplus::SdBusInterface* intf) :
 #endif
 }
 
-inline bus::bus(busp_t b) : _intf(&sdbus_impl), _bus(_intf->sd_bus_ref(b))
+inline bus::bus(busp_t b) :
+    _intf(&sdbus_impl),
+    _bus(_intf->sd_bus_ref(b), details::BusDeleter(&sdbus_impl))
 {
-    // We can leave this as the real deleter if we just use a null pointer.
-    _bus.get_deleter().deleter = sd_bus_unref;
+    _bus.get_deleter().deleter = &SdBusInterface::sd_bus_unref;
 
 #if @WANT_TRANSACTION@
     // Emitting object added causes a message to get the properties
@@ -479,7 +486,8 @@ inline bus::bus(busp_t b) : _intf(&sdbus_impl), _bus(_intf->sd_bus_ref(b))
 #endif
 }
 
-inline bus::bus(busp_t b, std::false_type) : _intf(&sdbus_impl), _bus(b)
+inline bus::bus(busp_t b, std::false_type) :
+    _intf(&sdbus_impl), _bus(b, details::BusDeleter(&sdbus_impl))
 {
 #if @WANT_TRANSACTION@
     // Emitting object added causes a message to get the properties

@@ -47,7 +47,7 @@ libsdbusplus_la_SOURCES = \
 	$(LIBSDBUSPLUS_FILES) \
 	$(LIBSDBUPLUS_FILES_TRANSACTION)
 libsdbusplus_la_LIBADD = $(SYSTEMD_LIBS) $(CODE_COVERAGE_LIBS)
-libsdbusplus_la_LDFLAGS = -version-info 1:0:0 -shared
+libsdbusplus_la_LDFLAGS = -version-info 1:0:0
 libsdbusplus_la_CPPFLAGS = $(CODE_COVERAGE_CPPFLAGS)
 libsdbusplus_la_CXXFLAGS = $(CODE_COVERAGE_CXXFLAGS) $(SYSTEMD_CFLAGS)
 

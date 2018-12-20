@@ -6,7 +6,7 @@
 class Match : public ::testing::Test
 {
   protected:
-    decltype(sdbusplus::bus::new_default()) bus = sdbusplus::bus::new_default();
+    sdbusplus::bus::bus bus = sdbusplus::bus::bus(nullptr, std::false_type());
 
     static constexpr auto busName = "xyz.openbmc_project.sdbusplus.test.Match";
 
@@ -23,6 +23,18 @@ class Match : public ::testing::Test
             bus.wait(0);
             bus.process_discard();
         }
+    }
+
+    void SetUp()
+    {
+        bus = sdbusplus::bus::new_bus();
+    }
+
+    void TearDown()
+    {
+        // We need to make sure our bus is clean for the next test
+        bus.flush();
+        bus.close();
     }
 };
 

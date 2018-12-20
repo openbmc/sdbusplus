@@ -76,8 +76,8 @@ struct BusDeleter
     }
 
     SdBusInterface* m_interface;
-    decltype(&SdBusInterface::sd_bus_flush_close_unref) deleter =
-        &SdBusInterface::sd_bus_flush_close_unref;
+    decltype(&SdBusInterface::sd_bus_unref) deleter =
+        &SdBusInterface::sd_bus_unref;
 };
 
 /** @brief Convert a vector of strings to c-style char** array. */
@@ -144,10 +144,22 @@ struct bus
     /** @brief Constructor for 'bus'.
      *
      *  Takes ownership of the bus-pointer and releases it when done.
-     *  This method will also cause the bus to be flushed and closed
-     *  on destruction.
      */
     bus(busp_t b, std::false_type);
+
+    /** @brief Close the connection to the dbus daemon. */
+    void set_should_close(bool shouldClose)
+    {
+        if (shouldClose)
+        {
+            _bus.get_deleter().deleter =
+                &SdBusInterface::sd_bus_flush_close_unref;
+        }
+        else
+        {
+            _bus.get_deleter().deleter = &SdBusInterface::sd_bus_unref;
+        }
+    }
 
     /** @brief Release ownership of the stored bus-pointer. */
     busp_t release()
@@ -468,8 +480,6 @@ struct bus
 inline bus::bus(busp_t b, sdbusplus::SdBusInterface* intf) :
     _intf(intf), _bus(_intf->sd_bus_ref(b), details::BusDeleter(intf))
 {
-    _bus.get_deleter().deleter = &SdBusInterface::sd_bus_unref;
-
 #if @WANT_TRANSACTION@
     // Emitting object added causes a message to get the properties
     // which can trigger a 'transaction' in the server bindings.  If
@@ -487,8 +497,6 @@ inline bus::bus(busp_t b) :
     _intf(&sdbus_impl),
     _bus(_intf->sd_bus_ref(b), details::BusDeleter(&sdbus_impl))
 {
-    _bus.get_deleter().deleter = &SdBusInterface::sd_bus_unref;
-
 #if @WANT_TRANSACTION@
     // Emitting object added causes a message to get the properties
     // which can trigger a 'transaction' in the server bindings.  If
@@ -547,21 +555,27 @@ inline bus new_bus()
 {
     sd_bus* b = nullptr;
     sd_bus_open(&b);
-    return bus(b, std::false_type());
+    bus bus(b, std::false_type());
+    bus.set_should_close(true);
+    return bus;
 }
 
 inline bus new_user()
 {
     sd_bus* b = nullptr;
     sd_bus_open_user(&b);
-    return bus(b, std::false_type());
+    bus bus(b, std::false_type());
+    bus.set_should_close(true);
+    return bus;
 }
 
 inline bus new_system()
 {
     sd_bus* b = nullptr;
     sd_bus_open_system(&b);
-    return bus(b, std::false_type());
+    bus bus(b, std::false_type());
+    bus.set_should_close(true);
+    return bus;
 }
 
 } // namespace bus

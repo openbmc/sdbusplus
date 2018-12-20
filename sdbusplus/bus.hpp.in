@@ -543,6 +543,13 @@ inline bus new_default_system()
 }
 
 /* WARNING: THESE ARE NOT THE FUNCTIONS YOU ARE LOOKING FOR! */
+inline bus new_bus()
+{
+    sd_bus* b = nullptr;
+    sd_bus_open(&b);
+    return bus(b, std::false_type());
+}
+
 inline bus new_user()
 {
     sd_bus* b = nullptr;

@@ -76,8 +76,8 @@ struct BusDeleter
     }
 
     SdBusInterface* m_interface;
-    decltype(&SdBusInterface::sd_bus_flush_close_unref) deleter =
-        &SdBusInterface::sd_bus_flush_close_unref;
+    decltype(&SdBusInterface::sd_bus_unref) deleter =
+        &SdBusInterface::sd_bus_unref;
 };
 
 /** @brief Convert a vector of strings to c-style char** array. */
@@ -144,8 +144,6 @@ struct bus
     /** @brief Constructor for 'bus'.
      *
      *  Takes ownership of the bus-pointer and releases it when done.
-     *  This method will also cause the bus to be flushed and closed
-     *  on destruction.
      */
     bus(busp_t b, std::false_type);
 

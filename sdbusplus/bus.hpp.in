@@ -181,12 +181,7 @@ struct bus
      */
     auto process_discard()
     {
-        int r = _intf->sd_bus_process(_bus.get(), nullptr);
-        if (r < 0)
-        {
-            throw exception::SdBusError(-r, "sd_bus_process discard");
-        }
-        return r > 0;
+        return _intf->sd_bus_process(_bus.get(), nullptr);
     }
 
     /** @brief Claim a service name on the dbus.

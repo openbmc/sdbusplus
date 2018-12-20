@@ -6,7 +6,7 @@
 class Match : public ::testing::Test
 {
   protected:
-    decltype(sdbusplus::bus::new_default()) bus = sdbusplus::bus::new_default();
+    sdbusplus::bus::bus bus = sdbusplus::bus::new_bus();
 
     static constexpr auto busName = "xyz.openbmc_project.sdbusplus.test.Match";
 

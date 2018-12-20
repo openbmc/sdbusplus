@@ -155,6 +155,22 @@ struct bus
         return _bus.release();
     }
 
+    /** @brief Flush all of the outstanding work on the bus. */
+    void flush()
+    {
+        int r = _intf->sd_bus_flush(_bus.get());
+        if (r < 0)
+        {
+            throw exception::SdBusError(-r, "sd_bus_flush");
+        }
+    }
+
+    /** @brief Close the connection to the dbus daemon. */
+    void close()
+    {
+        _intf->sd_bus_close(_bus.get());
+    }
+
     /** @brief Wait for new dbus messages or signals.
      *
      *  @param[in] timeout_us - Timeout in usec.

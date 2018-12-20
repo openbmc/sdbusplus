@@ -77,7 +77,7 @@ struct BusDeleter
 
     SdBusInterface* m_interface;
     decltype(&SdBusInterface::sd_bus_flush_close_unref) deleter =
-        &SdBusInterface::sd_bus_flush_close_unref;
+        &SdBusInterface::sd_bus_unref;
 };
 
 /** @brief Convert a vector of strings to c-style char** array. */

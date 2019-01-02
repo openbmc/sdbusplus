@@ -46,13 +46,13 @@ class connection : public sdbusplus::bus::bus
 {
   public:
     // default to system bus
-    connection(boost::asio::io_service& io) :
+    connection(boost::asio::io_context& io) :
         sdbusplus::bus::bus(sdbusplus::bus::new_system()), io_(io), socket(io_)
     {
         socket.assign(get_fd());
         read_wait();
     }
-    connection(boost::asio::io_service& io, sd_bus* bus) :
+    connection(boost::asio::io_context& io, sd_bus* bus) :
         sdbusplus::bus::bus(bus), io_(io), socket(io_)
     {
         socket.assign(get_fd());
@@ -202,13 +202,13 @@ class connection : public sdbusplus::bus::bus
         }
     }
 
-    boost::asio::io_service& get_io_service()
+    boost::asio::io_context& get_io_context()
     {
         return io_;
     }
 
   private:
-    boost::asio::io_service& io_;
+    boost::asio::io_context& io_;
     boost::asio::posix::stream_descriptor socket;
 
     void read_wait()
@@ -228,7 +228,7 @@ class connection : public sdbusplus::bus::bus
     }
     void read_immediate()
     {
-        io_.post([&] {
+	    boost::asio::post(io_, [&] {
             if (process_discard())
             {
                 read_immediate();

@@ -24,13 +24,13 @@ namespace sdbusplus
 
 namespace asio
 {
-/* A simple class to integrate the sd_event_loop into the boost::asio io_service
+/* A simple class to integrate the sd_event_loop into the boost::asio io_context
  * in case a boost::asio user needs sd_events
  */
 class sd_event_wrapper
 {
   public:
-    sd_event_wrapper(boost::asio::io_service& io) :
+    sd_event_wrapper(boost::asio::io_context& io) :
         evt(nullptr), descriptor(io), io(io)
     {
         sd_event_default(&evt);
@@ -40,7 +40,7 @@ class sd_event_wrapper
             async_run();
         }
     }
-    sd_event_wrapper(sd_event* evt, boost::asio::io_service& io) :
+    sd_event_wrapper(sd_event* evt, boost::asio::io_context& io) :
         evt(evt), descriptor(io), io(io)
     {
         if (evt)
@@ -117,7 +117,7 @@ class sd_event_wrapper
     }
     sd_event* evt;
     boost::asio::posix::stream_descriptor descriptor;
-    boost::asio::io_service& io;
+    boost::asio::io_context& io;
 };
 
 } // namespace asio

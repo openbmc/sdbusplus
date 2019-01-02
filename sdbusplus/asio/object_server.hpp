@@ -180,7 +180,7 @@ template <typename CallbackType>
 class coroutine_method_instance : public callback
 {
   public:
-    coroutine_method_instance(boost::asio::io_service& io,
+    coroutine_method_instance(boost::asio::io_context& io,
                               CallbackType&& func) :
         io_(io),
         func_(std::move(func))
@@ -204,7 +204,7 @@ class coroutine_method_instance : public callback
     using InputTupleType =
         typename utility::decay_tuple<CallbackSignature>::type;
     using ResultType = boost::callable_traits::return_type_t<CallbackType>;
-    boost::asio::io_service& io_;
+    boost::asio::io_context& io_;
     CallbackType func_;
     template <typename T>
     std::enable_if_t<!std::is_void<T>::value, void>
@@ -500,7 +500,7 @@ class dbus_interface
         {
             callbacksMethod_[name] =
                 std::make_unique<coroutine_method_instance<CallbackType>>(
-                    conn_->get_io_service(), std::move(handler));
+                    conn_->get_io_context(), std::move(handler));
         }
         else
         {

@@ -174,7 +174,7 @@ void do_start_async_to_yield(std::shared_ptr<sdbusplus::asio::connection> conn,
 int server()
 {
     // setup connection to dbus
-    boost::asio::io_service io;
+    boost::asio::io_context io;
     auto conn = std::make_shared<sdbusplus::asio::connection>(io);
 
     // test object server
@@ -254,7 +254,7 @@ int client()
     using message = sdbusplus::message::message;
 
     // setup connection to dbus
-    boost::asio::io_service io;
+    boost::asio::io_context io;
     auto conn = std::make_shared<sdbusplus::asio::connection>(io);
 
     int ready = 0;

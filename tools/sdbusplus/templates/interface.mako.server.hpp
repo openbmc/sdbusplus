@@ -139,7 +139,7 @@ ${ m.cpp_prototype(loader, interface=interface, ptype='callback-header') }
         sdbusplus::SdBusInterface *_intf;
 
     % for p in interface.properties:
-        % if p.defaultValue:
+        % if p.defaultValue is not None:
         ${p.cppTypeParam(interface.name)} _${p.camelCase} = \
             % if p.is_enum():
 ${p.cppTypeParam(interface.name)}::\

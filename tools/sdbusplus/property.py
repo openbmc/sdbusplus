@@ -11,12 +11,6 @@ class Property(NamedElement, Renderer):
         self.flags = kwargs.pop('flags', [])
         self.errors = kwargs.pop('errors', [])
 
-        # Convert True/False to 'true'/'false'
-        # because it will be rendered as C++ code
-        if (self.defaultValue is not None and
-                isinstance(self.defaultValue, bool)):
-            self.defaultValue = 'true' if self.defaultValue else 'false'
-
         super(Property, self).__init__(**kwargs)
 
     def is_enum(self):

@@ -738,12 +738,13 @@ class dbus_interface
 class object_server
 {
   public:
-    object_server(std::shared_ptr<sdbusplus::asio::connection>& conn) :
+    object_server(std::shared_ptr<sdbusplus::asio::connection>& conn,
+                  const std::string& path = "/") :
         conn_(conn)
     {
-        auto root = add_interface("/", "");
+        auto root = add_interface(path, "");
         root->initialize();
-        add_manager("/");
+        add_manager(path);
     }
 
     std::shared_ptr<dbus_interface> add_interface(const std::string& path,

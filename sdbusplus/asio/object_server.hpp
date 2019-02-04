@@ -697,6 +697,11 @@ class dbus_interface
         return true;
     }
 
+    bool is_initialized()
+    {
+        return initialized_;
+    }
+
     bool signal_property(const std::string& name)
     {
         if (!initialized_)

@@ -1,0 +1,10 @@
+Ok-To-Test+1: Jenkins <openbmc-ci-admin@ozlabs.org>
+Code-Review+1: James Feist <james.feist@linux.intel.com>
+Code-Review+2: William A. Kennington III <wak@google.com>
+Ok-To-Test+1: George Keishing <gkeishin@in.ibm.com>
+Verified+1: Jenkins <openbmc-ci-admin@ozlabs.org>
+Submitted-by: Richard Marian Thomaiyar <richard.marian.thomaiyar@linux.intel.com>
+Submitted-at: Tue, 05 Feb 2019 08:13:34 +0000
+Reviewed-on: https://gerrit.openbmc-project.xyz/17722
+Project: openbmc/sdbusplus
+Branch: refs/heads/master

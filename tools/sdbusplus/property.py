@@ -11,11 +11,15 @@ class Property(NamedElement, Renderer):
         self.flags = kwargs.pop('flags', [])
         self.errors = kwargs.pop('errors', [])
 
-        # Convert True/False to 'true'/'false'
-        # because it will be rendered as C++ code
-        if (self.defaultValue is not None and
-                isinstance(self.defaultValue, bool)):
-            self.defaultValue = 'true' if self.defaultValue else 'false'
+        if (self.defaultValue is not None):
+            if (isinstance(self.defaultValue, bool)):
+                # Convert True/False to 'true'/'false'
+                # because it will be rendered as C++ code
+                self.defaultValue = 'true' if self.defaultValue else 'false'
+            elif(isinstance(self.defaultValue, str) and
+                 self.typeName.lower() == "string"):
+                # Wrap string type default values with double-quotes
+                self.defaultValue = "\"" + self.defaultValue + "\""
 
         super(Property, self).__init__(**kwargs)
 

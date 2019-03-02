@@ -85,6 +85,11 @@ struct unix_fd_type
 {
     int fd;
 
+    unix_fd_type() = default;
+    unix_fd_type(int f) : fd(f)
+    {
+    }
+
     operator int() const
     {
         return fd;

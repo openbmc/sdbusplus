@@ -20,7 +20,6 @@ class Match : public ::testing::Test
     {
         for (size_t i = 0; (i < 16) && !triggered; ++i)
         {
-            bus.wait(0);
             bus.process_discard();
         }
     }

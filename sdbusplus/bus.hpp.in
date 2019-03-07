@@ -186,15 +186,11 @@ struct bus
 
     /** @brief Wait for new dbus messages or signals.
      *
-     *  @param[in] timeout_us - Timeout in usec.
+     *  @param[in] timeout - Timeout in usec.
      */
-    void wait(uint64_t timeout_us)
-    {
-        _intf->sd_bus_wait(_bus.get(), timeout_us);
-    }
     void wait(std::optional<SdBusDuration> timeout = std::nullopt)
     {
-        wait(timeout ? timeout->count() : UINT64_MAX);
+        _intf->sd_bus_wait(_bus.get(), timeout ? timeout->count() : UINT64_MAX);
     }
 
     /** @brief Process waiting dbus messages or signals. */
@@ -286,16 +282,18 @@ struct bus
      *         is_method_error() on the returned message.
      *
      *  @param[in] m - The method_call message.
-     *  @param[in] timeout_us - The timeout for the method call.
+     *  @param[in] timeout - The timeout for the method call.
      *
      *  @return The response message.
      */
-    auto call(message::message& m, uint64_t timeout_us)
+    auto call(message::message& m,
+              std::optional<SdBusDuration> timeout = std::nullopt)
     {
         sd_bus_error error = SD_BUS_ERROR_NULL;
         sd_bus_message* reply = nullptr;
-        int r =
-            _intf->sd_bus_call(_bus.get(), m.get(), timeout_us, &error, &reply);
+        int r = _intf->sd_bus_call(_bus.get(), m.get(),
+                                   timeout ? timeout->count() : 0,
+                                   &error, &reply);
         if (r < 0)
         {
             throw exception::SdBusError(&error, "sd_bus_call");
@@ -303,54 +301,42 @@ struct bus
 
         return message::message(reply, _intf, std::false_type());
     }
-    auto call(message::message& m,
-              std::optional<SdBusDuration> timeout = std::nullopt)
-    {
-        return call(m, timeout ? timeout->count() : 0);
-    }
 
     /** @brief Perform a message call, ignoring the reply.
      *
      *  @param[in] m - The method_call message.
-     *  @param[in] timeout_us - The timeout for the method call.
+     *  @param[in] timeout - The timeout for the method call.
      */
-    void call_noreply(message::message& m, uint64_t timeout_us)
+    auto call_noreply(message::message& m,
+                      std::optional<SdBusDuration> timeout = std::nullopt)
     {
         sd_bus_error error = SD_BUS_ERROR_NULL;
-        int r = _intf->sd_bus_call(_bus.get(), m.get(), timeout_us, &error,
-                                   nullptr);
+        int r = _intf->sd_bus_call(_bus.get(), m.get(),
+                                   timeout ? timeout->count() : 0,
+                                   &error, nullptr);
         if (r < 0)
         {
             throw exception::SdBusError(&error, "sd_bus_call noreply");
         }
-    }
-    auto call_noreply(message::message& m,
-                      std::optional<SdBusDuration> timeout = std::nullopt)
-    {
-        return call_noreply(m, timeout ? timeout->count() : 0);
     }
 
     /** @brief Perform a message call, ignoring the reply and any errors
      *         in the dbus stack.
      *
      *  @param[in] m - The method_call message.
-     *  @param[in] timeout_us - The timeout for the method call.
+     *  @param[in] timeout - The timeout for the method call.
      */
-    void call_noreply_noerror(message::message& m, uint64_t timeout_us)
+    auto call_noreply_noerror(message::message& m,
+                              std::optional<SdBusDuration> timeout = std::nullopt)
     {
         try
         {
-            call_noreply(m, timeout_us);
+            call_noreply(m, timeout);
         }
         catch (exception::SdBusError&)
         {
             // Intentionally ignoring these sd_bus errors
         }
-    }
-    auto call_noreply_noerror(message::message& m,
-                              std::optional<SdBusDuration> timeout = std::nullopt)
-    {
-        return call_noreply_noerror(m, timeout ? timeout->count() : 0);
     }
 
     /** @brief Get the bus unique name. Ex: ":1.11".

@@ -2,9 +2,15 @@
 
 #include <systemd/sd-bus.h>
 
+#include <chrono>
+
 // ABC for sdbus implementation.
 namespace sdbusplus
 {
+
+// Defined by systemd taking uint64_t usec params
+using SdBusDuration =
+    std::chrono::duration<uint64_t, std::chrono::microseconds::period>;
 
 // A wrapper for interfacing or testing sd-bus.  This will hold methods for
 // buses, messages, etc.

@@ -52,6 +52,9 @@ class sd_event_wrapper
     }
     ~sd_event_wrapper()
     {
+        // sd_event really wants to close the descriptor on its own
+        // so this class must merely release it
+        descriptor.release();
         sd_event_unref(evt);
     }
     // process one event step in the queue

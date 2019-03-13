@@ -88,9 +88,9 @@ class connection : public sdbusplus::bus::bus
         boost::asio::async_completion<
             MessageHandler, void(boost::system::error_code, message::message)>
             init(handler);
-        detail::async_send_handler<typename boost::asio::handler_type<
-            MessageHandler,
-            void(boost::system::error_code, message::message)>::type>(
+        detail::async_send_handler<typename boost::asio::async_result<
+            MessageHandler, void(boost::system::error_code,
+                                 message::message)>::completion_handler_type>(
             std::move(init.completion_handler))(get(), m);
         return init.result.get();
     }

@@ -11,7 +11,7 @@ namespace slot
 {
 
 using slotp_t = sd_bus_slot*;
-class slot;
+struct slot;
 
 namespace details
 {

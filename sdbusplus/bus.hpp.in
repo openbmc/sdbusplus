@@ -51,7 +51,7 @@ namespace bus
 {
 
 using busp_t = sd_bus*;
-class bus;
+struct bus;
 
 /** @brief Get an instance of the 'default' bus. */
 bus new_default();

@@ -27,6 +27,8 @@ __pycache__
 .dirstamp
 .libs
 /aclocal.m4
+/aminclude_static.am
+/autom4te.cache
 /build-aux
 /config.h
 /config.h.in

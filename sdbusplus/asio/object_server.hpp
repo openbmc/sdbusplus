@@ -674,7 +674,7 @@ class dbus_interface
         return sd_bus_error_set_const(error, SD_BUS_ERROR_INVALID_ARGS, NULL);
     }
 
-    bool initialize()
+    bool initialize(const bool skipPropertyChangedSignal = false)
     {
         // can only register once
         if (initialized_)
@@ -690,9 +690,12 @@ class dbus_interface
             this);
         conn_->emit_interfaces_added(path_.c_str(),
                                      std::vector<std::string>{name_});
-        for (const std::string& name : propertyNames_)
+        if (!skipPropertyChangedSignal)
         {
-            signal_property(name);
+            for (const std::string& name : propertyNames_)
+            {
+                signal_property(name);
+            }
         }
         return true;
     }

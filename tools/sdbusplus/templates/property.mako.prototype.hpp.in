@@ -19,6 +19,19 @@
         l = error_namespace(e).split('::')
         l.pop() # Remove "Error"
         return '/'.join(l) + '/error.hpp';
+
+    def enum_includes(l):
+        includes = []
+        for e in l:
+            es = e.enum_namespace(interface.name).split('::')
+            if len(es) < 2:
+                continue
+            es.pop()  # Remove trailing empty element
+            name = es.pop()
+            es.pop()  # Remove injected cpp namespace
+            es.append(name)
+            includes.append('/'.join(es) + '/server.hpp')
+        return includes
 %>
 % if ptype == 'callback-cpp':
 auto ${classname}::${property.camelCase}() const ->
@@ -142,5 +155,9 @@ static const auto _property_${property.name} =
 % elif ptype == 'callback-cpp-includes':
         % for e in property.errors:
 #include <${error_include(e)}>
+        % endfor
+% elif ptype == 'callback-hpp-includes':
+        % for i in enum_includes([property]):
+#include <${i}>
         % endfor
 % endif

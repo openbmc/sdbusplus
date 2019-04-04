@@ -64,6 +64,19 @@
         l.pop() # Remove "Error"
         return '/'.join(l) + '/error.hpp';
 
+    def enum_includes(l):
+        includes = []
+        for e in l:
+            es = e.enum_namespace(interface.name).split('::')
+            if len(es) < 2:
+                continue
+            es.pop()  # Remove trailing empty element
+            name = es.pop()
+            es.pop()  # Remove injected cpp namespace
+            es.append(name)
+            includes.append('/'.join(es) + '/server.hpp')
+        return includes
+
     def enum_convert(p):
         if not p.is_enum():
             return p.camelCase
@@ -198,5 +211,9 @@ static const auto _return_${ method.CamelCase } =
     % elif ptype == 'callback-cpp-includes':
         % for e in method.errors:
 #include <${error_include(e)}>
+        % endfor
+    % elif ptype == 'callback-hpp-includes':
+        % for i in enum_includes(method.returns + method.parameters):
+#include <${i}>
         % endfor
     % endif

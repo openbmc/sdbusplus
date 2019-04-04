@@ -25,6 +25,19 @@
 
     def interface_name():
         return interface.name.split('.').pop()
+
+    def enum_includes(l):
+        includes = []
+        for e in l:
+            es = e.enum_namespace(interface.name).split('::')
+            if len(es) < 2:
+                continue
+            es.pop()  # Remove trailing empty element
+            name = es.pop()
+            es.pop()  # Remove injected cpp namespace
+            es.append(name)
+            includes.append('/'.join(es) + '/server.hpp')
+        return includes
 %>
 ###
 ### Emit 'header'
@@ -78,4 +91,8 @@ static const auto _signal_${ signal.CamelCase } =
     % endif
 }
 }
+    % elif ptype == 'callback-hpp-includes':
+        % for i in enum_includes(signal.properties):
+#include <${i}>
+        % endfor
     % endif

@@ -3,6 +3,9 @@
 #include <systemd/sd-bus.h>
 #include <sdbusplus/sdbus.hpp>
 #include <sdbusplus/server.hpp>
+% for m in interface.methods + interface.properties + interface.signals:
+${ m.cpp_prototype(loader, interface=interface, ptype='callback-hpp-includes') }
+% endfor
 <%
     namespaces = interface.name.split('.')
     classname = namespaces.pop()

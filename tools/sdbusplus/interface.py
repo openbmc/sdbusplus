@@ -32,6 +32,21 @@ class Interface(NamedElement, Renderer):
 
         super(Interface, self).__init__(**kwargs)
 
+    def enum_includes(self, l):
+        includes = []
+        for e in l:
+            es = e.enum_namespace(self.name).split('::')
+            # Skip empty, non-enum values and self references like '::'
+            if len(es) < 2:
+                continue
+            # All elements will be formatted (x::)+
+            es.pop()  # Remove trailing empty element
+            name = es.pop()
+            es.pop()  # Remove injected cpp namespace
+            es.append(name)
+            includes.append('/'.join(es) + '/server.hpp')
+        return includes
+
     def markdown(self, loader):
         return self.render(loader, "interface.mako.md", interface=self)
 

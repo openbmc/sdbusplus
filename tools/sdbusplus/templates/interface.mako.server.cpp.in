@@ -3,11 +3,8 @@
 #include <sdbusplus/server.hpp>
 #include <sdbusplus/exception.hpp>
 #include <${"/".join(interface.name.split('.') + [ 'server.hpp' ])}>
-% for m in interface.methods:
+% for m in interface.methods + interface.properties + interface.signals:
 ${ m.cpp_prototype(loader, interface=interface, ptype='callback-cpp-includes') }
-% endfor
-% for p in interface.properties:
-${ p.cpp_prototype(loader, interface=interface, ptype='callback-cpp-includes') }
 % endfor
 <%
     namespaces = interface.name.split('.')

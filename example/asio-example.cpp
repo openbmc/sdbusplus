@@ -28,7 +28,7 @@ int fooYield(boost::asio::yield_context yield,
     boost::system::error_code ec;
     std::cout << "fooYield(yield, " << test << ")...\n";
     int testCount = conn->yield_method_call<int>(
-        yield[ec], "xyz.openbmc_project.asio-test", "/xyz/openbmc_project/test",
+        yield, ec, "xyz.openbmc_project.asio-test", "/xyz/openbmc_project/test",
         "xyz.openbmc_project.test", "TestFunction", test);
     if (ec || testCount != (test + 1))
     {
@@ -58,12 +58,12 @@ void do_start_async_method_call_one(
 {
     boost::system::error_code ec;
     variant testValue;
-    conn->yield_method_call<>(yield[ec], "xyz.openbmc_project.asio-test",
+    conn->yield_method_call<>(yield, ec, "xyz.openbmc_project.asio-test",
                               "/xyz/openbmc_project/test",
                               "org.freedesktop.DBus.Properties", "Set",
                               "xyz.openbmc_project.test", "int", variant(24));
     testValue = conn->yield_method_call<variant>(
-        yield[ec], "xyz.openbmc_project.asio-test", "/xyz/openbmc_project/test",
+        yield, ec, "xyz.openbmc_project.asio-test", "/xyz/openbmc_project/test",
         "org.freedesktop.DBus.Properties", "Get", "xyz.openbmc_project.test",
         "int");
     if (!ec && std::get<int>(testValue) == 24)
@@ -75,11 +75,11 @@ void do_start_async_method_call_one(
         std::cout << "ec = " << ec << ": " << std::get<int>(testValue) << "\n";
     }
     conn->yield_method_call<void>(
-        yield[ec], "xyz.openbmc_project.asio-test", "/xyz/openbmc_project/test",
+        yield, ec, "xyz.openbmc_project.asio-test", "/xyz/openbmc_project/test",
         "org.freedesktop.DBus.Properties", "Set", "xyz.openbmc_project.test",
         "int", variant(42));
     testValue = conn->yield_method_call<variant>(
-        yield[ec], "xyz.openbmc_project.asio-test", "/xyz/openbmc_project/test",
+        yield, ec, "xyz.openbmc_project.asio-test", "/xyz/openbmc_project/test",
         "org.freedesktop.DBus.Properties", "Get", "xyz.openbmc_project.test",
         "int");
     if (!ec && std::get<int>(testValue) == 42)
@@ -149,7 +149,7 @@ void do_start_async_to_yield(std::shared_ptr<sdbusplus::asio::connection> conn,
     try
     {
         testValue = conn->yield_method_call<int>(
-            yield[ec], "xyz.openbmc_project.asio-test",
+            yield, ec, "xyz.openbmc_project.asio-test",
             "/xyz/openbmc_project/test", "xyz.openbmc_project.test",
             "TestYieldFunction", int(41));
     }

@@ -132,7 +132,11 @@ class connection : public sdbusplus::bus::bus
             UnpackType responseData;
             if (!ec)
             {
-                if (!utility::read_into_tuple(responseData, r))
+                try
+                {
+                    utility::read_into_tuple(responseData, r);
+                }
+                catch (const std::exception& e)
                 {
                     // Set error code if not already set
                     ec = boost::system::errc::make_error_code(

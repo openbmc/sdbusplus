@@ -146,17 +146,10 @@ void do_start_async_to_yield(std::shared_ptr<sdbusplus::asio::connection> conn,
 {
     boost::system::error_code ec;
     int testValue = 0;
-    try
-    {
-        testValue = conn->yield_method_call<int>(
-            yield, ec, "xyz.openbmc_project.asio-test",
-            "/xyz/openbmc_project/test", "xyz.openbmc_project.test",
-            "TestYieldFunction", int(41));
-    }
-    catch (sdbusplus::exception::SdBusError& e)
-    {
-        std::cout << "oops: " << e.what() << "\n";
-    }
+    testValue = conn->yield_method_call<int>(
+        yield, ec, "xyz.openbmc_project.asio-test", "/xyz/openbmc_project/test",
+        "xyz.openbmc_project.test", "TestYieldFunction", int(41));
+
     if (!ec && testValue == 42)
     {
         std::cout
@@ -165,6 +158,35 @@ void do_start_async_to_yield(std::shared_ptr<sdbusplus::asio::connection> conn,
     else
     {
         std::cout << "ec = " << ec << ": " << testValue << "\n";
+    }
+
+    ec.clear();
+    auto badValue = conn->yield_method_call<std::string>(
+        yield, ec, "xyz.openbmc_project.asio-test", "/xyz/openbmc_project/test",
+        "xyz.openbmc_project.test", "TestYieldFunction", int(41));
+
+    if (!ec)
+    {
+        std::cout
+            << "yielding call to TestYieldFunction returned the wrong type\n";
+    }
+    else
+    {
+        std::cout << "TestYieldFunction expected error: " << ec << "\n";
+    }
+
+    ec.clear();
+    auto unUsedValue = conn->yield_method_call<std::string>(
+        yield, ec, "xyz.openbmc_project.asio-test", "/xyz/openbmc_project/test",
+        "xyz.openbmc_project.test", "TestYieldFunctionNotExits", int(41));
+
+    if (!ec)
+    {
+        std::cout << "TestYieldFunctionNotExists returned unexpectedly\n";
+    }
+    else
+    {
+        std::cout << "TestYieldFunctionNotExits expected error: " << ec << "\n";
     }
 }
 
@@ -316,6 +338,25 @@ int client()
         "/xyz/openbmc_project/object_mapper",
         "xyz.openbmc_project.ObjectMapper", "GetSubTree",
         "/org/openbmc/control", 2, std::vector<std::string>());
+
+    conn->async_method_call(
+        [](boost::system::error_code ec,
+           const std::vector<std::string>& things) {
+            std::cout << "async_method_call callback\n";
+            if (ec)
+            {
+                std::cerr << "async_method_call expected failure: " << ec
+                          << "\n";
+            }
+            else
+            {
+                std::cerr << "asyn_method_call should have faild!\n";
+            }
+        },
+        "xyz.openbmc_project.ObjectMapper",
+        "/xyz/openbmc_project/object_mapper",
+        "xyz.openbmc_project.ObjectMapper", "GetSubTree",
+        "/xyz/openbmc_project/sensors", depth, interfaces);
 
     // sd_events work too using the default event loop
     phosphor::Timer t1([]() { std::cerr << "*** tock ***\n"; });

@@ -149,9 +149,8 @@ class connection : public sdbusplus::bus::bus
     /** @brief Perform a yielding asynchronous method call, with input
      *         parameter packing and return value unpacking
      *
-     *  @param[in] yield - A yield context to async block upon. To catch errors
-     *                     for the call, call this function with 'yield[ec]',
-     *                     thus attaching an error code to the yield context
+     *  @param[in] yield - A yield context to async block upon.
+     *  @param[in] ec - an error code that will be set for any errors
      *  @param[in] service - The service to call.
      *  @param[in] objpath - The object's path for the call.
      *  @param[in] interf - The object's interface to call.
@@ -162,6 +161,7 @@ class connection : public sdbusplus::bus::bus
      */
     template <typename... RetTypes, typename... InputArgs>
     auto yield_method_call(boost::asio::yield_context yield,
+                           boost::system::error_code& ec,
                            const std::string& service,
                            const std::string& objpath,
                            const std::string& interf, const std::string& method,
@@ -170,7 +170,8 @@ class connection : public sdbusplus::bus::bus
         message::message m = new_method_call(service.c_str(), objpath.c_str(),
                                              interf.c_str(), method.c_str());
         m.append(a...);
-        message::message r = async_send(m, yield);
+        ec.clear();
+        message::message r = async_send(m, yield[ec]);
         if constexpr (sizeof...(RetTypes) == 0)
         {
             // void return
@@ -187,8 +188,23 @@ class connection : public sdbusplus::bus::bus
             {
                 // single item return
                 utility::first_type<RetTypes...> responseData;
-                // this will throw if the signature of r != RetType
-                r.read(responseData);
+                // before attempting to read, check ec and bail on error
+                if (ec)
+                {
+                    // something bad happened on the bus; ec will be set
+                    return responseData;
+                }
+                try
+                {
+                    r.read(responseData);
+                }
+                catch (const std::exception& e)
+                {
+
+                    ec = boost::system::errc::make_error_code(
+                        boost::system::errc::invalid_argument);
+                    // responseData will be default-constructed...
+                }
                 return responseData;
             }
         }
@@ -196,8 +212,23 @@ class connection : public sdbusplus::bus::bus
         {
             // tuple of things to return
             std::tuple<RetTypes...> responseData;
-            // this will throw if the signature of r != RetType
-            r.read(responseData);
+            // before attempting to read, check ec and bail on error
+            if (ec)
+            {
+                // something bad happened on the bus; ec will be set
+                return responseData;
+            }
+            try
+            {
+                r.read(responseData);
+            }
+            catch (const std::exception& e)
+            {
+
+                ec = boost::system::errc::make_error_code(
+                    boost::system::errc::invalid_argument);
+                // responseData will be default-constructed...
+            }
             return responseData;
         }
     }

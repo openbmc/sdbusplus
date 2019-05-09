@@ -34,6 +34,10 @@ check_PROGRAMS += message_read
 message_read_SOURCES = message/read.cpp
 message_read_LDADD = $(gtest_ldadd)
 
+check_PROGRAMS += message_typed
+message_typed_SOURCES = message/typed.cpp
+message_typed_LDADD = $(gtest_ldadd)
+
 check_PROGRAMS += message_native_types
 message_native_types_SOURCES = message/native_types.cpp
 message_native_types_LDADD = $(gtest_ldadd)

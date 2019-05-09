@@ -61,6 +61,7 @@ Makefile.in
 /test/message_append
 /test/message_native_types
 /test/message_read
+/test/message_typed
 /test/message_types
 /test/timer
 /test/utility_tuple_to_array

@@ -21,6 +21,9 @@ class SdBusMock : public SdBusInterface
     MOCK_METHOD3(sd_bus_attach_event, int(sd_bus*, sd_event*, int));
     MOCK_METHOD5(sd_bus_call, int(sd_bus*, sd_bus_message*, uint64_t,
                                   sd_bus_error*, sd_bus_message**));
+    MOCK_METHOD6(sd_bus_call_async,
+                 int(sd_bus*, sd_bus_slot**, sd_bus_message*,
+                     sd_bus_message_handler_t, void*, uint64_t));
     MOCK_METHOD1(sd_bus_detach_event, int(sd_bus*));
 
     MOCK_METHOD3(sd_bus_emit_interfaces_added_strv,
@@ -46,6 +49,11 @@ class SdBusMock : public SdBusInterface
     MOCK_METHOD2(sd_bus_get_unique_name, int(sd_bus*, const char**));
 
     MOCK_METHOD3(sd_bus_list_names, int(sd_bus*, char***, char***));
+
+    MOCK_METHOD2(sd_bus_slot_set_userdata, void*(sd_bus_slot*, void*));
+    MOCK_METHOD2(sd_bus_slot_set_destroy_callback,
+                 int(sd_bus_slot*, sd_bus_destroy_t));
+    MOCK_METHOD2(sd_bus_slot_set_floating, int(sd_bus_slot*, int));
 
     MOCK_METHOD3(sd_bus_message_append_basic,
                  int(sd_bus_message*, char, const void*));

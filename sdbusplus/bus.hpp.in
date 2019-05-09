@@ -5,12 +5,16 @@
 
 #include <algorithm>
 #include <climits>
+#include <function2/function2.hpp>
+#include <future>
 #include <memory>
 #include <optional>
 #include <sdbusplus/exception.hpp>
 #include <sdbusplus/message.hpp>
 #include <sdbusplus/sdbus.hpp>
+#include <sdbusplus/slot.hpp>
 #include <string>
+#include <utility>
 #include <vector>
 
 namespace sdbusplus
@@ -188,13 +192,18 @@ struct bus
      *
      *  @param[in] timeout_us - Timeout in usec.
      */
-    void wait(uint64_t timeout_us)
+    auto wait(uint64_t timeout_us)
     {
-        _intf->sd_bus_wait(_bus.get(), timeout_us);
+        int r = _intf->sd_bus_wait(_bus.get(), timeout_us);
+        if (r < 0)
+        {
+            throw exception::SdBusError(-r, "sd_bus_wait");
+        }
+        return r > 0;
     }
-    void wait(std::optional<SdBusDuration> timeout = std::nullopt)
+    auto wait(std::optional<SdBusDuration> timeout = std::nullopt)
     {
-        wait(timeout ? timeout->count() : UINT64_MAX);
+        return wait(timeout ? timeout->count() : UINT64_MAX);
     }
 
     /** @brief Process waiting dbus messages or signals. */
@@ -307,6 +316,75 @@ struct bus
               std::optional<SdBusDuration> timeout = std::nullopt)
     {
         return call(m, timeout ? timeout->count() : 0);
+    }
+
+    using Callback = fu2::unique_function<void(message::message)>;
+
+    struct CallbackData
+    {
+        Callback callback;
+        sdbusplus::SdBusInterface* intf;
+    };
+
+    static int handle_async(sd_bus_message* m, void* userdata, sd_bus_error* ret_error)
+    {
+        try
+        {
+            auto& data = *reinterpret_cast<CallbackData*>(userdata);
+            data.callback(message::message(m, data.intf));
+            return 1;
+        }
+        catch (const std::exception& e)
+        {
+            fprintf(stderr, "Exception in async handler: %s\n", e.what());
+            std::abort();
+        }
+        catch (...)
+        {
+            fprintf(stderr, "Exception in async handler\n");
+            std::abort();
+        }
+    }
+
+    static void destroy_async(void *userdata)
+    {
+        delete reinterpret_cast<CallbackData*>(userdata);
+    }
+
+    [[nodiscard]] slot::slot call_async(
+            message::message& m, Callback&& cb,
+            std::optional<SdBusDuration> timeout = std::nullopt)
+    {
+        sd_bus_slot *s;
+        int r = _intf->sd_bus_call_async(
+                _bus.get(), &s, m.get(), handle_async, nullptr,
+                timeout ? timeout->count() : 0);
+        if (r < 0)
+        {
+            throw exception::SdBusError(-r, "sd_bus_call_async");
+        }
+        slot::slot ret(s);
+        r = _intf->sd_bus_slot_set_destroy_callback(s, destroy_async);
+        if (r < 0)
+        {
+            throw exception::SdBusError(-r, "sd_bus_slot_set_destroy_callback");
+        }
+        _intf->sd_bus_slot_set_userdata(
+                s, new CallbackData{std::move(cb), _intf});
+        return ret;
+    }
+
+    std::future<message::message> call_async_future(
+            message::message& m,
+            std::optional<SdBusDuration> timeout = std::nullopt)
+    {
+        std::promise<message::message> p;
+        auto ret = p.get_future();
+        auto cb = [p = std::move(p)] (message::message m) mutable {
+            p.set_value(std::move(m));
+        };
+        call_async(m, std::move(cb), timeout).set_floating(true);
+        return ret;
     }
 
     /** @brief Perform a message call, ignoring the reply.

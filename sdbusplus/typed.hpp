@@ -163,6 +163,32 @@ class MethodCall<Types<>, Rets>
         return MethodCall<void, Rets>(std::move(reply));
     }
 
+    template <typename Callback, typename... Args>
+    [[nodiscard]] slot::slot call_async(Callback&& cb, Args&&... args) &&
+    {
+        auto lowerCb = [cb = std::move(cb)](message::message m) mutable {
+            cb(MethodCall<void, Rets>(std::move(m)));
+        };
+        auto slot = m.get_bus().call_async(m, std::move(lowerCb),
+                                           std::forward<Args>(args)...);
+        message::message(std::move(m)); // Drop our message reference
+        return slot;
+    }
+
+    template <typename... Args>
+    auto call_async_future(Args&&... args) &&
+    {
+        std::promise<MethodCall<void, Rets>> p;
+        auto ret = p.get_future();
+        auto cb = [p = std::move(p)](MethodCall<void, Rets> m) mutable {
+            p.set_value(std::move(m));
+        };
+        std::move(*this)
+            .call_async(std::move(cb), std::forward<Args>(args)...)
+            .set_floating(true);
+        return ret;
+    }
+
   private:
     message::message m;
 };

@@ -55,6 +55,7 @@ Makefile.in
 # Output binaries
 /example/calculator-server
 /example/list-users
+/test/bus_async
 /test/bus_list_names
 /test/bus_match
 /test/exception_sdbus_error

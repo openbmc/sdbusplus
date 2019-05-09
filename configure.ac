@@ -140,6 +140,12 @@ AS_IF([test "x$enable_tests" != "xno"], [
         ])
     ])
     AX_RESTORE_FLAGS_WITH_PREFIX(OLD, [LDFLAGS])
+
+    PKG_CHECK_MODULES([SDEVENTPLUS], [sdeventplus], [], [
+        AS_IF([test "x$enable_tests" = "xyes"], [
+            AC_MSG_ERROR([Testing enabled but couldn't find sdeventplus])
+        ])
+    ])
 ])
 
 # Check for valgrind

@@ -300,7 +300,7 @@ class message
             throw exception::SdBusError(-r, "sd_bus_message_new_method_return");
         }
 
-        return message(reply, std::false_type());
+        return message(reply, _intf, std::false_type());
     }
 
     /** @brief Create a 'method_error' type message from an existing message.
@@ -318,7 +318,7 @@ class message
             throw exception::SdBusError(-r, "sd_bus_message_new_method_errno");
         }
 
-        return message(reply, std::false_type());
+        return message(reply, _intf, std::false_type());
     }
 
     /** @brief Perform a 'method-return' response call. */

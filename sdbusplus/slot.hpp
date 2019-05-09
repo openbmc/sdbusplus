@@ -3,6 +3,7 @@
 #include <systemd/sd-bus.h>
 
 #include <memory>
+#include <sdbusplus/exception.hpp>
 
 namespace sdbusplus
 {
@@ -61,6 +62,15 @@ struct slot
     slotp_t release()
     {
         return _slot.release();
+    }
+
+    void set_floating(bool floating)
+    {
+        int r = sd_bus_slot_set_floating(_slot.get(), floating);
+        if (r < 0)
+        {
+            throw exception::SdBusError(-r, "sd_bus_slot_set_floating");
+        }
     }
 
     /** @brief Check if slot contains a real pointer. (non-nullptr). */

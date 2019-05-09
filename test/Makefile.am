@@ -14,6 +14,11 @@ gtest_ldadd = $(test_ldadd) $(GTEST_LIBS) $(GMOCK_LIBS) -lgmock_main -lpthread
 check_PROGRAMS =
 TESTS = $(check_PROGRAMS)
 
+check_PROGRAMS += bus_async
+bus_async_SOURCES = bus/async.cpp
+bus_async_CPPFLAGS = $(AM_CPPFLAGS) $(SDEVENTPLUS_CFLAGS)
+bus_async_LDADD = $(gtest_ldadd) $(SDEVENTPLUS_LIBS)
+
 check_PROGRAMS += bus_list_names
 bus_list_names_SOURCES = bus/list_names.cpp
 bus_list_names_LDADD = $(gtest_ldadd)

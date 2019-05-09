@@ -33,6 +33,10 @@ class SdBusInterface
     virtual int sd_bus_call(sd_bus* bus, sd_bus_message* m, uint64_t usec,
                             sd_bus_error* ret_error,
                             sd_bus_message** reply) = 0;
+    virtual int sd_bus_call_async(sd_bus* bus, sd_bus_slot** slot,
+                                  sd_bus_message* m,
+                                  sd_bus_message_handler_t callback,
+                                  void* userdata, uint64_t usec) = 0;
 
     virtual int sd_bus_detach_event(sd_bus* bus) = 0;
 
@@ -91,6 +95,12 @@ class SdBusInterface
     virtual const char* sd_bus_message_get_signature(sd_bus_message* m,
                                                      int complete) = 0;
     virtual int sd_bus_message_get_errno(sd_bus_message* m) = 0;
+
+    virtual void* sd_bus_slot_set_userdata(sd_bus_slot* slot,
+                                           void* userdata) = 0;
+    virtual int sd_bus_slot_set_destroy_callback(sd_bus_slot* s,
+                                                 sd_bus_destroy_t callback) = 0;
+    virtual int sd_bus_slot_set_floating(sd_bus_slot* slot, int b) = 0;
 
     virtual int sd_bus_message_is_method_call(sd_bus_message* m,
                                               const char* interface,
@@ -187,6 +197,13 @@ class SdBusImpl : public SdBusInterface
         return ::sd_bus_call(bus, m, usec, ret_error, reply);
     }
 
+    int sd_bus_call_async(sd_bus* bus, sd_bus_slot** slot, sd_bus_message* m,
+                          sd_bus_message_handler_t callback, void* userdata,
+                          uint64_t usec) override
+    {
+        return ::sd_bus_call_async(bus, slot, m, callback, userdata, usec);
+    }
+
     int sd_bus_detach_event(sd_bus* bus) override
     {
         return ::sd_bus_detach_event(bus);
@@ -273,6 +290,22 @@ class SdBusImpl : public SdBusInterface
                           char*** activatable) override
     {
         return ::sd_bus_list_names(bus, acquired, activatable);
+    }
+
+    void* sd_bus_slot_set_userdata(sd_bus_slot* slot, void* userdata)
+    {
+        return ::sd_bus_slot_set_userdata(slot, userdata);
+    }
+
+    int sd_bus_slot_set_destroy_callback(sd_bus_slot* s,
+                                         sd_bus_destroy_t callback) override
+    {
+        return ::sd_bus_slot_set_destroy_callback(s, callback);
+    }
+
+    int sd_bus_slot_set_floating(sd_bus_slot* slot, int b) override
+    {
+        return ::sd_bus_slot_set_floating(slot, b);
     }
 
     int sd_bus_message_append_basic(sd_bus_message* message, char type,

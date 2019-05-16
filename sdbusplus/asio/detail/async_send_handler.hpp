@@ -27,6 +27,44 @@ namespace asio
 {
 namespace detail
 {
+
+struct sdbus_error_category : public boost::system::error_category
+{
+    virtual ~sdbus_error_category() = default;
+
+    sdbus_error_category() :
+        boost::system::error_category(0xABCDEF) // FIXME: what is the id about?
+    {
+    }
+
+    void set_name(const char* name)
+    {
+        sdbus_name = name;
+    }
+    void set_message(const std::string& message)
+    {
+        sdbus_message = message;
+    }
+
+    const char* name() const BOOST_NOEXCEPT override
+    {
+        return sdbus_name;
+    }
+    std::string message(int /*ev*/) const override
+    {
+        return sdbus_message;
+    }
+    const char* sdbus_name;
+    std::string sdbus_message;
+};
+
+inline sdbus_error_category& sdbus_category() BOOST_NOEXCEPT
+{
+    // NOTE: This instance is NOT const and is shared in differnt DBus calls
+    static thread_local sdbus_error_category sdbus_category_instance;
+    return sdbus_category_instance;
+}
+
 template <typename Handler>
 struct async_send_handler
 {
@@ -64,6 +102,18 @@ struct async_send_handler
         message::message message(mesg);
         auto ec = make_error_code(
             static_cast<boost::system::errc::errc_t>(message.get_errno()));
+        auto e = sd_bus_message_get_error(mesg);
+        // In this callback, the error is actually in message rather than the
+        // `error` parameter.
+        // TODO: maybe report this issue to systemd?
+        if (sd_bus_error_is_set(e))
+        {
+            // Override the error_category by sdbus_category
+            auto& sdbus_ec = sdbusplus::asio::detail::sdbus_category();
+            sdbus_ec.set_name(e->name);
+            sdbus_ec.set_message(e->message);
+            ec.assign(sd_bus_error_get_errno(e), sdbus_ec);
+        }
         context->handler_(ec, message);
         return 1;
     }

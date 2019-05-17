@@ -1,6 +1,6 @@
 class Renderer(object):
     def __init__(self, **kwargs):
-        super(Renderer, self).__init__(**kwargs)
+        pass
 
     def render(self, loader, template, **kwargs):
         t = loader.get_template(template)

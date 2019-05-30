@@ -32,15 +32,11 @@ struct string_wrapper
     {
     }
 
-    operator std::string() const
+    operator const std::string&() const volatile&
     {
-        return str;
+        return const_cast<const string_wrapper<T>*>(this)->str;
     }
-    operator const std::string&() const
-    {
-        return str;
-    }
-    operator std::string &&()
+    operator std::string &&() &&
     {
         return std::move(str);
     }

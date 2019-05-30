@@ -1,9 +1,12 @@
 #include <map>
 #include <sdbusplus/message.hpp>
+#include <string>
 #include <unordered_map>
 #include <vector>
 
 #include <gtest/gtest.h>
+
+using namespace std::string_literals;
 
 /* Suite tests that object_path and signature can be cleanly converted to
  * and from strings and used as container parameters.
@@ -49,4 +52,20 @@ TEST(MessageNativeTypeConversions, SignatureInUnorderedMap)
         {sdbusplus::message::signature("iii"), 2}};
 
     ASSERT_EQ(u[sdbusplus::message::signature("iii")], 2);
+}
+
+TEST(MessageNativeTypeConversions, WrapperReference)
+{
+    auto orig = "str"s;
+    sdbusplus::message::object_path obj = orig;
+    auto out = static_cast<std::string>(obj);
+    EXPECT_EQ(orig, out);
+}
+
+TEST(MessageNativeTypeConversions, WrapperMove)
+{
+    auto orig = "str"s;
+    sdbusplus::message::object_path obj = orig;
+    auto out = static_cast<std::string>(std::move(obj));
+    EXPECT_EQ(orig, out);
 }

@@ -339,10 +339,13 @@ int client()
         "xyz.openbmc_project.ObjectMapper", "GetSubTree",
         "/org/openbmc/control", 2, std::vector<std::string>());
 
+    std::string nonConstCapture = "lalalala";
     conn->async_method_call(
-        [](boost::system::error_code ec,
-           const std::vector<std::string>& things) {
+        [nonConstCapture = std::move(nonConstCapture)](
+            boost::system::error_code ec,
+            const std::vector<std::string>& things) mutable {
             std::cout << "async_method_call callback\n";
+            nonConstCapture += " stuff";
             if (ec)
             {
                 std::cerr << "async_method_call expected failure: " << ec
@@ -350,7 +353,7 @@ int client()
             }
             else
             {
-                std::cerr << "asyn_method_call should have faild!\n";
+                std::cerr << "async_method_call should have failed!\n";
             }
         },
         "xyz.openbmc_project.ObjectMapper",

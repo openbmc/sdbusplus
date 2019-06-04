@@ -25,12 +25,12 @@
 #include <boost/asio/spawn.hpp>
 #include <boost/callable_traits.hpp>
 #include <chrono>
-#include <experimental/tuple>
 #include <sdbusplus/asio/detail/async_send_handler.hpp>
 #include <sdbusplus/message.hpp>
 #include <sdbusplus/utility/read_into_tuple.hpp>
 #include <sdbusplus/utility/type_traits.hpp>
 #include <string>
+#include <tuple>
 
 namespace sdbusplus
 {
@@ -115,7 +115,7 @@ class connection : public sdbusplus::bus::bus
      *          complete.
      */
     template <typename MessageHandler, typename... InputArgs>
-    void async_method_call(MessageHandler handler, const std::string& service,
+    void async_method_call(MessageHandler&& handler, const std::string& service,
                            const std::string& objpath,
                            const std::string& interf, const std::string& method,
                            const InputArgs&... a)
@@ -123,8 +123,9 @@ class connection : public sdbusplus::bus::bus
         message::message m = new_method_call(service.c_str(), objpath.c_str(),
                                              interf.c_str(), method.c_str());
         m.append(a...);
-        async_send(m, [handler](boost::system::error_code ec,
-                                message::message& r) {
+        async_send(m, [handler = std::forward<MessageHandler>(handler)](
+                          boost::system::error_code ec,
+                          message::message& r) mutable {
             using FunctionTuple =
                 boost::callable_traits::args_t<MessageHandler>;
             using UnpackType = typename utility::strip_first_arg<
@@ -146,7 +147,7 @@ class connection : public sdbusplus::bus::bus
             // Note.  Callback is called whether or not the unpack was
             // successful to allow the user to implement their own handling
             auto response = std::tuple_cat(std::make_tuple(ec), responseData);
-            std::experimental::apply(handler, response);
+            std::apply(handler, response);
         });
     }
 

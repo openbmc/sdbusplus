@@ -128,14 +128,14 @@ class callback_method_instance : public callback
     std::enable_if_t<!std::is_void<T>::value, void>
         callFunction(message::message& m, InputTupleType& inputArgs)
     {
-        ResultType r = std::experimental::apply(func_, inputArgs);
+        ResultType r = std::apply(func_, inputArgs);
         m.append(r);
     }
     template <typename T>
     std::enable_if_t<std::is_void<T>::value, void>
         callFunction(message::message& m, InputTupleType& inputArgs)
     {
-        std::experimental::apply(func_, inputArgs);
+        std::apply(func_, inputArgs);
     }
 #ifdef __cpp_if_constexpr
     // optional message-first-argument callback
@@ -218,14 +218,14 @@ class coroutine_method_instance : public callback
     std::enable_if_t<!std::is_void<T>::value, void>
         callFunction(message::message& m, InputTupleType& inputArgs)
     {
-        ResultType r = std::experimental::apply(func_, inputArgs);
+        ResultType r = std::apply(func_, inputArgs);
         m.append(r);
     }
     template <typename T>
     std::enable_if_t<std::is_void<T>::value, void>
         callFunction(message::message& m, InputTupleType& inputArgs)
     {
-        std::experimental::apply(func_, inputArgs);
+        std::apply(func_, inputArgs);
     }
     // co-routine body for call
     void expandCall(boost::asio::yield_context yield, message::message& m)

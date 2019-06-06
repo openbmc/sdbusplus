@@ -17,6 +17,7 @@ nobase_include_HEADERS = \
 	sdbusplus/asio/sd_event.hpp \
 	sdbusplus/bus.hpp \
 	sdbusplus/bus/match.hpp \
+	sdbusplus/common_calls/properties.hpp \
 	sdbusplus/sdbus.hpp \
 	sdbusplus/test/sdbus_mock.hpp \
 	sdbusplus/exception.hpp \

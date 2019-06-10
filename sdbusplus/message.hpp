@@ -219,6 +219,15 @@ class message
         return _intf->sd_bus_message_get_errno(_msg.get());
     }
 
+    /** @brief Get the error from the message.
+     *
+     *  @return The error of the message.
+     */
+    const sd_bus_error* get_error()
+    {
+        return _intf->sd_bus_message_get_error(_msg.get());
+    }
+
     /** @brief Get the type of a message.
      *
      * @return The type of message.

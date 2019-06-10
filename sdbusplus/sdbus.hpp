@@ -91,6 +91,7 @@ class SdBusInterface
     virtual const char* sd_bus_message_get_signature(sd_bus_message* m,
                                                      int complete) = 0;
     virtual int sd_bus_message_get_errno(sd_bus_message* m) = 0;
+    virtual const sd_bus_error* sd_bus_message_get_error(sd_bus_message* m) = 0;
 
     virtual int sd_bus_message_is_method_call(sd_bus_message* m,
                                               const char* interface,
@@ -357,6 +358,11 @@ class SdBusImpl : public SdBusInterface
     int sd_bus_message_get_errno(sd_bus_message* m) override
     {
         return ::sd_bus_message_get_errno(m);
+    }
+
+    const sd_bus_error* sd_bus_message_get_error(sd_bus_message* m) override
+    {
+        return ::sd_bus_message_get_error(m);
     }
 
     int sd_bus_message_is_method_call(sd_bus_message* m, const char* interface,

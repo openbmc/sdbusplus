@@ -140,6 +140,11 @@ class SdBusInterface
     virtual int sd_bus_request_name(sd_bus* bus, const char* name,
                                     uint64_t flags) = 0;
 
+    virtual int sd_bus_request_name_async(sd_bus* bus, sd_bus_slot** slot,
+                                          const char* name, uint64_t flags,
+                                          sd_bus_message_handler_t callback,
+                                          void* userdata) = 0;
+
     virtual int sd_bus_send(sd_bus* bus, sd_bus_message* m,
                             uint64_t* cookie) = 0;
 
@@ -454,6 +459,15 @@ class SdBusImpl : public SdBusInterface
                             uint64_t flags) override
     {
         return ::sd_bus_request_name(bus, name, flags);
+    }
+
+    int sd_bus_request_name_async(sd_bus* bus, sd_bus_slot** slot,
+                                  const char* name, uint64_t flags,
+                                  sd_bus_message_handler_t callback,
+                                  void* userdata) override
+    {
+        return ::sd_bus_request_name_async(bus, slot, name, flags, callback,
+                                           userdata);
     }
 
     int sd_bus_send(sd_bus* bus, sd_bus_message* m, uint64_t* cookie) override

@@ -235,6 +235,20 @@ struct bus
         }
     }
 
+    /** @brief Claim a service name on the dbus async.
+     *
+     *  @param[in] service - The service name to claim.
+     */
+    void request_name_async(const char* service)
+    {
+        int r = _intf->sd_bus_request_name_async(_bus.get(), nullptr, service,
+                                                 0, nullptr, nullptr);
+        if (r < 0)
+        {
+            throw exception::SdBusError(-r, "sd_bus_request_name_async");
+        }
+    }
+
     /** @brief Create a method_call message.
      *
      *  @param[in] service - The service to call.

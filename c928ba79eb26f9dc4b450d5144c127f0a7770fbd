@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "925f8e13_4a96a210",
+        "filename": "sdbusplus/bus.hpp.in",
+        "patchSetId": 2
+      },
+      "lineNbr": 574,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2019-06-19T20:21:50Z",
+      "side": 1,
+      "message": "This is going to impose c++17 on everyone.  Are we ok with that?",
+      "range": {
+        "startLine": 574,
+        "startChar": 29,
+        "endLine": 574,
+        "endChar": 45
+      },
+      "revId": "c928ba79eb26f9dc4b450d5144c127f0a7770fbd",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2ca477f2_e7e8ee3f",
+        "filename": "sdbusplus/bus.hpp.in",
+        "patchSetId": 2
+      },
+      "lineNbr": 579,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2019-06-19T20:21:50Z",
+      "side": 1,
+      "message": "This is relying on undefined behavior.  string_view is not guaranteed to be null terminated, as it is basically a span, but you\u0027re passing it to an API that expects it to be null terminated, and ignoring the size() parameter, so you will get behavior that might not match the intent.\n\nMost of the rest of this file declares APIs that are const char*.  We should probably do the same here.",
+      "range": {
+        "startLine": 579,
+        "startChar": 26,
+        "endLine": 579,
+        "endChar": 30
+      },
+      "revId": "c928ba79eb26f9dc4b450d5144c127f0a7770fbd",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    }
+  ]
+}

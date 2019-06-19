@@ -570,6 +570,17 @@ inline bus new_default_system()
     return bus(b, std::false_type());
 }
 
+/* Create new bus connection from given path */
+inline bus new_bus_from_path(const char* path)
+{
+    sd_bus *b = nullptr;
+    sd_bus_new(&b);
+    sd_bus_set_bus_client(b, true);
+    sd_bus_set_address(b, path);
+    sd_bus_start(b);
+    return bus(b, std::false_type());
+}
+
 /* WARNING: THESE ARE NOT THE FUNCTIONS YOU ARE LOOKING FOR! */
 inline bus new_bus()
 {

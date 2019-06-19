@@ -58,6 +58,14 @@ class connection : public sdbusplus::bus::bus
         socket.assign(get_fd());
         read_wait();
     }
+    connection(boost::asio::io_context& io, const std::string& path) :
+        sdbusplus::bus::bus(sdbusplus::bus::new_bus_from_path(path.c_str())),
+        io_(io), socket(io_)
+    {
+        socket.assign(get_fd());
+        read_wait();
+    }
+
     ~connection()
     {
         // The FD will be closed by the socket object, so assign null to the

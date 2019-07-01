@@ -102,7 +102,7 @@ class connection : public sdbusplus::bus::bus
      *                       continuation for the async dbus method call. The
      *                       arguments to parse on the return are deduced from
      *                       the handler's signature and then passed in along
-     *                       with an error code.
+     *                       with an error code and optional message::message
      *  @param[in] service - The service to call.
      *  @param[in] objpath - The object's path for the call.
      *  @param[in] interf - The object's interface to call.
@@ -128,8 +128,20 @@ class connection : public sdbusplus::bus::bus
                           message::message& r) mutable {
             using FunctionTuple =
                 boost::callable_traits::args_t<MessageHandler>;
-            using UnpackType = typename utility::strip_first_arg<
-                typename utility::decay_tuple<FunctionTuple>::type>::type;
+            using FunctionTupleType =
+                typename utility::decay_tuple<FunctionTuple>::type;
+            constexpr bool argsWithMsg = []() {
+                if constexpr (std::tuple_size<FunctionTupleType>::value > 1)
+                {
+                    return std::is_same<
+                        std::tuple_element_t<1, FunctionTupleType>,
+                        sdbusplus::message::message>::value;
+                }
+                return false;
+            }();
+            using UnpackType =
+                typename utility::strip_first_n_args<argsWithMsg ? 2 : 1,
+                                                     FunctionTupleType>::type;
             UnpackType responseData;
             if (!ec)
             {
@@ -146,7 +158,19 @@ class connection : public sdbusplus::bus::bus
             }
             // Note.  Callback is called whether or not the unpack was
             // successful to allow the user to implement their own handling
-            auto response = std::tuple_cat(std::make_tuple(ec), responseData);
+            auto response = [&]() {
+                if constexpr (argsWithMsg)
+                {
+                    return std::tuple_cat(std::make_tuple(ec),
+                                          std::forward_as_tuple(r),
+                                          std::move(responseData));
+                }
+                else
+                {
+                    return std::tuple_cat(std::make_tuple(ec),
+                                          std::move(responseData));
+                }
+            }();
             std::apply(handler, response);
         });
     }

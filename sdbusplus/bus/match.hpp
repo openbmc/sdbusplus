@@ -45,7 +45,12 @@ struct match
         _slot(nullptr)
     {
         sd_bus_slot* slot = nullptr;
-        sd_bus_add_match(bus.get(), &slot, match, handler, context);
+        int ret = sd_bus_add_match(bus.get(), &slot, match, handler, context);
+        if (ret < 0)
+        {
+            throw sdbusplus::exception::SdBusError(ret,
+                                                   "ERROR in add match rule");
+        }
 
         _slot = decltype(_slot){slot};
     }
@@ -55,7 +60,42 @@ struct match
     {
     }
 
+    /** @brief Register a async signal match.
+     *
+     *  @param[in] bus - The bus to register on.
+     *  @param[in] match - The match to register.
+     *  @param[in] handler - The callback for matches.
+     *  @param[in] asyncInstallHandler - The async install callback for add
+     * match response.
+     *  @param[in] context - An optional context to pass to the handler.
+     */
+    match(sdbusplus::bus::bus& bus, const char* match,
+          sd_bus_message_handler_t handler,
+          sd_bus_message_handler_t asyncInstallHandler,
+          void* context = nullptr) :
+        _slot(nullptr)
+    {
+        sd_bus_slot* slot = nullptr;
+        int ret = sd_bus_add_match_async(bus.get(), &slot, match, handler,
+                                         asyncInstallHandler, context);
+        if (ret < 0)
+        {
+            throw sdbusplus::exception::SdBusError(ret,
+                                                   "ERROR in add match rule");
+        }
+
+        _slot = decltype(_slot){slot};
+    }
+    match(sdbusplus::bus::bus& bus, const std::string& _match,
+          sd_bus_message_handler_t handler,
+          sd_bus_message_handler_t asyncInstallHandler,
+          void* context = nullptr) :
+        match(bus, _match.c_str(), handler, asyncInstallHandler, context)
+    {
+    }
+
     using callback_t = std::function<void(sdbusplus::message::message&)>;
+    using contextPair_t = std::pair<callback_t, callback_t>;
 
     /** @brief Register a signal match.
      *
@@ -64,12 +104,19 @@ struct match
      *  @param[in] callback - The callback for matches.
      */
     match(sdbusplus::bus::bus& bus, const char* match, callback_t callback) :
-        _slot(nullptr),
-        _callback(std::make_unique<callback_t>(std::move(callback)))
+        _slot(nullptr), callbackContext(std::make_unique<contextPair_t>(
+                            std::make_pair<callback_t, callback_t>(
+                                std::move(callback), nullptr)))
     {
         sd_bus_slot* slot = nullptr;
-        sd_bus_add_match(bus.get(), &slot, match, callCallback,
-                         _callback.get());
+        int ret =
+            sd_bus_add_match(bus.get(), &slot, match, callCallback,
+                             reinterpret_cast<void*>(callbackContext.get()));
+        if (ret < 0)
+        {
+            throw sdbusplus::exception::SdBusError(ret,
+                                                   "ERROR in add match rule");
+        }
 
         _slot = decltype(_slot){slot};
     }
@@ -79,16 +126,63 @@ struct match
     {
     }
 
+    /** @brief Register a async signal match.
+     *
+     *  @param[in] bus - The bus to register on.
+     *  @param[in] match - The match to register.
+     *  @param[in] callback - The callback for matches.
+     *  @param[in] asyncInstallCallback - The async install callback for add
+     *  match response.
+     */
+    match(sdbusplus::bus::bus& bus, const char* match, callback_t callback,
+          callback_t asyncInstallCallback) :
+        _slot(nullptr),
+        callbackContext(std::make_unique<contextPair_t>(
+            std::make_pair<callback_t, callback_t>(
+                std::move(callback), std::move(asyncInstallCallback))))
+    {
+        sd_bus_slot* slot = nullptr;
+        int ret = sd_bus_add_match_async(
+            bus.get(), &slot, match, callCallback, installCallbackHndlr,
+            reinterpret_cast<void*>(callbackContext.get()));
+        if (ret < 0)
+        {
+            throw sdbusplus::exception::SdBusError(ret,
+                                                   "ERROR in add match rule");
+        }
+
+        _slot = decltype(_slot){slot};
+    }
+    match(sdbusplus::bus::bus& bus, const std::string& _match,
+          callback_t callback, callback_t asyncInstallCallback) :
+        match(bus, _match.c_str(), callback, asyncInstallCallback)
+    {
+    }
+
   private:
     slot::slot _slot;
-    std::unique_ptr<callback_t> _callback = nullptr;
+    std::unique_ptr<contextPair_t> callbackContext;
+
+    static int installCallbackHndlr(sd_bus_message* m, void* context,
+                                    sd_bus_error* e)
+    {
+        auto pairPtr = static_cast<contextPair_t*>(context);
+        if (pairPtr->second)
+        {
+            callback_t c = pairPtr->second;
+            message::message message{m};
+            (c)(message);
+        }
+        return 0;
+    }
 
     static int callCallback(sd_bus_message* m, void* context, sd_bus_error* e)
     {
-        auto c = static_cast<callback_t*>(context);
+        auto pairPtr = static_cast<contextPair_t*>(context);
+        callback_t c = pairPtr->first;
         message::message message{m};
 
-        (*c)(message);
+        (c)(message);
 
         return 0;
     }

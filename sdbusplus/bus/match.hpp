@@ -41,21 +41,41 @@ struct match
      *  @param[in] context - An optional context to pass to the handler.
      */
     match(sdbusplus::bus::bus& bus, const char* match,
-          sd_bus_message_handler_t handler, void* context = nullptr) :
+          sd_bus_message_handler_t handler, void* context = nullptr,
+          bool asyncCall = false,
+          sd_bus_message_handler_t installHandler = nullptr) :
         _slot(nullptr)
     {
         sd_bus_slot* slot = nullptr;
-        sd_bus_add_match(bus.get(), &slot, match, handler, context);
+        int ret = 0;
+        if (asyncCall)
+        {
+            ret = sd_bus_add_match_async(bus.get(), &slot, match, handler,
+                                         installHandler, context);
+        }
+        else
+        {
+            ret = sd_bus_add_match(bus.get(), &slot, match, handler, context);
+        }
+        if (ret < 0)
+        {
+            throw sdbusplus::exception::SdBusError(-EIO,
+                                                   "ERROR in add match rule");
+        }
 
         _slot = decltype(_slot){slot};
     }
     match(sdbusplus::bus::bus& bus, const std::string& _match,
-          sd_bus_message_handler_t handler, void* context = nullptr) :
-        match(bus, _match.c_str(), handler, context)
+          sd_bus_message_handler_t handler, void* context = nullptr,
+          bool asyncCall = false,
+          sd_bus_message_handler_t installHandler = nullptr) :
+        match(bus, _match.c_str(), handler, context, asyncCall, installHandler)
     {
     }
 
     using callback_t = std::function<void(sdbusplus::message::message&)>;
+    using contextPair_t =
+        std::pair<std::unique_ptr<callback_t>, std::unique_ptr<callback_t>>;
 
     /** @brief Register a signal match.
      *
@@ -63,29 +83,67 @@ struct match
      *  @param[in] match - The match to register.
      *  @param[in] callback - The callback for matches.
      */
-    match(sdbusplus::bus::bus& bus, const char* match, callback_t callback) :
+    match(sdbusplus::bus::bus& bus, const char* match, callback_t callback,
+          bool asyncCall = false, callback_t installCallback = nullptr) :
         _slot(nullptr),
-        _callback(std::make_unique<callback_t>(std::move(callback)))
+        callbackContext(std::make_unique<contextPair_t>(
+            std::make_pair<std::unique_ptr<callback_t>,
+                           std::unique_ptr<callback_t>>(
+                std::make_unique<callback_t>(std::move(callback)),
+                installCallback
+                    ? std::make_unique<callback_t>(std::move(installCallback))
+                    : nullptr)))
     {
         sd_bus_slot* slot = nullptr;
-        sd_bus_add_match(bus.get(), &slot, match, callCallback,
-                         _callback.get());
+        int ret = 0;
+        if (asyncCall)
+        {
+            ret = sd_bus_add_match_async(
+                bus.get(), &slot, match, callCallback, installCallbackHndlr,
+                reinterpret_cast<void*>(callbackContext.get()));
+        }
+        else
+        {
+            ret = sd_bus_add_match(
+                bus.get(), &slot, match, callCallback,
+                reinterpret_cast<void*>(callbackContext.get()));
+        }
+        if (ret < 0)
+        {
+            throw sdbusplus::exception::SdBusError(-EIO,
+                                                   "ERROR in add match rule");
+        }
 
         _slot = decltype(_slot){slot};
     }
     match(sdbusplus::bus::bus& bus, const std::string& _match,
-          callback_t callback) :
-        match(bus, _match.c_str(), callback)
+          callback_t callback, bool asyncCall = false,
+          callback_t installCallback = nullptr) :
+        match(bus, _match.c_str(), callback, asyncCall, installCallback)
     {
     }
 
   private:
     slot::slot _slot;
-    std::unique_ptr<callback_t> _callback = nullptr;
+    std::unique_ptr<contextPair_t> callbackContext;
+
+    static int installCallbackHndlr(sd_bus_message* m, void* context,
+                                    sd_bus_error* e)
+    {
+        auto pairPtr = static_cast<contextPair_t*>(context);
+        if (pairPtr->second)
+        {
+            callback_t* c = pairPtr->second.get();
+            message::message message{m};
+            (*c)(message);
+        }
+        return 0;
+    }
 
     static int callCallback(sd_bus_message* m, void* context, sd_bus_error* e)
     {
-        auto c = static_cast<callback_t*>(context);
+        auto pairPtr = static_cast<contextPair_t*>(context);
+        callback_t* c = pairPtr->first.get();
         message::message message{m};
 
         (*c)(message);

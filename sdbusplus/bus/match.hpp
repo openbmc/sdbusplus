@@ -45,7 +45,8 @@ struct match
         _slot(nullptr)
     {
         sd_bus_slot* slot = nullptr;
-        sd_bus_add_match(bus.get(), &slot, match, handler, context);
+        sd_bus_add_match_async(bus.get(), &slot, match, handler, nullptr,
+                               context);
 
         _slot = decltype(_slot){slot};
     }
@@ -68,8 +69,8 @@ struct match
         _callback(std::make_unique<callback_t>(std::move(callback)))
     {
         sd_bus_slot* slot = nullptr;
-        sd_bus_add_match(bus.get(), &slot, match, callCallback,
-                         _callback.get());
+        sd_bus_add_match_async(bus.get(), &slot, match, callCallback, nullptr,
+                               _callback.get());
 
         _slot = decltype(_slot){slot};
     }

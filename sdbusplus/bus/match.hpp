@@ -45,8 +45,13 @@ struct match
         _slot(nullptr)
     {
         sd_bus_slot* slot = nullptr;
-        sd_bus_add_match_async(bus.get(), &slot, match, handler, nullptr,
-                               context);
+        int ret = sd_bus_add_match_async(bus.get(), &slot, match, handler,
+                                         nullptr, context);
+        if (ret < 0)
+        {
+            throw sdbusplus::exception::SdBusError(-EIO,
+                                                   "ERROR in add match rule");
+        }
 
         _slot = decltype(_slot){slot};
     }
@@ -69,8 +74,13 @@ struct match
         _callback(std::make_unique<callback_t>(std::move(callback)))
     {
         sd_bus_slot* slot = nullptr;
-        sd_bus_add_match_async(bus.get(), &slot, match, callCallback, nullptr,
-                               _callback.get());
+        int ret = sd_bus_add_match_async(bus.get(), &slot, match, callCallback,
+                                         nullptr, _callback.get());
+        if (ret < 0)
+        {
+            throw sdbusplus::exception::SdBusError(-EIO,
+                                                   "ERROR in add match rule");
+        }
 
         _slot = decltype(_slot){slot};
     }

@@ -46,7 +46,7 @@ struct match
     {
         sd_bus_slot* slot = nullptr;
         int ret = sd_bus_add_match_async(bus.get(), &slot, match, handler,
-                                         nullptr, context);
+                                         installCallbackHndlr, context);
         if (ret < 0)
         {
             throw sdbusplus::exception::SdBusError(-EIO,
@@ -75,7 +75,7 @@ struct match
     {
         sd_bus_slot* slot = nullptr;
         int ret = sd_bus_add_match_async(bus.get(), &slot, match, callCallback,
-                                         nullptr, _callback.get());
+                                         installCallbackHndlr, _callback.get());
         if (ret < 0)
         {
             throw sdbusplus::exception::SdBusError(-EIO,
@@ -93,6 +93,17 @@ struct match
   private:
     slot::slot _slot;
     std::unique_ptr<callback_t> _callback = nullptr;
+
+    static int installCallbackHndlr(sd_bus_message* m, void* context,
+                                    sd_bus_error* e)
+    {
+        if (sd_bus_message_is_method_error(m, nullptr))
+        {
+            throw sdbusplus::exception::SdBusError(-EIO,
+                                                   "Error in add match rule");
+        }
+        return 0;
+    }
 
     static int callCallback(sd_bus_message* m, void* context, sd_bus_error* e)
     {

@@ -16,6 +16,24 @@
       "revId": "3490afbb82357e6c31a99300e5c95afe56f23ed9",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "59e5bd2a_6f41c23c",
+        "filename": "sdbusplus/bus/match.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 1000168
+      },
+      "writtenOn": "2019-07-29T05:55:28Z",
+      "side": 1,
+      "message": "Initially i thought about that, but the problem is, many of our daemons are in async (including ipmi daemon), so if added separately then it will require to update the code in all the places with this param.\n\nThought of adding it in reverse(i.e. default is async \u0026 if param specifies using sync one), but dropped that idea, as no code so far handled the error case. (i.e. even if sd_bus_add_match() failed, match() ignored and proceeded). So, realized that current behavior is not changed because of this.\n\nNote: There are other 2 reviews on top of this, which throws accordingly, when there is failure.",
+      "parentUuid": "4fb7d87d_bae3e468",
+      "revId": "3490afbb82357e6c31a99300e5c95afe56f23ed9",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
     }
   ]
 }

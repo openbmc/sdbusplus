@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4fb7d87d_bae3e468",
+        "filename": "sdbusplus/bus/match.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 1000002
+      },
+      "writtenOn": "2019-07-29T02:36:45Z",
+      "side": 1,
+      "message": "Can more be said about the impact to synchronous callers that expect their handlers to be getting callbacks as soon as this is constructed?  Would it make sense to add a _new_ match_async interface rather than changing the behavior of the existing one?",
+      "revId": "3490afbb82357e6c31a99300e5c95afe56f23ed9",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    }
+  ]
+}

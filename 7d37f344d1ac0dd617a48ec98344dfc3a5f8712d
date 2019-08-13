@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "2663cfd0_86d33af9",
+        "filename": "sdbusplus/bus/match.hpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 1000168
+      },
+      "writtenOn": "2019-08-13T07:51:17Z",
+      "side": 1,
+      "message": "Not necessarily. i.e. asyncCall can exist, with installHandler being nullptr.\n(i.e. nullptr doesn\u0027t mean it is asyncCall only, and asyncCall doesn\u0027t need to have installHandler). \n\nCheck for nullptr is not needed, as we forward the same to the API. (i.e. in API it can be nullptr).",
+      "parentUuid": "42a42923_ee1cd50d",
+      "range": {
+        "startLine": 47,
+        "startChar": 0,
+        "endLine": 48,
+        "endChar": 59
+      },
+      "revId": "7d37f344d1ac0dd617a48ec98344dfc3a5f8712d",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "b88b49fd_90532d82",
         "filename": "sdbusplus/bus/match.hpp",
         "patchSetId": 6
@@ -36,6 +60,30 @@
       "writtenOn": "2019-08-12T23:59:14Z",
       "side": 1,
       "message": "Same comment as above.",
+      "range": {
+        "startLine": 72,
+        "startChar": 0,
+        "endLine": 72,
+        "endChar": 33
+      },
+      "revId": "7d37f344d1ac0dd617a48ec98344dfc3a5f8712d",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0978273f_29030807",
+        "filename": "sdbusplus/bus/match.hpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 1000168
+      },
+      "writtenOn": "2019-08-13T07:51:17Z",
+      "side": 1,
+      "message": "refer above",
+      "parentUuid": "b88b49fd_90532d82",
       "range": {
         "startLine": 72,
         "startChar": 0,

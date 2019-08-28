@@ -73,6 +73,47 @@
     },
     {
       "key": {
+        "uuid": "c4ab8c3c_28811392",
+        "filename": "sdbusplus/bus/match.hpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 1000188
+      },
+      "writtenOn": "2019-08-28T18:10:37Z",
+      "side": 1,
+      "message": "It would be better if the async part was a separate codepath, not sharing the same constructor path as the non-async version. Then you could get rid of the installHandler param for the synchronous call and not have runtime branching.",
+      "parentUuid": "01739578_c9044aba",
+      "range": {
+        "startLine": 47,
+        "startChar": 0,
+        "endLine": 48,
+        "endChar": 59
+      },
+      "revId": "7d37f344d1ac0dd617a48ec98344dfc3a5f8712d",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "294f50a8_e32f4aa2",
+        "filename": "sdbusplus/bus/match.hpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 1000188
+      },
+      "writtenOn": "2019-08-28T18:10:37Z",
+      "side": 1,
+      "message": "Throw the relevant error code.",
+      "revId": "7d37f344d1ac0dd617a48ec98344dfc3a5f8712d",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "b88b49fd_90532d82",
         "filename": "sdbusplus/bus/match.hpp",
         "patchSetId": 6
@@ -114,6 +155,23 @@
         "endLine": 72,
         "endChar": 33
       },
+      "revId": "7d37f344d1ac0dd617a48ec98344dfc3a5f8712d",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1dd3349f_39dfefe7",
+        "filename": "sdbusplus/bus/match.hpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 1000188
+      },
+      "writtenOn": "2019-08-28T18:10:37Z",
+      "side": 1,
+      "message": "Get rid of the unique_ptrs in here.",
       "revId": "7d37f344d1ac0dd617a48ec98344dfc3a5f8712d",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true

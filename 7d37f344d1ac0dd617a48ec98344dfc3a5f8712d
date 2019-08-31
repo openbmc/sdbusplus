@@ -145,6 +145,30 @@
     },
     {
       "key": {
+        "uuid": "41a1f206_304cfe09",
+        "filename": "sdbusplus/bus/match.hpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 1000168
+      },
+      "writtenOn": "2019-08-31T18:05:37Z",
+      "side": 1,
+      "message": "latest patch has that one, but you can check patch 8 too.",
+      "parentUuid": "c4ab8c3c_28811392",
+      "range": {
+        "startLine": 47,
+        "startChar": 0,
+        "endLine": 48,
+        "endChar": 59
+      },
+      "revId": "7d37f344d1ac0dd617a48ec98344dfc3a5f8712d",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "294f50a8_e32f4aa2",
         "filename": "sdbusplus/bus/match.hpp",
         "patchSetId": 6
@@ -156,6 +180,24 @@
       "writtenOn": "2019-08-28T18:10:37Z",
       "side": 1,
       "message": "Throw the relevant error code.",
+      "revId": "7d37f344d1ac0dd617a48ec98344dfc3a5f8712d",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "04b8f5f9_8b13c0b1",
+        "filename": "sdbusplus/bus/match.hpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 1000168
+      },
+      "writtenOn": "2019-08-31T18:05:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "294f50a8_e32f4aa2",
       "revId": "7d37f344d1ac0dd617a48ec98344dfc3a5f8712d",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true
@@ -220,6 +262,24 @@
       "writtenOn": "2019-08-28T18:10:37Z",
       "side": 1,
       "message": "Get rid of the unique_ptrs in here.",
+      "revId": "7d37f344d1ac0dd617a48ec98344dfc3a5f8712d",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bc70dc2e_cf8df78d",
+        "filename": "sdbusplus/bus/match.hpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 1000168
+      },
+      "writtenOn": "2019-08-31T18:05:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1dd3349f_39dfefe7",
       "revId": "7d37f344d1ac0dd617a48ec98344dfc3a5f8712d",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true

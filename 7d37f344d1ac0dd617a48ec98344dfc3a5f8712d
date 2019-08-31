@@ -97,6 +97,54 @@
     },
     {
       "key": {
+        "uuid": "f4f6c649_0e1c0acb",
+        "filename": "sdbusplus/bus/match.hpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 1000168
+      },
+      "writtenOn": "2019-08-31T05:47:12Z",
+      "side": 1,
+      "message": "thought that difference was on 2 lines based on the param whether it is sd_bus_add_match_async / sd_bus_add_match,\nWill try to make it as different",
+      "parentUuid": "c4ab8c3c_28811392",
+      "range": {
+        "startLine": 47,
+        "startChar": 0,
+        "endLine": 48,
+        "endChar": 59
+      },
+      "revId": "7d37f344d1ac0dd617a48ec98344dfc3a5f8712d",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b8f6151e_70d356cc",
+        "filename": "sdbusplus/bus/match.hpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 1000168
+      },
+      "writtenOn": "2019-08-31T05:47:12Z",
+      "side": 1,
+      "message": "Got your point now. I thought of exposing the sd_bus_add_match_async to the upper layer too, but it\u0027s not needed / doesn\u0027t make sense when the options are provided.\nHence will rewrite this to differentiate it based on asyncInstallHandler param only (and will remove asyncCall).",
+      "parentUuid": "01739578_c9044aba",
+      "range": {
+        "startLine": 47,
+        "startChar": 0,
+        "endLine": 48,
+        "endChar": 59
+      },
+      "revId": "7d37f344d1ac0dd617a48ec98344dfc3a5f8712d",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "294f50a8_e32f4aa2",
         "filename": "sdbusplus/bus/match.hpp",
         "patchSetId": 6

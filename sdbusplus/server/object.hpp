@@ -2,6 +2,7 @@
 
 #include <sdbusplus/bus.hpp>
 #include <sdbusplus/sdbus.hpp>
+#include <type_traits>
 
 namespace sdbusplus
 {
@@ -14,6 +15,16 @@ namespace object
 
 namespace details
 {
+
+template <class>
+constexpr std::false_type has_emit_added_helper(long);
+
+template <class T>
+constexpr auto has_emit_added_helper(int)
+    -> decltype(std::declval<T>().emit_added(), std::true_type{});
+
+template <class T>
+using has_emit_added = decltype(has_emit_added_helper<T>(0));
 
 /** Templates to allow multiple inheritance via template parameters.
  *
@@ -87,6 +98,13 @@ struct object : details::compose<Args...>
     object(object&&) = default;
     object& operator=(object&&) = default;
 
+    enum class action
+    {
+        EMIT_OBJECT_ADDED,
+        EMIT_INTERFACE_ADDED,
+        DEFER_EMIT,
+    };
+
     /** Construct an 'object' on a bus with a path.
      *
      *  @param[in] bus - The bus to place the object on.
@@ -96,17 +114,45 @@ struct object : details::compose<Args...>
      *                           object needs custom property init before the
      *                           signal can be sent.
      */
-    object(bus::bus& bus, const char* path, bool deferSignal = false) :
+    object(bus::bus& bus, const char* path,
+           action act = action::EMIT_OBJECT_ADDED) :
         details::compose<Args...>(bus, path),
         __sdbusplus_server_object_bus(bus.get(), bus.getInterface()),
         __sdbusplus_server_object_path(path),
         __sdbusplus_server_object_emitremoved(false),
         __sdbusplus_server_object_intf(bus.getInterface())
     {
-        if (!deferSignal)
+        // Default ctor
+        check_action(act);
+    }
+
+    object(bus::bus& bus, const char* path, bool deferSignal) :
+        object(bus, path,
+               deferSignal ? action::DEFER_EMIT : action::EMIT_OBJECT_ADDED)
+    {
+        // Delegate to default ctor
+    }
+
+    template <class T>
+    void maybe_emit()
+    {
+        if constexpr (details::has_emit_added<T>())
+        {
+            T::emit_added();
+        }
+    }
+
+    void check_action(action act)
+    {
+        if (act == action::EMIT_OBJECT_ADDED)
         {
             emit_object_added();
         }
+        else if (act == action::EMIT_INTERFACE_ADDED)
+        {
+            (maybe_emit<Args>(), ...);
+        }
+        // Otherwise, do nothing
     }
 
     ~object()

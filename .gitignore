@@ -66,3 +66,5 @@ Makefile.in
 /test/utility_tuple_to_array
 /test/utility_type_traits
 /test/vtable_vtable
+/test/object
+/test/server/Test

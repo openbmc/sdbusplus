@@ -1,0 +1,5 @@
+description: >
+    A test interface
+properties:
+    - name: SomeValue
+      type: int64

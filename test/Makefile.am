@@ -60,4 +60,25 @@ check_PROGRAMS += timer
 timer_SOURCES = timer.cpp
 timer_LDADD = $(gtest_ldadd)
 
+server/Test/server.hpp:
+	@mkdir -p $(@D)
+	@top_srcdir@/tools/sdbus++ \
+	    -r $(srcdir) -t $(top_builddir)/tools/sdbusplus/templates \
+	    interface server-header server.Test > $@
+
+server/Test/server.cpp:
+	@mkdir -p $(@D)
+	@top_srcdir@/tools/sdbus++ \
+	    -r $(srcdir) -t $(top_builddir)/tools/sdbusplus/templates \
+	    interface server-cpp server.Test > $@
+
+server_test_generated_sources = server/Test/server.cpp server/Test/server.hpp
+
+BUILT_SOURCES = $(server_test_generated_sources)
+CLEANFILES = $(server_test_generated_sources)
+
+check_PROGRAMS += object
+object_SOURCES = server/object.cpp $(server_test_generated_sources)
+object_LDADD = $(gtest_ldadd)
+
 endif

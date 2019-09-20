@@ -46,7 +46,6 @@ struct interface final
     interface& operator=(const interface&) = delete;
     interface(interface&&) = default;
     interface& operator=(interface&&) = default;
-    ~interface() = default;
 
     /** @brief Register the (path, interface, vtable) as a dbus object.
      *
@@ -60,13 +59,19 @@ struct interface final
     interface(sdbusplus::bus::bus& bus, const char* path, const char* interf,
               const sdbusplus::vtable::vtable_t* vtable, void* context) :
         _bus(bus.get(), bus.getInterface()),
-        _path(path), _interf(interf), _slot(nullptr), _intf(bus.getInterface())
+        _path(path), _interf(interf), _slot(nullptr), _intf(bus.getInterface()),
+        _interface_added(false)
     {
         sd_bus_slot* slot = nullptr;
         _intf->sd_bus_add_object_vtable(_bus.get(), &slot, _path.c_str(),
                                         _interf.c_str(), vtable, context);
 
         _slot = decltype(_slot){slot};
+    }
+
+    ~interface()
+    {
+        emit_removed();
     }
 
     /** @brief Create a new signal message.
@@ -93,6 +98,26 @@ struct interface final
             _bus.get(), _path.c_str(), _interf.c_str(), static_cast<char**>(p));
     }
 
+    /** @brief Emit the interface is added on D-Bus */
+    void emit_added()
+    {
+        if (!_interface_added)
+        {
+            _bus.emit_interfaces_added(_path.c_str(), {_interf});
+            _interface_added = true;
+        }
+    }
+
+    /** @brief Emit the interface is removed on D-Bus */
+    void emit_removed()
+    {
+        if (_interface_added)
+        {
+            _bus.emit_interfaces_removed(_path.c_str(), {_interf});
+            _interface_added = false;
+        }
+    }
+
     bus::bus& bus()
     {
         return _bus;
@@ -108,6 +133,7 @@ struct interface final
     std::string _interf;
     slot::slot _slot;
     SdBusInterface* _intf;
+    bool _interface_added;
 };
 
 } // namespace interface

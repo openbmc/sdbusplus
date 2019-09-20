@@ -121,6 +121,18 @@ ${p.camelCase}(${p.cppTypeParam(interface.name)} value);
         static ${e.name} convert${e.name}FromString(const std::string& s);
     % endfor
 
+        /** @brief Emit interface added */
+        void emit_added()
+        {
+            _${"_".join(interface.name.split('.'))}_interface.emit_added();
+        }
+
+        /** @brief Emit interface removed */
+        void emit_removed()
+        {
+            _${"_".join(interface.name.split('.'))}_interface.emit_removed();
+        }
+
         static constexpr auto interface = "${interface.name}";
 
     private:

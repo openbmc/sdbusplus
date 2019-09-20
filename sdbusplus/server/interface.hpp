@@ -93,6 +93,18 @@ struct interface final
             _bus.get(), _path.c_str(), _interf.c_str(), static_cast<char**>(p));
     }
 
+    /** @brief Emit the interface is added on D-Bus */
+    void emit_added()
+    {
+        _bus.emit_interfaces_added(_path.c_str(), {_interf});
+    }
+
+    /** @brief Emit the interface is removed on D-Bus */
+    void emit_removed()
+    {
+        _bus.emit_interfaces_removed(_path.c_str(), {_interf});
+    }
+
     bus::bus& bus()
     {
         return _bus;

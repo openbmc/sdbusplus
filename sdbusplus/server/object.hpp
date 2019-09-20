@@ -2,6 +2,7 @@
 
 #include <sdbusplus/bus.hpp>
 #include <sdbusplus/sdbus.hpp>
+#include <type_traits>
 
 namespace sdbusplus
 {
@@ -14,6 +15,25 @@ namespace object
 
 namespace details
 {
+
+/** Helper functions to detect if member exists in a class */
+
+/** Test if emit_added() exists in T return std::true_type */
+template <class T>
+constexpr auto has_emit_added_helper(int)
+    -> decltype(std::declval<T>().emit_added(), std::true_type{});
+
+/** If the above test fails, fall back to this to return std::false_type */
+template <class>
+constexpr std::false_type has_emit_added_helper(...);
+
+/** Invoke the test with an int so it first resolves to
+ *  has_emit_added_helper(int), and when it fails, it resovles to
+ *  has_emit_added_helper(...) thanks to SFINAE.
+ *  So the return type is std::true_type if emit_added() exists in T and
+ *  std::false_type otherwise */
+template <class T>
+using has_emit_added = decltype(has_emit_added_helper<T>(0));
 
 /** Templates to allow multiple inheritance via template parameters.
  *
@@ -87,6 +107,13 @@ struct object : details::compose<Args...>
     object(object&&) = default;
     object& operator=(object&&) = default;
 
+    enum class action
+    {
+        emit_object_added,
+        emit_interface_added,
+        defer_emit,
+    };
+
     /** Construct an 'object' on a bus with a path.
      *
      *  @param[in] bus - The bus to place the object on.
@@ -96,17 +123,23 @@ struct object : details::compose<Args...>
      *                           object needs custom property init before the
      *                           signal can be sent.
      */
-    object(bus::bus& bus, const char* path, bool deferSignal = false) :
+    object(bus::bus& bus, const char* path,
+           action act = action::emit_object_added) :
         details::compose<Args...>(bus, path),
         __sdbusplus_server_object_bus(bus.get(), bus.getInterface()),
         __sdbusplus_server_object_path(path),
         __sdbusplus_server_object_emitremoved(false),
         __sdbusplus_server_object_intf(bus.getInterface())
     {
-        if (!deferSignal)
-        {
-            emit_object_added();
-        }
+        // Default ctor
+        check_action(act);
+    }
+
+    object(bus::bus& bus, const char* path, bool deferSignal) :
+        object(bus, path,
+               deferSignal ? action::defer_emit : action::emit_object_added)
+    {
+        // Delegate to default ctor
     }
 
     ~object()
@@ -140,6 +173,30 @@ struct object : details::compose<Args...>
     std::string __sdbusplus_server_object_path;
     bool __sdbusplus_server_object_emitremoved;
     SdBusInterface* __sdbusplus_server_object_intf;
+
+    /** Detect if the interface has emit_added() and invoke it */
+    template <class T>
+    void maybe_emit()
+    {
+        if constexpr (details::has_emit_added<T>())
+        {
+            T::emit_added();
+        }
+    }
+
+    /** Check and run the action */
+    void check_action(action act)
+    {
+        if (act == action::emit_object_added)
+        {
+            emit_object_added();
+        }
+        else if (act == action::emit_interface_added)
+        {
+            (maybe_emit<Args>(), ...);
+        }
+        // Otherwise, do nothing
+    }
 };
 
 } // namespace object

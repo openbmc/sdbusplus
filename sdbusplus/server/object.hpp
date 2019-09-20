@@ -87,6 +87,13 @@ struct object : details::compose<Args...>
     object(object&&) = default;
     object& operator=(object&&) = default;
 
+    enum class action
+    {
+        EMIT_OBJECT_ADDED,
+        EMIT_INTERFACE_ADDED,
+        DEFER_EMIT,
+    };
+
     /** Construct an 'object' on a bus with a path.
      *
      *  @param[in] bus - The bus to place the object on.
@@ -96,17 +103,36 @@ struct object : details::compose<Args...>
      *                           object needs custom property init before the
      *                           signal can be sent.
      */
-    object(bus::bus& bus, const char* path, bool deferSignal = false) :
+    object(bus::bus& bus, const char* path,
+           action act = action::EMIT_OBJECT_ADDED) :
         details::compose<Args...>(bus, path),
         __sdbusplus_server_object_bus(bus.get(), bus.getInterface()),
         __sdbusplus_server_object_path(path),
         __sdbusplus_server_object_emitremoved(false),
-        __sdbusplus_server_object_intf(bus.getInterface())
+        __sdbusplus_server_object_intf(bus.getInterface()), __action(act)
     {
-        if (!deferSignal)
+        // Default ctor
+        check_action();
+    }
+
+    object(bus::bus& bus, const char* path, bool deferSignal) :
+        object(bus, path,
+               deferSignal ? action::DEFER_EMIT : action::EMIT_OBJECT_ADDED)
+    {
+        // Delegate to default ctor
+    }
+
+    void check_action()
+    {
+        if (__action == action::EMIT_OBJECT_ADDED)
         {
             emit_object_added();
         }
+        else if (__action == action::EMIT_INTERFACE_ADDED)
+        {
+            (Args::emit_added(), ...);
+        }
+        // Otherwise, do nothing
     }
 
     ~object()
@@ -116,6 +142,10 @@ struct object : details::compose<Args...>
             __sdbusplus_server_object_intf->sd_bus_emit_object_removed(
                 __sdbusplus_server_object_bus.get(),
                 __sdbusplus_server_object_path.c_str());
+        }
+        if (__action == action::EMIT_INTERFACE_ADDED)
+        {
+            (Args::emit_removed(), ...);
         }
     }
 
@@ -140,6 +170,7 @@ struct object : details::compose<Args...>
     std::string __sdbusplus_server_object_path;
     bool __sdbusplus_server_object_emitremoved;
     SdBusInterface* __sdbusplus_server_object_intf;
+    const action __action;
 };
 
 } // namespace object

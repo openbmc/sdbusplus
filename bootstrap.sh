@@ -18,3 +18,4 @@ esac
 
 autoreconf -vfi
 echo 'Run "./configure ${CONFIGURE_FLAGS} && make"'
+

@@ -1,0 +1,50 @@
+{
+   <suppress_epoll_ctl>
+   Memcheck:Param
+   epoll_ctl(event)
+   fun:epoll_ctl
+   fun:UnknownInlinedFun
+   fun:sd_event_add_time
+   fun:_ZN8phosphor5TimerC1EP8sd_eventSt8functionIFvvEE
+   fun:_ZN9TimerTestC1Ev
+   fun:_ZN40TimerTest_timerExpiresAfter2seconds_TestC1Ev
+   fun:_ZN7testing8internal15TestFactoryImplI40TimerTest_timerExpiresAfter2seconds_TestE10CreateTestEv
+   fun:HandleSehExceptionsInMethodIfSupported<testing::internal::TestFactoryBase, testing::Test*>
+   fun:_ZN7testing8internal35HandleExceptionsInMethodIfSupportedINS0_15TestFactoryBaseEPNS_4TestEEET0_PT_MS6_FS5_vEPKc
+   fun:Run
+   fun:_ZN7testing8TestInfo3RunEv
+   fun:Run
+   fun:_ZN7testing8TestCase3RunEv
+   fun:_ZN7testing8internal12UnitTestImpl11RunAllTestsEv
+   fun:HandleSehExceptionsInMethodIfSupported<testing::internal::UnitTestImpl, bool>
+   fun:_ZN7testing8internal35HandleExceptionsInMethodIfSupportedINS0_12UnitTestImplEbEET0_PT_MS4_FS3_vEPKc
+   fun:_ZN7testing8UnitTest3RunEv
+   fun:RUN_ALL_TESTS
+   fun:main
+}
+{
+   <suppress_epoll_ctl>
+   Memcheck:Param
+   epoll_ctl(event)
+   fun:epoll_ctl
+   fun:UnknownInlinedFun
+   fun:sd_event_add_time
+   fun:_ZN8phosphor5TimerC1EP8sd_eventSt8functionIFvvEE
+   fun:_ZSt11make_uniqueIN8phosphor5TimerEJRP8sd_eventRSt8functionIFvvEEEENSt9_MakeUniqIT_E15__single_objectEDpOT0_
+   fun:_ZN17TimerTestCallBackC1Ev
+   fun:_ZN47TimerTestCallBack_optionalFuncCallBackDone_TestC1Ev
+   fun:_ZN7testing8internal15TestFactoryImplI47TimerTestCallBack_optionalFuncCallBackDone_TestE10CreateTestEv
+   fun:HandleSehExceptionsInMethodIfSupported<testing::internal::TestFactoryBase, testing::Test*>
+   fun:_ZN7testing8internal35HandleExceptionsInMethodIfSupportedINS0_15TestFactoryBaseEPNS_4TestEEET0_PT_MS6_FS5_vEPKc
+   fun:Run
+   fun:_ZN7testing8TestInfo3RunEv
+   fun:Run
+   fun:_ZN7testing8TestCase3RunEv
+   fun:_ZN7testing8internal12UnitTestImpl11RunAllTestsEv
+   fun:HandleSehExceptionsInMethodIfSupported<testing::internal::UnitTestImpl, bool>
+   fun:_ZN7testing8internal35HandleExceptionsInMethodIfSupportedINS0_12UnitTestImplEbEET0_PT_MS4_FS3_vEPKc
+   fun:_ZN7testing8UnitTest3RunEv
+   fun:RUN_ALL_TESTS
+   fun:main
+}
+

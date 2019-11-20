@@ -5,6 +5,7 @@
 #include <sdbusplus/exception.hpp>
 #include <string>
 #include <tuple>
+#include <unistd.h>
 #include <variant>
 
 #include <${"/".join(interface.name.split('.') + [ 'server.hpp' ])}>

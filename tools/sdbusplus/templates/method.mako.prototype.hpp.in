@@ -153,6 +153,9 @@ int ${interface_name()}::_callback_${ method.CamelCase }(
     % if len(method.returns) == 0:
         // No data to append on reply.
     % elif len(method.returns) == 1:
+      % if returns_as_list() == 'sdbusplus::message::unix_fd':
+        auto fd = static_cast<int>(r);
+      % endif
         reply.append(convertForMessage(std::move(r)));
     % else:
         reply.append(\
@@ -160,6 +163,9 @@ ${returns_as_tuple_index("r",pre="convertForMessage(",post=")")});
     % endif
 
         reply.method_return();
+    % if returns_as_list() == 'sdbusplus::message::unix_fd':
+        close(fd);
+    % endif
     }
     catch(sdbusplus::internal_exception_t& e)
     {

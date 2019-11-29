@@ -178,13 +178,23 @@ template <>
 struct append_single<details::unix_fd_type>
 {
     template <typename T>
+    static void sanitize(const T& s)
+    {}
+
+    template <typename T>
+    static void sanitize(T& s)
+    {
+        s.fd = -1;
+    }
+
+    template <typename T>
     static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, T&& s)
     {
         constexpr auto dbusType = std::get<0>(types::type_id<T>());
         intf->sd_bus_message_append_basic(m, dbusType, &s.fd);
 
         // sd-bus now owns the file descriptor
-        s.fd = -1;
+        sanitize(s);
     }
 };
 

@@ -1,3 +1,6 @@
+#include <sys/epoll.h>
+#include <sys/timerfd.h>
+
 #include <chrono>
 #include <iostream>
 #include <sdbusplus/timer.hpp>
@@ -82,7 +85,7 @@ class TimerTestCallBack : public ::testing::Test
 /** @brief Makes sure that timer is expired and the
  *  callback handler gets invoked post 2 seconds
  */
-TEST_F(TimerTest, timerExpiresAfter2seconds)
+TEST_F(TimerTest, DISABLED_timerExpiresAfter2seconds)
 {
     using namespace std::chrono;
 
@@ -107,7 +110,7 @@ TEST_F(TimerTest, timerExpiresAfter2seconds)
 
 /** @brief Makes sure that timer is not expired
  */
-TEST_F(TimerTest, timerNotExpiredAfter2Seconds)
+TEST_F(TimerTest, DISABLED_timerNotExpiredAfter2Seconds)
 {
     using namespace std::chrono;
 
@@ -138,7 +141,7 @@ TEST_F(TimerTest, timerNotExpiredAfter2Seconds)
 /** @brief Makes sure that timer value is changed in between
  *  and that the new timer expires
  */
-TEST_F(TimerTest, updateTimerAndExpectExpire)
+TEST_F(TimerTest, DISABLED_updateTimerAndExpectExpire)
 {
     using namespace std::chrono;
 
@@ -170,7 +173,7 @@ TEST_F(TimerTest, updateTimerAndExpectExpire)
 /** @brief Makes sure that timer value is changed in between
  *  and turn off and make sure that timer does not expire
  */
-TEST_F(TimerTest, updateTimerAndNeverExpire)
+TEST_F(TimerTest, DISABLED_updateTimerAndNeverExpire)
 {
     using namespace std::chrono;
 
@@ -206,7 +209,7 @@ TEST_F(TimerTest, updateTimerAndNeverExpire)
 }
 
 /** @brief Makes sure that optional callback is called */
-TEST_F(TimerTestCallBack, optionalFuncCallBackDone)
+TEST_F(TimerTestCallBack, DISABLED_optionalFuncCallBackDone)
 {
     using namespace std::chrono;
 
@@ -232,7 +235,8 @@ TEST_F(TimerTestCallBack, optionalFuncCallBackDone)
 
 /** @brief Makes sure that timer is not expired
  */
-TEST_F(TimerTestCallBack, timerNotExpiredAfter2SecondsNoOptionalCallBack)
+TEST_F(TimerTestCallBack,
+       DISABLED_timerNotExpiredAfter2SecondsNoOptionalCallBack)
 {
     using namespace std::chrono;
 
@@ -259,4 +263,26 @@ TEST_F(TimerTestCallBack, timerNotExpiredAfter2SecondsNoOptionalCallBack)
 
     // 2 because of one more count that happens prior to exiting
     EXPECT_EQ(2, count);
+}
+
+TEST(ValgrindPOC, poc)
+{
+    // struct epoll_event ev; // Valgrind reports error with this
+    struct epoll_event ev = {0}; // Valgrind is fine with this change
+    int fd;
+    clockid_t clock = CLOCK_MONOTONIC;
+
+    printf("sizeof(ev): %lu\n", sizeof(ev));
+    printf("sizeof(ev.data): %lu\n", sizeof(ev.data));
+    printf("sizeof(ev.data.ptr): %lu\n", sizeof(ev.data.ptr));
+
+    printf("addr(ev): %p\n", &ev);
+    printf("addr(ev.events): %p\n", &ev.events);
+    printf("addr(ev.data): %p\n", &ev.data);
+
+    ev.events = EPOLLIN;
+    ev.data.ptr = nullptr;
+
+    fd = timerfd_create(clock, TFD_NONBLOCK | TFD_CLOEXEC);
+    epoll_ctl(1, EPOLL_CTL_ADD, fd, &ev);
 }

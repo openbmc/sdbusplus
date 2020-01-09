@@ -202,7 +202,26 @@ class coroutine_method_instance : public callback
         boost::asio::spawn(
             io_, [this, b = std::move(b)](boost::asio::yield_context yield) {
                 message::message mcpy{std::move(b)};
-                expandCall(yield, mcpy);
+                std::optional<message::message> err{};
+
+                try
+                {
+                    expandCall(yield, mcpy);
+                }
+                catch (sdbusplus::exception::SdBusError& e)
+                {
+                    // Catch D-Bus error explicitly called by method handler
+                    err = mcpy.new_method_errno(e.get_errno());
+                }
+                catch (...)
+                {
+                    err = mcpy.new_method_errno(-EIO);
+                }
+
+                if (err)
+                {
+                    err->method_return();
+                }
             });
         return 1;
     }

@@ -315,13 +315,14 @@ class message
     /** @brief Create a 'method_error' type message from an existing message.
      *
      *  @param[in] error - integer error number
+     *  @param[in] e - optional pointer to preformatted sd_bus_error
      *  @return method-error message.
      */
-    message new_method_errno(int error)
+    message new_method_errno(int error, const sd_bus_error* e = nullptr)
     {
         msgp_t reply = nullptr;
         int r = _intf->sd_bus_message_new_method_errno(this->get(), &reply,
-                                                       error, nullptr);
+                                                       error, e);
         if (r < 0)
         {
             throw exception::SdBusError(-r, "sd_bus_message_new_method_errno");

@@ -46,6 +46,7 @@ class SdBusError final : public internal_exception
     const char* description() const noexcept override;
     const char* what() const noexcept override;
     int get_errno() const noexcept;
+    const sd_bus_error* get_error() const noexcept;
 
   private:
     sd_bus_error error;

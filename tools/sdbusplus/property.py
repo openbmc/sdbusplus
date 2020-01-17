@@ -30,22 +30,38 @@ class Property(NamedElement, Renderer):
             return True
         return False
 
+    def process_enum(self, name, server):
+        # strip off 'enum<' and '>'
+        r = name.split('>')[0].split('<')[1]
+
+        # self. means local type.
+        if r.startswith("self."):
+            return r.split('self.')[1]
+
+        r = r.split('.')
+        r.insert(-2, "server" if server else "client")
+        r = "::".join(r)
+        return r
+
     """ Return a conversion of the cppTypeName valid as a function parameter.
         Currently only 'enum' requires conversion.
     """
     def cppTypeParam(self, interface, server=True):
         if self.is_enum():
-            # strip off 'enum<' and '>'
-            r = self.cppTypeName.split('>')[0].split('<')[1]
+            return self.process_enum(self.cppTypeName, server)
 
-            # self. means local type.
-            if r.startswith("self."):
-                return r.split('self.')[1]
+        # Handle any embedded enums
+        pos = self.cppTypeName.find('enum<')
+        while pos != -1:
+            endPos = self.cppTypeName.find('>', pos)
+            enumField = self.cppTypeName[pos:endPos + 1]
 
-            r = r.split('.')
-            r.insert(-2, "server" if server else "client")
-            r = "::".join(r)
-            return r
+            self.cppTypeName = self.cppTypeName[0:pos] + \
+                self.process_enum(enumField, server) + \
+                self.cppTypeName[endPos + 1:]
+
+            pos = self.cppTypeName.find('enum<')
+
         return self.cppTypeName
 
     """ Return a conversion of the cppTypeName valid as it is read out of a
@@ -54,6 +70,19 @@ class Property(NamedElement, Renderer):
     def cppTypeMessage(self, interface):
         if self.is_enum():
             return "std::string"
+
+        # Handle any embedded enums
+        pos = self.cppTypeName.find('enum<')
+        while pos != -1:
+            endPos = self.cppTypeName.find('>', pos)
+            enumField = self.cppTypeName[pos:endPos + 1]
+
+            self.cppTypeName = self.cppTypeName[0:pos] + \
+                "std::string" + \
+                self.cppTypeName[endPos + 1:]
+
+            pos = self.cppTypeName.find('enum<')
+
         return self.cppTypeName
 
     def enum_namespace(self, interface):

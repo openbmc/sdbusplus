@@ -30,24 +30,18 @@ class Property(NamedElement, Renderer):
     """ Return a conversion of the cppTypeName valid as a function parameter.
         Currently only 'enum' requires conversion.
     """
-    def cppTypeParam(self, interface, server=True):
+    def cppTypeParam(self, interface, full=False, server=True):
         r = self.cppTypeName
 
         if self.is_enum():
+            if "." not in r and full:
+                r = interface + "." + r
             if "." in r:
                 r = r.split('.')
                 r.insert(-2, "server" if server else "client")
                 r = "::".join(r)
 
         return r
-
-    """ Return a conversion of the cppTypeName valid as it is read out of a
-        message.  Currently only 'enum' requires conversion.
-    """
-    def cppTypeMessage(self, interface):
-        if self.is_enum():
-            return "std::string"
-        return self.cppTypeName
 
     def enum_namespace(self, interface):
         if not self.is_enum():

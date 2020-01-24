@@ -5,6 +5,7 @@ import yaml
 
 class Property(NamedElement, Renderer):
     def __init__(self, **kwargs):
+        self.enum = False
         self.typeName = kwargs.pop('type', None)
         self.cppTypeName = self.parse_cpp_type(self.typeName)
         self.defaultValue = kwargs.pop('default', None)
@@ -24,20 +25,14 @@ class Property(NamedElement, Renderer):
         super(Property, self).__init__(**kwargs)
 
     def is_enum(self):
-        if not self.cppTypeName:
-            return False
-        if self.cppTypeName.startswith("enum<"):
-            return True
-        return False
+        return self.enum
 
     """ Return a conversion of the cppTypeName valid as a function parameter.
         Currently only 'enum' requires conversion.
     """
     def cppTypeParam(self, interface, server=True):
         if self.is_enum():
-            # strip off 'enum<' and '>'
-            r = self.cppTypeName.split('>')[0].split('<')[1]
-
+            r = self.cppTypeName
             # self. means local type.
             if r.startswith("self."):
                 return r.split('self.')[1]
@@ -79,7 +74,7 @@ class Property(NamedElement, Renderer):
         """
         typeArray = yaml.safe_load("[" + ",[".join(typeName.split("[")) + "]")
         typeTuple = self.__preprocess_yaml_type_array(typeArray).pop(0)
-        return self.__parse_cpp_type__(typeTuple)
+        return self.__parse_cpp_type__(typeTuple, top_type=True)
 
     """ Take a list of dbus types from YAML and convert it to a recursive data
         structure. Each entry of the original list gets converted into a tuple
@@ -113,7 +108,7 @@ class Property(NamedElement, Renderer):
             [ variant [ dict [ int32, int32 ], double ] ]
         This function then converts the type-list into a C++ type string.
     """
-    def __parse_cpp_type__(self, typeTuple):
+    def __parse_cpp_type__(self, typeTuple, top_type=False):
         propertyMap = {
             'byte': {'cppName': 'uint8_t', 'params': 0},
             'boolean': {'cppName': 'bool', 'params': 0},
@@ -134,7 +129,7 @@ class Property(NamedElement, Renderer):
             'struct': {'cppName': 'std::tuple', 'params': -1},
             'variant': {'cppName': 'std::variant', 'params': -1},
             'dict': {'cppName': 'std::map', 'params': 2},
-            'enum': {'cppName': 'enum', 'params': 1, 'noparse': True}}
+            'enum': {'cppName': 'enum', 'params': 1}}
 
         if len(typeTuple) != 2:
             raise RuntimeError("Invalid typeTuple %s" % typeTuple)
@@ -159,16 +154,17 @@ class Property(NamedElement, Renderer):
             raise RuntimeError("Invalid entry count for %s : %s" %
                                (first, rest))
 
+        # Switch enum for proper type.
+        if result == 'enum':
+            if top_type:
+                self.enum = True
+            return rest[0][0]
+
         # Parse each parameter entry, if appropriate, and create C++ template
         # syntax.
         result += '<'
-        if entry.get('noparse'):
-            # Do not parse the parameter list, just use the first element
-            # of each tuple and ignore possible parameters
-            result += ", ".join([e[0] for e in rest])
-        else:
-            result += ", ".join(map(lambda e: self.__parse_cpp_type__(e),
-                                    rest))
+        result += ", ".join(map(lambda e: self.__parse_cpp_type__(e),
+                                rest))
         result += '>'
 
         return result

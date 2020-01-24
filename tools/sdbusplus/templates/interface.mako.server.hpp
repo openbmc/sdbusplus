@@ -113,12 +113,12 @@ ${p.camelCase}(${p.cppTypeParam(interface.name)} value);
 
     % endif
     % for e in interface.enums:
-    /** @brief Convert a string to an appropriate enum value.
-     *  @param[in] s - The string to convert in the form of
-     *                 "${interface.name}.<value name>"
-     *  @return - The enum value.
-     */
-    static ${e.name} convert${e.name}FromString(const std::string& s);
+        /** @brief Convert a string to an appropriate enum value.
+         *  @param[in] s - The string to convert in the form of
+         *                 "${interface.name}.<value name>"
+         *  @return - The enum value.
+         */
+        static ${e.name} convert${e.name}FromString(const std::string& s);
     % endfor
 
         static constexpr auto interface = "${interface.name}";

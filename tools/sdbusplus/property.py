@@ -43,14 +43,6 @@ class Property(NamedElement, Renderer):
 
         return r
 
-    """ Return a conversion of the cppTypeName valid as it is read out of a
-        message.  Currently only 'enum' requires conversion.
-    """
-    def cppTypeMessage(self, interface):
-        if self.is_enum():
-            return "std::string"
-        return self.cppTypeName
-
     def enum_namespace(self, interface):
         if not self.is_enum():
             return ""

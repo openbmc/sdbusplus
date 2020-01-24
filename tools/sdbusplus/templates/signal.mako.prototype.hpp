@@ -14,7 +14,7 @@
                 for p in signal.properties ])
 
     def parameters_types_as_list():
-        return ", ".join([ p.cppTypeMessage(interface.name)
+        return ", ".join([ p.cppTypeParam(interface.name, full=True)
                 for p in signal.properties ])
 
     def default_value(p):
@@ -56,12 +56,10 @@
 void ${interface_name()}::${ signal.camelCase }(
             ${ parameters() })
 {
-    using sdbusplus::server::binding::details::convertForMessage;
-
     auto& i = _${"_".join(interface.name.split('.'))}_interface;
     auto m = i.new_signal("${ signal.name }");
 
-    m.append(${ parameters_as_list(pre="convertForMessage(", post=")") });
+    m.append(${ parameters_as_list() });
     m.signal_send();
 }
 

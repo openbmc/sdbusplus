@@ -31,17 +31,15 @@ class Property(NamedElement, Renderer):
         Currently only 'enum' requires conversion.
     """
     def cppTypeParam(self, interface, server=True):
-        if self.is_enum():
-            r = self.cppTypeName
-            # self. means local type.
-            if r.startswith("self."):
-                return r.split('self.')[1]
+        r = self.cppTypeName
 
-            r = r.split('.')
-            r.insert(-2, "server" if server else "client")
-            r = "::".join(r)
-            return r
-        return self.cppTypeName
+        if self.is_enum():
+            if "." in r:
+                r = r.split('.')
+                r.insert(-2, "server" if server else "client")
+                r = "::".join(r)
+
+        return r
 
     """ Return a conversion of the cppTypeName valid as it is read out of a
         message.  Currently only 'enum' requires conversion.
@@ -158,7 +156,12 @@ class Property(NamedElement, Renderer):
         if result == 'enum':
             if top_type:
                 self.enum = True
-            return rest[0][0]
+            result = rest[0][0]
+
+            # self. means local type.
+            if result.startswith("self."):
+                return result[5:]   # "self." is 5 characters
+            return result
 
         # Parse each parameter entry, if appropriate, and create C++ template
         # syntax.

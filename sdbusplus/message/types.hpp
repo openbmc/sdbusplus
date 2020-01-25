@@ -166,9 +166,14 @@ constexpr auto type_id_multiple();
  *
  *  Struct must have a 'value' tuple containing the dbus type.  The default
  *  value is an empty tuple, which is used to indicate an unsupported type.
+ *
+ *  Enums are converted to strings on the dbus by some special conversion
+ *  routines.
  */
 template <typename T, typename Enable = void>
-struct type_id : public undefined_type_id
+struct type_id : public std::conditional_t<std::is_enum_v<T>,
+                                           tuple_type_id<SD_BUS_TYPE_STRING>,
+                                           undefined_type_id>
 {
 };
 // Specializations for built-in types.

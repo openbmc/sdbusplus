@@ -48,10 +48,11 @@ namespace details
  *  @tparam T - Type for identification.
  *
  *  User-defined types are expected to inherit from std::false_type.
- *
+ *  Enums are converted to strings, so must be done one at a time.
  */
 template <typename T, typename Enable = void>
-struct can_append_multiple : std::true_type
+struct can_append_multiple
+    : std::conditional_t<std::is_enum_v<T>, std::false_type, std::true_type>
 {
 };
 // unix_fd's int needs to be wrapped.

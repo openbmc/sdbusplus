@@ -41,6 +41,9 @@ void read(sdbusplus::SdBusInterface* intf, sd_bus_message* m, Args&&... args);
 namespace details
 {
 
+template <typename T>
+auto convert_from_string(const std::string&) = delete;
+
 /** @struct can_read_multiple
  *  @brief Utility to identify C++ types that may not be grouped into a
  *         single sd_bus_message_read call and instead need special
@@ -138,9 +141,9 @@ struct read_single
      *  @param[in] m - sd_bus_message to read from.
      *  @param[out] t - The reference to read item into.
      */
-    template <typename T,
-              typename = std::enable_if_t<std::is_same<S, Td<T>>::value>>
-    static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, T&& t)
+    template <typename T>
+    static std::enable_if_t<std::is_same_v<S, Td<T>> && !std::is_enum_v<Td<T>>>
+        op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, T&& t)
     {
         // For this default implementation, we need to ensure that only
         // basic types are used.
@@ -155,6 +158,16 @@ struct read_single
             throw exception::SdBusError(
                 -r, "sd_bus_message_read_basic fundamental");
         }
+    }
+
+    template <typename T>
+    static std::enable_if_t<std::is_same_v<S, Td<T>> && std::is_enum_v<Td<T>>>
+        op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, T&& t)
+    {
+        std::string value{};
+        sdbusplus::message::read(intf, m, value);
+
+        t = convert_from_string<Td<T>>(value);
     }
 };
 

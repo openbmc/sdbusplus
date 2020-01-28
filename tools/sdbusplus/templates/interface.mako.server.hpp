@@ -16,6 +16,9 @@ ${ m.cpp_prototype(loader, interface=interface, ptype='callback-hpp-includes') }
     def setOfPropertyTypes():
         return set(p.cppTypeParam(interface.name) for p in
                    interface.properties);
+
+    def cppNamespace():
+        return "::".join(namespaces) + "::server::" + classname
 %>
 namespace sdbusplus
 {
@@ -174,4 +177,19 @@ std::string convertForMessage(${classname}::${e.name} e);
     % for s in reversed(namespaces):
 } // namespace ${s}
     % endfor
+
+namespace message
+{
+namespace details
+{
+    % for e in interface.enums:
+template <>
+inline auto convert_from_string<${cppNamespace()}::${e.name}>(
+        const std::string& value)
+{
+    return ${cppNamespace()}::convert${e.name}FromString(value);
+}
+    % endfor
+} // namespace details
+} // namespace message
 } // namespace sdbusplus

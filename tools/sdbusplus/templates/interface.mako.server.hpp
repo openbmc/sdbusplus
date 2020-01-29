@@ -122,6 +122,13 @@ ${p.camelCase}(${p.cppTypeParam(interface.name)} value);
          *  @return - The enum value.
          */
         static ${e.name} convert${e.name}FromString(const std::string& s);
+
+        /** @brief Convert an enum value to a string.
+         *  @param[in] e - The enum to convert to a string.
+         *  @return - The string conversion in the form of
+         *            "${interface.name}.<value name>"
+         */
+        static std::string convert${e.name}ToString(${e.name} e);
     % endfor
 
         /** @brief Emit interface added */
@@ -183,7 +190,10 @@ ${p.defaultValue};
  * @param[in] e - Enum value to convert.
  * @return C-string representing the name for the enum value.
  */
-std::string convertForMessage(${classname}::${e.name} e);
+inline std::string convertForMessage(${classname}::${e.name} e)
+{
+    return ${classname}::convert${e.name}ToString(e);
+}
     % endfor
 
 } // namespace server

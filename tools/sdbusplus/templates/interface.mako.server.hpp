@@ -199,6 +199,13 @@ inline auto convert_from_string<${cppNamespace()}::${e.name}>(
 {
     return ${cppNamespace()}::convert${e.name}FromString(value);
 }
+
+template <>
+inline std::string convert_to_string<${cppNamespace()}::${e.name}>(
+        ${cppNamespace()}::${e.name} value)
+{
+    return ${cppNamespace()}::convert${e.name}ToString(value);
+}
     % endfor
 } // namespace details
 } // namespace message

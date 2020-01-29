@@ -40,6 +40,15 @@ void append(sdbusplus::SdBusInterface* intf, sd_bus_message* m, Args&&... args);
 namespace details
 {
 
+/** @brief Convert from a native type to a string.
+ *
+ *  Some C++ types cannot be represented directly on dbus, so we encode
+ *  them as strings.  Enums are the primary example of this.  This is a
+ *  template function prototype for the conversion to string functions.
+ */
+template <typename T>
+std::string convert_to_string(T) = delete;
+
 /** @struct can_append_multiple
  *  @brief Utility to identify C++ types that may not be grouped into a
  *         single sd_bus_message_append call and instead need special
@@ -155,9 +164,9 @@ struct append_single
      *  @param[in] m - sd_bus_message to append into.
      *  @param[in] t - The item to append.
      */
-    template <typename T,
-              typename = std::enable_if_t<std::is_same<S, Td<T>>::value>>
-    static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, T&& t)
+    template <typename T>
+    static std::enable_if_t<std::is_same_v<S, Td<T>> && !std::is_enum_v<Td<T>>>
+        op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, T&& t)
     {
         // For this default implementation, we need to ensure that only
         // basic types are used.
@@ -168,6 +177,14 @@ struct append_single
         constexpr auto dbusType = std::get<0>(types::type_id<T>());
         intf->sd_bus_message_append_basic(m, dbusType,
                                           address_of(std::forward<T>(t)));
+    }
+
+    template <typename T>
+    static std::enable_if_t<std::is_same_v<S, Td<T>> && std::is_enum_v<Td<T>>>
+        op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, T&& t)
+    {
+        auto value = convert_to_string<Td<T>>(t);
+        sdbusplus::message::append(intf, m, value);
     }
 };
 

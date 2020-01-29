@@ -121,7 +121,7 @@ auto ${classname}::convert${e.name}FromString(const std::string& s) ->
     }
 }
 
-std::string convertForMessage(${classname}::${e.name} v)
+std::string ${classname}::convert${e.name}ToString(${classname}::${e.name} v)
 {
     auto i = std::find_if(
             std::begin(mapping${classname}${e.name}),

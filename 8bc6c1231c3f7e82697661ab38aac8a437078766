@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b3d7e312_a2f34d57",
+        "filename": "sdbusplus/bus/match.hpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2020-01-31T16:28:09Z",
+      "side": 1,
+      "message": "Can we just put up separate constructors?  All the extra logic and stuff on line 90 makes this really difficult to understand.",
+      "revId": "8bc6c1231c3f7e82697661ab38aac8a437078766",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import sdbusplus
 import mako.lookup
 import argparse
@@ -34,11 +34,7 @@ def main():
 
     args = parser.parse_args()
 
-    if sys.version_info < (3, 0):
-        lookup = mako.lookup.TemplateLookup(directories=[args.templatedir],
-                                            disable_unicode=True)
-    else:
-        lookup = mako.lookup.TemplateLookup(directories=[args.templatedir])
+    lookup = mako.lookup.TemplateLookup(directories=[args.templatedir])
 
     instance = valid_types[args.typeName].load(args.item, args.rootdir)
     function = getattr(instance, valid_processes[args.process])

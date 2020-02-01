@@ -48,7 +48,6 @@ Makefile.in
 /sdbusplus.pc
 /sdbusplus/bus.hpp
 /sdbusplus/server.hpp
-/tools/sdbusplus/templates/interface.mako.server.cpp
 /tools/sdbusplus/templates/method.mako.prototype.hpp
 /tools/sdbusplus/templates/property.mako.prototype.hpp
 

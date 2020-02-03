@@ -29,7 +29,7 @@ namespace server
 
 ${classname}::${classname}(bus::bus& bus, const char* path)
         : _${interface_instance()}(
-                bus, path, _interface, _vtable, this), _intf(bus.getInterface())
+                bus, path, interface, _vtable, this), _intf(bus.getInterface())
 {
 }
 

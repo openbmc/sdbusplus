@@ -121,6 +121,8 @@ ${p.camelCase}(${p.cppTypeParam(interface.name)} value);
     static ${e.name} convert${e.name}FromString(const std::string& s);
     % endfor
 
+        static constexpr auto _interface = "${interface.name}";
+
     private:
     % for m in interface.methods:
 ${ m.cpp_prototype(loader, interface=interface, ptype='callback-header') }
@@ -138,7 +140,6 @@ ${ m.cpp_prototype(loader, interface=interface, ptype='callback-header') }
 
     % endfor
 
-        static constexpr auto _interface = "${interface.name}";
         static const vtable::vtable_t _vtable[];
         sdbusplus::server::interface::interface
                 _${"_".join(interface.name.split('.'))}_interface;

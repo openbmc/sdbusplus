@@ -120,28 +120,24 @@ class connection : public sdbusplus::bus::bus
                            const std::string& interf, const std::string& method,
                            const InputArgs&... a)
     {
-        message::message m = new_method_call(service.c_str(), objpath.c_str(),
-                                             interf.c_str(), method.c_str());
-        m.append(a...);
-        async_send(m, [handler = std::forward<MessageHandler>(handler)](
-                          boost::system::error_code ec,
-                          message::message& r) mutable {
-            using FunctionTuple =
-                boost::callable_traits::args_t<MessageHandler>;
-            using FunctionTupleType =
-                typename utility::decay_tuple<FunctionTuple>::type;
-            constexpr bool returnWithMsg = []() {
-                if constexpr (std::tuple_size_v<FunctionTupleType>> 1)
-                {
-                    return std::is_same_v<
-                        std::tuple_element_t<1, FunctionTupleType>,
-                        sdbusplus::message::message>;
-                }
-                return false;
-            }();
-            using UnpackType =
-                typename utility::strip_first_n_args<returnWithMsg ? 2 : 1,
-                                                     FunctionTupleType>::type;
+        using FunctionTuple = boost::callable_traits::args_t<MessageHandler>;
+        using FunctionTupleType =
+            typename utility::decay_tuple<FunctionTuple>::type;
+        constexpr bool returnWithMsg = []() {
+            if constexpr (std::tuple_size_v<FunctionTupleType>> 1)
+            {
+                return std::is_same_v<
+                    std::tuple_element_t<1, FunctionTupleType>,
+                    sdbusplus::message::message>;
+            }
+            return false;
+        }();
+        using UnpackType =
+            typename utility::strip_first_n_args<returnWithMsg ? 2 : 1,
+                                                 FunctionTupleType>::type;
+        auto applyHandler = [handler = std::forward<MessageHandler>(handler)](
+                                boost::system::error_code ec,
+                                message::message& r) mutable {
             UnpackType responseData;
             if (!ec)
             {
@@ -171,7 +167,23 @@ class connection : public sdbusplus::bus::bus
                                                std::move(responseData));
                 std::apply(handler, response);
             }
-        });
+        };
+        message::message m;
+        boost::system::error_code ec;
+        try
+        {
+            m = new_method_call(service.c_str(), objpath.c_str(),
+                                interf.c_str(), method.c_str());
+            m.append(a...);
+        }
+        catch (const exception::SdBusError& e)
+        {
+            ec = boost::system::errc::make_error_code(
+                static_cast<boost::system::errc::errc_t>(e.get_errno()));
+            applyHandler(ec, m);
+            return;
+        }
+        async_send(m, std::forward<decltype(applyHandler)>(applyHandler));
     }
 
     /** @brief Perform a yielding asynchronous method call, with input
@@ -195,10 +207,23 @@ class connection : public sdbusplus::bus::bus
                            const std::string& interf, const std::string& method,
                            const InputArgs&... a)
     {
-        message::message m = new_method_call(service.c_str(), objpath.c_str(),
-                                             interf.c_str(), method.c_str());
-        m.append(a...);
-        message::message r = async_send(m, yield[ec]);
+        message::message m;
+        try
+        {
+            m = new_method_call(service.c_str(), objpath.c_str(),
+                                interf.c_str(), method.c_str());
+            m.append(a...);
+        }
+        catch (const exception::SdBusError& e)
+        {
+            ec = boost::system::errc::make_error_code(
+                static_cast<boost::system::errc::errc_t>(e.get_errno()));
+        }
+        message::message r;
+        if (!ec)
+        {
+            r = async_send(m, yield[ec]);
+        }
         if constexpr (sizeof...(RetTypes) == 0)
         {
             // void return

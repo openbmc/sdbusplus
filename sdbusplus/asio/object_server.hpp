@@ -312,7 +312,7 @@ class callback_set_instance : public callback_set
         }
         return SetPropertyReturnValue::fail;
     }
-    SetPropertyReturnValue set(const boost::any& value)
+    SetPropertyReturnValue set(const boost::any& value) override
     {
         auto oldValue = *value_;
         if (func_(boost::any_cast<PropertyType>(value), *value_))

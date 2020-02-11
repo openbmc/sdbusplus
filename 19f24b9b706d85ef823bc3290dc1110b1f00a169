@@ -1,0 +1,11 @@
+Ok-To-Test+1: Jenkins <openbmc-ci-admin@ozlabs.org>
+Verified+1: Jenkins <openbmc-ci-admin@ozlabs.org>
+Code-Review+1: Patrick Williams <patrick@stwcx.xyz>
+Code-Review+1: Vernon Mauery <vernon.mauery@linux.intel.com>
+Code-Review+1: William A. Kennington III <wak@google.com>
+Code-Review+2: Lei YU <mine260309@gmail.com>
+Submitted-by: Lei YU <mine260309@gmail.com>
+Submitted-at: Tue, 11 Feb 2020 03:29:31 +0000
+Reviewed-on: https://gerrit.openbmc-project.xyz/c/openbmc/sdbusplus/+/29197
+Project: openbmc/sdbusplus
+Branch: refs/heads/master

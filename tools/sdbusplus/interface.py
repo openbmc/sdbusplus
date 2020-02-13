@@ -60,3 +60,6 @@ class Interface(NamedElement, Renderer):
 
     def server_cpp(self, loader):
         return self.render(loader, "interface.mako.server.cpp", interface=self)
+
+    def client_header(self, loader):
+        return self.render(loader, "interface.mako.client.hpp", interface=self)

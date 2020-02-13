@@ -1,7 +1,9 @@
 #include <iostream>
+#include <net/poettering/Calculator/client.hpp>
 #include <net/poettering/Calculator/error.hpp>
 #include <net/poettering/Calculator/server.hpp>
 #include <sdbusplus/server.hpp>
+#include <string_view>
 
 using Calculator_inherit =
     sdbusplus::server::object_t<sdbusplus::net::poettering::server::Calculator>;
@@ -47,10 +49,20 @@ struct Calculator : Calculator_inherit
     }
 };
 
+constexpr bool strings_equal(char const* a, char const* b)
+{
+    return *a == *b && (*a == '\0' || strings_equal(a + 1, b + 1));
+}
+
 int main()
 {
     // Define a dbus path location to place the object.
     constexpr auto path = "/net/poettering/calculator";
+
+    static_assert(
+        std::string_view(
+            sdbusplus::net::poettering::client::Calculator::interface) ==
+        std::string_view(Calculator::interface));
 
     // Create a new bus and affix an object manager for the subtree path we
     // intend to place objects at..

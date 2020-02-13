@@ -33,7 +33,8 @@ calculator_server_generated_files = \
 	net/poettering/Calculator/server.hpp \
 	net/poettering/Calculator/server.cpp \
 	net/poettering/Calculator/error.hpp \
-	net/poettering/Calculator/error.cpp
+	net/poettering/Calculator/error.cpp \
+	net/poettering/Calculator/client.hpp
 
 calculator_markdown_generated_files = \
 	calculator.md
@@ -82,4 +83,10 @@ calculator.md:
 	@top_srcdir@/tools/sdbus++ \
 	    -r $(srcdir) -t $(top_builddir)/tools/sdbusplus/templates \
 	    error markdown net.poettering.Calculator >> $@
+
+net/poettering/Calculator/client.hpp:
+	@mkdir -p $(@D)
+	@top_srcdir@/tools/sdbus++ \
+	    -r $(srcdir) -t $(top_builddir)/tools/sdbusplus/templates \
+	    interface client-header net.poettering.Calculator > $@
 endif

@@ -15,7 +15,8 @@ def main():
                        'server-header': "server_header",
                        'server-cpp': "server_cpp",
                        'exception-header': "exception_header",
-                       'exception-cpp': "exception_cpp"}
+                       'exception-cpp': "exception_cpp",
+                       'common-header': "common_header"}
 
     parser = argparse.ArgumentParser(description='Process sdbus++ YAML files.')
 

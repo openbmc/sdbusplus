@@ -37,15 +37,15 @@ struct interface final
      *     Not allowed:
      *         - Default constructor to avoid nullptrs.
      *         - Copy operations due to internal unique_ptr.
-     *     Allowed:
      *         - Move operations.
+     *     Allowed:
      *         - Destructor.
      */
     interface() = delete;
     interface(const interface&) = delete;
     interface& operator=(const interface&) = delete;
-    interface(interface&&) = default;
-    interface& operator=(interface&&) = default;
+    interface(interface&&) = delete;
+    interface& operator=(interface&&) = delete;
 
     /** @brief Register the (path, interface, vtable) as a dbus object.
      *

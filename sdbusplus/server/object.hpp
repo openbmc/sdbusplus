@@ -97,15 +97,15 @@ struct object : details::compose<Args...>
      *     Not allowed:
      *         - Default constructor to avoid nullptrs.
      *         - Copy operations due to internal unique_ptr.
-     *     Allowed:
      *         - Move operations.
+     *     Allowed:
      *         - Destructor.
      */
     object() = delete;
     object(const object&) = delete;
     object& operator=(const object&) = delete;
-    object(object&&) = default;
-    object& operator=(object&&) = default;
+    object(object&&) = delete;
+    object& operator=(object&&) = delete;
 
     enum class action
     {

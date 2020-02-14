@@ -44,8 +44,8 @@ struct interface final
     interface() = delete;
     interface(const interface&) = delete;
     interface& operator=(const interface&) = delete;
-    interface(interface&&) = default;
-    interface& operator=(interface&&) = default;
+    interface(interface&&) = delete;
+    interface& operator=(interface&&) = delete;
 
     /** @brief Register the (path, interface, vtable) as a dbus object.
      *

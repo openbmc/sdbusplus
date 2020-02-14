@@ -104,8 +104,8 @@ struct object : details::compose<Args...>
     object() = delete;
     object(const object&) = delete;
     object& operator=(const object&) = delete;
-    object(object&&) = default;
-    object& operator=(object&&) = default;
+    object(object&&) = delete;
+    object& operator=(object&&) = delete;
 
     enum class action
     {

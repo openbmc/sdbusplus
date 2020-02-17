@@ -72,7 +72,16 @@ server/Test/server.cpp:
 	    -r $(srcdir) -t $(top_builddir)/tools/sdbusplus/templates \
 	    interface server-cpp server.Test > $@
 
-server_test_generated_sources = server/Test/server.cpp server/Test/server.hpp
+server/Test/test_common_include.hpp:
+	@mkdir -p $(@D)
+	@top_srcdir@/tools/sdbus++ \
+	    -r $(srcdir) -t $(top_builddir)/tools/sdbusplus/templates \
+	    interface common-header server.Test > $@
+
+server_test_generated_sources = \
+	server/Test/server.cpp \
+	server/Test/server.hpp \
+	server/Test/test_common_include.hpp
 
 BUILT_SOURCES = $(server_test_generated_sources)
 CLEANFILES = $(server_test_generated_sources)

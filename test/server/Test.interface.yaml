@@ -3,3 +3,18 @@ description: >
 properties:
     - name: SomeValue
       type: int64
+    - name: SomeEnum
+      type: enum[self.MyEnum]
+      default: Enum1
+    - name: TheOtherEnum
+      type: enum[self.AnotherEnum]
+      default: EnumA
+enumerations:
+    - name: MyEnum
+      values:
+        - name: Enum1
+        - name: Enum2
+    - name: AnotherEnum
+      values:
+        - name: EnumA
+        - name: EnumB

@@ -1,4 +1,5 @@
 #include "Test/server.hpp"
+#include "Test/test_common_include.hpp"
 
 #include <sdbusplus/bus.hpp>
 #include <sdbusplus/server/manager.hpp>
@@ -21,6 +22,27 @@ class Object : public ::testing::Test
     static constexpr auto busName = "xyz.openbmc_project.sdbusplus.test.Object";
     static constexpr auto objPath = "/xyz/openbmc_project/sdbusplus/test";
 };
+
+TEST_F(Object, CommonHeaders)
+{
+    using namespace sdbusplus::server::server;
+    using MyEnum = sdbusplus::server::server::Test::MyEnum;
+    using AnotherEnum = sdbusplus::server::server::Test::AnotherEnum;
+
+    // Verify the interface name string
+    EXPECT_STREQ(TestInherit::interface, sdbusplus::server::Test::interface);
+
+    // Verify the enum strings
+    EXPECT_EQ(convertForMessage(MyEnum::Enum1),
+              sdbusplus::server::Test::MyEnum::Enum1);
+    EXPECT_EQ(convertForMessage(MyEnum::Enum2),
+              sdbusplus::server::Test::MyEnum::Enum2);
+
+    EXPECT_EQ(convertForMessage(AnotherEnum::EnumA),
+              sdbusplus::server::Test::AnotherEnum::EnumA);
+    EXPECT_EQ(convertForMessage(AnotherEnum::EnumB),
+              sdbusplus::server::Test::AnotherEnum::EnumB);
+}
 
 TEST_F(Object, InterfaceAddedOnly)
 {

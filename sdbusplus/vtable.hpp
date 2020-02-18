@@ -113,19 +113,22 @@ constexpr auto explicit_ = SD_BUS_VTABLE_PROPERTY_EXPLICIT;
 
 constexpr vtable_t start(decltype(vtable_t::flags) flags)
 {
-    return SD_BUS_VTABLE_START(flags);
+    vtable_t t = SD_BUS_VTABLE_START(flags);
+    return t;
 }
 
 constexpr vtable_t end()
 {
-    return SD_BUS_VTABLE_END;
+    vtable_t t = SD_BUS_VTABLE_END;
+    return t;
 }
 
 constexpr vtable_t method(const char* member, const char* signature,
                           const char* result, sd_bus_message_handler_t handler,
                           decltype(vtable_t::flags) flags)
 {
-    return SD_BUS_METHOD(member, signature, result, handler, flags);
+    vtable_t t = SD_BUS_METHOD(member, signature, result, handler, flags);
+    return t;
 }
 
 constexpr vtable_t method_o(const char* member, const char* signature,
@@ -133,21 +136,24 @@ constexpr vtable_t method_o(const char* member, const char* signature,
                             sd_bus_message_handler_t handler, size_t offset,
                             decltype(vtable_t::flags) flags)
 {
-    return SD_BUS_METHOD_WITH_OFFSET(member, signature, result, handler, offset,
-                                     flags);
+    vtable_t t = SD_BUS_METHOD_WITH_OFFSET(member, signature, result, handler,
+                                           offset, flags);
+    return t;
 }
 
 constexpr vtable_t signal(const char* member, const char* signature,
                           decltype(vtable_t::flags) flags)
 {
-    return SD_BUS_SIGNAL(member, signature, flags);
+    vtable_t t = SD_BUS_SIGNAL(member, signature, flags);
+    return t;
 }
 
 constexpr vtable_t property(const char* member, const char* signature,
                             sd_bus_property_get_t get,
                             decltype(vtable_t::flags) flags)
 {
-    return SD_BUS_PROPERTY(member, signature, get, 0, flags);
+    vtable_t t = SD_BUS_PROPERTY(member, signature, get, 0, flags);
+    return t;
 }
 
 constexpr vtable_t property(const char* member, const char* signature,
@@ -155,21 +161,25 @@ constexpr vtable_t property(const char* member, const char* signature,
                             sd_bus_property_set_t set,
                             decltype(vtable_t::flags) flags)
 {
-    return SD_BUS_WRITABLE_PROPERTY(member, signature, get, set, 0, flags);
+    vtable_t t =
+        SD_BUS_WRITABLE_PROPERTY(member, signature, get, set, 0, flags);
+    return t;
 }
 
 constexpr vtable_t property_o(const char* member, const char* signature,
                               size_t offset, decltype(vtable_t::flags) flags)
 {
-    return SD_BUS_PROPERTY(member, signature, nullptr, offset, flags);
+    vtable_t t = SD_BUS_PROPERTY(member, signature, nullptr, offset, flags);
+    return t;
 }
 
 constexpr vtable_t property_o(const char* member, const char* signature,
                               sd_bus_property_set_t set, size_t offset,
                               decltype(vtable_t::flags) flags)
 {
-    return SD_BUS_WRITABLE_PROPERTY(member, signature, nullptr, set, offset,
-                                    flags);
+    vtable_t t = SD_BUS_WRITABLE_PROPERTY(member, signature, nullptr, set,
+                                          offset, flags);
+    return t;
 }
 
 } // namespace vtable

@@ -11,8 +11,8 @@ sdbusplus contains two parts:
 
 The sdbusplus library requires sd-bus, which is contained in libsystemd.
 
-The sdbus++ application requires python and the python libraries mako
-and py-inflection.
+The sdbus++ application requires Python 3 and the Python libraries mako
+and inflection.
 
 ## C++ library
 
@@ -110,16 +110,16 @@ needed for Ubuntu and Fedora.
 ### Installation on Ubuntu
 
 ```
-sudo apt install git autoconf libtool pkg-config g++ autoconf-archive libsystemd-dev python python-yaml python-mako python-inflection
+sudo apt install git autoconf libtool pkg-config g++ autoconf-archive libsystemd-dev python3 python3-pip python3-yaml python3-mako python3-inflection
 ```
 
 ### Installation on Fedora
 
 ```
-sudo dnf install git autoconf libtool gcc-c++ pkgconfig autoconf-archive systemd-devel python python-pip python-yaml python-mako
+sudo dnf install git autoconf libtool gcc-c++ pkgconfig autoconf-archive systemd-devel python3 python3-pip python3-yaml python3-mako
 ```
 Install the inflection package using the pip utility (on Fedora)
 ```
-pip install inflection
+pip3 install inflection
 ```
 

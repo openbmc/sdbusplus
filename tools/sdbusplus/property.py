@@ -167,8 +167,7 @@ class Property(NamedElement, Renderer):
             # of each tuple and ignore possible parameters
             result += ", ".join([e[0] for e in rest])
         else:
-            result += ", ".join(map(lambda e: self.__parse_cpp_type__(e),
-                                    rest))
+            result += ", ".join([self.__parse_cpp_type__(e) for e in rest])
         result += '>'
 
         return result

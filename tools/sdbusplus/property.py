@@ -160,8 +160,7 @@ class Property(NamedElement, Renderer):
         # Parse each parameter entry, if appropriate, and create C++ template
         # syntax.
         result += '<'
-        result += ", ".join(map(lambda e: self.__parse_cpp_type__(e),
-                                rest))
+        result += ", ".join([self.__parse_cpp_type__(e) for e in rest])
         result += '>'
 
         return result

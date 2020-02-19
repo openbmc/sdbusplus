@@ -29,7 +29,7 @@ AC_PROG_INSTALL
 AC_PROG_MAKE_SET
 
 # setup sdbus++
-AM_PATH_PYTHON([2.7], [AC_SUBST([PYTHON], [echo "$PYTHON"])])
+AM_PATH_PYTHON([3.0], [AC_SUBST([PYTHON], [echo "$PYTHON"])])
 AC_SUBST([PYTHONDIR], ${pythondir})
 AS_IF([test "$PYTHON" != :], [have_python=yes], [have_python=no])
 

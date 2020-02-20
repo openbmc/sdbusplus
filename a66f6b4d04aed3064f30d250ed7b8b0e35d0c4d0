@@ -1,0 +1,9 @@
+Ok-To-Test+1: Jenkins <openbmc-ci-admin@ozlabs.org>
+Verified+1: Jenkins <openbmc-ci-admin@ozlabs.org>
+Code-Review+1: Patrick Williams <patrick@stwcx.xyz>
+Code-Review+2: Vernon Mauery <vernon.mauery@linux.intel.com>
+Submitted-by: Vernon Mauery <vernon.mauery@linux.intel.com>
+Submitted-at: Thu, 20 Feb 2020 17:34:15 +0000
+Reviewed-on: https://gerrit.openbmc-project.xyz/c/openbmc/sdbusplus/+/28333
+Project: openbmc/sdbusplus
+Branch: refs/heads/master

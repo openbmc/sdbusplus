@@ -4,6 +4,10 @@ import yaml
 
 
 class Property(NamedElement, Renderer):
+
+    LOCAL_ENUM_MAGIC = "<LOCAL_ENUM>"
+    NONLOCAL_ENUM_MAGIC = "<NONLOCAL_ENUM>"
+
     def __init__(self, **kwargs):
         self.enum = False
         self.typeName = kwargs.pop('type', None)
@@ -31,15 +35,23 @@ class Property(NamedElement, Renderer):
         Currently only 'enum' requires conversion.
     """
     def cppTypeParam(self, interface, full=False, server=True):
+
+        ns_type = "server" if server else "client"
+
+        iface = interface.split(".")
+        iface.insert(-2, ns_type)
+        iface = "::".join(iface)
+
         r = self.cppTypeName
 
-        if self.is_enum():
-            if "." not in r and full:
-                r = interface + "." + r
-            if "." in r:
-                r = r.split('.')
-                r.insert(-2, "server" if server else "client")
-                r = "::".join(r)
+        # Fix up local enum placeholders.
+        if full:
+            r = r.replace(self.LOCAL_ENUM_MAGIC, iface)
+        else:
+            r = r.replace(self.LOCAL_ENUM_MAGIC + "::", "")
+
+        # Fix up non-local enum placeholders.
+        r = r.replace(self.NONLOCAL_ENUM_MAGIC, ns_type)
 
         return r
 
@@ -154,7 +166,12 @@ class Property(NamedElement, Renderer):
 
             # self. means local type.
             if result.startswith("self."):
-                return result[5:]   # "self." is 5 characters
+                return result.replace("self.", self.LOCAL_ENUM_MAGIC + "::")
+
+            # Insert place-holder for header-type namespace (ex. "server")
+            result = result.split('.')
+            result.insert(-2, self.NONLOCAL_ENUM_MAGIC)
+            result = "::".join(result)
             return result
 
         # Parse each parameter entry, if appropriate, and create C++ template

@@ -518,6 +518,54 @@ class dbus_interface
         return false;
     }
 
+    bool register_signal(const std::string& name)
+    {
+        if (initialized_)
+        {
+            return false;
+        }
+        else if (name.find_first_not_of(PropertyNameAllowedCharacters) !=
+                 std::string::npos)
+        {
+            return false;
+        }
+
+        auto [itr, inserted] = signalNames_.insert(name);
+        if (!inserted)
+        {
+            return false;
+        }
+
+        vtable_.emplace_back(vtable::signal(itr->c_str(), ""));
+        return true;
+    }
+
+    template <typename... SignalSignature>
+    bool register_signal(const std::string& name)
+    {
+        if (initialized_)
+        {
+            return false;
+        }
+        else if (name.find_first_not_of(PropertyNameAllowedCharacters) !=
+                 std::string::npos)
+        {
+            return false;
+        }
+
+        static const auto signature = utility::tuple_to_array(
+            message::types::type_id<SignalSignature...>());
+
+        auto [itr, inserted] = signalNames_.insert(name);
+        if (!inserted)
+        {
+            return false;
+        }
+
+        vtable_.emplace_back(vtable::signal(itr->c_str(), signature.data()));
+        return true;
+    }
+
 #ifdef __cpp_if_constexpr
     template <typename CallbackType>
     bool register_method(const std::string& name, CallbackType&& handler)
@@ -750,6 +798,7 @@ class dbus_interface
     std::string name_;
     std::list<std::string> propertyNames_;
     std::list<std::string> methodNames_;
+    std::set<std::string> signalNames_;
     boost::container::flat_map<std::string, std::unique_ptr<callback>>
         callbacksGet_;
     boost::container::flat_map<std::string, std::unique_ptr<callback_set>>

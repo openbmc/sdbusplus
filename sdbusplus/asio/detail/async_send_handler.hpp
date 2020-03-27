@@ -37,12 +37,11 @@ struct async_send_handler
     async_send_handler(Handler& handler) : handler_(handler)
     {
     }
-    void operator()(sd_bus* conn, message::message& mesg)
+    void operator()(sd_bus* conn, message::message& mesg, uint64_t timeout)
     {
         async_send_handler* context = new async_send_handler(std::move(*this));
-        // 0 is the default timeout
-        int ec =
-            sd_bus_call_async(conn, NULL, mesg.get(), &callback, context, 0);
+        int ec = sd_bus_call_async(conn, NULL, mesg.get(), &callback, context,
+                                   timeout);
         if (ec < 0)
         {
             // add a deleter to context because handler may throw

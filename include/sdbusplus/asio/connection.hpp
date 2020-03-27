@@ -84,7 +84,8 @@ class connection : public sdbusplus::bus::bus
     inline BOOST_ASIO_INITFN_RESULT_TYPE(MessageHandler,
                                          void(boost::system::error_code,
                                               message::message&))
-        async_send(message::message& m, MessageHandler&& handler)
+        async_send(message::message& m, MessageHandler&& handler,
+                   uint64_t timeout = 0)
     {
         boost::asio::async_completion<
             MessageHandler, void(boost::system::error_code, message::message)>
@@ -92,12 +93,12 @@ class connection : public sdbusplus::bus::bus
         detail::async_send_handler<typename boost::asio::async_result<
             MessageHandler, void(boost::system::error_code,
                                  message::message)>::completion_handler_type>(
-            std::move(init.completion_handler))(get(), m);
+            std::move(init.completion_handler))(get(), m, timeout);
         return init.result.get();
     }
 
     /** @brief Perform an asynchronous method call, with input parameter packing
-     *         and return value unpacking
+     *         and return value unpacking.
      *
      *  @param[in] handler - A function object that is to be called as a
      *                       continuation for the async dbus method call. The
@@ -108,6 +109,8 @@ class connection : public sdbusplus::bus::bus
      *  @param[in] objpath - The object's path for the call.
      *  @param[in] interf - The object's interface to call.
      *  @param[in] method - The object's method to call.
+     *  @param[in] timeout - The timeout for the method call in usec (0 results
+     *                       in using the default value).
      *  @param[in] a... - Optional parameters for the method call.
      *
      *  @return immediate return of the internal handler registration. The
@@ -116,10 +119,12 @@ class connection : public sdbusplus::bus::bus
      *          complete.
      */
     template <typename MessageHandler, typename... InputArgs>
-    void async_method_call(MessageHandler&& handler, const std::string& service,
-                           const std::string& objpath,
-                           const std::string& interf, const std::string& method,
-                           const InputArgs&... a)
+    void async_method_call_timed(MessageHandler&& handler,
+                                 const std::string& service,
+                                 const std::string& objpath,
+                                 const std::string& interf,
+                                 const std::string& method, uint64_t timeout,
+                                 const InputArgs&... a)
     {
         using FunctionTuple = boost::callable_traits::args_t<MessageHandler>;
         using FunctionTupleType =
@@ -184,7 +189,37 @@ class connection : public sdbusplus::bus::bus
             applyHandler(ec, m);
             return;
         }
-        async_send(m, std::forward<decltype(applyHandler)>(applyHandler));
+        async_send(m, std::forward<decltype(applyHandler)>(applyHandler),
+                   timeout);
+    }
+
+    /** @brief Perform an asynchronous method call, with input parameter packing
+     *         and return value unpacking. Uses the default timeout value.
+     *
+     *  @param[in] handler - A function object that is to be called as a
+     *                       continuation for the async dbus method call. The
+     *                       arguments to parse on the return are deduced from
+     *                       the handler's signature and then passed in along
+     *                       with an error code and optional message::message
+     *  @param[in] service - The service to call.
+     *  @param[in] objpath - The object's path for the call.
+     *  @param[in] interf - The object's interface to call.
+     *  @param[in] method - The object's method to call.
+     *  @param[in] a... - Optional parameters for the method call.
+     *
+     *  @return immediate return of the internal handler registration. The
+     *          result of the actual asynchronous call will get unpacked from
+     *          the message and passed into the handler when the call is
+     *          complete.
+     */
+    template <typename MessageHandler, typename... InputArgs>
+    void async_method_call(MessageHandler&& handler, const std::string& service,
+                           const std::string& objpath,
+                           const std::string& interf, const std::string& method,
+                           const InputArgs&... a)
+    {
+        async_method_call_timed(std::forward<MessageHandler>(handler), service,
+                                objpath, interf, method, 0, a...);
     }
 
     /** @brief Perform a yielding asynchronous method call, with input

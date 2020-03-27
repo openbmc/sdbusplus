@@ -83,7 +83,8 @@ class connection : public sdbusplus::bus::bus
     inline BOOST_ASIO_INITFN_RESULT_TYPE(MessageHandler,
                                          void(boost::system::error_code,
                                               message::message&))
-        async_send(message::message& m, MessageHandler&& handler)
+        async_send(message::message& m, MessageHandler&& handler,
+                   uint64_t timeout = 0)
     {
         boost::asio::async_completion<
             MessageHandler, void(boost::system::error_code, message::message)>
@@ -91,7 +92,7 @@ class connection : public sdbusplus::bus::bus
         detail::async_send_handler<typename boost::asio::async_result<
             MessageHandler, void(boost::system::error_code,
                                  message::message)>::completion_handler_type>(
-            std::move(init.completion_handler))(get(), m);
+            std::move(init.completion_handler))(get(), m, timeout);
         return init.result.get();
     }
 
@@ -114,7 +115,8 @@ class connection : public sdbusplus::bus::bus
      *          the message and passed into the handler when the call is
      *          complete.
      */
-    template <typename MessageHandler, typename... InputArgs>
+    template <uint64_t Timeout = 0, typename MessageHandler,
+              typename... InputArgs>
     void async_method_call(MessageHandler&& handler, const std::string& service,
                            const std::string& objpath,
                            const std::string& interf, const std::string& method,
@@ -183,7 +185,8 @@ class connection : public sdbusplus::bus::bus
             applyHandler(ec, m);
             return;
         }
-        async_send(m, std::forward<decltype(applyHandler)>(applyHandler));
+        async_send(m, std::forward<decltype(applyHandler)>(applyHandler),
+                   Timeout);
     }
 
     /** @brief Perform a yielding asynchronous method call, with input

@@ -18,6 +18,7 @@
 #include <sdbusplus/server.hpp>
 #include <sdbusplus/utility/tuple_to_array.hpp>
 #include <sdbusplus/utility/type_traits.hpp>
+#include <set>
 
 namespace sdbusplus
 {

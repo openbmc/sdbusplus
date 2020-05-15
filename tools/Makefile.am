@@ -1,13 +1,13 @@
 if WANT_SDBUSPP
 
 all-local:
-	$(AM_V_at)$(PYTHON) ${top_builddir}/tools/setup.py build
+	$(AM_V_at)$(PYTHON) ${top_builddir}/tools/setup_autotools.py build
 
 clean-local:
 	rm -rfv ${top_builddir}/build
 
 install-exec-hook:
-	$(AM_V_at)$(PYTHON) ${top_builddir}/tools/setup.py install \
+	$(AM_V_at)$(PYTHON) ${top_builddir}/tools/setup_autotools.py install \
         --prefix=$(DESTDIR)${prefix} \
         --install-data=$(DESTDIR)${datadir} \
         --install-lib=$(DESTDIR)$(PYTHONDIR) \

@@ -185,7 +185,7 @@ AC_ARG_ENABLE([boost],
 AM_CONDITIONAL(BOOST, [test "x$enable_boost" = "xyes"])
 
 # Create configured output
-AC_CONFIG_FILES([Makefile test/Makefile tools/Makefile tools/setup.py])
+AC_CONFIG_FILES([Makefile test/Makefile tools/Makefile tools/setup_autotools.py])
 AC_CONFIG_FILES([example/Makefile])
 AC_CONFIG_FILES([sdbusplus.pc])
 AC_OUTPUT

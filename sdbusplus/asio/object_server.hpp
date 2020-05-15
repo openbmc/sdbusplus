@@ -19,6 +19,7 @@
 
 #include <list>
 #include <optional>
+#include <regex>
 #include <set>
 
 namespace sdbusplus
@@ -26,8 +27,10 @@ namespace sdbusplus
 namespace asio
 {
 
-constexpr const char* PropertyNameAllowedCharacters =
-    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_";
+constexpr const char* PropertyNamePattern = "[a-zA-Z0-9_]+";
+constexpr const char* PathPattern = "[a-zA-Z0-9_/]+";
+constexpr const char* InterfaceNamePattern = "[a-zA-Z0-9_\\.]*";
+
 class callback
 {
   public:
@@ -383,8 +386,7 @@ class dbus_interface
         {
             return false;
         }
-        if (name.find_first_not_of(PropertyNameAllowedCharacters) !=
-            std::string::npos)
+        if (!std::regex_match(name, std::regex(PropertyNamePattern)))
         {
             return false;
         }
@@ -431,8 +433,7 @@ class dbus_interface
         {
             return false;
         }
-        if (name.find_first_not_of(PropertyNameAllowedCharacters) !=
-            std::string::npos)
+        if (!std::regex_match(name, std::regex(PropertyNamePattern)))
         {
             return false;
         }
@@ -470,8 +471,7 @@ class dbus_interface
         {
             return false;
         }
-        if (name.find_first_not_of(PropertyNameAllowedCharacters) !=
-            std::string::npos)
+        if (!std::regex_match(name, std::regex(PropertyNamePattern)))
         {
             return false;
         }
@@ -525,8 +525,7 @@ class dbus_interface
         {
             return false;
         }
-        if (name.find_first_not_of(PropertyNameAllowedCharacters) !=
-            std::string::npos)
+        if (!std::regex_match(name, std::regex(PropertyNamePattern)))
         {
             return false;
         }
@@ -809,7 +808,11 @@ class object_server
     std::shared_ptr<dbus_interface> add_interface(const std::string& path,
                                                   const std::string& name)
     {
-
+        if (!std::regex_match(path, std::regex(PathPattern)) ||
+            !std::regex_match(name, std::regex(InterfaceNamePattern)))
+        {
+            throw exception::SdBusError(EINVAL, "Invalid path or interface");
+        }
         auto dbusIface = std::make_shared<dbus_interface>(conn_, path, name);
         interfaces_.emplace_back(dbusIface);
         return dbusIface;

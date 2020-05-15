@@ -347,8 +347,9 @@ struct bus
             // Intentionally ignoring these sd_bus errors
         }
     }
-    auto call_noreply_noerror(message::message& m,
-                              std::optional<SdBusDuration> timeout = std::nullopt)
+    auto call_noreply_noerror(
+        message::message& m,
+        std::optional<SdBusDuration> timeout = std::nullopt)
     {
         return call_noreply_noerror(m, timeout ? timeout->count() : 0);
     }
@@ -500,7 +501,6 @@ struct bus
 inline bus::bus(busp_t b, sdbusplus::SdBusInterface* intf) :
     _intf(intf), _bus(_intf->sd_bus_ref(b), details::BusDeleter(intf))
 {
-#if @WANT_TRANSACTION@
     // Emitting object added causes a message to get the properties
     // which can trigger a 'transaction' in the server bindings.  If
     // the bus isn't up far enough, this causes an assert deep in
@@ -510,14 +510,12 @@ inline bus::bus(busp_t b, sdbusplus::SdBusInterface* intf) :
     {
         get_unique_name();
     }
-#endif
 }
 
 inline bus::bus(busp_t b) :
     _intf(&sdbus_impl),
     _bus(_intf->sd_bus_ref(b), details::BusDeleter(&sdbus_impl))
 {
-#if @WANT_TRANSACTION@
     // Emitting object added causes a message to get the properties
     // which can trigger a 'transaction' in the server bindings.  If
     // the bus isn't up far enough, this causes an assert deep in
@@ -527,13 +525,11 @@ inline bus::bus(busp_t b) :
     {
         get_unique_name();
     }
-#endif
 }
 
 inline bus::bus(busp_t b, std::false_type) :
     _intf(&sdbus_impl), _bus(b, details::BusDeleter(&sdbus_impl))
 {
-#if @WANT_TRANSACTION@
     // Emitting object added causes a message to get the properties
     // which can trigger a 'transaction' in the server bindings.  If
     // the bus isn't up far enough, this causes an assert deep in
@@ -543,7 +539,6 @@ inline bus::bus(busp_t b, std::false_type) :
     {
         get_unique_name();
     }
-#endif
 }
 
 /* Create a new default connection: system bus if root, session bus if user */

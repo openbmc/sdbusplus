@@ -38,15 +38,12 @@ int ${classname}::_callback_get_${property.name}(
     try
     {
         auto m = message::message(reply, o->_intf);
-
-#if @WANT_TRANSACTION@
         {
             auto tbus = m.get_bus();
             sdbusplus::server::transaction::Transaction t(tbus, m);
             sdbusplus::server::transaction::set_id
                 (std::hash<sdbusplus::server::transaction::Transaction>{}(t));
         }
-#endif
 
         m.append(o->${property.camelCase}());
     }
@@ -95,15 +92,12 @@ int ${classname}::_callback_set_${property.name}(
     try
     {
         auto m = message::message(value, o->_intf);
-
-#if @WANT_TRANSACTION@
         {
             auto tbus = m.get_bus();
             sdbusplus::server::transaction::Transaction t(tbus, m);
             sdbusplus::server::transaction::set_id
                 (std::hash<sdbusplus::server::transaction::Transaction>{}(t));
         }
-#endif
 
         ${property.cppTypeParam(interface.name)} v{};
         m.read(v);

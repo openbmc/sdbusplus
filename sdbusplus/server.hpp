@@ -15,7 +15,5 @@ using match_t = bus::match_t;
 #include <sdbusplus/server/interface.hpp>
 #include <sdbusplus/server/manager.hpp>
 #include <sdbusplus/server/object.hpp>
-#include <sdbusplus/vtable.hpp>
-#if @WANT_TRANSACTION@
 #include <sdbusplus/server/transaction.hpp>
-#endif
+#include <sdbusplus/vtable.hpp>

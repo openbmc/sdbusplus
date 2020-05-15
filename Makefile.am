@@ -30,6 +30,7 @@ nobase_include_HEADERS = \
 	sdbusplus/server/interface.hpp \
 	sdbusplus/server/manager.hpp \
 	sdbusplus/server/object.hpp \
+	sdbusplus/server/transaction.hpp \
 	sdbusplus/slot.hpp \
 	sdbusplus/timer.hpp \
 	sdbusplus/utility/container_traits.hpp \
@@ -40,20 +41,12 @@ nobase_include_HEADERS = \
 
 LIBSDBUSPLUS_FILES = \
 	sdbusplus/exception.cpp \
-	sdbusplus/sdbus.cpp
-
-if WANT_TRANSACTION
-nobase_include_HEADERS += \
-	sdbusplus/server/transaction.hpp
-LIBSDBUPLUS_FILES_TRANSACTION = \
+	sdbusplus/sdbus.cpp \
 	sdbusplus/server/transaction.cpp
-endif
 
 libsdbusplusdir = ${libdir}
 libsdbusplus_LTLIBRARIES = libsdbusplus.la
-libsdbusplus_la_SOURCES = \
-	$(LIBSDBUSPLUS_FILES) \
-	$(LIBSDBUPLUS_FILES_TRANSACTION)
+libsdbusplus_la_SOURCES = $(LIBSDBUSPLUS_FILES)
 libsdbusplus_la_LIBADD = $(SYSTEMD_LIBS) $(CODE_COVERAGE_LIBS)
 libsdbusplus_la_LDFLAGS = -version-info 1:0:0 -shared
 libsdbusplus_la_CPPFLAGS = $(CODE_COVERAGE_CPPFLAGS)

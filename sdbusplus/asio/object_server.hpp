@@ -27,6 +27,11 @@ namespace asio
 
 constexpr const char* PropertyNameAllowedCharacters =
     "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_";
+constexpr const char* PathAllowedCharacters =
+    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_/";
+constexpr const char* InterfaceNameAllowedCharacters =
+    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_.";
+
 class callback
 {
   public:
@@ -808,7 +813,13 @@ class object_server
     std::shared_ptr<dbus_interface> add_interface(const std::string& path,
                                                   const std::string& name)
     {
-
+        if (path.find_first_not_of(PathAllowedCharacters) !=
+                std::string::npos ||
+            name.find_first_not_of(InterfaceNameAllowedCharacters) !=
+                std::string::npos)
+        {
+            return nullptr;
+        }
         auto dbusIface = std::make_shared<dbus_interface>(conn_, path, name);
         interfaces_.emplace_back(dbusIface);
         return dbusIface;

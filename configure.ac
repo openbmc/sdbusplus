@@ -188,8 +188,4 @@ AM_CONDITIONAL(BOOST, [test "x$enable_boost" = "xyes"])
 AC_CONFIG_FILES([Makefile test/Makefile tools/Makefile tools/setup.py])
 AC_CONFIG_FILES([example/Makefile])
 AC_CONFIG_FILES([sdbusplus.pc])
-AC_CONFIG_FILES([sdbusplus/bus.hpp])
-AC_CONFIG_FILES([sdbusplus/server.hpp])
-AC_CONFIG_FILES([tools/sdbusplus/templates/method.mako.prototype.hpp])
-AC_CONFIG_FILES([tools/sdbusplus/templates/property.mako.prototype.hpp])
 AC_OUTPUT

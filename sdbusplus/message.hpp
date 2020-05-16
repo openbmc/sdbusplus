@@ -16,7 +16,7 @@ namespace sdbusplus
 namespace bus
 {
 struct bus;
-};
+}
 
 namespace message
 {

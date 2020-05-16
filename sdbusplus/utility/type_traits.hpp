@@ -85,13 +85,13 @@ constexpr std::array<char, N - 2> strip_ends(const std::array<char, N>& s,
                                              std::index_sequence<Is...>)
 {
     return {(s[1 + Is])..., static_cast<char>(0)};
-};
+}
 
 template <std::size_t N>
 constexpr std::array<char, N - 2> strip_ends(const std::array<char, N>& s)
 {
     return strip_ends(s, std::make_index_sequence<N - 3>{});
-};
+}
 
 } // namespace utility
 

@@ -22,7 +22,9 @@ namespace message
  *  (This is an empty no-op function that is useful in some cases for
  *   variadic template reasons.)
  */
-inline void append(sdbusplus::SdBusInterface* intf, sd_bus_message* m){};
+inline void append(sdbusplus::SdBusInterface* /*intf*/, sd_bus_message* /*m*/)
+{
+}
 /** @brief Append data into an sdbus message.
  *
  *  @param[in] msg - The message to append to.

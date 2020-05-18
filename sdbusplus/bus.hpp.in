@@ -391,6 +391,26 @@ struct bus
         return _intf->sd_bus_get_event(_bus.get());
     }
 
+    /** @brief Get the I/O event mask.
+     *
+     * @return the I/O event mask, or negative on failure.
+     */
+    auto get_events()
+    {
+        return _intf->sd_bus_get_events(_bus.get());
+    }
+
+    /** @brief Get the timeout in us to pass to poll().
+     *
+     * @param[out] timeout_usec - the timeout in microseconds.
+     *
+     * @return Zero or positive on success, or negative on failure.
+     */
+    auto get_timeout(uint64_t *timeout_usec)
+    {
+        return _intf->sd_bus_get_timeout(_bus.get(), timeout_usec);
+    }
+
     /** @brief Wrapper for sd_bus_emit_interfaces_added_strv
      *
      *  In general the similarly named server::object::object API should

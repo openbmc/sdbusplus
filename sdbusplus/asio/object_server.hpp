@@ -30,6 +30,7 @@ constexpr const char* PropertyNameAllowedCharacters =
 class callback
 {
   public:
+    virtual ~callback() = default;
     virtual int call(message::message& m) = 0;
 };
 
@@ -43,6 +44,7 @@ enum class SetPropertyReturnValue : size_t
 class callback_set
 {
   public:
+    virtual ~callback_set() = default;
     virtual SetPropertyReturnValue call(message::message& m) = 0;
     virtual SetPropertyReturnValue set(const boost::any& value) = 0;
 };

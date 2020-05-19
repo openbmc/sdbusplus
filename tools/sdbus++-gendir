@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+
+set -e
+
+options=$(getopt -o t:o: --long tool:,output: -- "$@")
+eval set -- "$options"
+
+while true; do
+    case "$1" in
+        -o | --output)
+            shift
+            outputdir=$1;
+            shift
+            ;;
+
+        -t | --tool)
+            shift
+            sdbuspp=$1;
+            shift
+            ;;
+
+        --)
+            shift
+            break
+            ;;
+
+        *)
+            break
+            ;;
+    esac
+done
+
+for d in $* ;
+do
+    interfaces=$(find $d -name '*.interface.yaml')
+
+    for i in $interfaces ;
+    do
+        path=${i%.interface.yaml}
+        iface=${path//\//.}
+
+        mkdir -p $outputdir/$path
+
+        $sdbuspp interface server-header $iface > $outputdir/$path/server.hpp
+        echo $outputdir/$path/server.hpp
+
+        $sdbuspp interface server-cpp $iface > $outputdir/$path/server.cpp
+        echo $outputdir/$path/server.cpp
+
+        $sdbuspp interface client-header $iface > $outputdir/$path/client.hpp
+        echo $outputdir/$path/client.hpp
+
+        $sdbuspp interface markdown $iface > $outputdir/$path.md
+    done
+
+    errors=$(find $d -name '*.errors.yaml')
+
+    for e in $errors ;
+    do
+        path=${e%.errors.yaml}
+        iface=${path//\//.}
+
+        mkdir -p $outputdir/$path
+
+        $sdbuspp error exception-header $iface > $outputdir/$path/error.hpp
+        echo $outputdir/$path/error.hpp
+
+        $sdbuspp error exception-cpp $iface > $outputdir/$path/error.cpp
+        echo $outputdir/$path/error.cpp
+
+        $sdbuspp error markdown $iface >> $outputdir/$path.md
+    done
+done

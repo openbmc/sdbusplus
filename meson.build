@@ -1,4 +1,4 @@
-project('sdbusplus', 'cpp',
+project('sdbusplus', 'cpp', 'c',
     default_options: [
       'buildtype=debugoptimized',
       'cpp_std=c++17',
@@ -8,6 +8,7 @@ project('sdbusplus', 'cpp',
 )
 
 libsystemd_pkg = dependency('libsystemd')
+root_inc = include_directories('.')
 
 libsdbusplus_src = files(
     'sdbusplus/exception.cpp',
@@ -22,6 +23,18 @@ libsdbusplus = shared_library(
     version: meson.project_version(),
     install: true,
 )
+
+subdir('tools')
+
+boost_dep = dependency(
+    'boost',
+    required: false,
+    modules: [ 'coroutine' ],
+)
+pthread_dep = dependency('threads')
+
+subdir('example')
+subdir('test')
 
 install_subdir(
     'sdbusplus',

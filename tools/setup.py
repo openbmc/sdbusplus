@@ -6,7 +6,7 @@ setup(
     version="1.0",
     packages=find_packages(),
     install_requires=["inflection", "mako", "pyyaml"],
-    scripts=["sdbus++"],
+    scripts=["sdbus++", "sdbus++-gendir"],
     package_data={"sdbusplus": ["templates/*.mako.*"]},
     url="http://github.com/openbmc/sdbusplus",
     classifiers=["License :: OSI Approved :: Apache Software License"],

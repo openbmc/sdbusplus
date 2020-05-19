@@ -1,5 +1,6 @@
 project('sdbusplus', 'cpp',
     default_options: [
+      'buildtype=debugoptimized',
       'cpp_std=c++17',
       'werror=true',
     ],

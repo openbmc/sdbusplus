@@ -4,7 +4,7 @@
 #include <gtest/gtest.h>
 
 template <typename... Args>
-auto dbus_string(Args&&... args)
+auto dbus_string(Args&&... /*args*/)
 {
     return std::string(sdbusplus::utility::tuple_to_array(
                            sdbusplus::message::types::type_id<Args...>())

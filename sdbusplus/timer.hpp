@@ -178,7 +178,8 @@ class Timer
             CLOCK_MONOTONIC, // Time base
             UINT64_MAX,      // Expire time - way long time
             0,               // Use default event accuracy
-            [](sd_event_source* eventSource, uint64_t usec, void* userData) {
+            [](sd_event_source* /*eventSource*/, uint64_t /*usec*/,
+               void* userData) {
                 auto timer = static_cast<Timer*>(userData);
                 return timer->timeoutHandler();
             },     // Callback handler on timeout

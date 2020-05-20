@@ -83,7 +83,8 @@ struct match
     slot::slot _slot;
     std::unique_ptr<callback_t> _callback = nullptr;
 
-    static int callCallback(sd_bus_message* m, void* context, sd_bus_error* e)
+    static int callCallback(sd_bus_message* m, void* context,
+                            sd_bus_error* /*e*/)
     {
         auto c = static_cast<callback_t*>(context);
         message::message message{m};

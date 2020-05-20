@@ -619,9 +619,10 @@ class dbus_interface
     }
 #endif // __cpp_if_constexpr
 
-    static int get_handler(sd_bus* bus, const char* path, const char* interface,
-                           const char* property, sd_bus_message* reply,
-                           void* userdata, sd_bus_error* error)
+    static int get_handler(sd_bus* /*bus*/, const char* /*path*/,
+                           const char* /*interface*/, const char* property,
+                           sd_bus_message* reply, void* userdata,
+                           sd_bus_error* error)
     {
         dbus_interface* data = static_cast<dbus_interface*>(userdata);
         auto func = data->callbacksGet_.find(property);
@@ -649,9 +650,10 @@ class dbus_interface
         return sd_bus_error_set_const(error, SD_BUS_ERROR_INVALID_ARGS, NULL);
     }
 
-    static int set_handler(sd_bus* bus, const char* path, const char* interface,
-                           const char* property, sd_bus_message* value,
-                           void* userdata, sd_bus_error* error)
+    static int set_handler(sd_bus* /*bus*/, const char* /*path*/,
+                           const char* /*interface*/, const char* property,
+                           sd_bus_message* value, void* userdata,
+                           sd_bus_error* error)
     {
         dbus_interface* data = static_cast<dbus_interface*>(userdata);
         auto func = data->callbacksSet_.find(property);

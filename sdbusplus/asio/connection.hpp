@@ -124,7 +124,7 @@ class connection : public sdbusplus::bus::bus
         using FunctionTupleType =
             typename utility::decay_tuple<FunctionTuple>::type;
         constexpr bool returnWithMsg = []() {
-            if constexpr (std::tuple_size_v<FunctionTupleType>> 1)
+            if constexpr (std::tuple_size_v<FunctionTupleType> > 1)
             {
                 return std::is_same_v<
                     std::tuple_element_t<1, FunctionTupleType>,
@@ -294,7 +294,7 @@ class connection : public sdbusplus::bus::bus
     {
         socket.async_read_some(
             boost::asio::null_buffers(),
-            [&](const boost::system::error_code& ec, std::size_t) {
+            [&](const boost::system::error_code& /*ec*/, std::size_t) {
                 if (process_discard())
                 {
                     read_immediate();

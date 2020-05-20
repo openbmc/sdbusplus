@@ -53,7 +53,7 @@ struct async_send_handler
         }
     }
     static int callback(sd_bus_message* mesg, void* userdata,
-                        sd_bus_error* error)
+                        sd_bus_error* /*error*/)
     {
         if (userdata == nullptr || mesg == nullptr)
         {

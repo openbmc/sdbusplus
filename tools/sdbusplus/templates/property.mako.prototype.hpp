@@ -28,8 +28,8 @@ auto ${classname}::${property.camelCase}() const ->
 }
 
 int ${classname}::_callback_get_${property.name}(
-        sd_bus* bus, const char* path, const char* interface,
-        const char* property, sd_bus_message* reply, void* context,
+        sd_bus* /*bus*/, const char* /*path*/, const char* /*interface*/,
+        const char* /*property*/, sd_bus_message* reply, void* context,
         sd_bus_error* error)
 {
     // TODO(venture): Can this except? I wouldn't think so.
@@ -83,8 +83,8 @@ auto ${classname}::${property.camelCase}(${property.cppTypeParam(interface.name)
     return ${property.camelCase}(val, false);
 }
 int ${classname}::_callback_set_${property.name}(
-        sd_bus* bus, const char* path, const char* interface,
-        const char* property, sd_bus_message* value, void* context,
+        sd_bus* /*bus*/, const char* /*path*/, const char* /*interface*/,
+        const char* /*property*/, sd_bus_message* value, void* context,
         sd_bus_error* error)
 {
     auto o = static_cast<${classname}*>(context);

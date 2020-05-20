@@ -39,7 +39,7 @@ int fooYield(boost::asio::yield_context yield,
     return testCount;
 }
 
-int methodWithMessage(sdbusplus::message::message& m, int test)
+int methodWithMessage(sdbusplus::message::message& /*m*/, int test)
 {
     std::cout << "methodWithMessage(m, " << test << ") -> " << (test + 1)
               << "\n";
@@ -131,9 +131,9 @@ void do_start_async_ipmi_call(std::shared_ptr<sdbusplus::asio::connection> conn,
     }
 }
 
-auto ipmiInterface(boost::asio::yield_context yield, uint8_t netFn, uint8_t lun,
-                   uint8_t cmd, std::vector<uint8_t>& data,
-                   const std::map<std::string, variant>& options)
+auto ipmiInterface(boost::asio::yield_context /*yield*/, uint8_t netFn,
+                   uint8_t lun, uint8_t cmd, std::vector<uint8_t>& /*data*/,
+                   const std::map<std::string, variant>& /*options*/)
 {
     std::vector<uint8_t> reply = {1, 2, 3, 4};
     uint8_t cc = 0;
@@ -343,7 +343,7 @@ int client()
     conn->async_method_call(
         [nonConstCapture = std::move(nonConstCapture)](
             boost::system::error_code ec,
-            const std::vector<std::string>& things) mutable {
+            const std::vector<std::string>& /*things*/) mutable {
             std::cout << "async_method_call callback\n";
             nonConstCapture += " stuff";
             if (ec)

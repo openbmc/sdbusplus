@@ -294,7 +294,7 @@ class connection : public sdbusplus::bus::bus
     {
         socket.async_read_some(
             boost::asio::null_buffers(),
-            [&](const boost::system::error_code& ec, std::size_t) {
+            [&](const boost::system::error_code& /*ec*/, std::size_t) {
                 if (process_discard())
                 {
                     read_immediate();

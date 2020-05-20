@@ -533,7 +533,7 @@ std::enable_if_t<1 == std::tuple_size<Tuple>::value>
  */
 template <typename Tuple>
 std::enable_if_t<0 == std::tuple_size<Tuple>::value> inline read_tuple(
-    sdbusplus::SdBusInterface* intf, sd_bus_message* m, Tuple&& t)
+    sdbusplus::SdBusInterface* /*intf*/, sd_bus_message* /*m*/, Tuple&& /*t*/)
 {
 }
 

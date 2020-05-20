@@ -71,7 +71,7 @@ struct compose : compose_impl<Args...>
 template <>
 struct compose<>
 {
-    compose(bus::bus& bus, const char* path)
+    compose(bus::bus& /*bus*/, const char* /*path*/)
     {
     }
 };

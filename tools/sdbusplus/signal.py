@@ -11,8 +11,8 @@ class Signal(NamedElement, Renderer):
         super(Signal, self).__init__(**kwargs)
 
     def markdown(self, loader):
-        return self.render(loader, "signal.mako.md", signal=self)
+        return self.render(loader, "signal.md.mako", signal=self)
 
     def cpp_prototype(self, loader, interface, ptype):
-        return self.render(loader, "signal.mako.prototype.hpp", signal=self,
+        return self.render(loader, "signal.prototype.hpp.mako", signal=self,
                            interface=interface, ptype=ptype, post=str.rstrip)

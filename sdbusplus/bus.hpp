@@ -3,13 +3,14 @@
 #include <systemd/sd-bus.h>
 #include <systemd/sd-event.h>
 
+#include <sdbusplus/exception.hpp>
+#include <sdbusplus/message.hpp>
+#include <sdbusplus/sdbus.hpp>
+
 #include <algorithm>
 #include <climits>
 #include <memory>
 #include <optional>
-#include <sdbusplus/exception.hpp>
-#include <sdbusplus/message.hpp>
-#include <sdbusplus/sdbus.hpp>
 #include <string>
 #include <vector>
 
@@ -68,8 +69,7 @@ struct BusDeleter
 {
     BusDeleter() = delete;
     explicit BusDeleter(SdBusInterface* interface) : m_interface(interface)
-    {
-    }
+    {}
 
     void operator()(sd_bus* ptr) const
     {

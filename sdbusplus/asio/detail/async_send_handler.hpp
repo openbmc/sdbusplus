@@ -32,11 +32,9 @@ struct async_send_handler
 {
     Handler handler_;
     async_send_handler(Handler&& handler) : handler_(std::move(handler))
-    {
-    }
+    {}
     async_send_handler(Handler& handler) : handler_(handler)
-    {
-    }
+    {}
     void operator()(sd_bus* conn, message::message& mesg)
     {
         async_send_handler* context = new async_send_handler(std::move(*this));

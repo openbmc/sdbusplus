@@ -6,6 +6,7 @@
 #include <sdbusplus/message/types.hpp>
 #include <sdbusplus/utility/tuple_to_array.hpp>
 #include <sdbusplus/utility/type_traits.hpp>
+
 #include <string>
 #include <tuple>
 #include <type_traits>
@@ -24,8 +25,7 @@ namespace message
  *   variadic template reasons.)
  */
 inline void read(sdbusplus::SdBusInterface* /*intf*/, sd_bus_message* /*m*/)
-{
-}
+{}
 /** @brief Read data from an sdbus message.
  *
  *  @param[in] msg - The message to read from.
@@ -64,62 +64,52 @@ auto convert_from_string(const std::string&) = delete;
  *
  */
 template <typename T, typename Enable = void>
-struct can_read_multiple
-    : std::conditional_t<std::is_enum_v<T>, std::false_type, std::true_type>
-{
-};
+struct can_read_multiple :
+    std::conditional_t<std::is_enum_v<T>, std::false_type, std::true_type>
+{};
 // unix_fd's int needs to be wrapped
 template <>
 struct can_read_multiple<unix_fd> : std::false_type
-{
-};
+{};
 // std::string needs a char* conversion.
 template <>
 struct can_read_multiple<std::string> : std::false_type
-{
-};
+{};
 // object_path needs a char* conversion.
 template <>
 struct can_read_multiple<object_path> : std::false_type
-{
-};
+{};
 // signature needs a char* conversion.
 template <>
 struct can_read_multiple<signature> : std::false_type
-{
-};
+{};
 // bool needs to be resized to int, per sdbus documentation.
 template <>
 struct can_read_multiple<bool> : std::false_type
-{
-};
+{};
 
 // std::vector/map/unordered_vector/set need loops
 template <typename T>
 struct can_read_multiple<
     T,
     typename std::enable_if<utility::has_emplace_method<T>::value ||
-                            utility::has_emplace_back_method<T>::value>::type>
-    : std::false_type
-{
-};
+                            utility::has_emplace_back_method<T>::value>::type> :
+    std::false_type
+{};
 
 // std::pair needs to be broken down into components.
 template <typename T1, typename T2>
 struct can_read_multiple<std::pair<T1, T2>> : std::false_type
-{
-};
+{};
 
 // std::tuple needs to be broken down into components.
 template <typename... Args>
 struct can_read_multiple<std::tuple<Args...>> : std::false_type
-{
-};
+{};
 // variant needs to be broken down into components.
 template <typename... Args>
 struct can_read_multiple<std::variant<Args...>> : std::false_type
-{
-};
+{};
 
 /** @struct read_single
  *  @brief Utility to read a single C++ element from a sd_bus_message.
@@ -534,8 +524,7 @@ std::enable_if_t<1 == std::tuple_size<Tuple>::value>
 template <typename Tuple>
 std::enable_if_t<0 == std::tuple_size<Tuple>::value> inline read_tuple(
     sdbusplus::SdBusInterface* /*intf*/, sd_bus_message* /*m*/, Tuple&& /*t*/)
-{
-}
+{}
 
 /** @brief Group a sequence of C++ types for reading from an sd_bus_message.
  *  @tparam Tuple - A tuple of previously analyzed types.

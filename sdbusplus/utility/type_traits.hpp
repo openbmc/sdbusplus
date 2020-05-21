@@ -32,10 +32,9 @@ template <std::size_t N, typename FirstArg, typename... Rest>
 struct strip_first_n_args;
 
 template <std::size_t N, typename FirstArg, typename... Rest>
-struct strip_first_n_args<N, std::tuple<FirstArg, Rest...>>
-    : strip_first_n_args<N - 1, std::tuple<Rest...>>
-{
-};
+struct strip_first_n_args<N, std::tuple<FirstArg, Rest...>> :
+    strip_first_n_args<N - 1, std::tuple<Rest...>>
+{};
 
 template <typename FirstArg, typename... Rest>
 struct strip_first_n_args<0, std::tuple<FirstArg, Rest...>>
@@ -69,8 +68,7 @@ struct get_first_arg<std::tuple<FirstArg, Rest...>>
 // helper class to remove const and reference from types
 template <typename T>
 struct decay_tuple
-{
-};
+{};
 
 template <typename... Args>
 struct decay_tuple<std::tuple<Args...>>

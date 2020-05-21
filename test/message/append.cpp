@@ -1,9 +1,10 @@
 #include <systemd/sd-bus-protocol.h>
 
-#include <array>
-#include <map>
 #include <sdbusplus/message.hpp>
 #include <sdbusplus/test/sdbus_mock.hpp>
+
+#include <array>
+#include <map>
 #include <set>
 #include <string>
 #include <tuple>

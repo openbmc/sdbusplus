@@ -1,10 +1,11 @@
 #pragma once
 
-#include <functional>
-#include <memory>
 #include <sdbusplus/bus.hpp>
 #include <sdbusplus/message.hpp>
 #include <sdbusplus/slot.hpp>
+
+#include <functional>
+#include <memory>
 #include <string>
 
 namespace sdbusplus
@@ -52,8 +53,7 @@ struct match
     match(sdbusplus::bus::bus& bus, const std::string& _match,
           sd_bus_message_handler_t handler, void* context = nullptr) :
         match(bus, _match.c_str(), handler, context)
-    {
-    }
+    {}
 
     using callback_t = std::function<void(sdbusplus::message::message&)>;
 
@@ -76,8 +76,7 @@ struct match
     match(sdbusplus::bus::bus& bus, const std::string& _match,
           callback_t callback) :
         match(bus, _match.c_str(), callback)
-    {
-    }
+    {}
 
   private:
     slot::slot _slot;

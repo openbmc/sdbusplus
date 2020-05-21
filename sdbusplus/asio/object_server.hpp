@@ -9,8 +9,6 @@
 #include <boost/any.hpp>
 #include <boost/asio/spawn.hpp>
 #include <boost/container/flat_map.hpp>
-#include <list>
-#include <optional>
 #include <sdbusplus/asio/connection.hpp>
 #include <sdbusplus/exception.hpp>
 #include <sdbusplus/message/read.hpp>
@@ -18,6 +16,9 @@
 #include <sdbusplus/server.hpp>
 #include <sdbusplus/utility/tuple_to_array.hpp>
 #include <sdbusplus/utility/type_traits.hpp>
+
+#include <list>
+#include <optional>
 #include <set>
 
 namespace sdbusplus
@@ -114,8 +115,7 @@ class callback_method_instance : public callback
 {
   public:
     callback_method_instance(CallbackType&& func) : func_(std::move(func))
-    {
-    }
+    {}
     int call(message::message& m) override
     {
         return expandCall(m);
@@ -195,8 +195,7 @@ class coroutine_method_instance : public callback
                               CallbackType&& func) :
         io_(io),
         func_(std::move(func))
-    {
-    }
+    {}
     int call(message::message& m) override
     {
         // make a copy of m to move into the coroutine
@@ -294,8 +293,7 @@ class callback_get_instance : public callback
                           CallbackType&& func) :
         value_(value),
         func_(std::move(func))
-    {
-    }
+    {}
     int call(message::message& m) override
     {
         auto r = func_(*value_);
@@ -316,8 +314,7 @@ class callback_set_instance : public callback_set
                           CallbackType&& func) :
         value_(value),
         func_(std::move(func))
-    {
-    }
+    {}
     SetPropertyReturnValue call(message::message& m) override
     {
         PropertyType input;

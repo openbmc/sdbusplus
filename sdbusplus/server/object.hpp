@@ -2,6 +2,7 @@
 
 #include <sdbusplus/bus.hpp>
 #include <sdbusplus/sdbus.hpp>
+
 #include <type_traits>
 
 namespace sdbusplus
@@ -45,8 +46,7 @@ struct compose_impl : T, compose_impl<Rest...>
 {
     compose_impl(bus::bus& bus, const char* path) :
         T(bus, path), compose_impl<Rest...>(bus, path)
-    {
-    }
+    {}
 };
 
 /** Specialization for single element. */
@@ -54,8 +54,7 @@ template <class T>
 struct compose_impl<T> : T
 {
     compose_impl(bus::bus& bus, const char* path) : T(bus, path)
-    {
-    }
+    {}
 };
 
 /** Default compose operation for variadic arguments. */
@@ -63,8 +62,7 @@ template <class... Args>
 struct compose : compose_impl<Args...>
 {
     compose(bus::bus& bus, const char* path) : compose_impl<Args...>(bus, path)
-    {
-    }
+    {}
 };
 
 /** Specialization for zero variadic arguments. */
@@ -72,8 +70,7 @@ template <>
 struct compose<>
 {
     compose(bus::bus& /*bus*/, const char* /*path*/)
-    {
-    }
+    {}
 };
 
 } // namespace details

@@ -54,8 +54,7 @@ struct slot
      *  Takes ownership of the slot-pointer and releases it when done.
      */
     explicit slot(slotp_t s) : _slot(s)
-    {
-    }
+    {}
 
     /** @brief Release ownership of the stored slot-pointer. */
     slotp_t release()

@@ -2,8 +2,9 @@
 
 #include <systemd/sd-bus.h>
 
-#include <chrono>
 #include <sdbusplus/bus.hpp>
+
+#include <chrono>
 #include <stdexcept>
 #include <thread>
 
@@ -22,8 +23,7 @@ extern thread_local uint64_t id;
 struct Transaction
 {
     Transaction() : time(std::time(nullptr)), thread(std::this_thread::get_id())
-    {
-    }
+    {}
 
     int time;
     std::thread::id thread;
@@ -35,8 +35,7 @@ struct Transaction
 {
     Transaction(sdbusplus::bus::bus& bus, sdbusplus::message::message& msg) :
         bus(bus), msg(msg)
-    {
-    }
+    {}
 
     sdbusplus::bus::bus& bus;
     sdbusplus::message::message& msg;

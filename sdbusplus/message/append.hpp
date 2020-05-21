@@ -7,6 +7,7 @@
 #include <sdbusplus/utility/container_traits.hpp>
 #include <sdbusplus/utility/tuple_to_array.hpp>
 #include <sdbusplus/utility/type_traits.hpp>
+
 #include <tuple>
 #include <type_traits>
 #include <variant>
@@ -23,8 +24,7 @@ namespace message
  *   variadic template reasons.)
  */
 inline void append(sdbusplus::SdBusInterface* /*intf*/, sd_bus_message* /*m*/)
-{
-}
+{}
 /** @brief Append data into an sdbus message.
  *
  *  @param[in] msg - The message to append to.
@@ -62,57 +62,47 @@ std::string convert_to_string(T) = delete;
  *  Enums are converted to strings, so must be done one at a time.
  */
 template <typename T, typename Enable = void>
-struct can_append_multiple
-    : std::conditional_t<std::is_enum_v<T>, std::false_type, std::true_type>
-{
-};
+struct can_append_multiple :
+    std::conditional_t<std::is_enum_v<T>, std::false_type, std::true_type>
+{};
 // unix_fd's int needs to be wrapped.
 template <>
 struct can_append_multiple<unix_fd> : std::false_type
-{
-};
+{};
 // std::string needs a c_str() call.
 template <>
 struct can_append_multiple<std::string> : std::false_type
-{
-};
+{};
 // object_path needs a c_str() call.
 template <>
 struct can_append_multiple<object_path> : std::false_type
-{
-};
+{};
 // signature needs a c_str() call.
 template <>
 struct can_append_multiple<signature> : std::false_type
-{
-};
+{};
 // bool needs to be resized to int, per sdbus documentation.
 template <>
 struct can_append_multiple<bool> : std::false_type
-{
-};
+{};
 // std::vector/map/unordered_map/set need loops
 template <typename T>
 struct can_append_multiple<
-    T, typename std::enable_if<utility::has_const_iterator<T>::value>::type>
-    : std::false_type
-{
-};
+    T, typename std::enable_if<utility::has_const_iterator<T>::value>::type> :
+    std::false_type
+{};
 // std::pair needs to be broken down into components.
 template <typename T1, typename T2>
 struct can_append_multiple<std::pair<T1, T2>> : std::false_type
-{
-};
+{};
 // std::tuple needs to be broken down into components.
 template <typename... Args>
 struct can_append_multiple<std::tuple<Args...>> : std::false_type
-{
-};
+{};
 // variant needs to be broken down into components.
 template <typename... Args>
 struct can_append_multiple<std::variant<Args...>> : std::false_type
-{
-};
+{};
 
 /** @struct append_single
  *  @brief Utility to append a single C++ element into a sd_bus_message.
@@ -199,8 +189,7 @@ struct append_single<details::unix_fd_type>
 {
     template <typename T>
     static void sanitize(const T& s)
-    {
-    }
+    {}
 
     template <typename T>
     static void sanitize(T& s)
@@ -419,8 +408,7 @@ std::enable_if_t<1 == std::tuple_size<Tuple>::value>
 template <typename Tuple>
 std::enable_if_t<0 == std::tuple_size<Tuple>::value> inline append_tuple(
     sdbusplus::SdBusInterface* /*intf*/, sd_bus_message* /*m*/, Tuple&& /*t*/)
-{
-}
+{}
 
 /** @brief Group a sequence of C++ types for appending into an sd_bus_message.
  *  @tparam Tuple - A tuple of previously analyzed types.

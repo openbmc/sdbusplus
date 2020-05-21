@@ -1,6 +1,7 @@
+#include <sdbusplus/timer.hpp>
+
 #include <chrono>
 #include <iostream>
-#include <sdbusplus/timer.hpp>
 
 #include <gtest/gtest.h>
 

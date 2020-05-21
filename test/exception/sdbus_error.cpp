@@ -1,8 +1,9 @@
 #include <systemd/sd-bus.h>
 
-#include <cstdlib>
 #include <sdbusplus/exception.hpp>
 #include <sdbusplus/test/sdbus_mock.hpp>
+
+#include <cstdlib>
 #include <stdexcept>
 #include <string>
 #include <utility>

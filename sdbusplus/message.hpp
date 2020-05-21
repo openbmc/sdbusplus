@@ -2,11 +2,12 @@
 
 #include <systemd/sd-bus.h>
 
-#include <memory>
 #include <sdbusplus/message/append.hpp>
 #include <sdbusplus/message/native_types.hpp>
 #include <sdbusplus/message/read.hpp>
 #include <sdbusplus/sdbus.hpp>
+
+#include <memory>
 #include <type_traits>
 
 namespace sdbusplus
@@ -62,8 +63,7 @@ class message
 
     message(msgp_t m, sdbusplus::SdBusInterface* intf) :
         _intf(std::move(intf)), _msg(_intf->sd_bus_message_ref(m))
-    {
-    }
+    {}
 
     /** @brief Conversion constructor for 'msgp_t'.
      *
@@ -71,21 +71,18 @@ class message
      *  destructed.
      */
     explicit message(msgp_t m = nullptr) : message(m, &sdbus_impl)
-    {
-    }
+    {}
 
     message(msgp_t m, sdbusplus::SdBusInterface* intf, std::false_type) :
         _intf(intf), _msg(m)
-    {
-    }
+    {}
 
     /** @brief Constructor for 'msgp_t'.
      *
      *  Takes ownership of the msg-pointer and releases it when done.
      */
     message(msgp_t m, std::false_type) : _intf(&sdbus_impl), _msg(m)
-    {
-    }
+    {}
 
     /** @brief Copy constructor for 'message'.
      *
@@ -93,8 +90,7 @@ class message
      */
     message(const message& other) :
         _intf(other._intf), _msg(sd_bus_message_ref(other._msg.get()))
-    {
-    }
+    {}
 
     /** @brief Assignment operator for 'message'.
      *

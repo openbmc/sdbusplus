@@ -2,10 +2,11 @@
 
 #include <systemd/sd-bus.h>
 
-#include <map>
 #include <sdbusplus/message/native_types.hpp>
 #include <sdbusplus/utility/container_traits.hpp>
 #include <sdbusplus/utility/type_traits.hpp>
+
+#include <map>
 #include <string>
 #include <tuple>
 #include <variant>
@@ -171,78 +172,62 @@ constexpr auto type_id_multiple();
  *  routines.
  */
 template <typename T, typename Enable = void>
-struct type_id : public std::conditional_t<std::is_enum_v<T>,
-                                           tuple_type_id<SD_BUS_TYPE_STRING>,
-                                           undefined_type_id>
-{
-};
+struct type_id :
+    public std::conditional_t<
+        std::is_enum_v<T>, tuple_type_id<SD_BUS_TYPE_STRING>, undefined_type_id>
+{};
 // Specializations for built-in types.
 template <>
 struct type_id<bool> : tuple_type_id<SD_BUS_TYPE_BOOLEAN>
-{
-};
+{};
 template <>
 struct type_id<uint8_t> : tuple_type_id<SD_BUS_TYPE_BYTE>
-{
-};
+{};
 // int8_t isn't supported by dbus.
 template <>
 struct type_id<uint16_t> : tuple_type_id<SD_BUS_TYPE_UINT16>
-{
-};
+{};
 template <>
 struct type_id<int16_t> : tuple_type_id<SD_BUS_TYPE_INT16>
-{
-};
+{};
 template <>
 struct type_id<uint32_t> : tuple_type_id<SD_BUS_TYPE_UINT32>
-{
-};
+{};
 template <>
 struct type_id<int32_t> : tuple_type_id<SD_BUS_TYPE_INT32>
-{
-};
+{};
 template <>
 struct type_id<uint64_t> : tuple_type_id<SD_BUS_TYPE_UINT64>
-{
-};
+{};
 template <>
 struct type_id<int64_t> : tuple_type_id<SD_BUS_TYPE_INT64>
-{
-};
+{};
 // float isn't supported by dbus.
 template <>
 struct type_id<double> : tuple_type_id<SD_BUS_TYPE_DOUBLE>
-{
-};
+{};
 template <>
 struct type_id<const char*> : tuple_type_id<SD_BUS_TYPE_STRING>
-{
-};
+{};
 template <>
 struct type_id<char*> : tuple_type_id<SD_BUS_TYPE_STRING>
-{
-};
+{};
 template <>
 struct type_id<unix_fd> : tuple_type_id<SD_BUS_TYPE_UNIX_FD>
-{
-};
+{};
 template <>
 struct type_id<std::string> : tuple_type_id<SD_BUS_TYPE_STRING>
-{
-};
+{};
 template <>
 struct type_id<object_path> : tuple_type_id<SD_BUS_TYPE_OBJECT_PATH>
-{
-};
+{};
 template <>
 struct type_id<signature> : tuple_type_id<SD_BUS_TYPE_SIGNATURE>
-{
-};
+{};
 
 template <typename T>
-struct type_id<T, std::enable_if_t<utility::has_const_iterator<T>::value>>
-    : std::false_type
+struct type_id<T, std::enable_if_t<utility::has_const_iterator<T>::value>> :
+    std::false_type
 {
     static constexpr auto value = std::tuple_cat(
         tuple_type_id<SD_BUS_TYPE_ARRAY>::value,
@@ -270,8 +255,7 @@ struct type_id<std::tuple<Args...>>
 
 template <typename... Args>
 struct type_id<std::variant<Args...>> : tuple_type_id<SD_BUS_TYPE_VARIANT>
-{
-};
+{};
 
 template <>
 struct type_id<void>

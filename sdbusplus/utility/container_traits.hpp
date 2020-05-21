@@ -41,8 +41,7 @@ struct has_emplace_method
 {
   private:
     struct dummy
-    {
-    };
+    {};
 
     template <typename C, typename P>
     static constexpr auto test(P* p)
@@ -68,8 +67,7 @@ struct has_emplace_back_method
 {
   private:
     struct dummy
-    {
-    };
+    {};
 
     template <typename C, typename P>
     static constexpr auto test(P* p)

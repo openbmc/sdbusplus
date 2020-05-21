@@ -1,8 +1,9 @@
-#include <iostream>
 #include <net/poettering/Calculator/client.hpp>
 #include <net/poettering/Calculator/error.hpp>
 #include <net/poettering/Calculator/server.hpp>
 #include <sdbusplus/server.hpp>
+
+#include <iostream>
 #include <string_view>
 
 using Calculator_inherit =
@@ -14,8 +15,7 @@ struct Calculator : Calculator_inherit
     /** Constructor */
     Calculator(sdbusplus::bus::bus& bus, const char* path) :
         Calculator_inherit(bus, path)
-    {
-    }
+    {}
 
     /** Multiply (x*y), update lastResult */
     int64_t multiply(int64_t x, int64_t y) override

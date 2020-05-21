@@ -26,11 +26,9 @@ struct string_wrapper
     ~string_wrapper() = default;
 
     string_wrapper(const std::string& str) : str(str)
-    {
-    }
+    {}
     string_wrapper(std::string&& str) : str(std::move(str))
-    {
-    }
+    {}
 
     operator const std::string &() const volatile&
     {
@@ -70,12 +68,10 @@ struct string_wrapper
 
 /** Typename for sdbus OBJECT_PATH types. */
 struct object_path_type
-{
-};
+{};
 /** Typename for sdbus SIGNATURE types. */
 struct signature_type
-{
-};
+{};
 /** Typename for sdbus UNIX_FD types. */
 struct unix_fd_type
 {
@@ -83,8 +79,7 @@ struct unix_fd_type
 
     unix_fd_type() = default;
     unix_fd_type(int f) : fd(f)
-    {
-    }
+    {}
 
     operator int() const
     {

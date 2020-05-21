@@ -239,7 +239,7 @@ class connection : public sdbusplus::bus::bus
             else
             {
                 // single item return
-                utility::first_type<RetTypes...> responseData;
+                utility::first_type<RetTypes...> responseData{};
                 // before attempting to read, check ec and bail on error
                 if (ec)
                 {
@@ -261,7 +261,7 @@ class connection : public sdbusplus::bus::bus
         else
         {
             // tuple of things to return
-            std::tuple<RetTypes...> responseData;
+            std::tuple<RetTypes...> responseData{};
             // before attempting to read, check ec and bail on error
             if (ec)
             {

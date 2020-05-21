@@ -90,11 +90,14 @@ TEST(SdBusError, Move)
         // Move our SdBusError to a new one
         SdBusError errNew(std::move(err));
 
+        // We are purposefully calling functions on a moved-from object,
+        // so we need to suppress the clang warnings.
+#ifndef __clang_analyzer__
         // Ensure the old object was cleaned up
         EXPECT_EQ(0, err.get_errno());
         EXPECT_EQ(nullptr, err.name());
         EXPECT_EQ(nullptr, err.description());
-        EXPECT_EQ(std::string{}, err.what());
+#endif
 
         // Ensure our new object has the same data but moved
         EXPECT_EQ(errorVal, errNew.get_errno());
@@ -105,11 +108,14 @@ TEST(SdBusError, Move)
         // Move our SdBusError using the operator=()
         errFinal = std::move(errNew);
 
+        // We are purposefully calling functions on a moved-from object,
+        // so we need to suppress the clang warnings.
+#ifndef __clang_analyzer__
         // Ensure the old object was cleaned up
         EXPECT_EQ(0, errNew.get_errno());
         EXPECT_EQ(nullptr, errNew.name());
         EXPECT_EQ(nullptr, errNew.description());
-        EXPECT_EQ(std::string{}, errNew.what());
+#endif
     }
 
     // Ensure our new object has the same data but moved

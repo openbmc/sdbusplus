@@ -53,13 +53,13 @@ class Interface(NamedElement, Renderer):
         return includes
 
     def markdown(self, loader):
-        return self.render(loader, "interface.mako.md", interface=self)
+        return self.render(loader, "interface.md.mako", interface=self)
 
     def server_header(self, loader):
-        return self.render(loader, "interface.mako.server.hpp", interface=self)
+        return self.render(loader, "interface.server.hpp.mako", interface=self)
 
     def server_cpp(self, loader):
-        return self.render(loader, "interface.mako.server.cpp", interface=self)
+        return self.render(loader, "interface.server.cpp.mako", interface=self)
 
     def client_header(self, loader):
-        return self.render(loader, "interface.mako.client.hpp", interface=self)
+        return self.render(loader, "interface.client.hpp.mako", interface=self)

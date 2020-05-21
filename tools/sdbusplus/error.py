@@ -24,10 +24,10 @@ class Error(NamedElement, Renderer):
         super(Error, self).__init__(**kwargs)
 
     def markdown(self, loader):
-        return self.render(loader, "error.mako.md", error=self)
+        return self.render(loader, "error.md.mako", error=self)
 
     def exception_header(self, loader):
-        return self.render(loader, "error.mako.hpp", error=self)
+        return self.render(loader, "error.hpp.mako", error=self)
 
     def exception_cpp(self, loader):
-        return self.render(loader, "error.mako.cpp", error=self)
+        return self.render(loader, "error.cpp.mako", error=self)

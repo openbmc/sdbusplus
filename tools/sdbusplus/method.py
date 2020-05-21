@@ -14,8 +14,8 @@ class Method(NamedElement, Renderer):
         super(Method, self).__init__(**kwargs)
 
     def markdown(self, loader):
-        return self.render(loader, "method.mako.md", method=self)
+        return self.render(loader, "method.md.mako", method=self)
 
     def cpp_prototype(self, loader, interface, ptype):
-        return self.render(loader, "method.mako.prototype.hpp", method=self,
+        return self.render(loader, "method.prototype.hpp.mako", method=self,
                            interface=interface, ptype=ptype, post=str.rstrip)

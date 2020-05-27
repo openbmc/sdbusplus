@@ -14,5 +14,5 @@ setup(name='sdbusplus',
       packages=['sdbusplus'],
       scripts=['@top_builddir@/tools/sdbus++'],
       cmdclass={'build': CustomBuild},
-      package_data={'sdbusplus': ['templates/*.mako.*']},
+      package_data={'sdbusplus': ['templates/*.mako']},
       )

@@ -49,5 +49,6 @@ import('pkgconfig').generate(
     libraries: libsdbusplus,
     name: meson.project_name(),
     version: meson.project_version(),
+    requires: libsystemd_pkg,
     description: 'C++ bindings for sdbus',
 )

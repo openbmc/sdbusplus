@@ -16,7 +16,7 @@ libsdbusplus_src = files(
     'sdbusplus/server/transaction.cpp',
 )
 
-libsdbusplus = shared_library(
+libsdbusplus = library(
     'sdbusplus',
     libsdbusplus_src,
     dependencies: libsystemd_pkg,

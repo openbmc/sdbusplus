@@ -1,0 +1,8 @@
+Code-Review+2: William A. Kennington III <wak@google.com>
+Ok-To-Test+1: Patrick Williams <patrick@stwcx.xyz>
+Verified+1: Jenkins <openbmc-ci-admin@ozlabs.org>
+Submitted-by: Patrick Williams <patrick@stwcx.xyz>
+Submitted-at: Thu, 28 May 2020 01:46:36 +0000
+Reviewed-on: https://gerrit.openbmc-project.xyz/c/openbmc/sdbusplus/+/32848
+Project: openbmc/sdbusplus
+Branch: refs/heads/master

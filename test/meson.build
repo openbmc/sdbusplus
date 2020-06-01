@@ -22,13 +22,11 @@ foreach t : tests
         executable(
             'test-' + t.underscorify(),
             t + '.cpp',
-            include_directories: root_inc,
-            link_with: libsdbusplus,
             dependencies: [
                 gtest_dep,
                 gmock_dep,
                 gmock_main_dep,
-                libsystemd_pkg,
+                sdbusplus_dep,
             ],
         )
     )
@@ -40,9 +38,7 @@ test(
         'test-vtable',
         'vtable/vtable.cpp',
         'vtable/vtable_c.c',
-        include_directories: root_inc,
-        link_with: libsdbusplus,
-        dependencies: [ gtest_dep, gtest_main_dep, libsystemd_pkg ],
+        dependencies: [ gtest_dep, gtest_main_dep, sdbusplus_dep ],
     ),
 )
 
@@ -63,14 +59,13 @@ test(
         'test-server',
         'server/object.cpp',
         server_files,
-        include_directories: [ root_inc, include_directories('server') ],
-        link_with: libsdbusplus,
+        include_directories: include_directories('server'),
         dependencies: [
             gmock_dep,
             gmock_main_dep,
             gtest_dep,
-            libsystemd_pkg,
             pthread_dep,
+            sdbusplus_dep,
         ],
     ),
 )

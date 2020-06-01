@@ -1,9 +1,7 @@
 executable(
     'list-users',
     'list-users.cpp',
-    include_directories: root_inc,
-    link_with: libsdbusplus,
-    dependencies: libsystemd_pkg,
+    dependencies: sdbusplus_dep,
 )
 
 if boost_dep.found()
@@ -16,9 +14,7 @@ if boost_dep.found()
             '-DBOOST_ERROR_CODE_HEADER_ONLY',
             '-DBOOST_COROUTINES_NO_DEPRECATION_WARNING',
         ],
-        include_directories: root_inc,
-        link_with: libsdbusplus,
-        dependencies: [ boost_dep, pthread_dep, libsystemd_pkg ],
+        dependencies: [ boost_dep, pthread_dep, sdbusplus_dep ],
     )
 endif
 
@@ -37,7 +33,5 @@ executable(
     'calculator-server',
     'calculator-server.cpp',
     calc_files,
-    include_directories: root_inc,
-    link_with: libsdbusplus,
-    dependencies: libsystemd_pkg,
+    dependencies: sdbusplus_dep,
 )

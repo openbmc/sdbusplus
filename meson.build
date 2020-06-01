@@ -24,6 +24,12 @@ libsdbusplus = library(
     install: true,
 )
 
+sdbusplus_dep = declare_dependency(
+    include_directories: root_inc,
+    link_with: libsdbusplus,
+    dependencies: libsystemd_pkg
+)
+
 subdir('tools')
 
 boost_dep = dependency(

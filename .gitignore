@@ -1,69 +1,137 @@
-# Python build artifacts
-*.swp
-__pycache__
-*.pyc
-*.pyo
-/tools/build
-/tools/setup_autotools.py
+# Meson build directories.
+/build*/
 
-# Test suite logs
-*.log
+# Created by https://www.gitignore.io/api/vim,python
+# Edit at https://www.gitignore.io/?templates=vim,python
 
-# Code Coverage
-*.gcda
-*.gcno
-*.trs
-*-coverage*
+### Python ###
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
 
-# Compiler
-*.o
+# C extensions
+*.so
 
-# Libtool
-*.la
-*.lo
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
 
-# Autotools
-.deps
-.dirstamp
-.libs
-/aclocal.m4
-/aminclude_static.am
-/autom4te.cache
-/build-aux
-/config.h
-/config.h.in
-/config.h.in~
-/config.log
-/config.status
-/configure
-/m4
-/libtool
-Makefile
-Makefile.in
-/stamp-h1
+# PyInstaller
+#  Usually these files are written by a python script from a template
+#  before PyInstaller builds the exe, so as to inject date/other infos into it.
+*.manifest
+*.spec
 
-# Custom generated files
-/example/calculator.md
-/example/net/poettering/Calculator
-/sdbusplus.pc
-/sdbusplus/bus.hpp
-/sdbusplus/server.hpp
-/tools/sdbusplus/templates/method.mako.prototype.hpp
-/tools/sdbusplus/templates/property.mako.prototype.hpp
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
 
-# Output binaries
-/example/calculator-server
-/example/list-users
-/test/bus_list_names
-/test/bus_match
-/test/exception_sdbus_error
-/test/message_append
-/test/message_native_types
-/test/message_read
-/test/message_types
-/test/timer
-/test/utility_tuple_to_array
-/test/utility_type_traits
-/test/vtable_vtable
-/test/object
-/test/server/Test
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# Translations
+*.mo
+*.pot
+
+# Scrapy stuff:
+.scrapy
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+target/
+
+# pyenv
+.python-version
+
+# pipenv
+#   According to pypa/pipenv#598, it is recommended to include Pipfile.lock in version control.
+#   However, in case of collaboration, if having platform-specific dependencies or dependencies
+#   having no cross-platform support, pipenv may install dependencies that don't work, or not
+#   install all needed dependencies.
+#Pipfile.lock
+
+# celery beat schedule file
+celerybeat-schedule
+
+# SageMath parsed files
+*.sage.py
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# Mr Developer
+.mr.developer.cfg
+.project
+.pydevproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+### Vim ###
+# Swap
+[._]*.s[a-v][a-z]
+[._]*.sw[a-p]
+[._]s[a-rt-v][a-z]
+[._]ss[a-gi-z]
+[._]sw[a-p]
+
+# Session
+Session.vim
+Sessionx.vim
+
+# Temporary
+.netrwhist
+*~
+
+# Auto-generated tag files
+tags
+
+# Persistent undo
+[._]*.un~
+
+# Coc configuration directory
+.vim
+
+# End of https://www.gitignore.io/api/vim,python

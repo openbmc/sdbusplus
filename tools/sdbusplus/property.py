@@ -14,6 +14,7 @@ class Property(NamedElement, Renderer):
         self.cppTypeName = self.parse_cpp_type(self.typeName)
         self.defaultValue = kwargs.pop('default', None)
         self.flags = kwargs.pop('flags', [])
+        self.cpp_flags = self.or_cpp_flags(self.flags)
         self.errors = kwargs.pop('errors', [])
 
         if (self.defaultValue is not None):
@@ -189,3 +190,23 @@ class Property(NamedElement, Renderer):
     def cpp_prototype(self, loader, interface, ptype):
         return self.render(loader, "property.prototype.hpp.mako", property=self,
                            interface=interface, ptype=ptype, post=str.rstrip)
+
+    def or_cpp_flags(self, flags):
+        """Return the corresponding ORed cpp flags."""
+        flags_dict = {
+            "deprecated": "vtable::common_::deprecated",
+            "hidden": "vtable::common_::hidden",
+            "unprivileged": "vtable::common_::unprivileged",
+            "const": "vtable::property_::const_",
+            "emits_change": "vtable::property_::emits_change",
+            "emits_invalidation": "vtable::property_::emits_invalidation",
+            "explicit": "vtable::property_::explicit_"}
+
+        cpp_flags = []
+        for flag in flags:
+            try:
+                cpp_flags.append(flags_dict[flag])
+            except KeyError:
+                raise ValueError("Invalid flag \"{}\"".format(flag))
+
+        return " | ".join(cpp_flags)

@@ -150,13 +150,21 @@ methods:
 
 ## Properties
 
-A property must have the YAML property `name` and `type` and may optionally
-have `description`, `flags`, `default`, and `errors`.  The `default` defines the
+A property must have the YAML property `name` and `type` and may optionally have
+`description`, `flags`, `default`, and `errors`. The `default` defines the
 default value of the property. See the `Methods` section above for more
 information on errors.
-The only current supported value for `flags` is `const`, which corresponds to
-SD_BUS_VTABLE_PROPERTY_CONST, making the property read-only via D-Bus but
-still writable by the app implementing it.
+
+The supported values for `flags` are `deprecated`, `hidden`, `unprivileged`,
+`const`, `emits_change`, `emits_invalidation`, `explicit` , which corresponds to
+`SD_BUS_VTABLE_DEPRECATED`, `SD_BUS_VTABLE_HIDDEN`,
+`SD_BUS_VTABLE_UNPRIVILEGED`, `SD_BUS_VTABLE_PROPERTY_CONST`,
+`SD_BUS_VTABLE_PROPERTY_EMITS_CHANGE`,
+`SD_BUS_VTABLE_PROPERTY_EMITS_INVALIDATION` and
+`SD_BUS_VTABLE_PROPERTY_EXPLICIT`, respectively.  The flag `const ` makes the
+property read-only via D-Bus but still writable by the app implementing
+it. Moreover, if no flags have been specified for a property, `emits_change`
+will be added by default.
 
 Example:
 ```

@@ -4,6 +4,11 @@ executable(
     dependencies: sdbusplus_dep,
 )
 
+assert(
+    not get_option('examples').enabled() or boost_dep.found(),
+    'Boost is required when examples are enabled'
+)
+
 executable(
     'asio-example',
     'asio-example.cpp',

@@ -1,5 +1,5 @@
-gtest_dep = dependency('gtest', main: true, disabler: true)
-gmock_dep = dependency('gmock', disabler: true)
+gtest_dep = dependency('gtest', main: true, disabler: true, required: get_option('tests'))
+gmock_dep = dependency('gmock', disabler: true, required: get_option('tests'))
 
 tests = [
     'bus/list_names',
@@ -28,6 +28,11 @@ foreach t : tests
         )
     )
 endforeach
+
+assert(
+    not get_option('tests').enabled() or boost_dep.found(),
+    'Boost is required when tests are enabled'
+)
 
 test(
     'test-bus_aio',

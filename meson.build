@@ -30,6 +30,12 @@ sdbusplus_dep = declare_dependency(
     dependencies: libsystemd_pkg
 )
 
+# We first find these tools outside of the directory they are contained in
+# to ensure we allow the system to provide them instead of using our local
+# copy in cross compiled builds where the python environment will not work
+# with ad-hoc source contained scripts that need a working PYTHONPATH.
+sdbuspp_prog = find_program('sdbus++', native: true, required: false)
+sdbusgen_prog = find_program('sdbus++-gendir', native: true, required: false)
 subdir('tools')
 
 boost_dep = dependency(

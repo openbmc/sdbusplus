@@ -1,5 +1,20 @@
-gtest_dep = dependency('gtest', main: true, required: true)
-gmock_dep = dependency('gmock', required: true)
+gtest_dep = dependency('gtest', main: true, required: false)
+gmock_dep = dependency('gmock', required: false)
+if not gtest_dep.found() or not gmock_dep.found()
+    gtest_proj = import('cmake').subproject('googletest', required: false)
+    if gtest_proj.found()
+        gtest_dep = declare_dependency(
+            dependencies: [
+                dependency('threads'),
+                gtest_proj.dependency('gtest'),
+                gtest_proj.dependency('gtest_main'),
+            ],
+        )
+        gmock_dep = gtest_proj.dependency('gmock')
+    else
+        assert(false, 'Googletest is required')
+    endif
+endif
 
 tests = [
     'bus/list_names',

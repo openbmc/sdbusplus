@@ -8,17 +8,18 @@ project('sdbusplus', 'cpp', 'c',
 )
 
 libsystemd_pkg = dependency('libsystemd')
-root_inc = include_directories('.')
+root_inc = include_directories('.', 'sdbusplus')
 
 libsdbusplus_src = files(
-    'sdbusplus/exception.cpp',
-    'sdbusplus/sdbus.cpp',
-    'sdbusplus/server/transaction.cpp',
+    'src/exception.cpp',
+    'src/sdbus.cpp',
+    'src/server/transaction.cpp',
 )
 
 libsdbusplus = library(
     'sdbusplus',
     libsdbusplus_src,
+    include_directories: root_inc,
     dependencies: libsystemd_pkg,
     version: meson.project_version(),
     install: true,
@@ -46,9 +47,6 @@ install_subdir(
     'sdbusplus',
     install_dir: get_option('includedir'),
     strip_directory: false,
-    # TODO (stwcx): Once we remove autotools, we can move these files
-    # out of the same directory as the headers and remove this.
-    exclude_files: [ 'exception.cpp', 'sdbus.cpp', 'server/transaction.cpp' ],
 )
 
 import('pkgconfig').generate(

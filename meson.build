@@ -39,10 +39,15 @@ sdbuspp_prog = find_program('sdbus++', native: true, required: false)
 sdbusgen_prog = find_program('sdbus++-gendir', native: true, required: false)
 subdir('tools')
 
-pthread_dep = dependency('threads')
+examples_opt = get_option('examples')
+if not examples_opt.disabled()
+    subdir('example')
+endif
 
-subdir('example')
-subdir('test')
+tests_opt = get_option('tests')
+if not tests_opt.disabled()
+    subdir('test')
+endif
 
 install_subdir(
     'include/sdbusplus',

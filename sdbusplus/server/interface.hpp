@@ -64,8 +64,12 @@ struct interface final
         _interface_added(false)
     {
         sd_bus_slot* slot = nullptr;
-        _intf->sd_bus_add_object_vtable(_bus.get(), &slot, _path.c_str(),
-                                        _interf.c_str(), vtable, context);
+        int r = _intf->sd_bus_add_object_vtable(
+            _bus.get(), &slot, _path.c_str(), _interf.c_str(), vtable, context);
+        if (r < 0)
+        {
+            throw exception::SdBusError(-r, "sd_bus_add_object_vtable");
+        }
 
         _slot = decltype(_slot){slot};
     }

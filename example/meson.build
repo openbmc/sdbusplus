@@ -22,7 +22,7 @@ calc_buildroot = meson.current_build_dir()
 calc_files = files(
     run_command(
         sdbusgen_prog,
-        '--tool', sdbusplusplus_prog,
+        '--tool', sdbuspp_prog,
         '--output', calc_buildroot,
         'net',
         check: true

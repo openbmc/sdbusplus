@@ -30,6 +30,8 @@ sdbusplus_dep = declare_dependency(
     dependencies: libsystemd_pkg
 )
 
+sdbuspp_prog = find_program('sdbus++', native: true, required: false)
+sdbusgen_prog = find_program('sdbus++-gendir', native: true, required: false)
 subdir('tools')
 
 boost_dep = dependency(

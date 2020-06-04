@@ -4,19 +4,25 @@ executable(
     dependencies: sdbusplus_dep,
 )
 
-if boost_dep.found()
-    executable(
-        'asio-example',
-        'asio-example.cpp',
-        cpp_args: [
-            '-DBOOST_ALL_NO_LIB',
-            '-DBOOST_SYSTEM_NO_DEPRECATED',
-            '-DBOOST_ERROR_CODE_HEADER_ONLY',
-            '-DBOOST_COROUTINES_NO_DEPRECATION_WARNING',
-        ],
-        dependencies: [ boost_dep, pthread_dep, sdbusplus_dep ],
-    )
-endif
+boost_dep = dependency(
+    'boost',
+    disabler: true,
+    required: false,
+    modules: [ 'coroutine' ],
+)
+
+executable(
+    'asio-example',
+    'asio-example.cpp',
+    cpp_args: [
+        '-DBOOST_ASIO_DISABLE_THREADS',
+        '-DBOOST_ALL_NO_LIB',
+        '-DBOOST_SYSTEM_NO_DEPRECATED',
+        '-DBOOST_ERROR_CODE_HEADER_ONLY',
+        '-DBOOST_COROUTINES_NO_DEPRECATION_WARNING',
+    ],
+    dependencies: [ boost_dep, sdbusplus_dep ],
+)
 
 calc_buildroot = meson.current_build_dir()
 calc_files = files(

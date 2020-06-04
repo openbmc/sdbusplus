@@ -7,6 +7,7 @@ project('sdbusplus', 'cpp', 'c',
       'examples=' + (meson.is_subproject() ? 'disabled' : 'auto'),
     ],
     version: '1.0.0',
+    meson_version: '>=0.53.2',
 )
 
 libsystemd_pkg = dependency('libsystemd')

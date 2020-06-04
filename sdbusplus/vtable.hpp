@@ -98,6 +98,13 @@ constexpr vtable_t property_o(const char* member, const char* signature,
                               sd_bus_property_set_t set, size_t offset,
                               decltype(vtable_t::flags) flags = 0);
 
+namespace common_
+{
+constexpr auto deprecated = SD_BUS_VTABLE_DEPRECATED;
+constexpr auto hidden = SD_BUS_VTABLE_HIDDEN;
+constexpr auto unprivileged = SD_BUS_VTABLE_UNPRIVILEGED;
+} // namespace common_
+
 namespace method_
 {
 constexpr auto no_reply = SD_BUS_VTABLE_METHOD_NO_REPLY;

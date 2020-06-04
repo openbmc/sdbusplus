@@ -42,6 +42,9 @@ methods:
       errors:
         - self.Error.DivisionByZero
     - name: Clear
+      flags:
+        - unprivileged
+        - no_reply
       description: >
         Reset the LastResult property to zero.
 properties:

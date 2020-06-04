@@ -148,12 +148,14 @@ ${ s.cpp_prototype(loader, interface=interface, ptype='vtable') }
                      details::${classname}::_property_${p.name}
                         .data(),
                      _callback_get_${p.name},
-        % if 'const' in p.flags:
-                     vtable::property_::const_),
-        % else:
+        % if 'const' not in p.flags:
                      _callback_set_${p.name},
+        % endif
+        % if not p.cpp_flags:
                      vtable::property_::emits_change),
-        %endif
+        % else:
+                     ${p.cpp_flags}),
+        % endif
     % endfor
     vtable::end()
 };

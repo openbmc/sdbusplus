@@ -3,6 +3,8 @@ project('sdbusplus', 'cpp', 'c',
       'buildtype=debugoptimized',
       'cpp_std=c++17',
       'werror=true',
+      'tests=' + (meson.is_subproject() ? 'disabled' : 'auto'),
+      'examples=' + (meson.is_subproject() ? 'disabled' : 'auto'),
     ],
     version: '1.0.0',
 )

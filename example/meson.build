@@ -7,7 +7,7 @@ executable(
 boost_dep = dependency(
     'boost',
     disabler: true,
-    required: false,
+    required: examples_opt,
     modules: [ 'coroutine' ],
 )
 

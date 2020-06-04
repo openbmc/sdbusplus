@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6f4d3cc1_2bbad1e3",
+        "filename": "meson.build",
+        "patchSetId": 2
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2020-06-04T11:27:06Z",
+      "side": 1,
+      "message": "Thanks for this comment.  I understand the situation a lot better after reading this.\n\nI\u0027m concerned about a frustrating experience for someone who might be using the SDK or something like the openbmc-test docker image to do development on this repository.  It is fairly non-obvious to be using tools from outside the repository when they exist in the repository.\n\nIs there something we can do instead to detect a cross-compile situation and only do that in that case?  I think meson gives us that facility.\n\n(I am curious where you ran into this though because we didn\u0027t have the problem with the Yocto build)",
+      "revId": "a97b7389d72a0e5e9a8b6442059063b9a4a16f0a",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    }
+  ]
+}

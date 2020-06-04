@@ -38,11 +38,6 @@ sdbuspp_prog = find_program('sdbus++', native: true, required: false)
 sdbusgen_prog = find_program('sdbus++-gendir', native: true, required: false)
 subdir('tools')
 
-boost_dep = dependency(
-    'boost',
-    required: false,
-    modules: [ 'coroutine' ],
-)
 pthread_dep = dependency('threads')
 
 subdir('example')

@@ -16,6 +16,24 @@
       "revId": "a97b7389d72a0e5e9a8b6442059063b9a4a16f0a",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9dd4d369_80bfa77a",
+        "filename": "meson.build",
+        "patchSetId": 2
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1000188
+      },
+      "writtenOn": "2020-06-04T20:28:55Z",
+      "side": 1,
+      "message": "I think the frustrating experience is something one would end up experiencing with any out of date dependencies. I can see how this is more annoying with repos like sdbusplus in which we iterate our tooling more frequently. However, I think this is mitigated as users stop using the SDK environment and just start running directly with meson on their system or through the CI environment. If they are using bitbake directly the dependencies will always be kept in sync here. In general we should discourage users from installing openbmc dependencies in their build environments unless they are automatically managed, to prevent this kind of staleness.\n\nIt is annoying to have to deal with this in python because python doesn\u0027t really have a concept of packages per architecture. So it is preferred to separate native tooling and isolate its usage of python packages, allowing the build to have its own python packages that are intended to allow references in installed scripting. I\u0027m not 100% sure why this doesn\u0027t affect yocto, but I think it is lax in that it allows native and cross python dependencies to be mixed as long as they end up working.",
+      "parentUuid": "6f4d3cc1_2bbad1e3",
+      "revId": "a97b7389d72a0e5e9a8b6442059063b9a4a16f0a",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
     }
   ]
 }

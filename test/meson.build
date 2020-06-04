@@ -1,5 +1,5 @@
-gtest_dep = dependency('gtest', main: true, disabler: true)
-gmock_dep = dependency('gmock', disabler: true)
+gtest_dep = dependency('gtest', main: true, required: true)
+gmock_dep = dependency('gmock', required: true)
 
 tests = [
     'bus/list_names',

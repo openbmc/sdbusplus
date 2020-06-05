@@ -70,6 +70,24 @@
       "revId": "a97b7389d72a0e5e9a8b6442059063b9a4a16f0a",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1613a25a_fea99fdc",
+        "filename": "meson.build",
+        "patchSetId": 2
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2020-06-05T04:12:38Z",
+      "side": 1,
+      "message": "The \"you can use meson directly\" assumes that your localhost\u0027s compiler is sufficiently advanced enough to compile sdbusplus.  Some people on the project don\u0027t have that luxury and rely on things like docker containers and SDKs to get them a compiler that is \"advanced enough\".\n\n\u003e  I\u0027m not 100% sure why this doesn\u0027t affect yocto, but I think it is lax in that it allows native and cross python dependencies to be mixed as long as they end up working.\n\nWith Yocto we explicitly use the python3-native bbclass, which sets up your path so that `python3` is the Yocto-compiled nativepython.\n\n\u003e You can definitely still use the SDK environment if you want, you just can\u0027t let the version of sdbus++ lag far enough behind that it breaks your development version of openbmc.\n\nMy concern isn\u0027t about the SDK being out of date with the repository.  My concern is that someone doing sdbusplus/sdbus++ development in an SDK ends up being very confused and frustrated why the changes they are making to sdbus++ (and associated templates) are not taking affect.  Right now we\u0027re not giving any obvious way to identify and \"fix up\" that scenario.\n\n\nCan you restate the case where this ends up being a problem?  Since it isn\u0027t a problem in Yocto due to nativepython, I\u0027m having trouble understanding what other cases there are when we want the build to use the native-python but it ends up using the target-python.  If it really is a problem exclusively with cross-compiling, can\u0027t we use \u0027meson.is_cross_build()\u0027 to identify this case and choose the non-local version only under that condition?  Though without experimentation, I\u0027m not convinced that actually helps out the poor SDK user...",
+      "parentUuid": "b6039684_3354ea16",
+      "revId": "a97b7389d72a0e5e9a8b6442059063b9a4a16f0a",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
     }
   ]
 }

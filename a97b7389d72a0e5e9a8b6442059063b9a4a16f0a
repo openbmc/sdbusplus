@@ -34,6 +34,24 @@
       "revId": "a97b7389d72a0e5e9a8b6442059063b9a4a16f0a",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "beb0738d_ef1b8330",
+        "filename": "meson.build",
+        "patchSetId": 2
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2020-06-05T03:17:51Z",
+      "side": 1,
+      "message": "My 2 cents with sdbusplus:\nFor automation, I always use docker from openbmc-test-automation.\nFor development, I\u0027d like to use OpenBMC SDK whenever possible\nIn some cases where SDK does not work, I have to work in yocto environment (e.g. devtool xxx)\n\nBut I know there are projects outside openbmc are using sdbusplus as well, so I am OK with changes that helps others as long as it does not break the SDK/yocto environment.",
+      "parentUuid": "9dd4d369_80bfa77a",
+      "revId": "a97b7389d72a0e5e9a8b6442059063b9a4a16f0a",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
     }
   ]
 }

@@ -11,6 +11,7 @@ function show_usage {
     echo "    --tool <path>    - path to processing tool (default 'sdbus++')."
     echo "    --output <path>  - directory to place output files (default '.')."
     echo "    --list-all       - include all generated files in stdout list."
+    echo "    --jobs <N>       - number to run in parallel (default: $(nproc))."
     echo "    <dirs>+          - any number of subdirectories to generate."
     echo
     echo "The output on stdout is a list of generated files, which is intended"
@@ -23,18 +24,40 @@ function show_usage {
     echo "them into stdout unless --list-all is given."
 }
 
+# Ensure that no more than ${parallel} jobs are running at a time and if so
+# wait for at least one to finish.
+function wait_n {
+    while true;
+    do
+        if [[ $(jobs -r -p | wc -l) -ge $parallel ]];
+        then
+            wait -n
+        else
+            break
+        fi
+    done
+}
+
 sdbuspp="sdbus++"
 outputdir="."
 listall="no"
+parallel=$(nproc)
 
-options="$(getopt -o ho:t: --long help,list-all,output:,tool: -- "$@")"
+options="$(getopt -o ho:t:j: --long help,list-all,output:,tool:,jobs: -- "$@")"
 eval set -- "$options"
 
-while true; do
+while true;
+do
     case "$1" in
         -h | --help)
             show_usage
             exit
+            ;;
+
+        -j | --jobs)
+            shift
+            parallel="$1"
+            shift
             ;;
 
         --list-all)
@@ -44,13 +67,13 @@ while true; do
 
         -o | --output)
             shift
-            outputdir="$1";
+            outputdir="$1"
             shift
             ;;
 
         -t | --tool)
             shift
-            sdbuspp="$1";
+            sdbuspp="$1"
             shift
             ;;
 
@@ -78,23 +101,28 @@ do
 
         mkdir -p $outputdir/$path
 
-        $sdbuspp interface server-header $iface > $outputdir/$path/server.hpp
+        $sdbuspp interface server-header $iface > $outputdir/$path/server.hpp &
         echo $outputdir/$path/server.hpp
+        wait_n
 
-        $sdbuspp interface server-cpp $iface > $outputdir/$path/server.cpp
+        $sdbuspp interface server-cpp $iface > $outputdir/$path/server.cpp &
         echo $outputdir/$path/server.cpp
+        wait_n
 
-        $sdbuspp interface client-header $iface > $outputdir/$path/client.hpp
+        $sdbuspp interface client-header $iface > $outputdir/$path/client.hpp &
         echo $outputdir/$path/client.hpp
+        wait_n
 
-        $sdbuspp interface markdown $iface > $outputdir/$path.md
+        $sdbuspp interface markdown $iface > $outputdir/$path.md &
         # markdown files aren't recognized as source files by meson, so don't
         # emit them by default.
         if [ "xyes" == "x$listall" ];
         then
             echo $outputdir/$path.md
         fi
+        wait_n
     done
+    wait # finish all before continuing
 
     errors="$(find $d -name '*.errors.yaml')"
 
@@ -105,18 +133,22 @@ do
 
         mkdir -p $outputdir/$path
 
-        $sdbuspp error exception-header $iface > $outputdir/$path/error.hpp
+        $sdbuspp error exception-header $iface > $outputdir/$path/error.hpp &
         echo $outputdir/$path/error.hpp
+        wait_n
 
-        $sdbuspp error exception-cpp $iface > $outputdir/$path/error.cpp
+        $sdbuspp error exception-cpp $iface > $outputdir/$path/error.cpp &
         echo $outputdir/$path/error.cpp
+        wait_n
 
-        $sdbuspp error markdown $iface >> $outputdir/$path.md
+        $sdbuspp error markdown $iface >> $outputdir/$path.md &
         # markdown files aren't recognized as source files by meson, so don't
         # emit them by default.
         if [ "xyes" == "x$listall" ];
         then
             echo $outputdir/$path.md
         fi
+        wait_n
     done
+    wait # finish all before continuing
 done

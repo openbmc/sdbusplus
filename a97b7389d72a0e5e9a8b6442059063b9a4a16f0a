@@ -52,6 +52,24 @@
       "revId": "a97b7389d72a0e5e9a8b6442059063b9a4a16f0a",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b6039684_3354ea16",
+        "filename": "meson.build",
+        "patchSetId": 2
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1000188
+      },
+      "writtenOn": "2020-06-05T03:23:23Z",
+      "side": 1,
+      "message": "You can definitely still use the SDK environment if you want, you just can\u0027t let the version of sdbus++ lag far enough behind that it breaks your development version of openbmc. We could probably add something to detect that environment if it really bothers people and always uses the vendored copy of sdbus++.\n\nOnce all of the patches on top go in, you won\u0027t really even need the SDK to develop sdbusplus. You can just use meson locally. stdplus, sdeventplus, gpioplus have almost all their dependencies substitutable in meson so you can typically just run `meson build` `meson test -C build` and the tests just build and run.",
+      "parentUuid": "beb0738d_ef1b8330",
+      "revId": "a97b7389d72a0e5e9a8b6442059063b9a4a16f0a",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
     }
   ]
 }

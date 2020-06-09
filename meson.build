@@ -38,7 +38,7 @@ boost_dep = dependency(
     'boost',
     disabler: true,
     required: false,
-    modules: [ 'coroutine' ],
+    modules: [ 'coroutine', 'context' ],
 )
 
 subdir('example')

@@ -6,6 +6,7 @@ gmock_main_dep = dependency('gmock_main')
 tests = [
     'bus/list_names',
     'bus/match',
+    'bus/aio',
     'exception/sdbus_error',
     'message/append',
     'message/read',

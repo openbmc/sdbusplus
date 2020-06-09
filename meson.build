@@ -34,6 +34,12 @@ sdbusplus_dep = declare_dependency(
 subdir('tools')
 
 pthread_dep = dependency('threads')
+boost_dep = dependency(
+    'boost',
+    disabler: true,
+    required: false,
+    modules: [ 'coroutine' ],
+)
 
 subdir('example')
 subdir('test')

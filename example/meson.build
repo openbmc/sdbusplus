@@ -4,13 +4,6 @@ executable(
     dependencies: sdbusplus_dep,
 )
 
-boost_dep = dependency(
-    'boost',
-    disabler: true,
-    required: false,
-    modules: [ 'coroutine' ],
-)
-
 executable(
     'asio-example',
     'asio-example.cpp',

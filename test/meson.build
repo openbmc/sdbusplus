@@ -6,7 +6,6 @@ gmock_main_dep = dependency('gmock_main')
 tests = [
     'bus/list_names',
     'bus/match',
-    'bus/aio',
     'exception/sdbus_error',
     'message/append',
     'message/read',
@@ -32,6 +31,21 @@ foreach t : tests
         )
     )
 endforeach
+
+test(
+    'test-bus_aio',
+    executable(
+        'test-bus_aio',
+        'bus/aio.cpp',
+        dependencies: [
+            boost_dep,
+            gmock_dep,
+            gmock_main_dep,
+            gtest_dep,
+            sdbusplus_dep,
+        ],
+    )
+)
 
 test(
     'test-vtable',

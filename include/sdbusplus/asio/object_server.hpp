@@ -799,8 +799,6 @@ class object_server
     {
         if (!skipManager)
         {
-            auto root = add_interface("/", "");
-            root->initialize();
             add_manager("/");
         }
     }

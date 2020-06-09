@@ -41,7 +41,7 @@ function wait_n {
 sdbuspp="sdbus++"
 outputdir="."
 listall="no"
-parallel=$(nproc)
+parallel=$(nproc || (cat /proc/cpuinfo | grep processor | wc -l))
 
 options="$(getopt -o ho:t:j: --long help,list-all,output:,tool:,jobs: -- "$@")"
 eval set -- "$options"

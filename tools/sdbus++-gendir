@@ -24,20 +24,6 @@ function show_usage {
     echo "them into stdout unless --list-all is given."
 }
 
-# Ensure that no more than ${parallel} jobs are running at a time and if so
-# wait for at least one to finish.
-function wait_n {
-    while true;
-    do
-        if [[ $(jobs -r -p | wc -l) -ge $parallel ]];
-        then
-            wait -n
-        else
-            break
-        fi
-    done
-}
-
 sdbuspp="sdbus++"
 outputdir="."
 listall="no"
@@ -90,6 +76,43 @@ then
     exit 1
 fi
 
+# generate_single -- make a single call to sdbus++.
+#   $1: sdbus++ TYPE
+#   $2: sdbus++ PROCESS
+#   $3: sdbus++ ITEM
+#   $4: relative output file
+#   $5: 'append-mode' if present.
+function generate_single {
+    if [ "x" == "x$5" ];
+    then
+        $sdbuspp $1 $2 $3 > $outputdir/$4 &
+    else
+        $sdbuspp $1 $2 $3 >> $outputdir/$4 &
+    fi
+
+    # Always emit generated file name for foo-cpp and foo-header.
+    # Conditionally emit for everything else depending on $listall.
+    case "$2" in
+        *-cpp | *-header)
+            echo $outputdir/$4
+            ;;
+
+        *)
+            if [ "xyes" == "x$listall" ];
+            then
+                echo $outputdir/$4
+            fi
+            ;;
+    esac
+
+    # Ensure that no more than ${parallel} jobs are running at a time and if so
+    # wait for at least one to finish.
+    while [[ $(jobs -r -p | wc -l) -ge $parallel ]];
+    do
+        wait -n
+    done
+}
+
 for d in $@;
 do
     interfaces="$(find $d -name '*.interface.yaml')"
@@ -101,26 +124,11 @@ do
 
         mkdir -p $outputdir/$path
 
-        $sdbuspp interface server-header $iface > $outputdir/$path/server.hpp &
-        echo $outputdir/$path/server.hpp
-        wait_n
+        generate_single interface server-header $iface $path/server.hpp
+        generate_single interface server-cpp $iface $path/server.cpp
+        generate_single interface client-header $iface $path/client.hpp
+        generate_single interface markdown $iface $path.md
 
-        $sdbuspp interface server-cpp $iface > $outputdir/$path/server.cpp &
-        echo $outputdir/$path/server.cpp
-        wait_n
-
-        $sdbuspp interface client-header $iface > $outputdir/$path/client.hpp &
-        echo $outputdir/$path/client.hpp
-        wait_n
-
-        $sdbuspp interface markdown $iface > $outputdir/$path.md &
-        # markdown files aren't recognized as source files by meson, so don't
-        # emit them by default.
-        if [ "xyes" == "x$listall" ];
-        then
-            echo $outputdir/$path.md
-        fi
-        wait_n
     done
     wait # finish all before continuing
 
@@ -133,22 +141,10 @@ do
 
         mkdir -p $outputdir/$path
 
-        $sdbuspp error exception-header $iface > $outputdir/$path/error.hpp &
-        echo $outputdir/$path/error.hpp
-        wait_n
+        generate_single error exception-header $iface $path/error.hpp
+        generate_single error exception-cpp $iface $path/error.cpp
+        generate_single error markdown $iface $path.md append
 
-        $sdbuspp error exception-cpp $iface > $outputdir/$path/error.cpp &
-        echo $outputdir/$path/error.cpp
-        wait_n
-
-        $sdbuspp error markdown $iface >> $outputdir/$path.md &
-        # markdown files aren't recognized as source files by meson, so don't
-        # emit them by default.
-        if [ "xyes" == "x$listall" ];
-        then
-            echo $outputdir/$path.md
-        fi
-        wait_n
     done
     wait # finish all before continuing
 done

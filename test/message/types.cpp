@@ -45,3 +45,17 @@ TEST(MessageTypes, Signature)
 {
     ASSERT_EQ(dbus_string(sdbusplus::message::signature("sss")), "g");
 }
+
+TEST(MessageTypes, VectorOfString)
+{
+    std::vector<std::string> s = {"a", "b"};
+
+    ASSERT_EQ(dbus_string(s), "as");
+}
+
+TEST(MessageTypes, SetOfString)
+{
+    std::set<std::string> s = {"a", "b"};
+
+    ASSERT_EQ(dbus_string(s), "as");
+}

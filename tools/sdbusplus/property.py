@@ -131,6 +131,7 @@ class Property(NamedElement, Renderer):
             'signature': {'cppName': 'sdbusplus::message::signature',
                           'params': 0},
             'array': {'cppName': 'std::vector', 'params': 1},
+            'set': {'cppName': 'std::unordered_set', 'params': 1},
             'struct': {'cppName': 'std::tuple', 'params': -1},
             'variant': {'cppName': 'std::variant', 'params': -1},
             'dict': {'cppName': 'std::map', 'params': 2},

@@ -10,6 +10,7 @@
 #include <string>
 #include <tuple>
 #include <unordered_map>
+#include <unordered_set>
 #include <variant>
 #include <vector>
 
@@ -292,6 +293,27 @@ TEST_F(ReadTest, Set)
     }
 
     std::set<std::string> ret_ss;
+    new_message().read(ret_ss);
+    EXPECT_EQ(ss, ret_ss);
+}
+
+TEST_F(ReadTest, UnorderedSet)
+{
+    const std::unordered_set<std::string> ss{"one", "two", "eight"};
+
+    {
+        testing::InSequence seq;
+        expect_enter_container(SD_BUS_TYPE_ARRAY, "s");
+        for (const auto& s : ss)
+        {
+            expect_at_end(false, 0);
+            expect_basic<const char*>(SD_BUS_TYPE_STRING, s.c_str());
+        }
+        expect_at_end(false, 1);
+        expect_exit_container();
+    }
+
+    std::unordered_set<std::string> ret_ss;
     new_message().read(ret_ss);
     EXPECT_EQ(ss, ret_ss);
 }

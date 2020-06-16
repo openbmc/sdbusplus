@@ -11,6 +11,7 @@
 #include <tuple>
 #include <variant>
 #include <vector>
+#include <unordered_set>
 
 namespace sdbusplus
 {

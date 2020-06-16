@@ -89,12 +89,14 @@ expressed within square-brackets `[]`.  The following containers are supported:
 
 * `array[type]`
     - C++ type is `std::vector`
+* `dict[keytype, valuetype]`
+    - C++ type is `std::map`
+* `set[type]`
+    - C++ type is `std::set`
 * `struct[type0, type1, ...]`
     - C++ type is `std::tuple`
 * `variant[type0, type1, ...]`
     - C++ type is `std::variant`
-* `dict[keytype, valuetype]`
-    - C++ type is `std::map`
 
 It may seem odd that variants are required to list the types they may contain,
 but this is due to C++ being a strongly-typed language.  In order to generate

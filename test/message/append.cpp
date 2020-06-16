@@ -9,6 +9,7 @@
 #include <string>
 #include <tuple>
 #include <unordered_map>
+#include <unordered_set>
 #include <variant>
 #include <vector>
 
@@ -244,6 +245,22 @@ TEST_F(AppendTest, Vector)
 TEST_F(AppendTest, Set)
 {
     const std::set<std::string> s{"one", "two", "eight"};
+
+    {
+        testing::InSequence seq;
+        expect_open_container(SD_BUS_TYPE_ARRAY, "s");
+        for (const auto& i : s)
+        {
+            expect_basic_string(SD_BUS_TYPE_STRING, i.c_str());
+        }
+        expect_close_container();
+    }
+    new_message().append(s);
+}
+
+TEST_F(AppendTest, UnorderedSet)
+{
+    const std::unordered_set<std::string> s{"one", "two", "eight"};
 
     {
         testing::InSequence seq;

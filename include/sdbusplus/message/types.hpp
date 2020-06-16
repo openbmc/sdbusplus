@@ -7,6 +7,7 @@
 #include <sdbusplus/utility/type_traits.hpp>
 
 #include <map>
+#include <set>
 #include <string>
 #include <tuple>
 #include <variant>

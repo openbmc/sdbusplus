@@ -1,7 +1,5 @@
-gtest_dep = dependency('gtest')
-gtest_main_dep = dependency('gtest_main')
-gmock_dep = dependency('gmock')
-gmock_main_dep = dependency('gmock_main')
+gtest_dep = dependency('gtest', main: true, disabler: true)
+gmock_dep = dependency('gmock', disabler: true)
 
 tests = [
     'bus/list_names',
@@ -25,7 +23,6 @@ foreach t : tests
             dependencies: [
                 gtest_dep,
                 gmock_dep,
-                gmock_main_dep,
                 sdbusplus_dep,
             ],
         )
@@ -40,7 +37,6 @@ test(
         dependencies: [
             boost_dep,
             gmock_dep,
-            gmock_main_dep,
             gtest_dep,
             sdbusplus_dep,
         ],
@@ -53,7 +49,10 @@ test(
         'test-vtable',
         'vtable/vtable.cpp',
         'vtable/vtable_c.c',
-        dependencies: [ gtest_dep, gtest_main_dep, sdbusplus_dep ],
+        dependencies: [
+            gtest_dep,
+            sdbusplus_dep,
+        ],
     ),
 )
 
@@ -77,7 +76,6 @@ test(
         include_directories: include_directories('server'),
         dependencies: [
             gmock_dep,
-            gmock_main_dep,
             gtest_dep,
             sdbusplus_dep,
         ],

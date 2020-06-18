@@ -79,7 +79,6 @@ test(
             gmock_dep,
             gmock_main_dep,
             gtest_dep,
-            pthread_dep,
             sdbusplus_dep,
         ],
     ),

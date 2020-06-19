@@ -76,6 +76,7 @@ then
     exit 1
 fi
 
+declare -A emitted_file_names
 # generate_single -- make a single call to sdbus++.
 #   $1: sdbus++ TYPE
 #   $2: sdbus++ PROCESS
@@ -94,20 +95,27 @@ function generate_single {
         $sdbuspp $1 $2 $3 >> $outputdir/$4 &
     fi
 
-    # Always emit generated file name for foo-cpp and foo-header.
-    # Conditionally emit for everything else depending on $listall.
-    case "$2" in
-        *-cpp | *-header)
-            echo $outputdir/$4
-            ;;
+    # Emit filename as needed.
+    filename=$outputdir/$4
+    if [ "x1" != "x${emitted_file_names[$filename]}" ];
+    then
+        emitted_file_names[$filename]="1"
 
-        *)
-            if [ "xyes" == "x$listall" ];
-            then
-                echo $outputdir/$4
-            fi
-            ;;
-    esac
+        # Always emit generated file name for foo-cpp and foo-header.
+        # Conditionally emit for everything else depending on $listall.
+        case "$2" in
+            *-cpp | *-header)
+                echo $filename
+                ;;
+
+            *)
+                if [ "xyes" == "x$listall" ];
+                then
+                    echo $filename
+                fi
+                ;;
+        esac
+    fi
 
     # Ensure that no more than ${parallel} jobs are running at a time and if so
     # wait for at least one to finish.

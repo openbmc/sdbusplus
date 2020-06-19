@@ -83,7 +83,11 @@ fi
 #   $4: relative output file
 #   $5: 'append-mode' if present.
 function generate_single {
-    if [ "x" == "x$5" ];
+
+    if [ "xempty" == "x$1" ];
+    then
+        echo -n > $outputdir/$4
+    elif [ "x" == "x$5" ];
     then
         $sdbuspp $1 $2 $3 > $outputdir/$4 &
     else
@@ -116,6 +120,20 @@ function generate_single {
 for d in $@;
 do
     interfaces="$(find $d -name '*.interface.yaml')"
+    errors="$(find $d -name '*.errors.yaml')"
+
+    # Some files are created from multiple YAML sources, but we don't know
+    # which YAML sources are present.  For these files, we need to first
+    # create an empty file to ensure the file does not carry old data from
+    # a previous run.
+    for y in $interfaces $errors;
+    do
+        path="${y%.interface.yaml}"
+        path="${path%.errors.yaml}"
+        iface="${path//\//.}"
+
+        generate_single empty markdown $iface $path.md
+    done
 
     for i in $interfaces;
     do
@@ -127,12 +145,11 @@ do
         generate_single interface server-header $iface $path/server.hpp
         generate_single interface server-cpp $iface $path/server.cpp
         generate_single interface client-header $iface $path/client.hpp
-        generate_single interface markdown $iface $path.md
+        generate_single interface markdown $iface $path.md append
 
     done
     wait # finish all before continuing
 
-    errors="$(find $d -name '*.errors.yaml')"
 
     for e in $errors;
     do

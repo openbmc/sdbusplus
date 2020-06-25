@@ -2,6 +2,7 @@
 
 #include <systemd/sd-bus.h>
 
+#include <sdbusplus/exception.hpp>
 #include <sdbusplus/message/append.hpp>
 #include <sdbusplus/message/native_types.hpp>
 #include <sdbusplus/message/read.hpp>
@@ -303,6 +304,23 @@ class message
         if (r < 0)
         {
             throw exception::SdBusError(-r, "sd_bus_message_new_method_return");
+        }
+
+        return message(reply, _intf, std::false_type());
+    }
+
+    /** @brief Create a 'method_error' type message from an existing message.
+     *
+     *  @param[in] e - The exception we are returning
+     *  @return method-return message.
+     */
+    message new_method_error(const sdbusplus::exception::exception& e)
+    {
+        msgp_t reply = nullptr;
+        int r = _intf->sd_bus_message_new_method_error(this->get(), &reply, e.name(), e.description());
+        if (r < 0)
+        {
+            throw exception::SdBusError(-r, "sd_bus_message_new_method_error");
         }
 
         return message(reply, _intf, std::false_type());

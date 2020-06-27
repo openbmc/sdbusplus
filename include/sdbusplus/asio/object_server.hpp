@@ -518,6 +518,32 @@ class dbus_interface
         return false;
     }
 
+    // return true if the property is updated successfully and value is changed
+    // return false if the property is not updated or the value did not change
+    template <typename PropertyType>
+    bool set_property_change(const std::string& name, const PropertyType& value)
+    {
+        if (!initialized_)
+        {
+            return false;
+        }
+        auto func = callbacksSet_.find(name);
+        if (func != callbacksSet_.end())
+        {
+            SetPropertyReturnValue status = func->second->set(value);
+            if ((status == SetPropertyReturnValue::valueUpdated) ||
+                (status == SetPropertyReturnValue::sameValueUpdated))
+            {
+                if (status != SetPropertyReturnValue::sameValueUpdated)
+                {
+                    signal_property(name);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     template <typename... SignalSignature>
     bool register_signal(const std::string& name)
     {
@@ -718,6 +744,19 @@ class dbus_interface
 #endif
         }
         return sd_bus_error_set_const(error, SD_BUS_ERROR_INVALID_ARGS, NULL);
+    }
+
+    /** @brief Create a new signal message.
+     *
+     *  @param[in] member - The signal name to create.
+     */
+    auto new_signal(const char* member)
+    {
+        if (!initialized_)
+        {
+            return message::message(nullptr);
+        }
+        return interface_->new_signal(member);
     }
 
     bool initialize(const bool skipPropertyChangedSignal = false)

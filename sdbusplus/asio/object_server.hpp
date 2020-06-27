@@ -494,7 +494,7 @@ class dbus_interface
 
         return true;
     }
-    template <typename PropertyType>
+    template <typename PropertyType, bool ChangesOnly = false>
     bool set_property(const std::string& name, const PropertyType& value)
     {
         if (!initialized_)
@@ -511,8 +511,12 @@ class dbus_interface
                 if (status != SetPropertyReturnValue::sameValueUpdated)
                 {
                     signal_property(name);
+                    return true;
                 }
-                return true;
+                if constexpr (!ChangesOnly)
+                {
+                    return true;
+                }
             }
         }
         return false;
@@ -718,6 +722,19 @@ class dbus_interface
 #endif
         }
         return sd_bus_error_set_const(error, SD_BUS_ERROR_INVALID_ARGS, NULL);
+    }
+
+    /** @brief Create a new signal message.
+     *
+     *  @param[in] member - The signal name to create.
+     */
+    auto new_signal(const char* member)
+    {
+        if (!initialized_)
+        {
+            return message::message(nullptr);
+        }
+        return interface_->new_signal(member);
     }
 
     bool initialize(const bool skipPropertyChangedSignal = false)

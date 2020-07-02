@@ -65,7 +65,7 @@ class ${classname}
 
     % if interface.properties:
         using PropertiesVariant = std::variant<
-                ${",\n                ".join(setOfPropertyTypes())}>;
+                ${",\n                ".join(sorted(setOfPropertyTypes()))}>;
 
         /** @brief Constructor to initialize the object from a map of
          *         properties.

@@ -27,7 +27,7 @@ function show_usage {
 sdbuspp="sdbus++"
 outputdir="."
 listall="no"
-parallel=$(nproc || cat /proc/cpuinfo | grep ^processor | wc -l)
+parallel=0 #$(nproc || cat /proc/cpuinfo | grep ^processor | wc -l)
 
 options="$(getopt -o ho:t:j: --long help,list-all,output:,tool:,jobs: -- "$@")"
 eval set -- "$options"
@@ -76,6 +76,8 @@ then
     exit 1
 fi
 
+all_jobs=""
+
 declare -A emitted_file_names
 # generate_single -- make a single call to sdbus++.
 #   $1: sdbus++ TYPE
@@ -91,8 +93,10 @@ function generate_single {
     elif [ "x" == "x$5" ];
     then
         $sdbuspp $1 $2 $3 > $outputdir/$4 &
+        all_jobs="$all_jobs $!"
     else
         $sdbuspp $1 $2 $3 >> $outputdir/$4 &
+        all_jobs="$all_jobs $!"
     fi
 
     # Emit filename as needed.
@@ -119,10 +123,18 @@ function generate_single {
 
     # Ensure that no more than ${parallel} jobs are running at a time and if so
     # wait for at least one to finish.
-    while [[ $(jobs -r -p | wc -l) -ge $parallel ]];
+    if [[ $(echo $all_jobs | wc -w) -ge $parallel ]];
+    then
+        waitall
+    fi
+}
+
+function waitall {
+    for job in $all_jobs;
     do
-        wait -n
+        wait $job
     done
+    all_jobs=""
 }
 
 for d in $@;
@@ -155,7 +167,7 @@ do
         generate_single interface markdown $iface $path.md append
 
     done
-    wait # finish all before continuing
+    waitall # finish all before continuing
 
 
     for e in $errors;
@@ -168,5 +180,5 @@ do
         generate_single error markdown $iface $path.md append
 
     done
-    wait # finish all before continuing
+    waitall # finish all before continuing
 done

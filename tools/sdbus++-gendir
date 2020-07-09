@@ -125,6 +125,13 @@ function generate_single {
     done
 }
 
+function waitall {
+    for job in $(jobs -r -p);
+    do
+        wait $job
+    done
+}
+
 for d in $@;
 do
     interfaces="$(find $d -name '*.interface.yaml')"
@@ -155,7 +162,7 @@ do
         generate_single interface markdown $iface $path.md append
 
     done
-    wait # finish all before continuing
+    waitall # finish all before continuing
 
 
     for e in $errors;
@@ -168,5 +175,5 @@ do
         generate_single error markdown $iface $path.md append
 
     done
-    wait # finish all before continuing
+    waitall # finish all before continuing
 done

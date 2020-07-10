@@ -14,6 +14,29 @@ The sdbusplus library requires sd-bus, which is contained in libsystemd.
 The sdbus++ application requires Python 3 and the Python libraries mako
 and inflection.
 
+## Building
+
+The sdbusplus library is built using meson.
+
+```
+meson build
+cd build
+ninja
+ninja test
+ninja install
+```
+
+Optionally, building the tests and examples can be disabled by passing
+`-Dtests=disabled` and `-Dexamples=disabled` respectively to `meson.
+
+The sdbus++ application is installed as a standard Python package
+using `setuptools`.
+
+```
+cd tools
+./setup.py install
+```
+
 ## C++ library
 
 The sdbusplus library builds on top of the

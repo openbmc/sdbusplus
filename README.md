@@ -133,13 +133,13 @@ needed for Ubuntu and Fedora.
 ### Installation on Ubuntu
 
 ```
-sudo apt install git autoconf libtool pkg-config g++ autoconf-archive libsystemd-dev python3 python3-pip python3-yaml python3-mako python3-inflection
+sudo apt install git meson libtool pkg-config g++ libsystemd-dev python3 python3-pip python3-yaml python3-mako python3-inflection
 ```
 
 ### Installation on Fedora
 
 ```
-sudo dnf install git autoconf libtool gcc-c++ pkgconfig autoconf-archive systemd-devel python3 python3-pip python3-yaml python3-mako
+sudo dnf install git meson libtool gcc-c++ pkgconfig systemd-devel python3 python3-pip python3-yaml python3-mako
 ```
 Install the inflection package using the pip utility (on Fedora)
 ```

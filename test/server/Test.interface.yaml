@@ -3,3 +3,12 @@ description: >
 properties:
     - name: SomeValue
       type: int64
+    - name: ReadonlyValue
+      type: int64
+      flags:
+          - readonly
+          - emits_change
+    - name: ConstValue
+      type: int64
+      flags:
+          - const

@@ -157,16 +157,25 @@ A property must have the YAML property `name` and `type` and may optionally have
 default value of the property. See the `Methods` section above for more
 information on errors.
 
-The supported values for `flags` are `deprecated`, `hidden`, `unprivileged`,
-`const`, `emits_change`, `emits_invalidation`, `explicit` , which corresponds to
-`SD_BUS_VTABLE_DEPRECATED`, `SD_BUS_VTABLE_HIDDEN`,
-`SD_BUS_VTABLE_UNPRIVILEGED`, `SD_BUS_VTABLE_PROPERTY_CONST`,
-`SD_BUS_VTABLE_PROPERTY_EMITS_CHANGE`,
-`SD_BUS_VTABLE_PROPERTY_EMITS_INVALIDATION` and
-`SD_BUS_VTABLE_PROPERTY_EXPLICIT`, respectively.  The flag `const ` makes the
-property read-only via D-Bus but still writable by the app implementing
-it. Moreover, if no flags have been specified for a property, `emits_change`
-will be added by default.
+The supported values for `flags` are and their equivalent sd-bus flag setting:
+
+* `deprecated` - SD_BUS_VTABLE_DEPRECATED
+* `hidden` - SD_BUS_VTABLE_HIDDEN
+* `unprivileged` - SD_BUS_VTABLE_UNPRIVILEGED
+* `const` - SD_BUS_VTABLE_PROPERTY_CONST
+* `emits_change` - SD_BUS_VTABLE_PROPERTY_EMITS_CHANGE
+* `emits_invalidation` - SD_BUS_VTABLE_PROPERTY_EMITS_INVALIDATION
+* `explicit` - SD_BUS_VTABLE_PROPERTY_EXPLICIT
+* `readonly` - (N/A)
+
+If no flag is given, a property will default to `emits_change`.
+
+Both `const` and `readonly` prevent D-Bus clients from being able to write
+to a property.  `const` is a D-Bus indication that the property can never
+change, while `readonly` properties can be changed by the D-Bus server itself.
+As examples, the `Version` property on a software object might be appropriate
+to be `const` and the `Value` property on a sensor object would likely be
+`readonly`.
 
 Example:
 ```

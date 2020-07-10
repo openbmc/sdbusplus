@@ -155,10 +155,12 @@ ${ m.cpp_prototype(loader, interface=interface, ptype='callback-header') }
         static int _callback_get_${p.name}(
             sd_bus*, const char*, const char*, const char*,
             sd_bus_message*, void*, sd_bus_error*);
+        % if 'const' not in p.flags and 'readonly' not in p.flags:
         /** @brief sd-bus callback for set-property '${p.name}' */
         static int _callback_set_${p.name}(
             sd_bus*, const char*, const char*, const char*,
             sd_bus_message*, void*, sd_bus_error*);
+        % endif
 
     % endfor
 

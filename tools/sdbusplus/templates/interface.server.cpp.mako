@@ -148,7 +148,7 @@ ${ s.cpp_prototype(loader, interface=interface, ptype='vtable') }
                      details::${classname}::_property_${p.name}
                         .data(),
                      _callback_get_${p.name},
-        % if 'const' not in p.flags:
+        % if 'const' not in p.flags and 'readonly' not in p.flags:
                      _callback_set_${p.name},
         % endif
         % if not p.cpp_flags:

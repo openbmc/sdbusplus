@@ -195,18 +195,21 @@ class Property(NamedElement, Renderer):
     def or_cpp_flags(self, flags):
         """Return the corresponding ORed cpp flags."""
         flags_dict = {
-            "deprecated": "vtable::common_::deprecated",
-            "hidden": "vtable::common_::hidden",
-            "unprivileged": "vtable::common_::unprivileged",
             "const": "vtable::property_::const_",
+            "deprecated": "vtable::common_::deprecated",
             "emits_change": "vtable::property_::emits_change",
             "emits_invalidation": "vtable::property_::emits_invalidation",
-            "explicit": "vtable::property_::explicit_"}
+            "explicit": "vtable::property_::explicit_",
+            "hidden": "vtable::common_::hidden",
+            "readonly": False,
+            "unprivileged": "vtable::common_::unprivileged",
+            }
 
         cpp_flags = []
         for flag in flags:
             try:
-                cpp_flags.append(flags_dict[flag])
+                if flags_dict[flag]:
+                    cpp_flags.append(flags_dict[flag])
             except KeyError:
                 raise ValueError("Invalid flag \"{}\"".format(flag))
 

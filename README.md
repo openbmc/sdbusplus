@@ -14,6 +14,29 @@ The sdbusplus library requires sd-bus, which is contained in libsystemd.
 The sdbus++ application requires Python 3 and the Python libraries mako
 and inflection.
 
+## Building
+
+The sdbusplus library is built using meson.
+
+```
+meson build
+cd build
+ninja
+ninja test
+ninja install
+```
+
+Optionally, building the tests and examples can be disabled by passing
+`-Dtests=disabled` and `-Dexamples=disabled` respectively to `meson.
+
+The sdbus++ application is installed as a standard Python package
+using `setuptools`.
+
+```
+cd tools
+./setup.py install
+```
+
 ## C++ library
 
 The sdbusplus library builds on top of the
@@ -98,7 +121,7 @@ sdbus++ error markdown org.freedesktop.Example >> \
     org/freedesktop/Example.md
 ```
 
-See the `example/Makefile.am` for more details.
+See the `example/meson.build` for more details.
 
 ## Installing sdbusplus on custom distributions
 
@@ -110,13 +133,13 @@ needed for Ubuntu and Fedora.
 ### Installation on Ubuntu
 
 ```
-sudo apt install git autoconf libtool pkg-config g++ autoconf-archive libsystemd-dev python3 python3-pip python3-yaml python3-mako python3-inflection
+sudo apt install git meson libtool pkg-config g++ libsystemd-dev python3 python3-pip python3-yaml python3-mako python3-inflection
 ```
 
 ### Installation on Fedora
 
 ```
-sudo dnf install git autoconf libtool gcc-c++ pkgconfig autoconf-archive systemd-devel python3 python3-pip python3-yaml python3-mako
+sudo dnf install git meson libtool gcc-c++ pkgconfig systemd-devel python3 python3-pip python3-yaml python3-mako
 ```
 Install the inflection package using the pip utility (on Fedora)
 ```

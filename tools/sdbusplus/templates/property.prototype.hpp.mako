@@ -82,6 +82,8 @@ auto ${classname}::${property.camelCase}(${property.cppTypeParam(interface.name)
 {
     return ${property.camelCase}(val, false);
 }
+
+% if 'const' not in property.flags and 'readonly' not in property.flags:
 int ${classname}::_callback_set_${property.name}(
         sd_bus* /*bus*/, const char* /*path*/, const char* /*interface*/,
         const char* /*property*/, sd_bus_message* value, void* context,
@@ -116,6 +118,7 @@ int ${classname}::_callback_set_${property.name}(
 
     return true;
 }
+% endif
 
 namespace details
 {

@@ -28,8 +28,8 @@ namespace asio
 {
 
 constexpr const char* PropertyNamePattern = "[a-zA-Z0-9_]+";
-constexpr const char* PathPattern = "[a-zA-Z0-9_/]+";
-constexpr const char* InterfaceNamePattern = "[a-zA-Z0-9_\\.]*";
+constexpr const char* PathPattern = "(/[a-zA-Z0-9_]+)+";
+constexpr const char* InterfaceNamePattern = "[a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)+";
 
 class callback
 {

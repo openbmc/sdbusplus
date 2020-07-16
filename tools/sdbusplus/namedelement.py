@@ -8,16 +8,16 @@ class NamedElement(object):
         self.description = kwargs.pop('description', "")
 
     def __getattribute__(self, name):
-        l = {'CamelCase': lambda: inflection.camelize(self.name),
-             'camelCase': lambda: inflection.camelize(self.name, False),
-             'snake_case': lambda: inflection.underscore(self.name)}\
+        lam = {'CamelCase': lambda: inflection.camelize(self.name),
+               'camelCase': lambda: inflection.camelize(self.name, False),
+               'snake_case': lambda: inflection.underscore(self.name)}\
             .get(name)
 
-        if l:
+        if lam:
             return NamedElement.__fixup_name(l())
         try:
             return super(NamedElement, self).__getattribute__(name)
-        except:
+        except e:
             raise AttributeError("Attribute '%s' not found in %s.NamedElement"
                                  % (name, self.__module__))
 

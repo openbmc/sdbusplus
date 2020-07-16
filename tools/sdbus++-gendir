@@ -27,7 +27,7 @@ function show_usage {
 sdbuspp="sdbus++"
 outputdir="."
 listall="no"
-parallel=$(nproc || cat /proc/cpuinfo | grep ^processor | wc -l)
+parallel=$(nproc || grep -c ^processor < /proc/cpuinfo)
 
 options="$(getopt -o ho:t:j: --long help,list-all,output:,tool:,jobs: -- "$@")"
 eval set -- "$options"
@@ -70,7 +70,7 @@ do
     esac
 done
 
-if [ "x" == "x$@" ];
+if [ $# -eq 0 ];
 then
     show_usage
     exit 1
@@ -89,13 +89,13 @@ function generate_single {
 
     if [ "xempty" == "x$1" ];
     then
-        echo -n > $outputdir/$4
+        echo -n > "$outputdir/$4"
     elif [ "x" == "x$5" ];
     then
-        $sdbuspp $1 $2 $3 > $outputdir/$4 &
+        $sdbuspp "$1" "$2" "$3" > "$outputdir/$4" &
         all_jobs="$all_jobs $!"
     else
-        $sdbuspp $1 $2 $3 >> $outputdir/$4 &
+        $sdbuspp "$1" "$2" "$3" >> "$outputdir/$4" &
         all_jobs="$all_jobs $!"
     fi
 
@@ -109,13 +109,13 @@ function generate_single {
         # Conditionally emit for everything else depending on $listall.
         case "$2" in
             *-cpp | *-header)
-                echo $filename
+                echo "$filename"
                 ;;
 
             *)
                 if [ "xyes" == "x$listall" ];
                 then
-                    echo $filename
+                    echo "$filename"
                 fi
                 ;;
         esac
@@ -123,7 +123,7 @@ function generate_single {
 
     # Ensure that no more than ${parallel} jobs are running at a time and if so
     # wait for them to finish.
-    if [[ $(echo $all_jobs | wc -w) -ge $parallel ]];
+    if [[ $(echo "$all_jobs" | wc -w) -ge $parallel ]];
     then
         waitall
     fi
@@ -132,15 +132,15 @@ function generate_single {
 function waitall {
     for job in $all_jobs;
     do
-        wait $job
+        wait "$job"
     done
     all_jobs=""
 }
 
-for d in $@;
+for d in "$@";
 do
-    interfaces="$(find $d -name '*.interface.yaml')"
-    errors="$(find $d -name '*.errors.yaml')"
+    interfaces="$(find "$d" -name '*.interface.yaml')"
+    errors="$(find "$d" -name '*.errors.yaml')"
 
     # Some files are created from multiple YAML sources, but we don't know
     # which YAML sources are present.  For these files, we need to first
@@ -152,8 +152,8 @@ do
         path="${path%.errors.yaml}"
         iface="${path//\//.}"
 
-        mkdir -p $outputdir/$path
-        generate_single empty markdown $iface $path.md
+        mkdir -p "$outputdir/$path"
+        generate_single empty markdown "$iface" "$path.md"
     done
 
     for i in $interfaces;
@@ -161,10 +161,10 @@ do
         path="${i%.interface.yaml}"
         iface="${path//\//.}"
 
-        generate_single interface server-header $iface $path/server.hpp
-        generate_single interface server-cpp $iface $path/server.cpp
-        generate_single interface client-header $iface $path/client.hpp
-        generate_single interface markdown $iface $path.md append
+        generate_single interface server-header "$iface" "$path/server.hpp"
+        generate_single interface server-cpp "$iface" "$path/server.cpp"
+        generate_single interface client-header "$iface" "$path/client.hpp"
+        generate_single interface markdown "$iface" "$path.md" append
 
     done
     waitall # finish all before continuing
@@ -175,9 +175,9 @@ do
         path="${e%.errors.yaml}"
         iface="${path//\//.}"
 
-        generate_single error exception-header $iface $path/error.hpp
-        generate_single error exception-cpp $iface $path/error.cpp
-        generate_single error markdown $iface $path.md append
+        generate_single error exception-header "$iface" "$path/error.hpp"
+        generate_single error exception-cpp "$iface" "$path/error.cpp"
+        generate_single error markdown "$iface" "$path.md" append
 
     done
     waitall # finish all before continuing

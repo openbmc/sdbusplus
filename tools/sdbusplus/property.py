@@ -59,9 +59,9 @@ class Property(NamedElement, Renderer):
     def enum_namespace(self, interface):
         if not self.is_enum():
             return ""
-        l = self.cppTypeParam(interface).split("::")[0:-1]
-        if len(l) != 0:
-            return "::".join(l) + "::"
+        ns = self.cppTypeParam(interface).split("::")[0:-1]
+        if len(ns) != 0:
+            return "::".join(ns) + "::"
         return ""
 
     def enum_name(self, interface):
@@ -189,8 +189,9 @@ class Property(NamedElement, Renderer):
                            post=str.strip)
 
     def cpp_prototype(self, loader, interface, ptype):
-        return self.render(loader, "property.prototype.hpp.mako", property=self,
-                           interface=interface, ptype=ptype, post=str.rstrip)
+        return self.render(loader, "property.prototype.hpp.mako",
+                           property=self, interface=interface, ptype=ptype,
+                           post=str.rstrip)
 
     def or_cpp_flags(self, flags):
         """Return the corresponding ORed cpp flags."""

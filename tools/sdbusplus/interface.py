@@ -10,32 +10,28 @@ from .renderer import Renderer
 
 class Interface(NamedElement, Renderer):
     @staticmethod
-    def load(name, rootdir='.'):
+    def load(name, rootdir="."):
         filename = os.path.join(rootdir,
-                                name.replace('.', '/') + ".interface.yaml")
+                                name.replace(".", "/") + ".interface.yaml")
 
         with open(filename) as f:
             data = f.read()
             y = yaml.safe_load(data)
-            y['name'] = name
+            y["name"] = name
             return Interface(**y)
 
     def __init__(self, **kwargs):
-        self.properties = \
-            [Property(**p) for p in kwargs.pop('properties', [])]
-        self.methods = \
-            [Method(**m) for m in kwargs.pop('methods', [])]
-        self.signals = \
-            [Signal(**s) for s in kwargs.pop('signals', [])]
-        self.enums = \
-            [Enum(**e) for e in kwargs.pop('enumerations', [])]
+        self.properties = [Property(**p) for p in kwargs.pop("properties", [])]
+        self.methods = [Method(**m) for m in kwargs.pop("methods", [])]
+        self.signals = [Signal(**s) for s in kwargs.pop("signals", [])]
+        self.enums = [Enum(**e) for e in kwargs.pop("enumerations", [])]
 
         super(Interface, self).__init__(**kwargs)
 
-    def enum_includes(self, l):
+    def enum_includes(self, inc_list):
         includes = []
-        for e in l:
-            es = e.enum_namespace(self.name).split('::')
+        for e in inc_list:
+            es = e.enum_namespace(self.name).split("::")
             # Skip empty, non-enum values and self references like '::'
             if len(es) < 2:
                 continue
@@ -45,11 +41,11 @@ class Interface(NamedElement, Renderer):
             # xyz::openbmc_project::Network::server::IP:: and we need to
             # convert to xyz/openbmc_project/Network/IP/server.hpp
             es.pop()  # Remove trailing empty element
-            e_class = es.pop() # Remove class name
+            e_class = es.pop()  # Remove class name
             e_type = es.pop()  # Remove injected type namespace
             es.append(e_class)
             es.append(e_type)
-            includes.append('/'.join(es) + '.hpp')
+            includes.append("/".join(es) + ".hpp")
         return includes
 
     def markdown(self, loader):

@@ -375,11 +375,11 @@ class dbus_interface
                                        std::vector<std::string>{name_});
     }
 
-    // default getter and setter
-    template <typename PropertyType>
-    bool register_property(
-        const std::string& name, const PropertyType& property,
-        PropertyPermission access = PropertyPermission::readOnly)
+    template <typename PropertyType, typename CallbackTypeGet>
+    bool register_property_r(const std::string& name,
+                             const PropertyType& property,
+                             decltype(vtable::vtable_t::flags) flags,
+                             CallbackTypeGet&& getFunction)
     {
         // can only register once
         if (initialized_)
@@ -396,9 +396,9 @@ class dbus_interface
         auto nameItr = propertyNames_.emplace(propertyNames_.end(), name);
         auto propertyPtr = std::make_shared<PropertyType>(property);
 
-        callbacksGet_[name] = std::make_unique<callback_get_instance<
-            PropertyType, std::function<PropertyType(const PropertyType&)>>>(
-            propertyPtr, [](const PropertyType& value) { return value; });
+        callbacksGet_[name] = std::make_unique<
+            callback_get_instance<PropertyType, CallbackTypeGet>>(
+            propertyPtr, std::move(getFunction));
         callbacksSet_[name] = std::make_unique<callback_set_instance<
             PropertyType,
             std::function<int(const PropertyType&, PropertyType&)>>>(
@@ -407,64 +407,19 @@ class dbus_interface
                 return 1;
             });
 
-        if (access == PropertyPermission::readOnly)
-        {
-            vtable_.emplace_back(
-                vtable::property(nameItr->c_str(), type.data(), get_handler,
-                                 vtable::property_::emits_change));
-        }
-        else
-        {
-            vtable_.emplace_back(
-                vtable::property(nameItr->c_str(), type.data(), get_handler,
-                                 set_handler, vtable::property_::emits_change));
-        }
-        return true;
-    }
-
-    // custom setter, sets take an input property and respond with an int status
-    template <typename PropertyType, typename CallbackType>
-    bool register_property(const std::string& name,
-                           const PropertyType& property,
-                           CallbackType&& setFunction)
-    {
-        // can only register once
-        if (initialized_)
-        {
-            return false;
-        }
-        if (!std::regex_match(name, std::regex(PropertyNamePattern)))
-        {
-            return false;
-        }
-        static const auto type =
-            utility::tuple_to_array(message::types::type_id<PropertyType>());
-
-        auto nameItr = propertyNames_.emplace(propertyNames_.end(), name);
-        auto propertyPtr = std::make_shared<PropertyType>(property);
-
-        callbacksGet_[name] = std::make_unique<callback_get_instance<
-            PropertyType, std::function<PropertyType(const PropertyType&)>>>(
-            propertyPtr, [](const PropertyType& value) { return value; });
-
-        callbacksSet_[name] =
-            std::make_unique<callback_set_instance<PropertyType, CallbackType>>(
-                propertyPtr, std::move(setFunction));
         vtable_.emplace_back(vtable::property(nameItr->c_str(), type.data(),
-                                              get_handler, set_handler,
-                                              vtable::property_::emits_change));
+                                              get_handler, flags));
 
         return true;
     }
 
-    // custom getter and setter, gets take an input of void and respond with a
-    // property. property is only passed for type deduction
     template <typename PropertyType, typename CallbackType,
               typename CallbackTypeGet>
-    bool register_property(const std::string& name,
-                           const PropertyType& property,
-                           CallbackType&& setFunction,
-                           CallbackTypeGet&& getFunction)
+    bool register_property_rw(const std::string& name,
+                              const PropertyType& property,
+                              decltype(vtable::vtable_t::flags) flags,
+                              CallbackType&& setFunction,
+                              CallbackTypeGet&& getFunction)
     {
         // can only register once
         if (initialized_)
@@ -489,10 +444,60 @@ class dbus_interface
                 propertyPtr, std::move(setFunction));
 
         vtable_.emplace_back(vtable::property(nameItr->c_str(), type.data(),
-                                              get_handler, set_handler,
-                                              vtable::property_::emits_change));
+                                              get_handler, set_handler, flags));
 
         return true;
+    }
+
+    // default getter and setter
+    template <typename PropertyType>
+    bool register_property(
+        const std::string& name, const PropertyType& property,
+        PropertyPermission access = PropertyPermission::readOnly)
+    {
+        if (access == PropertyPermission::readOnly)
+        {
+            return register_property_r(
+                name, property, vtable::property_::emits_change,
+                [](const PropertyType& value) { return value; });
+        }
+        else
+        {
+            return register_property_rw(
+                name, property, vtable::property_::emits_change,
+                [](const PropertyType& req, PropertyType& old) {
+                    old = req;
+                    return 1;
+                },
+                [](const PropertyType& value) { return value; });
+        }
+    }
+
+    // custom setter, sets take an input property and respond with an int status
+    template <typename PropertyType, typename CallbackType>
+    bool register_property(const std::string& name,
+                           const PropertyType& property,
+                           CallbackType&& setFunction)
+    {
+        return register_property_rw(
+            name, property, vtable::property_::emits_change,
+            std::forward<CallbackType>(setFunction),
+            [](const PropertyType& value) { return value; });
+    }
+
+    // custom getter and setter, gets take an input of void and respond with a
+    // property. property is only passed for type deduction
+    template <typename PropertyType, typename CallbackType,
+              typename CallbackTypeGet>
+    bool register_property(const std::string& name,
+                           const PropertyType& property,
+                           CallbackType&& setFunction,
+                           CallbackTypeGet&& getFunction)
+    {
+        return register_property_rw(name, property,
+                                    vtable::property_::emits_change,
+                                    std::forward<CallbackType>(setFunction),
+                                    std::forward<CallbackTypeGet>(getFunction));
     }
     template <typename PropertyType, bool changesOnly = false>
     bool set_property(const std::string& name, const PropertyType& value)

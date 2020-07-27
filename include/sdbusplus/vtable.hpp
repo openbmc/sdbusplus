@@ -116,6 +116,7 @@ constexpr auto const_ = SD_BUS_VTABLE_PROPERTY_CONST;
 constexpr auto emits_change = SD_BUS_VTABLE_PROPERTY_EMITS_CHANGE;
 constexpr auto emits_invalidation = SD_BUS_VTABLE_PROPERTY_EMITS_INVALIDATION;
 constexpr auto explicit_ = SD_BUS_VTABLE_PROPERTY_EXPLICIT;
+constexpr auto none = decltype(vtable_t::flags){};
 } // namespace property_
 
 constexpr vtable_t start(decltype(vtable_t::flags) flags)

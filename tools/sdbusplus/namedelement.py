@@ -17,7 +17,7 @@ class NamedElement(object):
             return NamedElement.__fixup_name(lam())
         try:
             return super(NamedElement, self).__getattribute__(name)
-        except e:
+        except Exception:
             raise AttributeError("Attribute '%s' not found in %s.NamedElement"
                                  % (name, self.__module__))
 

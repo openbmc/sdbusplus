@@ -112,10 +112,12 @@ constexpr auto no_reply = SD_BUS_VTABLE_METHOD_NO_REPLY;
 
 namespace property_
 {
+using type = decltype(SD_BUS_VTABLE_PROPERTY_CONST);
 constexpr auto const_ = SD_BUS_VTABLE_PROPERTY_CONST;
 constexpr auto emits_change = SD_BUS_VTABLE_PROPERTY_EMITS_CHANGE;
 constexpr auto emits_invalidation = SD_BUS_VTABLE_PROPERTY_EMITS_INVALIDATION;
 constexpr auto explicit_ = SD_BUS_VTABLE_PROPERTY_EXPLICIT;
+constexpr auto none = type{};
 } // namespace property_
 
 constexpr vtable_t start(decltype(vtable_t::flags) flags)

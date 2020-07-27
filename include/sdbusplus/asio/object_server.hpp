@@ -379,7 +379,8 @@ class dbus_interface
     template <typename PropertyType>
     bool register_property(
         const std::string& name, const PropertyType& property,
-        PropertyPermission access = PropertyPermission::readOnly)
+        PropertyPermission access = PropertyPermission::readOnly,
+        vtable::property_::type flags = vtable::property_::emits_change)
     {
         // can only register once
         if (initialized_)
@@ -409,24 +410,24 @@ class dbus_interface
 
         if (access == PropertyPermission::readOnly)
         {
-            vtable_.emplace_back(
-                vtable::property(nameItr->c_str(), type.data(), get_handler,
-                                 vtable::property_::emits_change));
+            vtable_.emplace_back(vtable::property(nameItr->c_str(), type.data(),
+                                                  get_handler, flags));
         }
         else
         {
-            vtable_.emplace_back(
-                vtable::property(nameItr->c_str(), type.data(), get_handler,
-                                 set_handler, vtable::property_::emits_change));
+            vtable_.emplace_back(vtable::property(nameItr->c_str(), type.data(),
+                                                  get_handler, set_handler,
+                                                  flags));
         }
         return true;
     }
 
     // custom setter, sets take an input property and respond with an int status
     template <typename PropertyType, typename CallbackType>
-    bool register_property(const std::string& name,
-                           const PropertyType& property,
-                           CallbackType&& setFunction)
+    bool register_property(
+        const std::string& name, const PropertyType& property,
+        CallbackType&& setFunction,
+        vtable::property_::type flags = vtable::property_::emits_change)
     {
         // can only register once
         if (initialized_)
@@ -451,8 +452,7 @@ class dbus_interface
             std::make_unique<callback_set_instance<PropertyType, CallbackType>>(
                 propertyPtr, std::move(setFunction));
         vtable_.emplace_back(vtable::property(nameItr->c_str(), type.data(),
-                                              get_handler, set_handler,
-                                              vtable::property_::emits_change));
+                                              get_handler, set_handler, flags));
 
         return true;
     }
@@ -461,10 +461,10 @@ class dbus_interface
     // property. property is only passed for type deduction
     template <typename PropertyType, typename CallbackType,
               typename CallbackTypeGet>
-    bool register_property(const std::string& name,
-                           const PropertyType& property,
-                           CallbackType&& setFunction,
-                           CallbackTypeGet&& getFunction)
+    bool register_property(
+        const std::string& name, const PropertyType& property,
+        CallbackType&& setFunction, CallbackTypeGet&& getFunction,
+        vtable::property_::type flags = vtable::property_::emits_change)
     {
         // can only register once
         if (initialized_)
@@ -489,8 +489,7 @@ class dbus_interface
                 propertyPtr, std::move(setFunction));
 
         vtable_.emplace_back(vtable::property(nameItr->c_str(), type.data(),
-                                              get_handler, set_handler,
-                                              vtable::property_::emits_change));
+                                              get_handler, set_handler, flags));
 
         return true;
     }
@@ -510,7 +509,19 @@ class dbus_interface
             {
                 if (status != SetPropertyReturnValue::sameValueUpdated)
                 {
-                    signal_property(name);
+                    auto it = std::find_if(
+                        vtable_.begin(), vtable_.end(),
+                        [&name](const auto& item) {
+                            return item.type == _SD_BUS_VTABLE_PROPERTY &&
+                                   item.x.property.member == name;
+                        });
+                    if (it != vtable_.end())
+                    {
+                        if (it->flags & vtable::property_::emits_change)
+                        {
+                            signal_property(name);
+                        }
+                    }
                     return true;
                 }
                 if constexpr (!changesOnly)

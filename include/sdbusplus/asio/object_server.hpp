@@ -379,7 +379,9 @@ class dbus_interface
     template <typename PropertyType>
     bool register_property(
         const std::string& name, const PropertyType& property,
-        PropertyPermission access = PropertyPermission::readOnly)
+        PropertyPermission access = PropertyPermission::readOnly,
+        decltype(vtable::vtable_t::flags) flags =
+            vtable::property_::emits_change)
     {
         // can only register once
         if (initialized_)
@@ -409,15 +411,14 @@ class dbus_interface
 
         if (access == PropertyPermission::readOnly)
         {
-            vtable_.emplace_back(
-                vtable::property(nameItr->c_str(), type.data(), get_handler,
-                                 vtable::property_::emits_change));
+            vtable_.emplace_back(vtable::property(nameItr->c_str(), type.data(),
+                                                  get_handler, flags));
         }
         else
         {
-            vtable_.emplace_back(
-                vtable::property(nameItr->c_str(), type.data(), get_handler,
-                                 set_handler, vtable::property_::emits_change));
+            vtable_.emplace_back(vtable::property(nameItr->c_str(), type.data(),
+                                                  get_handler, set_handler,
+                                                  flags));
         }
         return true;
     }
@@ -426,7 +427,9 @@ class dbus_interface
     template <typename PropertyType, typename CallbackType>
     bool register_property(const std::string& name,
                            const PropertyType& property,
-                           CallbackType&& setFunction)
+                           CallbackType&& setFunction,
+                           decltype(vtable::vtable_t::flags) flags =
+                               vtable::property_::emits_change)
     {
         // can only register once
         if (initialized_)
@@ -451,8 +454,7 @@ class dbus_interface
             std::make_unique<callback_set_instance<PropertyType, CallbackType>>(
                 propertyPtr, std::move(setFunction));
         vtable_.emplace_back(vtable::property(nameItr->c_str(), type.data(),
-                                              get_handler, set_handler,
-                                              vtable::property_::emits_change));
+                                              get_handler, set_handler, flags));
 
         return true;
     }
@@ -464,7 +466,9 @@ class dbus_interface
     bool register_property(const std::string& name,
                            const PropertyType& property,
                            CallbackType&& setFunction,
-                           CallbackTypeGet&& getFunction)
+                           CallbackTypeGet&& getFunction,
+                           decltype(vtable::vtable_t::flags) flags =
+                               vtable::property_::emits_change)
     {
         // can only register once
         if (initialized_)
@@ -489,11 +493,11 @@ class dbus_interface
                 propertyPtr, std::move(setFunction));
 
         vtable_.emplace_back(vtable::property(nameItr->c_str(), type.data(),
-                                              get_handler, set_handler,
-                                              vtable::property_::emits_change));
+                                              get_handler, set_handler, flags));
 
         return true;
     }
+
     template <typename PropertyType, bool changesOnly = false>
     bool set_property(const std::string& name, const PropertyType& value)
     {

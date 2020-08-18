@@ -21,7 +21,9 @@
 #define BOOST_COROUTINES_NO_DEPRECATION_WARNING
 #endif
 
-#include <boost/asio.hpp>
+#include <boost/asio/async_result.hpp>
+#include <boost/asio/io_context.hpp>
+#include <boost/asio/posix/stream_descriptor.hpp>
 #include <boost/asio/spawn.hpp>
 #include <boost/callable_traits.hpp>
 #include <sdbusplus/asio/detail/async_send_handler.hpp>

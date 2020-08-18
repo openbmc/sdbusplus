@@ -1,3 +1,4 @@
+#include <boost/asio/io_service.hpp>
 #include <sdbusplus/asio/object_server.hpp>
 #include <sdbusplus/bus.hpp>
 

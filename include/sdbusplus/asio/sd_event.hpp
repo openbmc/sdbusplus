@@ -17,7 +17,9 @@
 
 #include <systemd/sd-event.h>
 
-#include <boost/asio.hpp>
+#include <boost/asio/io_context.hpp>
+#include <boost/asio/posix/stream_descriptor.hpp>
+#include <boost/system/error_code.hpp>
 
 namespace sdbusplus
 {

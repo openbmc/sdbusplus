@@ -17,7 +17,7 @@
 
 #include <systemd/sd-bus.h>
 
-#include <boost/asio.hpp>
+#include <boost/system/error_code.hpp>
 #include <sdbusplus/bus.hpp>
 #include <sdbusplus/message.hpp>
 

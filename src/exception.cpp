@@ -120,5 +120,26 @@ const char* InvalidEnumString::what() const noexcept
     return errWhat;
 }
 
+UnpackPropertyError::UnpackPropertyError(std::string_view propertyName,
+                                         std::string_view reason) :
+    propertyName(propertyName),
+    reason(reason)
+{}
+
+const char* UnpackPropertyError::name() const noexcept
+{
+    return errName;
+}
+
+const char* UnpackPropertyError::description() const noexcept
+{
+    return errDesc;
+}
+
+const char* UnpackPropertyError::what() const noexcept
+{
+    return errWhat;
+}
+
 } // namespace exception
 } // namespace sdbusplus

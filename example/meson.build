@@ -35,6 +35,19 @@ executable(
     dependencies: [ boost_dep, sdbusplus_dep ],
 )
 
+executable(
+    'get-all-properties',
+    'get-all-properties.cpp',
+    cpp_args: [
+        '-DBOOST_ASIO_DISABLE_THREADS',
+        '-DBOOST_ALL_NO_LIB',
+        '-DBOOST_SYSTEM_NO_DEPRECATED',
+        '-DBOOST_ERROR_CODE_HEADER_ONLY',
+        '-DBOOST_COROUTINES_NO_DEPRECATION_WARNING',
+    ],
+    dependencies: [ boost_dep, sdbusplus_dep ],
+)
+
 calc_buildroot = meson.current_build_dir()
 calc_files = files(
     run_command(

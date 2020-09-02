@@ -448,6 +448,15 @@ struct read_single<std::variant<Args...>>
     }
 };
 
+/** @brief Specialization of read_single for std::monostate. */
+template <>
+struct read_single<std::monostate>
+{
+    template <typename S>
+    static void op(sdbusplus::SdBusInterface*, sd_bus_message*, S&&)
+    {}
+};
+
 template <typename T>
 static void tuple_item_read(sdbusplus::SdBusInterface* intf, sd_bus_message* m,
                             T&& t)

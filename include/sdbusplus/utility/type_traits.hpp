@@ -91,6 +91,48 @@ constexpr std::array<char, N - 2> strip_ends(const std::array<char, N>& s)
     return strip_ends(s, std::make_index_sequence<N - 3>{});
 }
 
+template <typename T>
+class has_member_find
+{
+  private:
+    template <typename U>
+    static U& ref();
+
+    template <typename U>
+    static std::true_type check(decltype(ref<U>().find(
+        ref<std::tuple_element_t<0, typename U::value_type>>()))*);
+    template <typename>
+    static std::false_type check(...);
+
+  public:
+    static constexpr bool value =
+        decltype(check<std::decay_t<T>>(nullptr))::value;
+};
+
+template <typename T>
+constexpr bool has_member_find_v = has_member_find<T>::value;
+
+template <typename T>
+class has_member_contains
+{
+  private:
+    template <typename U>
+    static U& ref();
+
+    template <typename U>
+    static std::true_type check(decltype(ref<U>().contains(
+        ref<std::tuple_element_t<0, typename U::value_type>>()))*);
+    template <typename>
+    static std::false_type check(...);
+
+  public:
+    static constexpr bool value =
+        decltype(check<std::decay_t<T>>(nullptr))::value;
+};
+
+template <typename T>
+constexpr bool has_member_contains_v = has_member_contains<T>::value;
+
 } // namespace utility
 
 } // namespace sdbusplus

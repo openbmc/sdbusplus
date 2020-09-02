@@ -2,7 +2,7 @@
 
 #include <type_traits>
 
-#include <gtest/gtest.h>
+#include <gmock/gmock.h>
 
 namespace
 {
@@ -24,6 +24,62 @@ TEST(TypeTraits, Basic)
 
     static_assert(is_same<char[100], array_to_ptr_t<int, char[100]>>::value,
                   "array_to_ptr_t<int, char[100]> != char[100]");
+}
+
+TEST(TypeTraits, HasMemberFind)
+{
+    using sdbusplus::utility::has_member_find_v;
+    using namespace testing;
+
+    ASSERT_THAT((has_member_find_v<std::map<std::string, int>>), Eq(true));
+    ASSERT_THAT((has_member_find_v<std::vector<std::pair<std::string, int>>>),
+                Eq(false));
+
+    struct Foo
+    {
+        using value_type = std::pair<int, int>;
+
+        void find(std::tuple_element_t<0, value_type>)
+        {}
+    };
+
+    struct Bar
+    {};
+
+    ASSERT_THAT(has_member_find_v<Foo>, Eq(true));
+    ASSERT_THAT(has_member_find_v<Foo&>, Eq(true));
+    ASSERT_THAT(has_member_find_v<const Foo&>, Eq(true));
+
+    ASSERT_THAT(has_member_find_v<Bar>, Eq(false));
+}
+
+TEST(TypeTraits, HasMemberContains)
+{
+    using sdbusplus::utility::has_member_contains_v;
+    using namespace testing;
+
+    // std::map has member_contains from c++20
+    ASSERT_THAT((has_member_contains_v<std::map<std::string, int>>), Eq(false));
+    ASSERT_THAT(
+        (has_member_contains_v<std::vector<std::pair<std::string, int>>>),
+        Eq(false));
+
+    struct Foo
+    {
+        using value_type = std::pair<int, int>;
+
+        void contains(std::tuple_element_t<0, value_type>)
+        {}
+    };
+
+    struct Bar
+    {};
+
+    ASSERT_THAT(has_member_contains_v<Foo>, Eq(true));
+    ASSERT_THAT(has_member_contains_v<Foo&>, Eq(true));
+    ASSERT_THAT(has_member_contains_v<const Foo&>, Eq(true));
+
+    ASSERT_THAT(has_member_contains_v<Bar>, Eq(false));
 }
 
 } // namespace

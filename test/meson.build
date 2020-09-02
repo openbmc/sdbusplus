@@ -28,6 +28,7 @@ tests = [
     'message/native_types',
     'message/types',
     'timer',
+    'unpack_properties',
     'utility/tuple_to_array',
     'utility/type_traits',
 ]

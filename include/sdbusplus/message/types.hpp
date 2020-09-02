@@ -259,6 +259,12 @@ struct type_id<void>
     constexpr static auto value = std::make_tuple('\0');
 };
 
+template <>
+struct type_id<std::monostate>
+{
+    constexpr static auto value = std::make_tuple('\0');
+};
+
 template <typename T>
 constexpr auto type_id_single()
 {

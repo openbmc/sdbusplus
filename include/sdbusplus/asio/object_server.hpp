@@ -19,7 +19,6 @@
 
 #include <list>
 #include <optional>
-#include <regex>
 #include <set>
 
 namespace sdbusplus
@@ -27,9 +26,12 @@ namespace sdbusplus
 namespace asio
 {
 
-constexpr const char* PropertyNamePattern = "[a-zA-Z0-9_]+";
-constexpr const char* PathPattern = "(/[a-zA-Z0-9_]+)+";
-constexpr const char* InterfaceNamePattern = "[a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)+";
+constexpr const char* PropertyNameAllowedCharacters =
+    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_";
+constexpr const char* PathAllowedCharacters =
+    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_/";
+constexpr const char* InterfaceNameAllowedCharacters =
+    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_.";
 
 class callback
 {
@@ -386,7 +388,8 @@ class dbus_interface
         {
             return false;
         }
-        if (!std::regex_match(name, std::regex(PropertyNamePattern)))
+        if (name.find_first_not_of(PropertyNameAllowedCharacters) !=
+            std::string::npos)
         {
             return false;
         }
@@ -426,7 +429,8 @@ class dbus_interface
         {
             return false;
         }
-        if (!std::regex_match(name, std::regex(PropertyNamePattern)))
+        if (name.find_first_not_of(PropertyNameAllowedCharacters) !=
+            std::string::npos)
         {
             return false;
         }
@@ -535,7 +539,8 @@ class dbus_interface
         {
             return false;
         }
-        if (!std::regex_match(name, std::regex(PropertyNamePattern)))
+        if (name.find_first_not_of(PropertyNameAllowedCharacters) !=
+            std::string::npos)
         {
             return false;
         }
@@ -829,8 +834,10 @@ class object_server
     std::shared_ptr<dbus_interface> add_interface(const std::string& path,
                                                   const std::string& name)
     {
-        if (!std::regex_match(path, std::regex(PathPattern)) ||
-            !std::regex_match(name, std::regex(InterfaceNamePattern)))
+        if (path.find_first_not_of(PathAllowedCharacters) !=
+                std::string::npos ||
+            name.find_first_not_of(InterfaceNameAllowedCharacters) !=
+                std::string::npos)
         {
             throw exception::SdBusError(EINVAL, "Invalid path or interface");
         }

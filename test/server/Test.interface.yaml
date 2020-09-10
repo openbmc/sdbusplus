@@ -12,3 +12,5 @@ properties:
       type: int64
       flags:
           - const
+    - name: Countable
+      type: size

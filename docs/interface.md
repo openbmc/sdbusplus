@@ -77,6 +77,8 @@ but listed using lowercases: `int64` instead of `INT64` or C++ `int64_t`.
 * uint16
 * ...
 * uint64
+* size - maps to the C 'size_t' for the architecture.
+* ssize - maps to the C 'ssize_t' for the architecture.
 * double
 * unixfd
 * string

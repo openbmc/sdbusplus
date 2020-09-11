@@ -161,6 +161,8 @@ class Property(NamedElement, Renderer):
             'string': {'cppName': 'std::string', 'params': 0},
             'path': {'cppName': 'sdbusplus::message::object_path',
                      'params': 0},
+            'object_path': {'cppName': 'sdbusplus::message::object_path',
+                            'params': 0},
             'signature': {'cppName': 'sdbusplus::message::signature',
                           'params': 0},
             'array': {'cppName': 'std::vector', 'params': 1},

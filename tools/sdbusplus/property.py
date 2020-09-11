@@ -9,9 +9,8 @@ class Property(NamedElement, Renderer):
     NONLOCAL_ENUM_MAGIC = "<NONLOCAL_ENUM>"
 
     def __init__(self, **kwargs):
-        self.enum = False
         self.typeName = kwargs.pop('type', None)
-        self.cppTypeName = self.parse_cpp_type(self.typeName)
+        self.cppTypeName = self.parse_cpp_type()
         self.defaultValue = kwargs.pop('default', None)
         self.flags = kwargs.pop('flags', [])
         self.cpp_flags = self.or_cpp_flags(self.flags)
@@ -30,12 +29,17 @@ class Property(NamedElement, Renderer):
         super(Property, self).__init__(**kwargs)
 
     def is_enum(self):
-        return self.enum
+        if not self.typeName:
+            return false
+        return 'enum' == self.__type_tuple()[0]
 
     """ Return a conversion of the cppTypeName valid as a function parameter.
         Currently only 'enum' requires conversion.
     """
     def cppTypeParam(self, interface, full=False, server=True):
+        return self.__cppTypeParam(interface, self.cppTypeName, full, server)
+
+    def __cppTypeParam(self, interface, cppTypeName, full=False, server=True):
 
         ns_type = "server" if server else "client"
 
@@ -43,7 +47,7 @@ class Property(NamedElement, Renderer):
         iface.insert(-1, ns_type)
         iface = "::".join(iface)
 
-        r = self.cppTypeName
+        r = cppTypeName
 
         # Fix up local enum placeholders.
         if full:
@@ -56,30 +60,57 @@ class Property(NamedElement, Renderer):
 
         return r
 
-    def enum_namespace(self, interface):
-        if not self.is_enum():
-            return ""
-        ns = self.cppTypeParam(interface).split("::")[0:-1]
-        if len(ns) != 0:
-            return "::".join(ns) + "::"
-        return ""
+    """ Determine the C++ namespaces of an enumeration-type property.
+    """
+    def enum_namespaces(self, interface):
+        typeTuple = self.__type_tuple()
+        return self.__enum_namespaces(interface, typeTuple)
 
-    def enum_name(self, interface):
-        if not self.is_enum():
-            return ""
-        return self.cppTypeParam(interface).split("::")[-1]
+    def __enum_namespaces(self, interface, typeTuple):
+        # Enums can be processed directly.
+        if 'enum' == typeTuple[0]:
+            cppType = self.__cppTypeParam(interface,
+                                          self.__parse_cpp_type__(typeTuple))
+            ns = cppType.split("::")[0:-1]
+            if len(ns) != 0:
+                return ["::".join(ns) + "::"]
+            return []
 
-    def parse_cpp_type(self, typeName):
-        if not typeName:
+        # If the details part of the tuple has zero entries, no enums are
+        # present
+        if len(typeTuple[1]) == 0:
+            return []
+
+        # Otherwise, the tuple-type might have enums embedded in it.  Handle
+        # them recursively.
+        r = []
+        for t in typeTuple[1]:
+            r.extend(self.__enum_namespaces(interface, t))
+        return r
+
+    """ Convert the property type into a C++ type.
+    """
+    def parse_cpp_type(self):
+        if not self.typeName:
+            return None
+
+        typeTuple = self.__type_tuple()
+        return self.__parse_cpp_type__(typeTuple)
+
+    """ Convert the 'typeName' into a tuple of ('type', [ details ]) where
+        'details' is a recursive type-tuple.
+    """
+    def __type_tuple(self):
+        if not self.typeName:
             return None
 
         """ typeNames are _almost_ valid YAML.  Insert a , before each [
             and then wrap it in a [ ] and it becomes valid YAML.  (assuming
             the user gave us a valid typename)
         """
+        typeName = self.typeName
         typeArray = yaml.safe_load("[" + ",[".join(typeName.split("[")) + "]")
-        typeTuple = self.__preprocess_yaml_type_array(typeArray).pop(0)
-        return self.__parse_cpp_type__(typeTuple, top_type=True)
+        return self.__preprocess_yaml_type_array(typeArray).pop(0)
 
     """ Take a list of dbus types from YAML and convert it to a recursive data
         structure. Each entry of the original list gets converted into a tuple
@@ -113,7 +144,7 @@ class Property(NamedElement, Renderer):
             [ variant [ dict [ int32, int32 ], double ] ]
         This function then converts the type-list into a C++ type string.
     """
-    def __parse_cpp_type__(self, typeTuple, top_type=False):
+    def __parse_cpp_type__(self, typeTuple):
         propertyMap = {
             'byte': {'cppName': 'uint8_t', 'params': 0},
             'boolean': {'cppName': 'bool', 'params': 0},
@@ -164,8 +195,6 @@ class Property(NamedElement, Renderer):
 
         # Switch enum for proper type.
         if result == 'enum':
-            if top_type:
-                self.enum = True
             result = rest[0][0]
 
             # self. means local type.

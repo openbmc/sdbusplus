@@ -43,6 +43,10 @@ struct string_wrapper
     {
         return str == r.str;
     }
+    bool operator!=(const string_wrapper<T>& r) const
+    {
+        return str != r.str;
+    }
     bool operator<(const string_wrapper<T>& r) const
     {
         return str < r.str;
@@ -50,6 +54,10 @@ struct string_wrapper
     bool operator==(const std::string& r) const
     {
         return str == r;
+    }
+    bool operator!=(const std::string& r) const
+    {
+        return str != r;
     }
     bool operator<(const std::string& r) const
     {
@@ -59,6 +67,10 @@ struct string_wrapper
     friend bool operator==(const std::string& l, const string_wrapper& r)
     {
         return l == r.str;
+    }
+    friend bool operator!=(const std::string& l, const string_wrapper& r)
+    {
+        return l != r.str;
     }
     friend bool operator<(const std::string& l, const string_wrapper& r)
     {

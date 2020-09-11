@@ -15,4 +15,4 @@ properties:
     - name: Countable
       type: size
     - name: ObjectPath
-      type: path
+      type: object_path

@@ -30,8 +30,11 @@ class Interface(NamedElement, Renderer):
 
     def enum_includes(self, inc_list):
         includes = []
+        namespaces = []
         for e in inc_list:
-            es = e.enum_namespace(self.name).split("::")
+            namespaces.extend(e.enum_namespaces(self.name))
+        for e in sorted(set(namespaces)):
+            es = e.split("::")
             # Skip empty, non-enum values and self references like '::'
             if len(es) < 2:
                 continue

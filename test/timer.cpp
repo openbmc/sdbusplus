@@ -11,7 +11,7 @@ class TimerTest : public ::testing::Test
 {
   public:
     // systemd event handler
-    sd_event* events;
+    sd_event* events = nullptr;
 
     // Need this so that events can be initialized.
     int rc;

@@ -93,7 +93,7 @@ ${ s.cpp_prototype(loader, interface=interface, ptype='header') }
         /** Set value of ${p.name} with option to skip sending signal */
         virtual ${p.cppTypeParam(interface.name)} \
 ${p.camelCase}(${p.cppTypeParam(interface.name)} value,
-               bool skipSignal);
+               bool skipSignal = false);
         /** Set value of ${p.name} */
         virtual ${p.cppTypeParam(interface.name)} \
 ${p.camelCase}(${p.cppTypeParam(interface.name)} value);

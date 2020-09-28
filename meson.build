@@ -17,13 +17,14 @@ libsdbusplus_src = files(
     'src/exception.cpp',
     'src/sdbus.cpp',
     'src/server/transaction.cpp',
+    'src/sdbusplus/asio/scoped_dbus_interface.cpp',
 )
 
 libsdbusplus = library(
     'sdbusplus',
     libsdbusplus_src,
     include_directories: root_inc,
-    dependencies: libsystemd_pkg,
+    dependencies: [ libsystemd_pkg, dependency('threads') ],
     version: meson.project_version(),
     install: true,
 )

@@ -32,7 +32,7 @@ executable(
         '-DBOOST_ERROR_CODE_HEADER_ONLY',
         '-DBOOST_COROUTINES_NO_DEPRECATION_WARNING',
     ],
-    dependencies: [ boost_dep, sdbusplus_dep ],
+    dependencies: [ boost_dep, sdbusplusasio_dep ],
 )
 
 executable(
@@ -45,7 +45,7 @@ executable(
         '-DBOOST_ERROR_CODE_HEADER_ONLY',
         '-DBOOST_COROUTINES_NO_DEPRECATION_WARNING',
     ],
-    dependencies: [ boost_dep, sdbusplus_dep ],
+    dependencies: [ boost_dep, sdbusplusasio_dep ],
 )
 
 calc_buildroot = meson.current_build_dir()

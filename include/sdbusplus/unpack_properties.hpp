@@ -1,41 +1,24 @@
 #pragma once
 
+#include <sdbusplus/exception.hpp>
+
 #include <algorithm>
 #include <bitset>
 #include <optional>
 #include <stdexcept>
 #include <string>
 #include <string_view>
-#include <type_traits>
 #include <variant>
 
 namespace sdbusplus
 {
-
-struct UnpackPropertyError : public std::runtime_error
-{
-    explicit UnpackPropertyError(std::string propertyName,
-                                 std::string_view reason) :
-        std::runtime_error("UnpackPropertyError: " + propertyName +
-                           ", reason: " + reason.data()),
-        propertyName(propertyName), reason(reason)
-    {}
-
-    static constexpr std::string_view reasonMissingProperty =
-        "Missing property";
-    static constexpr std::string_view reasonTypeNotMatched = "Type not matched";
-
-    const std::string propertyName;
-    const std::string reason;
-};
-
 namespace detail
 {
 
-template <typename T, typename Variant, typename ValueType>
+template <typename Variant, typename ValueType>
 bool getIf(Variant&& variant, ValueType& outValue)
 {
-    if (auto value = std::get_if<T>(&variant))
+    if (auto value = std::get_if<ValueType>(&variant))
     {
         outValue = std::move(*value);
         return true;
@@ -57,7 +40,7 @@ void readSingleProperty(const std::string& key, Variant&& variant,
     {
         if (!assigned.test(Index))
         {
-            if (getIf<ValueType>(variant, outValue))
+            if (getIf(variant, outValue))
             {
                 assigned.set(Index);
             }
@@ -88,14 +71,13 @@ std::string findMissingProperty(std::bitset<N>& assigned,
                                               std::forward<Args>(args)...);
     }
 
-    return std::string();
+    return {};
 }
 
 } // namespace detail
 
 template <typename Container, typename... Args>
-std::optional<UnpackPropertyError> unpackProperties(Container&& input,
-                                                    Args&&... args)
+void unpackProperties(Container&& input, Args&&... args)
 {
     static_assert(sizeof...(Args) % 2 == 0);
 
@@ -118,15 +100,15 @@ std::optional<UnpackPropertyError> unpackProperties(Container&& input,
 
         if (keyIt == input.end())
         {
-            return UnpackPropertyError(
-                missingProperty, UnpackPropertyError::reasonMissingProperty);
+            throw exception::UnpackPropertyError(
+                missingProperty,
+                exception::UnpackPropertyError::reasonMissingProperty);
         }
 
-        return UnpackPropertyError(missingProperty,
-                                   UnpackPropertyError::reasonTypeNotMatched);
+        throw exception::UnpackPropertyError(
+            missingProperty,
+            exception::UnpackPropertyError::reasonTypeNotMatched);
     }
-
-    return std::nullopt;
 }
 
 } // namespace sdbusplus

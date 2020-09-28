@@ -835,6 +835,23 @@ class object_server
         return dbusIface;
     }
 
+    std::unique_ptr<dbus_interface>
+        add_unique_interface(const std::string& path, const std::string& name)
+    {
+        return std::make_unique<dbus_interface>(conn_, path, name);
+    }
+
+    template <class Initializer>
+    std::unique_ptr<dbus_interface>
+        add_unique_interface(const std::string& path, const std::string& name,
+                             Initializer&& initializer)
+    {
+        auto dbusIface = std::make_unique<dbus_interface>(conn_, path, name);
+        initializer(*dbusIface);
+        dbusIface->initialize();
+        return dbusIface;
+    }
+
     void add_manager(const std::string& path)
     {
         managers_.emplace_back(
@@ -842,7 +859,7 @@ class object_server
                 static_cast<sdbusplus::bus::bus&>(*conn_), path.c_str())));
     }
 
-    bool remove_interface(std::shared_ptr<dbus_interface>& iface)
+    bool remove_interface(const std::shared_ptr<dbus_interface>& iface)
     {
         auto findIface =
             std::find(interfaces_.begin(), interfaces_.end(), iface);

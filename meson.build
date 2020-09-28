@@ -23,7 +23,7 @@ libsdbusplus = library(
     'sdbusplus',
     libsdbusplus_src,
     include_directories: root_inc,
-    dependencies: libsystemd_pkg,
+    dependencies: [ libsystemd_pkg ],
     version: meson.project_version(),
     install: true,
 )
@@ -31,6 +31,25 @@ libsdbusplus = library(
 sdbusplus_dep = declare_dependency(
     include_directories: root_inc,
     link_with: libsdbusplus,
+    dependencies: libsystemd_pkg
+)
+
+libsdbusplusasio_src = files(
+    'src/sdbusplus/asio/scoped_dbus_interface.cpp',
+)
+
+libsdbusplusasio = library(
+    'sdbusplusasio',
+    libsdbusplusasio_src,
+    include_directories: root_inc,
+    dependencies: [ libsystemd_pkg, dependency('threads') ],
+    version: meson.project_version(),
+    install: true,
+)
+
+sdbusplusasio_dep = declare_dependency(
+    include_directories: root_inc,
+    link_with: [libsdbusplus, libsdbusplusasio],
     dependencies: libsystemd_pkg
 )
 
@@ -62,4 +81,12 @@ import('pkgconfig').generate(
     version: meson.project_version(),
     requires: libsystemd_pkg,
     description: 'C++ bindings for sdbus',
+)
+
+import('pkgconfig').generate(
+    libraries: libsdbusplusasio,
+    name: meson.project_name() + 'asio',
+    version: meson.project_version(),
+    requires: [libsystemd_pkg, dependency('sdbusplus')],
+    description: 'C++ asio bindings for sdbus',
 )

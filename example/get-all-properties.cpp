@@ -82,7 +82,8 @@ class Application
         ++fatalErrors_;
     }
 
-    void logExpectedException(const sdbusplus::UnpackPropertyError& error)
+    void logExpectedException(
+        const sdbusplus::exception::UnpackPropertyError& error)
     {
         std::cout << "As expected " << error.what() << " => "
                   << error.propertyName << " is missing because "
@@ -97,32 +98,34 @@ class Application
             [this](std::vector<std::pair<
                        std::string, std::variant<std::monostate, std::string>>>&
                        properties) {
-                std::string greetings;
-                std::string goodbyes;
-                std::string value;
+                try
+                {
+                    std::string greetings;
+                    std::string goodbyes;
+                    sdbusplus::unpackProperties(properties, name::greetings,
+                                                greetings, name::goodbyes,
+                                                goodbyes);
 
-                if (auto error = sdbusplus::unpackProperties(
-                        properties, name::greetings, greetings, name::goodbyes,
-                        goodbyes))
-                {
-                    logException(*error);
-                }
-                else
-                {
                     std::cout << "value of greetings: " << greetings << "\n";
                     std::cout << "value of goodbyes: " << goodbyes << "\n";
                 }
-
-                if (auto error = sdbusplus::unpackProperties(
-                        properties, name::value, value))
+                catch (const sdbusplus::exception::UnpackPropertyError& error)
                 {
-                    logExpectedException(*error);
+                    logException(error);
                 }
-                else
+
+                try
                 {
+                    std::string value;
+                    sdbusplus::unpackProperties(properties, name::value, value);
+
                     std::cerr << "Error: it should fail because of "
                                  "not matched type\n";
                     ++fatalErrors_;
+                }
+                catch (const sdbusplus::exception::UnpackPropertyError& error)
+                {
+                    logExpectedException(error);
                 }
             });
     }
@@ -136,46 +139,52 @@ class Application
                 std::vector<std::pair<std::string,
                                       std::variant<std::monostate, std::string,
                                                    uint32_t>>>& properties) {
-                std::string greetings;
-                std::string goodbyes;
-                uint32_t value = 0u;
-                if (auto error = sdbusplus::unpackProperties(
-                        properties, name::greetings, greetings, name::goodbyes,
-                        goodbyes, name::value, value))
+                try
                 {
-                    logException(*error);
-                }
-                else
-                {
+                    std::string greetings;
+                    std::string goodbyes;
+                    uint32_t value = 0u;
+                    sdbusplus::unpackProperties(properties, name::greetings,
+                                                greetings, name::goodbyes,
+                                                goodbyes, name::value, value);
+
                     std::cout << "value of greetings: " << greetings << "\n";
                     std::cout << "value of goodbyes: " << goodbyes << "\n";
                     std::cout << "value of value: " << value << "\n";
                 }
-
-                std::string unknownProperty;
-                if (auto error = sdbusplus::unpackProperties(
-                        properties, "UnknownPropertyName", unknownProperty))
+                catch (const sdbusplus::exception::UnpackPropertyError& error)
                 {
-                    logExpectedException(*error);
+                    logException(error);
                 }
-                else
+
+                try
                 {
+                    std::string unknownProperty;
+                    sdbusplus::unpackProperties(
+                        properties, "UnknownPropertyName", unknownProperty);
+
                     std::cerr << "Error: it should fail because of "
                                  "missing property\n";
                     ++fatalErrors_;
                 }
-
-                uint32_t notMatchingType;
-                if (auto error = sdbusplus::unpackProperties(
-                        properties, name::greetings, notMatchingType))
+                catch (const sdbusplus::exception::UnpackPropertyError& error)
                 {
-                    logExpectedException(*error);
+                    logExpectedException(error);
                 }
-                else
+
+                try
                 {
+                    uint32_t notMatchingType;
+                    sdbusplus::unpackProperties(properties, name::greetings,
+                                                notMatchingType);
+
                     std::cerr << "Error: it should fail because of "
                                  "not matched type\n";
                     ++fatalErrors_;
+                }
+                catch (const sdbusplus::exception::UnpackPropertyError& error)
+                {
+                    logExpectedException(error);
                 }
             });
     }

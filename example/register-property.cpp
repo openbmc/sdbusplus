@@ -74,27 +74,23 @@ class Application
         ioc_(ioc),
         bus_(bus), objServer_(objServer)
     {
-        demo_ = objServer_.add_interface(xyz::demo::path, xyz::demo::name);
+        demo_ = objServer_.add_scoped_interface(
+            xyz::demo::path, xyz::demo::name,
+            [this](sdbusplus::asio::dbus_interface& demo) {
+                demo.register_property_r(
+                    name::greetings, std::string(),
+                    sdbusplus::vtable::property_::const_,
+                    [this](const auto&) { return greetings_; });
 
-        demo_->register_property_r(name::greetings, std::string(),
-                                   sdbusplus::vtable::property_::const_,
-                                   [this](const auto&) { return greetings_; });
-
-        demo_->register_property_rw(
-            name::goodbyes, std::string(),
-            sdbusplus::vtable::property_::emits_change,
-            [this](const auto& newPropertyValue, const auto&) {
-                goodbyes_ = newPropertyValue;
-                return 1;
-            },
-            [this](const auto&) { return goodbyes_; });
-
-        demo_->initialize();
-    }
-
-    ~Application()
-    {
-        objServer_.remove_interface(demo_);
+                demo.register_property_rw(
+                    name::goodbyes, std::string(),
+                    sdbusplus::vtable::property_::emits_change,
+                    [this](const auto& newPropertyValue, const auto&) {
+                        goodbyes_ = newPropertyValue;
+                        return 1;
+                    },
+                    [this](const auto&) { return goodbyes_; });
+            });
     }
 
     uint32_t fatalErrors() const
@@ -173,7 +169,7 @@ class Application
     sdbusplus::asio::connection& bus_;
     sdbusplus::asio::object_server& objServer_;
 
-    std::shared_ptr<sdbusplus::asio::dbus_interface> demo_;
+    sdbusplus::asio::scoped_dbus_interface demo_;
     std::string greetings_ = "Hello";
     std::string goodbyes_ = "Bye";
 

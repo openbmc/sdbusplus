@@ -1,7 +1,7 @@
 #include <boost/asio.hpp>
 #include <sdbusplus/asio/connection.hpp>
-#include <sdbusplus/asio/get_all_properties.hpp>
 #include <sdbusplus/asio/object_server.hpp>
+#include <sdbusplus/asio/property.hpp>
 #include <sdbusplus/bus.hpp>
 #include <sdbusplus/unpack_properties.hpp>
 

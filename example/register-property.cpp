@@ -1,6 +1,7 @@
 #include <boost/asio.hpp>
 #include <sdbusplus/asio/connection.hpp>
 #include <sdbusplus/asio/object_server.hpp>
+#include <sdbusplus/asio/property.hpp>
 #include <sdbusplus/bus.hpp>
 
 #include <iostream>
@@ -38,39 +39,20 @@ class Property
         service_(service), path_(path), interface_(interface), name_(name)
     {}
 
-    template <class F>
-    void async_get(F&& callback)
+    template <class OnError, class OnSuccess>
+    void async_get(OnError&& onError, OnSuccess&& onSuccess)
     {
-        bus_.async_method_call(
-            [callback =
-                 std::move(callback)](const boost::system::error_code& error,
-                                      const std::variant<T>& valueVariant) {
-                if (error)
-                {
-                    callback(std::nullopt);
-                    return;
-                }
-
-                if (auto value = std::get_if<T>(&valueVariant))
-                {
-                    callback(*value);
-                    return;
-                }
-
-                callback(std::nullopt);
-            },
-            service_, path_, "org.freedesktop.DBus.Properties", "Get",
-            interface_, name_);
+        sdbusplus::asio::getProperty<T>(bus_, service_, path_, interface_,
+                                        name_, std::forward<OnError>(onError),
+                                        std::forward<OnSuccess>(onSuccess));
     }
 
-    template <class F>
-    void async_set(const T& value, F&& callback)
+    template <class OnError, class OnSuccess>
+    void async_set(T&& value, OnError&& onError, OnSuccess&& onSuccess)
     {
-        bus_.async_method_call(
-            [callback = std::move(callback)](
-                const boost::system::error_code& error) { callback(error); },
-            service_, path_, "org.freedesktop.DBus.Properties", "Set",
-            interface_, name_, value);
+        sdbusplus::asio::setProperty(
+            bus_, service_, path_, interface_, name_, std::forward<T>(value),
+            std::forward<OnError>(onError), std::forward<OnSuccess>(onSuccess));
     }
 
   private:
@@ -114,36 +96,73 @@ class Application
         objServer_.remove_interface(demo_);
     }
 
+    uint32_t fatalErrors() const
+    {
+        return fatalErrors_;
+    }
+
+    auto getFailed()
+    {
+        return [this](boost::system::error_code error) {
+            std::cerr << "Error: getProperty failed " << error << "\n";
+            ++fatalErrors_;
+        };
+    }
+
+    void asyncReadPropertyWithIncorrectType()
+    {
+        utils::Property<uint32_t> propertyWithWrongType{
+            bus_, xyz::demo::name, xyz::demo::path, xyz::demo::name,
+            name::greetings};
+
+        propertyWithWrongType.async_get(
+            [](boost::system::error_code error) {
+                std::cout
+                    << "As expected failed to getProperty with wrong type: "
+                    << error << "\n";
+            },
+            [this](uint32_t) {
+                std::cerr << "Error: it was expected to fail getProperty due "
+                             "to wrong type\n";
+                ++fatalErrors_;
+            });
+    }
+
     void asyncReadProperties()
     {
-        propertyGreetings.async_get([](std::optional<std::string> value) {
-            std::cout << "Greetings value is: "
-                      << value.value_or("std::nullopt") << "\n";
+        propertyGreetings.async_get(getFailed(), [](std::string value) {
+            std::cout << "Greetings value is: " << value << "\n";
         });
 
-        propertyGoodbyes.async_get([](std::optional<std::string> value) {
-            std::cout << "Goodbyes value is: " << value.value_or("std::nullopt")
-                      << "\n";
+        propertyGoodbyes.async_get(getFailed(), [](std::string value) {
+            std::cout << "Goodbyes value is: " << value << "\n";
         });
     }
 
     void asyncChangeProperty()
     {
         propertyGreetings.async_set(
-            "Hi, hey, hello", [](const boost::system::error_code& error) {
-                if (error)
-                {
-                    std::cout
-                        << "As expected, failed to set greetings property\n";
-                }
+            "Hi, hey, hello",
+            [](const boost::system::error_code& error) {
+                std::cout << "As expected, failed to set greetings property: "
+                          << error << "\n";
+            },
+            [this]() {
+                std::cout
+                    << "Error: it was expected to fail to change greetings\n";
+                ++fatalErrors_;
             });
 
         propertyGoodbyes.async_set(
-            "Bye bye", [this](const boost::system::error_code& error) {
-                if (!error)
-                {
-                    std::cout << "Changed goodbyes property as expected\n";
-                }
+            "Bye bye",
+            [this](const boost::system::error_code& error) {
+                std::cout << "Error: it supposed to be ok to change goodbyes "
+                             "property: "
+                          << error << "\n";
+                ++fatalErrors_;
+            },
+            [this]() {
+                std::cout << "Changed goodbyes property as expected\n";
                 boost::asio::post(ioc_, [this] { asyncReadProperties(); });
             });
     }
@@ -156,6 +175,8 @@ class Application
     std::shared_ptr<sdbusplus::asio::dbus_interface> demo_;
     std::string greetings_ = "Hello";
     std::string goodbyes_ = "Bye";
+
+    uint32_t fatalErrors_ = 0u;
 
     utils::Property<std::string> propertyGreetings{
         bus_, xyz::demo::name, xyz::demo::path, xyz::demo::name,
@@ -180,10 +201,14 @@ int main(int, char**)
 
     Application app(ioc, *bus, *objServer);
 
+    boost::asio::post(ioc,
+                      [&app] { app.asyncReadPropertyWithIncorrectType(); });
     boost::asio::post(ioc, [&app] { app.asyncReadProperties(); });
     boost::asio::post(ioc, [&app] { app.asyncChangeProperty(); });
 
     ioc.run();
 
-    return 0;
+    std::cout << "Fatal errors count: " << app.fatalErrors() << "\n";
+
+    return app.fatalErrors();
 }

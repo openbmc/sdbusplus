@@ -36,7 +36,8 @@ class Application
         ioc_(ioc),
         bus_(bus), objServer_(objServer)
     {
-        demo_ = objServer_.add_interface(xyz::demo::path, xyz::demo::interface);
+        demo_ = objServer_.add_unique_interface(xyz::demo::path,
+                                                xyz::demo::interface);
 
         demo_->register_property_r(name::greetings, std::string(),
                                    sdbusplus::vtable::property_::const_,
@@ -56,11 +57,6 @@ class Application
             [](const auto& value) -> uint32_t { return value; });
 
         demo_->initialize();
-    }
-
-    ~Application()
-    {
-        objServer_.remove_interface(demo_);
     }
 
     uint32_t fatalErrors() const
@@ -194,7 +190,7 @@ class Application
     sdbusplus::asio::connection& bus_;
     sdbusplus::asio::object_server& objServer_;
 
-    std::shared_ptr<sdbusplus::asio::dbus_interface> demo_;
+    std::unique_ptr<sdbusplus::asio::dbus_interface> demo_;
     std::string greetings_ = "Hello";
     std::string goodbyes_ = "Bye";
 

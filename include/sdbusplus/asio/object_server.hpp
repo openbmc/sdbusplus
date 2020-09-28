@@ -10,6 +10,7 @@
 #include <boost/asio/spawn.hpp>
 #include <boost/container/flat_map.hpp>
 #include <sdbusplus/asio/connection.hpp>
+#include <sdbusplus/asio/scoped_dbus_interface.hpp>
 #include <sdbusplus/exception.hpp>
 #include <sdbusplus/message/read.hpp>
 #include <sdbusplus/message/types.hpp>
@@ -833,6 +834,20 @@ class object_server
         auto dbusIface = std::make_shared<dbus_interface>(conn_, path, name);
         interfaces_.emplace_back(dbusIface);
         return dbusIface;
+    }
+
+    template <typename Functor>
+    scoped_dbus_interface add_scoped_interface(const std::string& path,
+                                               const std::string& name,
+                                               Functor&& functor)
+    {
+        auto dbusIface = add_interface(path, name);
+
+        functor(*dbusIface);
+
+        dbusIface->initialize();
+
+        return scoped_dbus_interface(*this, dbusIface);
     }
 
     void add_manager(const std::string& path)

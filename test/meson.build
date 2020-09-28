@@ -43,6 +43,7 @@ foreach t : tests
                 gtest_dep,
                 gmock_dep,
                 sdbusplus_dep,
+                sdbusplusasio_dep,
             ],
         )
     )

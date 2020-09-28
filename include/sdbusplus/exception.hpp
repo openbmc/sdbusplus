@@ -80,6 +80,33 @@ struct InvalidEnumString final : public internal_exception
     const char* what() const noexcept override;
 };
 
+/** Exception for when unpackProperties cannot find given property in provided
+ * container */
+class UnpackPropertyError final : public internal_exception
+{
+  public:
+    UnpackPropertyError(std::string_view propertyName, std::string_view reason);
+
+    static constexpr std::string_view reasonMissingProperty =
+        "Missing property";
+    static constexpr std::string_view reasonTypeNotMatched = "Type not matched";
+
+    static constexpr auto errName =
+        "xyz.openbmc_project.sdbusplus.Error.UnpackPropertyError";
+    static constexpr auto errDesc =
+        "unpackProperties failed to unpack one of requested properties.";
+    static constexpr auto errWhat =
+        "xyz.openbmc_project.sdbusplus.Error.UnpackPropertyError: "
+        "unpackProperties failed to unpack one of requested properties.";
+
+    const char* name() const noexcept override;
+    const char* description() const noexcept override;
+    const char* what() const noexcept override;
+
+    const std::string propertyName;
+    const std::string reason;
+};
+
 } // namespace exception
 
 using exception_t = exception::exception;

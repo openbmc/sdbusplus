@@ -12,6 +12,21 @@ using ContainerTypes =
                    boost::container::flat_map<std::string, VariantType>,
                    std::map<std::string, VariantType>>;
 
+template <typename Exception, typename F>
+std::optional<Exception> captureException(F&& code)
+{
+    try
+    {
+        code();
+    }
+    catch (const Exception& e)
+    {
+        return e;
+    }
+
+    return std::nullopt;
+}
+
 template <typename Container>
 struct UnpackPropertiesTest : public testing::Test
 {
@@ -39,9 +54,7 @@ TYPED_TEST(UnpackPropertiesTest,
     float val2 = 0.f;
     double val3 = 0.;
 
-    ASSERT_THAT(unpackProperties(this->data, "Key-1", val1, "Key-2", val2,
-                                 "Key-3", val3),
-                Eq(std::nullopt));
+    unpackProperties(this->data, "Key-1", val1, "Key-2", val2, "Key-3", val3);
 
     ASSERT_THAT(val1, Eq("string"));
     ASSERT_THAT(val2, FloatEq(42.f));
@@ -55,10 +68,11 @@ TYPED_TEST(UnpackPropertiesTest,
 
     std::string val1, val2;
 
-    ASSERT_THAT(unpackProperties(this->data, "Key-1", val1), Eq(std::nullopt));
-    ASSERT_THAT(unpackProperties(this->data, "Key-1", val2), Eq(std::nullopt));
+    unpackProperties(this->data, "Key-1", val1);
+    unpackProperties(this->data, "Key-1", val2);
 
-    ASSERT_THAT(val1, Not(Eq(val2)));
+    ASSERT_THAT(val1, Eq("string"));
+    ASSERT_THAT(val2, Not(Eq("string")));
 }
 
 TYPED_TEST(UnpackPropertiesTest,
@@ -68,12 +82,11 @@ TYPED_TEST(UnpackPropertiesTest,
 
     std::string val1, val2;
 
-    ASSERT_THAT(unpackProperties(Const(this->data), "Key-1", val1),
-                Eq(std::nullopt));
-    ASSERT_THAT(unpackProperties(Const(this->data), "Key-1", val2),
-                Eq(std::nullopt));
+    unpackProperties(Const(this->data), "Key-1", val1);
+    unpackProperties(Const(this->data), "Key-1", val2);
 
-    ASSERT_THAT(val1, Eq(val2));
+    ASSERT_THAT(val1, Eq("string"));
+    ASSERT_THAT(val2, Eq("string"));
 }
 
 TYPED_TEST(UnpackPropertiesTest, silentlyDiscardsDuplicatedKeyInData)
@@ -88,8 +101,10 @@ TYPED_TEST(UnpackPropertiesTest, silentlyDiscardsDuplicatedKeyInData)
     this->data.insert(this->data.end(),
                       std::make_pair("Key-1"s, VariantType("string2"s)));
 
-    auto error = unpackProperties(this->data, "Key-1", val1, "Key-2", val2,
-                                  "Key-3", val3);
+    auto error = captureException<exception::UnpackPropertyError>([&] {
+        unpackProperties(this->data, "Key-1", val1, "Key-2", val2, "Key-3",
+                         val3);
+    });
 
     ASSERT_THAT(val1, Eq("string"));
     ASSERT_THAT(val2, FloatEq(42.f));
@@ -104,11 +119,14 @@ TYPED_TEST(UnpackPropertiesTest, returnsErrorWhenKeyIsMissing)
     float val2 = 0.f;
     double val3 = 0.;
 
-    std::optional<UnpackPropertyError> error = unpackProperties(
-        this->data, "Key-1", val1, "Key-4", val2, "Key-3", val3);
+    auto error = captureException<exception::UnpackPropertyError>([&] {
+        unpackProperties(this->data, "Key-1", val1, "Key-4", val2, "Key-3",
+                         val3);
+    });
 
     ASSERT_TRUE(error);
-    ASSERT_THAT(error->reason, Eq(UnpackPropertyError::reasonMissingProperty));
+    ASSERT_THAT(error->reason,
+                Eq(exception::UnpackPropertyError::reasonMissingProperty));
     ASSERT_THAT(error->propertyName, Eq("Key-4"));
 }
 
@@ -120,11 +138,14 @@ TYPED_TEST(UnpackPropertiesTest, returnsErrorWhenTypeDoesntMatch)
     std::string val2;
     double val3 = 0.;
 
-    std::optional<UnpackPropertyError> error = unpackProperties(
-        this->data, "Key-1", val1, "Key-2", val2, "Key-3", val3);
+    auto error = captureException<exception::UnpackPropertyError>([&] {
+        unpackProperties(this->data, "Key-1", val1, "Key-2", val2, "Key-3",
+                         val3);
+    });
 
     ASSERT_TRUE(error);
-    ASSERT_THAT(error->reason, Eq(UnpackPropertyError::reasonTypeNotMatched));
+    ASSERT_THAT(error->reason,
+                Eq(exception::UnpackPropertyError::reasonTypeNotMatched));
     ASSERT_THAT(error->propertyName, Eq("Key-2"));
 }
 
@@ -138,11 +159,14 @@ TYPED_TEST(UnpackPropertiesTest,
     float val2 = 0.f;
     double val3 = 0.;
 
-    auto error = unpackProperties(this->data, "Key-1", val1, "Key-2", val2,
-                                  "Key-3", val3, "Key-1", val1);
+    auto error = captureException<exception::UnpackPropertyError>([&] {
+        unpackProperties(this->data, "Key-1", val1, "Key-2", val2, "Key-3",
+                         val3, "Key-1", val1);
+    });
 
     ASSERT_TRUE(error);
-    ASSERT_THAT(error->reason, Eq(UnpackPropertyError::reasonTypeNotMatched));
+    ASSERT_THAT(error->reason,
+                Eq(exception::UnpackPropertyError::reasonTypeNotMatched));
     ASSERT_THAT(error->propertyName, Eq("Key-1"));
 }
 

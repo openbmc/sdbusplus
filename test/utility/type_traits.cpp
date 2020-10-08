@@ -1,3 +1,4 @@
+#include <sdbusplus/utility/dedup_variant.hpp>
 #include <sdbusplus/utility/type_traits.hpp>
 
 #include <type_traits>
@@ -81,5 +82,14 @@ TEST(TypeTraits, HasMemberContains)
 
     ASSERT_THAT(has_member_contains_v<Bar>, Eq(false));
 }
+
+// Tests for dedup_variant.
+static_assert(std::is_same_v<std::variant<size_t>,
+                             sdbusplus::utility::dedup_variant<size_t>>);
+static_assert(std::is_same_v<std::variant<char, size_t>,
+                             sdbusplus::utility::dedup_variant<char, size_t>>);
+static_assert(std::is_same_v<
+              std::variant<uint32_t, uint64_t>,
+              sdbusplus::utility::dedup_variant<uint32_t, uint64_t, size_t>>);
 
 } // namespace

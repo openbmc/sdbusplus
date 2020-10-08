@@ -1,11 +1,10 @@
 #include <algorithm>
 #include <map>
+#include <sdbusplus/exception.hpp>
 #include <sdbusplus/sdbus.hpp>
 #include <sdbusplus/server.hpp>
-#include <sdbusplus/exception.hpp>
 #include <string>
 #include <tuple>
-#include <variant>
 
 #include <${"/".join(interface.name.split('.') + [ 'server.hpp' ])}>
 % for m in interface.methods + interface.properties + interface.signals:

@@ -14,5 +14,11 @@ properties:
           - const
     - name: Countable
       type: size
+    - name: SignedCountable
+      type: ssize
+    - name: UnsignedInt32
+      type: uint32
+    - name: UnsignedInt64
+      type: uint64
     - name: ObjectPath
       type: object_path

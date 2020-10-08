@@ -1,11 +1,11 @@
 #pragma once
 #include <map>
-#include <string>
 #include <sdbusplus/sdbus.hpp>
 #include <sdbusplus/server.hpp>
+#include <sdbusplus/utility/dedup_variant.hpp>
+#include <string>
 #include <systemd/sd-bus.h>
 #include <tuple>
-#include <variant>
 % for m in interface.methods + interface.properties + interface.signals:
 ${ m.cpp_prototype(loader, interface=interface, ptype='callback-hpp-includes') }
 % endfor
@@ -64,7 +64,7 @@ class ${classname}
     % endfor
 
     % if interface.properties:
-        using PropertiesVariant = std::variant<
+        using PropertiesVariant = sdbusplus::utility::dedup_variant_t<
                 ${",\n                ".join(sorted(setOfPropertyTypes()))}>;
 
         /** @brief Constructor to initialize the object from a map of

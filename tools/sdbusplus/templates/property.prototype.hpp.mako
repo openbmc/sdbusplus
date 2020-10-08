@@ -32,7 +32,6 @@ int ${classname}::_callback_get_${property.name}(
         const char* /*property*/, sd_bus_message* reply, void* context,
         sd_bus_error* error)
 {
-    // TODO(venture): Can this except? I wouldn't think so.
     auto o = static_cast<${classname}*>(context);
 
     try

@@ -2,6 +2,7 @@
 #include <map>
 #include <sdbusplus/exception.hpp>
 #include <sdbusplus/sdbus.hpp>
+#include <sdbusplus/sdbuspp_support/server.hpp>
 #include <sdbusplus/server.hpp>
 #include <string>
 #include <tuple>

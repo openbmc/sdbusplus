@@ -34,21 +34,18 @@ int ${classname}::_callback_get_${property.name}(
 {
     auto o = static_cast<${classname}*>(context);
 
+    % if property.errors:
     try
+    % endif
     {
-        auto m = message::message(reply, o->_intf);
-        {
-            auto tbus = m.get_bus();
-            sdbusplus::server::transaction::Transaction t(tbus, m);
-            sdbusplus::server::transaction::set_id
-                (std::hash<sdbusplus::server::transaction::Transaction>{}(t));
-        }
-
-        m.append(o->${property.camelCase}());
-    }
-    catch(sdbusplus::internal_exception_t& e)
-    {
-        return o->_intf->sd_bus_error_set(error, e.name(), e.description());
+        return sdbusplus::sdbuspp::property_callback(
+                reply, o->_intf, error,
+                std::function(
+                    [=]()
+                    {
+                        return o->${property.camelCase}();
+                    }
+                ));
     }
     % for e in property.errors:
     catch(sdbusplus::${error_namespace(e)}::${error_name(e)}& e)
@@ -56,8 +53,6 @@ int ${classname}::_callback_get_${property.name}(
         return o->_intf->sd_bus_error_set(error, e.name(), e.description());
     }
     % endfor
-
-    return true;
 }
 
 auto ${classname}::${property.camelCase}(${property.cppTypeParam(interface.name)} value,
@@ -90,23 +85,18 @@ int ${classname}::_callback_set_${property.name}(
 {
     auto o = static_cast<${classname}*>(context);
 
+    % if property.errors:
     try
+    % endif
     {
-        auto m = message::message(value, o->_intf);
-        {
-            auto tbus = m.get_bus();
-            sdbusplus::server::transaction::Transaction t(tbus, m);
-            sdbusplus::server::transaction::set_id
-                (std::hash<sdbusplus::server::transaction::Transaction>{}(t));
-        }
-
-        ${property.cppTypeParam(interface.name)} v{};
-        m.read(v);
-        o->${property.camelCase}(v);
-    }
-    catch(sdbusplus::internal_exception_t& e)
-    {
-        return o->_intf->sd_bus_error_set(error, e.name(), e.description());
+        return sdbusplus::sdbuspp::property_callback(
+                value, o->_intf, error,
+                std::function(
+                    [=](${property.cppTypeParam(interface.name)}&& arg)
+                    {
+                        o->${property.camelCase}(std::move(arg));
+                    }
+                ));
     }
     % for e in property.errors:
     catch(sdbusplus::${error_namespace(e)}::${error_name(e)}& e)

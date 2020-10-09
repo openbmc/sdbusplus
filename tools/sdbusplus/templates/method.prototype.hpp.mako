@@ -1,4 +1,6 @@
 <%
+    def parameters_as_arg_list():
+        return ", ".join([ parameter(p, ref="&&") for p in method.parameters ])
 
     def parameters_as_list(transform=lambda p: p.camelCase):
         return ", ".join([ transform(p) for p in method.parameters ])
@@ -7,10 +9,17 @@
         return ", ".join([ p.cppTypeParam(interface.name, full=True)
                 for p in method.parameters ])
 
-    def returns_as_tuple_index(tuple, pre="", post=""):
-        return ", ".join([ "%sstd::move(std::get<%d>(%s))%s" %\
-                (pre,i,tuple,post) \
-                for i in range(len(method.returns))])
+    def parameter(p, defaultValue=False, ref=""):
+        r = "%s%s %s" % (p.cppTypeParam(interface.name), ref, p.camelCase)
+        if defaultValue:
+            r += default_value(p)
+        return r
+
+    def default_value(p):
+        if p.defaultValue != None:
+            return " = " + str(p.defaultValue)
+        else:
+            return ""
 
     def interface_name():
         return interface.name.split('.').pop()
@@ -82,54 +91,34 @@
 int ${interface_name()}::_callback_${ method.CamelCase }(
         sd_bus_message* msg, void* context, sd_bus_error* error)
 {
+    auto o = static_cast<${interface_name()}*>(context);
+
+    % if method.errors:
     try
-    {
-        ### Need to add a ref to msg since we attached it to an
-        ### sdbusplus::message.
-        auto m = message::message(msg);
-        {
-            auto tbus = m.get_bus();
-            sdbusplus::server::transaction::Transaction t(tbus, m);
-            sdbusplus::server::transaction::set_id
-                (std::hash<sdbusplus::server::transaction::Transaction>{}(t));
-        }
-
-    % if len(method.parameters) != 0:
-        ${method.parameters_as_local(interface)}{};
-
-        m.read(${parameters_as_list()});
     % endif
-
-        auto o = static_cast<${interface_name()}*>(context);
-    % if len(method.returns) != 0:
-        auto r = \
-    %endif
-        o->${ method.camelCase }(${parameters_as_list()});
-
-        auto reply = m.new_method_return();
-    % if len(method.returns) == 0:
-        // No data to append on reply.
-    % elif len(method.returns) == 1:
-        reply.append(std::move(r));
-    % else:
-        reply.append(\
-${returns_as_tuple_index("r")});
-    % endif
-
-        reply.method_return();
-    }
-    catch(sdbusplus::internal_exception_t& e)
     {
-        return sd_bus_error_set(error, e.name(), e.description());
+        return sdbusplus::sdbuspp::method_callback\
+    % if len(method.returns) > 1:
+<true>\
+    % endif
+(
+                msg, o->_intf, error,
+                std::function(
+                    [=](${parameters_as_arg_list()})
+                    {
+                        return o->${ method.camelCase }(
+                                ${parameters_as_list()});
+                    }
+                ));
     }
     % for e in method.errors:
     catch(sdbusplus::${error_namespace(e)}::${error_name(e)}& e)
     {
-        return sd_bus_error_set(error, e.name(), e.description());
+        return o->_intf->sd_bus_error_set(error, e.name(), e.description());
     }
     % endfor
 
-    return true;
+    return 0;
 }
 
 namespace details

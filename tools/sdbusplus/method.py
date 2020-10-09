@@ -47,10 +47,6 @@ class Method(NamedElement, Renderer):
             [self.parameter(interface, p, defaultValue)
                 for p in self.parameters])
 
-    def parameters_as_local(self, interface):
-        return "{};\n    ".join([self.parameter(interface, p)
-                                for p in self.parameters])
-
     def or_cpp_flags(self, flags):
         """Return the corresponding ORed cpp flags."""
         flags_dict = {"deprecated": "vtable::common_::deprecated",

@@ -46,7 +46,7 @@ class SdBusInterface
     virtual int sd_bus_emit_properties_changed_strv(sd_bus* bus,
                                                     const char* path,
                                                     const char* interface,
-                                                    char** names) = 0;
+                                                    const char** names) = 0;
 
     virtual int sd_bus_error_set(sd_bus_error* e, const char* name,
                                  const char* message) = 0;
@@ -222,10 +222,19 @@ class SdBusImpl : public SdBusInterface
 
     int sd_bus_emit_properties_changed_strv(sd_bus* bus, const char* path,
                                             const char* interface,
-                                            char** names) override
+                                            const char** names) override
     {
         return ::sd_bus_emit_properties_changed_strv(bus, path, interface,
-                                                     names);
+                                                     const_cast<char**>(names));
+        // The const_cast above may seem unsafe, but it is.  sd_bus's man page
+        // shows a 'const char*' but the header does not.  I examined the code
+        // and no modification of the strings is done.  I tried to change sdbus
+        // directly but due to quirks of C you cannot implicitly convert a
+        // 'char **' to a 'const char**', so changing the implementation causes
+        // lots of compile failures due to an incompatible API change.
+        //
+        // Performing a const_cast allows us to avoid a memory allocation of
+        // the contained strings in 'interface::property_changed'.
     }
 
     int sd_bus_error_set(sd_bus_error* e, const char* name,

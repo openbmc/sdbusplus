@@ -94,13 +94,12 @@ struct interface final
      */
     void property_changed(const char* property)
     {
-        std::vector<std::string> values{property};
-        sdbusplus::bus::details::Strv p(values);
+        std::array<const char*, 2> values = {property, nullptr};
 
         // Note: Converting to use _strv version, could also mock two pointer
         // use-case explicitly.
         _intf->sd_bus_emit_properties_changed_strv(
-            _bus.get(), _path.c_str(), _interf.c_str(), static_cast<char**>(p));
+            _bus.get(), _path.c_str(), _interf.c_str(), values.data());
     }
 
     /** @brief Emit the interface is added on D-Bus */

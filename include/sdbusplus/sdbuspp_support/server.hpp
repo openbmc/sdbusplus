@@ -33,10 +33,7 @@ bool property_callback(sd_bus_message* msg, sdbusplus::SdBusInterface* intf,
         auto m = message::message(msg, intf);
 
         // Set up the transaction.
-        auto tbus = m.get_bus();
-        sdbusplus::server::transaction::Transaction t(tbus, m);
-        sdbusplus::server::transaction::set_id(
-            std::hash<sdbusplus::server::transaction::Transaction>{}(t));
+        server::transaction::set_id(m);
 
         // Read arguments from the message.
         std::tuple<Args...> arg{};
@@ -88,10 +85,7 @@ bool method_callback(sd_bus_message* msg, sdbusplus::SdBusInterface* intf,
         auto m = message::message(msg, intf);
 
         // Set up the transaction.
-        auto tbus = m.get_bus();
-        sdbusplus::server::transaction::Transaction t(tbus, m);
-        sdbusplus::server::transaction::set_id(
-            std::hash<sdbusplus::server::transaction::Transaction>{}(t));
+        server::transaction::set_id(m);
 
         // Read arguments from the message.
         std::tuple<Args...> arg{};

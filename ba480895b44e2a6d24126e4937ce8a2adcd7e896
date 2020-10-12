@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bfe49ef1_74ccd330",
+        "filename": "include/sdbusplus/sdbus.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 229,
+      "author": {
+        "id": 1000002
+      },
+      "writtenOn": "2020-10-12T19:33:17Z",
+      "side": 1,
+      "message": "A nit for sure, but reads odd.  If you have to change for some other reason, how about:\n\nthe const_cast above may not seem safe, but it is\n\nor\n\nthe const_cast above may seem unsafe, but it is not",
+      "range": {
+        "startLine": 229,
+        "startChar": 11,
+        "endLine": 229,
+        "endChar": 58
+      },
+      "revId": "ba480895b44e2a6d24126e4937ce8a2adcd7e896",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "82cb3d3d_ce205504",
+        "filename": "include/sdbusplus/sdbus.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 230,
+      "author": {
+        "id": 1000002
+      },
+      "writtenOn": "2020-10-12T19:33:17Z",
+      "side": 1,
+      "message": "ouch.",
+      "range": {
+        "startLine": 229,
+        "startChar": 61,
+        "endLine": 230,
+        "endChar": 56
+      },
+      "revId": "ba480895b44e2a6d24126e4937ce8a2adcd7e896",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    }
+  ]
+}

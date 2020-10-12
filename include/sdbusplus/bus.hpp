@@ -402,12 +402,7 @@ struct bus
      *  @param[in] ifaces - The interfaces to forward.
      */
     void emit_interfaces_added(const char* path,
-                               const std::vector<std::string>& ifaces)
-    {
-        details::Strv s{ifaces};
-        _intf->sd_bus_emit_interfaces_added_strv(_bus.get(), path,
-                                                 static_cast<char**>(s));
-    }
+                               const std::vector<std::string>& ifaces);
 
     /** @brief Wrapper for sd_bus_emit_interfaces_removed_strv
      *
@@ -419,12 +414,7 @@ struct bus
      *  @param[in] ifaces - The interfaces to forward.
      */
     void emit_interfaces_removed(const char* path,
-                                 const std::vector<std::string>& ifaces)
-    {
-        details::Strv s{ifaces};
-        _intf->sd_bus_emit_interfaces_removed_strv(_bus.get(), path,
-                                                   static_cast<char**>(s));
-    }
+                                 const std::vector<std::string>& ifaces);
 
     /** @brief Wrapper for sd_bus_emit_object_added
      *

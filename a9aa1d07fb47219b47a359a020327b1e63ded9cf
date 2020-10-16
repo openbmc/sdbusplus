@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7e171ef9_f0d69c58",
+        "filename": "include/sdbusplus/sdbuspp_support/server.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2020-10-16T06:01:20Z",
+      "side": 1,
+      "message": "It\u0027s realized that it\u0027s returning bool as before.\nBut the mako function returns int actually, should this be fixed?",
+      "range": {
+        "startLine": 82,
+        "startChar": 0,
+        "endLine": 82,
+        "endChar": 5
+      },
+      "revId": "a9aa1d07fb47219b47a359a020327b1e63ded9cf",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ababf1eb_b49ef937",
+        "filename": "include/sdbusplus/sdbuspp_support/server.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2020-10-16T06:01:20Z",
+      "side": 1,
+      "message": "I feel a bit hard to understand why it needs the out-sider std::apply.\nI hope there may be \"easier\" way to pack the return values into the reply.append(...)",
+      "range": {
+        "startLine": 116,
+        "startChar": 0,
+        "endLine": 118,
+        "endChar": 54
+      },
+      "revId": "a9aa1d07fb47219b47a359a020327b1e63ded9cf",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    }
+  ]
+}

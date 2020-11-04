@@ -22,3 +22,6 @@ properties:
       type: uint64
     - name: ObjectPath
       type: object_path
+    - name: DoubleAsNAN
+      type: double
+      default: NaN

@@ -1,4 +1,5 @@
 #pragma once
+#include <limits>
 #include <map>
 #include <sdbusplus/sdbus.hpp>
 #include <sdbusplus/server.hpp>

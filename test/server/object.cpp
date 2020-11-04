@@ -103,3 +103,24 @@ TEST_F(Object, ObjectAdded)
                 sd_bus_emit_interfaces_removed_strv(_, StrEq(objPath), _))
         .Times(0);
 }
+
+TEST_F(Object, DoubleHasDefaultValues)
+{
+    // Simulate the typical usage of a service
+    sdbusplus::server::manager::manager objManager(bus, objPath);
+    bus.request_name(busName);
+
+    EXPECT_CALL(sdbusMock, sd_bus_emit_object_added(_, StrEq(objPath)))
+        .Times(1);
+    EXPECT_CALL(sdbusMock,
+                sd_bus_emit_interfaces_added_strv(_, StrEq(objPath), _))
+        .Times(0);
+
+    auto test = std::make_unique<TestInherit>(bus, objPath);
+    EXPECT_TRUE(std::isnan(test->doubleAsNAN()));
+    EXPECT_TRUE(std::isinf(test->doubleAsInf()) &&
+                !std::signbit(test->doubleAsInf()));
+    EXPECT_TRUE(std::isinf(test->doubleAsNegInf()) &&
+                std::signbit(test->doubleAsNegInf()));
+    EXPECT_EQ(std::numeric_limits<double>::epsilon(), test->doubleAsEpsilon());
+}

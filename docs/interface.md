@@ -85,6 +85,16 @@ but listed using lowercases: `int64` instead of `INT64` or C++ `int64_t`.
 * object_path
 * signature
 
+### Special type values
+
+For 'double' types it is possible to express one of the special values:
+    * 'NaN' (case-insensitive)
+        - A quiet-type not-a-number value.
+    * 'Infinity' (case-insensitive)
+        - A positive infinity value.
+    * 'Epsilon' (case-insensitive)
+        - An epsilon value.
+
 ### Containers
 Container types can also be expressed, but the contained-type should be
 expressed within square-brackets `[]`.  The following containers are supported:

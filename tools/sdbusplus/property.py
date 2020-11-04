@@ -25,6 +25,20 @@ class Property(NamedElement, Renderer):
                  self.typeName.lower() == "string"):
                 # Wrap string type default values with double-quotes
                 self.defaultValue = "\"" + self.defaultValue + "\""
+            elif(isinstance(self.defaultValue, str) and
+                    self.typeName.lower() == "double"):
+                if self.defaultValue.lower() == "nan":
+                    self.defaultValue = \
+                        'std::numeric_limits<double>::quiet_NaN()'
+                elif self.defaultValue.lower() == "infinity":
+                    self.defaultValue = \
+                        'std::numeric_limits<double>::infinity()'
+                elif self.defaultValue.lower() == "-infinity":
+                    self.defaultValue = \
+                        '-std::numeric_limits<double>::infinity()'
+                elif self.defaultValue.lower() == "epsilon":
+                    self.defaultValue = \
+                        'std::numeric_limits<double>::epsilon()'
 
         super(Property, self).__init__(**kwargs)
 

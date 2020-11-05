@@ -142,13 +142,13 @@ class message
 
     /** @brief Get the dbus bus from the message. */
     // Forward declare.
-    auto get_bus();
+    auto get_bus() const;
 
     /** @brief Get the signature of a message.
      *
      *  @return A [weak] pointer to the signature of the message.
      */
-    const char* get_signature()
+    const char* get_signature() const
     {
         return _intf->sd_bus_message_get_signature(_msg.get(), true);
     }
@@ -157,7 +157,7 @@ class message
      *
      *  @return A [weak] pointer to the path of the message.
      */
-    const char* get_path()
+    const char* get_path() const
     {
         return _intf->sd_bus_message_get_path(_msg.get());
     }
@@ -166,7 +166,7 @@ class message
      *
      *  @return A [weak] pointer to the interface of the message.
      */
-    const char* get_interface()
+    const char* get_interface() const
     {
         return _intf->sd_bus_message_get_interface(_msg.get());
     }
@@ -175,7 +175,7 @@ class message
      *
      *  @return A [weak] pointer to the member of the message.
      */
-    const char* get_member()
+    const char* get_member() const
     {
         return _intf->sd_bus_message_get_member(_msg.get());
     }
@@ -184,7 +184,7 @@ class message
      *
      *  @return A [weak] pointer to the destination of the message.
      */
-    const char* get_destination()
+    const char* get_destination() const
     {
         return _intf->sd_bus_message_get_destination(_msg.get());
     }
@@ -193,7 +193,7 @@ class message
      *
      *  @return A [weak] pointer to the sender of the message.
      */
-    const char* get_sender()
+    const char* get_sender() const
     {
         return _intf->sd_bus_message_get_sender(_msg.get());
     }
@@ -202,7 +202,7 @@ class message
      *
      *  @return True - if message is a method error.
      */
-    bool is_method_error()
+    bool is_method_error() const
     {
         return _intf->sd_bus_message_is_method_error(_msg.get(), nullptr);
     }
@@ -211,7 +211,7 @@ class message
      *
      *  @return The errno of the message.
      */
-    int get_errno()
+    int get_errno() const
     {
         return _intf->sd_bus_message_get_errno(_msg.get());
     }
@@ -220,7 +220,7 @@ class message
      *
      *  @return The error of the message.
      */
-    const sd_bus_error* get_error()
+    const sd_bus_error* get_error() const
     {
         return _intf->sd_bus_message_get_error(_msg.get());
     }
@@ -229,7 +229,7 @@ class message
      *
      * @return The type of message.
      */
-    auto get_type()
+    auto get_type() const
     {
         uint8_t type;
         int r = _intf->sd_bus_message_get_type(_msg.get(), &type);
@@ -244,7 +244,7 @@ class message
      *
      * @return The transaction cookie of a message.
      */
-    auto get_cookie()
+    auto get_cookie() const
     {
         uint64_t cookie;
         int r = _intf->sd_bus_message_get_cookie(_msg.get(), &cookie);
@@ -259,7 +259,7 @@ class message
      *
      * @return The reply cookie of a message.
      */
-    auto get_reply_cookie()
+    auto get_reply_cookie() const
     {
         uint64_t cookie;
         int r = _intf->sd_bus_message_get_reply_cookie(_msg.get(), &cookie);
@@ -277,7 +277,7 @@ class message
      *
      *  @return True - if message is a method call for interface/method.
      */
-    bool is_method_call(const char* interface, const char* method)
+    bool is_method_call(const char* interface, const char* method) const
     {
         return _intf->sd_bus_message_is_method_call(_msg.get(), interface,
                                                     method);
@@ -288,7 +288,7 @@ class message
      *  @param[in] interface - The interface to match.
      *  @param[in] member - The member to match.
      */
-    bool is_signal(const char* interface, const char* member)
+    bool is_signal(const char* interface, const char* member) const
     {
         return _intf->sd_bus_message_is_signal(_msg.get(), interface, member);
     }

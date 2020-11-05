@@ -599,7 +599,7 @@ inline bus new_system()
  *
  *  @return The dbus bus.
  */
-inline auto message::message::get_bus()
+inline auto message::message::get_bus() const
 {
     sd_bus* b = nullptr;
     b = _intf->sd_bus_message_get_bus(_msg.get());

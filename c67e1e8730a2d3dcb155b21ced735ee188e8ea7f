@@ -1,0 +1,11 @@
+Ok-To-Test+1: OpenBMC CI <openbmcbump-ci@yahoo.com>
+Verified+1: OpenBMC CI <openbmcbump-ci@yahoo.com>
+Code-Review+1: Bruce Mitchell <Bruce_Mitchell@Phoenix.com>
+Code-Review+1: Konstantin Aladyshev <aladyshev22@gmail.com>
+Code-Review+1: Lei YU <yulei.sh@bytedance.com>
+Code-Review+2: Patrick Williams <patrick@stwcx.xyz>
+Submitted-by: Patrick Williams <patrick@stwcx.xyz>
+Submitted-at: Thu, 05 Nov 2020 12:54:38 +0000
+Reviewed-on: https://gerrit.openbmc-project.xyz/c/openbmc/sdbusplus/+/37957
+Project: openbmc/sdbusplus
+Branch: refs/heads/master

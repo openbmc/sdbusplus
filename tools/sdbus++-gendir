@@ -10,6 +10,7 @@ function show_usage {
     echo "Options:"
     echo "    --tool <path>    - path to processing tool (default 'sdbus++')."
     echo "    --output <path>  - directory to place output files (default '.')."
+    echo "    --gen-mocks      - generate gmock header files."
     echo "    --list-all       - include all generated files in stdout list."
     echo "    --jobs <N>       - number to run in parallel (default: $(nproc))."
     echo "    <dirs>+          - any number of subdirectories to generate."
@@ -26,10 +27,11 @@ function show_usage {
 
 sdbuspp="sdbus++"
 outputdir="."
+genmocks="no"
 listall="no"
 parallel=$(nproc || grep -c ^processor < /proc/cpuinfo)
 
-options="$(getopt -o ho:t:j: --long help,list-all,output:,tool:,jobs: -- "$@")"
+options="$(getopt -o hgo:t:j: --long help,list-all,gen-mocks,output:,tool:,jobs: -- "$@")"
 eval set -- "$options"
 
 while true;
@@ -43,6 +45,11 @@ do
         -j | --jobs)
             shift
             parallel="$1"
+            shift
+            ;;
+
+        --gen-mocks)
+            genmocks="yes"
             shift
             ;;
 
@@ -162,6 +169,10 @@ do
         iface="${path//\//.}"
 
         generate_single interface server-header "$iface" "$path/server.hpp"
+        if [ "xyes" == "x$genmocks" ];
+        then
+            generate_single interface server-gmock-header "$iface" "$path/mock_server.hpp"
+        fi
         generate_single interface server-cpp "$iface" "$path/server.cpp"
         generate_single interface client-header "$iface" "$path/client.hpp"
         generate_single interface markdown "$iface" "$path.md" append

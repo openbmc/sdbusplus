@@ -63,6 +63,10 @@ class Interface(NamedElement, Renderer):
     def server_header(self, loader):
         return self.render(loader, "interface.server.hpp.mako", interface=self)
 
+    def server_gmock_header(self, loader):
+        return self.render(loader, "interface.mock_server.hpp.mako",
+                           interface=self)
+
     def server_cpp(self, loader):
         return self.render(loader, "interface.server.cpp.mako", interface=self)
 

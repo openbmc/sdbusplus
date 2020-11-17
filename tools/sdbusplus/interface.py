@@ -57,14 +57,14 @@ class Interface(NamedElement, Renderer):
             includes.append("/".join(es) + ".hpp")
         return includes
 
-    def markdown(self, loader):
+    def markdown(self, loader, parameters=None):
         return self.render(loader, "interface.md.mako", interface=self)
 
-    def server_header(self, loader):
+    def server_header(self, loader, parameters=None):
         return self.render(loader, "interface.server.hpp.mako", interface=self)
 
-    def server_cpp(self, loader):
+    def server_cpp(self, loader, parameters=None):
         return self.render(loader, "interface.server.cpp.mako", interface=self)
 
-    def client_header(self, loader):
+    def client_header(self, loader, parameters=None):
         return self.render(loader, "interface.client.hpp.mako", interface=self)

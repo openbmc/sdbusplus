@@ -10,6 +10,7 @@ function show_usage {
     echo "Options:"
     echo "    --tool <path>    - path to processing tool (default 'sdbus++')."
     echo "    --output <path>  - directory to place output files (default '.')."
+    echo "    --template-params - pass additional parameters to the template."
     echo "    --list-all       - include all generated files in stdout list."
     echo "    --jobs <N>       - number to run in parallel (default: $(nproc))."
     echo "    <dirs>+          - any number of subdirectories to generate."
@@ -26,10 +27,11 @@ function show_usage {
 
 sdbuspp="sdbus++"
 outputdir="."
+templateparams="{}"
 listall="no"
 parallel=$(nproc || grep -c ^processor < /proc/cpuinfo)
 
-options="$(getopt -o ho:t:j: --long help,list-all,output:,tool:,jobs: -- "$@")"
+options="$(getopt -o ho:p:t:j: --long help,list-all,template-params:,output:,tool:,jobs: -- "$@")"
 eval set -- "$options"
 
 while true;
@@ -45,6 +47,13 @@ do
             parallel="$1"
             shift
             ;;
+
+
+        --template-params)
+            shift
+            templateparams="$1"
+            shift
+            ;;            
 
         --list-all)
             listall="yes"
@@ -92,7 +101,7 @@ function generate_single {
         echo -n > "$outputdir/$4"
     elif [ "x" == "x$5" ];
     then
-        $sdbuspp "$1" "$2" "$3" > "$outputdir/$4" &
+        $sdbuspp "$1" "$2" "$3" --parameters "$templateparams" > "$outputdir/$4" &
         all_jobs="$all_jobs $!"
     else
         $sdbuspp "$1" "$2" "$3" >> "$outputdir/$4" &

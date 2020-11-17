@@ -11,15 +11,12 @@
 ${ m.cpp_prototype(loader, interface=interface, ptype='callback-hpp-includes') }
 % endfor
 <%
-    namespaces = interface.name.split('.')
-    classname = namespaces.pop()
+    namespaces = interface.namespaces
+    classname = interface.classname
 
     def setOfPropertyTypes():
         return set(p.cppTypeParam(interface.name) for p in
                    interface.properties);
-
-    def cppNamespace():
-        return "::".join(namespaces) + "::server::" + classname
 %>
 namespace sdbusplus
 {
@@ -210,17 +207,17 @@ namespace details
 {
     % for e in interface.enums:
 template <>
-inline auto convert_from_string<${cppNamespace()}::${e.name}>(
+inline auto convert_from_string<${interface.cppNamespace()}::${e.name}>(
         const std::string& value)
 {
-    return ${cppNamespace()}::convert${e.name}FromString(value);
+    return ${interface.cppNamespace()}::convert${e.name}FromString(value);
 }
 
 template <>
-inline std::string convert_to_string<${cppNamespace()}::${e.name}>(
-        ${cppNamespace()}::${e.name} value)
+inline std::string convert_to_string<${interface.cppNamespace()}::${e.name}>(
+        ${interface.cppNamespace()}::${e.name} value)
 {
-    return ${cppNamespace()}::convert${e.name}ToString(value);
+    return ${interface.cppNamespace()}::convert${e.name}ToString(value);
 }
     % endfor
 } // namespace details

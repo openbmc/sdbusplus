@@ -1,0 +1,22 @@
+description: >
+    An example interface
+methods:
+    - name: Reboot
+      description: >
+        Reboots the software in waitTime micro-seconds
+      parameters:
+        - name: waitTime
+          type: uint64
+          description: >
+            The time to wait before doing the reboot.
+      returns:
+        - name: upTime
+          type: uint64
+          description: >
+            The microseconds since last reboot.
+properties:
+    - name: Version
+      type: uint64
+      default: 0
+      description: >
+        The current version of the software.

@@ -105,3 +105,7 @@ test(
         ],
     ),
 )
+
+if not get_option('itests').disabled()
+  subdir('test/integration')
+endif

@@ -9,6 +9,7 @@ valid_types = {"interface": sdbusplus.Interface, "error": sdbusplus.Error}
 valid_processes = {
     "markdown": "markdown",
     "server-header": "server_header",
+    "server-gmock-header": "server_gmock_header",
     "server-cpp": "server_cpp",
     "exception-header": "exception_header",
     "exception-cpp": "exception_cpp",
@@ -57,7 +58,8 @@ def parse_args():
         help="Item to process.",
     )
 
-    parser.add_argument("-p",
+    parser.add_argument(
+        "-p",
         "--parameters",
         help="JSON dictionary of parameters to pass to the template")
 

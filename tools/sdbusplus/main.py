@@ -9,6 +9,7 @@ valid_types = {"interface": sdbusplus.Interface, "error": sdbusplus.Error}
 valid_processes = {
     "markdown": "markdown",
     "server-header": "server_header",
+    "server-gmock-header": "server_gmock_header",
     "server-cpp": "server_cpp",
     "exception-header": "exception_header",
     "exception-cpp": "exception_cpp",

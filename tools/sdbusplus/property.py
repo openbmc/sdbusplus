@@ -53,6 +53,12 @@ class Property(NamedElement, Renderer):
     def cppTypeParam(self, interface, full=False, server=True):
         return self.__cppTypeParam(interface, self.cppTypeName, full, server)
 
+    def default_value(self):
+        if self.defaultValue != None:
+            return " = " + str(self.defaultValue)
+        else:
+            return ""
+
     def __cppTypeParam(self, interface, cppTypeName, full=False, server=True):
 
         ns_type = "server" if server else "client"

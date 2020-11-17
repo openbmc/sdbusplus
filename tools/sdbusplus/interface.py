@@ -28,6 +28,12 @@ class Interface(NamedElement, Renderer):
 
         super(Interface, self).__init__(**kwargs)
 
+        self.namespaces = self.name.split('.')
+        self.classname = self.namespaces.pop()
+
+    def cppNamespace(self):
+        return "::".join(self.namespaces) + "::server::" + self.classname
+
     def enum_includes(self, inc_list):
         includes = []
         namespaces = []

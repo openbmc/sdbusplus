@@ -1,20 +1,4 @@
 <%
-    def cpp_return_type():
-        if len(method.returns) == 0:
-            return "void"
-        elif len(method.returns) == 1:
-            return method.returns[0].cppTypeParam(interface.name)
-        else:
-            return "std::tuple<" + \
-                   returns_as_list() + \
-                   ">"
-
-    def parameters(defaultValue=False):
-        return ",\n            ".\
-            join([ parameter(p, defaultValue) for p in method.parameters ])
-
-    def parameters_as_local():
-        return "{};\n    ".join([ parameter(p) for p in method.parameters ])
 
     def parameters_as_list(transform=lambda p: p.camelCase):
         return ", ".join([ transform(p) for p in method.parameters ])
@@ -23,26 +7,10 @@
         return ", ".join([ p.cppTypeParam(interface.name, full=True)
                 for p in method.parameters ])
 
-    def parameter(p, defaultValue=False):
-        r = "%s %s" % (p.cppTypeParam(interface.name), p.camelCase)
-        if defaultValue:
-            r += default_value(p)
-        return r
-
-    def returns_as_list(full=False):
-        return ", ".join([ r.cppTypeParam(interface.name, full=full)
-                for r in method.returns ])
-
     def returns_as_tuple_index(tuple, pre="", post=""):
         return ", ".join([ "%sstd::move(std::get<%d>(%s))%s" %\
                 (pre,i,tuple,post) \
                 for i in range(len(method.returns))])
-
-    def default_value(p):
-        if p.defaultValue != None:
-            return " = " + str(p.defaultValue)
-        else:
-            return ""
 
     def interface_name():
         return interface.name.split('.').pop()
@@ -82,8 +50,8 @@
         % endfor
     % endif
          */
-        virtual ${cpp_return_type()} ${ method.camelCase }(
-            ${ parameters() }) = 0;
+        virtual ${method.cpp_return_type(interface)} ${ method.camelCase }(
+            ${ method.get_parameters_str(interface) }) = 0;
 ###
 ### Emit 'callback-header'
 ###
@@ -127,7 +95,7 @@ int ${interface_name()}::_callback_${ method.CamelCase }(
         }
 
     % if len(method.parameters) != 0:
-        ${parameters_as_local()}{};
+        ${method.parameters_as_local(interface)}{};
 
         m.read(${parameters_as_list()});
     % endif
@@ -180,7 +148,7 @@ static const auto _return_${ method.CamelCase } =
         utility::tuple_to_array(std::make_tuple('\0'));
     % else:
         utility::tuple_to_array(message::types::type_id<
-                ${ returns_as_list(full=True) }>());
+                ${ method.returns_as_list(interface, full=True) }>());
     % endif
 }
 }

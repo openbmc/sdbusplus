@@ -22,6 +22,35 @@ class Method(NamedElement, Renderer):
         return self.render(loader, "method.prototype.hpp.mako", method=self,
                            interface=interface, ptype=ptype, post=str.rstrip)
 
+    def returns_as_list(self, interface, full=False):
+        return ", ".join([ r.cppTypeParam(interface.name, full=full)
+                for r in self.returns ])
+
+    def cpp_return_type(self, interface):
+        if len(self.returns) == 0:
+            return "void"
+        elif len(self.returns) == 1:
+            return self.returns[0].cppTypeParam(interface.name)
+        else:
+            return "std::tuple<" + \
+                   self.returns_as_list() + \
+                   ">"
+
+    def parameter(self, interface, p, defaultValue=False):
+        r = "%s %s" % (p.cppTypeParam(interface.name), p.camelCase)
+        if defaultValue:
+            r += p.default_value()
+        return r
+
+    def get_parameters_str(self, interface, defaultValue=False):
+        return ",\n            ".\
+            join([ self.parameter(interface, p, defaultValue)\
+                for p in self.parameters ])
+
+    def parameters_as_local(self, interface):
+        return "{};\n    ".join([ self.parameter(interface, p)\
+                                for p in self.parameters ])
+
     def or_cpp_flags(self, flags):
         """Return the corresponding ORed cpp flags."""
         flags_dict = {"deprecated": "vtable::common_::deprecated",

@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "458e232e_f51f4928",
+        "filename": "tools/sdbusplus/interface.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 1000188
+      },
+      "writtenOn": "2020-11-24T08:09:00Z",
+      "side": 1,
+      "message": "What is the reasoning for not generating properties? Are there any interfaces where this is desirable?",
+      "revId": "cfe723d63adf5761cbdb0bc66df9c5852d0ab1c1",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "871797f4_868d7119",
+        "filename": "tools/sdbusplus/templates/interface.mock_server.hpp.mako",
+        "patchSetId": 5
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 1000188
+      },
+      "writtenOn": "2020-11-24T08:09:00Z",
+      "side": 1,
+      "message": "I\u0027m not sure what the default implementation is, but we should probably make it so that property getters and setters do their logical passthrough get / set operations by default.",
+      "revId": "cfe723d63adf5761cbdb0bc66df9c5852d0ab1c1",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    }
+  ]
+}

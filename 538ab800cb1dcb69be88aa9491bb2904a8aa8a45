@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b61af37e_1af91bac",
+        "filename": "include/sdbusplus/test/integration/README.md",
+        "patchSetId": 9
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2020-11-25T05:44:48Z",
+      "side": 1,
+      "message": "Remove the tailing spaces.",
+      "range": {
+        "startLine": 14,
+        "startChar": 28,
+        "endLine": 14,
+        "endChar": 29
+      },
+      "revId": "538ab800cb1dcb69be88aa9491bb2904a8aa8a45",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "28530032_d20878cf",
+        "filename": "include/sdbusplus/test/integration/README.md",
+        "patchSetId": 9
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2020-11-25T05:44:48Z",
+      "side": 1,
+      "message": "Remove the tailing space.",
+      "range": {
+        "startLine": 16,
+        "startChar": 27,
+        "endLine": 16,
+        "endChar": 28
+      },
+      "revId": "538ab800cb1dcb69be88aa9491bb2904a8aa8a45",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d448afba_e701f16e",
+        "filename": "include/sdbusplus/test/integration/README.md",
+        "patchSetId": 9
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2020-11-25T05:44:48Z",
+      "side": 1,
+      "message": "The indents are not aligned. Some use tabs, and some use spaces.",
+      "range": {
+        "startLine": 27,
+        "startChar": 0,
+        "endLine": 27,
+        "endChar": 4
+      },
+      "revId": "538ab800cb1dcb69be88aa9491bb2904a8aa8a45",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    }
+  ]
+}

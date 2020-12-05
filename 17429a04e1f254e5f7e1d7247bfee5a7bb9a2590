@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ac14a224_50f75b9b",
+        "filename": "include/sdbusplus/test/integration/README.md",
+        "patchSetId": 12
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 1000233
+      },
+      "writtenOn": "2020-12-05T01:32:59Z",
+      "side": 1,
+      "message": "You may want to link to a Gerrit change or hashtag that includes some examples",
+      "revId": "17429a04e1f254e5f7e1d7247bfee5a7bb9a2590",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    }
+  ]
+}

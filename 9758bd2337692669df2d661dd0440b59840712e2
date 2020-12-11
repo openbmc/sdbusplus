@@ -1,0 +1,101 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8a0f6378_5b95ffdf",
+        "filename": "include/sdbusplus/test/integration/mock_service.hpp",
+        "patchSetId": 15
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2020-12-11T23:01:15Z",
+      "side": 1,
+      "message": "Don\u0027t pollute the global namespace.",
+      "revId": "9758bd2337692669df2d661dd0440b59840712e2",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "042de4cd_73594858",
+        "filename": "include/sdbusplus/test/integration/mock_service.hpp",
+        "patchSetId": 15
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2020-12-11T23:01:15Z",
+      "side": 1,
+      "message": "Do you really need a shared_ptr, or is a PrivateBus\u0026 better?",
+      "range": {
+        "startLine": 40,
+        "startChar": 41,
+        "endLine": 40,
+        "endChar": 56
+      },
+      "revId": "9758bd2337692669df2d661dd0440b59840712e2",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c8f8e19b_3a83c5bf",
+        "filename": "include/sdbusplus/test/integration/mock_service.hpp",
+        "patchSetId": 15
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2020-12-11T23:01:15Z",
+      "side": 1,
+      "message": "I\u0027m surprised that either of these are shared_ptr.  Are you really sharing the thread outside the class?",
+      "range": {
+        "startLine": 105,
+        "startChar": 0,
+        "endLine": 106,
+        "endChar": 45
+      },
+      "revId": "9758bd2337692669df2d661dd0440b59840712e2",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "101b73a0_adbf5ba0",
+        "filename": "src/sdbusplus/test/integration/mock_service.cpp",
+        "patchSetId": 15
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2020-12-11T23:01:15Z",
+      "side": 1,
+      "message": "Why is this safe to do without the mutex?",
+      "revId": "9758bd2337692669df2d661dd0440b59840712e2",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d98e8a9c_77108d20",
+        "filename": "src/sdbusplus/test/integration/mock_service.cpp",
+        "patchSetId": 15
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2020-12-11T23:01:15Z",
+      "side": 1,
+      "message": "Why is this safe to do without the mutex?",
+      "revId": "9758bd2337692669df2d661dd0440b59840712e2",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    }
+  ]
+}

@@ -1,0 +1,95 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c1f55140_5f5087e1",
+        "filename": "tools/sdbus++-gendir",
+        "patchSetId": 9
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2020-12-11T20:50:18Z",
+      "side": 1,
+      "message": "sdbus++-gendir is used within sdbusplus and not used anywhere else.\nsdbus++-gen-meson is what is used elsewhere, primarily in phosphor-dbus-interfaces.  We\u0027ll need to get that one updated as well.\n\nsdbus++-gendir only exists because I started implementing meson support and then when I moved to adding it into P-D-I, I got some push-back from the other maintainers on how it worked.  I haven\u0027t had a chance to convert sdbusplus to use sdbus++-gendir yet.",
+      "revId": "126acbbb87878244af44d13b99d8fe5febbf544b",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "39366734_bad26202",
+        "filename": "tools/sdbus++-gendir",
+        "patchSetId": 9
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2020-12-11T20:50:18Z",
+      "side": 1,
+      "message": "I don\u0027t think there is a good reason to make this an option.  Let\u0027s just do it all the time.",
+      "revId": "126acbbb87878244af44d13b99d8fe5febbf544b",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9ddc727f_5c17abb9",
+        "filename": "tools/sdbus++-gendir",
+        "patchSetId": 9
+      },
+      "lineNbr": 174,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2020-12-11T20:50:18Z",
+      "side": 1,
+      "message": "Prefer keeping line-wrap at 80. ;)",
+      "range": {
+        "startLine": 174,
+        "startChar": 67,
+        "endLine": 174,
+        "endChar": 90
+      },
+      "revId": "126acbbb87878244af44d13b99d8fe5febbf544b",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0d926607_bc8a5453",
+        "filename": "tools/sdbusplus/templates/interface.mock_server.hpp.mako",
+        "patchSetId": 9
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2020-12-11T20:50:18Z",
+      "side": 1,
+      "message": "Shouldn\u0027t this be \u003cgmock/gmock.h\u003e?  It is a global header.",
+      "revId": "126acbbb87878244af44d13b99d8fe5febbf544b",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "59f71989_9ceef69f",
+        "filename": "tools/sdbusplus/templates/interface.mock_server.hpp.mako",
+        "patchSetId": 9
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2020-12-11T20:50:18Z",
+      "side": 1,
+      "message": "Can you put this into the class itself to scope it.  I don\u0027t like polluting the global namespace with a using.",
+      "revId": "126acbbb87878244af44d13b99d8fe5febbf544b",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    }
+  ]
+}

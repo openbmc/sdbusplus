@@ -1,0 +1,347 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "45f598f6_105d7ed1",
+        "filename": "include/sdbusplus/test/integration/daemon_manager.hpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2020-12-11T22:07:12Z",
+      "side": 1,
+      "message": "Recommend `const std::string\u0026`",
+      "range": {
+        "startLine": 49,
+        "startChar": 46,
+        "endLine": 49,
+        "endChar": 63
+      },
+      "revId": "70494844e5f6c3dffba67ab168a5cf4cb6aeb7fe",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0e391cbf_7c032280",
+        "filename": "include/sdbusplus/test/integration/daemon_manager.hpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2020-12-11T22:07:12Z",
+      "side": 1,
+      "message": "Is there a strong reason to make the destructor `noexcept(false)`?  Generally throwing from an exception is frowned upon because it can easily cause terminating situations (ex. throw in a already thrown situation where the stack is being unwound and objects are being destructed).",
+      "revId": "70494844e5f6c3dffba67ab168a5cf4cb6aeb7fe",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f158a368_50abd2fe",
+        "filename": "src/sdbusplus/test/integration/daemon_manager.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2020-12-11T22:07:12Z",
+      "side": 1,
+      "message": "I\u0027m worried about using a static value where we are waiting and not, instead, looking for something to determine that the Daemon has started.  Two reasons:\n\n1. On a busy CI server, it will be running multiple compile and unit tests jobs and run \"slower than usual\".  So people will have to put extra buffer in to ensure they wait long enough.\n\n2. Now with those long wait times, `ninja test` is going to take quite a bit of time where we\u0027re just sitting there waiting and doing nothing.  That means as a developer I\u0027m pretty unlikely to run `itest`.  Hopefully it doesn\u0027t have a large impact on CI result times.",
+      "revId": "70494844e5f6c3dffba67ab168a5cf4cb6aeb7fe",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "364399ff_6a830fe6",
+        "filename": "src/sdbusplus/test/integration/daemon_manager.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2020-12-11T22:07:12Z",
+      "side": 1,
+      "message": "This can be replaced with:\n\ncmd \u003d std::accumulate(std::begin(argvStr) + 1, std::end(argvStr),\n                      std::begin(argvStr),\n                      [](auto\u0026\u0026 a, auto b) {\n                           return std::move(a) + \" \" + b;\n                      });\n\nIf you don\u0027t care about having an extra space at the beginning, you can simplify it further:\n\n    cmd \u003d std::accumulate(std::begin(argvStr), std::end(argvStr),\n                          std::string{}, /*lambda from above*/);",
+      "range": {
+        "startLine": 88,
+        "startChar": 0,
+        "endLine": 95,
+        "endChar": 5
+      },
+      "revId": "70494844e5f6c3dffba67ab168a5cf4cb6aeb7fe",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b0cdadc0_4b685ed1",
+        "filename": "src/sdbusplus/test/integration/daemon_manager.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2020-12-11T22:07:12Z",
+      "side": 1,
+      "message": "By using buildPosixSpawnFileActions and destroyPosixSpawnFileActions you\u0027ve created a possible memory leak if an exception is throw.  Suggest creating an RAII type that will automatically call destroy as needed.",
+      "revId": "70494844e5f6c3dffba67ab168a5cf4cb6aeb7fe",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "400ac8b2_a554d6d5",
+        "filename": "src/sdbusplus/test/integration/daemon_manager.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2020-12-11T22:07:12Z",
+      "side": 1,
+      "message": "Just use \u0027auto\u0027 in these cases.",
+      "range": {
+        "startLine": 108,
+        "startChar": 15,
+        "endLine": 108,
+        "endChar": 26
+      },
+      "revId": "70494844e5f6c3dffba67ab168a5cf4cb6aeb7fe",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b9f3b14e_0e69cc7a",
+        "filename": "src/sdbusplus/test/integration/daemon_manager.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2020-12-11T22:07:12Z",
+      "side": 1,
+      "message": "This isn\u0027t the safest operation to do because you aren\u0027t certain that the result of c_str will live longer than line 110.  But, if you want to continue with it, just use a transform rather than writing your own loop:\n\nstd::transform(std::cbegin(argvStr), std::cend(argvStr), \n               std::back_inserter(arg),\n               [](auto\u0026 a){ return a.c_str(); });",
+      "range": {
+        "startLine": 108,
+        "startChar": 0,
+        "endLine": 111,
+        "endChar": 5
+      },
+      "revId": "70494844e5f6c3dffba67ab168a5cf4cb6aeb7fe",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "72dd103d_b03f4ce8",
+        "filename": "src/sdbusplus/test/integration/daemon_manager.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 143,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2020-12-11T22:07:12Z",
+      "side": 1,
+      "message": "This isn\u0027t super great because pids can be reused, but I get you might not have many other options.",
+      "revId": "70494844e5f6c3dffba67ab168a5cf4cb6aeb7fe",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "146fc8ce_e6bd623d",
+        "filename": "src/sdbusplus/test/integration/daemon_manager.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 162,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2020-12-11T22:07:12Z",
+      "side": 1,
+      "message": "This makes your string have a huge amount of spaces in it, which I suspect is not what you intended.",
+      "range": {
+        "startLine": 161,
+        "startChar": 25,
+        "endLine": 162,
+        "endChar": 53
+      },
+      "revId": "70494844e5f6c3dffba67ab168a5cf4cb6aeb7fe",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "74036e77_81d98c02",
+        "filename": "src/sdbusplus/test/integration/daemon_manager.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 180,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2020-12-11T22:07:12Z",
+      "side": 1,
+      "message": "This is redundant, right?  String compare between an empty string and a not-empty string will be false.",
+      "range": {
+        "startLine": 180,
+        "startChar": 12,
+        "endLine": 180,
+        "endChar": 31
+      },
+      "revId": "70494844e5f6c3dffba67ab168a5cf4cb6aeb7fe",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ba711bd3_7f3c2f85",
+        "filename": "src/sdbusplus/test/integration/daemon_manager.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 206,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2020-12-11T22:07:12Z",
+      "side": 1,
+      "message": "Are these \u0027addclose\u0027 necessary?  I\u0027m not convinced it actually does anything from the man pages.",
+      "revId": "70494844e5f6c3dffba67ab168a5cf4cb6aeb7fe",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "380a1454_e593a39b",
+        "filename": "src/sdbusplus/test/integration/daemon_manager.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 241,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2020-12-11T22:07:12Z",
+      "side": 1,
+      "message": "This is a case where \u0027errno\u0027 is not valid and might lead to confusing results of calling throwDaemonError.  Something you might want to think through anywhere you\u0027re calling throwDaemonError.",
+      "range": {
+        "startLine": 238,
+        "startChar": 0,
+        "endLine": 241,
+        "endChar": 5
+      },
+      "revId": "70494844e5f6c3dffba67ab168a5cf4cb6aeb7fe",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5bde6723_2507b8e6",
+        "filename": "src/sdbusplus/test/integration/daemon_manager.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 246,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2020-12-11T22:07:12Z",
+      "side": 1,
+      "message": "This feels like you\u0027re trying to be fancy with boolean notation and causes extra work to read, to me. \n\nreturn !stdoutPath.empty() || !stderrPath.empty()",
+      "revId": "70494844e5f6c3dffba67ab168a5cf4cb6aeb7fe",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5855d00c_284d5aea",
+        "filename": "src/sdbusplus/test/integration/daemon_manager.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 252,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2020-12-11T22:07:12Z",
+      "side": 1,
+      "message": "\"\\n\".\n\nDon\u0027t use endl unless you want to flush a buffer, which isn\u0027t what you\u0027re intending to do on a stringstream.",
+      "range": {
+        "startLine": 252,
+        "startChar": 33,
+        "endLine": 252,
+        "endChar": 42
+      },
+      "revId": "70494844e5f6c3dffba67ab168a5cf4cb6aeb7fe",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2b722955_4bd7fd93",
+        "filename": "src/sdbusplus/test/integration/daemon_manager.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 253,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2020-12-11T22:07:12Z",
+      "side": 1,
+      "message": "You need to capture errno as the first operation in this function.  Anything you do afterwards, including calling the stringstream constructor, has the possibility of overwriting the value stored in errno.",
+      "range": {
+        "startLine": 253,
+        "startChar": 26,
+        "endLine": 253,
+        "endChar": 77
+      },
+      "revId": "70494844e5f6c3dffba67ab168a5cf4cb6aeb7fe",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d39c80c5_724c503f",
+        "filename": "src/sdbusplus/test/integration/daemon_manager.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 271,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2020-12-11T22:07:12Z",
+      "side": 1,
+      "message": "It is possible that someone called the constructor with an empty vector and this is the only time you\u0027re reading the vector without a begin/end iterator loop of some sort.  Suggest using .at(0) so that the code throws rather than segv.",
+      "revId": "70494844e5f6c3dffba67ab168a5cf4cb6aeb7fe",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "08b335d8_4146a88d",
+        "filename": "test/test/integration/daemon_manager.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2020-12-11T22:07:12Z",
+      "side": 1,
+      "message": "I\u0027m pretty worried about this not working in all cases for our CI testing.  There are two potential problems:\n\n1. if two tests are running in parallel the daemon matching the command string may exist but be for a different \n2. busybox ps doesn\u0027t support this -C option.  Some BMCs only include busybox ps, which means we cannot run these unit/integration tests on device.\n\nAn alternative might be:\n    - create a pid namespace with `unshare` so that all children processes are in a separate namespace.\n    - use pgrep instead of ps.\n    - (processes invoked with \u0027system\u0027 become children of this process, right?  so they\u0027d be included in the new pid namespace.  otherwise you might need a different way to launch beside `system`).\n\nAlso, you might want to use an option like \u0027pgrep -f\u0027 instead of the ps option you\u0027re doing too.  Processes can change their name when they launch, but not their own cmdline.  Unfortunately you can also get a collision with a process named \u0027top\u0027 and \u0027htop\u0027.  That means your unit tests below might always fail on somebody\u0027s Linux desktop based on what process monitor they have running.",
+      "revId": "70494844e5f6c3dffba67ab168a5cf4cb6aeb7fe",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    }
+  ]
+}

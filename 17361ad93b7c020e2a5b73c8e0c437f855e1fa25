@@ -1,0 +1,113 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "af800d28_222e3cfb",
+        "filename": "src/sdbusplus/test/integration/dbusd_manager.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2020-12-11T22:24:35Z",
+      "side": 1,
+      "message": "This only supports Linux desktops that use dbus-daemon and not ones that use dbus-broker.  The BMC uses dbus-broker.\n\nHow do you know if this is launching a system bus or a user bus (I see buildArgv below)?  How do dbus applications connect to this bus if the session or system already has one?",
+      "revId": "17361ad93b7c020e2a5b73c8e0c437f855e1fa25",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f0bbd5a7_1d1f69e7",
+        "filename": "src/sdbusplus/test/integration/dbusd_manager.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2020-12-11T22:24:35Z",
+      "side": 1,
+      "message": "How do you know this order will be maintained forever?",
+      "range": {
+        "startLine": 55,
+        "startChar": 0,
+        "endLine": 56,
+        "endChar": 47
+      },
+      "revId": "17361ad93b7c020e2a5b73c8e0c437f855e1fa25",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "890eff5b_1cd63f4b",
+        "filename": "src/sdbusplus/test/integration/dbusd_manager.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2020-12-11T22:24:35Z",
+      "side": 1,
+      "message": "This help doesn\u0027t match the class.",
+      "range": {
+        "startLine": 62,
+        "startChar": 0,
+        "endLine": 63,
+        "endChar": 66
+      },
+      "revId": "17361ad93b7c020e2a5b73c8e0c437f855e1fa25",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "58eafb20_0bd101e7",
+        "filename": "src/sdbusplus/test/integration/dbusd_manager.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2020-12-11T22:24:35Z",
+      "side": 1,
+      "message": "Suggest \u0027const std::string\u0026\u0027 parameter.  Defer conversion to C-string until the last possible moment.  Here you can use the C++ \u0027stol\u0027 functions instead of the C \u0027strtol\u0027.",
+      "range": {
+        "startLine": 66,
+        "startChar": 36,
+        "endLine": 66,
+        "endChar": 54
+      },
+      "revId": "17361ad93b7c020e2a5b73c8e0c437f855e1fa25",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "aa929f15_70ae0262",
+        "filename": "src/sdbusplus/test/integration/dbusd_manager.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2020-12-11T22:24:35Z",
+      "side": 1,
+      "message": "const std::string\u0026 here also.",
+      "range": {
+        "startLine": 72,
+        "startChar": 42,
+        "endLine": 72,
+        "endChar": 61
+      },
+      "revId": "17361ad93b7c020e2a5b73c8e0c437f855e1fa25",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    }
+  ]
+}

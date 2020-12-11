@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2b597564_b97555ee",
+        "filename": "include/sdbusplus/test/integration/mock_object.hpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2020-12-11T22:50:01Z",
+      "side": 1,
+      "message": "const std::string\u0026 ?",
+      "range": {
+        "startLine": 28,
+        "startChar": 15,
+        "endLine": 28,
+        "endChar": 26
+      },
+      "revId": "e3a93303806f4e12b9bc2a628d7f0852a10ea758",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "36422b41_ce77ca58",
+        "filename": "src/sdbusplus/test/integration/mock_object.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2020-12-11T22:50:01Z",
+      "side": 1,
+      "message": "If you don\u0027t use \u0027const std::string\u0026\u0027, this should be std::move(objPath).",
+      "range": {
+        "startLine": 17,
+        "startChar": 46,
+        "endLine": 17,
+        "endChar": 59
+      },
+      "revId": "e3a93303806f4e12b9bc2a628d7f0852a10ea758",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6958ee93_090ea0e7",
+        "filename": "src/sdbusplus/test/integration/mock_object.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2020-12-11T22:50:01Z",
+      "side": 1,
+      "message": "I feel like there is a misunderstanding of dbus in this class.  Earlier you talked about \"constructing an object on the dbus\", which this class doesn\u0027t actually do.  But, I know you might do something else via inheritance that I don\u0027t have visibility to.\n\nThis line is creating an \"object manager\", which is very different from an \"object\".  There should only be 1 object manager in a process and it should be located at the top-most part of the path where objects will eventually reside.",
+      "revId": "e3a93303806f4e12b9bc2a628d7f0852a10ea758",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    }
+  ]
+}

@@ -80,7 +80,8 @@ inline void setProperty(sdbusplus::asio::connection& bus,
             onSuccess();
         },
         service, path, "org.freedesktop.DBus.Properties", "Set", interface,
-        propertyName, std::variant<T>(std::forward<T>(propertyValue)));
+        propertyName,
+        std::variant<std::decay_t<T>>(std::forward<T>(propertyValue)));
 }
 
 } // namespace sdbusplus::asio

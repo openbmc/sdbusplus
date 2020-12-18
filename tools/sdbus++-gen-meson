@@ -2,6 +2,10 @@
 
 set -e
 
+# Locale can change behavior of utilities like 'sort' but we want the output
+# to be stable on all machines.  Force the locale to 'C' for consistency.
+export LC_ALL=C
+
 function show_usage {
     cat \
 <<EOF

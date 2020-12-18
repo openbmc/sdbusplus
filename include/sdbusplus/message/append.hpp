@@ -221,8 +221,20 @@ struct append_single<std::string>
 };
 
 /** @brief Specialization of append_single for details::string_wrapper. */
-template <typename T>
-struct append_single<details::string_wrapper<T>>
+template <>
+struct append_single<details::string_wrapper>
+{
+    template <typename S>
+    static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, S&& s)
+    {
+        constexpr auto dbusType = std::get<0>(types::type_id<S>());
+        intf->sd_bus_message_append_basic(m, dbusType, s.str.c_str());
+    }
+};
+
+/** @brief Specialization of append_single for details::string_wrapper. */
+template <>
+struct append_single<details::string_path_wrapper>
 {
     template <typename S>
     static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, S&& s)

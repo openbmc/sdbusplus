@@ -48,11 +48,11 @@ class Property
     }
 
     template <class OnError, class OnSuccess>
-    void async_set(T&& value, OnError&& onError, OnSuccess&& onSuccess)
+    void async_set(const T& value, OnError&& onError, OnSuccess&& onSuccess)
     {
-        sdbusplus::asio::setProperty(
-            bus_, service_, path_, interface_, name_, std::forward<T>(value),
-            std::forward<OnError>(onError), std::forward<OnSuccess>(onSuccess));
+        sdbusplus::asio::setProperty(bus_, service_, path_, interface_, name_,
+                                     value, std::forward<OnError>(onError),
+                                     std::forward<OnSuccess>(onSuccess));
     }
 
   private:

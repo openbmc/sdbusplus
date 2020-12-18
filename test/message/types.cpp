@@ -41,6 +41,33 @@ TEST(MessageTypes, ObjectPath)
     ASSERT_EQ(dbus_string(sdbusplus::message::object_path("/asdf")), "o");
 }
 
+TEST(MessageTypes, ObjectPathLeaf)
+{
+    ASSERT_EQ(sdbusplus::message::object_path("/abc/def").filename(),
+              std::optional<std::string>("def"));
+    ASSERT_EQ(sdbusplus::message::object_path("/abc/").filename(),
+              std::nullopt);
+    ASSERT_EQ(sdbusplus::message::object_path("/abc").filename(),
+              std::optional<std::string>("abc"));
+    ASSERT_EQ(sdbusplus::message::object_path("/").filename(), std::nullopt);
+    ASSERT_EQ(sdbusplus::message::object_path("").filename(), std::nullopt);
+    ASSERT_EQ(sdbusplus::message::object_path("abc").filename(), std::nullopt);
+}
+
+TEST(MessageTypes, ObjectPathParent)
+{
+    ASSERT_EQ(sdbusplus::message::object_path("/abc/def").parent_path(),
+              std::optional<std::string>("/abc"));
+    ASSERT_EQ(sdbusplus::message::object_path("/abc/").parent_path(),
+              std::nullopt);
+    ASSERT_EQ(sdbusplus::message::object_path("/abc").parent_path(),
+              std::optional<std::string>("/"));
+    ASSERT_EQ(sdbusplus::message::object_path("/").parent_path(), std::nullopt);
+    ASSERT_EQ(sdbusplus::message::object_path("").parent_path(), std::nullopt);
+    ASSERT_EQ(sdbusplus::message::object_path("abc").parent_path(),
+              std::nullopt);
+}
+
 TEST(MessageTypes, Signature)
 {
     ASSERT_EQ(dbus_string(sdbusplus::message::signature("sss")), "g");

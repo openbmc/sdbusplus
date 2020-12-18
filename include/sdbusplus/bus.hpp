@@ -99,7 +99,7 @@ class Strv
         ptrs.push_back(nullptr);
     }
 
-    explicit operator char* *()
+    explicit operator char**()
     {
         return const_cast<char**>(&ptrs.front());
     }

@@ -41,6 +41,28 @@ TEST(MessageTypes, ObjectPath)
     ASSERT_EQ(dbus_string(sdbusplus::message::object_path("/asdf")), "o");
 }
 
+TEST(MessageTypes, ObjectPathLeaf)
+{
+    ASSERT_EQ(sdbusplus::message::object_path("/abc/def").filename(), "def");
+    ASSERT_EQ(sdbusplus::message::object_path("/abc/").filename(), "");
+    ASSERT_EQ(sdbusplus::message::object_path("/abc").filename(), "abc");
+    ASSERT_EQ(sdbusplus::message::object_path("/").filename(), "");
+    ASSERT_EQ(sdbusplus::message::object_path("").filename(), "");
+    ASSERT_EQ(sdbusplus::message::object_path("abc").filename(), "");
+}
+
+TEST(MessageTypes, ObjectPathParent)
+{
+    ASSERT_EQ(sdbusplus::message::object_path("/abc/def").parent_path(),
+              sdbusplus::message::object_path("/abc"));
+    ASSERT_EQ(sdbusplus::message::object_path("/abc/").parent_path(),
+              sdbusplus::message::object_path("/abc"));
+    ASSERT_EQ(sdbusplus::message::object_path("/abc").parent_path(),
+              sdbusplus::message::object_path("/"));
+    ASSERT_EQ(sdbusplus::message::object_path("/").parent_path(),
+              sdbusplus::message::object_path("/"));
+}
+
 TEST(MessageTypes, Signature)
 {
     ASSERT_EQ(dbus_string(sdbusplus::message::signature("sss")), "g");

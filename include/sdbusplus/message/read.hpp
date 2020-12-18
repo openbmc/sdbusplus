@@ -208,8 +208,27 @@ struct read_single<std::string>
 };
 
 /** @brief Specialization of read_single for details::string_wrapper. */
-template <typename T>
-struct read_single<details::string_wrapper<T>>
+template <>
+struct read_single<details::string_wrapper>
+{
+    template <typename S>
+    static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, S&& s)
+    {
+        constexpr auto dbusType = std::get<0>(types::type_id<S>());
+        const char* str = nullptr;
+        int r = intf->sd_bus_message_read_basic(m, dbusType, &str);
+        if (r < 0)
+        {
+            throw exception::SdBusError(
+                -r, "sd_bus_message_read_basic string_wrapper");
+        }
+        s.str = str;
+    }
+};
+
+/** @brief Specialization of read_single for details::string_wrapper. */
+template <>
+struct read_single<details::string_path_wrapper>
 {
     template <typename S>
     static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, S&& s)

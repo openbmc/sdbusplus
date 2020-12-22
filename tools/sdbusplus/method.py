@@ -33,7 +33,7 @@ class Method(NamedElement, Renderer):
             return self.returns[0].cppTypeParam(interface.name)
         else:
             return "std::tuple<" + \
-                   self.returns_as_list() + \
+                   self.returns_as_list(interface) + \
                    ">"
 
     def parameter(self, interface, p, defaultValue=False):

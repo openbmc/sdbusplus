@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "42677546_fc7a8f51",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1000002
+      },
+      "writtenOn": "2021-01-05T14:02:24Z",
+      "side": 1,
+      "message": "\u003e The saved size potentially means a bit overhead of runtime\n\nIn functions that are called infrequently.  I really doubt the handful of instructions saved have any meaningful impact on runtime throughput.\n\n\u003e  Do we really such size?\n\nYes, when the footprint improvment is essentially free (see above).",
+      "parentUuid": "ac5dcc9f_f55a1ea8",
+      "revId": "0492982e7ae6d2c5957df6a77e0cd5f3206e30c4",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "8b0bc3aa_74084969",
         "filename": "include/sdbusplus/server/transaction.hpp",
         "patchSetId": 3

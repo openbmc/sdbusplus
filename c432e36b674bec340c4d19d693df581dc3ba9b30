@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "87576e6d_7d9e9a96",
+        "filename": "include/sdbusplus/message/native_types.hpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2021-01-14T18:22:52Z",
+      "side": 1,
+      "message": "Sounds reasonable.  My thinking was that dbus paths aren\u0027t allowed to be filenameless, whereas std::filesystem::path can be a directory, but now that I think about it, it\u0027s roughly the same.\n\nThe other thinking is that std::optional makes it a lot more obvious that you need to check for errors before using the string, but I guess making it look like the standard probably trumps ease of use.",
+      "parentUuid": "fee010ba_26dba4d2",
+      "revId": "c432e36b674bec340c4d19d693df581dc3ba9b30",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "798328fa_74f24d25",
         "filename": "include/sdbusplus/message/native_types.hpp",
         "patchSetId": 3
@@ -30,6 +48,24 @@
       "writtenOn": "2021-01-14T18:00:03Z",
       "side": 1,
       "message": "parent_path always returns \"/\" in the case where a path like \"/\" is passed in.  std::optional isn\u0027t required.",
+      "revId": "c432e36b674bec340c4d19d693df581dc3ba9b30",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5875cf7d_1f366b16",
+        "filename": "include/sdbusplus/message/native_types.hpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 167,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2021-01-14T18:22:52Z",
+      "side": 1,
+      "message": "Sounds reasonable, will fix.",
+      "parentUuid": "798328fa_74f24d25",
       "revId": "c432e36b674bec340c4d19d693df581dc3ba9b30",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true

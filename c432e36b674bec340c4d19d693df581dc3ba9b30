@@ -122,6 +122,24 @@
       "revId": "c432e36b674bec340c4d19d693df581dc3ba9b30",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b2d68c7a_9d736b45",
+        "filename": "test/message/types.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2021-01-14T22:16:03Z",
+      "side": 1,
+      "message": "There has to be some differences in some regards, right?\n\n\"abc\" is a valid std::filesystem::path, but is not a valid dbus path.  \".\", \"..\" ect are also valid std::filesystem::paths.  In the context of this patch, I really don\u0027t want to think through what a dbus relative paths would look like, as I don\u0027t think the added complexity is worth it.  Does that jive with you?\n\nAre you ok with the approach that \"Valid dbus paths will have the same behavior as the equivalent std::filesystem::path, but invalid dbus paths might return empty string more often\"?",
+      "parentUuid": "01630347_4a280438",
+      "revId": "c432e36b674bec340c4d19d693df581dc3ba9b30",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
     }
   ]
 }

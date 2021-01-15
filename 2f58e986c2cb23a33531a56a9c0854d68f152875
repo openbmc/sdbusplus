@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "ee9a4dfa_1e5f2b20",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2021-01-15T17:13:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "26d35feb_eb577a02",
+      "range": {
+        "startLine": 27,
+        "startChar": 60,
+        "endLine": 28,
+        "endChar": 5
+      },
+      "revId": "2f58e986c2cb23a33531a56a9c0854d68f152875",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e29f9d39_78857a43",
         "filename": "/COMMIT_MSG",
         "patchSetId": 5
@@ -45,6 +69,30 @@
       "revId": "2f58e986c2cb23a33531a56a9c0854d68f152875",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "04d46a7d_be3995e2",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2021-01-15T17:13:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e29f9d39_78857a43",
+      "range": {
+        "startLine": 33,
+        "startChar": 58,
+        "endLine": 33,
+        "endChar": 62
+      },
+      "revId": "2f58e986c2cb23a33531a56a9c0854d68f152875",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "428f52e2_005757cd",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2021-01-15T17:13:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f017b719_bb7c39f4",
+      "range": {
+        "startLine": 34,
+        "startChar": 0,
+        "endLine": 34,
+        "endChar": 6
+      },
+      "revId": "2f58e986c2cb23a33531a56a9c0854d68f152875",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d579af52_cc6682b9",
         "filename": "include/sdbusplus/message/native_types.hpp",
         "patchSetId": 5
@@ -91,6 +163,30 @@
       "revId": "2f58e986c2cb23a33531a56a9c0854d68f152875",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "47aa5239_d9dcca3a",
+        "filename": "include/sdbusplus/message/native_types.hpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2021-01-15T17:13:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d579af52_cc6682b9",
+      "range": {
+        "startLine": 3,
+        "startChar": 0,
+        "endLine": 3,
+        "endChar": 19
+      },
+      "revId": "2f58e986c2cb23a33531a56a9c0854d68f152875",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
     },
     {
       "key": {
@@ -117,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "356255eb_5dddce8c",
+        "filename": "include/sdbusplus/message/native_types.hpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 156,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2021-01-15T17:13:44Z",
+      "side": 1,
+      "message": "I\u0027m not quite following.  The statement below (I assume you\u0027re talking about on line 164) is operating on different return types, and is different code than this block, so unless I\u0027m missing something, can\u0027t be merged together without causing an extra string copy, which I\u0027d like to avoid in this case.",
+      "parentUuid": "f83f4e9f_0629add5",
+      "range": {
+        "startLine": 148,
+        "startChar": 0,
+        "endLine": 156,
+        "endChar": 9
+      },
+      "revId": "2f58e986c2cb23a33531a56a9c0854d68f152875",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "8156b5ed_3e38bb6c",
         "filename": "include/sdbusplus/message/native_types.hpp",
         "patchSetId": 5
@@ -128,6 +248,30 @@
       "writtenOn": "2021-01-15T12:04:49Z",
       "side": 1,
       "message": "nit you don\u0027t have to construct string_path_wrapper. literal string is enough",
+      "range": {
+        "startLine": 166,
+        "startChar": 19,
+        "endLine": 166,
+        "endChar": 38
+      },
+      "revId": "2f58e986c2cb23a33531a56a9c0854d68f152875",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b940491c_6e292302",
+        "filename": "include/sdbusplus/message/native_types.hpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 166,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2021-01-15T17:13:44Z",
+      "side": 1,
+      "message": "I\u0027m not sure where you got that idea, but string_path_wrapper is not implicitly constructable from const char[], nor should it be.\n\nMore concretely, if I make the change you\u0027re suggesting, the compiler gives the error.\n\n../include/sdbusplus/message/native_types.hpp:165:20: error: could not convert ‘\"/\"’ from ‘const char [2]’ to ‘sdbusplus::message::details::string_path_wrapper’.",
+      "parentUuid": "8156b5ed_3e38bb6c",
       "range": {
         "startLine": 166,
         "startChar": 19,

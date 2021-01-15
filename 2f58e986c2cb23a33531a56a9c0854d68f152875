@@ -1,0 +1,153 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "26d35feb_eb577a02",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1000677
+      },
+      "writtenOn": "2021-01-15T12:04:49Z",
+      "side": 1,
+      "message": "nit single \u0027avoid\u0027",
+      "range": {
+        "startLine": 27,
+        "startChar": 60,
+        "endLine": 28,
+        "endChar": 5
+      },
+      "revId": "2f58e986c2cb23a33531a56a9c0854d68f152875",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e29f9d39_78857a43",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1000677
+      },
+      "writtenOn": "2021-01-15T12:04:49Z",
+      "side": 1,
+      "message": "nit change it to filename",
+      "range": {
+        "startLine": 33,
+        "startChar": 58,
+        "endLine": 33,
+        "endChar": 62
+      },
+      "revId": "2f58e986c2cb23a33531a56a9c0854d68f152875",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d579af52_cc6682b9",
+        "filename": "include/sdbusplus/message/native_types.hpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1000677
+      },
+      "writtenOn": "2021-01-15T12:04:49Z",
+      "side": 1,
+      "message": "nit not required",
+      "range": {
+        "startLine": 3,
+        "startChar": 0,
+        "endLine": 3,
+        "endChar": 19
+      },
+      "revId": "2f58e986c2cb23a33531a56a9c0854d68f152875",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f83f4e9f_0629add5",
+        "filename": "include/sdbusplus/message/native_types.hpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 156,
+      "author": {
+        "id": 1000677
+      },
+      "writtenOn": "2021-01-15T12:04:49Z",
+      "side": 1,
+      "message": "nit it is possible to merge those statements, same below",
+      "range": {
+        "startLine": 148,
+        "startChar": 0,
+        "endLine": 156,
+        "endChar": 9
+      },
+      "revId": "2f58e986c2cb23a33531a56a9c0854d68f152875",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8156b5ed_3e38bb6c",
+        "filename": "include/sdbusplus/message/native_types.hpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 166,
+      "author": {
+        "id": 1000677
+      },
+      "writtenOn": "2021-01-15T12:04:49Z",
+      "side": 1,
+      "message": "nit you don\u0027t have to construct string_path_wrapper. literal string is enough",
+      "range": {
+        "startLine": 166,
+        "startChar": 19,
+        "endLine": 166,
+        "endChar": 38
+      },
+      "revId": "2f58e986c2cb23a33531a56a9c0854d68f152875",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dc8d4968_e0cdade8",
+        "filename": "test/message/types.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 1000677
+      },
+      "writtenOn": "2021-01-15T12:04:49Z",
+      "side": 1,
+      "message": "missing case where object_path has many slashes without gaps -\u003e \"//\" and object_path do not have slash at the begging of the string -\u003e \"abc/def\"",
+      "revId": "2f58e986c2cb23a33531a56a9c0854d68f152875",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6e4a33f0_724ad4c5",
+        "filename": "test/message/types.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 1000677
+      },
+      "writtenOn": "2021-01-15T12:04:49Z",
+      "side": 1,
+      "message": "missing case where object_path is empty - \"\"",
+      "revId": "2f58e986c2cb23a33531a56a9c0854d68f152875",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    }
+  ]
+}

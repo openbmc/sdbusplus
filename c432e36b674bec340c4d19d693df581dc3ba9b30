@@ -158,6 +158,24 @@
       "revId": "c432e36b674bec340c4d19d693df581dc3ba9b30",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d9cb8cae_8b62b61a",
+        "filename": "test/message/types.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2021-01-15T17:23:33Z",
+      "side": 1,
+      "message": "\u003e \u003e ... Does that jive with you?\n\u003e \n\u003e Yep.\n\u003e \n\u003e \u003e Are you ok with the approach that \"Valid dbus paths will have the same behavior as the equivalent std::filesystem::path, but invalid dbus paths might return empty string more often\"?\n\u003e \n\u003e Absolutely.  My preference would be that:\n\u003e - valid dbus paths operate in the same way as filesystem::path\n\u003e - invalid dbus paths are undefined behavior\n\nAt some point, it\u0027s be really nice if we had a constructor that didn\u0027t allow constructing invalid dbus paths, but that\u0027s a problem for another day.\n\n\u003e \n\u003e This allows us to implement with filesystem::path and really covers all the useful cases of dbus path operations.  I\u0027d like to do some refactoring to see if I can just make both string_wrapper classes so that they inherit from the underlying type (string vs path) and then we get a bunch of implementations for free.\n\u003e \n\u003e \u003e There has to be some differences in some regards, right?\n\u003e \n\u003e Are there any if we treat invalid dbus paths as UB?\n\nI don\u0027t think there are.  Sounds good to me.\n\n\nI can compare these against their std::filesystem::path bretheren (probably today).",
+      "parentUuid": "c0a7f86c_7686b976",
+      "revId": "c432e36b674bec340c4d19d693df581dc3ba9b30",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
     }
   ]
 }

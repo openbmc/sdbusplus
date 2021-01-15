@@ -48,6 +48,29 @@
     },
     {
       "key": {
+        "uuid": "f017b719_bb7c39f4",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-01-15T12:39:43Z",
+      "side": 1,
+      "message": "And \u0027parent_path\u0027. ;)",
+      "range": {
+        "startLine": 34,
+        "startChar": 0,
+        "endLine": 34,
+        "endChar": 6
+      },
+      "revId": "2f58e986c2cb23a33531a56a9c0854d68f152875",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "d579af52_cc6682b9",
         "filename": "include/sdbusplus/message/native_types.hpp",
         "patchSetId": 5

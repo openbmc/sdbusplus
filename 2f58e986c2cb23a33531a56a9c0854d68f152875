@@ -261,6 +261,30 @@
     },
     {
       "key": {
+        "uuid": "83578b5c_e54170c5",
+        "filename": "include/sdbusplus/message/native_types.hpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 156,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2021-01-19T17:17:19Z",
+      "side": 1,
+      "message": "There\u0027s an increment in between the two statements, so I\u0027m not sure how it could be joined without having to do the increment twice, or making the code less clear.\n\nAssuming I\u0027m understanding correctly, you want me to write\n\nif (index \u003d\u003d std::string::npos || \n    index + 1 \u003e\u003d str.size()){\n    return \"\";\n}\nindex++;  // Increment done a second time.\nreturn str.substr(index);\n\n\nMy preference would be to leave it as is, which IMO is clearer code, and in theory should require fewer intermediate registers.\nWith that said, Patrick is the maintainer, so if he wants to see the change above, I\u0027m happy to make it.",
+      "parentUuid": "bf929c29_1ad0e650",
+      "range": {
+        "startLine": 148,
+        "startChar": 0,
+        "endLine": 156,
+        "endChar": 9
+      },
+      "revId": "2f58e986c2cb23a33531a56a9c0854d68f152875",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "8156b5ed_3e38bb6c",
         "filename": "include/sdbusplus/message/native_types.hpp",
         "patchSetId": 5

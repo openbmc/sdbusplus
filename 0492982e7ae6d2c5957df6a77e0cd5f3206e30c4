@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "442bf3b6_7351367f",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-01-31T13:19:02Z",
+      "side": 1,
+      "message": "Yes, I agree with Brad.  The performance impact of an indirection is negligible even if it were called often.  I\u0027d want to see it show up on a profiler before being worried about it.\n\nOriginally when I wrote this library I strived to make it all header-only.  There is too much going on to actually achieve that with a reasonable code size.  I\u0027m trying to inline a number of functions to reduce the size of both phosphor-dbus-interfaces and across all the callers.  We can certainly cycle back and profile some of it if we think sdbusplus ends up having a performance impact on real applications.",
+      "parentUuid": "42677546_fc7a8f51",
+      "revId": "0492982e7ae6d2c5957df6a77e0cd5f3206e30c4",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "8b0bc3aa_74084969",
         "filename": "include/sdbusplus/server/transaction.hpp",
         "patchSetId": 3
@@ -57,6 +75,47 @@
       "revId": "0492982e7ae6d2c5957df6a77e0cd5f3206e30c4",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f0430165_f9b2bb99",
+        "filename": "include/sdbusplus/server/transaction.hpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-01-31T13:19:02Z",
+      "side": 1,
+      "message": "It is related to the space optimization.  There was this boilerplate in a number of generated functions:\n\n        auto tbus \u003d m.get_bus();\n        sdbusplus::server::transaction::Transaction t(tbus, m);\n        sdbusplus::server::transaction::set_id(\n            std::hash\u003csdbusplus::server::transaction::Transaction\u003e{}(t));\n\nIt is now enclosed in this set_id function.\n\nI don\u0027t see a significant value in putting that part into a separate commit.",
+      "parentUuid": "8b0bc3aa_74084969",
+      "range": {
+        "startLine": 102,
+        "startChar": 0,
+        "endLine": 106,
+        "endChar": 35
+      },
+      "revId": "0492982e7ae6d2c5957df6a77e0cd5f3206e30c4",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d373d656_7b475252",
+        "filename": "src/server/transaction.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-01-31T13:19:02Z",
+      "side": 1,
+      "message": "This is the new function implementation.",
+      "revId": "0492982e7ae6d2c5957df6a77e0cd5f3206e30c4",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
     }
   ]
 }

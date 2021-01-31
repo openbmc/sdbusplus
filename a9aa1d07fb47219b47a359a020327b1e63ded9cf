@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "15fa18c6_a84383c0",
+        "filename": "include/sdbusplus/sdbuspp_support/server.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-01-31T13:13:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7e171ef9_f0d69c58",
+      "range": {
+        "startLine": 82,
+        "startChar": 0,
+        "endLine": 82,
+        "endChar": 5
+      },
+      "revId": "a9aa1d07fb47219b47a359a020327b1e63ded9cf",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ababf1eb_b49ef937",
         "filename": "include/sdbusplus/sdbuspp_support/server.hpp",
         "patchSetId": 2
@@ -45,6 +69,30 @@
       "revId": "a9aa1d07fb47219b47a359a020327b1e63ded9cf",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ad42e235_b35070fa",
+        "filename": "include/sdbusplus/sdbuspp_support/server.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-01-31T13:13:32Z",
+      "side": 1,
+      "message": "I added comments.\n\nI don\u0027t think there is an easier method other than maybe holding the results of `std::apply(f, std::move(arg)` into a temporary that we then std::move into the outer std::apply.",
+      "parentUuid": "ababf1eb_b49ef937",
+      "range": {
+        "startLine": 116,
+        "startChar": 0,
+        "endLine": 118,
+        "endChar": 54
+      },
+      "revId": "a9aa1d07fb47219b47a359a020327b1e63ded9cf",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
     }
   ]
 }

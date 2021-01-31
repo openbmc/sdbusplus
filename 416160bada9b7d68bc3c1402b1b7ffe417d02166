@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fce6ccf8_56cd3047",
+        "filename": "tools/sdbusplus/method.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-01-31T13:22:02Z",
+      "side": 1,
+      "message": "If you\u0027re comparing with PS2, these 4 functions are introduced via rebase.",
+      "revId": "416160bada9b7d68bc3c1402b1b7ffe417d02166",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    }
+  ]
+}

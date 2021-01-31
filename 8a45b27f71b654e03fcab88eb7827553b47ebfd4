@@ -16,6 +16,24 @@
       "revId": "8a45b27f71b654e03fcab88eb7827553b47ebfd4",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "21329c7d_0d8fdc3d",
+        "filename": "include/sdbusplus/sdbus.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 228,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-01-31T12:56:12Z",
+      "side": 1,
+      "message": "I can\u0027t think of a good way to write a test for it...  You\u0027d be really trying to reverse engineer some future code (which doesn\u0027t already exist) to figure out the case where it does modify the value.  I don\u0027t really think there are useful cases where they ever would need to modify the value unless the value was invalid and there was a simple way to fix it up.",
+      "parentUuid": "69501465_6376d1af",
+      "revId": "8a45b27f71b654e03fcab88eb7827553b47ebfd4",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
     }
   ]
 }

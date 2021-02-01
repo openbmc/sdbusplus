@@ -93,6 +93,30 @@
       "revId": "a9aa1d07fb47219b47a359a020327b1e63ded9cf",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "449c77e6_72bc1c85",
+        "filename": "include/sdbusplus/sdbuspp_support/server.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2021-02-01T03:02:36Z",
+      "side": 1,
+      "message": "Yup, that\u0027s what I was expecting, something like:\n\n  auto ret \u003d std::apply(f, std::move(arg)));\n  reply.append(std::move(ret));\n\nBut it looks like it does need to pack the return values from `f` to `reply.append()` one-by-one according to the comment.\nSo +1",
+      "parentUuid": "ad42e235_b35070fa",
+      "range": {
+        "startLine": 116,
+        "startChar": 0,
+        "endLine": 118,
+        "endChar": 54
+      },
+      "revId": "a9aa1d07fb47219b47a359a020327b1e63ded9cf",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
     }
   ]
 }

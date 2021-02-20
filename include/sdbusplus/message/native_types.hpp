@@ -29,11 +29,11 @@ struct string_wrapper
     string_wrapper(std::string&& str) : str(std::move(str))
     {}
 
-    operator const std::string &() const volatile&
+    operator const std::string&() const volatile&
     {
         return const_cast<const string_wrapper*>(this)->str;
     }
-    operator std::string &&() &&
+    operator std::string&&() &&
     {
         return std::move(str);
     }
@@ -94,11 +94,11 @@ struct string_path_wrapper
     string_path_wrapper(std::string&& str) : str(std::move(str))
     {}
 
-    operator const std::string &() const volatile&
+    operator const std::string&() const volatile&
     {
         return const_cast<const string_path_wrapper*>(this)->str;
     }
-    operator std::string &&() &&
+    operator std::string&&() &&
     {
         return std::move(str);
     }

@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "69cd81bc_909e055f",
+        "filename": "include/sdbusplus/message.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 377,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-02-20T15:59:53Z",
+      "side": 1,
+      "message": "I\u0027ve been meaning to look into this in many other place where we\u0027re doing this `std::optional\u003cSdBusDuration\u003e`...\n\nWhat is the point of using a std::optional wrapper here?  `timeout \u003d 0` already means don\u0027t timeout, so why not just make this \u0027auto call(SdBusDuration timeout \u003d 0)\u0027?",
+      "revId": "a9fd2abadfaaa9258e4ca665e4a60bebf2e8be9b",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ccbf9fa1_0f21559e",
+        "filename": "include/sdbusplus/message.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 382,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-02-20T15:59:53Z",
+      "side": 1,
+      "message": "I originally put these functions on the bus to limit how much the message needed to break through the abstraction and get to the bus object itself (bus uses message and message uses bus).  Unfortunately, there were a few cases where it wasn\u0027t possible, like the \u0027method_return\u0027 function.  If you look back at commit \u00274c3427c2~1\u0027 before all the interface abstraction was put in, you\u0027ll see the only case where we had to access the bus object was in the \u0027method_return\u0027 function.\n\nIf we\u0027re going to add this \u0027call\u0027 here, you could make an argument that every method in bus that operates on a message should / could be moved into message itself.  Doing that requires this extra kind of lookup though.\n\nIs there some use case where the syntax of calling on the message object improves things significantly for the developer?  Is it worth the expense of the extra lookup?  If so, is there any reason to not move all the similar methods over here as well?",
+      "revId": "a9fd2abadfaaa9258e4ca665e4a60bebf2e8be9b",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    }
+  ]
+}

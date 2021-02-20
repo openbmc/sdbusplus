@@ -64,12 +64,10 @@ class Application
         return fatalErrors_;
     }
 
-    auto logSystemErrorCode()
+    auto logSystemErrorCode(boost::system::error_code ec)
     {
-        return [this](boost::system::error_code ec) {
             std::cerr << "Error: " << ec << "\n";
             ++fatalErrors_;
-        };
     }
 
     void logException(const std::exception& e)
@@ -90,10 +88,15 @@ class Application
     {
         sdbusplus::asio::getAllProperties(
             bus_, xyz::demo::name, xyz::demo::path, xyz::demo::interface,
-            logSystemErrorCode(),
-            [this](std::vector<std::pair<
+            [this](boost::system::error_code ec,
+                   std::vector<std::pair<
                        std::string, std::variant<std::monostate, std::string>>>&
-                       properties) {
+                       properties) -> void {
+                if (ec)
+                {
+                    logSystemErrorCode(ec);
+                    return;
+                }
                 try
                 {
                     std::string greetings;
@@ -130,11 +133,16 @@ class Application
     {
         sdbusplus::asio::getAllProperties(
             bus_, xyz::demo::name, xyz::demo::path, xyz::demo::interface,
-            logSystemErrorCode(),
-            [this](
-                std::vector<std::pair<std::string,
-                                      std::variant<std::monostate, std::string,
-                                                   uint32_t>>>& properties) {
+            [this](boost::system::error_code ec,
+                   std::vector<std::pair<
+                       std::string,
+                       std::variant<std::monostate, std::string, uint32_t>>>&
+                       properties) -> void {
+                if (ec)
+                {
+                    logSystemErrorCode(ec);
+                    return;
+                }
                 try
                 {
                     std::string greetings;

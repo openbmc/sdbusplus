@@ -90,10 +90,15 @@ class Application
     {
         sdbusplus::asio::getAllProperties(
             bus_, xyz::demo::name, xyz::demo::path, xyz::demo::interface,
-            logSystemErrorCode(),
-            [this](std::vector<std::pair<
+            [this](boost::system::error_code ec,
+                   std::vector<std::pair<
                        std::string, std::variant<std::monostate, std::string>>>&
-                       properties) {
+                       properties) -> void {
+                if (ec)
+                {
+                    logSystemErrorCode();
+                    return;
+                }
                 try
                 {
                     std::string greetings;
@@ -130,11 +135,16 @@ class Application
     {
         sdbusplus::asio::getAllProperties(
             bus_, xyz::demo::name, xyz::demo::path, xyz::demo::interface,
-            logSystemErrorCode(),
-            [this](
-                std::vector<std::pair<std::string,
-                                      std::variant<std::monostate, std::string,
-                                                   uint32_t>>>& properties) {
+            [this](boost::system::error_code ec,
+                   std::vector<std::pair<
+                       std::string,
+                       std::variant<std::monostate, std::string, uint32_t>>>&
+                       properties) -> void {
+                if (ec)
+                {
+                    logSystemErrorCode();
+                    return;
+                }
                 try
                 {
                     std::string greetings;

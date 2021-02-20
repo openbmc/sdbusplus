@@ -39,20 +39,18 @@ class Property
         service_(service), path_(path), interface_(interface), name_(name)
     {}
 
-    template <class OnError, class OnSuccess>
-    void async_get(OnError&& onError, OnSuccess&& onSuccess)
+    template <class Handler>
+    void async_get(Handler&& handler)
     {
         sdbusplus::asio::getProperty<T>(bus_, service_, path_, interface_,
-                                        name_, std::forward<OnError>(onError),
-                                        std::forward<OnSuccess>(onSuccess));
+                                        name_, std::forward<Handler>(handler));
     }
 
-    template <class OnError, class OnSuccess>
-    void async_set(const T& value, OnError&& onError, OnSuccess&& onSuccess)
+    template <class Handler>
+    void async_set(const T& value, Handler&& handler)
     {
         sdbusplus::asio::setProperty(bus_, service_, path_, interface_, name_,
-                                     value, std::forward<OnError>(onError),
-                                     std::forward<OnSuccess>(onSuccess));
+                                     value, std::forward<Handler>(handler));
     }
 
   private:
@@ -112,12 +110,15 @@ class Application
             name::greetings};
 
         propertyWithWrongType.async_get(
-            [](boost::system::error_code error) {
-                std::cout
-                    << "As expected failed to getProperty with wrong type: "
-                    << error << "\n";
-            },
-            [this](uint32_t) {
+            [this](boost::system::error_code error, uint32_t) {
+                if (error)
+                {
+                    std::cout
+                        << "As expected failed to getProperty with wrong type: "
+                        << error << "\n";
+                    return;
+                }
+
                 std::cerr << "Error: it was expected to fail getProperty due "
                              "to wrong type\n";
                 ++fatalErrors_;
@@ -126,38 +127,55 @@ class Application
 
     void asyncReadProperties()
     {
-        propertyGreetings.async_get(getFailed(), [](std::string value) {
-            std::cout << "Greetings value is: " << value << "\n";
-        });
+        propertyGreetings.async_get(
+            [this](boost::system::error_code ec, std::string value) {
+                if (ec)
+                {
+                    getFailed();
+                    return;
+                }
+                std::cout << "Greetings value is: " << value << "\n";
+            });
 
-        propertyGoodbyes.async_get(getFailed(), [](std::string value) {
-            std::cout << "Goodbyes value is: " << value << "\n";
-        });
+        propertyGoodbyes.async_get(
+            [this](boost::system::error_code ec, std::string value) {
+                if (ec)
+                {
+                    getFailed();
+                    return;
+                }
+                std::cout << "Goodbyes value is: " << value << "\n";
+            });
     }
 
     void asyncChangeProperty()
     {
         propertyGreetings.async_set(
-            "Hi, hey, hello",
-            [](const boost::system::error_code& error) {
-                std::cout << "As expected, failed to set greetings property: "
-                          << error << "\n";
-            },
-            [this]() {
+            "Hi, hey, hello", [this](const boost::system::error_code& error) {
+                if (error)
+                {
+                    std::cout
+                        << "As expected, failed to set greetings property: "
+                        << error << "\n";
+                    return;
+                }
+
                 std::cout
                     << "Error: it was expected to fail to change greetings\n";
                 ++fatalErrors_;
             });
 
         propertyGoodbyes.async_set(
-            "Bye bye",
-            [this](const boost::system::error_code& error) {
-                std::cout << "Error: it supposed to be ok to change goodbyes "
-                             "property: "
-                          << error << "\n";
-                ++fatalErrors_;
-            },
-            [this]() {
+            "Bye bye", [this](const boost::system::error_code& error) {
+                if (error)
+                {
+                    std::cout
+                        << "Error: it supposed to be ok to change goodbyes "
+                           "property: "
+                        << error << "\n";
+                    ++fatalErrors_;
+                    return;
+                }
                 std::cout << "Changed goodbyes property as expected\n";
                 boost::asio::post(ioc_, [this] { asyncReadProperties(); });
             });

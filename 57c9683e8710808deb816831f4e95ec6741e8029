@@ -73,6 +73,30 @@
     },
     {
       "key": {
+        "uuid": "bc17ec91_43164e0d",
+        "filename": "include/sdbusplus/asio/property.hpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1000900
+      },
+      "writtenOn": "2021-02-23T03:24:15Z",
+      "side": 1,
+      "message": "It\u0027s not clear with all the diff colorations, but I was commenting on the whole lambda - I think this could just be bus.async_method_call(std::forward(handler), service,...) because the lambda doesn\u0027t do anything extra now.\n\nBut either way, the rule I learned from Scott Meyer is to use std::forward on universal references (which handler is). Since handler could theoretically be an lvalue reference to a closure object, we should use std::forward to preserve that type. (Although passing lvalue closures seems to be less common in practice in our code.)",
+      "parentUuid": "24690d9f_31a41e43",
+      "range": {
+        "startLine": 19,
+        "startChar": 8,
+        "endLine": 23,
+        "endChar": 9
+      },
+      "revId": "57c9683e8710808deb816831f4e95ec6741e8029",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "c78fd4b9_32a3d3d2",
         "filename": "include/sdbusplus/asio/property.hpp",
         "patchSetId": 5

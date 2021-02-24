@@ -192,6 +192,30 @@
     },
     {
       "key": {
+        "uuid": "aeaf0979_e875de45",
+        "filename": "include/sdbusplus/asio/property.hpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1000678
+      },
+      "writtenOn": "2021-02-24T08:40:10Z",
+      "side": 1,
+      "message": "This may not work in all cases. async_method_call requires to pass proper types. This is not that important but you should know that there is small difference.\n\nWhen you do it like this you are allowed to do:\n[](auto ec, vector\u003c...\u003e) {}\n\nWhen you do plain forward you are forced to take ec as boost::system::error_code",
+      "parentUuid": "45918381_da5ba2e7",
+      "range": {
+        "startLine": 19,
+        "startChar": 8,
+        "endLine": 23,
+        "endChar": 9
+      },
+      "revId": "57c9683e8710808deb816831f4e95ec6741e8029",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c78fd4b9_32a3d3d2",
         "filename": "include/sdbusplus/asio/property.hpp",
         "patchSetId": 5
@@ -260,6 +284,29 @@
       "revId": "57c9683e8710808deb816831f4e95ec6741e8029",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "31472d2c_759ccac7",
+        "filename": "include/sdbusplus/asio/property.hpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1000678
+      },
+      "writtenOn": "2021-02-24T08:40:10Z",
+      "side": 1,
+      "message": "just a note: you need pay for creating this type, it may be just int, but it may be tuple of string, ...\n\nIt is probably lighter than creating shared_ptr",
+      "range": {
+        "startLine": 50,
+        "startChar": 20,
+        "endLine": 50,
+        "endChar": 22
+      },
+      "revId": "57c9683e8710808deb816831f4e95ec6741e8029",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
     },
     {
       "key": {

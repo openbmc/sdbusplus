@@ -453,6 +453,30 @@
     },
     {
       "key": {
+        "uuid": "b048e36e_b07aa030",
+        "filename": "include/sdbusplus/asio/property.hpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2021-02-24T16:56:36Z",
+      "side": 1,
+      "message": "For the one usage of getProperty that I could find in the codebase I\u0027ve added the extra overload and marked it as deprecated.  This should avoid the hard binding between these two patchsets when they get merged.\n\nI wasn\u0027t able to find usages of the other methods, so they should be easy to move forward directly.",
+      "parentUuid": "21a92167_388d0308",
+      "range": {
+        "startLine": 61,
+        "startChar": 24,
+        "endLine": 61,
+        "endChar": 41
+      },
+      "revId": "57c9683e8710808deb816831f4e95ec6741e8029",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "26a47eff_df93ded3",
         "filename": "include/sdbusplus/asio/property.hpp",
         "patchSetId": 5

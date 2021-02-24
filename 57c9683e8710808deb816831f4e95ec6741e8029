@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "bc93df36_9017f010",
+        "filename": "example/get-all-properties.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2021-02-24T16:36:08Z",
+      "side": 1,
+      "message": "That\u0027s a great catch.  I\u0027ve changed logSystemErrorCode to be a normal function instead of returning a lambda.  This cleans up the error handling path here quite a bit, and simplifies it.  Thanks!\n\nYour comment about binary size is well received, although it should be noted that for the examples, these two pieces off code generate exactly the same same binary, which has the same binary size as the old code.",
+      "parentUuid": "1e3f60f7_9e1fb9dd",
+      "range": {
+        "startLine": 99,
+        "startChar": 20,
+        "endLine": 99,
+        "endChar": 41
+      },
+      "revId": "57c9683e8710808deb816831f4e95ec6741e8029",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "d42a76b0_895bcc77",
         "filename": "include/sdbusplus/asio/property.hpp",
         "patchSetId": 5
@@ -216,6 +240,30 @@
     },
     {
       "key": {
+        "uuid": "2e1b3637_45b56ae9",
+        "filename": "include/sdbusplus/asio/property.hpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2021-02-24T16:36:08Z",
+      "side": 1,
+      "message": "\u003e This may not work in all cases. async_method_call requires to pass proper types. This is not that important but you should know that there is small difference.\n\u003e \n\u003e When you do it like this you are allowed to do:\n\u003e [](auto ec, vector\u003c...\u003e) {}\n\nIs this a real use case?  Can you point at code that does this?  Taking a callable parameter by auto seems problematic from a code reading comprehension standpoint.  I know if code got checked in that did this, I would ask for the type to be called out explicitly.\n\n\u003e \n\u003e When you do plain forward you are forced to take ec as boost::system::error_code\n\nYou\u0027re taking it as boost::system::error_code in both cases, in the former case you\u0027re just allowed to use auto, which obfuscates the type.\n\nTo my understanding, std::networking apis don\u0027t allow using auto for the error code return type, as handlers must meet the Handler concepts defined by the standard.  I\u0027d like to follow that model for consistency between async calls.\n\nEventually I\u0027d really like these to have their own defined concepts for handler type, with static asserts for when handler types don\u0027t work, but that\u0027s for another patchset.",
+      "parentUuid": "aeaf0979_e875de45",
+      "range": {
+        "startLine": 19,
+        "startChar": 8,
+        "endLine": 23,
+        "endChar": 9
+      },
+      "revId": "57c9683e8710808deb816831f4e95ec6741e8029",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "c78fd4b9_32a3d3d2",
         "filename": "include/sdbusplus/asio/property.hpp",
         "patchSetId": 5
@@ -310,6 +358,30 @@
     },
     {
       "key": {
+        "uuid": "69b450fa_7384b5c9",
+        "filename": "include/sdbusplus/asio/property.hpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2021-02-24T16:36:08Z",
+      "side": 1,
+      "message": "You only need to pay for construction in the failing case, which seems ok to me.\n\ntuple\u003cstd::string, std::string\u003e construction doesn\u0027t call malloc, and if I remember right std::string zero initializes, so in terms of code, it\u0027s the same as declaring\n\nstd::array\u003cuint8_t, 24+24\u003e {0};\nWhich should be cheaper than constructing a shared_ptr, which will call into malloc a couple times to allocate the tracking struct as well as the object being constructed.  This gets constructed on stack, initialized with zeros.\n\nThe other option I considered was declaring a variable of type T at the top of this function, and using std::move(value) to put the result into it, that way all code paths returned the same variable.  That seems worse, as it forces a move in the golden path, which we\u0027d like to optimize for, and forces the object to be move constructable.",
+      "parentUuid": "31472d2c_759ccac7",
+      "range": {
+        "startLine": 50,
+        "startChar": 20,
+        "endLine": 50,
+        "endChar": 22
+      },
+      "revId": "57c9683e8710808deb816831f4e95ec6741e8029",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "eb4541a8_9145060a",
         "filename": "include/sdbusplus/asio/property.hpp",
         "patchSetId": 5
@@ -345,6 +417,30 @@
       "side": 1,
       "message": "How about creating two overloads, one which takes single handler with two parameters and one with two handler one parameter in each?",
       "parentUuid": "eb4541a8_9145060a",
+      "range": {
+        "startLine": 61,
+        "startChar": 24,
+        "endLine": 61,
+        "endChar": 41
+      },
+      "revId": "57c9683e8710808deb816831f4e95ec6741e8029",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "21a92167_388d0308",
+        "filename": "include/sdbusplus/asio/property.hpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2021-02-24T16:36:08Z",
+      "side": 1,
+      "message": "\"But why do you want to move error checking part to user code? \"\n\nI\u0027m not following.  Error checking will be in user code regardless, this code just makes it a branch instead of a secondary object.  Yes, I would like users to handle their errors explicitly, and without constructing an extra object just to store in the failing case.\n\n\n\"How about creating two overloads,\"\n\nI thought about creating two overloads temporarily, so this change could be rolled out, then the old one deleted, but looking through the codebase, I found one usage of these new methods (in telemetry that I sent the patchset out for) so it seemed easier to just jump directly to the new API.\n\nLong term, I\u0027d rather we don\u0027t have two overloads of this for consistency with std::networking.",
+      "parentUuid": "8b73bdd9_4132e537",
       "range": {
         "startLine": 61,
         "startChar": 24,

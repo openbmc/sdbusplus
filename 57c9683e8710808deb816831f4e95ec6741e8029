@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "f330695e_17540cc9",
+        "filename": "example/get-all-properties.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 1000678
+      },
+      "writtenOn": "2021-02-24T08:22:00Z",
+      "side": 1,
+      "message": "logSystemErrorCode is a function which produces lambda. It was verified that binary side is smaller if you pass lambda created by function rather than copy paste. Also it made sense when it was parameter to getAllProperties.\n\nNow you need to either logSystemErrorCode()(ec) inline logSystemErrorCode here.",
+      "range": {
+        "startLine": 99,
+        "startChar": 20,
+        "endLine": 99,
+        "endChar": 41
+      },
+      "revId": "57c9683e8710808deb816831f4e95ec6741e8029",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "d42a76b0_895bcc77",
         "filename": "include/sdbusplus/asio/property.hpp",
         "patchSetId": 5

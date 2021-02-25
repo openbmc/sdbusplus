@@ -73,6 +73,29 @@
     },
     {
       "key": {
+        "uuid": "d8d432c2_68d95aa5",
+        "filename": "example/get-all-properties.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 233,
+      "author": {
+        "id": 1000678
+      },
+      "writtenOn": "2021-02-25T10:14:00Z",
+      "side": 1,
+      "message": "Have you run this examples? If everything is ok you should be able to run it, ctrl+c after few seconds (depending on how fast your system is) fatal error count should be equal to 0.\n\nThis examples also work like tests.",
+      "range": {
+        "startLine": 233,
+        "startChar": 11,
+        "endLine": 233,
+        "endChar": 28
+      },
+      "revId": "57c9683e8710808deb816831f4e95ec6741e8029",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "d42a76b0_895bcc77",
         "filename": "include/sdbusplus/asio/property.hpp",
         "patchSetId": 5
@@ -252,6 +275,30 @@
       "side": 1,
       "message": "\u003e This may not work in all cases. async_method_call requires to pass proper types. This is not that important but you should know that there is small difference.\n\u003e \n\u003e When you do it like this you are allowed to do:\n\u003e [](auto ec, vector\u003c...\u003e) {}\n\nIs this a real use case?  Can you point at code that does this?  Taking a callable parameter by auto seems problematic from a code reading comprehension standpoint.  I know if code got checked in that did this, I would ask for the type to be called out explicitly.\n\n\u003e \n\u003e When you do plain forward you are forced to take ec as boost::system::error_code\n\nYou\u0027re taking it as boost::system::error_code in both cases, in the former case you\u0027re just allowed to use auto, which obfuscates the type.\n\nTo my understanding, std::networking apis don\u0027t allow using auto for the error code return type, as handlers must meet the Handler concepts defined by the standard.  I\u0027d like to follow that model for consistency between async calls.\n\nEventually I\u0027d really like these to have their own defined concepts for handler type, with static asserts for when handler types don\u0027t work, but that\u0027s for another patchset.",
       "parentUuid": "aeaf0979_e875de45",
+      "range": {
+        "startLine": 19,
+        "startChar": 8,
+        "endLine": 23,
+        "endChar": 9
+      },
+      "revId": "57c9683e8710808deb816831f4e95ec6741e8029",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d354a8a2_dad51a03",
+        "filename": "include/sdbusplus/asio/property.hpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1000678
+      },
+      "writtenOn": "2021-02-25T10:14:00Z",
+      "side": 1,
+      "message": "I don\u0027t know if it is used. I am just saying that you are changing previous  behavior. Previously it was allowed to pass auto now you are taking that possibility. All I wanted by this comment was to make sure you are aware of the difference.\n\nIt will be up to sdbusplus maintainers to decide.\n\nNow about what you wrote, I disagree that using auto may be harder to read.\n\n[](boost::system::error_code ec) {\n  if (ec) {\n    return;\n   }\n}\n\n[](auto errorCode) {\n  if (errorCode) {\n    return;\n   }\n}\n\nBoth cases look the same, user will decide what they want, why force them?",
+      "parentUuid": "2e1b3637_45b56ae9",
       "range": {
         "startLine": 19,
         "startChar": 8,
@@ -465,6 +512,30 @@
       "side": 1,
       "message": "For the one usage of getProperty that I could find in the codebase I\u0027ve added the extra overload and marked it as deprecated.  This should avoid the hard binding between these two patchsets when they get merged.\n\nI wasn\u0027t able to find usages of the other methods, so they should be easy to move forward directly.",
       "parentUuid": "21a92167_388d0308",
+      "range": {
+        "startLine": 61,
+        "startChar": 24,
+        "endLine": 61,
+        "endChar": 41
+      },
+      "revId": "57c9683e8710808deb816831f4e95ec6741e8029",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f7ab71d1_35f7e563",
+        "filename": "include/sdbusplus/asio/property.hpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 1000678
+      },
+      "writtenOn": "2021-02-25T10:14:00Z",
+      "side": 1,
+      "message": "How about other users of sdbusplus? This project can be used by anything, it doesn\u0027t have to be related to openBmc. It would be nice to give other projects (if any) some warning before breaking change is introduced.\n\nWhat about other helpers methods? If there is someone who is using them and that code is not public this is going to be a breaking change without a warning.\n\nI am just raising my concerns, maintainers will decide.",
+      "parentUuid": "b048e36e_b07aa030",
       "range": {
         "startLine": 61,
         "startChar": 24,

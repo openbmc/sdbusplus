@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6727287b_79961c02",
+        "filename": "include/sdbusplus/asio/property.hpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 1000900
+      },
+      "writtenOn": "2021-02-25T17:54:11Z",
+      "side": 1,
+      "message": "This can also be reduced to bus.async_method_call(std::forward\u003cHandler\u003e(handler), service...)",
+      "range": {
+        "startLine": 90,
+        "startChar": 8,
+        "endLine": 91,
+        "endChar": 59
+      },
+      "revId": "8dbe86e7581c0b1568cd61426d54c89b35ea024c",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    }
+  ]
+}

@@ -96,6 +96,30 @@
     },
     {
       "key": {
+        "uuid": "aa8edc15_9f9a7049",
+        "filename": "example/get-all-properties.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 233,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2021-02-25T15:29:43Z",
+      "side": 1,
+      "message": "The examples don\u0027t run on my desktop because of permissions issues on my flavor of debian, but the unit tests do pass, which has coverage of this.",
+      "parentUuid": "d8d432c2_68d95aa5",
+      "range": {
+        "startLine": 233,
+        "startChar": 11,
+        "endLine": 233,
+        "endChar": 28
+      },
+      "revId": "57c9683e8710808deb816831f4e95ec6741e8029",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "d42a76b0_895bcc77",
         "filename": "include/sdbusplus/asio/property.hpp",
         "patchSetId": 5
@@ -299,6 +323,30 @@
       "side": 1,
       "message": "I don\u0027t know if it is used. I am just saying that you are changing previous  behavior. Previously it was allowed to pass auto now you are taking that possibility. All I wanted by this comment was to make sure you are aware of the difference.\n\nIt will be up to sdbusplus maintainers to decide.\n\nNow about what you wrote, I disagree that using auto may be harder to read.\n\n[](boost::system::error_code ec) {\n  if (ec) {\n    return;\n   }\n}\n\n[](auto errorCode) {\n  if (errorCode) {\n    return;\n   }\n}\n\nBoth cases look the same, user will decide what they want, why force them?",
       "parentUuid": "2e1b3637_45b56ae9",
+      "range": {
+        "startLine": 19,
+        "startChar": 8,
+        "endLine": 23,
+        "endChar": 9
+      },
+      "revId": "57c9683e8710808deb816831f4e95ec6741e8029",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5147a417_ebe55238",
+        "filename": "include/sdbusplus/asio/property.hpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2021-02-25T15:29:43Z",
+      "side": 1,
+      "message": "\u003e I don\u0027t know if it is used. I am just saying that you are changing previous  behavior. Previously it was allowed to pass auto now you are taking that possibility. All I wanted by this comment was to make sure you are aware of the difference.\n\nI do appreciate you pointing it out;  I was not aware at the time, but I am now.  I think this behavior is more in line with the title of this patchset, which is attempting to make these look more like asio handlers.\n\n\u003e \n\u003e It will be up to sdbusplus maintainers to decide.\n\nOf course, happy to make whatever changes Patrick wants, but IMO this should stay as it is.\n\n\u003e \n\u003e Now about what you wrote, I disagree that using auto may be harder to read.\n\u003e \n\u003e [](boost::system::error_code ec) {\n\u003e   if (ec) {\n\u003e     return;\n\u003e    }\n\u003e }\n\u003e \n\u003e [](auto errorCode) {\n\u003e   if (errorCode) {\n\u003e     return;\n\u003e    }\n\u003e }\n\u003e \n\u003e Both cases look the same, user will decide what they want, why force them?\n\nWithout looking at the docs or relying on the name, what methods are allowed on errorCode?\n\nI could just as easily write\n[](auto ret)\n\nand it would be very difficult to determine the type of ret without looking at other examples, relying on an IDE, or reverse engineering sdbusplus.  If the type is called out explicitly, I can find the docs page on boost::system::error_code immediately.",
+      "parentUuid": "d354a8a2_dad51a03",
       "range": {
         "startLine": 19,
         "startChar": 8,
@@ -536,6 +584,30 @@
       "side": 1,
       "message": "How about other users of sdbusplus? This project can be used by anything, it doesn\u0027t have to be related to openBmc. It would be nice to give other projects (if any) some warning before breaking change is introduced.\n\nWhat about other helpers methods? If there is someone who is using them and that code is not public this is going to be a breaking change without a warning.\n\nI am just raising my concerns, maintainers will decide.",
       "parentUuid": "b048e36e_b07aa030",
+      "range": {
+        "startLine": 61,
+        "startChar": 24,
+        "endLine": 61,
+        "endChar": 41
+      },
+      "revId": "57c9683e8710808deb816831f4e95ec6741e8029",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "42eb613d_a908c96f",
+        "filename": "include/sdbusplus/asio/property.hpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2021-02-25T15:29:43Z",
+      "side": 1,
+      "message": "\u003e How about other users of sdbusplus?  This project can be used by anything, it doesn\u0027t have to be related to openBmc. It would be nice to give other projects (if any) some warning before breaking change is introduced.\n\nWe didn\u0027t give warning when the original breaking change that moved this to two handlers was introduced, and we\u0027ve made several other behavior breaking changes in the past without warning or deprecation.  Considering OpenBMC is the heaviest user of this, this method is new, and so far as I\u0027m aware there\u0027s only one usage of any of this in openbmc, it seems unlikely that any other projects have picked it up.\n\nWith that said, I\u0027m happy to do what Patrick wants here.\n\n\u003e \n\u003e What about other helpers methods? If there is someone who is using them and that code is not public this is going to be a breaking change without a warning.\n\nI can\u0027t make guesses about code that I can\u0027t see and isn\u0027t open source.  If other open source users pop up, I\u0027m happy to go push patches to fix their code too.  If we talk about downstream fork compatibility, technically any of these projects could\u0027ve patched this method, and any change here would be breaking.  I can\u0027t reason about code that I can\u0027t see.\n\n\u003e \n\u003e I am just raising my concerns, maintainers will decide.\n\nYep, I\u0027m happy to do anything that Patrick asks for, IMO I think what\u0027s currently in the patchset is the right path.",
+      "parentUuid": "f7ab71d1_35f7e563",
       "range": {
         "startLine": 61,
         "startChar": 24,

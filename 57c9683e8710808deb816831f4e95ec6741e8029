@@ -97,6 +97,30 @@
     },
     {
       "key": {
+        "uuid": "d772957f_413e9801",
+        "filename": "example/get-all-properties.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2021-02-26T16:50:19Z",
+      "side": 1,
+      "message": "Yep.  I believe this is fixed in the newest patchset;  If you\u0027d like more changes here, please let me know.",
+      "parentUuid": "31a0c34e_9c755c9c",
+      "range": {
+        "startLine": 99,
+        "startChar": 20,
+        "endLine": 99,
+        "endChar": 41
+      },
+      "revId": "57c9683e8710808deb816831f4e95ec6741e8029",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "d8d432c2_68d95aa5",
         "filename": "example/get-all-properties.cpp",
         "patchSetId": 5
@@ -407,6 +431,30 @@
     },
     {
       "key": {
+        "uuid": "d402d648_9033e021",
+        "filename": "include/sdbusplus/asio/property.hpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2021-02-26T16:50:19Z",
+      "side": 1,
+      "message": "\u003e To know what kind of lambda is expected to be passed here you still need to read the docs or look at the examples because signature takes Handler, it doesn\u0027t seem like anything is changing here.\n\nOnly if you\u0027re writing new code, with no known examples.  If you\u0027re following an example, you know exactly what the type is without ever having to open the getAllProperties implementation.\n\nIn the case of setProperty, you\u0027d have to open two levels of code to determine the return type.\n\n\u003e It is true that when you find example you have the type, with auto you have to look inside this function to see that boost::system::error_code is passed to your handler and that\u0027s something common, you read the code as is if you need details you go and take a look how is the function defined/implemented.\n\u003e \n\u003e I was looking for something in the internet which aligns with my knowledge about auto, this way may be more convincing.\n\u003e \n\u003e https://herbsutter.com/2013/08/12/gotw-94-solution-aaa-style-almost-always-auto/\n\n\nI\u0027ve read this article many times.  Some things to realize about it:\n1. Herb sutter, while great, does not speak for the entirety of the C++ committee or community.\n2. There are plenty of other response articles talking about that advice being harmful in a lot of ways.\n3. Lambda argument deduction by auto was added in c++14, so that article takes no opinion that can be directly applied to this code.  That article (with the exception of the title) is almost entirely focused on inline variable declarations, and makes no mention of taking arguments by auto.  It does mention templates for this kind of thing, but I think every callback handler becoming a template would be a mess, and I don\u0027t think that\u0027s what herb was getting at with his example.\n\n\u003e \n\u003e You can start reading from:\n\u003e \"3. What are some popular concerns about using auto to declare variables? Are they valid? Discuss.\"\n\u003e \n\u003e Just to make it clear. I\u0027m fine with having boost::system::error_code explicit I just disagree that using auto instead is bad. We can go for boost::system::error_code if this is coding standard that was agreed for example.\n\nSo in the context of this patchset, it sounds like we\u0027re good to go.  Thanks for your review.",
+      "parentUuid": "82999476_dccc4402",
+      "range": {
+        "startLine": 19,
+        "startChar": 8,
+        "endLine": 23,
+        "endChar": 9
+      },
+      "revId": "57c9683e8710808deb816831f4e95ec6741e8029",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "c78fd4b9_32a3d3d2",
         "filename": "include/sdbusplus/asio/property.hpp",
         "patchSetId": 5
@@ -537,6 +585,30 @@
       "side": 1,
       "message": "Just a note with make shared there should be one memory allocation. But yes shared pointer is slow, mostly because it\u0027s thread safe, if we cut that part out it should be only a bit slower than raw pointers (you still have to increment/decrement reference counter).",
       "parentUuid": "69b450fa_7384b5c9",
+      "range": {
+        "startLine": 50,
+        "startChar": 20,
+        "endLine": 50,
+        "endChar": 22
+      },
+      "revId": "57c9683e8710808deb816831f4e95ec6741e8029",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bde30d5c_8c5f912e",
+        "filename": "include/sdbusplus/asio/property.hpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2021-02-26T16:50:19Z",
+      "side": 1,
+      "message": "\u003e Just a note with make shared there should be one memory allocation.  But yes shared pointer is slow, mostly because it\u0027s thread safe, if we cut that part out it should be only a bit slower than raw pointers (you still have to increment/decrement reference counter).\n\nI\u0027m not sure what you mean by \"cut that part out\".  Are you talking about changing the shared_ptr implementation?  That seems difficult to do, and this is likely cheaper still.\n\nEven if you required shared_ptr in your lambda callbacks, you\u0027re imposing requirements on the things that can be passed to the callbacks, which this patchset is trying to avoid.\n\nIf you have a concrete change that you\u0027d like to see on this line, I\u0027m happy to make it;  I\u0027ve given the two thoughts I had here when writing this, and I\u0027ve picked what I think is the best option.",
+      "parentUuid": "a1a0a44e_6b3fbd7b",
       "range": {
         "startLine": 50,
         "startChar": 20,

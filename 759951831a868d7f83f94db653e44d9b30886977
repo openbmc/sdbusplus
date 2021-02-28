@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "62be090b_0976d513",
+        "filename": "include/sdbusplus/asio/property.hpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2021-02-28T06:12:33Z",
+      "side": 1,
+      "message": "This piece of code could be simplified to something like:\n\n T* value \u003d nullptr;\n if (!ec)\n {\n     value \u003d std::get_if\u003cT\u003e(\u0026ret);\n     if (!value)\n     {\n        ec \u003d boost::system::errc::make_error_code(\n                        boost::system::errc::invalid_argument);\n     }\n }\n handler(ec, value ? *value : {});",
+      "range": {
+        "startLine": 29,
+        "startChar": 0,
+        "endLine": 43,
+        "endChar": 24
+      },
+      "revId": "759951831a868d7f83f94db653e44d9b30886977",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    }
+  ]
+}

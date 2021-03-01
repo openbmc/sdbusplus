@@ -503,6 +503,30 @@
     },
     {
       "key": {
+        "uuid": "fd07755e_8a6a0dc8",
+        "filename": "include/sdbusplus/asio/property.hpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-03-01T13:42:12Z",
+      "side": 1,
+      "message": "In general, I have a strong preference for AAA style, but this code for the most part isn’t and I haven’t put a lot of eyeball time on the ASIO code in general since it was written during the time I was away from the project.  So, keep it how ever you desire for the time being.\n\nSpeaking generally, I find some of the arguments regarding [bad] readability / documentation of AAA style mostly bogus and this context to me is strong evidence.\n\n1. Handler is a template with no static asserts to ensure it follows any particular constraints anyhow.  (C++20 has Concepts which could be added to the templates as constraints to ensure certain requirements are met and are more appropriate than type-checking of lambdas).\n\n2. None of this code even uses ‘ec’/‘ret’ but it is redirected from ‘async_method_call’ to ‘handler’.  It provides no meaningful documentation because I still have to look at ‘async_method_call’s documentation to know if you got it right, other than assuming you have it right by nature of it compiling.  To me, as a reviewer / user, this really provides me no additional information that I wouldn’t have to look at these other functions to understand anyhow, so it is just noise to me.\n\nHerb is certainly not the only advocate of AAA in the C++ community even though he is probably the most famous name.  The C++ Core Guidelines also encourage AAA-style at ES.11 (though Herb started them, he is not the only contributor and no longer the maintainer): http://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#Res-auto .\n\nA few other interesting articles:\nhttps://www.fluentcpp.com/2018/09/28/auto-stick-changing-style/\nhttps://www.fluentcpp.com/2020/12/04/auto-for-types-but-not-for-concepts/",
+      "parentUuid": "b7da0aee_21681383",
+      "range": {
+        "startLine": 19,
+        "startChar": 8,
+        "endLine": 23,
+        "endChar": 9
+      },
+      "revId": "57c9683e8710808deb816831f4e95ec6741e8029",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "c78fd4b9_32a3d3d2",
         "filename": "include/sdbusplus/asio/property.hpp",
         "patchSetId": 5

@@ -527,6 +527,30 @@
     },
     {
       "key": {
+        "uuid": "27ca09a7_170f56a5",
+        "filename": "include/sdbusplus/asio/property.hpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2021-03-01T16:27:17Z",
+      "side": 1,
+      "message": "\u003e In general, I have a strong preference for AAA style, but this code for the most part isn’t and I haven’t put a lot of eyeball time on the ASIO code in general since it was written during the time I was away from the project.  So, keep it how ever you desire for the time being.\n\nMy preference would be for keeping it the way it is, under the (possibly false) assumption that the std::networking guys know something I don\u0027t.\n\n\u003e \n\u003e Speaking generally, I find some of the arguments regarding [bad] readability / documentation of AAA style mostly bogus and this context to me is strong evidence.\n\u003e \n\u003e 1. Handler is a template with no static asserts to ensure it follows any particular constraints anyhow.  (C++20 has Concepts which could be added to the templates as constraints to ensure certain requirements are met and are more appropriate than type-checking of lambdas).\n\nTechnically all asio handlers are supposed to have an associated class template (basically a concept without the syntax) with something like \"is_get_handler\" and a static assert.  I intentionally didn\u0027t do this here, because I figured it be better to jump straight to concepts, and the other handler-as-arguments don\u0027t do this already.  I plan to add this to all the asio handlers in a future patchset.\n\n\u003e \n\u003e 2. None of this code even uses ‘ec’/‘ret’ but it is redirected from ‘async_method_call’ to ‘handler’.  It provides no meaningful documentation because I still have to look at ‘async_method_call’s documentation to know if you got it right, other than assuming you have it right by nature of it compiling.  To me, as a reviewer / user, this really provides me no additional information that I wouldn’t have to look at these other functions to understand anyhow, so it is just noise to me.\n\nThe first patchset didn\u0027t have this problem, and could be verified directly from the extra lambda forward.  With that said, I see your point on this specific handler. It\u0027s not great without static asserts.\n\n\u003e \n\u003e Herb is certainly not the only advocate of AAA in the C++ community even though he is probably the most famous name.  The C++ Core Guidelines also encourage AAA-style at ES.11 (though Herb started them, he is not the only contributor and no longer the maintainer): http://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#Res-auto .\n\u003e \n\u003e A few other interesting articles:\n\u003e https://www.fluentcpp.com/2018/09/28/auto-stick-changing-style/\n\u003e https://www.fluentcpp.com/2020/12/04/auto-for-types-but-not-for-concepts/\n\nI hadn\u0027t read the second one yet.",
+      "parentUuid": "fd07755e_8a6a0dc8",
+      "range": {
+        "startLine": 19,
+        "startChar": 8,
+        "endLine": 23,
+        "endChar": 9
+      },
+      "revId": "57c9683e8710808deb816831f4e95ec6741e8029",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "c78fd4b9_32a3d3d2",
         "filename": "include/sdbusplus/asio/property.hpp",
         "patchSetId": 5
@@ -705,6 +729,30 @@
       "side": 1,
       "message": "\u003e I\u0027m not sure what you mean by \"cut that part out\".  Are you talking about changing the shared_ptr implementation?  That seems difficult to do, and this is likely cheaper still.\n\nI didn\u0027t mean to change shared_ptr, I just wanted to point out that two allocations can be avoided using make_shared and even if we do that the reason shared_ptr is slower is mostly because it is thread safe.",
       "parentUuid": "bde30d5c_8c5f912e",
+      "range": {
+        "startLine": 50,
+        "startChar": 20,
+        "endLine": 50,
+        "endChar": 22
+      },
+      "revId": "57c9683e8710808deb816831f4e95ec6741e8029",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8ebf3c35_42150e85",
+        "filename": "include/sdbusplus/asio/property.hpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2021-03-01T16:27:17Z",
+      "side": 1,
+      "message": "So, this is fine as-is then?",
+      "parentUuid": "bcfd356b_76cdb84f",
       "range": {
         "startLine": 50,
         "startChar": 20,

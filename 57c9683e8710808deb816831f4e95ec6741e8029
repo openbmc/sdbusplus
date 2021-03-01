@@ -455,6 +455,30 @@
     },
     {
       "key": {
+        "uuid": "b7da0aee_21681383",
+        "filename": "include/sdbusplus/asio/property.hpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1000678
+      },
+      "writtenOn": "2021-03-01T10:17:20Z",
+      "side": 1,
+      "message": "\u003e I\u0027ve read this article many times.  Some things to realize about it:\n\u003e 1. Herb sutter, while great, does not speak for the entirety of the C++ committee or community.\n\u003e 2. There are plenty of other response articles talking about that advice being harmful in a lot of ways.\n\nDo you have any link about what is C++ committee and community saying about auto as argument in lambda?\nDo you have any link to article which says that I should not use auto?\nOr could you just explain benefits of it?\n\nFor example:\n\"In the case of setProperty, you\u0027d have to open two levels of code to determine the return type.\"\nSure it is true, but it doesn\u0027t convince me to write code against specific implementation instead code against interface. Maybe you are right, but I would appreciate If you could give some arguments why I should believe what you are saying.\n\nType of ec never had real meaning for me. All I needed was I can do if (ec) and if (ec \u003d\u003d boost::system::errc::success) this was all in existing code I didn\u0027t have to look in details of sdbusplus to know that. I would be grateful if you could explain in more details why I should not use auto as parameter in lambda. Or why should I write code against concrete implementation instead of interfaces.\n\n\"So in the context of this patchset, it sounds like we\u0027re good to go.  Thanks for your review.\"\nYes, if this is about changes in patchset we\u0027re good. Still it would be nice if you could give share you knowledge about this topic or share link to articles/c++ committee/community where I can find anwers.",
+      "parentUuid": "d402d648_9033e021",
+      "range": {
+        "startLine": 19,
+        "startChar": 8,
+        "endLine": 23,
+        "endChar": 9
+      },
+      "revId": "57c9683e8710808deb816831f4e95ec6741e8029",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "c78fd4b9_32a3d3d2",
         "filename": "include/sdbusplus/asio/property.hpp",
         "patchSetId": 5
@@ -609,6 +633,30 @@
       "side": 1,
       "message": "\u003e Just a note with make shared there should be one memory allocation.  But yes shared pointer is slow, mostly because it\u0027s thread safe, if we cut that part out it should be only a bit slower than raw pointers (you still have to increment/decrement reference counter).\n\nI\u0027m not sure what you mean by \"cut that part out\".  Are you talking about changing the shared_ptr implementation?  That seems difficult to do, and this is likely cheaper still.\n\nEven if you required shared_ptr in your lambda callbacks, you\u0027re imposing requirements on the things that can be passed to the callbacks, which this patchset is trying to avoid.\n\nIf you have a concrete change that you\u0027d like to see on this line, I\u0027m happy to make it;  I\u0027ve given the two thoughts I had here when writing this, and I\u0027ve picked what I think is the best option.",
       "parentUuid": "a1a0a44e_6b3fbd7b",
+      "range": {
+        "startLine": 50,
+        "startChar": 20,
+        "endLine": 50,
+        "endChar": 22
+      },
+      "revId": "57c9683e8710808deb816831f4e95ec6741e8029",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bcfd356b_76cdb84f",
+        "filename": "include/sdbusplus/asio/property.hpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1000678
+      },
+      "writtenOn": "2021-03-01T10:17:20Z",
+      "side": 1,
+      "message": "\u003e I\u0027m not sure what you mean by \"cut that part out\".  Are you talking about changing the shared_ptr implementation?  That seems difficult to do, and this is likely cheaper still.\n\nI didn\u0027t mean to change shared_ptr, I just wanted to point out that two allocations can be avoided using make_shared and even if we do that the reason shared_ptr is slower is mostly because it is thread safe.",
+      "parentUuid": "bde30d5c_8c5f912e",
       "range": {
         "startLine": 50,
         "startChar": 20,

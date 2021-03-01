@@ -168,6 +168,30 @@
     },
     {
       "key": {
+        "uuid": "f4410001_98e144f6",
+        "filename": "example/get-all-properties.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 233,
+      "author": {
+        "id": 1000678
+      },
+      "writtenOn": "2021-03-01T10:26:38Z",
+      "side": 1,
+      "message": "Yes, but I believe that after making a change we should also check if affected examples are working. There is no point in having example code that contains implementation errors, for example wrong usage of getAllProperties.",
+      "parentUuid": "aa8edc15_9f9a7049",
+      "range": {
+        "startLine": 233,
+        "startChar": 11,
+        "endLine": 233,
+        "endChar": 28
+      },
+      "revId": "57c9683e8710808deb816831f4e95ec6741e8029",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "d42a76b0_895bcc77",
         "filename": "include/sdbusplus/asio/property.hpp",
         "patchSetId": 5

@@ -168,6 +168,11 @@ struct bus
         return _bus.release();
     }
 
+    auto set_trusted(bool b)
+    {
+        return _intf->sd_bus_set_trusted(_bus.get(), b);
+    }
+
     /** @brief Flush all of the outstanding work on the bus. */
     void flush()
     {

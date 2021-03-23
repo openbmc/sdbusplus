@@ -148,6 +148,8 @@ class SdBusInterface
     virtual int sd_bus_send(sd_bus* bus, sd_bus_message* m,
                             uint64_t* cookie) = 0;
 
+    virtual int sd_bus_set_trusted(sd_bus* bus, int b) = 0;
+
     virtual sd_bus* sd_bus_unref(sd_bus* bus) = 0;
     virtual sd_bus* sd_bus_flush_close_unref(sd_bus* bus) = 0;
 
@@ -481,6 +483,12 @@ class SdBusImpl : public SdBusInterface
     int sd_bus_send(sd_bus* bus, sd_bus_message* m, uint64_t* cookie) override
     {
         return ::sd_bus_send(bus, m, cookie);
+    }
+
+    int sd_bus_set_trusted(sd_bus* bus, int b)
+    {
+        fprintf(stderr, "[sd_bus_set_trusted %p] trusted=%d\n", bus, b);
+        return ::sd_bus_set_trusted(bus, b);
     }
 
     sd_bus* sd_bus_unref(sd_bus* bus) override

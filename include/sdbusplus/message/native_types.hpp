@@ -1,5 +1,7 @@
 #pragma once
 
+#include <sdbusplus/utility/memory.hpp>
+
 #include <string>
 
 namespace sdbusplus
@@ -76,6 +78,7 @@ struct string_wrapper
         return l < r.str;
     }
 };
+
 /** Simple wrapper class for std::string to allow conversion to and from an
  *  alternative typename. */
 struct string_path_wrapper
@@ -143,18 +146,15 @@ struct string_path_wrapper
 
     std::string filename() const
     {
-        auto index = str.rfind('/');
-        if (index == std::string::npos)
+        std::string parent = parent_path();
+        _cleanup_free_ char* out = nullptr;
+        int r = sd_bus_path_decode(str.c_str(), parent.c_str(), &out);
+        if (r <= 0)
         {
             return "";
         }
-        index++;
-        if (index >= str.size())
-        {
-            return "";
-        }
-
-        return str.substr(index);
+        std::string ret(out);
+        return ret;
     }
 
     string_path_wrapper parent_path() const
@@ -170,6 +170,24 @@ struct string_path_wrapper
         }
 
         return str.substr(0, index);
+    }
+
+    string_path_wrapper operator/(const std::string& extId)
+    {
+        return this->operator/(extId.c_str());
+    }
+
+    string_path_wrapper operator/(const char* extId)
+    {
+        string_path_wrapper out;
+        _cleanup_free_ char* encOut = nullptr;
+        int ret = sd_bus_path_encode(str.c_str(), extId, &encOut);
+        if (ret < 0)
+        {
+            return out;
+        }
+        out.str = encOut;
+        return out;
     }
 };
 

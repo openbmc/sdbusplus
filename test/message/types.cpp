@@ -41,7 +41,7 @@ TEST(MessageTypes, ObjectPath)
     ASSERT_EQ(dbus_string(sdbusplus::message::object_path("/asdf")), "o");
 }
 
-TEST(MessageTypes, ObjectPathLeaf)
+TEST(MessageTypes, ObjectPathFilename)
 {
     ASSERT_EQ(sdbusplus::message::object_path("/abc/def").filename(), "def");
     ASSERT_EQ(sdbusplus::message::object_path("/abc/").filename(), "");
@@ -49,6 +49,9 @@ TEST(MessageTypes, ObjectPathLeaf)
     ASSERT_EQ(sdbusplus::message::object_path("/").filename(), "");
     ASSERT_EQ(sdbusplus::message::object_path("").filename(), "");
     ASSERT_EQ(sdbusplus::message::object_path("abc").filename(), "");
+    ASSERT_EQ(sdbusplus::message::object_path("/_2d").filename(), "-");
+    ASSERT_EQ(sdbusplus::message::object_path("/_20").filename(), " ");
+    ASSERT_EQ(sdbusplus::message::object_path("/_2F").filename(), "/");
 }
 
 TEST(MessageTypes, ObjectPathParent)
@@ -61,6 +64,24 @@ TEST(MessageTypes, ObjectPathParent)
               sdbusplus::message::object_path("/"));
     ASSERT_EQ(sdbusplus::message::object_path("/").parent_path(),
               sdbusplus::message::object_path("/"));
+}
+
+TEST(MessageTypes, ObjectPathOperatorSlash)
+{
+    ASSERT_EQ(sdbusplus::message::object_path("/") / "abc",
+              sdbusplus::message::object_path("/abc"));
+    ASSERT_EQ(sdbusplus::message::object_path("/abc") / "def",
+              sdbusplus::message::object_path("/abc/def"));
+    ASSERT_EQ(sdbusplus::message::object_path("/abc") / "-",
+              sdbusplus::message::object_path("/abc/_2d"));
+    ASSERT_EQ(sdbusplus::message::object_path("/abc") / " ",
+              sdbusplus::message::object_path("/abc/_20"));
+    ASSERT_EQ(sdbusplus::message::object_path("/abc") / "/",
+              sdbusplus::message::object_path("/abc/_2f"));
+
+    // Test the std::string overload.  This is largely just for coverage
+    ASSERT_EQ(sdbusplus::message::object_path("/") / std::string("abc"),
+              sdbusplus::message::object_path("/abc"));
 }
 
 TEST(MessageTypes, Signature)

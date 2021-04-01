@@ -121,6 +121,24 @@
       "revId": "ea0361a5ebc6d479f045068dc2932e83d4d143ef",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6afda792_48083463",
+        "filename": "include/sdbusplus/message/native_types.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 186,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2021-04-01T20:46:13Z",
+      "side": 1,
+      "message": "Done.  I\u0027ve copied verbatim from systemd, and it seems to work.  I can\u0027t say I fully understand everything that\u0027s going on in those macros, but so long as it works?",
+      "parentUuid": "95bb8fd5_11484e60",
+      "revId": "ea0361a5ebc6d479f045068dc2932e83d4d143ef",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
     }
   ]
 }

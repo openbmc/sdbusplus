@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "8c2fcbcc_c5dff7ba",
+        "filename": "include/sdbusplus/message/native_types.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 153,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2021-04-01T03:14:00Z",
+      "side": 1,
+      "message": "\u003e Leaked \u0027out\u0027, I think.\n\u003e \n\u003e Wow... it appears like our CI even caught this:\n\u003e \n\u003e \u001b[1;31m\u003e\u003e\u003e \u001b[0mMALLOC_PERTURB_\u003d171 /home/jenkins-op/workspace/ci-repository/openbmc/sdbusplus/build/test/test-message_types\n\nThat\u0027s kinda neat.....  Fixed in latest.\n\nSorry for the noise, I was expecting you had gone home for the day and wanted to make sure this passed CI.",
+      "parentUuid": "75d50b5e_7605af76",
+      "revId": "ea0361a5ebc6d479f045068dc2932e83d4d143ef",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "4b2e40cd_b3422f78",
         "filename": "include/sdbusplus/message/native_types.hpp",
         "patchSetId": 1
@@ -53,6 +71,24 @@
     },
     {
       "key": {
+        "uuid": "b8960ada_6d4279a8",
+        "filename": "include/sdbusplus/message/native_types.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2021-04-01T03:14:00Z",
+      "side": 1,
+      "message": "I have no strong opinion either way.  Changed.",
+      "parentUuid": "4b2e40cd_b3422f78",
+      "revId": "ea0361a5ebc6d479f045068dc2932e83d4d143ef",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "84474609_2622dc79",
         "filename": "include/sdbusplus/message/native_types.hpp",
         "patchSetId": 1
@@ -64,6 +100,24 @@
       "writtenOn": "2021-04-01T02:30:21Z",
       "side": 1,
       "message": "It maybe better to do what systemd itself does on this.  There is a subtle case where if 185 throws an exception we end up with a leak.  Not likely to happen though.\n\n\n  static inline void freep(void *p) {\n        *(void**)p \u003d mfree(*(void**) p);\n  }\n\n  #define _cleanup_free_ _cleanup_(freep)\n  #define _cleanup_(x) __attribute__((__cleanup__(x)))\n\nThey\u0027re basically defining a C-ish RAII.  I thought we had something like that for file-descriptors already (which could be adopted to free) but I\u0027m not seeing it in this codebase.  I think you\u0027d have to use unique_ptr with a custom deleter class that calls free instead.",
+      "revId": "ea0361a5ebc6d479f045068dc2932e83d4d143ef",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "95bb8fd5_11484e60",
+        "filename": "include/sdbusplus/message/native_types.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 186,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2021-04-01T03:14:00Z",
+      "side": 1,
+      "message": "I don\u0027t fully understand what the above macro is doing, so I\u0027ll have to get back to that.\n\nFWIW I did try a custom deleter on  unique_ptr, but I\u0027m not sure how to get a char** from a unique_ptr to pass to the decode method in such a way that actually puts the payload in the unique_ptr.  \u0026(myUniquePtr.get()) returns a compile error.",
+      "parentUuid": "84474609_2622dc79",
       "revId": "ea0361a5ebc6d479f045068dc2932e83d4d143ef",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true

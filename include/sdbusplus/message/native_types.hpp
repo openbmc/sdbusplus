@@ -189,6 +189,20 @@ struct string_path_wrapper
         out.str = encOut;
         return out;
     }
+
+    string_path_wrapper& operator/=(const char* extId)
+    {
+        string_path_wrapper out = this->operator/(extId);
+        this->str = std::move(out.str);
+        return *this;
+    }
+
+    string_path_wrapper& operator/=(const std::string& extId)
+    {
+        string_path_wrapper out = this->operator/(extId);
+        this->str = std::move(out.str);
+        return *this;
+    }
 };
 
 /** Typename for sdbus SIGNATURE types. */

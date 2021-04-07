@@ -84,6 +84,17 @@ TEST(MessageTypes, ObjectPathOperatorSlash)
               sdbusplus::message::object_path("/abc"));
 }
 
+TEST(MessageTypes, ObjectPathOperatorSlashEqual)
+{
+    sdbusplus::message::object_path path("/");
+    path /= "abc";
+    ASSERT_EQ(path, sdbusplus::message::object_path("/abc"));
+
+    sdbusplus::message::object_path path2("/");
+    path /= std::string("def");
+    ASSERT_EQ(path, sdbusplus::message::object_path("/def"));
+}
+
 TEST(MessageTypes, Signature)
 {
     ASSERT_EQ(dbus_string(sdbusplus::message::signature("sss")), "g");

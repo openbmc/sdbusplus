@@ -22,6 +22,30 @@
       "revId": "ef65ad594901625b4ed0dceedd0633a6e08f09cf",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ec7a63e1_10a7544b",
+        "filename": "include/sdbusplus/message/native_types.hpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 197,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2021-04-08T17:38:17Z",
+      "side": 1,
+      "message": "I wonder why they do that?  You\u0027d think any code that would rely on that would be using operator/, not operator/\u003d.  Oh well, i\u0027m all for consistency.\n\nDone.",
+      "parentUuid": "6e244e31_465191c7",
+      "range": {
+        "startLine": 193,
+        "startChar": 0,
+        "endLine": 197,
+        "endChar": 5
+      },
+      "revId": "ef65ad594901625b4ed0dceedd0633a6e08f09cf",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
     }
   ]
 }

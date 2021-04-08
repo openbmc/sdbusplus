@@ -1,5 +1,7 @@
 #pragma once
 
+#include <systemd/sd-bus.h>
+
 #include <sdbusplus/utility/memory.hpp>
 
 #include <string>

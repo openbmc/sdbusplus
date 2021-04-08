@@ -46,6 +46,30 @@
       "revId": "ef65ad594901625b4ed0dceedd0633a6e08f09cf",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5952eeda_306e9a5d",
+        "filename": "include/sdbusplus/message/native_types.hpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 197,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-04-08T20:13:56Z",
+      "side": 1,
+      "message": "I suspect it is so you can use it in for/while loops like:\n\nwhile((++x) \u003c 1024)\n    ...\n\nI don’t have a great example with strings and/or the /\u003d operator specifically but I think it is done that way in the STL to align with how basic types act.",
+      "parentUuid": "ec7a63e1_10a7544b",
+      "range": {
+        "startLine": 193,
+        "startChar": 0,
+        "endLine": 197,
+        "endChar": 5
+      },
+      "revId": "ef65ad594901625b4ed0dceedd0633a6e08f09cf",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
     }
   ]
 }

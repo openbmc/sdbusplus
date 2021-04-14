@@ -60,7 +60,7 @@ TEST(TypeTraits, HasMemberContains)
     using namespace testing;
 
     // std::map has member_contains from c++20
-    ASSERT_THAT((has_member_contains_v<std::map<std::string, int>>), Eq(false));
+    ASSERT_THAT((has_member_contains_v<std::map<std::string, int>>), Eq(true));
     ASSERT_THAT(
         (has_member_contains_v<std::vector<std::pair<std::string, int>>>),
         Eq(false));

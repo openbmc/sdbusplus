@@ -69,6 +69,24 @@
       "revId": "a9fd2abadfaaa9258e4ca665e4a60bebf2e8be9b",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "49b62aab_cadf6eff",
+        "filename": "include/sdbusplus/message.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 382,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-04-15T20:33:05Z",
+      "side": 1,
+      "message": "fwiw, systemd recently added \u0027sd_bus_message_send\u0027 as well, which effectively does the same thing.  I wonder if we should call this function \u0027send\u0027 to match then?  When systemd 248 is old enough we could switch this to use the sd_bus_message_send directly.",
+      "parentUuid": "ca2177d9_92e37ab8",
+      "revId": "a9fd2abadfaaa9258e4ca665e4a60bebf2e8be9b",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
     }
   ]
 }

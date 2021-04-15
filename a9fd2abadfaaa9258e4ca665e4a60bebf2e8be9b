@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "eb567b8f_94e804a5",
+        "filename": "include/sdbusplus/message.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 377,
+      "author": {
+        "id": 1000188
+      },
+      "writtenOn": "2021-04-15T20:16:45Z",
+      "side": 1,
+      "message": "The point was to create a type safe abstraction to differentiate the meaning of no provided timeout from a valid timeout value. sd-bus obviously just uses an int under the hood, and 0 made sense as a sentinel for `default` given that 0 isn\u0027t really a useful value.\n\n\nI don\u0027t feel too strongly about keeping it this way, as sd-bus uses 0 and it might be clear to most readers that timing out immediately wouldn\u0027t make sense.",
+      "parentUuid": "69cd81bc_909e055f",
+      "revId": "a9fd2abadfaaa9258e4ca665e4a60bebf2e8be9b",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "ccbf9fa1_0f21559e",
         "filename": "include/sdbusplus/message.hpp",
         "patchSetId": 1
@@ -33,6 +51,24 @@
       "revId": "a9fd2abadfaaa9258e4ca665e4a60bebf2e8be9b",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ca2177d9_92e37ab8",
+        "filename": "include/sdbusplus/message.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 382,
+      "author": {
+        "id": 1000188
+      },
+      "writtenOn": "2021-04-15T20:16:45Z",
+      "side": 1,
+      "message": "I have instances where messages are decoupled from the bus they were created on and it would be nicer to not have to associate the two things when the message already implicitly knows the associated bus. It turns out we don\u0027t even have to do the lookup at all and the internal code for doing the lookup should be faster than even passing in a bus pointer.",
+      "parentUuid": "ccbf9fa1_0f21559e",
+      "revId": "a9fd2abadfaaa9258e4ca665e4a60bebf2e8be9b",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
     }
   ]
 }

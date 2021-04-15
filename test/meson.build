@@ -24,6 +24,7 @@ tests = [
     'bus/match',
     'exception/sdbus_error',
     'message/append',
+    'message/call',
     'message/read',
     'message/native_types',
     'message/types',

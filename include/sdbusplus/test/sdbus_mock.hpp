@@ -21,6 +21,10 @@ class SdBusMock : public SdBusInterface
     MOCK_METHOD3(sd_bus_attach_event, int(sd_bus*, sd_event*, int));
     MOCK_METHOD5(sd_bus_call, int(sd_bus*, sd_bus_message*, uint64_t,
                                   sd_bus_error*, sd_bus_message**));
+    MOCK_METHOD(int, sd_bus_call_async,
+                (sd_bus*, sd_bus_slot**, sd_bus_message*,
+                 sd_bus_message_handler_t, void*, uint64_t),
+                (override));
     MOCK_METHOD1(sd_bus_detach_event, int(sd_bus*));
 
     MOCK_METHOD3(sd_bus_emit_interfaces_added_strv,
@@ -106,6 +110,11 @@ class SdBusMock : public SdBusInterface
     MOCK_METHOD2(sd_bus_message_skip, int(sd_bus_message*, const char*));
     MOCK_METHOD3(sd_bus_message_verify_type,
                  int(sd_bus_message*, char, const char*));
+
+    MOCK_METHOD(int, sd_bus_slot_set_destroy_callback,
+                (sd_bus_slot*, sd_bus_destroy_t), (override));
+    MOCK_METHOD(void*, sd_bus_slot_set_userdata, (sd_bus_slot*, void*),
+                (override));
 
     MOCK_METHOD2(sd_bus_process, int(sd_bus*, sd_bus_message**));
     MOCK_METHOD1(sd_bus_ref, sd_bus*(sd_bus*));

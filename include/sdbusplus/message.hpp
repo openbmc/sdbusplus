@@ -7,9 +7,14 @@
 #include <sdbusplus/message/native_types.hpp>
 #include <sdbusplus/message/read.hpp>
 #include <sdbusplus/sdbus.hpp>
+#include <sdbusplus/slot.hpp>
 
+#include <cstdio>
+#include <exception>
 #include <memory>
+#include <optional>
 #include <type_traits>
+#include <utility>
 
 namespace sdbusplus
 {
@@ -42,6 +47,15 @@ struct MsgDeleter
 
 /* @brief Alias 'msg' to a unique_ptr type for auto-release. */
 using msg = std::unique_ptr<sd_bus_message, MsgDeleter>;
+
+template <typename CbT>
+int call_async_cb(sd_bus_message* m, void* userdata, sd_bus_error*) noexcept;
+
+template <typename CbT>
+void call_async_del(void* userdata) noexcept
+{
+    delete reinterpret_cast<CbT*>(userdata);
+}
 
 } // namespace details
 
@@ -388,6 +402,51 @@ class message
         return message(reply, _intf, std::false_type());
     }
 
+    /** @brief Perform an async message call.
+     *
+     *  @param[in] cb - The callback to run when the response is available.
+     *  @param[in] timeout_us - The timeout for the method call.
+     *
+     *  @return The slot handle that manages the lifetime of the call object.
+     */
+    template <typename Cb>
+    [[nodiscard]] slot::slot
+        call_async(Cb&& cb, std::optional<SdBusDuration> timeout = std::nullopt)
+    {
+        sd_bus_slot* slot;
+        auto timeout_us = timeout ? timeout->count() : 0;
+        using CbT = std::remove_cv_t<std::remove_reference_t<Cb>>;
+        int r = _intf->sd_bus_call_async(nullptr, &slot, get(),
+                                         details::call_async_cb<CbT>, nullptr,
+                                         timeout_us);
+        if (r < 0)
+        {
+            throw exception::SdBusError(-r, "sd_bus_call_async");
+        }
+        slot::slot ret(std::move(slot));
+        if constexpr (std::is_pointer_v<CbT>)
+        {
+            _intf->sd_bus_slot_set_userdata(slot, reinterpret_cast<void*>(cb));
+        }
+        else if constexpr (std::is_function_v<CbT>)
+        {
+            _intf->sd_bus_slot_set_userdata(slot, reinterpret_cast<void*>(&cb));
+        }
+        else
+        {
+            r = _intf->sd_bus_slot_set_destroy_callback(
+                slot, details::call_async_del<CbT>);
+            if (r < 0)
+            {
+                throw exception::SdBusError(-r,
+                                            "sd_bus_slot_set_destroy_callback");
+            }
+            _intf->sd_bus_slot_set_userdata(slot,
+                                            new CbT(std::forward<Cb>(cb)));
+        }
+        return ret;
+    }
+
     friend struct sdbusplus::bus::bus;
 
     /** @brief Get a pointer to the owned 'msgp_t'.
@@ -403,6 +462,34 @@ class message
     sdbusplus::SdBusInterface* _intf;
     details::msg _msg;
 };
+
+namespace details
+{
+
+template <typename CbT>
+int call_async_cb(sd_bus_message* m, void* userdata, sd_bus_error*) noexcept
+{
+    try
+    {
+        if constexpr (std::is_pointer_v<CbT>)
+        {
+            (*reinterpret_cast<CbT>(userdata))(message(m));
+        }
+        else
+        {
+            (*reinterpret_cast<CbT*>(userdata))(message(m));
+        }
+    }
+    catch (const std::exception& e)
+    {
+        fprintf(stderr, "Unhandled callback failure: %s\n", e.what());
+        fflush(stderr);
+        std::terminate();
+    }
+    return 1;
+}
+
+} // namespace details
 
 } // namespace message
 

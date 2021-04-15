@@ -59,7 +59,7 @@ install_subdir(
 )
 
 import('pkgconfig').generate(
-    libraries: libsdbusplus,
+    libsdbusplus,
     name: meson.project_name(),
     version: meson.project_version(),
     requires: libsystemd_pkg,

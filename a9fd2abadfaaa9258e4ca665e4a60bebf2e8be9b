@@ -87,6 +87,24 @@
       "revId": "a9fd2abadfaaa9258e4ca665e4a60bebf2e8be9b",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "51c366fa_04103db3",
+        "filename": "include/sdbusplus/message.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 382,
+      "author": {
+        "id": 1000188
+      },
+      "writtenOn": "2021-04-16T21:10:22Z",
+      "side": 1,
+      "message": "sd_bus_message_send() is not the same thing as any of the call functions and replaces sd_bus_send() invocations.",
+      "parentUuid": "49b62aab_cadf6eff",
+      "revId": "a9fd2abadfaaa9258e4ca665e4a60bebf2e8be9b",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
     }
   ]
 }

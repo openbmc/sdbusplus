@@ -24,8 +24,8 @@ namespace sdbuspp
  *  function 'f', and then pack them into the response message.
  */
 template <typename... Args, typename Return>
-bool property_callback(sd_bus_message* msg, sdbusplus::SdBusInterface* intf,
-                       sd_bus_error* error, std::function<Return(Args&&...)> f)
+int property_callback(sd_bus_message* msg, sdbusplus::SdBusInterface* intf,
+                      sd_bus_error* error, std::function<Return(Args&&...)> f)
 {
     try
     {
@@ -56,7 +56,9 @@ bool property_callback(sd_bus_message* msg, sdbusplus::SdBusInterface* intf,
         return intf->sd_bus_error_set(error, e.name(), e.description());
     }
 
-    return true;
+    // A positive integer must be returned to indicate that the callback
+    // has done its work (and not delegate to a later callback in the vtable).
+    return 1;
 }
 
 /** Handle common parts of a method callback.
@@ -127,7 +129,9 @@ int method_callback(sd_bus_message* msg, sdbusplus::SdBusInterface* intf,
         return intf->sd_bus_error_set(error, e.name(), e.description());
     }
 
-    return 0;
+    // A positive integer must be returned to indicate that the callback
+    // has done its work (and not delegate to a later callback in the vtable).
+    return 1;
 }
 
 } // namespace sdbuspp

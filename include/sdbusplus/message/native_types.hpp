@@ -4,6 +4,7 @@
 
 #include <sdbusplus/utility/memory.hpp>
 
+#include <array>
 #include <string>
 
 namespace sdbusplus
@@ -149,6 +150,21 @@ struct string_path_wrapper
     std::string filename() const
     {
         std::string parent = parent_path();
+        size_t firstIndex = parent.size();
+        if (parent != "/")
+        {
+            firstIndex++;
+        }
+        if (firstIndex >= str.size() || parent == "")
+        {
+            return "";
+        }
+        // If we don't see that this was encoded by sdbusplus, return the naive
+        // version of the filename path.
+        if (str[firstIndex] != '_')
+        {
+            return str.substr(firstIndex);
+        }
         _cleanup_free_ char* out = nullptr;
         int r = sd_bus_path_decode(str.c_str(), parent.c_str(), &out);
         if (r <= 0)
@@ -164,7 +180,7 @@ struct string_path_wrapper
         auto index = str.rfind('/');
         if (index == std::string::npos)
         {
-            return string_path_wrapper("/");
+            return string_path_wrapper("");
         }
         if (index <= 1)
         {
@@ -189,6 +205,29 @@ struct string_path_wrapper
             return out;
         }
         out.str = encOut;
+
+        constexpr std::array<char, 16> hex{'0', '1', '2', '3', '4', '5',
+                                           '6', '7', '8', '9', 'a', 'b',
+                                           'c', 'd', 'e', 'f'};
+        if (*extId == '\0')
+        {
+            return out;
+        }
+        size_t firstIndex = str.size();
+        if (str != "/")
+        {
+            firstIndex++;
+        }
+        if (out.str[firstIndex] == '_')
+        {
+            return out;
+        }
+        char firstChar = *extId;
+        out.str.erase(firstIndex, 1);
+        out.str.insert(firstIndex, 1, '_');
+        out.str.insert(firstIndex + 1, 1, hex[firstChar >> 4]);
+        out.str.insert(firstIndex + 2, 1, hex[firstChar & 0xF]);
+
         return out;
     }
 

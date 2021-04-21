@@ -4,6 +4,7 @@
 
 #include <sdbusplus/utility/memory.hpp>
 
+#include <array>
 #include <string>
 
 namespace sdbusplus
@@ -189,6 +190,29 @@ struct string_path_wrapper
             return out;
         }
         out.str = encOut;
+
+        constexpr std::array<char, 16> hex{'0', '1', '2', '3', '4', '5',
+                                           '6', '7', '8', '9', 'a', 'b',
+                                           'c', 'd', 'e', 'f'};
+        if (*extId == '\0')
+        {
+            return out;
+        }
+        size_t firstIndex = str.size();
+        if (str != "/")
+        {
+            firstIndex++;
+        }
+        if (out.str[firstIndex] == '_')
+        {
+            return out;
+        }
+        char firstChar = *extId;
+        out.str.erase(firstIndex, 1);
+        out.str.insert(firstIndex, 1, '_');
+        out.str.insert(firstIndex + 1, 1, hex[firstChar >> 4]);
+        out.str.insert(firstIndex + 2, 1, hex[firstChar & 0xF]);
+
         return out;
     }
 

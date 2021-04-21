@@ -46,12 +46,15 @@ TEST(MessageTypes, ObjectPathFilename)
     ASSERT_EQ(sdbusplus::message::object_path("/abc/def").filename(), "def");
     ASSERT_EQ(sdbusplus::message::object_path("/abc/").filename(), "");
     ASSERT_EQ(sdbusplus::message::object_path("/abc").filename(), "abc");
+    ASSERT_EQ(sdbusplus::message::object_path("/_61bc").filename(), "abc");
     ASSERT_EQ(sdbusplus::message::object_path("/").filename(), "");
     ASSERT_EQ(sdbusplus::message::object_path("").filename(), "");
     ASSERT_EQ(sdbusplus::message::object_path("abc").filename(), "");
     ASSERT_EQ(sdbusplus::message::object_path("/_2d").filename(), "-");
     ASSERT_EQ(sdbusplus::message::object_path("/_20").filename(), " ");
     ASSERT_EQ(sdbusplus::message::object_path("/_2F").filename(), "/");
+    ASSERT_EQ(sdbusplus::message::object_path("/bios_active").filename(),
+              "bios_active");
 }
 
 TEST(MessageTypes, ObjectPathParent)
@@ -69,9 +72,9 @@ TEST(MessageTypes, ObjectPathParent)
 TEST(MessageTypes, ObjectPathOperatorSlash)
 {
     ASSERT_EQ(sdbusplus::message::object_path("/") / "abc",
-              sdbusplus::message::object_path("/abc"));
+              sdbusplus::message::object_path("/_61bc"));
     ASSERT_EQ(sdbusplus::message::object_path("/abc") / "def",
-              sdbusplus::message::object_path("/abc/def"));
+              sdbusplus::message::object_path("/abc/_64ef"));
     ASSERT_EQ(sdbusplus::message::object_path("/abc") / "-",
               sdbusplus::message::object_path("/abc/_2d"));
     ASSERT_EQ(sdbusplus::message::object_path("/abc") / " ",
@@ -81,18 +84,18 @@ TEST(MessageTypes, ObjectPathOperatorSlash)
 
     // Test the std::string overload.  This is largely just for coverage
     ASSERT_EQ(sdbusplus::message::object_path("/") / std::string("abc"),
-              sdbusplus::message::object_path("/abc"));
+              sdbusplus::message::object_path("/_61bc"));
 }
 
 TEST(MessageTypes, ObjectPathOperatorSlashEqual)
 {
     sdbusplus::message::object_path path("/");
     path /= "abc";
-    ASSERT_EQ(path, sdbusplus::message::object_path("/abc"));
+    ASSERT_EQ(path, sdbusplus::message::object_path("/_61bc"));
 
     sdbusplus::message::object_path path2("/");
     path2 /= std::string("def");
-    ASSERT_EQ(path2, sdbusplus::message::object_path("/def"));
+    ASSERT_EQ(path2, sdbusplus::message::object_path("/_64ef"));
 }
 
 TEST(MessageTypes, Signature)

@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "7e25ac6e_ae8e6e5f",
+        "filename": "include/sdbusplus/message.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 483,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-04-21T15:04:13Z",
+      "side": 1,
+      "message": "I was thinking about this commit a little more and I wonder if we need to create a promise type, which will eventually also be used for co-routines, rather than returning a simple bus::slot for async calls.  The promise would hold the return value and any exception which came from the underlying async call and when you try to get the return value it would rethrow (or the exception could be obtained from it via query).\n\nI\u0027m not suggesting that this needs to be done right now, but we should probably keep that in mind before we have too many users of this async function.",
+      "parentUuid": "2ce721e6_9781d62c",
+      "range": {
+        "startLine": 482,
+        "startChar": 0,
+        "endLine": 483,
+        "endChar": 5
+      },
+      "revId": "ea4b07c6d1af1755758bf844b2628f05cb7e0d62",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "2b1f5778_d8a8f617",
         "filename": "include/sdbusplus/message.hpp",
         "patchSetId": 2

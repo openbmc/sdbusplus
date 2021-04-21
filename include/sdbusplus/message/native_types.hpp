@@ -4,6 +4,7 @@
 
 #include <sdbusplus/utility/memory.hpp>
 
+#include <array>
 #include <string>
 
 namespace sdbusplus
@@ -149,6 +150,7 @@ struct string_path_wrapper
     std::string filename() const
     {
         std::string parent = parent_path();
+
         _cleanup_free_ char* out = nullptr;
         int r = sd_bus_path_decode(str.c_str(), parent.c_str(), &out);
         if (r <= 0)
@@ -182,6 +184,7 @@ struct string_path_wrapper
     string_path_wrapper operator/(const char* extId)
     {
         string_path_wrapper out;
+
         _cleanup_free_ char* encOut = nullptr;
         int ret = sd_bus_path_encode(str.c_str(), extId, &encOut);
         if (ret < 0)
@@ -189,6 +192,29 @@ struct string_path_wrapper
             return out;
         }
         out.str = encOut;
+
+        constexpr std::array<char, 16> hex{'0', '1', '2', '3', '4', '5',
+                                           '6', '7', '8', '9', 'a', 'b',
+                                           'c', 'd', 'e', 'f'};
+        if (*extId == '\0')
+        {
+            return out;
+        }
+        size_t firstIndex = str.size();
+        if (str != "/")
+        {
+            firstIndex++;
+        }
+        if (out.str[firstIndex] == '_')
+        {
+            return out;
+        }
+        char firstChar = *extId;
+        out.str.erase(firstIndex, 1);
+        out.str.insert(firstIndex, 1, '_');
+        out.str.insert(firstIndex + 1, 1, hex[firstChar >> 4]);
+        out.str.insert(firstIndex + 2, 1, hex[firstChar & 0xF]);
+
         return out;
     }
 
@@ -206,6 +232,11 @@ struct string_path_wrapper
         return *this;
     }
 };
+
+inline void PrintTo(const string_path_wrapper& obj, std::ostream* os)
+{
+    *os << obj.str;
+}
 
 /** Typename for sdbus SIGNATURE types. */
 struct signature_type

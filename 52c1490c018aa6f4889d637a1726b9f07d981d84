@@ -72,6 +72,24 @@
     },
     {
       "key": {
+        "uuid": "8110ddea_0478896f",
+        "filename": "include/sdbusplus/message/native_types.hpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 209,
+      "author": {
+        "id": 1000733
+      },
+      "writtenOn": "2021-04-22T23:53:39Z",
+      "side": 1,
+      "message": "\u003e Time to switch to rust.\n\nI\u0027m +1 on that, but I think Rust happens to suffer from pretty much the exact same problem unfortunately: https://github.com/rust-lang/rfcs/pull/2545",
+      "parentUuid": "608d7bd5_c630b079",
+      "revId": "52c1490c018aa6f4889d637a1726b9f07d981d84",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "33b2935a_a891ee6d",
         "filename": "test/message/types.cpp",
         "patchSetId": 3

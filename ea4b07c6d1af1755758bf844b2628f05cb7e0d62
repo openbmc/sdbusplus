@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "c2f4f875_b47158d4",
+        "filename": "include/sdbusplus/message.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 483,
+      "author": {
+        "id": 1000188
+      },
+      "writtenOn": "2021-04-23T09:37:17Z",
+      "side": 1,
+      "message": "The rationale is similar to the event driven callback code too. I found that triggering an abort in those cases was almost always less desirable than ignoring the error, because most callbacks would end up just wrapping everything in a `try catch` block to prevent spurious aborts. In the cases it would abort, the program would end up hard to debug and failing for cases where it could limp along and still be serviceable. If you needed to do something special on error, you would have your own cleanup logic anyway. I would hope that most code is using sensible RAII, so any used resources could be cleaned up in the process.\n\nWRT to future based async. A long time ago I wrote a future / promise type intended to replace the builtin ones that use locks / atomics. It would allow the event loop to wake up the future callback and allow the user to get from it with similar semantics to std::future.\nhttps://gerrit.openbmc-project.xyz/c/openbmc/stdplus/+/22336\n\nAt the time the intended use case was for an sd_bus_call_async function\nhttps://gerrit.openbmc-project.xyz/c/openbmc/sdbusplus/+/21351\n\nBut with the coroutines features in c++20 I would need to revist how this was implemented as it doesn\u0027t really make sense with that model. I still think it would be nice to have a call_async function that more closely matches how sd_bus_call_async works under the covers for users not interested in asio / coroutines.",
+      "parentUuid": "7e25ac6e_ae8e6e5f",
+      "range": {
+        "startLine": 482,
+        "startChar": 0,
+        "endLine": 483,
+        "endChar": 5
+      },
+      "revId": "ea4b07c6d1af1755758bf844b2628f05cb7e0d62",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "2b1f5778_d8a8f617",
         "filename": "include/sdbusplus/message.hpp",
         "patchSetId": 2
@@ -60,6 +84,24 @@
       "writtenOn": "2021-04-21T12:00:29Z",
       "side": 1,
       "message": "Why fprintf?  This is C++ code.",
+      "revId": "ea4b07c6d1af1755758bf844b2628f05cb7e0d62",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9a7461bc_0479ea36",
+        "filename": "include/sdbusplus/message.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 484,
+      "author": {
+        "id": 1000188
+      },
+      "writtenOn": "2021-04-23T09:37:17Z",
+      "side": 1,
+      "message": "If you prefer iostreams we could do that, purely personal preference.",
+      "parentUuid": "2b1f5778_d8a8f617",
       "revId": "ea4b07c6d1af1755758bf844b2628f05cb7e0d62",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true

@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "afb5d174_87b09f06",
+        "filename": "include/sdbusplus/message/native_types.hpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 1000188
+      },
+      "writtenOn": "2021-04-23T09:21:37Z",
+      "side": 1,
+      "message": "I would just use sd_bus_encode_path_many / sd_bus_decode_path_many with \"%\" as the format string since it doesn\u0027t require the parent path at all. Would have been nice if they had a simple  `sd_bus_{encode,decode}` function.",
+      "parentUuid": "a8aa1fcb_70200c2f",
+      "revId": "52c1490c018aa6f4889d637a1726b9f07d981d84",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "57b7bea5_12613035",
         "filename": "include/sdbusplus/message/native_types.hpp",
         "patchSetId": 3

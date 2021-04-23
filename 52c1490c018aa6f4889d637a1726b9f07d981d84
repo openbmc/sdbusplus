@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "f727acce_3d018ae5",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1000020
+      },
+      "writtenOn": "2021-04-23T14:16:17Z",
+      "side": 1,
+      "message": "Signed-off ?",
+      "revId": "52c1490c018aa6f4889d637a1726b9f07d981d84",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "c9597758_1970b699",
         "filename": "include/sdbusplus/message/native_types.hpp",
         "patchSetId": 3

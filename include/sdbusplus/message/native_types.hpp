@@ -174,12 +174,12 @@ struct string_path_wrapper
         return str.substr(0, index);
     }
 
-    string_path_wrapper operator/(const std::string& extId)
+    string_path_wrapper operator/(const std::string& extId) const
     {
         return this->operator/(extId.c_str());
     }
 
-    string_path_wrapper operator/(const char* extId)
+    string_path_wrapper operator/(const char* extId) const
     {
         string_path_wrapper out;
         _cleanup_free_ char* encOut = nullptr;

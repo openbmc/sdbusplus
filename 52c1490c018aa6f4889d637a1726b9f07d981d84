@@ -126,6 +126,24 @@
     },
     {
       "key": {
+        "uuid": "9e1303b9_86d1b155",
+        "filename": "include/sdbusplus/message/native_types.hpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2021-04-26T20:59:41Z",
+      "side": 1,
+      "message": "sd_bus_decode_path_many(to_unescape, \"\", \u0026out) will decode the slashes into escape characters, right?  Isn\u0027t that the whole reason why you need the parent as the input?",
+      "parentUuid": "d52801c2_f50d230f",
+      "revId": "52c1490c018aa6f4889d637a1726b9f07d981d84",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "57b7bea5_12613035",
         "filename": "include/sdbusplus/message/native_types.hpp",
         "patchSetId": 3

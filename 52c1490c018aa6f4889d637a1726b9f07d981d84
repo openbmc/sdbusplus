@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "2a9d7b69_ff319297",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2021-04-26T16:19:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f727acce_3d018ae5",
+      "revId": "52c1490c018aa6f4889d637a1726b9f07d981d84",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c9597758_1970b699",
         "filename": "include/sdbusplus/message/native_types.hpp",
         "patchSetId": 3
@@ -66,6 +84,24 @@
       "side": 1,
       "message": "I would just use sd_bus_encode_path_many / sd_bus_decode_path_many with \"%\" as the format string since it doesn\u0027t require the parent path at all. Would have been nice if they had a simple  `sd_bus_{encode,decode}` function.",
       "parentUuid": "a8aa1fcb_70200c2f",
+      "revId": "52c1490c018aa6f4889d637a1726b9f07d981d84",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8a5a148e_fcd35cbe",
+        "filename": "include/sdbusplus/message/native_types.hpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2021-04-26T16:19:05Z",
+      "side": 1,
+      "message": "sd_bus_path_decode_many would still require the parent path, as we have to pass in the \"prefix\" as part of the decode so we get only the arg we want out.\n\nOr I\u0027m really missing something on that method.\n\nThis isn\u0027t fixed in the latest patchset, I need to look a little deeper at how to simplify this.",
+      "parentUuid": "afb5d174_87b09f06",
       "revId": "52c1490c018aa6f4889d637a1726b9f07d981d84",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true
@@ -143,6 +179,24 @@
     },
     {
       "key": {
+        "uuid": "41639237_8de54c8e",
+        "filename": "include/sdbusplus/message/native_types.hpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 209,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2021-04-26T16:19:05Z",
+      "side": 1,
+      "message": "I\u0027ll leave this one up to the maintainer if he wants me to change it.  std::array is more \"modern\" because you can do range checks in a much more consistent way with .size(), but in this case, because we don\u0027t do any range checks (because they\u0027re intrinsically safe with our shifts).  I don\u0027t have a strong preference here.\n\nAt the very least, leaving this as a c++ array would let us enable the:\nhttps://clang.llvm.org/extra/clang-tidy/checks/modernize-avoid-c-arrays.html\nclang-tidy check across this whole project in the future.",
+      "parentUuid": "dc6ec792_55a78110",
+      "revId": "52c1490c018aa6f4889d637a1726b9f07d981d84",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "1a37f09c_63e0b09d",
         "filename": "include/sdbusplus/message/native_types.hpp",
         "patchSetId": 3
@@ -160,6 +214,24 @@
     },
     {
       "key": {
+        "uuid": "11ab95ec_dff8d40b",
+        "filename": "include/sdbusplus/message/native_types.hpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 228,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2021-04-26T16:19:05Z",
+      "side": 1,
+      "message": "Fixed on latest patchset.",
+      "parentUuid": "1a37f09c_63e0b09d",
+      "revId": "52c1490c018aa6f4889d637a1726b9f07d981d84",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "afedfc93_f6af65dc",
         "filename": "test/message/types.cpp",
         "patchSetId": 3
@@ -171,6 +243,24 @@
       "writtenOn": "2021-04-23T02:22:01Z",
       "side": 1,
       "message": "This changes the previous behavior, I am not sure if there is existing code that depends on this API, if yes, how do we make sure they are not affected?",
+      "revId": "52c1490c018aa6f4889d637a1726b9f07d981d84",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8f524c7c_0f0b0611",
+        "filename": "test/message/types.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2021-04-26T16:19:05Z",
+      "side": 1,
+      "message": "This is intentionally changing old behavior because of #60;  I believe I wrote most (all?) of the current usages of operator/ that exist at this point, and for at least the things I\u0027ve done sofar, this is better behavior.\n\nIn a perfect world, we wouldn\u0027t need any of this, but we need to transition some APIs around, and this was the best of the mediocre options.",
+      "parentUuid": "afedfc93_f6af65dc",
       "revId": "52c1490c018aa6f4889d637a1726b9f07d981d84",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true
@@ -209,6 +299,24 @@
       "revId": "52c1490c018aa6f4889d637a1726b9f07d981d84",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a2b6b3dd_ae8a36fd",
+        "filename": "test/message/types.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2021-04-26T16:19:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "287074ee_dee58982",
+      "revId": "52c1490c018aa6f4889d637a1726b9f07d981d84",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
     }
   ]
 }

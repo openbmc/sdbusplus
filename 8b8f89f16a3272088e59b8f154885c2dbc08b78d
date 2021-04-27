@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "f796811b_aa04f2a2",
+        "filename": "include/sdbusplus/message/native_types.hpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2021-04-27T17:09:58Z",
+      "side": 1,
+      "message": "I tried to do it without the check in patchset 8, but valgrind didn\u0027t like it.  There might still be a bug in my code, but I\u0027m not seeing it.",
+      "parentUuid": "a973e0d2_749e6fa9",
+      "revId": "8b8f89f16a3272088e59b8f154885c2dbc08b78d",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "2b836828_dcc25f44",
         "filename": "include/sdbusplus/message/native_types.hpp",
         "patchSetId": 6
@@ -102,6 +120,24 @@
       "side": 1,
       "message": "Right, std::string_view wouldn\u0027t work nicely here. I would just use `auto filename \u003d str.c_str() + firstIndex` then. It would still work the same as substr, even if you remove the size() check above. And you could return it / use it in sd_bus_path*",
       "parentUuid": "e9f05857_71f20a87",
+      "revId": "8b8f89f16a3272088e59b8f154885c2dbc08b78d",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ebed9c2f_31fec0a3",
+        "filename": "include/sdbusplus/message/native_types.hpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 164,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2021-04-27T17:09:58Z",
+      "side": 1,
+      "message": "I did this with string_view;  That seemed better than going to raw pointers.",
+      "parentUuid": "a4a4682f_b37c63d0",
       "revId": "8b8f89f16a3272088e59b8f154885c2dbc08b78d",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true

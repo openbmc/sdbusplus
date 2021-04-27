@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "a973e0d2_749e6fa9",
+        "filename": "include/sdbusplus/message/native_types.hpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 1000188
+      },
+      "writtenOn": "2021-04-27T01:05:46Z",
+      "side": 1,
+      "message": "There is no exception, you can just delete the code. substr(str.size()) is legal and returns \"\".",
+      "parentUuid": "00469058_506a0dcc",
+      "revId": "8b8f89f16a3272088e59b8f154885c2dbc08b78d",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "2b836828_dcc25f44",
         "filename": "include/sdbusplus/message/native_types.hpp",
         "patchSetId": 6
@@ -66,6 +84,24 @@
       "side": 1,
       "message": "I\u0027m wary to do that because we need a null terminated string to pass to sd_bus_path_decode_many later, also on line 167, we might have to construct a string from said string_view anyway.\n\nTechnically you can\u0027t rely on std::string_view.data() being null terminated, although I suspect we should be able to in this case because all std::strings are null terminated these days, and while string_view doesn\u0027t guarantee that, std::string does, so, only kind of undefined behavior?\n\nIf you think that\u0027s really the right thing to do, I can make that change here, but I suspect that\u0027s going to be worse in terms of peoples mental model and style for std::string_view.data().",
       "parentUuid": "2b836828_dcc25f44",
+      "revId": "8b8f89f16a3272088e59b8f154885c2dbc08b78d",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a4a4682f_b37c63d0",
+        "filename": "include/sdbusplus/message/native_types.hpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 164,
+      "author": {
+        "id": 1000188
+      },
+      "writtenOn": "2021-04-27T01:05:46Z",
+      "side": 1,
+      "message": "Right, std::string_view wouldn\u0027t work nicely here. I would just use `auto filename \u003d str.c_str() + firstIndex` then. It would still work the same as substr, even if you remove the size() check above. And you could return it / use it in sd_bus_path*",
+      "parentUuid": "e9f05857_71f20a87",
       "revId": "8b8f89f16a3272088e59b8f154885c2dbc08b78d",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true

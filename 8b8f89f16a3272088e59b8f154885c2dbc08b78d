@@ -73,6 +73,24 @@
     },
     {
       "key": {
+        "uuid": "05a81150_6f4e3a99",
+        "filename": "include/sdbusplus/message/native_types.hpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 1000188
+      },
+      "writtenOn": "2021-04-27T19:09:24Z",
+      "side": 1,
+      "message": "`std::string_view filename \u003d str.substr(firstIndex);`\n\ncreates a temporary std::string and that\u0027s what ubasan doesn\u0027t like.\n\n`auto filename \u003d std::string_view(str).substr(firstIndex);`\n\nwill reference str directly.",
+      "parentUuid": "f796811b_aa04f2a2",
+      "revId": "8b8f89f16a3272088e59b8f154885c2dbc08b78d",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "2b836828_dcc25f44",
         "filename": "include/sdbusplus/message/native_types.hpp",
         "patchSetId": 6
@@ -138,6 +156,24 @@
       "side": 1,
       "message": "I did this with string_view;  That seemed better than going to raw pointers.",
       "parentUuid": "a4a4682f_b37c63d0",
+      "revId": "8b8f89f16a3272088e59b8f154885c2dbc08b78d",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9bb058a9_b093aa04",
+        "filename": "include/sdbusplus/message/native_types.hpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 164,
+      "author": {
+        "id": 1000188
+      },
+      "writtenOn": "2021-04-27T19:09:24Z",
+      "side": 1,
+      "message": "For zstrings, I would just keep the `char*` type. You wouldn\u0027t need to check `.empty()` prior to accessing `filename[0]` since you can always depend on the nul terminator existing at the end of the string. You also wouldn\u0027t need to make two independent substrings with a string_view and then a `filename.c_str() + firstIndex` later.",
+      "parentUuid": "ebed9c2f_31fec0a3",
       "revId": "8b8f89f16a3272088e59b8f154885c2dbc08b78d",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true

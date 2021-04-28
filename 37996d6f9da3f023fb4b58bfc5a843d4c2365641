@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c059821c_13c42455",
+        "filename": "include/sdbusplus/message/native_types.hpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 167,
+      "author": {
+        "id": 1000188
+      },
+      "writtenOn": "2021-04-28T08:20:37Z",
+      "side": 1,
+      "message": "nit: This can reference `filename` now",
+      "revId": "37996d6f9da3f023fb4b58bfc5a843d4c2365641",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    }
+  ]
+}

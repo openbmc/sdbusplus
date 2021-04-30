@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "2805be1f_0f2e0b59",
+        "filename": "include/sdbusplus/message/native_types.hpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 155,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2021-04-30T16:40:49Z",
+      "side": 1,
+      "message": "Because we previously defined empty string as the \"error\" return, and if this fires, it means that the dbus path isn\u0027t valid.",
+      "parentUuid": "d7e3441b_fbdb8ee2",
+      "revId": "4795243581e3881ad136a304d40b6efe0df9fccd",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "e0352779_6ca04737",
         "filename": "include/sdbusplus/message/native_types.hpp",
         "patchSetId": 13
@@ -30,6 +48,24 @@
       "writtenOn": "2021-04-30T15:42:06Z",
       "side": 1,
       "message": "I think you could use a few comments from here to the end.  At least what you\u0027re attempting to do at a high-level.",
+      "revId": "4795243581e3881ad136a304d40b6efe0df9fccd",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ad3fb454_e6014c7d",
+        "filename": "include/sdbusplus/message/native_types.hpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 206,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2021-04-30T16:40:49Z",
+      "side": 1,
+      "message": "Done;  I also moved this array lower in the file so that the comment makes more sense in context.",
+      "parentUuid": "e0352779_6ca04737",
       "revId": "4795243581e3881ad136a304d40b6efe0df9fccd",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true
@@ -59,6 +95,30 @@
     },
     {
       "key": {
+        "uuid": "1f98a563_b6d10cf1",
+        "filename": "include/sdbusplus/message/native_types.hpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 212,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2021-04-30T16:40:49Z",
+      "side": 1,
+      "message": "I think this check got invalidated when we went to pointers.  In theory it was checking whether the last character was a /, but now I don\u0027t think it\u0027s needed.  Removed.",
+      "parentUuid": "d1287a4d_d81dd13f",
+      "range": {
+        "startLine": 209,
+        "startChar": 0,
+        "endLine": 212,
+        "endChar": 9
+      },
+      "revId": "4795243581e3881ad136a304d40b6efe0df9fccd",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "9355610e_10d184a6",
         "filename": "include/sdbusplus/message/native_types.hpp",
         "patchSetId": 13
@@ -70,6 +130,30 @@
       "writtenOn": "2021-04-30T15:42:06Z",
       "side": 1,
       "message": "I\u0027d prefer you create a char[4] and do a single insert.\n\nA small optimization would be to flip the first character to a _ and insert just the hex part.",
+      "range": {
+        "startLine": 224,
+        "startChar": 0,
+        "endLine": 226,
+        "endChar": 64
+      },
+      "revId": "4795243581e3881ad136a304d40b6efe0df9fccd",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e7623188_57436902",
+        "filename": "include/sdbusplus/message/native_types.hpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 226,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2021-04-30T16:40:49Z",
+      "side": 1,
+      "message": "I did the small optimization path, and did an insert of char[2] after replacing the first character with _\n\nThe array constructor looks a little messy, but breaking it up seemed worse (although I\u0027m on the fence there).",
+      "parentUuid": "9355610e_10d184a6",
       "range": {
         "startLine": 224,
         "startChar": 0,

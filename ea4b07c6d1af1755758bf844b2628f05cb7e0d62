@@ -73,6 +73,30 @@
     },
     {
       "key": {
+        "uuid": "86a39398_b1eefa98",
+        "filename": "include/sdbusplus/message.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 483,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-04-30T15:54:22Z",
+      "side": 1,
+      "message": "\u003e I found that triggering an abort in those cases was almost always less desirable than ignoring the error, because most callbacks would end up just wrapping everything in a `try catch` block to prevent spurious aborts. In the cases it would abort, the program would end up hard to debug and failing for cases where it could limp along and still be serviceable.\n\nI don\u0027t like any silent catching and dropping of an error.  Even in this case where we\u0027re printing something to the console (maybe that ends up in the journal), nobody will look at it.  So we could go a LONG time with unseen issues before anybody deals with them.\n\nIf you print the exception, print a message, and abort, you should have everything someone needs to debug it.\n\nIf someone decides to wrap the whole call in a try-catch and drop it in their own code, that is on them.  Maybe they feel like that is a good way to deal with it.  We shouldn\u0027t make those decisions for other developers in library code though.\n\n\u003e WRT to future based async....\n\nOk.  I\u0027m planning on working on coroutine support in the near future.  We can revisit this once I have something working there.  I don\u0027t think it would be high impact to migrate people to a promise return in the future if we go that route.",
+      "parentUuid": "c2f4f875_b47158d4",
+      "range": {
+        "startLine": 482,
+        "startChar": 0,
+        "endLine": 483,
+        "endChar": 5
+      },
+      "revId": "ea4b07c6d1af1755758bf844b2628f05cb7e0d62",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "2b1f5778_d8a8f617",
         "filename": "include/sdbusplus/message.hpp",
         "patchSetId": 2
@@ -102,6 +126,24 @@
       "side": 1,
       "message": "If you prefer iostreams we could do that, purely personal preference.",
       "parentUuid": "2b1f5778_d8a8f617",
+      "revId": "ea4b07c6d1af1755758bf844b2628f05cb7e0d62",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "230576b9_b093ab3e",
+        "filename": "include/sdbusplus/message.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 484,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-04-30T15:54:22Z",
+      "side": 1,
+      "message": "I\u0027m mostly indifferent.  We don\u0027t have other cases of this already in the code either way.  All \u0027cout\u0027 calls are in test cases or examples.  There are no [f]printf calls.\n\nThe only potential problem is that buffering can be implemented differently between C++ and C io.  We could end up with a message out the console sooner, due to use of fprintf, than the application itself due to their use of cout/cerr.",
+      "parentUuid": "9a7461bc_0479ea36",
       "revId": "ea4b07c6d1af1755758bf844b2628f05cb7e0d62",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true

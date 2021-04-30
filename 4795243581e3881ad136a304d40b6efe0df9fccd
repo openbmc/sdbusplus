@@ -1,0 +1,84 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d7e3441b_fbdb8ee2",
+        "filename": "include/sdbusplus/message/native_types.hpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 155,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-04-30T15:42:06Z",
+      "side": 1,
+      "message": "Why wouldn\u0027t you return str in this case?",
+      "revId": "4795243581e3881ad136a304d40b6efe0df9fccd",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e0352779_6ca04737",
+        "filename": "include/sdbusplus/message/native_types.hpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 206,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-04-30T15:42:06Z",
+      "side": 1,
+      "message": "I think you could use a few comments from here to the end.  At least what you\u0027re attempting to do at a high-level.",
+      "revId": "4795243581e3881ad136a304d40b6efe0df9fccd",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d1287a4d_d81dd13f",
+        "filename": "include/sdbusplus/message/native_types.hpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 212,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-04-30T15:42:06Z",
+      "side": 1,
+      "message": "This is not obvious what you\u0027re catching with this.",
+      "range": {
+        "startLine": 209,
+        "startChar": 0,
+        "endLine": 212,
+        "endChar": 9
+      },
+      "revId": "4795243581e3881ad136a304d40b6efe0df9fccd",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9355610e_10d184a6",
+        "filename": "include/sdbusplus/message/native_types.hpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 226,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-04-30T15:42:06Z",
+      "side": 1,
+      "message": "I\u0027d prefer you create a char[4] and do a single insert.\n\nA small optimization would be to flip the first character to a _ and insert just the hex part.",
+      "range": {
+        "startLine": 224,
+        "startChar": 0,
+        "endLine": 226,
+        "endChar": 64
+      },
+      "revId": "4795243581e3881ad136a304d40b6efe0df9fccd",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    }
+  ]
+}

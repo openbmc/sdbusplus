@@ -1,4 +1,5 @@
 import inflection
+import re
 
 
 class NamedElement(object):
@@ -9,7 +10,7 @@ class NamedElement(object):
 
     def __getattribute__(self, name):
         lam = {'CamelCase': lambda: inflection.camelize(self.name),
-               'camelCase': lambda: inflection.camelize(self.name, False),
+               'camelCase': lambda: NamedElement.lower_camel_case(self.name),
                'snake_case': lambda: inflection.underscore(self.name)}\
             .get(name)
 
@@ -49,3 +50,15 @@ class NamedElement(object):
             name = name + "_"
 
         return name
+
+    @staticmethod
+    def lower_camel_case(name):
+        upper_name = inflection.camelize(name)
+        if re.match(r"^[A-Z]*$", upper_name):
+            return upper_name.lower()
+        if not re.match(r"^[A-Z]{2}", upper_name):
+            return upper_name[0].lower() + upper_name[1:]
+        return re.sub(
+                r"^([A-Z]+)([A-Z].*)$",
+                lambda m: m.group(1).lower() + m.group(2),
+                upper_name)

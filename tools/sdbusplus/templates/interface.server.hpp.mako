@@ -18,6 +18,10 @@ ${ m.cpp_prototype(loader, interface=interface, ptype='callback-hpp-includes') }
         return set(p.cppTypeParam(interface.name) for p in
                    interface.properties);
 %>
+#ifndef SDBUSPP_NEW_CAMELCASE
+#define SDBUSPP_NEW_CAMELCASE 1
+#endif
+
 namespace sdbusplus
 {
     % for s in namespaces:

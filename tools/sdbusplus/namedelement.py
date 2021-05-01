@@ -1,4 +1,5 @@
 import inflection
+import re
 
 
 class NamedElement(object):
@@ -9,7 +10,7 @@ class NamedElement(object):
 
     def __getattribute__(self, name):
         lam = {'CamelCase': lambda: inflection.camelize(self.name),
-               'camelCase': lambda: inflection.camelize(self.name, False),
+               'camelCase': lambda: NamedElement.lower_camel_case(self.name),
                'snake_case': lambda: inflection.underscore(self.name)}\
             .get(name)
 
@@ -49,3 +50,36 @@ class NamedElement(object):
             name = name + "_"
 
         return name
+
+    # Normally you can use inflection.camelize(string, False) to return
+    # a lowerCamelCase string, but it doesn't work well for acronyms.
+    # An input like "MACAddress" will become "mACAddress".  Try to handle
+    # acronyms in a better way.
+    @staticmethod
+    def lower_camel_case(name):
+        # Get the UpperCamelCase variation of the name first.
+        upper_name = inflection.camelize(name)
+
+        # If it is all upper case, return as all lower.  ex. "MAC"
+        if re.match(r"^[A-Z]*$", upper_name):
+            return upper_name.lower()
+
+        # If it doesn't start with 2 upper case, it isn't an acronym.
+        if not re.match(r"^[A-Z]{2}", upper_name):
+            return upper_name[0].lower() + upper_name[1:]
+
+        # If it is upper case followed by 'v[0-9]', treat it all as one word.
+        # ex. "IPv6Address" -> "ipv6Address"
+        if re.match(r"^[A-Z]+v[0-9]", upper_name):
+            return re.sub(r"^([A-Z]+)(.*)$",
+                lambda m: m.group(1).lower() + m.group(2),
+                upper_name)
+
+        # Anything left has at least two sequential upper-case, so it is an
+        # acronym.  Switch all but the last upper-case (which starts the next
+        # word) to lower-case.
+        # ex. "MACAddress" -> "macAddress".
+        return re.sub(
+                r"^([A-Z]+)([A-Z].*)$",
+                lambda m: m.group(1).lower() + m.group(2),
+                upper_name)

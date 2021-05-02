@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <string_view>
 
 namespace sdbusplus
 {
@@ -144,18 +145,8 @@ struct string_path_wrapper
 
     std::string filename() const;
     string_path_wrapper parent_path() const;
-    string_path_wrapper operator/(const char* extId) const;
-    string_path_wrapper& operator/=(const char* extId);
-
-    string_path_wrapper operator/(const std::string& extId) const
-    {
-        return this->operator/(extId.c_str());
-    }
-
-    string_path_wrapper& operator/=(const std::string& extId)
-    {
-        return this->operator/=(extId.c_str());
-    }
+    string_path_wrapper operator/(std::string_view) const;
+    string_path_wrapper& operator/=(std::string_view);
 };
 
 /** Typename for sdbus SIGNATURE types. */

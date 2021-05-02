@@ -53,6 +53,10 @@ TEST(MessageTypes, ObjectPathFilename)
     EXPECT_EQ(sdbusplus::message::object_path("/_2d").filename(), "-");
     EXPECT_EQ(sdbusplus::message::object_path("/_20").filename(), " ");
     EXPECT_EQ(sdbusplus::message::object_path("/_2F").filename(), "/");
+    EXPECT_EQ(sdbusplus::message::object_path("/_").filename(), "");
+    EXPECT_EQ(sdbusplus::message::object_path("/_2").filename(), "");
+    EXPECT_EQ(sdbusplus::message::object_path("/_2y").filename(), "");
+    EXPECT_EQ(sdbusplus::message::object_path("/_y2").filename(), "");
     EXPECT_EQ(sdbusplus::message::object_path("/bios_active").filename(),
               "bios_active");
 }
@@ -73,6 +77,8 @@ TEST(MessageTypes, ObjectPathOperatorSlash)
 {
     EXPECT_EQ(sdbusplus::message::object_path("/") / "abc",
               sdbusplus::message::object_path("/_61bc"));
+    EXPECT_EQ(sdbusplus::message::object_path("/") / "abc",
+              sdbusplus::message::object_path("/_61bc"));
     EXPECT_EQ(sdbusplus::message::object_path("/abc") / "def",
               sdbusplus::message::object_path("/abc/_64ef"));
     EXPECT_EQ(sdbusplus::message::object_path("/abc") / "-",
@@ -83,6 +89,10 @@ TEST(MessageTypes, ObjectPathOperatorSlash)
               sdbusplus::message::object_path("/abc/_2f"));
     EXPECT_EQ(sdbusplus::message::object_path("/abc") / "ab_cd",
               sdbusplus::message::object_path("/abc/_61b_5fcd"));
+    EXPECT_EQ(sdbusplus::message::object_path("/abc") / "_ab_cd",
+              sdbusplus::message::object_path("/abc/_5fab_5fcd"));
+    EXPECT_EQ(sdbusplus::message::object_path("/abc") / "ab-c_d",
+              sdbusplus::message::object_path("/abc/_61b_2dc_5fd"));
 
     // Test the std::string overload.  This is largely just for coverage
     EXPECT_EQ(sdbusplus::message::object_path("/") / std::string("abc"),
@@ -96,8 +106,8 @@ TEST(MessageTypes, ObjectPathOperatorSlashEqual)
     EXPECT_EQ(path, sdbusplus::message::object_path("/_61bc"));
 
     sdbusplus::message::object_path path2("/");
-    path2 /= std::string("def");
-    EXPECT_EQ(path2, sdbusplus::message::object_path("/_64ef"));
+    path2 /= std::string("d-ef");
+    EXPECT_EQ(path2, sdbusplus::message::object_path("/_64_2def"));
 }
 
 TEST(MessageTypes, Signature)

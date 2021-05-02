@@ -1,7 +1,4 @@
-#include <systemd/sd-bus.h>
-
 #include <sdbusplus/message/native_types.hpp>
-#include <sdbusplus/utility/memory.hpp>
 
 #include <array>
 
@@ -12,31 +9,81 @@ namespace message
 namespace details
 {
 
+constexpr std::array<char, 16> hex{'0', '1', '2', '3', '4', '5', '6', '7',
+                                   '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
+
+constexpr std::array<char, 256> unhex = [] {
+    std::array<char, 256> ret;
+    for (size_t i = 0; i < ret.size(); ++i)
+    {
+        ret[i] = -1;
+    }
+    for (char i = 0; i < 10; ++i)
+    {
+        ret['0' + i] = i;
+    }
+    for (char i = 0; i < 6; ++i)
+    {
+        ret['A' + i] = i + 10;
+        ret['a' + i] = i + 10;
+    }
+    return ret;
+}();
+
+inline bool pathShouldEscape(char c)
+{
+    return (c < 'A' || c > 'Z') && (c < 'a' || c > 'z') && (c < '0' || c > '9');
+}
+
+inline void pathAppendEscape(std::string& s, char c)
+{
+    s.append(1, '_');
+    s.append(1, hex[(c >> 4) & 0xf]);
+    s.append(1, hex[c & 0xf]);
+}
+
 std::string string_path_wrapper::filename() const
 {
-    size_t firstIndex = str.rfind('/');
+    std::string_view strv(str);
+    size_t firstIndex = strv.rfind('/');
 
     // Dbus paths must start with /, if we don't find one, it's an error
     if (firstIndex == std::string::npos)
     {
         return "";
     }
-    firstIndex++;
+    auto filename = strv.substr(firstIndex + 1);
+
     // If we don't see that this was encoded by sdbusplus, return the naive
     // version of the filename path.
-    const char* filename = str.c_str() + firstIndex;
-    if (*filename != '_')
+    if (filename[0] != '_')
     {
         return std::string(filename);
     }
 
-    _cleanup_free_ char* out = nullptr;
-    int r = sd_bus_path_decode_many(filename, "%", &out);
-    if (r <= 0)
+    std::string out;
+    out.reserve(filename.size());
+    for (size_t i = 0; i < filename.size(); ++i)
     {
-        return "";
+        if (filename[i] != '_')
+        {
+            out.append(1, filename[i]);
+            continue;
+        }
+        if (i + 2 >= filename.size())
+        {
+            return "";
+        }
+        auto ch = unhex[filename[i + 1]];
+        auto cl = unhex[filename[i + 2]];
+        if (ch == -1 || cl == -1)
+        {
+            return "";
+        }
+        out.append(1, (ch << 4) | cl);
+        i += 2;
     }
-    return std::string(out);
+    return out;
 }
 
 string_path_wrapper string_path_wrapper::parent_path() const
@@ -54,50 +101,37 @@ string_path_wrapper string_path_wrapper::parent_path() const
     return str.substr(0, index);
 }
 
-string_path_wrapper string_path_wrapper::operator/(const char* extId) const
+string_path_wrapper string_path_wrapper::operator/(std::string_view extId) const
 {
     string_path_wrapper out;
-    _cleanup_free_ char* encOut = nullptr;
-    int ret = sd_bus_path_encode(str.c_str(), extId, &encOut);
-    if (ret < 0)
-    {
-        return out;
-    }
-    out.str = encOut;
-
-    size_t firstIndex = str.size();
-    if (str != "/")
-    {
-        firstIndex++;
-    }
-
-    // Attempt to encode the first character of the path.  This allows the
-    // filename() method to "detect" that this is a path that's been encoded
-    // and to decode it properly.  This was needed to support a number of
-    // paths that currently dont' have any encoding, and utilize underscores
-    // Ideally this, and the equivalent code in filename() would go away
-    // when all paths are being encoded per systemds methods.
-    if (out.str[firstIndex] == '_')
-    {
-        return out;
-    }
-
-    constexpr std::array<char, 16> hex{'0', '1', '2', '3', '4', '5', '6', '7',
-                                       '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
-    uint8_t firstChar = static_cast<uint8_t>(*extId);
-    out.str[firstIndex] = '_';
-    std::array<char, 2> encoded{hex[(firstChar >> 4) & 0xF],
-                                hex[firstChar & 0xF]};
-    out.str.insert(out.str.begin() + firstIndex + 1, encoded.begin(),
-                   encoded.end());
-
-    return out;
+    out.str.reserve(str.size() + 1 + extId.size() * 3);
+    out.str.append(str);
+    return out /= extId;
 }
 
-string_path_wrapper& string_path_wrapper::operator/=(const char* extId)
+string_path_wrapper& string_path_wrapper::operator/=(std::string_view extId)
 {
-    string_path_wrapper out = this->operator/(extId);
-    this->str = std::move(out.str);
+    str.reserve(str.size() + 1 + extId.size() * 3);
+    if (!str.empty() && str[str.size() - 1] != '/')
+    {
+        str.append(1, '/');
+    }
+    if (extId.empty())
+    {
+        return *this;
+    }
+    pathAppendEscape(str, extId[0]);
+    for (auto c : extId.substr(1))
+    {
+        if (pathShouldEscape(c))
+        {
+            pathAppendEscape(str, c);
+        }
+        else
+        {
+            str.append(1, c);
+        }
+    }
     return *this;
 }
 

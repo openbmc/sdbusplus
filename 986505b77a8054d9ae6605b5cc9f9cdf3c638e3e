@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f1b772ba_0e44f0ff",
+        "filename": "tools/sdbusplus/namedelement.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 1000188
+      },
+      "writtenOn": "2021-05-04T20:58:00Z",
+      "side": 1,
+      "message": "I really don\u0027t like how specific this logic gets to specific naming conventions. Can we just abandon the lower camel first character alltogether? Are we going to just keep hacking in new overrides for every single strange convention we find?",
+      "revId": "986505b77a8054d9ae6605b5cc9f9cdf3c638e3e",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    }
+  ]
+}

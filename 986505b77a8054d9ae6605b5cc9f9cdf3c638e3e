@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "e350d54b_473fcc24",
+        "filename": "tools/sdbusplus/namedelement.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 1000188
+      },
+      "writtenOn": "2021-05-04T22:24:35Z",
+      "side": 1,
+      "message": "Can\u0027t this be handled by the final expression?",
+      "revId": "986505b77a8054d9ae6605b5cc9f9cdf3c638e3e",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "f1b772ba_0e44f0ff",
         "filename": "tools/sdbusplus/namedelement.py",
         "patchSetId": 4
@@ -31,6 +48,24 @@
       "side": 1,
       "message": "What do you mean by \"abandon the lower camel first character\"?  Do you mean \"stop using lower-camel-case and only use upper-camel-case\"?\n\nI think that causes collisions between a bunch of methods / properties / enums / classes.  I know I\u0027ve cases where people named an enum and a property the same and it compiles due to difference of cases.\n\n\u003e Are we going to just keep hacking in new overrides for every single strange convention we find?\n\nIf we find other ones that are useful to workaround, yes?  I agree that it isn\u0027t ideal but it isn\u0027t really a significant amount of work if someone wants to add a new case.",
       "parentUuid": "f1b772ba_0e44f0ff",
+      "revId": "986505b77a8054d9ae6605b5cc9f9cdf3c638e3e",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e132c6d0_39ca12d2",
+        "filename": "tools/sdbusplus/namedelement.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 1000188
+      },
+      "writtenOn": "2021-05-04T22:24:35Z",
+      "side": 1,
+      "message": "Yeah, that\u0027s unfortunate that we have naming conflicts.\n\nMy concern with having all of these rules is the unintended side effects of the different patterns we are matching and altering.",
+      "parentUuid": "6e8ad6b8_aa11250f",
       "revId": "986505b77a8054d9ae6605b5cc9f9cdf3c638e3e",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true

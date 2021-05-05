@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "995d5345_4c249e1a",
+        "filename": "tools/sdbusplus/namedelement.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-05-05T20:17:14Z",
+      "side": 1,
+      "message": "Not easily?  Unless you have a suggestion on regex syntax, but I was trying to keep the regexes obvious.\n\nIn current form, line 83 would turn \"BMC\" into \"bmC\".",
+      "parentUuid": "e350d54b_473fcc24",
+      "revId": "986505b77a8054d9ae6605b5cc9f9cdf3c638e3e",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "f1b772ba_0e44f0ff",
         "filename": "tools/sdbusplus/namedelement.py",
         "patchSetId": 4
@@ -66,6 +84,24 @@
       "side": 1,
       "message": "Yeah, that\u0027s unfortunate that we have naming conflicts.\n\nMy concern with having all of these rules is the unintended side effects of the different patterns we are matching and altering.",
       "parentUuid": "6e8ad6b8_aa11250f",
+      "revId": "986505b77a8054d9ae6605b5cc9f9cdf3c638e3e",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a68b2056_8256feb5",
+        "filename": "tools/sdbusplus/namedelement.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-05-05T20:17:14Z",
+      "side": 1,
+      "message": "\u003e My concern with having all of these rules is the unintended side effects of the different patterns we are matching and altering.\n\nHow would you like me to alleviate your concern?  We don\u0027t have a test framework already set up for this code (unfortunately) so what I am currently doing is using this as a subproject with phosphor-dbus-interfaces and comparing the output with/without the change to make sure the results are sane.",
+      "parentUuid": "e132c6d0_39ca12d2",
       "revId": "986505b77a8054d9ae6605b5cc9f9cdf3c638e3e",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true

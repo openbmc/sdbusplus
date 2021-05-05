@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "3a992d28_1de7cc88",
+        "filename": "tools/sdbusplus/namedelement.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 1000188
+      },
+      "writtenOn": "2021-05-05T21:58:49Z",
+      "side": 1,
+      "message": "Oh, right",
+      "parentUuid": "995d5345_4c249e1a",
+      "revId": "986505b77a8054d9ae6605b5cc9f9cdf3c638e3e",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f1b772ba_0e44f0ff",
         "filename": "tools/sdbusplus/namedelement.py",
         "patchSetId": 4
@@ -105,6 +123,24 @@
       "revId": "986505b77a8054d9ae6605b5cc9f9cdf3c638e3e",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "07055aec_8aa7d516",
+        "filename": "tools/sdbusplus/namedelement.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 1000188
+      },
+      "writtenOn": "2021-05-05T21:58:49Z",
+      "side": 1,
+      "message": "Should be fine for now, I know other frameworks have gone with a dictionary of acronyms to handle these types of things. Rails had it but I guess python inflection didn\u0027t implement it.",
+      "parentUuid": "a68b2056_8256feb5",
+      "revId": "986505b77a8054d9ae6605b5cc9f9cdf3c638e3e",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
     }
   ]
 }

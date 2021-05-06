@@ -76,11 +76,11 @@ TEST(MessageTypes, ObjectPathParent)
 TEST(MessageTypes, ObjectPathOperatorSlash)
 {
     EXPECT_EQ(sdbusplus::message::object_path("/") / "abc",
-              sdbusplus::message::object_path("/_61bc"));
+              sdbusplus::message::object_path("/abc"));
     EXPECT_EQ(sdbusplus::message::object_path("/") / "abc",
-              sdbusplus::message::object_path("/_61bc"));
+              sdbusplus::message::object_path("/abc"));
     EXPECT_EQ(sdbusplus::message::object_path("/abc") / "def",
-              sdbusplus::message::object_path("/abc/_64ef"));
+              sdbusplus::message::object_path("/abc/def"));
     EXPECT_EQ(sdbusplus::message::object_path("/abc") / "-",
               sdbusplus::message::object_path("/abc/_2d"));
     EXPECT_EQ(sdbusplus::message::object_path("/abc") / " ",
@@ -88,7 +88,7 @@ TEST(MessageTypes, ObjectPathOperatorSlash)
     EXPECT_EQ(sdbusplus::message::object_path("/abc") / "/",
               sdbusplus::message::object_path("/abc/_2f"));
     EXPECT_EQ(sdbusplus::message::object_path("/abc") / "ab_cd",
-              sdbusplus::message::object_path("/abc/_61b_5fcd"));
+              sdbusplus::message::object_path("/abc/ab_cd"));
     EXPECT_EQ(sdbusplus::message::object_path("/abc") / "_ab_cd",
               sdbusplus::message::object_path("/abc/_5fab_5fcd"));
     EXPECT_EQ(sdbusplus::message::object_path("/abc") / "ab-c_d",
@@ -96,14 +96,14 @@ TEST(MessageTypes, ObjectPathOperatorSlash)
 
     // Test the std::string overload.  This is largely just for coverage
     EXPECT_EQ(sdbusplus::message::object_path("/") / std::string("abc"),
-              sdbusplus::message::object_path("/_61bc"));
+              sdbusplus::message::object_path("/abc"));
 }
 
 TEST(MessageTypes, ObjectPathOperatorSlashEqual)
 {
     sdbusplus::message::object_path path("/");
     path /= "abc";
-    EXPECT_EQ(path, sdbusplus::message::object_path("/_61bc"));
+    EXPECT_EQ(path, sdbusplus::message::object_path("/abc"));
 
     sdbusplus::message::object_path path2("/");
     path2 /= std::string("d-ef");

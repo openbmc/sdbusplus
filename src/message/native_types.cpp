@@ -1,5 +1,6 @@
 #include <sdbusplus/message/native_types.hpp>
 
+#include <algorithm>
 #include <array>
 
 namespace sdbusplus
@@ -33,6 +34,11 @@ constexpr std::array<char, 256> unhex = [] {
 inline bool pathShouldEscape(char c)
 {
     return (c < 'A' || c > 'Z') && (c < 'a' || c > 'z') && (c < '0' || c > '9');
+}
+
+inline bool pathRequiresEscape(char c)
+{
+    return pathShouldEscape(c) && c != '_';
 }
 
 inline void pathAppendEscape(std::string& s, char c)
@@ -116,8 +122,11 @@ string_path_wrapper& string_path_wrapper::operator/=(std::string_view extId)
     {
         str.append(1, '/');
     }
-    if (extId.empty())
+    if (extId.empty() ||
+        (!pathShouldEscape(extId[0]) &&
+         std::none_of(extId.begin() + 1, extId.end(), pathRequiresEscape)))
     {
+        str.append(extId);
         return *this;
     }
     pathAppendEscape(str, extId[0]);

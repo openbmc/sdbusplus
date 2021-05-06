@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "66c894c3_4c7e5196",
+        "filename": "include/sdbusplus/message/native_types.hpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 148,
+      "author": {
+        "id": 1000188
+      },
+      "writtenOn": "2021-05-06T02:30:39Z",
+      "side": 1,
+      "message": "It pushes the work of doing strlen() onto a `const char *` caller, but if you pass an std::string it just takes the already stored ptr + str. Google internally generally thinks this is very efficient since it\u0027s just a ptr + size tuple that you are passing and prefers passing by copy as the indirection is slower.\n\nThe first thing the function does is look at the length of the passed in argument, so you don\u0027t gain anything by holding off on performing the strlen.",
+      "parentUuid": "ff78aaf6_a973b7c4",
+      "revId": "de26818f89eac3abce023786e16d3ddb4c2b45f1",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c043917c_a1d56ff8",
         "filename": "src/message/native_types.cpp",
         "patchSetId": 3
@@ -33,6 +51,24 @@
       "revId": "de26818f89eac3abce023786e16d3ddb4c2b45f1",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "50ace707_ef6fb07c",
+        "filename": "src/message/native_types.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1000188
+      },
+      "writtenOn": "2021-05-06T02:30:39Z",
+      "side": 1,
+      "message": "Ah yeah, of course this exists.",
+      "parentUuid": "c043917c_a1d56ff8",
+      "revId": "de26818f89eac3abce023786e16d3ddb4c2b45f1",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
     }
   ]
 }

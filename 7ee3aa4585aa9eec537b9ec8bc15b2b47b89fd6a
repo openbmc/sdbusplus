@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "176b6348_d4d48cd3",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-05-11T14:55:14Z",
+      "side": 1,
+      "message": "I hope you\u0027re doing these with a script.\n\nSimply s/IRC/Discord is insufficient because people have different nicks between the two.",
+      "revId": "7ee3aa4585aa9eec537b9ec8bc15b2b47b89fd6a",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ff44a1a5_94d5f408",
+        "filename": "MAINTAINERS",
+        "patchSetId": 1
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-05-11T14:55:14Z",
+      "side": 1,
+      "message": "This is not correct.",
+      "range": {
+        "startLine": 46,
+        "startChar": 40,
+        "endLine": 46,
+        "endChar": 51
+      },
+      "revId": "7ee3aa4585aa9eec537b9ec8bc15b2b47b89fd6a",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "33ee8245_6616bf02",
+        "filename": "MAINTAINERS",
+        "patchSetId": 1
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-05-11T14:55:14Z",
+      "side": 1,
+      "message": "This is not correct.",
+      "range": {
+        "startLine": 52,
+        "startChar": 65,
+        "endLine": 52,
+        "endChar": 71
+      },
+      "revId": "7ee3aa4585aa9eec537b9ec8bc15b2b47b89fd6a",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    }
+  ]
+}

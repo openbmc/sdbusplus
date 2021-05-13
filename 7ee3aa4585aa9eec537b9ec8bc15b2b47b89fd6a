@@ -66,6 +66,30 @@
     },
     {
       "key": {
+        "uuid": "cb963cad_94df6860",
+        "filename": "MAINTAINERS",
+        "patchSetId": 1
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1000188
+      },
+      "writtenOn": "2021-05-13T02:42:11Z",
+      "side": 1,
+      "message": "It\u0027s just `wak` on discord since they allow duplicate usernames.",
+      "parentUuid": "aec0e463_cfd61660",
+      "range": {
+        "startLine": 46,
+        "startChar": 40,
+        "endLine": 46,
+        "endChar": 51
+      },
+      "revId": "7ee3aa4585aa9eec537b9ec8bc15b2b47b89fd6a",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "33ee8245_6616bf02",
         "filename": "MAINTAINERS",
         "patchSetId": 1

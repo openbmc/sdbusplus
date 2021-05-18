@@ -239,7 +239,6 @@ generated_others += custom_target(
         '--directory', meson.current_source_dir() / '$yamldir',
         '$1',
     ],
-    build_by_default: true,
 )
 
 EOF

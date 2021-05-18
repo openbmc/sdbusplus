@@ -36,7 +36,7 @@ EOF
 ## if a repository contains old copies of the generated meson.build files and
 ## needs an update.  We should increment the version number whenever the
 ## resulting meson.build would change.
-tool_version="sdbus++-gen-meson version 2"
+tool_version="sdbus++-gen-meson version 3"
 function show_version {
     echo "$tool_version"
 }
@@ -239,7 +239,6 @@ generated_others += custom_target(
         '--directory', meson.current_source_dir() / '$yamldir',
         '$1',
     ],
-    build_by_default: true,
 )
 
 EOF

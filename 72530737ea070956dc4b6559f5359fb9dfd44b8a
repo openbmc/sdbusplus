@@ -16,6 +16,24 @@
       "revId": "72530737ea070956dc4b6559f5359fb9dfd44b8a",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b24417c8_d64ac121",
+        "filename": "tools/sdbus++-gen-meson",
+        "patchSetId": 1
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1000188
+      },
+      "writtenOn": "2021-05-19T17:56:57Z",
+      "side": 1,
+      "message": "It\u0027s not incompatible, I don\u0027t think we should require everyone to update because of this type of change if previous generations are unaffected.",
+      "parentUuid": "5c748f6c_28d52bc9",
+      "revId": "72530737ea070956dc4b6559f5359fb9dfd44b8a",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
     }
   ]
 }

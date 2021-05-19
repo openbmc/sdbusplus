@@ -171,13 +171,15 @@ function meson_create_path {
 ##
 ## $1 - The interface to generate a target for.
 function meson_cpp_target {
+    mesondir="$outputdir/$1"
+    yamldir="$(realpath --relative-to="$mesondir" "$rootdir")"
 
     # Determine the source and output files based on the YAMLs present.
     sources=""
     outputs=""
     for s in ${interfaces[$1]};
     do
-        sources="${sources}meson.project_source_root() / '$1.$s', "
+      sources="'$yamldir/$1.$s', "
 
         case "$s" in
             errors.yaml)
@@ -192,7 +194,7 @@ function meson_cpp_target {
     done
 
     # Create the target to generate the 'outputs'.
-    cat >> "$outputdir/$1/meson.build" \
+    cat >> "$mesondir/meson.build" \
 <<EOF
 generated_sources += custom_target(
     '$1__cpp'.underscorify(),
@@ -202,7 +204,7 @@ generated_sources += custom_target(
         sdbuspp_gen_meson_prog, '--command', 'cpp',
         '--output', meson.current_build_dir(),
         '--tool', sdbusplusplus_prog,
-        '--directory', meson.project_source_root(),
+        '--directory', meson.current_source_dir() / '$yamldir',
         '$1',
     ],
 )
@@ -213,16 +215,18 @@ EOF
 ## Generate the meson target for the markdown files from a YAML interface.
 ## $1 - The interface to generate a target for.
 function meson_md_target {
+    mesondir="$outputdir/$(dirname "$1")"
+    yamldir="$(realpath --relative-to="$mesondir" "$rootdir")"
 
     # Determine the source files based on the YAMLs present.
     sources=""
     for s in ${interfaces[$1]};
     do
-        sources="${sources}meson.project_source_root() / '$1.$s', "
+        sources="'$yamldir/$1.$s', "
     done
 
     # Create the target to generate the interface.md file.
-    cat >> "$outputdir/$(dirname "$1")/meson.build" \
+    cat >> "$mesondir/meson.build" \
 <<EOF
 generated_others += custom_target(
     '$1__markdown'.underscorify(),
@@ -232,7 +236,7 @@ generated_others += custom_target(
         sdbuspp_gen_meson_prog, '--command', 'markdown',
         '--output', meson.current_build_dir(),
         '--tool', sdbusplusplus_prog,
-        '--directory', meson.project_source_root(),
+        '--directory', meson.current_source_dir() / '$yamldir',
         '$1',
     ],
     build_by_default: true,

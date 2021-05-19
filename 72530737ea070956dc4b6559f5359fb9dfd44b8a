@@ -34,6 +34,24 @@
       "revId": "72530737ea070956dc4b6559f5359fb9dfd44b8a",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "626acc0f_5a14706c",
+        "filename": "tools/sdbus++-gen-meson",
+        "patchSetId": 1
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-05-19T18:03:42Z",
+      "side": 1,
+      "message": "I\u0027m fine with that on this one, especially since we have a version bump in the next one.  I\u0027ve previously forced the version increment anytime the meson.build would change and part of that is because if people don\u0027t regenerate the meson, they get a more cryptic CI failure than the obvious \"your gen-meson version is out of date on your files\".\n\nTo be honest, it hasn\u0027t turned out entirely as I wanted because I need to change things so that each and every generated meson.build has this check.  Right now it is only in the root one and people will do a rebase and not get the obvious failure (instead they get the less obvious one).",
+      "parentUuid": "b24417c8_d64ac121",
+      "revId": "72530737ea070956dc4b6559f5359fb9dfd44b8a",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
     }
   ]
 }

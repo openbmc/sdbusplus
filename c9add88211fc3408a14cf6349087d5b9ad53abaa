@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "df1ed14d_d475e8df",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-05-19T17:56:11Z",
+      "side": 1,
+      "message": "Can we leave something here to define the \"trivially created target\"?",
+      "revId": "c9add88211fc3408a14cf6349087d5b9ad53abaa",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2daa9a80_06cacba0",
+        "filename": "tools/sdbus++-gen-meson",
+        "patchSetId": 2
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-05-19T17:56:11Z",
+      "side": 1,
+      "message": "Ah.  You did the version bump here, which is fine if we merge them together.",
+      "revId": "c9add88211fc3408a14cf6349087d5b9ad53abaa",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    }
+  ]
+}

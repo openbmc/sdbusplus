@@ -1,0 +1,10 @@
+Ok-To-Test+1: OpenBMC CI <openbmcbump-ci@yahoo.com>
+Code-Review+1: Andrew Jeffery <andrew@aj.id.au>
+Code-Review+1: Lei YU <yulei.sh@bytedance.com>
+Code-Review+2: Vernon Mauery <vernon.mauery@linux.intel.com>
+Verified+1: OpenBMC CI <openbmcbump-ci@yahoo.com>
+Submitted-by: William A. Kennington III <wak@google.com>
+Submitted-at: Thu, 27 May 2021 22:00:57 +0000
+Reviewed-on: https://gerrit.openbmc-project.xyz/c/openbmc/sdbusplus/+/43568
+Project: openbmc/sdbusplus
+Branch: refs/heads/master

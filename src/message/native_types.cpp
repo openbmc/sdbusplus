@@ -15,7 +15,7 @@ constexpr std::array<char, 16> hex{'0', '1', '2', '3', '4', '5', '6', '7',
                                    '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
 
 constexpr std::array<char, 256> unhex = [] {
-    std::array<char, 256> ret;
+    std::array<char, 256> ret{};
     for (size_t i = 0; i < ret.size(); ++i)
     {
         ret[i] = -1;

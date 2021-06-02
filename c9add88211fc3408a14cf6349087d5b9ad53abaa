@@ -33,6 +33,24 @@
       "revId": "c9add88211fc3408a14cf6349087d5b9ad53abaa",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9ef7e2af_9b67005e",
+        "filename": "tools/sdbus++-gen-meson",
+        "patchSetId": 2
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1000188
+      },
+      "writtenOn": "2021-06-02T01:52:52Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "2daa9a80_06cacba0",
+      "revId": "c9add88211fc3408a14cf6349087d5b9ad53abaa",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
     }
   ]
 }

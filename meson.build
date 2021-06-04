@@ -31,20 +31,25 @@ libsdbusplus = library(
     install: true,
 )
 
+boost_compile_args = [
+    '-DBOOST_ASIO_DISABLE_THREADS',
+    '-DBOOST_ALL_NO_LIB',
+    '-DBOOST_SYSTEM_NO_DEPRECATED',
+    '-DBOOST_ERROR_CODE_HEADER_ONLY',
+    '-DBOOST_COROUTINES_NO_DEPRECATION_WARNING',
+]
+
+boost_dep = declare_dependency(
+    dependencies: dependency('boost', required: false),
+    compile_args: boost_compile_args)
+
 sdbusplus_dep = declare_dependency(
     include_directories: root_inc,
     link_with: libsdbusplus,
-    dependencies: libsystemd_pkg
+    dependencies: [ libsystemd_pkg, boost_dep ],
 )
 
 subdir('tools')
-
-boost_dep = dependency(
-    'boost',
-    disabler: true,
-    required: false,
-    modules: [ 'coroutine', 'context' ],
-)
 
 if not get_option('examples').disabled()
   subdir('example')
@@ -64,5 +69,6 @@ import('pkgconfig').generate(
     name: meson.project_name(),
     version: meson.project_version(),
     requires: libsystemd_pkg,
+    extra_cflags: boost_compile_args,
     description: 'C++ bindings for sdbus',
 )

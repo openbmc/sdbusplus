@@ -4,48 +4,36 @@ executable(
     dependencies: sdbusplus_dep,
 )
 
+has_asio = meson.get_compiler('cpp').has_header_symbol(
+  'boost/asio.hpp',
+  'boost::asio::io_context',
+  required: false)
+asio_dep = sdbusplus_dep
+if not has_asio
+  asio_dep = disabler()
+endif
+
 assert(
-    not get_option('examples').enabled() or boost_dep.found(),
+    not get_option('examples').enabled() or has_asio,
     'Boost is required when examples are enabled'
 )
 
 executable(
     'asio-example',
     'asio-example.cpp',
-    cpp_args: [
-        '-DBOOST_ASIO_DISABLE_THREADS',
-        '-DBOOST_ALL_NO_LIB',
-        '-DBOOST_SYSTEM_NO_DEPRECATED',
-        '-DBOOST_ERROR_CODE_HEADER_ONLY',
-        '-DBOOST_COROUTINES_NO_DEPRECATION_WARNING',
-    ],
-    dependencies: [ boost_dep, sdbusplus_dep ],
+    dependencies: asio_dep,
 )
 
 executable(
     'register-property',
     'register-property.cpp',
-    cpp_args: [
-        '-DBOOST_ASIO_DISABLE_THREADS',
-        '-DBOOST_ALL_NO_LIB',
-        '-DBOOST_SYSTEM_NO_DEPRECATED',
-        '-DBOOST_ERROR_CODE_HEADER_ONLY',
-        '-DBOOST_COROUTINES_NO_DEPRECATION_WARNING',
-    ],
-    dependencies: [ boost_dep, sdbusplus_dep ],
+    dependencies: asio_dep,
 )
 
 executable(
     'get-all-properties',
     'get-all-properties.cpp',
-    cpp_args: [
-        '-DBOOST_ASIO_DISABLE_THREADS',
-        '-DBOOST_ALL_NO_LIB',
-        '-DBOOST_SYSTEM_NO_DEPRECATED',
-        '-DBOOST_ERROR_CODE_HEADER_ONLY',
-        '-DBOOST_COROUTINES_NO_DEPRECATION_WARNING',
-    ],
-    dependencies: [ boost_dep, sdbusplus_dep ],
+    dependencies: asio_dep,
 )
 
 calc_buildroot = meson.current_build_dir()

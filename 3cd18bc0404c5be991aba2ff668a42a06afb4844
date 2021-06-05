@@ -16,6 +16,24 @@
       "revId": "3cd18bc0404c5be991aba2ff668a42a06afb4844",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8efaf0fa_6a44c697",
+        "filename": "meson.build",
+        "patchSetId": 2
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1000188
+      },
+      "writtenOn": "2021-06-05T18:53:59Z",
+      "side": 1,
+      "message": "No, modules are only used when you want to link against the specific underlying library code. We want to take advantage of header only code so we don\u0027t specify the modules.",
+      "parentUuid": "61c668e1_3d04b956",
+      "revId": "3cd18bc0404c5be991aba2ff668a42a06afb4844",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
     }
   ]
 }

@@ -93,9 +93,7 @@ int ${interface_name()}::_callback_${ method.CamelCase }(
 {
     auto o = static_cast<${interface_name()}*>(context);
 
-    % if method.errors:
     try
-    % endif
     {
         return sdbusplus::sdbuspp::method_callback\
     % if len(method.returns) > 1:
@@ -117,6 +115,10 @@ int ${interface_name()}::_callback_${ method.CamelCase }(
         return o->_intf->sd_bus_error_set(error, e.name(), e.description());
     }
     % endfor
+    catch(const std::exception& e)
+    {
+        return o->_intf->sd_bus_error_set(error, SD_BUS_ERROR_FAILED, e.what());
+    }
 
     return 0;
 }

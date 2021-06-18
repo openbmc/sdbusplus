@@ -34,9 +34,7 @@ int ${classname}::_callback_get_${property.name}(
 {
     auto o = static_cast<${classname}*>(context);
 
-    % if property.errors:
     try
-    % endif
     {
         return sdbusplus::sdbuspp::property_callback(
                 reply, o->_intf, error,
@@ -53,6 +51,10 @@ int ${classname}::_callback_get_${property.name}(
         return o->_intf->sd_bus_error_set(error, e.name(), e.description());
     }
     % endfor
+    catch(const std::exception& e)
+    {
+        return o->_intf->sd_bus_error_set(error, SD_BUS_ERROR_FAILED, e.what());
+    }
 }
 
 auto ${classname}::${property.camelCase}(${property.cppTypeParam(interface.name)} value,
@@ -85,9 +87,7 @@ int ${classname}::_callback_set_${property.name}(
 {
     auto o = static_cast<${classname}*>(context);
 
-    % if property.errors:
     try
-    % endif
     {
         return sdbusplus::sdbuspp::property_callback(
                 value, o->_intf, error,
@@ -104,6 +104,10 @@ int ${classname}::_callback_set_${property.name}(
         return o->_intf->sd_bus_error_set(error, e.name(), e.description());
     }
     % endfor
+    catch(const std::exception& e)
+    {
+        return o->_intf->sd_bus_error_set(error, SD_BUS_ERROR_FAILED, e.what());
+    }
 
     return true;
 }

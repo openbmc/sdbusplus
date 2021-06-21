@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2e9046b3_48705d7a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-06-21T19:46:09Z",
+      "side": 1,
+      "message": "Can you expand on why this is better than the current behavior?  To me the current behavior was as intended.\n\nApplications are expected to only throw the exceptions that are listed in the dbus interface.  If they throw something other than that, it is undefined behavior because the binding code cannot turn it into a well-defined error message in response.  With this change you are proposing that we change both of these error types into a generic response:\n\n1. Other PDI-defined exceptions, but which are not listed in the throwing interface.  (this is especially bad to me)\n2. std-style exceptions.\n\nTo me, both of these are bugs on the daemon side.  By silently catching them and turning them into a generic error we\u0027re actually doing a disservice in my opinion.  Now the exception isn\u0027t even noticed on the daemon side and there is no debug data to be able to solve it.  With the current behavior we\u0027re getting a core-dump and it can be debugged and fixed.",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 11,
+        "endChar": 50
+      },
+      "revId": "7fb6d014a6ac77f2538e033f9c973d1cd16b34d5",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    }
+  ]
+}

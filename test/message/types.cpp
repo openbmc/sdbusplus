@@ -53,10 +53,10 @@ TEST(MessageTypes, ObjectPathFilename)
     EXPECT_EQ(sdbusplus::message::object_path("/_2d").filename(), "-");
     EXPECT_EQ(sdbusplus::message::object_path("/_20").filename(), " ");
     EXPECT_EQ(sdbusplus::message::object_path("/_2F").filename(), "/");
-    EXPECT_EQ(sdbusplus::message::object_path("/_").filename(), "");
-    EXPECT_EQ(sdbusplus::message::object_path("/_2").filename(), "");
-    EXPECT_EQ(sdbusplus::message::object_path("/_2y").filename(), "");
-    EXPECT_EQ(sdbusplus::message::object_path("/_y2").filename(), "");
+    EXPECT_EQ(sdbusplus::message::object_path("/_").filename(), "_");
+    EXPECT_EQ(sdbusplus::message::object_path("/_2").filename(), "_2");
+    EXPECT_EQ(sdbusplus::message::object_path("/_2y").filename(), "_2y");
+    EXPECT_EQ(sdbusplus::message::object_path("/_y2").filename(), "_y2");
     EXPECT_EQ(sdbusplus::message::object_path("/bios_active").filename(),
               "bios_active");
 }

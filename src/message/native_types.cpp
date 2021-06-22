@@ -79,13 +79,16 @@ std::string string_path_wrapper::filename() const
         }
         if (i + 2 >= filename.size())
         {
-            return "";
+            out.append(1, filename[i]);
+            continue;
         }
+
         auto ch = unhex[filename[i + 1]];
         auto cl = unhex[filename[i + 2]];
         if (ch == -1 || cl == -1)
         {
-            return "";
+            out.append(1, filename[i]);
+            continue;
         }
         out.append(1, (ch << 4) | cl);
         i += 2;

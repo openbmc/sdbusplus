@@ -34,6 +34,24 @@
       "revId": "450ea2e88526f0621ffa17480df41d271c153945",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7ad29047_77c4a0ed",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-06-23T11:06:46Z",
+      "side": 1,
+      "message": "I think you misunderstand.  There are test cases for this code.  Please enhance them to cover the cases you\u0027ve found which you think are broken.\n\nSee test/message/types.cpp.\n\nAlso, Jenkins is reporting that you broke one of the existing test cases.",
+      "parentUuid": "e0444f16_e09b964e",
+      "revId": "450ea2e88526f0621ffa17480df41d271c153945",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
     }
   ]
 }

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ea4cbf35_c722f297",
+        "filename": "src/message/native_types.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 1000188
+      },
+      "writtenOn": "2021-07-01T18:17:10Z",
+      "side": 1,
+      "message": "Changing this logic also implies that strings like `_yabc` and `_agabd` are valid in place, but `_aga_bd` would end up as `_aga\\xbd`. That seems more surprising than originally intended,",
+      "revId": "2765f7fe7e01f3bbf30b008d0aea5c4260c2bbb9",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    }
+  ]
+}

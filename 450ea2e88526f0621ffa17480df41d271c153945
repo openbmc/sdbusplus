@@ -70,6 +70,24 @@
       "revId": "450ea2e88526f0621ffa17480df41d271c153945",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5572269a_4bf4c2a2",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1000188
+      },
+      "writtenOn": "2021-07-01T09:42:49Z",
+      "side": 1,
+      "message": "Can you just fix the server in question to use our encoding scheme?",
+      "parentUuid": "f0b1db65_ab31c91d",
+      "revId": "450ea2e88526f0621ffa17480df41d271c153945",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
     }
   ]
 }

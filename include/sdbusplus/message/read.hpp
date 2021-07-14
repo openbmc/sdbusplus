@@ -50,7 +50,7 @@ namespace details
  *  template function prototype for the conversion from string functions.
  */
 template <typename T>
-auto convert_from_string(const std::string&) = delete;
+auto convert_from_string(const std::string&) noexcept = delete;
 
 /** @struct can_read_multiple
  *  @brief Utility to identify C++ types that may not be grouped into a
@@ -167,7 +167,12 @@ struct read_single
         std::string value{};
         sdbusplus::message::read(intf, m, value);
 
-        t = convert_from_string<Td<T>>(value);
+        auto r = convert_from_string<Td<T>>(value);
+        if (!r)
+        {
+            throw sdbusplus::exception::InvalidEnumString();
+        }
+        t = *r;
     }
 };
 

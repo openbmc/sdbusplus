@@ -268,7 +268,7 @@ struct type_id<std::monostate>
 template <typename T>
 constexpr auto type_id_single()
 {
-    static_assert(!std::is_base_of<undefined_type_id, type_id<T>>::value,
+    static_assert(!std::is_base_of_v<undefined_type_id, type_id<T>>,
                   "No dbus type conversion provided for type.");
     return type_id<T>::value;
 }

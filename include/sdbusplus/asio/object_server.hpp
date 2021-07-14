@@ -96,8 +96,8 @@ struct NonDbusArgsCount<std::tuple<FirstArg, OtherArgs...>>
 {
     constexpr static std::size_t size()
     {
-        if constexpr (std::is_same<FirstArg, message::message>::value ||
-                      std::is_same<FirstArg, boost::asio::yield_context>::value)
+        if constexpr (std::is_same_v<FirstArg, message::message> ||
+                      std::is_same_v<FirstArg, boost::asio::yield_context>)
         {
             return 1 + NonDbusArgsCount<std::tuple<OtherArgs...>>::size();
         }
@@ -127,14 +127,14 @@ class callback_method_instance : public callback
     using ResultType = boost::callable_traits::return_type_t<CallbackType>;
     CallbackType func_;
     template <typename T>
-    std::enable_if_t<!std::is_void<T>::value, void>
+    std::enable_if_t<!std::is_void_v<T>, void>
         callFunction(message::message& m, InputTupleType& inputArgs)
     {
         ResultType r = std::apply(func_, inputArgs);
         m.append(r);
     }
     template <typename T>
-    std::enable_if_t<std::is_void<T>::value, void>
+    std::enable_if_t<std::is_void_v<T>, void>
         callFunction(message::message& m, InputTupleType& inputArgs)
     {
         std::apply(func_, inputArgs);
@@ -233,14 +233,14 @@ class coroutine_method_instance : public callback
     boost::asio::io_context& io_;
     CallbackType func_;
     template <typename T>
-    std::enable_if_t<!std::is_void<T>::value, void>
+    std::enable_if_t<!std::is_void_v<T>, void>
         callFunction(message::message& m, InputTupleType& inputArgs)
     {
         ResultType r = std::apply(func_, inputArgs);
         m.append(r);
     }
     template <typename T>
-    std::enable_if_t<std::is_void<T>::value, void>
+    std::enable_if_t<std::is_void_v<T>, void>
         callFunction(message::message& m, InputTupleType& inputArgs)
     {
         std::apply(func_, inputArgs);

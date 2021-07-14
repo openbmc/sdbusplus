@@ -23,8 +23,8 @@ using first_type_t = std::tuple_element_t<0, std::tuple<Types...>>;
  */
 template <typename Tbase, typename T>
 using array_to_ptr_t = typename std::conditional_t<
-    std::is_array<T>::value,
-    std::conditional_t<std::is_same<Tbase, std::remove_extent_t<T>>::value,
+    std::is_array_v<T>,
+    std::conditional_t<std::is_same_v<Tbase, std::remove_extent_t<T>>,
                        std::add_pointer_t<std::remove_extent_t<T>>, T>,
     T>;
 

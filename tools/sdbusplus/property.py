@@ -66,6 +66,7 @@ class Property(NamedElement, Renderer):
         iface = interface.split(".")
         iface.insert(-1, ns_type)
         iface = "::".join(iface)
+        iface = "sdbusplus::" + iface
 
         r = cppTypeName
 

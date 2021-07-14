@@ -165,7 +165,12 @@ struct read_single
         std::string value{};
         sdbusplus::message::read(intf, m, value);
 
-        t = convert_from_string<Td<T>>(value);
+        auto r = convert_from_string<Td<T>>(value);
+        if (!r)
+        {
+            throw sdbusplus::exception::InvalidEnumString();
+        }
+        t = *r;
     }
 };
 

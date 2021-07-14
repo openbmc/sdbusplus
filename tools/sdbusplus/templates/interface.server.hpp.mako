@@ -224,7 +224,7 @@ template <>
 inline auto convert_from_string<${interface.cppNamespace()}::${e.name}>(
         const std::string& value)
 {
-    return ${interface.cppNamespace()}::convert${e.name}FromString(value);
+    return ${interface.cppNamespace()}::convertStringTo${e.name}(value);
 }
 
 template <>

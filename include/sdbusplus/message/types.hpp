@@ -222,7 +222,7 @@ struct type_id<signature> : tuple_type_id<SD_BUS_TYPE_SIGNATURE>
 {};
 
 template <typename T>
-struct type_id<T, std::enable_if_t<utility::has_const_iterator<T>::value>> :
+struct type_id<T, std::enable_if_t<utility::has_const_iterator_v<T>>> :
     std::false_type
 {
     static constexpr auto value = std::tuple_cat(

@@ -91,8 +91,8 @@ struct can_read_multiple<bool> : std::false_type
 // std::vector/map/unordered_vector/set need loops
 template <typename T>
 struct can_read_multiple<
-    T, typename std::enable_if_t<utility::has_emplace_method<T>::value ||
-                                 utility::has_emplace_back_method<T>::value>> :
+    T, typename std::enable_if_t<utility::has_emplace_method_v<T> ||
+                                 utility::has_emplace_back_method_v<T>>> :
     std::false_type
 {};
 
@@ -238,8 +238,7 @@ struct read_single<bool>
 
 /** @brief Specialization of read_single for std::vectors. */
 template <typename T>
-struct read_single<T,
-                   std::enable_if_t<utility::has_emplace_back_method<T>::value>>
+struct read_single<T, std::enable_if_t<utility::has_emplace_back_method_v<T>>>
 {
     template <typename S>
     static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, S&& s)
@@ -276,7 +275,7 @@ struct read_single<T,
 
 /** @brief Specialization of read_single for std::map. */
 template <typename T>
-struct read_single<T, std::enable_if_t<utility::has_emplace_method<T>::value>>
+struct read_single<T, std::enable_if_t<utility::has_emplace_method_v<T>>>
 {
     template <typename S>
     static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, S&& s)

@@ -106,3 +106,18 @@ test(
         ],
     ),
 )
+
+test(
+    'test-server-message-variant',
+    executable(
+        'test-server-message-variant',
+        'server/message_variant.cpp',
+        server_files,
+        include_directories: include_directories('server'),
+        dependencies: [
+            gmock_dep,
+            gtest_dep,
+            sdbusplus_dep,
+        ],
+    ),
+)

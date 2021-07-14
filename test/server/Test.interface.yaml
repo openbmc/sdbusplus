@@ -34,3 +34,16 @@ properties:
     - name: DoubleAsEpsilon
       type: double
       default: Epsilon
+
+    - name: VariantOfEnums
+      type: variant[enum[self.EnumOne], string, enum[self.EnumTwo]]
+
+enumerations:
+    - name: EnumOne
+      values:
+        - name: OneA
+        - name: OneB
+    - name: EnumTwo
+      values:
+        - name: TwoA
+        - name: TwoB

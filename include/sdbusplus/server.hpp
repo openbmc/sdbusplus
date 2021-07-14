@@ -11,7 +11,6 @@ namespace match = bus::match;
 using match_t = bus::match_t;
 } // namespace server
 } // namespace sdbusplus
-#include <sdbusplus/server/bindings.hpp>
 #include <sdbusplus/server/interface.hpp>
 #include <sdbusplus/server/manager.hpp>
 #include <sdbusplus/server/object.hpp>

@@ -186,7 +186,7 @@ ${p.defaultValue};
 };
 
     % for e in interface.enums:
-/* Specialization of sdbusplus::server::bindings::details::convertForMessage
+/* Specialization of sdbusplus::server::convertForMessage
  * for enum-type ${classname}::${e.name}.
  *
  * This converts from the enum to a constant c-string representing the enum.

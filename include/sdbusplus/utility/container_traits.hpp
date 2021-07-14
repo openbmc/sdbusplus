@@ -52,7 +52,7 @@ struct has_emplace_method
 
   public:
     static constexpr bool value =
-        std::is_same<std::true_type, decltype(test<T, dummy>(nullptr))>::value;
+        std::is_same_v<std::true_type, decltype(test<T, dummy>(nullptr))>;
 };
 
 /** has_emplace_method - Determine if type has a method template named
@@ -78,7 +78,7 @@ struct has_emplace_back_method
 
   public:
     static constexpr bool value =
-        std::is_same<std::true_type, decltype(test<T, dummy>(nullptr))>::value;
+        std::is_same_v<std::true_type, decltype(test<T, dummy>(nullptr))>;
 };
 
 } // namespace utility

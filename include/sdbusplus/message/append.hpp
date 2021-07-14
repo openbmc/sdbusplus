@@ -162,8 +162,8 @@ struct append_single
     {
         // For this default implementation, we need to ensure that only
         // basic types are used.
-        static_assert(std::is_fundamental<Td<T>>::value ||
-                          std::is_convertible<Td<T>, const char*>::value,
+        static_assert(std::is_fundamental_v<Td<T>> ||
+                          std::is_convertible_v<Td<T>, const char*>,
                       "Non-basic types are not allowed.");
 
         constexpr auto dbusType = std::get<0>(types::type_id<T>());
@@ -383,15 +383,11 @@ struct AppendHelper<1>
  *  sd_bus_message_append.
  */
 template <typename Tuple>
-std::enable_if_t<2 <= std::tuple_size<Tuple>::value>
+std::enable_if_t<2 <= std::tuple_size_v<Tuple>>
     append_tuple(sdbusplus::SdBusInterface* intf, sd_bus_message* m, Tuple&& t)
 {
     // This was called because the tuple had at least 2 items in it.
-
-    AppendHelper<std::tuple_size<Tuple>::value>::op(intf, m, std::move(t));
-
-    //    append_tuple(intf, m, std::move(t),
-    //                 std::make_index_sequence<std::tuple_size<Tuple>::value>());
+    AppendHelper<std::tuple_size_v<Tuple>>::op(intf, m, std::move(t));
 }
 
 /** @brief Append a tuple of exactly 1 entry into the sd_bus_message.
@@ -405,7 +401,7 @@ std::enable_if_t<2 <= std::tuple_size<Tuple>::value>
  *  can_append_multiple::value == false.
  */
 template <typename Tuple>
-std::enable_if_t<1 == std::tuple_size<Tuple>::value>
+std::enable_if_t<1 == std::tuple_size_v<Tuple>>
     append_tuple(sdbusplus::SdBusInterface* intf, sd_bus_message* m, Tuple&& t)
 {
     using itemType = decltype(std::get<0>(t));
@@ -418,7 +414,7 @@ std::enable_if_t<1 == std::tuple_size<Tuple>::value>
  *  This a no-op function that is useful due to variadic templates.
  */
 template <typename Tuple>
-std::enable_if_t<0 == std::tuple_size<Tuple>::value> inline append_tuple(
+std::enable_if_t<0 == std::tuple_size_v<Tuple>> inline append_tuple(
     sdbusplus::SdBusInterface* /*intf*/, sd_bus_message* /*m*/, Tuple&& /*t*/)
 {}
 

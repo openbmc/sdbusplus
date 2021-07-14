@@ -14,7 +14,7 @@ namespace utility
  * @tparam Types - the parameter pack
  */
 template <typename... Types>
-using first_type = std::tuple_element_t<0, std::tuple<Types...>>;
+using first_type_t = std::tuple_element_t<0, std::tuple<Types...>>;
 
 /** @brief Convert T[N] to T* if is_same<Tbase,T>
  *
@@ -47,10 +47,16 @@ struct strip_first_n_args<N, std::tuple<>>
     using type = std::tuple<>;
 };
 
+template <std::size_t N, typename... Args>
+using strip_first_n_args_t = typename strip_first_n_args<N, Args...>::type;
+
 // Small helper class for stripping off the error code from the function
 // argument definitions so unpack can be called appropriately
 template <typename T>
 using strip_first_arg = strip_first_n_args<1, T>;
+
+template <typename T>
+using strip_first_arg_t = typename strip_first_arg<T>::type;
 
 // matching helper class to only return the first type
 template <typename T>
@@ -65,6 +71,9 @@ struct get_first_arg<std::tuple<FirstArg, Rest...>>
     using type = FirstArg;
 };
 
+template <typename... Args>
+using get_first_arg_t = typename get_first_arg<Args...>::type;
+
 // helper class to remove const and reference from types
 template <typename T>
 struct decay_tuple
@@ -75,6 +84,9 @@ struct decay_tuple<std::tuple<Args...>>
 {
     using type = std::tuple<typename std::decay<Args>::type...>;
 };
+
+template <typename... Args>
+using decay_tuple_t = typename decay_tuple<Args...>::type;
 
 // Small helper class for stripping off the first + last character of a char
 // array

@@ -130,8 +130,7 @@ class connection : public sdbusplus::bus::bus
                                  const InputArgs&... a)
     {
         using FunctionTuple = boost::callable_traits::args_t<MessageHandler>;
-        using FunctionTupleType =
-            typename utility::decay_tuple<FunctionTuple>::type;
+        using FunctionTupleType = utility::decay_tuple_t<FunctionTuple>;
         constexpr bool returnWithMsg = []() {
             if constexpr ((std::tuple_size_v<FunctionTupleType>) > 1)
             {
@@ -141,9 +140,8 @@ class connection : public sdbusplus::bus::bus
             }
             return false;
         }();
-        using UnpackType =
-            typename utility::strip_first_n_args<returnWithMsg ? 2 : 1,
-                                                 FunctionTupleType>::type;
+        using UnpackType = utility::strip_first_n_args_t<returnWithMsg ? 2 : 1,
+                                                         FunctionTupleType>;
         auto applyHandler = [handler = std::forward<MessageHandler>(handler)](
                                 boost::system::error_code ec,
                                 message::message& r) mutable {
@@ -270,7 +268,7 @@ class connection : public sdbusplus::bus::bus
         }
         else if constexpr (sizeof...(RetTypes) == 1)
         {
-            if constexpr (std::is_same<utility::first_type<RetTypes...>,
+            if constexpr (std::is_same<utility::first_type_t<RetTypes...>,
                                        void>::value)
             {
                 return;
@@ -278,7 +276,7 @@ class connection : public sdbusplus::bus::bus
             else
             {
                 // single item return
-                utility::first_type<RetTypes...> responseData{};
+                utility::first_type_t<RetTypes...> responseData{};
                 // before attempting to read, check ec and bail on error
                 if (ec)
                 {

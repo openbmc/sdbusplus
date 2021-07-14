@@ -268,8 +268,8 @@ class connection : public sdbusplus::bus::bus
         }
         else if constexpr (sizeof...(RetTypes) == 1)
         {
-            if constexpr (std::is_same<utility::first_type_t<RetTypes...>,
-                                       void>::value)
+            if constexpr (std::is_same_v<utility::first_type_t<RetTypes...>,
+                                         void>)
             {
                 return;
             }

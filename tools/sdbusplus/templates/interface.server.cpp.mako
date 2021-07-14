@@ -104,8 +104,8 @@ mapping${classname}${e.name}[] =
 
 } // anonymous namespace
 
-auto ${classname}::convert${e.name}FromString(const std::string& s) ->
-        ${e.name}
+auto ${classname}::convertStringTo${e.name}(const std::string& s) noexcept ->
+        std::optional<${e.name}>
 {
     auto i = std::find_if(
             std::begin(mapping${classname}${e.name}),
@@ -113,11 +113,26 @@ auto ${classname}::convert${e.name}FromString(const std::string& s) ->
             [&s](auto& e){ return 0 == strcmp(s.c_str(), std::get<0>(e)); } );
     if (std::end(mapping${classname}${e.name}) == i)
     {
-        throw sdbusplus::exception::InvalidEnumString();
+        return std::nullopt;
     }
     else
     {
         return std::get<1>(*i);
+    }
+}
+
+auto ${classname}::convert${e.name}FromString(const std::string& s) ->
+        ${e.name}
+{
+    auto r = convertStringTo${e.name}(s);
+
+    if (!r)
+    {
+        throw sdbusplus::exception::InvalidEnumString();
+    }
+    else
+    {
+        return *r;
     }
 }
 

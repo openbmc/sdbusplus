@@ -88,7 +88,7 @@ struct can_append_multiple<bool> : std::false_type
 // std::vector/map/unordered_map/set need loops
 template <typename T>
 struct can_append_multiple<
-    T, typename std::enable_if<utility::has_const_iterator<T>::value>::type> :
+    T, typename std::enable_if_t<utility::has_const_iterator<T>::value>> :
     std::false_type
 {};
 // std::pair needs to be broken down into components.

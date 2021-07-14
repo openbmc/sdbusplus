@@ -91,9 +91,8 @@ struct can_read_multiple<bool> : std::false_type
 // std::vector/map/unordered_vector/set need loops
 template <typename T>
 struct can_read_multiple<
-    T,
-    typename std::enable_if<utility::has_emplace_method<T>::value ||
-                            utility::has_emplace_back_method<T>::value>::type> :
+    T, typename std::enable_if_t<utility::has_emplace_method<T>::value ||
+                                 utility::has_emplace_back_method<T>::value>> :
     std::false_type
 {};
 

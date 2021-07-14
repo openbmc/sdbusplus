@@ -38,6 +38,7 @@ namespace types
  */
 template <typename... Args>
 constexpr auto type_id();
+
 /** @fn type_id_nonull()
  *  @brief A non-null-terminated version of type_id.
  *
@@ -138,6 +139,9 @@ struct tuple_type_id
 #endif
 };
 
+template <char... Chars>
+inline constexpr auto tuple_type_id_v = tuple_type_id<Chars...>::value;
+
 /** @fn type_id_single()
  *  @brief Get a tuple containing the dbus type character(s) for a C++ type.
  *
@@ -172,6 +176,10 @@ struct type_id :
     public std::conditional_t<
         std::is_enum_v<T>, tuple_type_id<SD_BUS_TYPE_STRING>, undefined_type_id>
 {};
+
+template <typename... Args>
+inline constexpr auto type_id_v = type_id<Args...>::value;
+
 // Specializations for built-in types.
 template <>
 struct type_id<bool> : tuple_type_id<SD_BUS_TYPE_BOOLEAN>
@@ -226,27 +234,27 @@ struct type_id<T, std::enable_if_t<utility::has_const_iterator_v<T>>> :
     std::false_type
 {
     static constexpr auto value = std::tuple_cat(
-        tuple_type_id<SD_BUS_TYPE_ARRAY>::value,
-        type_id<type_id_downcast_t<typename T::value_type>>::value);
+        tuple_type_id_v<SD_BUS_TYPE_ARRAY>,
+        type_id_v<type_id_downcast_t<typename T::value_type>>);
 };
 
 template <typename T1, typename T2>
 struct type_id<std::pair<T1, T2>>
 {
     static constexpr auto value =
-        std::tuple_cat(tuple_type_id<SD_BUS_TYPE_DICT_ENTRY_BEGIN>::value,
-                       type_id<type_id_downcast_t<T1>>::value,
-                       type_id<type_id_downcast_t<T2>>::value,
-                       tuple_type_id<SD_BUS_TYPE_DICT_ENTRY_END>::value);
+        std::tuple_cat(tuple_type_id_v<SD_BUS_TYPE_DICT_ENTRY_BEGIN>,
+                       type_id_v<type_id_downcast_t<T1>>,
+                       type_id_v<type_id_downcast_t<T2>>,
+                       tuple_type_id_v<SD_BUS_TYPE_DICT_ENTRY_END>);
 };
 
 template <typename... Args>
 struct type_id<std::tuple<Args...>>
 {
     static constexpr auto value =
-        std::tuple_cat(tuple_type_id<SD_BUS_TYPE_STRUCT_BEGIN>::value,
-                       type_id<type_id_downcast_t<Args>>::value...,
-                       tuple_type_id<SD_BUS_TYPE_STRUCT_END>::value);
+        std::tuple_cat(tuple_type_id_v<SD_BUS_TYPE_STRUCT_BEGIN>,
+                       type_id_v<type_id_downcast_t<Args>>...,
+                       tuple_type_id_v<SD_BUS_TYPE_STRUCT_END>);
 };
 
 template <typename... Args>
@@ -270,7 +278,7 @@ constexpr auto type_id_single()
 {
     static_assert(!std::is_base_of_v<undefined_type_id, type_id<T>>,
                   "No dbus type conversion provided for type.");
-    return type_id<T>::value;
+    return type_id_v<T>;
 }
 
 template <typename T, typename... Args>

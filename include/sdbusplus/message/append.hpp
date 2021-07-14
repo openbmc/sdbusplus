@@ -88,7 +88,7 @@ struct can_append_multiple<bool> : std::false_type
 // std::vector/map/unordered_map/set need loops
 template <typename T>
 struct can_append_multiple<
-    T, typename std::enable_if_t<utility::has_const_iterator<T>::value>> :
+    T, typename std::enable_if_t<utility::has_const_iterator_v<T>>> :
     std::false_type
 {};
 // std::pair needs to be broken down into components.
@@ -260,7 +260,7 @@ struct append_single<bool>
 /** @brief Specialization of append_single for containers (ie vector, array,
  * set, map, etc) */
 template <typename T>
-struct append_single<T, std::enable_if_t<utility::has_const_iterator<T>::value>>
+struct append_single<T, std::enable_if_t<utility::has_const_iterator_v<T>>>
 {
     template <typename S>
     static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, S&& s)

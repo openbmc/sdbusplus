@@ -30,6 +30,9 @@ struct has_const_iterator
     static constexpr bool value = sizeof(test<T>(0)) == sizeof(yes);
 };
 
+template <typename T>
+inline constexpr bool has_const_iterator_v = has_const_iterator<T>::value;
+
 /** has_emplace_method - Determine if type has a method template named emplace
  *
  *  @tparam T - Type to be tested.
@@ -54,6 +57,9 @@ struct has_emplace_method
     static constexpr bool value =
         std::is_same_v<std::true_type, decltype(test<T, dummy>(nullptr))>;
 };
+
+template <typename T>
+inline constexpr bool has_emplace_method_v = has_emplace_method<T>::value;
 
 /** has_emplace_method - Determine if type has a method template named
  * emplace_back
@@ -80,6 +86,10 @@ struct has_emplace_back_method
     static constexpr bool value =
         std::is_same_v<std::true_type, decltype(test<T, dummy>(nullptr))>;
 };
+
+template <typename T>
+inline constexpr bool has_emplace_back_method_v =
+    has_emplace_back_method<T>::value;
 
 } // namespace utility
 } // namespace sdbusplus

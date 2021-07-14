@@ -67,7 +67,7 @@ class ${classname}
     % endfor
 
     % if interface.properties:
-        using PropertiesVariant = sdbusplus::utility::dedup_variant<
+        using PropertiesVariant = sdbusplus::utility::dedup_variant_t<
                 ${",\n                ".join(sorted(setOfPropertyTypes()))}>;
 
         /** @brief Constructor to initialize the object from a map of

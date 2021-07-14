@@ -57,8 +57,14 @@ struct dedup_variant<std::variant<Done...>, First, Rest...> :
  *  to `std::variant<uint32_t>` on architectures where there is a collision.
  */
 template <typename T, typename... Types>
-using dedup_variant =
+using dedup_variant_t =
     typename details::dedup_variant<std::variant<T>, Types...>::type;
+
+// Keep temporarily for backwards compatibility.
+//  openbmc/bmcweb
+//  openbmc/smbios-mdr
+template <typename T, typename... Types>
+using dedup_variant = dedup_variant_t<T, Types...>;
 
 } // namespace utility
 } // namespace sdbusplus

@@ -53,21 +53,20 @@ class callback_set
 
 template <typename T>
 using FirstArgIsYield =
-    std::is_same<typename utility::get_first_arg<typename utility::decay_tuple<
-                     boost::callable_traits::args_t<T>>::type>::type,
+    std::is_same<utility::get_first_arg_t<
+                     utility::decay_tuple_t<boost::callable_traits::args_t<T>>>,
                  boost::asio::yield_context>;
 
 template <typename T>
 using FirstArgIsMessage =
-    std::is_same<typename utility::get_first_arg<typename utility::decay_tuple<
-                     boost::callable_traits::args_t<T>>::type>::type,
+    std::is_same<utility::get_first_arg_t<
+                     utility::decay_tuple_t<boost::callable_traits::args_t<T>>>,
                  message::message>;
 
 template <typename T>
 using SecondArgIsMessage = std::is_same<
-    typename utility::get_first_arg<
-        typename utility::strip_first_arg<typename utility::decay_tuple<
-            boost::callable_traits::args_t<T>>::type>::type>::type,
+    utility::get_first_arg_t<utility::strip_first_arg_t<
+        utility::decay_tuple_t<boost::callable_traits::args_t<T>>>>,
     message::message>;
 template <typename T>
 static constexpr bool callbackYields = FirstArgIsYield<T>::value;
@@ -124,8 +123,7 @@ class callback_method_instance : public callback
 
   private:
     using CallbackSignature = boost::callable_traits::args_t<CallbackType>;
-    using InputTupleType =
-        typename utility::decay_tuple<CallbackSignature>::type;
+    using InputTupleType = utility::decay_tuple_t<CallbackSignature>;
     using ResultType = boost::callable_traits::return_type_t<CallbackType>;
     CallbackType func_;
     template <typename T>
@@ -145,9 +143,8 @@ class callback_method_instance : public callback
     // optional message-first-argument callback
     int expandCall(message::message& m)
     {
-        using DbusTupleType = typename utility::strip_first_n_args<
-            details::NonDbusArgsCount<InputTupleType>::size(),
-            InputTupleType>::type;
+        using DbusTupleType = utility::strip_first_n_args_t<
+            details::NonDbusArgsCount<InputTupleType>::size(), InputTupleType>;
 
         DbusTupleType dbusArgs;
         if (!utility::read_into_tuple(dbusArgs, m))
@@ -231,8 +228,7 @@ class coroutine_method_instance : public callback
 
   private:
     using CallbackSignature = boost::callable_traits::args_t<CallbackType>;
-    using InputTupleType =
-        typename utility::decay_tuple<CallbackSignature>::type;
+    using InputTupleType = utility::decay_tuple_t<CallbackSignature>;
     using ResultType = boost::callable_traits::return_type_t<CallbackType>;
     boost::asio::io_context& io_;
     CallbackType func_;
@@ -252,9 +248,8 @@ class coroutine_method_instance : public callback
     // co-routine body for call
     void expandCall(boost::asio::yield_context yield, message::message& m)
     {
-        using DbusTupleType = typename utility::strip_first_n_args<
-            details::NonDbusArgsCount<InputTupleType>::size(),
-            InputTupleType>::type;
+        using DbusTupleType = utility::strip_first_n_args_t<
+            details::NonDbusArgsCount<InputTupleType>::size(), InputTupleType>;
         DbusTupleType dbusArgs;
         try
         {
@@ -559,11 +554,10 @@ class dbus_interface
     bool register_method(const std::string& name, CallbackType&& handler)
     {
         using ActualSignature = boost::callable_traits::args_t<CallbackType>;
-        using CallbackSignature = typename utility::strip_first_n_args<
+        using CallbackSignature = utility::strip_first_n_args_t<
             details::NonDbusArgsCount<ActualSignature>::size(),
-            ActualSignature>::type;
-        using InputTupleType =
-            typename utility::decay_tuple<CallbackSignature>::type;
+            ActualSignature>;
+        using InputTupleType = utility::decay_tuple_t<CallbackSignature>;
         using ResultType = boost::callable_traits::return_type_t<CallbackType>;
 
         if (initialized_)
@@ -601,8 +595,7 @@ class dbus_interface
     bool register_method(const std::string& name, CallbackType&& handler)
     {
         using CallbackSignature = boost::callable_traits::args_t<CallbackType>;
-        using InputTupleType =
-            typename utility::decay_tuple<CallbackSignature>::type;
+        using InputTupleType = utility::decay_tuple_t<CallbackSignature>;
         using ResultType = boost::callable_traits::return_type_t<CallbackType>;
 
         if (initialized_)

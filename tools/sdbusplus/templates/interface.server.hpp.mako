@@ -1,6 +1,7 @@
 #pragma once
 #include <limits>
 #include <map>
+#include <optional>
 #include <sdbusplus/sdbus.hpp>
 #include <sdbusplus/server.hpp>
 #include <sdbusplus/utility/dedup_variant.hpp>
@@ -122,8 +123,17 @@ ${p.camelCase}(${p.cppTypeParam(interface.name)} value);
          *  @param[in] s - The string to convert in the form of
          *                 "${interface.name}.<value name>"
          *  @return - The enum value.
+         *
+         *  @note Throws if string is not a valid mapping.
          */
         static ${e.name} convert${e.name}FromString(const std::string& s);
+
+        /** @brief Convert a string to an appropriate enum value.
+         *  @param[in] s - The string to convert in the form of
+         *                 "${interface.name}.<value name>"
+         *  @return - The enum value or std::nullopt
+         */
+        static std::optional<${e.name}> convertStringTo${e.name}(const std::string& s);
 
         /** @brief Convert an enum value to a string.
          *  @param[in] e - The enum to convert to a string.

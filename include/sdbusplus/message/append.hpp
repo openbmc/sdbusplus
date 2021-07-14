@@ -104,6 +104,10 @@ template <typename... Args>
 struct can_append_multiple<std::variant<Args...>> : std::false_type
 {};
 
+template <typename... Args>
+inline constexpr bool can_append_multiple_v =
+    can_append_multiple<Args...>::value;
+
 /** @struct append_single
  *  @brief Utility to append a single C++ element into a sd_bus_message.
  *
@@ -398,7 +402,7 @@ std::enable_if_t<2 <= std::tuple_size_v<Tuple>>
  *  A tuple of 1 entry can be added with sd_bus_message_append_basic.
  *
  *  Note: Some 1-entry tuples may need special handling due to
- *  can_append_multiple::value == false.
+ *  can_append_multiple_v == false.
  */
 template <typename Tuple>
 std::enable_if_t<1 == std::tuple_size_v<Tuple>>
@@ -422,22 +426,21 @@ std::enable_if_t<0 == std::tuple_size_v<Tuple>> inline append_tuple(
  *  @tparam Tuple - A tuple of previously analyzed types.
  *  @tparam Arg - The argument to analyze for grouping.
  *
- *  Specialization for when can_append_multiple<Arg> is true.
+ *  Specialization for when can_append_multiple_v<Arg> is true.
  */
 template <typename Tuple, typename Arg>
-std::enable_if_t<
-    can_append_multiple<types::details::type_id_downcast_t<Arg>>::value>
+std::enable_if_t<can_append_multiple_v<types::details::type_id_downcast_t<Arg>>>
     append_grouping(sdbusplus::SdBusInterface* intf, sd_bus_message* m,
                     Tuple&& t, Arg&& arg);
 /** @brief Group a sequence of C++ types for appending into an sd_bus_message.
  *  @tparam Tuple - A tuple of previously analyzed types.
  *  @tparam Arg - The argument to analyze for grouping.
  *
- *  Specialization for when can_append_multiple<Arg> is false.
+ *  Specialization for when can_append_multiple_v<Arg> is false.
  */
 template <typename Tuple, typename Arg>
 std::enable_if_t<
-    !can_append_multiple<types::details::type_id_downcast_t<Arg>>::value>
+    !can_append_multiple_v<types::details::type_id_downcast_t<Arg>>>
     append_grouping(sdbusplus::SdBusInterface* intf, sd_bus_message* m,
                     Tuple&& t, Arg&& arg);
 /** @brief Group a sequence of C++ types for appending into an sd_bus_message.
@@ -445,11 +448,10 @@ std::enable_if_t<
  *  @tparam Arg - The argument to analyze for grouping.
  *  @tparam Rest - The remaining arguments left to analyze.
  *
- *  Specialization for when can_append_multiple<Arg> is true.
+ *  Specialization for when can_append_multiple_v<Arg> is true.
  */
 template <typename Tuple, typename Arg, typename... Rest>
-std::enable_if_t<
-    can_append_multiple<types::details::type_id_downcast_t<Arg>>::value>
+std::enable_if_t<can_append_multiple_v<types::details::type_id_downcast_t<Arg>>>
     append_grouping(sdbusplus::SdBusInterface* intf, sd_bus_message* m,
                     Tuple&& t, Arg&& arg, Rest&&... rest);
 /** @brief Group a sequence of C++ types for appending into an sd_bus_message.
@@ -457,17 +459,16 @@ std::enable_if_t<
  *  @tparam Arg - The argument to analyze for grouping.
  *  @tparam Rest - The remaining arguments left to analyze.
  *
- *  Specialization for when can_append_multiple<Arg> is false.
+ *  Specialization for when can_append_multiple_v<Arg> is false.
  */
 template <typename Tuple, typename Arg, typename... Rest>
 std::enable_if_t<
-    !can_append_multiple<types::details::type_id_downcast_t<Arg>>::value>
+    !can_append_multiple_v<types::details::type_id_downcast_t<Arg>>>
     append_grouping(sdbusplus::SdBusInterface* intf, sd_bus_message* m,
                     Tuple&& t, Arg&& arg, Rest&&... rest);
 
 template <typename Tuple, typename Arg>
-std::enable_if_t<
-    can_append_multiple<types::details::type_id_downcast_t<Arg>>::value>
+std::enable_if_t<can_append_multiple_v<types::details::type_id_downcast_t<Arg>>>
     append_grouping(sdbusplus::SdBusInterface* intf, sd_bus_message* m,
                     Tuple&& t, Arg&& arg)
 {
@@ -481,7 +482,7 @@ std::enable_if_t<
 
 template <typename Tuple, typename Arg>
 std::enable_if_t<
-    !can_append_multiple<types::details::type_id_downcast_t<Arg>>::value>
+    !can_append_multiple_v<types::details::type_id_downcast_t<Arg>>>
     append_grouping(sdbusplus::SdBusInterface* intf, sd_bus_message* m,
                     Tuple&& t, Arg&& arg)
 {
@@ -494,8 +495,7 @@ std::enable_if_t<
 }
 
 template <typename Tuple, typename Arg, typename... Rest>
-std::enable_if_t<
-    can_append_multiple<types::details::type_id_downcast_t<Arg>>::value>
+std::enable_if_t<can_append_multiple_v<types::details::type_id_downcast_t<Arg>>>
     append_grouping(sdbusplus::SdBusInterface* intf, sd_bus_message* m,
                     Tuple&& t, Arg&& arg, Rest&&... rest)
 {
@@ -511,7 +511,7 @@ std::enable_if_t<
 
 template <typename Tuple, typename Arg, typename... Rest>
 std::enable_if_t<
-    !can_append_multiple<types::details::type_id_downcast_t<Arg>>::value>
+    !can_append_multiple_v<types::details::type_id_downcast_t<Arg>>>
     append_grouping(sdbusplus::SdBusInterface* intf, sd_bus_message* m,
                     Tuple&& t, Arg&& arg, Rest&&... rest)
 {

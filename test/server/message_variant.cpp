@@ -43,6 +43,15 @@ struct Object : public ::testing::Test
     }
 };
 
+static_assert(
+    sdbusplus::message::details::has_convert_from_string_v<TestIf::EnumOne>,
+    "EnumOne does not have convert_from_string!");
+static_assert(
+    sdbusplus::message::details::has_convert_from_string_v<TestIf::EnumTwo>,
+    "EnumTwo does not have convert_from_string!");
+static_assert(!sdbusplus::message::details::has_convert_from_string_v<size_t>,
+              "size_t unexpectedly has a convert_from_string!");
+
 TEST_F(Object, PlainEnumOne)
 {
     run_test<TestIf::EnumOne>(TestIf::EnumOne::OneA);

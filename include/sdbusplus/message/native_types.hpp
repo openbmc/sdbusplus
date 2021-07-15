@@ -221,6 +221,26 @@ std::string convert_to_string(T t)
     return details::convert_to_string<T>::op(t);
 }
 
+namespace details
+{
+// SFINAE templates to determine if convert_from_string exists for a type.
+template <typename T>
+auto has_convert_from_string_helper(T)
+    -> decltype(convert_from_string<T>::op(std::declval<std::string>()),
+                std::true_type());
+auto has_convert_from_string_helper(...) -> std::false_type;
+
+template <typename T>
+struct has_convert_from_string :
+    decltype(has_convert_from_string_helper(std::declval<T>()))
+{};
+
+template <typename T>
+inline constexpr bool has_convert_from_string_v =
+    has_convert_from_string<T>::value;
+
+} // namespace details
+
 } // namespace message
 } // namespace sdbusplus
 

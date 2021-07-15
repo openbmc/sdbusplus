@@ -175,6 +175,52 @@ using object_path = details::string_path_wrapper;
 using signature = details::string_wrapper;
 using unix_fd = details::unix_fd_type;
 
+namespace details
+{
+
+template <typename T>
+struct convert_from_string
+{
+    static auto op(const std::string&) noexcept = delete;
+};
+
+template <typename T>
+struct convert_to_string
+{
+    static std::string op(T) = delete;
+};
+
+} // namespace details
+
+/** @brief Convert from a string to a native type.
+ *
+ *  Some C++ types cannot be represented directly on dbus, so we encode
+ *  them as strings.  Enums are the primary example of this.  This is a
+ *  template function prototype for the conversion from string functions.
+ *
+ *  @return A std::optional<T> containing the value if conversion is possible.
+ */
+template <typename T>
+auto convert_from_string(const std::string& str) noexcept
+{
+    return details::convert_from_string<T>::op(str);
+};
+
+/** @brief Convert from a native type to a string.
+ *
+ *  Some C++ types cannot be represented directly on dbus, so we encode
+ *  them as strings.  Enums are the primary example of this.  This is a
+ *  template function prototype for the conversion to string functions.
+ *
+ *  @return A std::string containing an encoding of the value, if conversion is
+ *          possible.
+ */
+template <typename T>
+std::string convert_to_string(T t)
+{
+    return details::convert_to_string<T>::op(t);
+}
+
 } // namespace message
 } // namespace sdbusplus
 

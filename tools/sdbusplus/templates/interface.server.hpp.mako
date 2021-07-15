@@ -216,25 +216,26 @@ inline std::string convertForMessage(${classname}::${e.name} e)
 } // namespace ${s}
     % endfor
 
-namespace message
-{
-namespace details
+namespace message::details
 {
     % for e in interface.enums:
 template <>
-inline auto convert_from_string<${interface.cppNamespace()}::${e.name}>(
-        const std::string& value) noexcept
+struct convert_from_string<${interface.cppNamespace()}::${e.name}>
 {
-    return ${interface.cppNamespace()}::convertStringTo${e.name}(value);
-}
+    static auto op(const std::string& value) noexcept
+    {
+        return ${interface.cppNamespace()}::convertStringTo${e.name}(value);
+    }
+};
 
 template <>
-inline std::string convert_to_string<${interface.cppNamespace()}::${e.name}>(
-        ${interface.cppNamespace()}::${e.name} value)
+struct convert_to_string<${interface.cppNamespace()}::${e.name}>
 {
-    return ${interface.cppNamespace()}::convert${e.name}ToString(value);
-}
+    static std::string op(${interface.cppNamespace()}::${e.name} value)
+    {
+        return ${interface.cppNamespace()}::convert${e.name}ToString(value);
+    }
+};
     % endfor
-} // namespace details
-} // namespace message
+} // namespace message::details
 } // namespace sdbusplus

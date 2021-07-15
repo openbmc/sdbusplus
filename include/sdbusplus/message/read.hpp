@@ -43,15 +43,6 @@ void read(sdbusplus::SdBusInterface* intf, sd_bus_message* m, Args&&... args);
 namespace details
 {
 
-/** @brief Convert from a string to a native type.
- *
- *  Some C++ types cannot be represented directly on dbus, so we encode
- *  them as strings.  Enums are the primary example of this.  This is a
- *  template function prototype for the conversion from string functions.
- */
-template <typename T>
-auto convert_from_string(const std::string&) noexcept = delete;
-
 /** @struct can_read_multiple
  *  @brief Utility to identify C++ types that may not be grouped into a
  *         single sd_bus_message_read call and instead need special
@@ -167,7 +158,7 @@ struct read_single
         std::string value{};
         sdbusplus::message::read(intf, m, value);
 
-        auto r = convert_from_string<Td<T>>(value);
+        auto r = sdbusplus::message::convert_from_string<Td<T>>(value);
         if (!r)
         {
             throw sdbusplus::exception::InvalidEnumString();

@@ -375,6 +375,10 @@ struct read_single<std::tuple<Args...>>
 template <typename... Args>
 struct read_single<std::variant<Args...>>
 {
+    // Downcast
+    template <typename T>
+    using Td = types::details::type_id_downcast_t<T>;
+
     template <typename S, typename S1, typename... Args1>
     static void read(sdbusplus::SdBusInterface* intf, sd_bus_message* m, S&& s)
     {
@@ -393,8 +397,6 @@ struct read_single<std::variant<Args...>>
             return;
         }
 
-        std::remove_reference_t<S1> s1;
-
         r = intf->sd_bus_message_enter_container(m, SD_BUS_TYPE_VARIANT,
                                                  dbusType.data());
         if (r < 0)
@@ -403,7 +405,31 @@ struct read_single<std::variant<Args...>>
                 -r, "sd_bus_message_enter_container variant");
         }
 
-        sdbusplus::message::read(intf, m, s1);
+        // If this type is an enum or string, we don't know which is the
+        // valid parsing.  Delegate to 'convert_from_string' so we do the
+        // correct conversion.
+        if constexpr (std::is_enum_v<Td<S1>> ||
+                      std::is_same_v<std::string, Td<S1>>)
+        {
+            std::string str{};
+            sdbusplus::message::read(intf, m, str);
+            auto r =
+                sdbusplus::message::convert_from_string<std::variant<Args...>>(
+                    str);
+
+            if (!r)
+            {
+                throw sdbusplus::exception::InvalidEnumString();
+            }
+
+            s = std::move(*r);
+        }
+        else // otherise, read it out directly.
+        {
+            std::remove_reference_t<S1> s1;
+            sdbusplus::message::read(intf, m, s1);
+            s = std::move(s1);
+        }
 
         r = intf->sd_bus_message_exit_container(m);
         if (r < 0)
@@ -411,8 +437,6 @@ struct read_single<std::variant<Args...>>
             throw exception::SdBusError(
                 -r, "sd_bus_message_exit_container variant");
         }
-
-        s = std::move(s1);
     }
 
     template <typename S>

@@ -1,7 +1,9 @@
 #pragma once
 
+#include <optional>
 #include <string>
 #include <string_view>
+#include <variant>
 
 namespace sdbusplus
 {
@@ -238,6 +240,59 @@ struct has_convert_from_string :
 template <typename T>
 inline constexpr bool has_convert_from_string_v =
     has_convert_from_string<T>::value;
+
+// Specialization of 'convert_from_string' for variant.
+template <typename... Types>
+struct convert_from_string<std::variant<Types...>>
+{
+    static auto op(const std::string& str)
+        -> std::optional<std::variant<Types...>>
+    {
+        if constexpr (0 < sizeof...(Types))
+        {
+            return process<Types...>(str);
+        }
+        return {};
+    }
+
+    // We need to iterate through all the variant types and find
+    // the one which matches the contents of the string.  Often,
+    // a variant can contain both a convertible-type (ie. enum) and
+    // a string, so we need to iterate through all the convertible-types
+    // first and convert to string as a last resort.
+    template <typename T, typename... Args>
+    static auto process(const std::string& str)
+        -> std::optional<std::variant<Types...>>
+    {
+        // If convert_from_string exists for the type, attempt it.
+        if constexpr (has_convert_from_string_v<T>)
+        {
+            auto r = convert_from_string<T>::op(str);
+            if (r)
+            {
+                return r;
+            }
+        }
+
+        // If there are any more types in the variant, try them.
+        if constexpr (0 < sizeof...(Args))
+        {
+            auto r = process<Args...>(str);
+            if (r)
+            {
+                return r;
+            }
+        }
+
+        // Otherwise, if this is a string, do last-resort conversion.
+        if constexpr (std::is_same_v<std::string, std::remove_cv_t<T>>)
+        {
+            return str;
+        }
+
+        return {};
+    }
+};
 
 } // namespace details
 

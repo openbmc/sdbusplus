@@ -51,6 +51,9 @@ static_assert(
     "EnumTwo does not have convert_from_string!");
 static_assert(!sdbusplus::message::details::has_convert_from_string_v<size_t>,
               "size_t unexpectedly has a convert_from_string!");
+static_assert(sdbusplus::message::details::has_convert_from_string_v<
+                  TestIf::PropertiesVariant>,
+              "TestIf::PropertiesVariant does not convert_from_string!");
 
 TEST_F(Object, PlainEnumOne)
 {
@@ -74,7 +77,7 @@ TEST_F(Object, EnumTwoAsEnumOneThrows)
         TestIf::EnumTwo::TwoB);
 }
 
-TEST_F(Object, DISABLED_VariantAsString)
+TEST_F(Object, VariantAsString)
 {
     run_test<variant_t>(std::string("Hello"));
 }
@@ -84,7 +87,7 @@ TEST_F(Object, VariantAsEnumOne)
     run_test<variant_t>(TestIf::EnumOne::OneA);
 }
 
-TEST_F(Object, DISABLED_VariantAsEnumTwo)
+TEST_F(Object, VariantAsEnumTwo)
 {
     run_test<variant_t>(TestIf::EnumTwo::TwoB);
 }

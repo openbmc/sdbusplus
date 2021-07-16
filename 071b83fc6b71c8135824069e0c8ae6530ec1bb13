@@ -22,6 +22,30 @@
       "revId": "071b83fc6b71c8135824069e0c8ae6530ec1bb13",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "578c4b1d_b73ec6e3",
+        "filename": "tools/sdbusplus/property.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-07-16T14:30:21Z",
+      "side": 1,
+      "message": "```\n\u003e\u003e\u003e x \u003d [ \"a\", \"b\", \"c\"]\n\u003e\u003e\u003e \"::\".join(x)\n\u0027a::b::c\u0027\n```",
+      "parentUuid": "f5b1c5a1_681bf719",
+      "range": {
+        "startLine": 69,
+        "startChar": 26,
+        "endLine": 69,
+        "endChar": 28
+      },
+      "revId": "071b83fc6b71c8135824069e0c8ae6530ec1bb13",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
     }
   ]
 }

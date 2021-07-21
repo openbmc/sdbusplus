@@ -296,6 +296,11 @@ struct convert_from_string<std::variant<Types...>>
 
 } // namespace details
 
+/** Export template helper to determine if a type has convert_from_string. */
+template <typename T>
+inline constexpr bool has_convert_from_string_v =
+    details::has_convert_from_string_v<T>;
+
 } // namespace message
 } // namespace sdbusplus
 

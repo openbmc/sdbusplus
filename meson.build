@@ -2,6 +2,7 @@ project('sdbusplus', 'cpp', 'c',
     default_options: [
       'buildtype=debugoptimized',
       'cpp_std=c++20',
+      'warning_level=3',
       'werror=true',
       'tests=' + (meson.is_subproject() ? 'disabled' : 'auto'),
       'examples=' + (meson.is_subproject() ? 'disabled' : 'auto'),

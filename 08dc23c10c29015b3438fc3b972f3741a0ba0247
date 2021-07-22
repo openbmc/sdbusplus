@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e2b811ad_48a6636e",
+        "filename": "docs/interface.md",
+        "patchSetId": 4
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-07-22T11:28:29Z",
+      "side": 1,
+      "message": "Added documentation of these new special values.",
+      "revId": "08dc23c10c29015b3438fc3b972f3741a0ba0247",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    }
+  ]
+}

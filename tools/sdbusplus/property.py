@@ -39,6 +39,14 @@ class Property(NamedElement, Renderer):
                 elif self.defaultValue.lower() == "epsilon":
                     self.defaultValue = \
                         'std::numeric_limits<double>::epsilon()'
+            elif(isinstance(self.defaultValue, str) and
+                    self.typeName.lower() == "uint64"):
+                if self.defaultValue.lower() == "maxint":
+                    self.defaultValue = \
+                        'std::numeric_limits<uint64_t>::max()'
+                elif self.defaultValue.lower() == "minint":
+                    self.defaultValue = \
+                        '0'
 
         super(Property, self).__init__(**kwargs)
 

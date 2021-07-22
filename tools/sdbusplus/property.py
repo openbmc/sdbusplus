@@ -47,6 +47,13 @@ class Property(NamedElement, Renderer):
             return false
         return 'enum' == self.__type_tuple()[0]
 
+    def is_integer(self):
+        return self.typeName in ["byte", "int16", "uint16", "int32", "uint32",
+                                 "int64", "uint64", "size", "ssize"]
+
+    def is_floating_point(self):
+        return self.typeName in ["double"]
+
     """ Return a conversion of the cppTypeName valid as a function parameter.
         Currently only 'enum' requires conversion.
     """

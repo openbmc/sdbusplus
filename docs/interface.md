@@ -87,7 +87,7 @@ but listed using lowercases: `int64` instead of `INT64` or C++ `int64_t`.
 
 ### Special type values
 
-For 'double' types it is possible to express one of the special values:
+For floating-point types it is possible to express one of the special values:
     * 'NaN' (case-insensitive)
         - A quiet-type not-a-number value.
     * 'Infinity' (case-insensitive)
@@ -96,6 +96,12 @@ For 'double' types it is possible to express one of the special values:
         - A negative infinity value.
     * 'Epsilon' (case-insensitive)
         - An epsilon value.
+
+For integer types it is possible to express one of the special values:
+    * 'minint' (case-insensitive)
+        - The mininum value the integer type can hold.
+    * 'maxint' (case-insensitive)
+        - The maximum value the integer type can hold.
 
 ### Containers
 Container types can also be expressed, but the contained-type should be

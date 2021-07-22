@@ -26,19 +26,27 @@ class Property(NamedElement, Renderer):
                 # Wrap string type default values with double-quotes
                 self.defaultValue = "\"" + self.defaultValue + "\""
             elif(isinstance(self.defaultValue, str) and
-                    self.typeName.lower() == "double"):
+                    self.is_floating_point()):
                 if self.defaultValue.lower() == "nan":
                     self.defaultValue = \
-                        'std::numeric_limits<double>::quiet_NaN()'
+                        f'std::numeric_limits<{self.cppTypeName}>::quiet_NaN()'
                 elif self.defaultValue.lower() == "infinity":
                     self.defaultValue = \
-                        'std::numeric_limits<double>::infinity()'
+                        f'std::numeric_limits<{self.cppTypeName}>::infinity()'
                 elif self.defaultValue.lower() == "-infinity":
                     self.defaultValue = \
-                        '-std::numeric_limits<double>::infinity()'
+                        f'-std::numeric_limits<{self.cppTypeName}>::infinity()'
                 elif self.defaultValue.lower() == "epsilon":
                     self.defaultValue = \
-                        'std::numeric_limits<double>::epsilon()'
+                        f'std::numeric_limits<{self.cppTypeName}>::epsilon()'
+            elif(isinstance(self.defaultValue, str) and
+                    self.is_integer()):
+                if self.defaultValue.lower() == "maxint":
+                    self.defaultValue = \
+                        f'std::numeric_limits<{self.cppTypeName}>::max()'
+                elif self.defaultValue.lower() == "minint":
+                    self.defaultValue = \
+                        f'std::numeric_limits<{self.cppTypeName}>::min()'
 
         super(Property, self).__init__(**kwargs)
 

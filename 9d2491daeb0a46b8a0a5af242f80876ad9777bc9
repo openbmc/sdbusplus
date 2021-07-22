@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "48ca4782_b32ed580",
+        "filename": "tools/sdbusplus/property.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-07-22T11:15:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "412823e2_e2f70fcc",
+      "range": {
+        "startLine": 43,
+        "startChar": 20,
+        "endLine": 43,
+        "endChar": 53
+      },
+      "revId": "9d2491daeb0a46b8a0a5af242f80876ad9777bc9",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "807f1f71_76df8c01",
         "filename": "tools/sdbusplus/property.py",
         "patchSetId": 2
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "d6659033_d4710219",
+        "filename": "tools/sdbusplus/property.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-07-22T11:15:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "807f1f71_76df8c01",
+      "range": {
+        "startLine": 46,
+        "startChar": 45,
+        "endLine": 46,
+        "endChar": 53
+      },
+      "revId": "9d2491daeb0a46b8a0a5af242f80876ad9777bc9",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3d93db72_9e834c8e",
         "filename": "tools/sdbusplus/property.py",
         "patchSetId": 2
@@ -68,6 +116,30 @@
       "revId": "9d2491daeb0a46b8a0a5af242f80876ad9777bc9",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "200ff838_ce1c4cdc",
+        "filename": "tools/sdbusplus/property.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-07-22T11:15:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3d93db72_9e834c8e",
+      "range": {
+        "startLine": 47,
+        "startChar": 0,
+        "endLine": 49,
+        "endChar": 27
+      },
+      "revId": "9d2491daeb0a46b8a0a5af242f80876ad9777bc9",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
     }
   ]
 }

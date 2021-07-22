@@ -16,6 +16,24 @@
       "revId": "08dc23c10c29015b3438fc3b972f3741a0ba0247",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f29a8cdb_3d0b2440",
+        "filename": "docs/interface.md",
+        "patchSetId": 4
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 1000885
+      },
+      "writtenOn": "2021-07-22T16:12:33Z",
+      "side": 1,
+      "message": "Thanks, for the updating the doc.",
+      "parentUuid": "e2b811ad_48a6636e",
+      "revId": "08dc23c10c29015b3438fc3b972f3741a0ba0247",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
     }
   ]
 }

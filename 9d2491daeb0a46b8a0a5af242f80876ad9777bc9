@@ -96,6 +96,30 @@
     },
     {
       "key": {
+        "uuid": "81545416_b75ca233",
+        "filename": "tools/sdbusplus/property.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1000885
+      },
+      "writtenOn": "2021-07-22T16:12:33Z",
+      "side": 1,
+      "message": "oh yeah, nice. That\u0027s quite useful to have. Thanks for updating the patch.",
+      "parentUuid": "d6659033_d4710219",
+      "range": {
+        "startLine": 46,
+        "startChar": 45,
+        "endLine": 46,
+        "endChar": 53
+      },
+      "revId": "9d2491daeb0a46b8a0a5af242f80876ad9777bc9",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3d93db72_9e834c8e",
         "filename": "tools/sdbusplus/property.py",
         "patchSetId": 2
@@ -131,6 +155,30 @@
       "side": 1,
       "message": "Done",
       "parentUuid": "3d93db72_9e834c8e",
+      "range": {
+        "startLine": 47,
+        "startChar": 0,
+        "endLine": 49,
+        "endChar": 27
+      },
+      "revId": "9d2491daeb0a46b8a0a5af242f80876ad9777bc9",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "981ac1b3_f663189e",
+        "filename": "tools/sdbusplus/property.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1000885
+      },
+      "writtenOn": "2021-07-22T16:12:33Z",
+      "side": 1,
+      "message": "I just thought it was shorter to do it if it is only support uint64. Since we already know the value.\n\nBut yeah, using min() is better when support different types at the same time.",
+      "parentUuid": "200ff838_ce1c4cdc",
       "range": {
         "startLine": 47,
         "startChar": 0,

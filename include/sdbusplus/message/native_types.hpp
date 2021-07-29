@@ -206,7 +206,7 @@ template <typename T>
 auto convert_from_string(const std::string& str) noexcept
 {
     return details::convert_from_string<T>::op(str);
-};
+}
 
 /** @brief Convert from a native type to a string.
  *

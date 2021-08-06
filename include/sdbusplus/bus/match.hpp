@@ -200,6 +200,11 @@ inline auto propertiesChanged(const std::string& p, const std::string& i)
            interface("org.freedesktop.DBus.Properties"s) + argN(0, i);
 }
 
+inline auto propertiesChangedNamespace(const std::string& p, const std::string& i)
+{
+    return type::signal() + path_namespace(p) + member("PropertiesChanged"s) +
+           interface("org.freedesktop.DBus.Properties"s) + argN(0, i);
+}
 /**
  * @brief Constructs a NameOwnerChanged match string for a service name
  *

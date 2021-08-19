@@ -135,7 +135,7 @@ class callback_method_instance : public callback
     }
     template <typename T>
     std::enable_if_t<std::is_void_v<T>, void>
-        callFunction(message::message& m, InputTupleType& inputArgs)
+        callFunction(message::message&, InputTupleType& inputArgs)
     {
         std::apply(func_, inputArgs);
     }

@@ -292,7 +292,10 @@ struct bus
      */
     auto call(message::message& m, uint64_t timeout_us)
     {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wc99-extensions"
         sd_bus_error error = SD_BUS_ERROR_NULL;
+#pragma clang diagnostic pop
         sd_bus_message* reply = nullptr;
         int r =
             _intf->sd_bus_call(_bus.get(), m.get(), timeout_us, &error, &reply);
@@ -316,7 +319,10 @@ struct bus
      */
     void call_noreply(message::message& m, uint64_t timeout_us)
     {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wc99-extensions"
         sd_bus_error error = SD_BUS_ERROR_NULL;
+#pragma clang diagnostic pop
         int r = _intf->sd_bus_call(_bus.get(), m.get(), timeout_us, &error,
                                    nullptr);
         if (r < 0)

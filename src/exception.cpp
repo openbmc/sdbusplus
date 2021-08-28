@@ -3,6 +3,9 @@
 #include <stdexcept>
 #include <utility>
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wc99-extensions"
+
 namespace sdbusplus
 {
 namespace exception
@@ -143,3 +146,5 @@ const char* UnpackPropertyError::what() const noexcept
 
 } // namespace exception
 } // namespace sdbusplus
+
+#pragma clang diagnostic pop

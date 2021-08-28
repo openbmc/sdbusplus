@@ -389,7 +389,10 @@ class message
      */
     auto call(std::optional<SdBusDuration> timeout = std::nullopt)
     {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wc99-extensions"
         sd_bus_error error = SD_BUS_ERROR_NULL;
+#pragma clang diagnostic pop
         sd_bus_message* reply = nullptr;
         auto timeout_us = timeout ? timeout->count() : 0;
         int r = _intf->sd_bus_call(nullptr, get(), timeout_us, &error, &reply);

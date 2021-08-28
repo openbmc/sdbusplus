@@ -14,6 +14,11 @@
 #include <string>
 #include <vector>
 
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wc99-extensions"
+#endif
+
 namespace sdbusplus
 {
 
@@ -597,3 +602,7 @@ inline auto message::message::get_bus() const
 }
 
 } // namespace sdbusplus
+
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif

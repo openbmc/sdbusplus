@@ -15,6 +15,11 @@
 #include <type_traits>
 #include <utility>
 
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wc99-extensions"
+#endif
+
 namespace sdbusplus
 {
 
@@ -491,3 +496,7 @@ int call_async_cb(sd_bus_message* m, void* userdata, sd_bus_error*) noexcept
 } // namespace message
 
 } // namespace sdbusplus
+
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif

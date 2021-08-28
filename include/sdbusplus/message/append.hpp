@@ -183,7 +183,7 @@ template <>
 struct append_single<details::unix_fd_type>
 {
     template <typename T>
-    static void sanitize(const T& s)
+    static void sanitize(const T&)
     {}
 
     template <typename T>

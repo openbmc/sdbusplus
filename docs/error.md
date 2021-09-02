@@ -11,12 +11,14 @@ which has specified it may return that error, then the bindings will generate
 a catch clause that returns a D-Bus error like
 "org.freedesktop.Example.Error.SomeError" to the method caller.
 
-The error YAML is simply a list of `name` and optional `description` properties.
+The error YAML is simply a list of `name` along with optional `description`
+and `errno` properties.
 Example:
 ```
 - name: SomeError
 - name: AnotherError
   description: >
     This is another error.
+  errno: E2BIG
 ```
 

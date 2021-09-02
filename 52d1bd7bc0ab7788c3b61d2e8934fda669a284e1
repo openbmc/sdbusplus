@@ -70,6 +70,24 @@
       "revId": "52d1bd7bc0ab7788c3b61d2e8934fda669a284e1",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5794c07f_b4a5ef11",
+        "filename": "include/sdbusplus/exception.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-09-02T22:46:27Z",
+      "side": 1,
+      "message": "The next change added it for the internal exceptions we have defined. \n\nThe change after that adds then for sdbus++ generated exceptions (from PDI) if they are in the YAML file, but otherwise it defaults to this implementation if it isn’t in the YAML.\n\nI could make that change+2 add default values of EIO also, but that’s what I meant about generating hundreds of trivial functions, when inheritance does the same thing.",
+      "parentUuid": "9bcfe075_ba6a7754",
+      "revId": "52d1bd7bc0ab7788c3b61d2e8934fda669a284e1",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
     }
   ]
 }

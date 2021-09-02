@@ -131,6 +131,11 @@ const char* InvalidEnumString::what() const noexcept
     return errWhat;
 }
 
+int InvalidEnumString::get_errno() const noexcept
+{
+    return EINVAL;
+}
+
 UnpackPropertyError::UnpackPropertyError(std::string_view propertyName,
                                          std::string_view reason) :
     propertyName(propertyName),
@@ -150,6 +155,11 @@ const char* UnpackPropertyError::description() const noexcept
 const char* UnpackPropertyError::what() const noexcept
 {
     return errWhat;
+}
+
+int UnpackPropertyError::get_errno() const noexcept
+{
+    return EINVAL;
 }
 
 } // namespace exception

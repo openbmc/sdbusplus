@@ -4,22 +4,25 @@ from .namedelement import NamedElement
 from .renderer import Renderer
 
 
+class ErrorElement(NamedElement):
+    def __init__(self, **kwargs):
+        super(ErrorElement, self).__init__(**kwargs)
+        self.errno = kwargs.pop("errno", False)
+
+
 class Error(NamedElement, Renderer):
     @staticmethod
-    def load(name, rootdir='.'):
-        filename = os.path.join(rootdir,
-                                name.replace('.', '/') + ".errors.yaml")
+    def load(name, rootdir="."):
+        filename = os.path.join(rootdir, name.replace(".", "/") + ".errors.yaml")
 
         with open(filename) as f:
             data = f.read()
             y = yaml.safe_load(data)
-            y = {'name': name,
-                 'errors': y}
+            y = {"name": name, "errors": y}
             return Error(**y)
 
     def __init__(self, **kwargs):
-        self.errors = \
-            [NamedElement(**n) for n in kwargs.pop('errors', [])]
+        self.errors = [ErrorElement(**n) for n in kwargs.pop("errors", [])]
 
         super(Error, self).__init__(**kwargs)
 

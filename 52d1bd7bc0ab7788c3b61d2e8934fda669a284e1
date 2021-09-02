@@ -52,6 +52,24 @@
       "revId": "52d1bd7bc0ab7788c3b61d2e8934fda669a284e1",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9bcfe075_ba6a7754",
+        "filename": "include/sdbusplus/exception.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1000188
+      },
+      "writtenOn": "2021-09-02T22:35:44Z",
+      "side": 1,
+      "message": "Doesn\u0027t your other CL fix all of the default functions? I just don\u0027t want it to become non-obvious at runtime why the errno is mismatched with the description or name.",
+      "parentUuid": "e9e755cf_16c189cd",
+      "revId": "52d1bd7bc0ab7788c3b61d2e8934fda669a284e1",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
     }
   ]
 }

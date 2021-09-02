@@ -3,6 +3,10 @@ import yaml
 from .namedelement import NamedElement
 from .renderer import Renderer
 
+class ErrorElement(NamedElement):
+    def __init__(self, **kwargs):
+        super(ErrorElement, self).__init__(**kwargs)
+        self.errno = kwargs.pop('errno', False)
 
 class Error(NamedElement, Renderer):
     @staticmethod
@@ -19,7 +23,7 @@ class Error(NamedElement, Renderer):
 
     def __init__(self, **kwargs):
         self.errors = \
-            [NamedElement(**n) for n in kwargs.pop('errors', [])]
+            [ErrorElement(**n) for n in kwargs.pop('errors', [])]
 
         super(Error, self).__init__(**kwargs)
 

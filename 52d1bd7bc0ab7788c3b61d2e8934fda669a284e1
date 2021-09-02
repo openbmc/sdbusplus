@@ -34,6 +34,24 @@
       "revId": "52d1bd7bc0ab7788c3b61d2e8934fda669a284e1",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e9e755cf_16c189cd",
+        "filename": "include/sdbusplus/exception.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-09-02T21:52:56Z",
+      "side": 1,
+      "message": "I probably should at least move this over into the cpp file.\n\nIs there some reason you want to make sure it is pure?  I was trying to make sure that the systemd default was preserved and it seemed better to make that happen by providing a non-pure default.  If I make this pure-virtual, we have to have hundreds of default functions in the generated code (phosphor-dbus-interfaces) that simply returns EIO.",
+      "parentUuid": "05e67b64_c02ce864",
+      "revId": "52d1bd7bc0ab7788c3b61d2e8934fda669a284e1",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
     }
   ]
 }

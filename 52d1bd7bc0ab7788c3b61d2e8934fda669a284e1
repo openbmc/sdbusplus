@@ -88,6 +88,24 @@
       "revId": "52d1bd7bc0ab7788c3b61d2e8934fda669a284e1",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fcfe0d12_77f2753e",
+        "filename": "include/sdbusplus/exception.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1000188
+      },
+      "writtenOn": "2021-09-02T22:56:12Z",
+      "side": 1,
+      "message": "Doesn\u0027t that mean we should just have one more layer of indirection specifically for PDI generated exceptions to provide this default? Any other non-PDI definitions would not want to accidentally miss defining this method.",
+      "parentUuid": "5794c07f_b4a5ef11",
+      "revId": "52d1bd7bc0ab7788c3b61d2e8934fda669a284e1",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
     }
   ]
 }

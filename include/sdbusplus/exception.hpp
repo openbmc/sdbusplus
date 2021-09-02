@@ -79,6 +79,7 @@ struct InvalidEnumString final : public internal_exception
     const char* name() const noexcept override;
     const char* description() const noexcept override;
     const char* what() const noexcept override;
+    int get_errno() const noexcept override;
 };
 
 /** Exception for when unpackProperties cannot find given property in provided
@@ -103,6 +104,7 @@ class UnpackPropertyError final : public internal_exception
     const char* name() const noexcept override;
     const char* description() const noexcept override;
     const char* what() const noexcept override;
+    int get_errno() const noexcept override;
 
     const std::string propertyName;
     const std::string reason;

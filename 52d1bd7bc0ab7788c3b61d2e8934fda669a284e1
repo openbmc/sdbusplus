@@ -16,6 +16,24 @@
       "revId": "52d1bd7bc0ab7788c3b61d2e8934fda669a284e1",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "05e67b64_c02ce864",
+        "filename": "include/sdbusplus/exception.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1000188
+      },
+      "writtenOn": "2021-09-02T21:41:16Z",
+      "side": 1,
+      "message": "I get that you don\u0027t want to change all of the derivatives in a single change, but I\u0027d like to see that there is a follow on that converts this to pure in that case.",
+      "parentUuid": "40d56ad3_1a602046",
+      "revId": "52d1bd7bc0ab7788c3b61d2e8934fda669a284e1",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
     }
   ]
 }

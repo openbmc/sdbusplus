@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cerrno>
 #include <sdbusplus/exception.hpp>
 <% namespaces = error.name.split('.') %>
 namespace sdbusplus
@@ -20,10 +21,16 @@ struct ${e.name} final :
             "${e.description.strip()}";
     static constexpr auto errWhat =
             "${error.name}.Error.${e.name}: ${e.description.strip()}";
+    % if e.errno:
+    static constexpr auto errErrno = ${e.errno};
+    % endif
 
     const char* name() const noexcept override;
     const char* description() const noexcept override;
     const char* what() const noexcept override;
+    % if e.errno:
+    int get_errno() const noexcept override;
+    % endif
 };
 
     % endfor

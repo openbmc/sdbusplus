@@ -124,6 +124,24 @@
       "revId": "52d1bd7bc0ab7788c3b61d2e8934fda669a284e1",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "70a612f0_98716e3d",
+        "filename": "include/sdbusplus/exception.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-09-03T11:07:23Z",
+      "side": 1,
+      "message": "Done in a follow up commit.  I did move this one into the cpp part for this commit (and then it becomes a simple name change in the second commit).",
+      "parentUuid": "a5081f0f_a14be734",
+      "revId": "52d1bd7bc0ab7788c3b61d2e8934fda669a284e1",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
     }
   ]
 }

@@ -19,6 +19,11 @@ int exception::get_errno() const noexcept
     return EIO;
 }
 
+int generated_exception::get_errno() const noexcept
+{
+    return EIO;
+}
+
 SdBusError::SdBusError(int error, const char* prefix, SdBusInterface* intf) :
     error(SD_BUS_ERROR_NULL), intf(intf)
 {

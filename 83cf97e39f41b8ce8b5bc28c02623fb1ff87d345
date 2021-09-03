@@ -34,6 +34,24 @@
       "revId": "83cf97e39f41b8ce8b5bc28c02623fb1ff87d345",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b68d1ebd_6a702a71",
+        "filename": "tools/sdbusplus/templates/error.hpp.mako",
+        "patchSetId": 3
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-09-03T11:00:59Z",
+      "side": 1,
+      "message": "Oh.  It isn\u0027t that simple.  \u0027e.errno\u0027 comes from a list on line 15.  What I\u0027d have to do here is check \"are there any errors in error.errors that have an errno value\".  I don\u0027t think that is worth the clutter when most of the time cerrno is already included somewhere in the include tree anyhow.\n\n(I forgot to include it in an earlier patch set and everything still compiled.)",
+      "parentUuid": "3079f1f5_8fdff881",
+      "revId": "83cf97e39f41b8ce8b5bc28c02623fb1ff87d345",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
     }
   ]
 }

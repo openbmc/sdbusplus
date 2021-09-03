@@ -12,7 +12,8 @@ namespace Error
 {
 
     % for e in error.errors:
-struct ${e.name} final : public sdbusplus::exception_t
+struct ${e.name} final :
+        public sdbusplus::exception::generated_exception
 {
     static constexpr auto errName = "${error.name}.Error.${e.name}";
     static constexpr auto errDesc =

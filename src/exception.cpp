@@ -14,7 +14,7 @@ namespace sdbusplus
 namespace exception
 {
 
-int exception::get_errno() const noexcept
+int generated_exception::get_errno() const noexcept
 {
     return EIO;
 }

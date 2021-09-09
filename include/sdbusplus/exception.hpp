@@ -19,7 +19,7 @@ struct exception : public std::exception
 {
     virtual const char* name() const noexcept = 0;
     virtual const char* description() const noexcept = 0;
-    virtual int get_errno() const noexcept;
+    virtual int get_errno() const noexcept = 0;
 };
 
 /** base exception class for all errors created by the sdbus++ generator */

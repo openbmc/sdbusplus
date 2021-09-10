@@ -8,6 +8,12 @@ class NamedElement(object):
         self.name = kwargs.pop('name', "unnamed")
         self.description = kwargs.pop('description', "")
 
+        if not isinstance(self.name, str):
+            raise AttributeError(
+                "Element interpreted by YAML parser as non-string; likely "
+                "missing quotes around original name."
+            )
+
     def __getattribute__(self, name):
         lam = {'CamelCase': lambda: inflection.camelize(self.name),
                'camelCase': lambda: NamedElement.lower_camel_case(self.name),

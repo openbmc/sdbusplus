@@ -25,7 +25,9 @@
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/posix/stream_descriptor.hpp>
 #include <boost/asio/post.hpp>
+#ifndef SDBUSPLUS_DISABLE_BOOST_COROUTINES
 #include <boost/asio/spawn.hpp>
+#endif
 #include <boost/callable_traits.hpp>
 #include <sdbusplus/asio/detail/async_send_handler.hpp>
 #include <sdbusplus/message.hpp>
@@ -223,6 +225,7 @@ class connection : public sdbusplus::bus::bus
                                 objpath, interf, method, 0, a...);
     }
 
+#ifndef SDBUSPLUS_DISABLE_BOOST_COROUTINES
     /** @brief Perform a yielding asynchronous method call, with input
      *         parameter packing and return value unpacking
      *
@@ -317,7 +320,7 @@ class connection : public sdbusplus::bus::bus
             return responseData;
         }
     }
-
+#endif
     boost::asio::io_context& get_io_context()
     {
         return io_;

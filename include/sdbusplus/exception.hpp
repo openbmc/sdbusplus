@@ -20,6 +20,13 @@ struct exception : public std::exception
     virtual const char* name() const noexcept = 0;
     virtual const char* description() const noexcept = 0;
     virtual int get_errno() const noexcept = 0;
+
+  private:
+    // This unused function is to ensure that the vtable for this class is
+    // properly emitted when `-flto=auto` is used, which is the default in
+    // Yocto builds.  Without this, the vtable is a hidden symbol and no
+    // users can inherit from our exception type directly.
+    virtual void unused() const noexcept;
 };
 
 /** base exception class for all errors created by the sdbus++ generator */

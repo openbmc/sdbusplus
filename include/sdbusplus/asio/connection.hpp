@@ -178,7 +178,6 @@ class connection : public sdbusplus::bus::bus
             }
         };
         message::message m;
-        boost::system::error_code ec;
         try
         {
             m = new_method_call(service.c_str(), objpath.c_str(),
@@ -187,9 +186,13 @@ class connection : public sdbusplus::bus::bus
         }
         catch (const exception::SdBusError& e)
         {
-            ec = boost::system::errc::make_error_code(
-                static_cast<boost::system::errc::errc_t>(e.get_errno()));
-            applyHandler(ec, m);
+            boost::asio::post(io_, [&] {
+                boost::system::error_code ec =
+                    boost::system::errc::make_error_code(
+                        static_cast<boost::system::errc::errc_t>(
+                            e.get_errno()));
+                applyHandler(ec, m);
+            });
             return;
         }
         async_send(m, std::forward<decltype(applyHandler)>(applyHandler),

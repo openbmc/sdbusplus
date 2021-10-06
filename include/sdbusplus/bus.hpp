@@ -347,7 +347,7 @@ struct bus
         {
             call_noreply(m, timeout_us);
         }
-        catch (exception::SdBusError&)
+        catch (const exception::SdBusError&)
         {
             // Intentionally ignoring these sd_bus errors
         }

@@ -288,7 +288,7 @@ int client()
             message intMsg = conn->call(readyMsg);
             intMsg.read(ready);
         }
-        catch (sdbusplus::exception::SdBusError& e)
+        catch (const sdbusplus::exception::SdBusError& e)
         {
             ready = 0;
             // pause to give the server a chance to start up

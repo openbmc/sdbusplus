@@ -208,7 +208,7 @@ class coroutine_method_instance : public callback
                 {
                     expandCall(yield, mcpy);
                 }
-                catch (sdbusplus::exception::SdBusError& e)
+                catch (const sdbusplus::exception::SdBusError& e)
                 {
                     // Catch D-Bus error explicitly called by method handler
                     err = mcpy.new_method_errno(e.get_errno(), e.get_error());
@@ -637,7 +637,7 @@ class dbus_interface
 #ifdef __EXCEPTIONS
             }
 
-            catch (sdbusplus::exception_t& e)
+            catch (const sdbusplus::exception_t& e)
             {
                 return sd_bus_error_set(error, e.name(), e.description());
             }
@@ -678,7 +678,7 @@ class dbus_interface
 #ifdef __EXCEPTIONS
             }
 
-            catch (sdbusplus::exception_t& e)
+            catch (const sdbusplus::exception_t& e)
             {
                 return sd_bus_error_set(error, e.name(), e.description());
             }
@@ -711,7 +711,7 @@ class dbus_interface
 #ifdef __EXCEPTIONS
             }
 
-            catch (sdbusplus::exception_t& e)
+            catch (const sdbusplus::exception_t& e)
             {
                 return sd_bus_error_set(error, e.name(), e.description());
             }

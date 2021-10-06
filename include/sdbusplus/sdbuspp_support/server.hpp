@@ -51,7 +51,7 @@ int property_callback(sd_bus_message* msg, sdbusplus::SdBusInterface* intf,
             std::apply(f, std::move(arg));
         }
     }
-    catch (sdbusplus::internal_exception_t& e)
+    catch (const sdbusplus::internal_exception_t& e)
     {
         return intf->sd_bus_error_set(error, e.name(), e.description());
     }
@@ -124,7 +124,7 @@ int method_callback(sd_bus_message* msg, sdbusplus::SdBusInterface* intf,
         // Indicate reply complete.
         reply.method_return();
     }
-    catch (sdbusplus::internal_exception_t& e)
+    catch (const sdbusplus::internal_exception_t& e)
     {
         return intf->sd_bus_error_set(error, e.name(), e.description());
     }

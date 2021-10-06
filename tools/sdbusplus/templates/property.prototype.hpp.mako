@@ -48,7 +48,7 @@ int ${classname}::_callback_get_${property.name}(
                 ));
     }
     % for e in property.errors:
-    catch(sdbusplus::${error_namespace(e)}::${error_name(e)}& e)
+    catch(const sdbusplus::${error_namespace(e)}::${error_name(e)}& e)
     {
         return o->_intf->sd_bus_error_set(error, e.name(), e.description());
     }
@@ -99,7 +99,7 @@ int ${classname}::_callback_set_${property.name}(
                 ));
     }
     % for e in property.errors:
-    catch(sdbusplus::${error_namespace(e)}::${error_name(e)}& e)
+    catch(const sdbusplus::${error_namespace(e)}::${error_name(e)}& e)
     {
         return o->_intf->sd_bus_error_set(error, e.name(), e.description());
     }

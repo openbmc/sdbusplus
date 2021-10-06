@@ -112,7 +112,7 @@ int ${interface_name()}::_callback_${ method.CamelCase }(
                 ));
     }
     % for e in method.errors:
-    catch(sdbusplus::${error_namespace(e)}::${error_name(e)}& e)
+    catch(const sdbusplus::${error_namespace(e)}::${error_name(e)}& e)
     {
         return o->_intf->sd_bus_error_set(error, e.name(), e.description());
     }

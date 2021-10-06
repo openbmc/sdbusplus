@@ -48,7 +48,9 @@ namespace asio
 /**
  * A connection to a bus, through which messages may be sent or received.
  */
-class connection : public sdbusplus::bus_t
+class connection :
+    public sdbusplus::bus_t,
+    public std::enable_shared_from_this<connection>
 {
   public:
     // default to system bus
@@ -130,6 +132,7 @@ class connection : public sdbusplus::bus_t
                                  const std::string& method, uint64_t timeout,
                                  const InputArgs&... a)
     {
+        std::weak_ptr<connection> weakRef = weak_from_this();
         using FunctionTuple = boost::callable_traits::args_t<MessageHandler>;
         using FunctionTupleType = utility::decay_tuple_t<FunctionTuple>;
         constexpr bool returnWithMsg = []() {
@@ -143,9 +146,10 @@ class connection : public sdbusplus::bus_t
         }();
         using UnpackType = utility::strip_first_n_args_t<returnWithMsg ? 2 : 1,
                                                          FunctionTupleType>;
-        auto applyHandler = [handler = std::forward<MessageHandler>(handler)](
-                                boost::system::error_code ec,
-                                message_t& r) mutable {
+        auto applyHandler = [handler = std::forward<MessageHandler>(handler),
+                             weakRef](boost::system::error_code ec,
+                                      message_t& r) mutable {
+            std::shared_ptr<connection> self = weakRef.lock();
             UnpackType responseData;
             if (!ec)
             {
@@ -173,11 +177,11 @@ class connection : public sdbusplus::bus_t
             {
                 auto response = std::tuple_cat(std::make_tuple(ec),
                                                std::move(responseData));
-                std::apply(handler, response);
+                boost::asio::post(self->io_,
+                                  [&] { std::apply(handler, response); });
             }
         };
         message_t m;
-        boost::system::error_code ec;
         try
         {
             m = new_method_call(service.c_str(), objpath.c_str(),
@@ -186,9 +190,13 @@ class connection : public sdbusplus::bus_t
         }
         catch (const exception::SdBusError& e)
         {
-            ec = boost::system::errc::make_error_code(
-                static_cast<boost::system::errc::errc_t>(e.get_errno()));
-            applyHandler(ec, m);
+            boost::asio::post(io_, [&] {
+                boost::system::error_code ec =
+                    boost::system::errc::make_error_code(
+                        static_cast<boost::system::errc::errc_t>(
+                            e.get_errno()));
+                applyHandler(ec, m);
+            });
             return;
         }
         async_send(m, std::forward<decltype(applyHandler)>(applyHandler),

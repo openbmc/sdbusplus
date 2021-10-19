@@ -17,7 +17,7 @@ namespace detail
 {
 
 template <typename Variant, typename ValueType>
-bool getIf(Variant&& variant, ValueType& outValue)
+bool getIf(Variant&& variant, ValueType& outValue) noexcept
 {
     if (auto value = std::get_if<ValueType>(&variant))
     {
@@ -29,7 +29,7 @@ bool getIf(Variant&& variant, ValueType& outValue)
 }
 
 template <typename Container>
-auto findProperty(Container&& container, const std::string& key)
+auto findProperty(Container&& container, const std::string& key) noexcept
 {
     if constexpr (utility::has_member_find_v<Container>)
     {
@@ -44,7 +44,7 @@ auto findProperty(Container&& container, const std::string& key)
 }
 
 template <typename Container>
-bool containsProperty(Container&& container, const std::string& key)
+bool containsProperty(Container&& container, const std::string& key) noexcept
 {
     if constexpr (utility::has_member_contains_v<Container>)
     {
@@ -61,7 +61,7 @@ template <size_t Index, typename Container, size_t N, typename ValueType,
           typename... Args>
 void readProperties(Container&& container, std::bitset<N>& assigned,
                     const std::string& expectedKey, ValueType& outValue,
-                    Args&&... args)
+                    Args&&... args) noexcept
 {
     static_assert(Index < N);
 
@@ -85,7 +85,7 @@ void readProperties(Container&& container, std::bitset<N>& assigned,
 template <size_t Index, size_t N, typename ValueType, typename... Args>
 std::string findMissingProperty(std::bitset<N>& assigned,
                                 const std::string& key, ValueType&,
-                                Args&&... args)
+                                Args&&... args) noexcept
 {
     static_assert(Index < N);
 
@@ -103,10 +103,10 @@ std::string findMissingProperty(std::bitset<N>& assigned,
     return {};
 }
 
-} // namespace detail
-
-template <typename Container, typename... Args>
-void unpackProperties(Container&& input, Args&&... args)
+template <bool BadProperty, typename Container, typename... Args>
+std::conditional_t<BadProperty, std::optional<std::string>, bool>
+    unpackPropertiesCommon(Container&& input,
+                           Args&&... args) noexcept(BadProperty)
 {
     static_assert(sizeof...(Args) % 2 == 0);
 
@@ -119,20 +119,45 @@ void unpackProperties(Container&& input, Args&&... args)
         std::string missingProperty = detail::findMissingProperty<0>(
             assigned, std::forward<Args>(args)...);
 
-        if (detail::containsProperty(std::forward<Container>(input),
-                                     missingProperty))
+        if constexpr (BadProperty)
         {
-            throw exception::UnpackPropertyError(
-                missingProperty,
-                exception::UnpackPropertyError::reasonTypeNotMatched);
+            return missingProperty;
         }
         else
         {
-            throw exception::UnpackPropertyError(
-                missingProperty,
-                exception::UnpackPropertyError::reasonMissingProperty);
+            if (detail::containsProperty(std::forward<Container>(input),
+                                         missingProperty))
+            {
+                throw exception::UnpackPropertyError(
+                    missingProperty,
+                    exception::UnpackPropertyError::reasonTypeNotMatched);
+            }
+            else
+            {
+                throw exception::UnpackPropertyError(
+                    missingProperty,
+                    exception::UnpackPropertyError::reasonMissingProperty);
+            }
         }
     }
+    return {};
+}
+
+} // namespace detail
+
+template <typename Container, typename... Args>
+void unpackProperties(Container&& input, Args&&... args)
+{
+    detail::unpackPropertiesCommon<false, Container, Args...>(
+        std::forward<Container>(input), std::forward<Args>(args)...);
+}
+
+template <typename Container, typename... Args>
+std::optional<std::string> unpackPropertiesNoThrow(Container&& input,
+                                                   Args&&... args) noexcept
+{
+    return detail::unpackPropertiesCommon<true, Container, Args...>(
+        std::forward<Container>(input), std::forward<Args>(args)...);
 }
 
 } // namespace sdbusplus

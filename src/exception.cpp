@@ -139,10 +139,12 @@ int InvalidEnumString::get_errno() const noexcept
     return EINVAL;
 }
 
-UnpackPropertyError::UnpackPropertyError(std::string_view propertyName,
-                                         std::string_view reason) :
-    propertyName(propertyName),
-    reason(reason)
+UnpackPropertyError::UnpackPropertyError(std::string_view propertyNameIn,
+                                         std::string_view reasonIn) :
+    propertyName(propertyNameIn),
+    reason(reasonIn),
+    errWhatDetailed(std::string(errWhat) + " PropertyName: '" + propertyName +
+                    "', Reason: '" + reason + "'.")
 {}
 
 const char* UnpackPropertyError::name() const noexcept
@@ -157,7 +159,7 @@ const char* UnpackPropertyError::description() const noexcept
 
 const char* UnpackPropertyError::what() const noexcept
 {
-    return errWhat;
+    return errWhatDetailed.c_str();
 }
 
 int UnpackPropertyError::get_errno() const noexcept

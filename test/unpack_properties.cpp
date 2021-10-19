@@ -1,10 +1,18 @@
 #include <boost/container/flat_map.hpp>
 #include <sdbusplus/unpack_properties.hpp>
 
+#include <iostream>
+
 #include <gmock/gmock.h>
 
 namespace sdbusplus
 {
+
+enum class UnpackVariant
+{
+    Throw,
+    NoThrow
+};
 
 using VariantType = std::variant<std::string, uint32_t, float, double>;
 using ContainerTypes =
@@ -61,6 +69,23 @@ TYPED_TEST(UnpackPropertiesTest, returnsValueWhenKeyIsPresentAndTypeMatches)
 }
 
 TYPED_TEST(UnpackPropertiesTest,
+           noThrowReturnsValueWhenKeyIsPresentAndTypeMatches)
+{
+    using namespace testing;
+
+    std::string val1;
+    float val2 = 0.f;
+    double val3 = 0.;
+
+    unpackPropertiesNoThrow(this->data, "Key-1", val1, "Key-2", val2, "Key-3",
+                            val3);
+
+    ASSERT_THAT(val1, Eq("string"));
+    ASSERT_THAT(val2, FloatEq(42.f));
+    ASSERT_THAT(val3, DoubleEq(15.));
+}
+
+TYPED_TEST(UnpackPropertiesTest,
            unpackChangesOriginalDataWhenPassedAsNonConstReference)
 {
     using namespace testing;
@@ -75,6 +100,20 @@ TYPED_TEST(UnpackPropertiesTest,
 }
 
 TYPED_TEST(UnpackPropertiesTest,
+           noThrowUnpackChangesOriginalDataWhenPassedAsNonConstReference)
+{
+    using namespace testing;
+
+    std::string val1, val2;
+
+    unpackPropertiesNoThrow(this->data, "Key-1", val1);
+    unpackPropertiesNoThrow(this->data, "Key-1", val2);
+
+    ASSERT_THAT(val1, Eq("string"));
+    ASSERT_THAT(val2, Not(Eq("string")));
+}
+
+TYPED_TEST(UnpackPropertiesTest,
            unpackDoesntChangeOriginalDataWhenPassesAsConstReference)
 {
     using namespace testing;
@@ -83,6 +122,20 @@ TYPED_TEST(UnpackPropertiesTest,
 
     unpackProperties(Const(this->data), "Key-1", val1);
     unpackProperties(Const(this->data), "Key-1", val2);
+
+    ASSERT_THAT(val1, Eq("string"));
+    ASSERT_THAT(val2, Eq("string"));
+}
+
+TYPED_TEST(UnpackPropertiesTest,
+           noThrowUnpackDoesntChangeOriginalDataWhenPassesAsConstReference)
+{
+    using namespace testing;
+
+    std::string val1, val2;
+
+    unpackPropertiesNoThrow(Const(this->data), "Key-1", val1);
+    unpackPropertiesNoThrow(Const(this->data), "Key-1", val2);
 
     ASSERT_THAT(val1, Eq("string"));
     ASSERT_THAT(val2, Eq("string"));
@@ -107,6 +160,21 @@ TYPED_TEST(UnpackPropertiesTest, throwsErrorWhenKeyIsMissing)
     ASSERT_THAT(error->propertyName, Eq("Key-4"));
 }
 
+TYPED_TEST(UnpackPropertiesTest, noThrowErrorWhenKeyIsMissing)
+{
+    using namespace testing;
+
+    std::string val1;
+    float val2 = 0.f;
+    double val3 = 0.;
+
+    auto badProperty = unpackPropertiesNoThrow(this->data, "Key-1", val1,
+                                               "Key-4", val2, "Key-3", val3);
+
+    ASSERT_TRUE(badProperty);
+    ASSERT_THAT(*badProperty, Eq("Key-4"));
+}
+
 TYPED_TEST(UnpackPropertiesTest, throwsErrorWhenTypeDoesntMatch)
 {
     using namespace testing;
@@ -126,6 +194,21 @@ TYPED_TEST(UnpackPropertiesTest, throwsErrorWhenTypeDoesntMatch)
     ASSERT_THAT(error->propertyName, Eq("Key-2"));
 }
 
+TYPED_TEST(UnpackPropertiesTest, noThrowErrorWhenTypeDoesntMatch)
+{
+    using namespace testing;
+
+    std::string val1;
+    std::string val2;
+    double val3 = 0.;
+
+    auto badProperty = unpackPropertiesNoThrow(this->data, "Key-1", val1,
+                                               "Key-2", val2, "Key-3", val3);
+
+    ASSERT_TRUE(badProperty);
+    ASSERT_THAT(*badProperty, Eq("Key-2"));
+}
+
 TYPED_TEST(UnpackPropertiesTest,
            returnsUndefinedValueForDuplicatedKeysWhenDataIsNonConstReference)
 {
@@ -139,6 +222,27 @@ TYPED_TEST(UnpackPropertiesTest,
 
     unpackProperties(this->data, "Key-1", val1, "Key-2", val2, "Key-3", val3,
                      "Key-1", val4);
+
+    ASSERT_THAT(val1, Eq("string"));
+    ASSERT_THAT(val2, FloatEq(42.f));
+    ASSERT_THAT(val3, DoubleEq(15.));
+    ASSERT_THAT(val4, Not(Eq("string")));
+}
+
+TYPED_TEST(
+    UnpackPropertiesTest,
+    noThrowReturnsUndefinedValueForDuplicatedKeysWhenDataIsNonConstReference)
+{
+    using namespace testing;
+    using namespace std::string_literals;
+
+    std::string val1;
+    float val2 = 0.f;
+    double val3 = 0.;
+    std::string val4;
+
+    unpackPropertiesNoThrow(this->data, "Key-1", val1, "Key-2", val2, "Key-3",
+                            val3, "Key-1", val4);
 
     ASSERT_THAT(val1, Eq("string"));
     ASSERT_THAT(val2, FloatEq(42.f));
@@ -166,12 +270,37 @@ TYPED_TEST(UnpackPropertiesTest,
     ASSERT_THAT(val4, Eq("string"));
 }
 
+TYPED_TEST(UnpackPropertiesTest,
+           noThrowReturnsValueForDuplicatedKeysWhenDataIsConstReference)
+{
+    using namespace testing;
+    using namespace std::string_literals;
+
+    std::string val1;
+    float val2 = 0.f;
+    double val3 = 0.;
+    std::string val4;
+
+    unpackPropertiesNoThrow(Const(this->data), "Key-1", val1, "Key-2", val2,
+                            "Key-3", val3, "Key-1", val4);
+
+    ASSERT_THAT(val1, Eq("string"));
+    ASSERT_THAT(val2, FloatEq(42.f));
+    ASSERT_THAT(val3, DoubleEq(15.));
+    ASSERT_THAT(val4, Eq("string"));
+}
+
 struct UnpackPropertiesTest_ForVector :
     public UnpackPropertiesTest<
-        std::vector<std::pair<std::string, VariantType>>>
+        std::vector<std::pair<std::string, VariantType>>>,
+    public testing::WithParamInterface<UnpackVariant>
 {};
 
-TEST_F(UnpackPropertiesTest_ForVector, silentlyDiscardsDuplicatedKeyInData)
+INSTANTIATE_TEST_SUITE_P(_, UnpackPropertiesTest_ForVector,
+                         testing::Values(UnpackVariant::Throw,
+                                         UnpackVariant::NoThrow));
+
+TEST_P(UnpackPropertiesTest_ForVector, silentlyDiscardsDuplicatedKeyInData)
 {
     using namespace testing;
     using namespace std::string_literals;
@@ -183,7 +312,17 @@ TEST_F(UnpackPropertiesTest_ForVector, silentlyDiscardsDuplicatedKeyInData)
     this->data.insert(this->data.end(),
                       std::make_pair("Key-1"s, VariantType("string2"s)));
 
-    unpackProperties(this->data, "Key-1", val1, "Key-2", val2, "Key-3", val3);
+    if (GetParam() == UnpackVariant::Throw)
+    {
+        unpackProperties(this->data, "Key-1", val1, "Key-2", val2, "Key-3",
+                         val3);
+    }
+    else if (GetParam() == UnpackVariant::NoThrow)
+    {
+        auto badProperty = unpackPropertiesNoThrow(
+            this->data, "Key-1", val1, "Key-2", val2, "Key-3", val3);
+        ASSERT_FALSE(badProperty);
+    }
 
     ASSERT_THAT(val1, Eq("string"));
     ASSERT_THAT(val2, FloatEq(42.f));

@@ -121,6 +121,9 @@ class UnpackPropertyError final : public internal_exception
 
     const std::string propertyName;
     const std::string reason;
+
+  private:
+    const std::string errWhatDetailed;
 };
 
 } // namespace exception

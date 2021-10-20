@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "51b778d3_73b80036",
+        "filename": "include/sdbusplus/unpack_properties.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 164,
+      "author": {
+        "id": 1000678
+      },
+      "writtenOn": "2021-10-20T12:26:20Z",
+      "side": 1,
+      "message": "nit: you can pass std::ref(badProperty) it will be exactly the same, but you will give a hint that it\u0027s going to be passed as reference wrapper",
+      "range": {
+        "startLine": 164,
+        "startChar": 44,
+        "endLine": 164,
+        "endChar": 55
+      },
+      "revId": "32a64f5a9c2540b80234dadaba26f7424da314e1",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    }
+  ]
+}

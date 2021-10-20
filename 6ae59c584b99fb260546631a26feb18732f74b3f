@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "97ed5dda_0a5535ad",
+        "filename": "include/sdbusplus/unpack_properties.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 143,
+      "author": {
+        "id": 1000678
+      },
+      "writtenOn": "2021-10-20T12:26:20Z",
+      "side": 1,
+      "message": "You can put it inside else block. In case of throwing exception function will not return and in all other cases it means success.",
+      "range": {
+        "startLine": 143,
+        "startChar": 8,
+        "endLine": 143,
+        "endChar": 21
+      },
+      "revId": "6ae59c584b99fb260546631a26feb18732f74b3f",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    }
+  ]
+}

@@ -61,7 +61,11 @@ class ${classname}
         enum class ${e.name}
         {
         % for v in e.values:
-            ${v.name},
+            % if v.defaultValue is not None and isinstance(v.defaultValue, int):
+                ${v.name} = ${v.defaultValue},
+            % else:
+                ${v.name},
+            % endif
         % endfor
         };
     % endfor

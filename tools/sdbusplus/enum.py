@@ -8,5 +8,6 @@ from .property import Property
 class Enum(NamedElement):
     def __init__(self, **kwargs):
         self.values = [Property(**v) for v in kwargs.pop("values", [])]
+        self.defaultValue = kwargs.pop('default', None)
 
         super(Enum, self).__init__(**kwargs)

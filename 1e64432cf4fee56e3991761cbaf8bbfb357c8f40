@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "8d63a58a_45180749",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1000397
+      },
+      "writtenOn": "2021-11-04T09:58:15Z",
+      "side": 1,
+      "message": "Because we have some device type values that start from 1, not 0,\nOr some types only contain 1, 2, 4, etc.",
+      "parentUuid": "6ca6fe31_45b8e993",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 27
+      },
+      "revId": "1e64432cf4fee56e3991761cbaf8bbfb357c8f40",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "601c8a85_6c3d0646",
         "filename": "tools/sdbusplus/templates/interface.server.hpp.mako",
         "patchSetId": 3
@@ -36,6 +60,30 @@
       "writtenOn": "2021-11-04T09:41:57Z",
       "side": 1,
       "message": "If we were going to do this, shouldn\u0027t we be able to handle alias enums?",
+      "range": {
+        "startLine": 64,
+        "startChar": 48,
+        "endLine": 64,
+        "endChar": 80
+      },
+      "revId": "1e64432cf4fee56e3991761cbaf8bbfb357c8f40",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9e482ea6_0cb7ac91",
+        "filename": "tools/sdbusplus/templates/interface.server.hpp.mako",
+        "patchSetId": 3
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 1000397
+      },
+      "writtenOn": "2021-11-04T09:58:15Z",
+      "side": 1,
+      "message": "so, do you recommend removing this judgment?",
+      "parentUuid": "601c8a85_6c3d0646",
       "range": {
         "startLine": 64,
         "startChar": 48,

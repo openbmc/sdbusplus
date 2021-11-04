@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "c692f33b_eccafa27",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-11-04T13:33:23Z",
+      "side": 1,
+      "message": "I’m still not understanding why you need particular values in the dbus interface. “Device type values” imply a particular hardware specification, which should not be encoded in an API between processes. \n\nDo you have a concrete example?",
+      "parentUuid": "8d63a58a_45180749",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 27
+      },
+      "revId": "1e64432cf4fee56e3991761cbaf8bbfb357c8f40",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "601c8a85_6c3d0646",
         "filename": "tools/sdbusplus/templates/interface.server.hpp.mako",
         "patchSetId": 3
@@ -84,6 +108,30 @@
       "side": 1,
       "message": "so, do you recommend removing this judgment?",
       "parentUuid": "601c8a85_6c3d0646",
+      "range": {
+        "startLine": 64,
+        "startChar": 48,
+        "endLine": 64,
+        "endChar": 80
+      },
+      "revId": "1e64432cf4fee56e3991761cbaf8bbfb357c8f40",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1d4d2100_61ed3736",
+        "filename": "tools/sdbusplus/templates/interface.server.hpp.mako",
+        "patchSetId": 3
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-11-04T13:33:23Z",
+      "side": 1,
+      "message": "No necessarily. If the value contained another enum string you won’t be able to emit its value directly, but you’d need to go through translation. \n\nWe do have some “values” which represent integers but are not integers themselves. You probably need to use one of the translation functions to get the correct C++ value here, similar to how default values are handled in other parts of the code.",
+      "parentUuid": "9e482ea6_0cb7ac91",
       "range": {
         "startLine": 64,
         "startChar": 48,

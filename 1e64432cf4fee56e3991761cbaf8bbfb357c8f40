@@ -73,6 +73,30 @@
     },
     {
       "key": {
+        "uuid": "fffde335_289680f0",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1000397
+      },
+      "writtenOn": "2021-11-05T01:08:11Z",
+      "side": 1,
+      "message": "Sure, We have a custom interface, where the `Device Type` is uint8, and the initial value starts from 1, for example:\n\n```\nByte Value       Meaning\n01h              Other\n02h              Unknown\n03h              DRAM\n...\n```\n\nIf the default value is not set, the enumeration will start from 0.\n\nthe YAML file:\n```\nenumerations:\n    - name: DeviceType\n      description: \u003e\n      values:\n        - name: Other\n          description: \u003e\n          default: 1\n        - name: Unknown\n          description: \u003e\n        - name: DRAM\n          description: \u003e\n```\n\nThe generated server.hpp like this:\n```\nenum class DeviceType\n{\n    Other \u003d 1,\n    Unknown,\n    DRAM,\n};\n```",
+      "parentUuid": "c692f33b_eccafa27",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 27
+      },
+      "revId": "1e64432cf4fee56e3991761cbaf8bbfb357c8f40",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "601c8a85_6c3d0646",
         "filename": "tools/sdbusplus/templates/interface.server.hpp.mako",
         "patchSetId": 3
@@ -132,6 +156,30 @@
       "side": 1,
       "message": "No necessarily. If the value contained another enum string you won’t be able to emit its value directly, but you’d need to go through translation. \n\nWe do have some “values” which represent integers but are not integers themselves. You probably need to use one of the translation functions to get the correct C++ value here, similar to how default values are handled in other parts of the code.",
       "parentUuid": "9e482ea6_0cb7ac91",
+      "range": {
+        "startLine": 64,
+        "startChar": 48,
+        "endLine": 64,
+        "endChar": 80
+      },
+      "revId": "1e64432cf4fee56e3991761cbaf8bbfb357c8f40",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "489d5fc9_ced8379d",
+        "filename": "tools/sdbusplus/templates/interface.server.hpp.mako",
+        "patchSetId": 3
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 1000397
+      },
+      "writtenOn": "2021-11-05T01:08:11Z",
+      "side": 1,
+      "message": "Sorry, I am not expert here, Do you have a concrete example? Thanks.",
+      "parentUuid": "1d4d2100_61ed3736",
       "range": {
         "startLine": 64,
         "startChar": 48,

@@ -169,6 +169,30 @@
     },
     {
       "key": {
+        "uuid": "393ff85a_f89ec122",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1000397
+      },
+      "writtenOn": "2021-11-10T00:56:48Z",
+      "side": 1,
+      "message": "Sorry, maybe we are not the same page.\nI mean, if we have a common interface, we start from 1,\nfor example: https://github.com/openbmc/phosphor-dbus-interfaces/blob/master/yaml/xyz/openbmc_project/Inventory/Item/ Dimm.interface.yaml#L92\n\nIf the general specification is to start from 1 instead of 0, can we not use enum?",
+      "parentUuid": "31f725e8_93396d80",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 27
+      },
+      "revId": "1e64432cf4fee56e3991761cbaf8bbfb357c8f40",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "601c8a85_6c3d0646",
         "filename": "tools/sdbusplus/templates/interface.server.hpp.mako",
         "patchSetId": 3

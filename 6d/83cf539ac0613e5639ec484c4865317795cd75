@@ -1,0 +1,9 @@
+Ok-To-Test+1: OpenBMC CI <openbmcbump-ci@yahoo.com>
+Verified+1: OpenBMC CI <openbmcbump-ci@yahoo.com>
+Code-Review+1: Szymon Dompke <szymon.dompke@intel.com>
+Code-Review+2: William A. Kennington III <wak@google.com>
+Submitted-by: Patrick Williams <patrick@stwcx.xyz>
+Submitted-at: Wed, 10 Nov 2021 22:01:35 +0000
+Reviewed-on: https://gerrit.openbmc-project.xyz/c/openbmc/sdbusplus/+/47961
+Project: openbmc/sdbusplus
+Branch: refs/heads/master

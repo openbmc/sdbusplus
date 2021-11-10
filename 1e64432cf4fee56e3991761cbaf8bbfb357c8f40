@@ -193,6 +193,30 @@
     },
     {
       "key": {
+        "uuid": "10d4d3bf_0757d60a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-11-10T02:29:10Z",
+      "side": 1,
+      "message": "Since you’re referring to DIMMs I would assume you to mean there is some specification like SMBIOS that sets particular values for particular meanings. The issue is that SMBIOS is not the only way to get a dimm information. We are not going to have the dbus interface conform to one specification and violate another one. The point of the dbus interfaces is to abstract everyone away from the underlying protocol/specification. \n\nAt a dbus level, the enigma are assigned as the compiler sees fit. We will not add default values. If, in your SMBIOS code you need a particular mapping, that is pretty trivial to implement on your own, but we are not going to have that mapping spread through the codebase outside your single application. \n\nOne trivially implemented mapping is static constexpr unordered_map\u003cDimmType, SMBIOS_DimmType\u003e …",
+      "parentUuid": "393ff85a_f89ec122",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 27
+      },
+      "revId": "1e64432cf4fee56e3991761cbaf8bbfb357c8f40",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "601c8a85_6c3d0646",
         "filename": "tools/sdbusplus/templates/interface.server.hpp.mako",
         "patchSetId": 3

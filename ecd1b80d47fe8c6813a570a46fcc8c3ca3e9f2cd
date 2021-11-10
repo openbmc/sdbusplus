@@ -84,6 +84,24 @@
     },
     {
       "key": {
+        "uuid": "b99a08d9_c199411a",
+        "filename": "include/sdbusplus/unpack_properties.hpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 1000188
+      },
+      "writtenOn": "2021-11-10T11:35:47Z",
+      "side": 1,
+      "message": "So then wrap it in `if constexpr (BadProperty) { return {}; }` and it works fine...",
+      "parentUuid": "debada25_1ea3ca41",
+      "revId": "ecd1b80d47fe8c6813a570a46fcc8c3ca3e9f2cd",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "096eef62_a5ca405c",
         "filename": "src/exception.cpp",
         "patchSetId": 5

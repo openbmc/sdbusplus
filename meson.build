@@ -13,6 +13,27 @@ project('sdbusplus', 'cpp', 'c',
 
 libsystemd_pkg = dependency('libsystemd')
 root_inc = include_directories('include')
+libsdbusplus_deppkgs = [ libsystemd_pkg ]
+
+libunifex_dep = dependency('unifex', required: false)
+if libunifex_dep.found()
+    libsdbusplus_deppkgs += libunifex_dep
+else
+    libunifex_opts = import('cmake').subproject_options()
+    libunifex_opts.add_cmake_defines({
+        'BUILD_SHARED_LIBS': 'ON',
+        'BUILD_TESTING': 'OFF',
+        'BUILD_EXAMPLES': 'OFF',
+        'CMAKE_CXX_STANDARD': '20',
+    })
+
+    libunifex_proj = import('cmake').subproject(
+        'libunifex',
+        options: libunifex_opts,
+        required: true,
+    )
+    libunifex_dep = libunifex_proj.dependency('unifex')
+endif
 
 libsdbusplus_src = files(
     'src/exception.cpp',
@@ -23,11 +44,13 @@ libsdbusplus_src = files(
     'src/server/transaction.cpp',
 )
 
+libsdbusplus_deps = [ libsystemd_pkg, libunifex_dep ]
+
 libsdbusplus = library(
     'sdbusplus',
     libsdbusplus_src,
     include_directories: root_inc,
-    dependencies: libsystemd_pkg,
+    dependencies: libsdbusplus_deps,
     version: meson.project_version(),
     install: true,
 )
@@ -47,7 +70,10 @@ boost_dep = declare_dependency(
 sdbusplus_dep = declare_dependency(
     include_directories: root_inc,
     link_with: libsdbusplus,
-    dependencies: [ libsystemd_pkg, boost_dep ],
+    dependencies: [
+        boost_dep,
+        libsdbusplus_deps,
+    ],
 )
 
 subdir('tools')
@@ -69,7 +95,7 @@ import('pkgconfig').generate(
     libsdbusplus,
     name: meson.project_name(),
     version: meson.project_version(),
-    requires: libsystemd_pkg,
+    requires: libsdbusplus_deppkgs,
     extra_cflags: boost_compile_args,
     description: 'C++ bindings for sdbus',
 )

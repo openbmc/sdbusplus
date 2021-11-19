@@ -33,11 +33,11 @@ struct Transaction
 
 struct Transaction
 {
-    Transaction(sdbusplus::bus::bus& bus, sdbusplus::message_t& msg) :
+    Transaction(sdbusplus::bus_t& bus, sdbusplus::message_t& msg) :
         bus(bus), msg(msg)
     {}
 
-    sdbusplus::bus::bus& bus;
+    sdbusplus::bus_t& bus;
     sdbusplus::message_t& msg;
 };
 
@@ -48,11 +48,11 @@ struct Transaction
 namespace std
 {
 
-/** @ brief Overload of std::hash for sdbusplus::bus::bus */
+/** @ brief Overload of std::hash for sdbusplus::bus_t */
 template <>
-struct hash<sdbusplus::bus::bus>
+struct hash<sdbusplus::bus_t>
 {
-    size_t operator()(sdbusplus::bus::bus& b) const;
+    size_t operator()(sdbusplus::bus_t& b) const;
 };
 
 /** @ brief Overload of std::hash for sdbusplus::message_t */

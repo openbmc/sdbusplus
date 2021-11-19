@@ -41,7 +41,7 @@ struct manager
      *  @param[in] bus - The bus to register on.
      *  @param[in] path - The path to register.
      */
-    manager(sdbusplus::bus::bus& bus, const char* path) : _slot(nullptr)
+    manager(sdbusplus::bus_t& bus, const char* path) : _slot(nullptr)
     {
         sd_bus_slot* slot = nullptr;
         sdbusplus::SdBusInterface* intf = bus.getInterface();

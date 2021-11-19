@@ -46,18 +46,18 @@ namespace asio
 /**
  * A connection to a bus, through which messages may be sent or received.
  */
-class connection : public sdbusplus::bus::bus
+class connection : public sdbusplus::bus_t
 {
   public:
     // default to system bus
     connection(boost::asio::io_context& io) :
-        sdbusplus::bus::bus(sdbusplus::bus::new_default()), io_(io), socket(io_)
+        sdbusplus::bus_t(sdbusplus::bus::new_default()), io_(io), socket(io_)
     {
         socket.assign(get_fd());
         read_wait();
     }
     connection(boost::asio::io_context& io, sd_bus* bus) :
-        sdbusplus::bus::bus(bus), io_(io), socket(io_)
+        sdbusplus::bus_t(bus), io_(io), socket(io_)
     {
         socket.assign(get_fd());
         read_wait();

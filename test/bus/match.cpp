@@ -6,7 +6,7 @@
 class Match : public ::testing::Test
 {
   protected:
-    sdbusplus::bus::bus bus = sdbusplus::bus::new_bus();
+    sdbusplus::bus_t bus = sdbusplus::bus::new_bus();
 
     static constexpr auto busName = "xyz.openbmc_project.sdbusplus.test.Match";
 

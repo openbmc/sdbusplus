@@ -748,7 +748,7 @@ class dbus_interface
         vtable_.emplace_back(vtable::end());
 
         interface_ = std::make_unique<sdbusplus::server::interface::interface>(
-            static_cast<sdbusplus::bus::bus&>(*conn_), path_.c_str(),
+            static_cast<sdbusplus::bus_t&>(*conn_), path_.c_str(),
             name_.c_str(), static_cast<const sd_bus_vtable*>(&vtable_[0]),
             this);
         conn_->emit_interfaces_added(path_.c_str(),
@@ -857,7 +857,7 @@ class object_server
     {
         managers_.emplace_back(
             std::make_unique<server::manager::manager>(server::manager::manager(
-                static_cast<sdbusplus::bus::bus&>(*conn_), path.c_str())));
+                static_cast<sdbusplus::bus_t&>(*conn_), path.c_str())));
     }
 
     bool remove_interface(const std::shared_ptr<dbus_interface>& iface)

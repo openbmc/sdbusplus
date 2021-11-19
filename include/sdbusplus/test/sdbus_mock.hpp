@@ -127,13 +127,13 @@ class SdBusMock : public SdBusInterface
     MOCK_METHOD2(sd_bus_wait, int(sd_bus*, uint64_t));
 };
 
-inline bus::bus get_mocked_new(SdBusMock* sdbus)
+inline bus_t get_mocked_new(SdBusMock* sdbus)
 {
     using ::testing::IsNull;
     using ::testing::Return;
 
     EXPECT_CALL(*sdbus, sd_bus_ref(IsNull())).WillRepeatedly(Return(nullptr));
-    bus::bus bus_mock(nullptr, sdbus);
+    bus_t bus_mock(nullptr, sdbus);
 
     return bus_mock;
 }

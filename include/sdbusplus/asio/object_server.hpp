@@ -33,7 +33,7 @@ class callback
 {
   public:
     virtual ~callback() = default;
-    virtual int call(message::message& m) = 0;
+    virtual int call(message_t& m) = 0;
 };
 
 enum class SetPropertyReturnValue : size_t
@@ -47,7 +47,7 @@ class callback_set
 {
   public:
     virtual ~callback_set() = default;
-    virtual SetPropertyReturnValue call(message::message& m) = 0;
+    virtual SetPropertyReturnValue call(message_t& m) = 0;
     virtual SetPropertyReturnValue set(const boost::any& value) = 0;
 };
 
@@ -61,13 +61,13 @@ template <typename T>
 inline const bool FirstArgIsMessage_v =
     std::is_same_v<utility::get_first_arg_t<utility::decay_tuple_t<
                        boost::callable_traits::args_t<T>>>,
-                   message::message>;
+                   message_t>;
 
 template <typename T>
 inline const bool SecondArgIsMessage_v = std::is_same_v<
     utility::get_first_arg_t<utility::strip_first_arg_t<
         utility::decay_tuple_t<boost::callable_traits::args_t<T>>>>,
-    message::message>;
+    message_t>;
 template <typename T>
 static constexpr bool callbackYields = FirstArgIsYield_v<T>;
 template <typename T>
@@ -78,7 +78,7 @@ static constexpr bool callbackWantsMessage = (FirstArgIsMessage_v<T> ||
 namespace details
 {
 // small helper class to count the number of non-dbus arguments
-// to a registered dbus function (like message::message or yield_context)
+// to a registered dbus function (like message_t or yield_context)
 // so the registered signature can omit them
 template <typename FirstArg, typename... Rest>
 struct NonDbusArgsCount;
@@ -96,7 +96,7 @@ struct NonDbusArgsCount<std::tuple<FirstArg, OtherArgs...>>
 {
     constexpr static std::size_t size()
     {
-        if constexpr (std::is_same_v<FirstArg, message::message> ||
+        if constexpr (std::is_same_v<FirstArg, message_t> ||
                       std::is_same_v<FirstArg, boost::asio::yield_context>)
         {
             return 1 + NonDbusArgsCount<std::tuple<OtherArgs...>>::size();
@@ -116,7 +116,7 @@ class callback_method_instance : public callback
   public:
     callback_method_instance(CallbackType&& func) : func_(std::move(func))
     {}
-    int call(message::message& m) override
+    int call(message_t& m) override
     {
         return expandCall(m);
     }
@@ -128,20 +128,20 @@ class callback_method_instance : public callback
     CallbackType func_;
     template <typename T>
     std::enable_if_t<!std::is_void_v<T>, void>
-        callFunction(message::message& m, InputTupleType& inputArgs)
+        callFunction(message_t& m, InputTupleType& inputArgs)
     {
         ResultType r = std::apply(func_, inputArgs);
         m.append(r);
     }
     template <typename T>
     std::enable_if_t<std::is_void_v<T>, void>
-        callFunction(message::message&, InputTupleType& inputArgs)
+        callFunction(message_t&, InputTupleType& inputArgs)
     {
         std::apply(func_, inputArgs);
     }
 #ifdef __cpp_if_constexpr
     // optional message-first-argument callback
-    int expandCall(message::message& m)
+    int expandCall(message_t& m)
     {
         using DbusTupleType = utility::strip_first_n_args_t<
             details::NonDbusArgsCount<InputTupleType>::size(), InputTupleType>;
@@ -168,7 +168,7 @@ class callback_method_instance : public callback
     };
 #else
     // normal dbus-types-only callback
-    int expandCall(message::message& m)
+    int expandCall(message_t& m)
     {
         InputTupleType inputArgs;
         if (!utility::read_into_tuple(inputArgs, m))
@@ -194,15 +194,15 @@ class coroutine_method_instance : public callback
         io_(io),
         func_(std::move(func))
     {}
-    int call(message::message& m) override
+    int call(message_t& m) override
     {
         // make a copy of m to move into the coroutine
-        message::message b{m};
+        message_t b{m};
         // spawn off a new coroutine to handle the method call
         boost::asio::spawn(
             io_, [this, b = std::move(b)](boost::asio::yield_context yield) {
-                message::message mcpy{std::move(b)};
-                std::optional<message::message> err{};
+                message_t mcpy{std::move(b)};
+                std::optional<message_t> err{};
 
                 try
                 {
@@ -234,19 +234,19 @@ class coroutine_method_instance : public callback
     CallbackType func_;
     template <typename T>
     std::enable_if_t<!std::is_void_v<T>, void>
-        callFunction(message::message& m, InputTupleType& inputArgs)
+        callFunction(message_t& m, InputTupleType& inputArgs)
     {
         ResultType r = std::apply(func_, inputArgs);
         m.append(r);
     }
     template <typename T>
     std::enable_if_t<std::is_void_v<T>, void>
-        callFunction(message::message& m, InputTupleType& inputArgs)
+        callFunction(message_t& m, InputTupleType& inputArgs)
     {
         std::apply(func_, inputArgs);
     }
     // co-routine body for call
-    void expandCall(boost::asio::yield_context yield, message::message& m)
+    void expandCall(boost::asio::yield_context yield, message_t& m)
     {
         using DbusTupleType = utility::strip_first_n_args_t<
             details::NonDbusArgsCount<InputTupleType>::size(), InputTupleType>;
@@ -290,7 +290,7 @@ class callback_get_instance : public callback
         value_(value),
         func_(std::move(func))
     {}
-    int call(message::message& m) override
+    int call(message_t& m) override
     {
         auto r = func_(*value_);
         m.append(r);
@@ -311,7 +311,7 @@ class callback_set_instance : public callback_set
         value_(value),
         func_(std::move(func))
     {}
-    SetPropertyReturnValue call(message::message& m) override
+    SetPropertyReturnValue call(message_t& m) override
     {
         PropertyType input;
         m.read(input);
@@ -626,7 +626,7 @@ class dbus_interface
     {
         dbus_interface* data = static_cast<dbus_interface*>(userdata);
         auto func = data->callbacksGet_.find(property);
-        auto mesg = message::message(reply);
+        auto mesg = message_t(reply);
         if (func != data->callbacksGet_.end())
         {
 #ifdef __EXCEPTIONS
@@ -657,7 +657,7 @@ class dbus_interface
     {
         dbus_interface* data = static_cast<dbus_interface*>(userdata);
         auto func = data->callbacksSet_.find(property);
-        auto mesg = message::message(value);
+        auto mesg = message_t(value);
         if (func != data->callbacksSet_.end())
         {
 #ifdef __EXCEPTIONS
@@ -695,7 +695,7 @@ class dbus_interface
                               sd_bus_error* error)
     {
         dbus_interface* data = static_cast<dbus_interface*>(userdata);
-        auto mesg = message::message(m);
+        auto mesg = message_t(m);
         auto func = data->callbacksMethod_.find(mesg.get_member());
         if (func != data->callbacksMethod_.end())
         {
@@ -732,7 +732,7 @@ class dbus_interface
     {
         if (!initialized_)
         {
-            return message::message(nullptr);
+            return message_t(nullptr);
         }
         return interface_->new_signal(member);
     }

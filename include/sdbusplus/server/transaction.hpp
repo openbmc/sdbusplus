@@ -33,12 +33,12 @@ struct Transaction
 
 struct Transaction
 {
-    Transaction(sdbusplus::bus::bus& bus, sdbusplus::message::message& msg) :
+    Transaction(sdbusplus::bus::bus& bus, sdbusplus::message_t& msg) :
         bus(bus), msg(msg)
     {}
 
     sdbusplus::bus::bus& bus;
-    sdbusplus::message::message& msg;
+    sdbusplus::message_t& msg;
 };
 
 } // namespace transaction
@@ -55,11 +55,11 @@ struct hash<sdbusplus::bus::bus>
     size_t operator()(sdbusplus::bus::bus& b) const;
 };
 
-/** @ brief Overload of std::hash for sdbusplus::message::message */
+/** @ brief Overload of std::hash for sdbusplus::message_t */
 template <>
-struct hash<sdbusplus::message::message>
+struct hash<sdbusplus::message_t>
 {
-    size_t operator()(sdbusplus::message::message& m) const;
+    size_t operator()(sdbusplus::message_t& m) const;
 };
 
 /** @ brief Overload of std::hash for Transaction */
@@ -103,7 +103,7 @@ void set_id(uint64_t value);
  *
  * @param[in] msg - The message to create the transaction from.
  */
-void set_id(message::message& msg);
+void set_id(message_t& msg);
 
 } // namespace transaction
 } // namespace server

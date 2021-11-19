@@ -40,7 +40,7 @@ int fooYield(boost::asio::yield_context yield,
     return testCount;
 }
 
-int methodWithMessage(sdbusplus::message::message& /*m*/, int test)
+int methodWithMessage(sdbusplus::message_t& /*m*/, int test)
 {
     std::cout << "methodWithMessage(m, " << test << ") -> " << (test + 1)
               << "\n";
@@ -107,7 +107,7 @@ void do_start_async_ipmi_call(std::shared_ptr<sdbusplus::asio::connection> conn,
     std::vector<uint8_t> commandData = {4, 3, 2, 1};
     method.append(netFn, lun, cmd, commandData, options);
     boost::system::error_code ec;
-    sdbusplus::message::message reply = conn->async_send(method, yield[ec]);
+    sdbusplus::message_t reply = conn->async_send(method, yield[ec]);
     std::tuple<uint8_t, uint8_t, uint8_t, uint8_t, std::vector<uint8_t>>
         tupleOut;
     try
@@ -271,7 +271,7 @@ int client()
     using GetSubTreeType = std::vector<std::pair<
         std::string,
         std::vector<std::pair<std::string, std::vector<std::string>>>>>;
-    using message = sdbusplus::message::message;
+    using message = sdbusplus::message_t;
 
     // setup connection to dbus
     boost::asio::io_context io;

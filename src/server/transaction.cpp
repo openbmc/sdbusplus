@@ -30,7 +30,7 @@ void set_id(uint64_t value)
     details::id = value;
 }
 
-void set_id(message::message& msg)
+void set_id(message_t& msg)
 {
     auto tbus = msg.get_bus();
     auto t = Transaction(tbus, msg);
@@ -50,8 +50,7 @@ size_t hash<sdbusplus::bus::bus>::operator()(sdbusplus::bus::bus& b) const
     return std::hash<std::string>{}(name);
 }
 
-size_t hash<sdbusplus::message::message>::operator()(
-    sdbusplus::message::message& m) const
+size_t hash<sdbusplus::message_t>::operator()(sdbusplus::message_t& m) const
 {
     switch (m.get_type())
     {
@@ -79,7 +78,7 @@ size_t hash<sdbusplus::server::transaction::Transaction>::operator()(
     sdbusplus::server::transaction::Transaction const& t) const
 {
     auto hash1 = std::hash<sdbusplus::bus::bus>{}(t.bus);
-    auto hash2 = std::hash<sdbusplus::message::message>{}(t.msg);
+    auto hash2 = std::hash<sdbusplus::message_t>{}(t.msg);
 
     // boost::hash_combine() algorithm.
     return static_cast<size_t>(

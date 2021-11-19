@@ -35,7 +35,7 @@ struct async_send_handler
     {}
     async_send_handler(Handler& handler) : handler_(handler)
     {}
-    void operator()(sd_bus* conn, message::message& mesg, uint64_t timeout)
+    void operator()(sd_bus* conn, message_t& mesg, uint64_t timeout)
     {
         async_send_handler* context = new async_send_handler(std::move(*this));
         int ec = sd_bus_call_async(conn, NULL, mesg.get(), &callback, context,
@@ -58,7 +58,7 @@ struct async_send_handler
         }
         std::unique_ptr<async_send_handler> context(
             static_cast<async_send_handler*>(userdata));
-        message::message message(mesg);
+        message_t message(mesg);
         auto ec = make_error_code(
             static_cast<boost::system::errc::errc_t>(message.get_errno()));
         context->handler_(ec, message);

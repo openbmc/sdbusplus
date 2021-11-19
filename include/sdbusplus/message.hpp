@@ -495,6 +495,8 @@ int call_async_cb(sd_bus_message* m, void* userdata, sd_bus_error*) noexcept
 
 } // namespace message
 
+using message_t = message::message;
+
 } // namespace sdbusplus
 
 #ifdef __clang__

@@ -30,7 +30,7 @@ int property_callback(sd_bus_message* msg, sdbusplus::SdBusInterface* intf,
     try
     {
         // Refcount the message.
-        auto m = message::message(msg, intf);
+        auto m = message_t(msg, intf);
 
         // Set up the transaction.
         server::transaction::set_id(m);
@@ -86,7 +86,7 @@ int method_callback(sd_bus_message* msg, sdbusplus::SdBusInterface* intf,
     try
     {
         // Refcount the message.
-        auto m = message::message(msg, intf);
+        auto m = message_t(msg, intf);
 
         // Set up the transaction.
         server::transaction::set_id(m);

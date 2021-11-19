@@ -43,7 +43,7 @@ class ReadTest : public testing::Test
             .WillRepeatedly(Return(0));
     };
 
-    sdbusplus::message::message new_message()
+    sdbusplus::message_t new_message()
     {
         return sdbusplus::get_mocked_new(&mock).new_method_call(
             nullptr, nullptr, nullptr, nullptr);

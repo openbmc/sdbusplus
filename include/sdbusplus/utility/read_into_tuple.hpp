@@ -38,7 +38,7 @@ constexpr auto index_apply(F f)
 }
 } // namespace detail
 template <class Tuple>
-constexpr bool read_into_tuple(Tuple& t, message::message& m)
+constexpr bool read_into_tuple(Tuple& t, message_t& m)
 {
     return detail::index_apply<std::tuple_size<Tuple>{}>([&](auto... Is) {
         if (m.is_method_error())

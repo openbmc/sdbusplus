@@ -55,7 +55,7 @@ struct match
         match(bus, _match.c_str(), handler, context)
     {}
 
-    using callback_t = std::function<void(sdbusplus::message::message&)>;
+    using callback_t = std::function<void(sdbusplus::message_t&)>;
 
     /** @brief Register a signal match.
      *
@@ -86,7 +86,7 @@ struct match
                             sd_bus_error* /*e*/)
     {
         auto c = static_cast<callback_t*>(context);
-        message::message message{m};
+        message_t message{m};
 
         (*c)(message);
 

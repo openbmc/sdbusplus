@@ -86,16 +86,15 @@ class connection : public sdbusplus::bus::bus
     template <typename MessageHandler>
     inline BOOST_ASIO_INITFN_RESULT_TYPE(MessageHandler,
                                          void(boost::system::error_code,
-                                              message::message&))
-        async_send(message::message& m, MessageHandler&& handler,
-                   uint64_t timeout = 0)
+                                              message_t&))
+        async_send(message_t& m, MessageHandler&& handler, uint64_t timeout = 0)
     {
         boost::asio::async_completion<
-            MessageHandler, void(boost::system::error_code, message::message)>
+            MessageHandler, void(boost::system::error_code, message_t)>
             init(handler);
         detail::async_send_handler<typename boost::asio::async_result<
             MessageHandler, void(boost::system::error_code,
-                                 message::message)>::completion_handler_type>(
+                                 message_t)>::completion_handler_type>(
             std::move(init.completion_handler))(get(), m, timeout);
         return init.result.get();
     }
@@ -107,7 +106,7 @@ class connection : public sdbusplus::bus::bus
      *                       continuation for the async dbus method call. The
      *                       arguments to parse on the return are deduced from
      *                       the handler's signature and then passed in along
-     *                       with an error code and optional message::message
+     *                       with an error code and optional message_t
      *  @param[in] service - The service to call.
      *  @param[in] objpath - The object's path for the call.
      *  @param[in] interf - The object's interface to call.
@@ -136,7 +135,7 @@ class connection : public sdbusplus::bus::bus
             {
                 return std::is_same_v<
                     std::tuple_element_t<1, FunctionTupleType>,
-                    sdbusplus::message::message>;
+                    sdbusplus::message_t>;
             }
             return false;
         }();
@@ -144,7 +143,7 @@ class connection : public sdbusplus::bus::bus
                                                          FunctionTupleType>;
         auto applyHandler = [handler = std::forward<MessageHandler>(handler)](
                                 boost::system::error_code ec,
-                                message::message& r) mutable {
+                                message_t& r) mutable {
             UnpackType responseData;
             if (!ec)
             {
@@ -175,7 +174,7 @@ class connection : public sdbusplus::bus::bus
                 std::apply(handler, response);
             }
         };
-        message::message m;
+        message_t m;
         boost::system::error_code ec;
         try
         {
@@ -201,7 +200,7 @@ class connection : public sdbusplus::bus::bus
      *                       continuation for the async dbus method call. The
      *                       arguments to parse on the return are deduced from
      *                       the handler's signature and then passed in along
-     *                       with an error code and optional message::message
+     *                       with an error code and optional message_t
      *  @param[in] service - The service to call.
      *  @param[in] objpath - The object's path for the call.
      *  @param[in] interf - The object's interface to call.
@@ -244,7 +243,7 @@ class connection : public sdbusplus::bus::bus
                            const std::string& interf, const std::string& method,
                            const InputArgs&... a)
     {
-        message::message m;
+        message_t m;
         try
         {
             m = new_method_call(service.c_str(), objpath.c_str(),
@@ -256,7 +255,7 @@ class connection : public sdbusplus::bus::bus
             ec = boost::system::errc::make_error_code(
                 static_cast<boost::system::errc::errc_t>(e.get_errno()));
         }
-        message::message r;
+        message_t r;
         if (!ec)
         {
             r = async_send(m, yield[ec]);

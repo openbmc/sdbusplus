@@ -50,7 +50,7 @@ TEST_F(Match, FunctorIs_sd_bus_message_handler_t)
 TEST_F(Match, FunctorIs_LambdaTakingMessage)
 {
     bool triggered = false;
-    auto trigger = [&triggered](sdbusplus::message::message& /*m*/) {
+    auto trigger = [&triggered](sdbusplus::message_t& /*m*/) {
         triggered = true;
     };
 
@@ -74,7 +74,7 @@ TEST_F(Match, FunctorIs_MemberFunctionTakingMessage)
       public:
         bool triggered = false;
 
-        void callback(sdbusplus::message::message& /*m*/)
+        void callback(sdbusplus::message_t& /*m*/)
         {
             triggered = true;
         }

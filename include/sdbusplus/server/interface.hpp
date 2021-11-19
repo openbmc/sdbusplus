@@ -32,7 +32,7 @@ namespace interface
  *  implementation should 'has-a' server::interface with a name sufficiently
  *  unique to prevent name collisions in multiple-inheritence situations.
  */
-struct interface final
+struct interface final : private sdbusplus::bus::details::bus_friend
 {
     /* Define all of the basic class operations:
      *     Not allowed:

@@ -17,7 +17,7 @@ namespace bus
 namespace match
 {
 
-struct match
+struct match : private sdbusplus::bus::details::bus_friend
 {
     /* Define all of the basic class operations:
      *     Not allowed:
@@ -45,7 +45,7 @@ struct match
           sd_bus_message_handler_t handler, void* context = nullptr)
     {
         sd_bus_slot* slot = nullptr;
-        sd_bus_add_match(bus.get(), &slot, match, handler, context);
+        sd_bus_add_match(get_busp(bus), &slot, match, handler, context);
 
         _slot = std::move(slot);
     }
@@ -66,7 +66,7 @@ struct match
         _callback(std::make_unique<callback_t>(std::move(callback)))
     {
         sd_bus_slot* slot = nullptr;
-        sd_bus_add_match(bus.get(), &slot, match, callCallback,
+        sd_bus_add_match(get_busp(bus), &slot, match, callCallback,
                          _callback.get());
 
         _slot = std::move(slot);

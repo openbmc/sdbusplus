@@ -88,7 +88,9 @@ struct compose<>
  *
  */
 template <class... Args>
-struct object : details::compose<Args...>
+struct object :
+    details::compose<Args...>,
+    private sdbusplus::bus::details::bus_friend
 {
     /* Define all of the basic class operations:
      *     Not allowed:
@@ -123,7 +125,7 @@ struct object : details::compose<Args...>
     object(bus_t& bus, const char* path,
            action act = action::emit_object_added) :
         details::compose<Args...>(bus, path),
-        __sdbusplus_server_object_bus(bus.get(), bus.getInterface()),
+        __sdbusplus_server_object_bus(get_busp(bus), bus.getInterface()),
         __sdbusplus_server_object_path(path),
         __sdbusplus_server_object_emitremoved(false),
         __sdbusplus_server_object_intf(bus.getInterface())
@@ -144,7 +146,7 @@ struct object : details::compose<Args...>
         if (__sdbusplus_server_object_emitremoved)
         {
             __sdbusplus_server_object_intf->sd_bus_emit_object_removed(
-                __sdbusplus_server_object_bus.get(),
+                get_busp(__sdbusplus_server_object_bus),
                 __sdbusplus_server_object_path.c_str());
         }
     }
@@ -155,7 +157,7 @@ struct object : details::compose<Args...>
         if (!__sdbusplus_server_object_emitremoved)
         {
             __sdbusplus_server_object_intf->sd_bus_emit_object_added(
-                __sdbusplus_server_object_bus.get(),
+                get_busp(__sdbusplus_server_object_bus),
                 __sdbusplus_server_object_path.c_str());
             __sdbusplus_server_object_emitremoved = true;
         }

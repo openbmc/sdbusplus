@@ -22,37 +22,6 @@
 namespace sdbusplus
 {
 
-// Forward declare.
-namespace server
-{
-namespace interface
-{
-struct interface;
-}
-} // namespace server
-namespace server
-{
-namespace manager
-{
-struct manager;
-}
-} // namespace server
-namespace server
-{
-namespace object
-{
-template <class...>
-struct object;
-}
-} // namespace server
-namespace bus
-{
-namespace match
-{
-struct match;
-}
-} // namespace bus
-
 namespace bus
 {
 
@@ -115,6 +84,8 @@ class Strv
 
 /* @brief Alias 'bus' to a unique_ptr type for auto-release. */
 using bus = std::unique_ptr<sd_bus, BusDeleter>;
+
+struct bus_friend;
 
 } // namespace details
 
@@ -476,14 +447,10 @@ struct bus
         return _intf;
     }
 
-    friend struct server::interface::interface;
-    friend struct server::manager::manager;
-    template <class... Args>
-    friend struct server::object::object;
-    friend struct match::match;
+    friend struct details::bus_friend;
 
   protected:
-    busp_t get()
+    busp_t get() noexcept
     {
         return _bus.get();
     }
@@ -585,6 +552,23 @@ inline bus new_system()
     bus.set_should_close(true);
     return bus;
 }
+
+namespace details
+{
+
+// Some sdbusplus classes need to be able to pass the underlying bus pointer
+// along to sd_bus calls, but we don't want to make it available for everyone.
+// Define a class which can be inherited explicitly (intended for internal users
+// only) to get the underlying bus pointer.
+struct bus_friend
+{
+    static busp_t get_busp(sdbusplus::bus::bus& b) noexcept
+    {
+        return b.get();
+    }
+};
+
+} // namespace details
 
 } // namespace bus
 

@@ -371,7 +371,7 @@ class dbus_interface
     template <typename PropertyType, typename CallbackTypeGet>
     bool register_property_r(const std::string& name,
                              const PropertyType& property,
-                             decltype(vtable::vtable_t::flags) flags,
+                             decltype(vtable_t::flags) flags,
                              CallbackTypeGet&& getFunction)
     {
         // can only register once
@@ -411,7 +411,7 @@ class dbus_interface
               typename CallbackTypeGet>
     bool register_property_rw(const std::string& name,
                               const PropertyType& property,
-                              decltype(vtable::vtable_t::flags) flags,
+                              decltype(vtable_t::flags) flags,
                               CallbackTypeSet&& setFunction,
                               CallbackTypeGet&& getFunction)
     {

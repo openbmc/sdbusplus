@@ -177,7 +177,7 @@ ${ m.cpp_prototype(loader, interface=interface, ptype='callback-header') }
 
     % endfor
 
-        static const vtable::vtable_t _vtable[];
+        static const vtable_t _vtable[];
         sdbusplus::server::interface_t
                 _${"_".join(interface.name.split('.'))}_interface;
         sdbusplus::SdBusInterface *_intf;

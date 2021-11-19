@@ -17,7 +17,7 @@ extern "C"
     extern const size_t example2_size;
 }
 
-static const sdbusplus::vtable::vtable_t example[] = {
+static const sdbusplus::vtable_t example[] = {
     sdbusplus::vtable::start(),
     sdbusplus::vtable::method("1", "2", "3", &test_handler, 0),
     sdbusplus::vtable::signal("5", "6"),

@@ -10,8 +10,8 @@ namespace interface
 {
 
 interface::interface(sdbusplus::bus_t& bus, const char* path,
-                     const char* interf,
-                     const sdbusplus::vtable::vtable_t* vtable, void* context) :
+                     const char* interf, const sdbusplus::vtable_t* vtable,
+                     void* context) :
     _bus(bus.get(), bus.getInterface()),
     _path(path), _interf(interf), _slot(nullptr), _intf(bus.getInterface()),
     _interface_added(false)

@@ -150,7 +150,7 @@ std::string ${classname}::convert${e.name}ToString(${classname}::${e.name} v)
 }
     % endfor
 
-const vtable::vtable_t ${classname}::_vtable[] = {
+const vtable_t ${classname}::_vtable[] = {
     vtable::start(),
     % for m in interface.methods:
 ${ m.cpp_prototype(loader, interface=interface, ptype='vtable') }

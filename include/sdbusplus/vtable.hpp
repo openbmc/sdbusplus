@@ -183,4 +183,6 @@ constexpr vtable_t property_o(const char* member, const char* signature,
 
 } // namespace vtable
 
+using vtable_t = vtable::vtable_t;
+
 } // namespace sdbusplus

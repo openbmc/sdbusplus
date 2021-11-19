@@ -58,7 +58,7 @@ struct interface final
      *                       the interface implementation class.
      */
     interface(sdbusplus::bus_t& bus, const char* path, const char* interf,
-              const sdbusplus::vtable::vtable_t* vtable, void* context);
+              const sdbusplus::vtable_t* vtable, void* context);
 
     ~interface();
 

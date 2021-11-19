@@ -9,7 +9,7 @@ namespace server
 namespace interface
 {
 
-interface::interface(sdbusplus::bus::bus& bus, const char* path,
+interface::interface(sdbusplus::bus_t& bus, const char* path,
                      const char* interf,
                      const sdbusplus::vtable::vtable_t* vtable, void* context) :
     _bus(bus.get(), bus.getInterface()),

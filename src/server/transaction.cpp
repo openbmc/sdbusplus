@@ -44,7 +44,7 @@ void set_id(message_t& msg)
 namespace std
 {
 
-size_t hash<sdbusplus::bus::bus>::operator()(sdbusplus::bus::bus& b) const
+size_t hash<sdbusplus::bus_t>::operator()(sdbusplus::bus_t& b) const
 {
     auto name = b.get_unique_name();
     return std::hash<std::string>{}(name);
@@ -77,7 +77,7 @@ size_t hash<sdbusplus::message_t>::operator()(sdbusplus::message_t& m) const
 size_t hash<sdbusplus::server::transaction::Transaction>::operator()(
     sdbusplus::server::transaction::Transaction const& t) const
 {
-    auto hash1 = std::hash<sdbusplus::bus::bus>{}(t.bus);
+    auto hash1 = std::hash<sdbusplus::bus_t>{}(t.bus);
     auto hash2 = std::hash<sdbusplus::message_t>{}(t.msg);
 
     // boost::hash_combine() algorithm.

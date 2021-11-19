@@ -44,7 +44,7 @@ using has_emit_added = decltype(has_emit_added_helper<T>(0));
 template <class T, class... Rest>
 struct compose_impl : T, compose_impl<Rest...>
 {
-    compose_impl(bus::bus& bus, const char* path) :
+    compose_impl(bus_t& bus, const char* path) :
         T(bus, path), compose_impl<Rest...>(bus, path)
     {}
 };
@@ -53,7 +53,7 @@ struct compose_impl : T, compose_impl<Rest...>
 template <class T>
 struct compose_impl<T> : T
 {
-    compose_impl(bus::bus& bus, const char* path) : T(bus, path)
+    compose_impl(bus_t& bus, const char* path) : T(bus, path)
     {}
 };
 
@@ -61,7 +61,7 @@ struct compose_impl<T> : T
 template <class... Args>
 struct compose : compose_impl<Args...>
 {
-    compose(bus::bus& bus, const char* path) : compose_impl<Args...>(bus, path)
+    compose(bus_t& bus, const char* path) : compose_impl<Args...>(bus, path)
     {}
 };
 
@@ -69,7 +69,7 @@ struct compose : compose_impl<Args...>
 template <>
 struct compose<>
 {
-    compose(bus::bus& /*bus*/, const char* /*path*/)
+    compose(bus_t& /*bus*/, const char* /*path*/)
     {}
 };
 
@@ -120,7 +120,7 @@ struct object : details::compose<Args...>
      *                           object needs custom property init before the
      *                           signal can be sent.
      */
-    object(bus::bus& bus, const char* path,
+    object(bus_t& bus, const char* path,
            action act = action::emit_object_added) :
         details::compose<Args...>(bus, path),
         __sdbusplus_server_object_bus(bus.get(), bus.getInterface()),
@@ -132,7 +132,7 @@ struct object : details::compose<Args...>
         check_action(act);
     }
 
-    object(bus::bus& bus, const char* path, bool deferSignal) :
+    object(bus_t& bus, const char* path, bool deferSignal) :
         object(bus, path,
                deferSignal ? action::defer_emit : action::emit_object_added)
     {
@@ -166,7 +166,7 @@ struct object : details::compose<Args...>
     // unique.  Since an object is 'composed' via multiple-inheritence,
     // all members need to have unique names to ensure there is no
     // ambiguity.
-    bus::bus __sdbusplus_server_object_bus;
+    bus_t __sdbusplus_server_object_bus;
     std::string __sdbusplus_server_object_path;
     bool __sdbusplus_server_object_emitremoved;
     SdBusInterface* __sdbusplus_server_object_intf;

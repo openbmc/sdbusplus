@@ -16,7 +16,7 @@ class Object : public ::testing::Test
 {
   protected:
     sdbusplus::SdBusMock sdbusMock;
-    sdbusplus::bus::bus bus = sdbusplus::get_mocked_new(&sdbusMock);
+    sdbusplus::bus_t bus = sdbusplus::get_mocked_new(&sdbusMock);
 
     static constexpr auto busName = "xyz.openbmc_project.sdbusplus.test.Object";
     static constexpr auto objPath = "/xyz/openbmc_project/sdbusplus/test";

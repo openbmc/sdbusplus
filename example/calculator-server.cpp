@@ -13,7 +13,7 @@ using Calculator_inherit =
 struct Calculator : Calculator_inherit
 {
     /** Constructor */
-    Calculator(sdbusplus::bus::bus& bus, const char* path) :
+    Calculator(sdbusplus::bus_t& bus, const char* path) :
         Calculator_inherit(bus, path)
     {}
 

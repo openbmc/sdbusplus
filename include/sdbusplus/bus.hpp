@@ -588,6 +588,8 @@ inline bus new_system()
 
 } // namespace bus
 
+using bus_t = bus::bus;
+
 /** @brief Get the dbus bus from the message.
  *
  *  @return The dbus bus.
@@ -596,7 +598,7 @@ inline auto message_t::get_bus() const
 {
     sd_bus* b = nullptr;
     b = _intf->sd_bus_message_get_bus(_msg.get());
-    return bus::bus(b, _intf);
+    return bus_t(b, _intf);
 }
 
 } // namespace sdbusplus

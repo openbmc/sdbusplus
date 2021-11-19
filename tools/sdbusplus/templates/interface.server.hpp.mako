@@ -55,7 +55,7 @@ class ${classname}
          *  @param[in] bus - Bus to attach to.
          *  @param[in] path - Path to attach at.
          */
-        ${classname}(bus::bus& bus, const char* path);
+        ${classname}(bus_t& bus, const char* path);
 
     % for e in interface.enums:
         enum class ${e.name}
@@ -77,7 +77,7 @@ class ${classname}
          *  @param[in] path - Path to attach at.
          *  @param[in] vals - Map of property name to value for initialization.
          */
-        ${classname}(bus::bus& bus, const char* path,
+        ${classname}(bus_t& bus, const char* path,
                      const std::map<std::string, PropertiesVariant>& vals,
                      bool skipSignal = false);
 

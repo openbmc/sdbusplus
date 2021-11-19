@@ -8,7 +8,7 @@ using TestIf = sdbusplus::server::server::Test;
 
 struct Object : public ::testing::Test
 {
-    sdbusplus::bus::bus bus = sdbusplus::bus::new_default();
+    sdbusplus::bus_t bus = sdbusplus::bus::new_default();
     sdbusplus::message_t msg = bus.new_method_call(
         "xyz.openbmc_project.sdbusplus.test.Object",
         "/xyz/openbmc_project/sdbusplus/test/object",

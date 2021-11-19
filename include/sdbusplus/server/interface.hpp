@@ -57,7 +57,7 @@ struct interface final
      *  @param[in] context - User-defined context, which is often 'this' from
      *                       the interface implementation class.
      */
-    interface(sdbusplus::bus::bus& bus, const char* path, const char* interf,
+    interface(sdbusplus::bus_t& bus, const char* path, const char* interf,
               const sdbusplus::vtable::vtable_t* vtable, void* context);
 
     ~interface();
@@ -97,7 +97,7 @@ struct interface final
         }
     }
 
-    bus::bus& bus()
+    bus_t& bus()
     {
         return _bus;
     }
@@ -107,7 +107,7 @@ struct interface final
     }
 
   private:
-    bus::bus _bus;
+    bus_t _bus;
     std::string _path;
     std::string _interf;
     slot::slot _slot;

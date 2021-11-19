@@ -20,13 +20,13 @@ void setGlobalId(message&& m)
     m.read(globalId);
 }
 
-message newBusIdReq(bus::bus& b)
+message newBusIdReq(bus_t& b)
 {
     return b.new_method_call("org.freedesktop.DBus", "/org/freedesktop/DBus",
                              "org.freedesktop.DBus", "GetId");
 }
 
-std::string syncBusId(bus::bus& b)
+std::string syncBusId(bus_t& b)
 {
     std::string ret;
     newBusIdReq(b).call().read(ret);

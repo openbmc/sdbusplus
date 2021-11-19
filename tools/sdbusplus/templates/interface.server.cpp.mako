@@ -27,14 +27,14 @@ namespace ${s}
 namespace server
 {
 
-${classname}::${classname}(bus::bus& bus, const char* path)
+${classname}::${classname}(bus_t& bus, const char* path)
         : _${interface_instance()}(
                 bus, path, interface, _vtable, this), _intf(bus.getInterface())
 {
 }
 
     % if interface.properties:
-${classname}::${classname}(bus::bus& bus, const char* path,
+${classname}::${classname}(bus_t& bus, const char* path,
                            const std::map<std::string, PropertiesVariant>& vals,
                            bool skipSignal)
         : ${classname}(bus, path)

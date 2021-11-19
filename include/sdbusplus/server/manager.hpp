@@ -48,11 +48,11 @@ struct manager
 
         intf->sd_bus_add_object_manager(bus.get(), &slot, path);
 
-        _slot = decltype(_slot){slot};
+        _slot = std::move(slot);
     }
 
   private:
-    slot_t _slot{nullptr};
+    slot_t _slot{};
 };
 
 } // namespace manager

@@ -42,13 +42,12 @@ struct match
      *  @param[in] context - An optional context to pass to the handler.
      */
     match(sdbusplus::bus_t& bus, const char* match,
-          sd_bus_message_handler_t handler, void* context = nullptr) :
-        _slot(nullptr)
+          sd_bus_message_handler_t handler, void* context = nullptr)
     {
         sd_bus_slot* slot = nullptr;
         sd_bus_add_match(bus.get(), &slot, match, handler, context);
 
-        _slot = decltype(_slot){slot};
+        _slot = std::move(slot);
     }
     match(sdbusplus::bus_t& bus, const std::string& _match,
           sd_bus_message_handler_t handler, void* context = nullptr) :
@@ -64,14 +63,13 @@ struct match
      *  @param[in] callback - The callback for matches.
      */
     match(sdbusplus::bus_t& bus, const char* match, callback_t callback) :
-        _slot(nullptr),
         _callback(std::make_unique<callback_t>(std::move(callback)))
     {
         sd_bus_slot* slot = nullptr;
         sd_bus_add_match(bus.get(), &slot, match, callCallback,
                          _callback.get());
 
-        _slot = decltype(_slot){slot};
+        _slot = std::move(slot);
     }
     match(sdbusplus::bus_t& bus, const std::string& _match,
           callback_t callback) :
@@ -79,7 +77,7 @@ struct match
     {}
 
   private:
-    slot_t _slot;
+    slot_t _slot{};
     std::unique_ptr<callback_t> _callback = nullptr;
 
     static int callCallback(sd_bus_message* m, void* context,

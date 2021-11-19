@@ -110,7 +110,7 @@ struct interface final
     bus_t _bus;
     std::string _path;
     std::string _interf;
-    slot_t _slot;
+    slot_t _slot{};
     SdBusInterface* _intf;
     bool _interface_added;
 };

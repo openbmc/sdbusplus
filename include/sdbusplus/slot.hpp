@@ -36,13 +36,12 @@ struct slot
 {
     /* Define all of the basic class operations:
      *     Not allowed:
-     *         - Default constructor to avoid nullptrs.
      *         - Copy operations due to internal unique_ptr.
      *     Allowed:
+     *         - Default constructor, assigned as a nullptr.
      *         - Move operations.
      *         - Destructor.
      */
-    slot() = delete;
     slot(const slot&) = delete;
     slot& operator=(const slot&) = delete;
     slot(slot&&) = default;
@@ -53,8 +52,22 @@ struct slot
      *
      *  Takes ownership of the slot-pointer and releases it when done.
      */
-    explicit slot(slotp_t s) : _slot(s)
-    {}
+    explicit slot(slotp_t&& s = nullptr) : _slot(s)
+    {
+        s = nullptr;
+    }
+
+    /** @brief Conversion from 'slotp_t'.
+     *
+     *  Takes ownership of the slot-pointer and releases it when done.
+     */
+    slot& operator=(slotp_t&& s)
+    {
+        _slot.reset(s);
+        s = nullptr;
+
+        return *this;
+    }
 
     /** @brief Release ownership of the stored slot-pointer. */
     slotp_t release()

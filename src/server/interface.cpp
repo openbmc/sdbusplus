@@ -13,7 +13,7 @@ interface::interface(sdbusplus::bus_t& bus, const char* path,
                      const char* interf, const sdbusplus::vtable_t* vtable,
                      void* context) :
     _bus(bus.get(), bus.getInterface()),
-    _path(path), _interf(interf), _slot(nullptr), _intf(bus.getInterface()),
+    _path(path), _interf(interf), _intf(bus.getInterface()),
     _interface_added(false)
 {
     sd_bus_slot* slot = nullptr;
@@ -24,7 +24,7 @@ interface::interface(sdbusplus::bus_t& bus, const char* path,
         throw exception::SdBusError(-r, "sd_bus_add_object_vtable");
     }
 
-    _slot = decltype(_slot){slot};
+    _slot = std::move(slot);
 }
 
 interface::~interface()

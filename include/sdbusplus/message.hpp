@@ -427,25 +427,35 @@ class message
         {
             throw exception::SdBusError(-r, "sd_bus_call_async");
         }
+
+        // Generally, slot_t expects to act like a RAII wrapper but it doesn't
+        // allow direct access to the underlying pointer.  We still have some
+        // updates we need to make to the slot after it is saved away in the
+        // RAII wrapper, so we need to explicitly make a copy of the pointer for
+        // later use.
+        sd_bus_slot* slot_saved = slot;
         slot_t ret(std::move(slot));
+
         if constexpr (std::is_pointer_v<CbT>)
         {
-            _intf->sd_bus_slot_set_userdata(slot, reinterpret_cast<void*>(cb));
+            _intf->sd_bus_slot_set_userdata(slot_saved,
+                                            reinterpret_cast<void*>(cb));
         }
         else if constexpr (std::is_function_v<CbT>)
         {
-            _intf->sd_bus_slot_set_userdata(slot, reinterpret_cast<void*>(&cb));
+            _intf->sd_bus_slot_set_userdata(slot_saved,
+                                            reinterpret_cast<void*>(&cb));
         }
         else
         {
             r = _intf->sd_bus_slot_set_destroy_callback(
-                slot, details::call_async_del<CbT>);
+                slot_saved, details::call_async_del<CbT>);
             if (r < 0)
             {
                 throw exception::SdBusError(-r,
                                             "sd_bus_slot_set_destroy_callback");
             }
-            _intf->sd_bus_slot_set_userdata(slot,
+            _intf->sd_bus_slot_set_userdata(slot_saved,
                                             new CbT(std::forward<Cb>(cb)));
         }
         return ret;

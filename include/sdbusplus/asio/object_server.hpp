@@ -747,7 +747,7 @@ class dbus_interface
         initialized_ = true;
         vtable_.emplace_back(vtable::end());
 
-        interface_ = std::make_unique<sdbusplus::server::interface::interface>(
+        interface_ = std::make_unique<sdbusplus::server::interface_t>(
             static_cast<sdbusplus::bus_t&>(*conn_), path_.c_str(),
             name_.c_str(), static_cast<const sd_bus_vtable*>(&vtable_[0]),
             this);
@@ -802,7 +802,7 @@ class dbus_interface
     boost::container::flat_map<std::string, std::unique_ptr<callback>>
         callbacksMethod_;
     std::vector<sd_bus_vtable> vtable_;
-    std::unique_ptr<sdbusplus::server::interface::interface> interface_;
+    std::unique_ptr<sdbusplus::server::interface_t> interface_;
 
     bool initialized_ = false;
 };
@@ -856,7 +856,7 @@ class object_server
     void add_manager(const std::string& path)
     {
         managers_.emplace_back(
-            std::make_unique<server::manager::manager>(server::manager::manager(
+            std::make_unique<server::manager_t>(server::manager_t(
                 static_cast<sdbusplus::bus_t&>(*conn_), path.c_str())));
     }
 
@@ -875,7 +875,7 @@ class object_server
   private:
     std::shared_ptr<sdbusplus::asio::connection> conn_;
     std::vector<std::shared_ptr<dbus_interface>> interfaces_;
-    std::vector<std::unique_ptr<server::manager::manager>> managers_;
+    std::vector<std::unique_ptr<server::manager_t>> managers_;
 };
 
 } // namespace asio

@@ -10,7 +10,7 @@ using ::testing::_;
 using ::testing::StrEq;
 
 using TestInherit =
-    sdbusplus::server::object::object<sdbusplus::server::server::Test>;
+    sdbusplus::server::object_t<sdbusplus::server::server::Test>;
 
 class Object : public ::testing::Test
 {
@@ -25,7 +25,7 @@ class Object : public ::testing::Test
 TEST_F(Object, InterfaceAddedOnly)
 {
     // Simulate the typical usage of a service
-    sdbusplus::server::manager::manager objManager(bus, objPath);
+    sdbusplus::server::manager_t objManager(bus, objPath);
     bus.request_name(busName);
 
     EXPECT_CALL(sdbusMock, sd_bus_emit_object_added(_, StrEq(objPath)))
@@ -49,7 +49,7 @@ TEST_F(Object, InterfaceAddedOnly)
 TEST_F(Object, DeferAddInterface)
 {
     // Simulate the typical usage of a service
-    sdbusplus::server::manager::manager objManager(bus, objPath);
+    sdbusplus::server::manager_t objManager(bus, objPath);
     bus.request_name(busName);
 
     EXPECT_CALL(sdbusMock, sd_bus_emit_object_added(_, StrEq(objPath)))
@@ -82,7 +82,7 @@ TEST_F(Object, DeferAddInterface)
 TEST_F(Object, ObjectAdded)
 {
     // Simulate the typical usage of a service
-    sdbusplus::server::manager::manager objManager(bus, objPath);
+    sdbusplus::server::manager_t objManager(bus, objPath);
     bus.request_name(busName);
 
     EXPECT_CALL(sdbusMock, sd_bus_emit_object_added(_, StrEq(objPath)))
@@ -107,7 +107,7 @@ TEST_F(Object, ObjectAdded)
 TEST_F(Object, DoubleHasDefaultValues)
 {
     // Simulate the typical usage of a service
-    sdbusplus::server::manager::manager objManager(bus, objPath);
+    sdbusplus::server::manager_t objManager(bus, objPath);
     bus.request_name(busName);
 
     EXPECT_CALL(sdbusMock, sd_bus_emit_object_added(_, StrEq(objPath)))

@@ -79,7 +79,7 @@ struct match
     {}
 
   private:
-    slot::slot _slot;
+    slot_t _slot;
     std::unique_ptr<callback_t> _callback = nullptr;
 
     static int callCallback(sd_bus_message* m, void* context,

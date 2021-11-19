@@ -73,4 +73,7 @@ struct slot
 };
 
 } // namespace slot
+
+using slot_t = slot::slot;
+
 } // namespace sdbusplus

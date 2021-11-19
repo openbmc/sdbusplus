@@ -414,7 +414,7 @@ class message
      *  @return The slot handle that manages the lifetime of the call object.
      */
     template <typename Cb>
-    [[nodiscard]] slot::slot
+    [[nodiscard]] slot_t
         call_async(Cb&& cb, std::optional<SdBusDuration> timeout = std::nullopt)
     {
         sd_bus_slot* slot;
@@ -427,7 +427,7 @@ class message
         {
             throw exception::SdBusError(-r, "sd_bus_call_async");
         }
-        slot::slot ret(std::move(slot));
+        slot_t ret(std::move(slot));
         if constexpr (std::is_pointer_v<CbT>)
         {
             _intf->sd_bus_slot_set_userdata(slot, reinterpret_cast<void*>(cb));

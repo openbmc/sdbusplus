@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1f277970_e8f9a54a",
+        "filename": "include/sdbusplus/message.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 431,
+      "author": {
+        "id": 1000188
+      },
+      "writtenOn": "2021-11-22T11:05:26Z",
+      "side": 1,
+      "message": "Add a .get() method to the slot_t?",
+      "revId": "a7ac313ce959bd1493b7fa5f80f4ba0cc445d687",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    }
+  ]
+}

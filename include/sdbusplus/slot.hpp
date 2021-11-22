@@ -27,6 +27,8 @@ struct SlotDeleter
 
 using slot = std::unique_ptr<sd_bus_slot, SlotDeleter>;
 
+struct slot_friend;
+
 } // namespace details
 
 /** @class slot
@@ -81,9 +83,32 @@ struct slot
         return bool(_slot);
     }
 
+    friend struct details::slot_friend;
+
   private:
+    slotp_t get() noexcept
+    {
+        return _slot.get();
+    }
     details::slot _slot;
 };
+
+namespace details
+{
+
+// Some sdbusplus classes need to be able to pass the underlying slot pointer
+// along to sd_bus calls, but we don't want to make it available for everyone.
+// Define a class which can be inherited explicitly (intended for internal users
+// only) to get the underlying bus pointer.
+struct slot_friend
+{
+    static slotp_t get_slotp(sdbusplus::slot::slot& s) noexcept
+    {
+        return s.get();
+    }
+};
+
+} // namespace details
 
 } // namespace slot
 

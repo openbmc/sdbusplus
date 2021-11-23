@@ -9,8 +9,20 @@
 using ::testing::_;
 using ::testing::StrEq;
 
-using TestInherit =
-    sdbusplus::server::object_t<sdbusplus::server::server::Test>;
+struct UselessInherit
+{
+    template <typename... Args>
+    explicit UselessInherit(Args&&...)
+    {}
+};
+
+// It isn't a particularly good idea to inherit from object_t twice, but some
+// clients seem to do it.  Do it here to ensure that code compiles (avoiding
+// diamond-inheritance problems) and that emit happens correctly when it is
+// done.
+using TestInherit = sdbusplus::server::object_t<
+    UselessInherit,
+    sdbusplus::server::object_t<sdbusplus::server::server::Test>>;
 
 class Object : public ::testing::Test
 {

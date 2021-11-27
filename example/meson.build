@@ -43,21 +43,3 @@ executable(
     'get-all-properties.cpp',
     dependencies: asio_dep,
 )
-
-calc_buildroot = meson.current_build_dir()
-calc_files = files(
-    run_command(
-        sdbusgen_prog,
-        '--tool', sdbusplusplus_prog,
-        '--output', calc_buildroot,
-        'net',
-        check: true
-    ).stdout().strip().split('\n')
-)
-
-executable(
-    'calculator-server',
-    'calculator-server.cpp',
-    calc_files,
-    dependencies: sdbusplus_dep,
-)

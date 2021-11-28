@@ -36,8 +36,10 @@ else
 endif
 
 libsdbusplus_src = files(
-    'src/exception.cpp',
+    'src/async/context.cpp',
+    'src/async/match.cpp',
     'src/bus.cpp',
+    'src/exception.cpp',
     'src/message/native_types.cpp',
     'src/sdbus.cpp',
     'src/server/interface.cpp',

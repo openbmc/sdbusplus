@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d832d1fa_a3dab7f4",
+        "filename": "include/sdbusplus/asio/connection.hpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2021-12-01T16:49:23Z",
+      "side": 1,
+      "message": "this is going to crash anyone that\u0027s not constructing a connection via shared_ptr.  I\u0027m pretty sure this isn\u0027t what you want.",
+      "range": {
+        "startLine": 53,
+        "startChar": 4,
+        "endLine": 53,
+        "endChar": 51
+      },
+      "revId": "59825bc219beec515dbb94121b51a4e854531e31",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c8660aa0_61c10a21",
+        "filename": "include/sdbusplus/asio/connection.hpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2021-12-01T16:49:23Z",
+      "side": 1,
+      "message": "lock() can fail, which you don\u0027t check for here.  Handle your errors.",
+      "range": {
+        "startLine": 152,
+        "startChar": 0,
+        "endLine": 152,
+        "endChar": 62
+      },
+      "revId": "59825bc219beec515dbb94121b51a4e854531e31",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    }
+  ]
+}

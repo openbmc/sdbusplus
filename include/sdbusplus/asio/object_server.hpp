@@ -810,7 +810,7 @@ class dbus_interface
 class object_server
 {
   public:
-    object_server(std::shared_ptr<sdbusplus::asio::connection>& conn,
+    object_server(const std::shared_ptr<sdbusplus::asio::connection>& conn,
                   const bool skipManager = false) :
         conn_(conn)
     {

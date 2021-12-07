@@ -1,0 +1,113 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "223599a5_deb46e86",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-12-07T18:41:38Z",
+      "side": 1,
+      "message": "Please update your `git config` to have your full name rather than a userid.",
+      "revId": "c188f6fcd1dff0f6e3168c3359102f834c0099eb",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "937ef33a_4b7fe88b",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 315,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-12-07T18:41:38Z",
+      "side": 1,
+      "message": "Please use \u0027tuple\u0027.",
+      "range": {
+        "startLine": 315,
+        "startChar": 9,
+        "endLine": 315,
+        "endChar": 13
+      },
+      "revId": "c188f6fcd1dff0f6e3168c3359102f834c0099eb",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "79c51f85_7dd9eaa0",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 325,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-12-07T18:41:38Z",
+      "side": 1,
+      "message": "Simplify as:\n\nreturn { SetPropertyReturnValue::fail, ret }",
+      "range": {
+        "startLine": 325,
+        "startChar": 19,
+        "endLine": 325,
+        "endChar": 69
+      },
+      "revId": "c188f6fcd1dff0f6e3168c3359102f834c0099eb",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ad0ab1d2_90551fc8",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 672,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-12-07T18:41:38Z",
+      "side": 1,
+      "message": "Use tie syntax:\n\nauto [status,rc] \u003d func-\u003esecond-\u003ecall(mesg);",
+      "range": {
+        "startLine": 672,
+        "startChar": 16,
+        "endLine": 672,
+        "endChar": 27
+      },
+      "revId": "c188f6fcd1dff0f6e3168c3359102f834c0099eb",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8fce8977_72b749dd",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 678,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-12-07T18:41:38Z",
+      "side": 1,
+      "message": "I think you can revert this back once you use tie syntax.\n\nAlternatively, I\u0027d like to see this logic collapsed.  The nested if-condition isn\u0027t helpful.\n\nswitch (status) {\ncase sameValueUpdated: { return true; }\ncase valueUpdated: { data-\u003esignal_property(property); return true; }\ncase failed: { sd_bus_error_set_errno(error, rc); return false }\n}",
+      "range": {
+        "startLine": 673,
+        "startChar": 0,
+        "endLine": 678,
+        "endChar": 67
+      },
+      "revId": "c188f6fcd1dff0f6e3168c3359102f834c0099eb",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    }
+  ]
+}

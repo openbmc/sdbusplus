@@ -20,6 +20,7 @@
 #include <list>
 #include <optional>
 #include <set>
+#include <tuple>
 
 namespace sdbusplus
 {
@@ -47,7 +48,7 @@ class callback_set
 {
   public:
     virtual ~callback_set() = default;
-    virtual SetPropertyReturnValue call(message_t& m) = 0;
+    virtual std::pair<SetPropertyReturnValue, int> call(message_t& m) = 0;
     virtual SetPropertyReturnValue set(const boost::any& value) = 0;
 };
 
@@ -311,21 +312,25 @@ class callback_set_instance : public callback_set
         value_(value),
         func_(std::move(func))
     {}
-    SetPropertyReturnValue call(message_t& m) override
+    std::pair<SetPropertyReturnValue, int> call(message_t& m) override
     {
         PropertyType input;
         m.read(input);
 
         auto oldValue = *value_;
-        if (func_(input, *value_))
+        auto ret = func_(input, *value_);
+
+        if (ret < 0)
         {
-            if (oldValue == *value_)
-            {
-                return SetPropertyReturnValue::sameValueUpdated;
-            }
-            return SetPropertyReturnValue::valueUpdated;
+            return std::make_pair(SetPropertyReturnValue::fail, ret);
         }
-        return SetPropertyReturnValue::fail;
+        if (oldValue == *value_)
+        {
+            return std::make_pair(SetPropertyReturnValue::sameValueUpdated,
+                                  ret);
+        }
+
+        return std::make_pair(SetPropertyReturnValue::valueUpdated, ret);
     }
     SetPropertyReturnValue set(const boost::any& value) override
     {
@@ -664,15 +669,21 @@ class dbus_interface
             try
             {
 #endif
-                SetPropertyReturnValue status = func->second->call(mesg);
-                if ((status == SetPropertyReturnValue::valueUpdated) ||
-                    (status == SetPropertyReturnValue::sameValueUpdated))
+                auto status = func->second->call(mesg);
+                if ((status.first == SetPropertyReturnValue::valueUpdated) ||
+                    ((status.first ==
+                      SetPropertyReturnValue::sameValueUpdated)))
                 {
-                    if (status != SetPropertyReturnValue::sameValueUpdated)
+                    if ((status.first !=
+                         SetPropertyReturnValue::sameValueUpdated))
                     {
                         data->signal_property(property);
                     }
                     return true;
+                }
+                if ((status.second < 0))
+                {
+                    sd_bus_error_set_errno(error, status.second);
                 }
                 return false;
 #ifdef __EXCEPTIONS

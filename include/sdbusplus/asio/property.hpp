@@ -16,16 +16,16 @@ inline void getAllProperties(sdbusplus::asio::connection& bus,
                           interface);
 }
 
-template <typename T, typename Handler>
-inline void getProperty(sdbusplus::asio::connection& bus,
-                        const std::string& service, const std::string& path,
-                        const std::string& interface,
-                        const std::string& propertyName, Handler&& handler)
+template <typename T>
+inline void
+    getProperty(sdbusplus::asio::connection& bus, const std::string& service,
+                const std::string& path, const std::string& interface,
+                const std::string& propertyName,
+                std::function<void(boost::system::error_code, T)>&& handler)
 {
     bus.async_method_call(
-        [handler = std::forward<Handler>(handler)](
-            boost::system::error_code ec,
-            std::variant<std::monostate, T>& ret) {
+        [handler = std::move(handler)](boost::system::error_code ec,
+                                       std::variant<std::monostate, T>& ret) {
             if (ec)
             {
                 handler(ec, {});
@@ -34,7 +34,7 @@ inline void getProperty(sdbusplus::asio::connection& bus,
 
             if (T* value = std::get_if<T>(&ret))
             {
-                handler(ec, *value);
+                handler(ec, std::move(*value));
                 return;
             }
 

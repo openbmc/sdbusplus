@@ -22,6 +22,93 @@
       "revId": "d0b432b4973201929a72d6b74a8b73e5d6c31018",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5e07586e_0015ce98",
+        "filename": "include/sdbusplus/asio/property.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2021-12-08T17:41:35Z",
+      "side": 1,
+      "message": "\u003e It is a little unfortunate that we need to allocate memory for this rather than being able to defer it until async_method_calls puts it in the final location (as a whole blob).  There is probably some complicated templates you could do to differentiate between Handlers which are L-value references (and thus need a lifetime longer than the async_method_call anyhow) vs R-value references (which require us to extend the lifetime with a move/copy).\n\nThe handlers have to have memory allocated anyway, because the stack is going to be destroyed before the callback gets called.  The issue here is that we\u0027re allocating for something that might have already been allocated.\n\n\u003e \n\u003e Alternatively you could attempt to do small-value-optimization (SVO) like std::string does so that small Handler objects are held in a byte-array with an in-place construction and large Handler objects revert to a unique_ptr.\n\u003e \n\u003e I\u0027m not sure either of these are incredibly worthwhile, but if done correctly they would both eliminate the extra memory allocation and likely be even smaller (due to removing the `new` call intrinsic in the unique_ptr).\n\nSee below, I think std::function gets us all our optimizations.  If the user uses std::function, no new allocations are made.  If the user uses a stack variable (like a lambda) then std::function will allocate for us.",
+      "parentUuid": "ffa3130a_5f4d848f",
+      "range": {
+        "startLine": 71,
+        "startChar": 0,
+        "endLine": 72,
+        "endChar": 44
+      },
+      "revId": "d0b432b4973201929a72d6b74a8b73e5d6c31018",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c772ee7a_135f02af",
+        "filename": "include/sdbusplus/asio/property.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2021-12-08T17:41:35Z",
+      "side": 1,
+      "message": "Isn\u0027t TypeErasedCallback basically re-inventing std::function?",
+      "revId": "d0b432b4973201929a72d6b74a8b73e5d6c31018",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "29fab57b_72f24832",
+        "filename": "include/sdbusplus/asio/property.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2021-12-08T17:41:35Z",
+      "side": 1,
+      "message": "Considering Handler always has the same return types, could we just remove the template alltogether, and change Handler to std::function\u003cvoid(T)\u003e",
+      "range": {
+        "startLine": 89,
+        "startChar": 20,
+        "endLine": 89,
+        "endChar": 39
+      },
+      "revId": "d0b432b4973201929a72d6b74a8b73e5d6c31018",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3881aef6_058527fc",
+        "filename": "include/sdbusplus/asio/property.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2021-12-08T17:41:35Z",
+      "side": 1,
+      "message": "Just FYI, the \"real\" problem here is that async_method_call has quite a bit of code that is shared between all the handlers, yet is in a template so it gets duplicated.  This is actually a way worse issue in bmcweb, and something that\u0027s been on my list to look at.  last time I looked at bloaty, async_method_call takes up ~15% of the binary size of bmcweb. (150ish KB last time I measured).",
+      "range": {
+        "startLine": 95,
+        "startChar": 8,
+        "endLine": 95,
+        "endChar": 25
+      },
+      "revId": "d0b432b4973201929a72d6b74a8b73e5d6c31018",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
     }
   ]
 }

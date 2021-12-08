@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b10b9a0c_40a0c101",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2021-12-08T02:55:54Z",
+      "side": 1,
+      "message": "Oh is this really valid use case?\n\nI was expecting the object is a \"hodler\" for the interfaces, but not for nested objects.\n\nCould we simply ask the application to change the above to object\u003ciface0, iface1, iface2, iface3\u003e?",
+      "revId": "c489a6df5a0e0374d215c55a36456b294abd7c10",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "acd63e84_c885db5b",
+        "filename": "test/server/object.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2021-12-08T02:55:54Z",
+      "side": 1,
+      "message": "This only tests the case of inherit object_t\u003cxxx, object_t\u003ciface0\u003e\u003e\n\nIf we are going to support the nested case, it\u0027s better to add a new case to test the case of\nobject_t\u003cxxx, object_t\u003ciface0\u003e, object_t\u003ciface1, iface2\u003e\u003e and make sure all the iface0~2 are emitting the interfaces as expected.",
+      "revId": "c489a6df5a0e0374d215c55a36456b294abd7c10",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    }
+  ]
+}

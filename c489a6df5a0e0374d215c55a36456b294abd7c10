@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "856f90a4_413d46e7",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-12-08T03:26:52Z",
+      "side": 1,
+      "message": "I think it is possible someone could do something like:\n\nInterfaceOne \u003d object\u003cOne\u003e;\nInterfaceTwo \u003d object\u003cTwo\u003e;\nInterfaceBoth \u003d object\u003cInterfaceOne, InterfaceTwo\u003e;\n\nAnd in some cases make independent One or Two objects and in other cases make a combined Both.  That seemed to be the original intent of the failing repository but due to code maintenance it ended up never making smaller One objects anymore.\n\nIt isn\u0027t particularly difficult to not do the wrong thing if someone were to inherit the object twice.\n\n(BTW, I am making changes to the application in question anyhow because they were also doing `InterfaceOne::function()` calls which ended up not being able to be fixed automatically for them.)",
+      "parentUuid": "b10b9a0c_40a0c101",
+      "revId": "c489a6df5a0e0374d215c55a36456b294abd7c10",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "acd63e84_c885db5b",
         "filename": "test/server/object.cpp",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2021-12-08T02:55:54Z",
       "side": 1,
       "message": "This only tests the case of inherit object_t\u003cxxx, object_t\u003ciface0\u003e\u003e\n\nIf we are going to support the nested case, it\u0027s better to add a new case to test the case of\nobject_t\u003cxxx, object_t\u003ciface0\u003e, object_t\u003ciface1, iface2\u003e\u003e and make sure all the iface0~2 are emitting the interfaces as expected.",
+      "revId": "c489a6df5a0e0374d215c55a36456b294abd7c10",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "310a8d77_bddee5ef",
+        "filename": "test/server/object.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-12-08T03:26:52Z",
+      "side": 1,
+      "message": "I could do `object\u003cUseless, object\u003cUselessAlso, Test\u003e\u003e` if you really want, but I don\u0027t want to bother with generating a whole new sdbus++ YAML file just to test this case.  The template is recursive so I don\u0027t think it is particularly necessary.  \n\nBefore the code changes this code would have failed to compile with a duplicate inheritance / ambiguous overload error.  With the code change it doesn\u0027t.  That seems good enough?",
+      "parentUuid": "acd63e84_c885db5b",
       "revId": "c489a6df5a0e0374d215c55a36456b294abd7c10",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true

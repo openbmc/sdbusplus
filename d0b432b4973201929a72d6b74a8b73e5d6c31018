@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ffa3130a_5f4d848f",
+        "filename": "include/sdbusplus/asio/property.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-12-08T16:45:03Z",
+      "side": 1,
+      "message": "It is a little unfortunate that we need to allocate memory for this rather than being able to defer it until async_method_calls puts it in the final location (as a whole blob).  There is probably some complicated templates you could do to differentiate between Handlers which are L-value references (and thus need a lifetime longer than the async_method_call anyhow) vs R-value references (which require us to extend the lifetime with a move/copy).\n\nAlternatively you could attempt to do small-value-optimization (SVO) like std::string does so that small Handler objects are held in a byte-array with an in-place construction and large Handler objects revert to a unique_ptr.\n\nI\u0027m not sure either of these are incredibly worthwhile, but if done correctly they would both eliminate the extra memory allocation and likely be even smaller (due to removing the `new` call intrinsic in the unique_ptr).",
+      "range": {
+        "startLine": 71,
+        "startChar": 0,
+        "endLine": 72,
+        "endChar": 44
+      },
+      "revId": "d0b432b4973201929a72d6b74a8b73e5d6c31018",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    }
+  ]
+}

@@ -4,6 +4,76 @@
 
 namespace sdbusplus::asio
 {
+namespace details
+{
+
+template <class T>
+struct TypeErasedCallbackInterface
+{
+    virtual ~TypeErasedCallbackInterface() = default;
+
+    virtual void operator()(boost::system::error_code, T) const = 0;
+};
+
+template <class T, class Handler>
+struct TypeErasedCallbackImpl : public TypeErasedCallbackInterface<T>
+{
+    TypeErasedCallbackImpl(Handler&& handler) :
+        handler(std::forward<Handler>(handler))
+    {}
+
+    virtual void operator()(boost::system::error_code ec,
+                            T value) const override
+    {
+        handler(ec, std::move(value));
+    }
+
+  private:
+    Handler handler;
+};
+
+template <class T>
+struct TypeErasedCallback
+{
+    TypeErasedCallback(
+        std::unique_ptr<TypeErasedCallbackInterface<T>> handler) :
+        handler(std::move(handler))
+    {}
+
+    void operator()(boost::system::error_code ec,
+                    std::variant<std::monostate, T>& arg) const
+    {
+        if (ec)
+        {
+            (*handler)(ec, {});
+            return;
+        }
+
+        if (T* value = std::get_if<T>(&arg))
+        {
+            (*handler)(ec, std::move(*value));
+            return;
+        }
+
+        (*handler)(boost::system::errc::make_error_code(
+                       boost::system::errc::invalid_argument),
+                   {});
+    }
+
+  private:
+    std::unique_ptr<TypeErasedCallbackInterface<T>> handler;
+};
+
+template <class T, class Handler>
+TypeErasedCallback<T> makeTypeErasedCallback(Handler&& handler)
+{
+    auto typeErasedCallbackImpl =
+        std::make_unique<TypeErasedCallbackImpl<T, Handler>>(
+            std::forward<Handler>(handler));
+    return {std::move(typeErasedCallbackImpl)};
+}
+
+} // namespace details
 
 template <typename Handler>
 inline void getAllProperties(sdbusplus::asio::connection& bus,
@@ -23,25 +93,7 @@ inline void getProperty(sdbusplus::asio::connection& bus,
                         const std::string& propertyName, Handler&& handler)
 {
     bus.async_method_call(
-        [handler = std::forward<Handler>(handler)](
-            boost::system::error_code ec,
-            std::variant<std::monostate, T>& ret) {
-            if (ec)
-            {
-                handler(ec, {});
-                return;
-            }
-
-            if (T* value = std::get_if<T>(&ret))
-            {
-                handler(ec, *value);
-                return;
-            }
-
-            handler(boost::system::errc::make_error_code(
-                        boost::system::errc::invalid_argument),
-                    {});
-        },
+        details::makeTypeErasedCallback<T>(std::forward<Handler>(handler)),
         service, path, "org.freedesktop.DBus.Properties", "Get", interface,
         propertyName);
 }

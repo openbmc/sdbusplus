@@ -4,6 +4,37 @@
 
 namespace sdbusplus::asio
 {
+namespace details
+{
+
+template <class T>
+std::function<void(boost::system::error_code,
+                   const std::variant<std::monostate, T>&)>
+    makeTypeErasedCallback(
+        std::function<void(boost::system::error_code, const T&)>&& handler)
+{
+    return [handler = std::move(handler)](
+               boost::system::error_code ec,
+               const std::variant<std::monostate, T>& arg) {
+        if (ec)
+        {
+            handler(ec, {});
+            return;
+        }
+
+        if (const T* value = std::get_if<T>(&arg))
+        {
+            handler(ec, std::move(*value));
+            return;
+        }
+
+        handler(boost::system::errc::make_error_code(
+                    boost::system::errc::invalid_argument),
+                {});
+    };
+}
+
+} // namespace details
 
 template <typename Handler>
 inline void getAllProperties(sdbusplus::asio::connection& bus,
@@ -16,34 +47,16 @@ inline void getAllProperties(sdbusplus::asio::connection& bus,
                           interface);
 }
 
-template <typename T, typename Handler>
-inline void getProperty(sdbusplus::asio::connection& bus,
-                        const std::string& service, const std::string& path,
-                        const std::string& interface,
-                        const std::string& propertyName, Handler&& handler)
+template <typename T>
+inline void getProperty(
+    sdbusplus::asio::connection& bus, const std::string& service,
+    const std::string& path, const std::string& interface,
+    const std::string& propertyName,
+    std::function<void(boost::system::error_code, const T&)>&& handler)
 {
     bus.async_method_call(
-        [handler = std::forward<Handler>(handler)](
-            boost::system::error_code ec,
-            std::variant<std::monostate, T>& ret) {
-            if (ec)
-            {
-                handler(ec, {});
-                return;
-            }
-
-            if (T* value = std::get_if<T>(&ret))
-            {
-                handler(ec, *value);
-                return;
-            }
-
-            handler(boost::system::errc::make_error_code(
-                        boost::system::errc::invalid_argument),
-                    {});
-        },
-        service, path, "org.freedesktop.DBus.Properties", "Get", interface,
-        propertyName);
+        details::makeTypeErasedCallback<T>(std::move(handler)), service, path,
+        "org.freedesktop.DBus.Properties", "Get", interface, propertyName);
 }
 
 /* This method has been deprecated, and will be removed in a future revision.

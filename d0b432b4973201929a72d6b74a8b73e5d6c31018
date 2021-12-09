@@ -179,6 +179,30 @@
     },
     {
       "key": {
+        "uuid": "af24132e_0b953c80",
+        "filename": "include/sdbusplus/asio/property.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-12-09T14:52:36Z",
+      "side": 1,
+      "message": "I don\u0027t think 0.1% size savings is worth the readability/simplicity decrease.  Let\u0027s go with #3 style.\n\nOne nice thing about std::function, beyond the readability, is that any static analyzers that already understand it will give us information on it, while they won\u0027t understand a custom type-erasure type.",
+      "parentUuid": "49e981c0_b5aa6cfa",
+      "range": {
+        "startLine": 89,
+        "startChar": 20,
+        "endLine": 89,
+        "endChar": 39
+      },
+      "revId": "d0b432b4973201929a72d6b74a8b73e5d6c31018",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "3881aef6_058527fc",
         "filename": "include/sdbusplus/asio/property.hpp",
         "patchSetId": 2

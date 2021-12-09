@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f04003ea_a68e4676",
+        "filename": "include/sdbusplus/asio/property.hpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-12-09T14:52:36Z",
+      "side": 1,
+      "message": "This looks like a slight API change.  Are we sure that all the code using getProperty will compile with it?  Maybe there aren\u0027t too many users already.\n\nIt seems like the net change here is to change Handler from a template argument to a std::function.  It just means that all existing Handlers need to be convertible to the std::function format.  Hopefully they already are.\n\nCan\u0027t we now get rid of all changes except for the prototype and maybe something on the original line 26 (std::forward -\u003e std::move)?  I\u0027m just saying we can reduce the amount of change by not having the details function anymore.",
+      "range": {
+        "startLine": 55,
+        "startChar": 4,
+        "endLine": 55,
+        "endChar": 62
+      },
+      "revId": "c30fe0df9c785bfa49de110f3f0b0c41eabd0f02",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    }
+  ]
+}

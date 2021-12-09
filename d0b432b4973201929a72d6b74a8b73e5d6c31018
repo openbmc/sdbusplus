@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "2d3aab54_9fb45291",
+        "filename": "include/sdbusplus/asio/property.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 1000678
+      },
+      "writtenOn": "2021-12-09T08:00:46Z",
+      "side": 1,
+      "message": "using std::function as parameter won\u0027t prevent from allocating new TypeErasedCallback/std::function. There is common code that needs to be appended before actual callback is called (Lines 46-60).\n\nWe need to create another std::function which executes this common code and then executes std::function passed as parameter. So theoretically it should produce worse results, but I will check it and post values.",
+      "parentUuid": "5e07586e_0015ce98",
+      "range": {
+        "startLine": 71,
+        "startChar": 0,
+        "endLine": 72,
+        "endChar": 44
+      },
+      "revId": "d0b432b4973201929a72d6b74a8b73e5d6c31018",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "c772ee7a_135f02af",
         "filename": "include/sdbusplus/asio/property.hpp",
         "patchSetId": 2
@@ -60,6 +84,24 @@
       "writtenOn": "2021-12-08T17:41:35Z",
       "side": 1,
       "message": "Isn\u0027t TypeErasedCallback basically re-inventing std::function?",
+      "revId": "d0b432b4973201929a72d6b74a8b73e5d6c31018",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "13ee6d2b_221dd8a9",
+        "filename": "include/sdbusplus/asio/property.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 1000678
+      },
+      "writtenOn": "2021-12-09T08:00:46Z",
+      "side": 1,
+      "message": "Yes it is. I also measured size when std::function is used. Result was that both std::function and TypeErasedCallback decreased binary size, but TypeErasedCallback had better results.",
+      "parentUuid": "c772ee7a_135f02af",
       "revId": "d0b432b4973201929a72d6b74a8b73e5d6c31018",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true
@@ -100,6 +142,30 @@
       "writtenOn": "2021-12-08T17:41:35Z",
       "side": 1,
       "message": "Just FYI, the \"real\" problem here is that async_method_call has quite a bit of code that is shared between all the handlers, yet is in a template so it gets duplicated.  This is actually a way worse issue in bmcweb, and something that\u0027s been on my list to look at.  last time I looked at bloaty, async_method_call takes up ~15% of the binary size of bmcweb. (150ish KB last time I measured).",
+      "range": {
+        "startLine": 95,
+        "startChar": 8,
+        "endLine": 95,
+        "endChar": 25
+      },
+      "revId": "d0b432b4973201929a72d6b74a8b73e5d6c31018",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "654d8966_075ee959",
+        "filename": "include/sdbusplus/asio/property.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 1000678
+      },
+      "writtenOn": "2021-12-09T08:00:46Z",
+      "side": 1,
+      "message": "If this works out probably same approach could be used in async_method_call. I didn\u0027t analyze async_method_call if it\u0027s possible, there are variadic number of parameters and callback with variadic number of parameters.",
+      "parentUuid": "3881aef6_058527fc",
       "range": {
         "startLine": 95,
         "startChar": 8,

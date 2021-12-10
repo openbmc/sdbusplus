@@ -22,6 +22,30 @@
       "revId": "c30fe0df9c785bfa49de110f3f0b0c41eabd0f02",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "73354d17_104dfaa3",
+        "filename": "include/sdbusplus/asio/property.hpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 1000678
+      },
+      "writtenOn": "2021-12-10T09:57:37Z",
+      "side": 1,
+      "message": "I changed signature from const T\u0026 to T and std::move. It should cover all cases and allow std::move if needed. In sdbusplus/Examples we have few use cases where it works. Telemetry service is using this helper function in unitTests and POC change in bmcweb also confirms that different signatures are correctly handled.",
+      "parentUuid": "f04003ea_a68e4676",
+      "range": {
+        "startLine": 55,
+        "startChar": 4,
+        "endLine": 55,
+        "endChar": 62
+      },
+      "revId": "c30fe0df9c785bfa49de110f3f0b0c41eabd0f02",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
     }
   ]
 }

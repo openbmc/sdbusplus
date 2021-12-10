@@ -227,6 +227,30 @@
     },
     {
       "key": {
+        "uuid": "ab097196_677d9121",
+        "filename": "include/sdbusplus/asio/property.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2021-12-10T18:56:22Z",
+      "side": 1,
+      "message": "\u003e I don\u0027t think 0.1% size savings is worth the readability/simplicity decrease.  Let\u0027s go with #3 style.\n\nAgreed.  Also, in the future when/if bmcweb moves to one common variant type, (which I\u0027ve been looking into) we _should_ get these bytes back, along with a lot of others in the async_method_call.\n\nFWIW, in the history, this std::function pattern was what boost-dbus (that these handlers were derived from) did originally (technically boost::function, same thing), but we moved them to template handlers because at the time we didn\u0027t have c++14, and some lambdas couldn\u0027t implicitly turn into std::function, and it\u0027s not clear that James or I knew what we were doing when we did that.  These days, I think std::function is better.\n\nIdeally we should also make a similar change to async_method_call, but that\u0027s going to be trickier.",
+      "parentUuid": "7000ec82_393d59e8",
+      "range": {
+        "startLine": 89,
+        "startChar": 20,
+        "endLine": 89,
+        "endChar": 39
+      },
+      "revId": "d0b432b4973201929a72d6b74a8b73e5d6c31018",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "3881aef6_058527fc",
         "filename": "include/sdbusplus/asio/property.hpp",
         "patchSetId": 2
@@ -262,6 +286,30 @@
       "side": 1,
       "message": "If this works out probably same approach could be used in async_method_call. I didn\u0027t analyze async_method_call if it\u0027s possible, there are variadic number of parameters and callback with variadic number of parameters.",
       "parentUuid": "3881aef6_058527fc",
+      "range": {
+        "startLine": 95,
+        "startChar": 8,
+        "endLine": 95,
+        "endChar": 25
+      },
+      "revId": "d0b432b4973201929a72d6b74a8b73e5d6c31018",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2a924ddc_22d0a0b4",
+        "filename": "include/sdbusplus/asio/property.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2021-12-10T18:56:22Z",
+      "side": 1,
+      "message": "Yep, agreed.  async_method_call could benefit from this.  async_send is supposed to do the type erasing (because we didn\u0027t have c++14 at the time) but clearly its been broken.",
+      "parentUuid": "654d8966_075ee959",
       "range": {
         "startLine": 95,
         "startChar": 8,

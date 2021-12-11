@@ -275,6 +275,30 @@
     },
     {
       "key": {
+        "uuid": "78d84888_4e0d83b8",
+        "filename": "include/sdbusplus/asio/property.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2021-12-11T18:00:49Z",
+      "side": 1,
+      "message": "I\u0027m not sure imposing a fu2 dependency on all sdbusplus apps is a good idea just for this case, although it looks like we might get something in c++23?  http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2021/p0288r9.html",
+      "parentUuid": "7d4da601_6b1087b6",
+      "range": {
+        "startLine": 89,
+        "startChar": 20,
+        "endLine": 89,
+        "endChar": 39
+      },
+      "revId": "d0b432b4973201929a72d6b74a8b73e5d6c31018",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "3881aef6_058527fc",
         "filename": "include/sdbusplus/asio/property.hpp",
         "patchSetId": 2

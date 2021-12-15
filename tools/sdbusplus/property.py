@@ -52,7 +52,7 @@ class Property(NamedElement, Renderer):
 
     def is_enum(self):
         if not self.typeName:
-            return false
+            return False
         return 'enum' == self.__type_tuple()[0]
 
     def is_integer(self):

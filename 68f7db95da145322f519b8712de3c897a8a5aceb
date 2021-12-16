@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "d9cb569f_f877e562",
+        "filename": "include/sdbusplus/asio/property.hpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2021-12-16T00:12:56Z",
+      "side": 1,
+      "message": "As a general rule, we can\u0027t do that anyway, because the lvalue reference is on stack, and the stack is going to be destroyed as part of the async callback, so the two ways to capture std::function are by value or by rvalue move, so we can take ownership of the callback.",
+      "parentUuid": "6eb64e82_9c6138f7",
+      "range": {
+        "startLine": 24,
+        "startChar": 65,
+        "endLine": 24,
+        "endChar": 67
+      },
+      "revId": "68f7db95da145322f519b8712de3c897a8a5aceb",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "3bd822cc_d860464e",
         "filename": "include/sdbusplus/asio/property.hpp",
         "patchSetId": 5
@@ -36,6 +60,30 @@
       "writtenOn": "2021-12-15T22:24:18Z",
       "side": 1,
       "message": "nit: any reason we don\u0027t start using std::error_code? Mixing the two will result in some extra copies, but otherwise they seem seamlessly convertible.",
+      "range": {
+        "startLine": 29,
+        "startChar": 39,
+        "endLine": 29,
+        "endChar": 64
+      },
+      "revId": "68f7db95da145322f519b8712de3c897a8a5aceb",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "54b6cc79_f8008a53",
+        "filename": "include/sdbusplus/asio/property.hpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2021-12-16T00:12:56Z",
+      "side": 1,
+      "message": "We didn\u0027t use it originally because boost asio uses boost::system::error_code, so ideally we make all of our async asio calls consistent.  With that said, I think there\u0027s a way to convert one to the other, so in theory we could move all of sdbusplus asio over to std::error_code, but I think that\u0027s probably more work than it\u0027s worth.\n\nstd::error_code is also annoying because it doesn\u0027t support implicit cast to boolean, so instead of writing \nif (ec){\n   // error is set\n}\n\nyou have to write\n\nif (ec !\u003d std::errc()){\n   /// error is set\n}\n\nWhich is a little more subtle IMO, but it\u0027s all just preference.",
+      "parentUuid": "3bd822cc_d860464e",
       "range": {
         "startLine": 29,
         "startChar": 39,

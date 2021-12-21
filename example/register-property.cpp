@@ -6,62 +6,11 @@
 
 #include <iostream>
 
-namespace xyz
-{
-namespace demo
-{
-
-const std::string path = "/xyz/demo";
-const std::string name = "xyz.demo";
-
-} // namespace demo
-} // namespace xyz
-
-namespace name
-{
-
-const std::string greetings = "Greetings";
-const std::string goodbyes = "Goodbyes";
-
-} // namespace name
-
-namespace utils
-{
-
-template <class T>
-class Property
-{
-  public:
-    Property(sdbusplus::asio::connection& bus, std::string_view service,
-             std::string_view path, std::string_view interface,
-             std::string_view name) :
-        bus_(bus),
-        service_(service), path_(path), interface_(interface), name_(name)
-    {}
-
-    template <class Handler>
-    void async_get(Handler&& handler)
-    {
-        sdbusplus::asio::getProperty<T>(bus_, service_, path_, interface_,
-                                        name_, std::forward<Handler>(handler));
-    }
-
-    template <class Handler>
-    void async_set(const T& value, Handler&& handler)
-    {
-        sdbusplus::asio::setProperty(bus_, service_, path_, interface_, name_,
-                                     value, std::forward<Handler>(handler));
-    }
-
-  private:
-    sdbusplus::asio::connection& bus_;
-    std::string service_;
-    std::string path_;
-    std::string interface_;
-    std::string name_;
-};
-
-} // namespace utils
+constexpr std::string demoServiceName = "demo.service";
+constexpr std::string demoObjectPath = "/xyz/demo";
+constexpr std::string demoInterfaceName = "xyz.demo";
+constexpr std::string propertyGrettingName = "Greetings";
+constexpr std::string propertyGoodbyesName = "Goodbyes";
 
 class Application
 {
@@ -72,15 +21,15 @@ class Application
         bus_(bus), objServer_(objServer)
     {
         demo_ = objServer_.add_unique_interface(
-            xyz::demo::path, xyz::demo::name,
+            demoObjectPath, demoInterfaceName,
             [this](sdbusplus::asio::dbus_interface& demo) {
                 demo.register_property_r(
-                    name::greetings, std::string(),
+                    propertyGrettingName, std::string(),
                     sdbusplus::vtable::property_::const_,
                     [this](const auto&) { return greetings_; });
 
                 demo.register_property_rw(
-                    name::goodbyes, std::string(),
+                    propertyGoodbyesName, std::string(),
                     sdbusplus::vtable::property_::emits_change,
                     [this](const auto& newPropertyValue, const auto&) {
                         goodbyes_ = newPropertyValue;
@@ -105,17 +54,15 @@ class Application
 
     void asyncReadPropertyWithIncorrectType()
     {
-        utils::Property<uint32_t> propertyWithWrongType{
-            bus_, xyz::demo::name, xyz::demo::path, xyz::demo::name,
-            name::greetings};
-
-        propertyWithWrongType.async_get(
-            [this](boost::system::error_code error, uint32_t) {
-                if (error)
+        sdbusplus::asio::getProperty<uint32_t>(
+            bus_, demoServiceName, demoObjectPath, demoInterfaceName,
+            propertyGrettingName,
+            [this](boost::system::error_code ec, uint32_t) {
+                if (ec)
                 {
                     std::cout
                         << "As expected failed to getProperty with wrong type: "
-                        << error << "\n";
+                        << ec << "\n";
                     return;
                 }
 
@@ -127,7 +74,9 @@ class Application
 
     void asyncReadProperties()
     {
-        propertyGreetings.async_get(
+        sdbusplus::asio::getProperty<std::string>(
+            bus_, demoServiceName, demoObjectPath, demoInterfaceName,
+            propertyGrettingName,
             [this](boost::system::error_code ec, std::string value) {
                 if (ec)
                 {
@@ -137,7 +86,9 @@ class Application
                 std::cout << "Greetings value is: " << value << "\n";
             });
 
-        propertyGoodbyes.async_get(
+        sdbusplus::asio::getProperty<std::string>(
+            bus_, demoServiceName, demoObjectPath, demoInterfaceName,
+            propertyGoodbyesName,
             [this](boost::system::error_code ec, std::string value) {
                 if (ec)
                 {
@@ -150,13 +101,15 @@ class Application
 
     void asyncChangeProperty()
     {
-        propertyGreetings.async_set(
-            "Hi, hey, hello", [this](const boost::system::error_code& error) {
-                if (error)
+        sdbusplus::asio::setProperty(
+            bus_, demoServiceName, demoObjectPath, demoInterfaceName,
+            propertyGrettingName, "Hi, hey, hello",
+            [this](const boost::system::error_code& ec) {
+                if (ec)
                 {
                     std::cout
                         << "As expected, failed to set greetings property: "
-                        << error << "\n";
+                        << ec << "\n";
                     return;
                 }
 
@@ -165,14 +118,16 @@ class Application
                 ++fatalErrors_;
             });
 
-        propertyGoodbyes.async_set(
-            "Bye bye", [this](const boost::system::error_code& error) {
-                if (error)
+        sdbusplus::asio::setProperty(
+            bus_, demoServiceName, demoObjectPath, demoInterfaceName,
+            propertyGoodbyesName, "Bye bye",
+            [this](const boost::system::error_code& ec) {
+                if (ec)
                 {
                     std::cout
                         << "Error: it supposed to be ok to change goodbyes "
                            "property: "
-                        << error << "\n";
+                        << ec << "\n";
                     ++fatalErrors_;
                     return;
                 }
@@ -184,7 +139,7 @@ class Application
     void syncChangeGoodbyes(std::string_view value)
     {
         goodbyes_ = value;
-        demo_->signal_property(name::goodbyes);
+        demo_->signal_property(propertyGoodbyesName);
     }
 
   private:
@@ -197,13 +152,6 @@ class Application
     std::string goodbyes_ = "Bye";
 
     uint32_t fatalErrors_ = 0u;
-
-    utils::Property<std::string> propertyGreetings{
-        bus_, xyz::demo::name, xyz::demo::path, xyz::demo::name,
-        name::greetings};
-    utils::Property<std::string> propertyGoodbyes{
-        bus_, xyz::demo::name, xyz::demo::path, xyz::demo::name,
-        name::goodbyes};
 };
 
 int main(int, char**)
@@ -217,7 +165,7 @@ int main(int, char**)
     auto bus = std::make_shared<sdbusplus::asio::connection>(ioc);
     auto objServer = std::make_unique<sdbusplus::asio::object_server>(bus);
 
-    bus->request_name(xyz::demo::name.c_str());
+    bus->request_name(demoServiceName.c_str());
 
     Application app(ioc, *bus, *objServer);
 

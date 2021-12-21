@@ -7,26 +7,12 @@
 
 #include <iostream>
 
-namespace xyz
-{
-namespace demo
-{
-
-const std::string path = "/xyz/demo";
-const std::string name = "xyz.demo";
-const std::string interface = "xyz.demo.interface";
-
-} // namespace demo
-} // namespace xyz
-
-namespace name
-{
-
-const std::string greetings = "Greetings";
-const std::string goodbyes = "Goodbyes";
-const std::string value = "Value";
-
-} // namespace name
+constexpr std::string demoServiceName = "demo.service";
+constexpr std::string demoObjectPath = "/xyz/demo";
+constexpr std::string demoInterfaceName = "xyz.demo";
+constexpr std::string propertyGrettingName = "Greetings";
+constexpr std::string propertyGoodbyesName = "Goodbyes";
+constexpr std::string propertyValueName = "Value";
 
 class Application
 {
@@ -36,15 +22,15 @@ class Application
         ioc_(ioc),
         bus_(bus), objServer_(objServer)
     {
-        demo_ = objServer_.add_unique_interface(xyz::demo::path,
-                                                xyz::demo::interface);
+        demo_ =
+            objServer_.add_unique_interface(demoObjectPath, demoInterfaceName);
 
-        demo_->register_property_r(name::greetings, std::string(),
+        demo_->register_property_r(propertyGrettingName, std::string(),
                                    sdbusplus::vtable::property_::const_,
                                    [this](const auto&) { return greetings_; });
 
         demo_->register_property_rw(
-            name::goodbyes, std::string(),
+            propertyGoodbyesName, std::string(),
             sdbusplus::vtable::property_::emits_change,
             [this](const auto& newPropertyValue, const auto&) {
                 goodbyes_ = newPropertyValue;
@@ -53,7 +39,8 @@ class Application
             [this](const auto&) { return goodbyes_; });
 
         demo_->register_property_r(
-            name::value, uint32_t{42}, sdbusplus::vtable::property_::const_,
+            propertyValueName, uint32_t{42},
+            sdbusplus::vtable::property_::const_,
             [](const auto& value) -> uint32_t { return value; });
 
         demo_->initialize();
@@ -76,6 +63,12 @@ class Application
         ++fatalErrors_;
     }
 
+    void logBadProperty(const std::string& badProperty)
+    {
+        std::cerr << "BadProperty: " << badProperty << "\n";
+        ++fatalErrors_;
+    }
+
     void logExpectedException(
         const sdbusplus::exception::UnpackPropertyError& error)
     {
@@ -87,7 +80,7 @@ class Application
     void asyncGetAllPropertiesStringTypeOnly()
     {
         sdbusplus::asio::getAllProperties(
-            bus_, xyz::demo::name, xyz::demo::path, xyz::demo::interface,
+            bus_, demoServiceName, demoObjectPath, demoInterfaceName,
             [this](boost::system::error_code ec,
                    std::vector<std::pair<
                        std::string, std::variant<std::monostate, std::string>>>&
@@ -97,26 +90,31 @@ class Application
                     logSystemErrorCode(ec);
                     return;
                 }
-                try
                 {
                     std::string greetings;
                     std::string goodbyes;
-                    sdbusplus::unpackProperties(properties, name::greetings,
-                                                greetings, name::goodbyes,
-                                                goodbyes);
+                    std::optional<std::string> badProperty =
+                        sdbusplus::unpackPropertiesNoThrow(
+                            properties, propertyGrettingName, greetings,
+                            propertyGoodbyesName, goodbyes);
 
-                    std::cout << "value of greetings: " << greetings << "\n";
-                    std::cout << "value of goodbyes: " << goodbyes << "\n";
-                }
-                catch (const sdbusplus::exception::UnpackPropertyError& error)
-                {
-                    logException(error);
+                    if (badProperty)
+                    {
+                        logBadProperty(*badProperty);
+                    }
+                    else
+                    {
+                        std::cout << "value of greetings: " << greetings
+                                  << "\n";
+                        std::cout << "value of goodbyes: " << goodbyes << "\n";
+                    }
                 }
 
                 try
                 {
                     std::string value;
-                    sdbusplus::unpackProperties(properties, name::value, value);
+                    sdbusplus::unpackProperties(properties, propertyValueName,
+                                                value);
 
                     std::cerr << "Error: it should fail because of "
                                  "not matched type\n";
@@ -132,7 +130,7 @@ class Application
     void asyncGetAllProperties()
     {
         sdbusplus::asio::getAllProperties(
-            bus_, xyz::demo::name, xyz::demo::path, xyz::demo::interface,
+            bus_, demoServiceName, demoObjectPath, demoInterfaceName,
             [this](boost::system::error_code ec,
                    std::vector<std::pair<
                        std::string,
@@ -148,9 +146,10 @@ class Application
                     std::string greetings;
                     std::string goodbyes;
                     uint32_t value = 0u;
-                    sdbusplus::unpackProperties(properties, name::greetings,
-                                                greetings, name::goodbyes,
-                                                goodbyes, name::value, value);
+                    sdbusplus::unpackProperties(properties,
+                                                propertyGrettingName, greetings,
+                                                propertyGoodbyesName, goodbyes,
+                                                propertyValueName, value);
 
                     std::cout << "value of greetings: " << greetings << "\n";
                     std::cout << "value of goodbyes: " << goodbyes << "\n";
@@ -179,8 +178,8 @@ class Application
                 try
                 {
                     uint32_t notMatchingType;
-                    sdbusplus::unpackProperties(properties, name::greetings,
-                                                notMatchingType);
+                    sdbusplus::unpackProperties(
+                        properties, propertyGrettingName, notMatchingType);
 
                     std::cerr << "Error: it should fail because of "
                                  "not matched type\n";
@@ -216,7 +215,7 @@ int main(int, char**)
     auto bus = std::make_shared<sdbusplus::asio::connection>(ioc);
     auto objServer = std::make_unique<sdbusplus::asio::object_server>(bus);
 
-    bus->request_name(xyz::demo::name.c_str());
+    bus->request_name(demoServiceName.c_str());
 
     Application app(ioc, *bus, *objServer);
 

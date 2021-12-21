@@ -44,6 +44,12 @@ executable(
     dependencies: asio_dep,
 )
 
+executable(
+    'monostate',
+    'monostate.cpp',
+    dependencies: asio_dep,
+)
+
 calc_buildroot = meson.current_build_dir()
 calc_files = files(
     run_command(

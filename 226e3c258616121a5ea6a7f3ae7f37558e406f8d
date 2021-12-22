@@ -22,6 +22,30 @@
       "revId": "226e3c258616121a5ea6a7f3ae7f37558e406f8d",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4fc0d706_5b9bbc3b",
+        "filename": "example/get-all-properties.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1000678
+      },
+      "writtenOn": "2021-12-22T14:45:46Z",
+      "side": 1,
+      "message": "Maybe I am doing something wrong:\nhttps://godbolt.org/z/5x8TdMs8r",
+      "parentUuid": "75cfeac8_0e2f0c0d",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 5
+      },
+      "revId": "226e3c258616121a5ea6a7f3ae7f37558e406f8d",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
     }
   ]
 }

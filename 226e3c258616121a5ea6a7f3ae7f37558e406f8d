@@ -46,6 +46,30 @@
       "revId": "226e3c258616121a5ea6a7f3ae7f37558e406f8d",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0b42396f_7100e8c1",
+        "filename": "example/get-all-properties.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-12-22T14:56:33Z",
+      "side": 1,
+      "message": "Hmm.  You are right.  GCC doesn\u0027t support \"constexpr std::string\" until GCC 12 according to https://en.cppreference.com/w/cpp/compiler_support.\n\nIt is annoying how much stuff was added to C++20 but not available in compilers yet...",
+      "parentUuid": "4fc0d706_5b9bbc3b",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 5
+      },
+      "revId": "226e3c258616121a5ea6a7f3ae7f37558e406f8d",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
     }
   ]
 }

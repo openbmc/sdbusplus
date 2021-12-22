@@ -16,6 +16,24 @@
       "revId": "9fcae57456d5ea3601cad17027aee27402de6ee9",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "149c8a42_87d113d8",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1000678
+      },
+      "writtenOn": "2021-12-22T09:12:27Z",
+      "side": 1,
+      "message": "Okay, I will bring back variables.\n\nAs far as I understand std::string can be used in constexpr function but we cannot create constexpr std::string.\n\nstring_view has no default conversion to std::string, sdbusplus forces us to use std::string, to avoid copy it might be more efficient to create std::string constant",
+      "parentUuid": "06bbcd3a_cbc24e56",
+      "revId": "9fcae57456d5ea3601cad17027aee27402de6ee9",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
     }
   ]
 }

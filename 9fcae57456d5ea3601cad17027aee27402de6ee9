@@ -34,6 +34,24 @@
       "revId": "9fcae57456d5ea3601cad17027aee27402de6ee9",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1ef74896_12f2bc03",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1000678
+      },
+      "writtenOn": "2021-12-22T09:27:46Z",
+      "side": 1,
+      "message": "Done. After taking a look at it after some time I was confused by variable names, I agree it would be better to simply rename then instead of removing.",
+      "parentUuid": "149c8a42_87d113d8",
+      "revId": "9fcae57456d5ea3601cad17027aee27402de6ee9",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
     }
   ]
 }

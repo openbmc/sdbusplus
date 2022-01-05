@@ -61,26 +61,26 @@ class Application
         ++fatalErrors_;
     }
 
-    void logBadProperty(const std::string& badProperty)
+    void logUnpackError(const sdbusplus::UnpackErrorReason reason,
+                        const std::string& property)
     {
-        std::cerr << "BadProperty: " << badProperty << "\n";
+        std::cerr << "UnpackError: " << static_cast<int>(reason) << ", "
+                  << property << "\n";
         ++fatalErrors_;
     }
 
     void logExpectedException(
         const sdbusplus::exception::UnpackPropertyError& error)
     {
-        std::cout << "As expected " << error.what() << " => "
-                  << error.propertyName << " is missing because "
-                  << error.reason << "\n";
+        std::cout << "As expected " << error.what() << "\n";
     }
 
     void asyncGetAllPropertiesStringTypeOnly()
     {
         sdbusplus::asio::getAllProperties(
             bus_, demoServiceName, demoObjectPath, demoInterfaceName,
-            [this](boost::system::error_code ec,
-                   std::vector<std::pair<
+            [this](const boost::system::error_code ec,
+                   const std::vector<std::pair<
                        std::string, std::variant<std::monostate, std::string>>>&
                        properties) -> void {
                 if (ec)
@@ -89,22 +89,25 @@ class Application
                     return;
                 }
                 {
-                    std::string greetings;
-                    std::string goodbyes;
-                    std::optional<std::string> badProperty =
-                        sdbusplus::unpackPropertiesNoThrow(
-                            properties, propertyGrettingName, greetings,
-                            propertyGoodbyesName, goodbyes);
+                    const std::string* greetings = nullptr;
+                    const std::string* goodbyes = nullptr;
+                    const bool success = sdbusplus::unpackPropertiesNoThrow(
+                        [this](const sdbusplus::UnpackErrorReason reason,
+                               const std::string& property) {
+                            logUnpackError(reason, property);
+                        },
+                        properties, propertyGrettingName, greetings,
+                        propertyGoodbyesName, goodbyes);
 
-                    if (badProperty)
+                    if (success)
                     {
-                        logBadProperty(*badProperty);
+                        std::cout << "value of greetings: " << *greetings
+                                  << "\n";
+                        std::cout << "value of goodbyes: " << *goodbyes << "\n";
                     }
                     else
                     {
-                        std::cout << "value of greetings: " << greetings
-                                  << "\n";
-                        std::cout << "value of goodbyes: " << goodbyes << "\n";
+                        ++fatalErrors_;
                     }
                 }
 
@@ -129,8 +132,8 @@ class Application
     {
         sdbusplus::asio::getAllProperties(
             bus_, demoServiceName, demoObjectPath, demoInterfaceName,
-            [this](boost::system::error_code ec,
-                   std::vector<std::pair<
+            [this](const boost::system::error_code ec,
+                   const std::vector<std::pair<
                        std::string,
                        std::variant<std::monostate, std::string, uint32_t>>>&
                        properties) -> void {

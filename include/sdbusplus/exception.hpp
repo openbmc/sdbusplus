@@ -10,6 +10,12 @@
 namespace sdbusplus
 {
 
+enum class UnpackErrorReason
+{
+    missingProperty,
+    wrongType
+};
+
 namespace exception
 {
 
@@ -100,11 +106,8 @@ struct InvalidEnumString final : public internal_exception
 class UnpackPropertyError final : public internal_exception
 {
   public:
-    UnpackPropertyError(std::string_view propertyName, std::string_view reason);
-
-    static constexpr std::string_view reasonMissingProperty =
-        "Missing property";
-    static constexpr std::string_view reasonTypeNotMatched = "Type not matched";
+    UnpackPropertyError(std::string_view propertyName,
+                        const UnpackErrorReason reason);
 
     static constexpr auto errName =
         "xyz.openbmc_project.sdbusplus.Error.UnpackPropertyError";
@@ -120,7 +123,7 @@ class UnpackPropertyError final : public internal_exception
     int get_errno() const noexcept override;
 
     const std::string propertyName;
-    const std::string reason;
+    const UnpackErrorReason reason;
 
   private:
     const std::string errWhatDetailed;

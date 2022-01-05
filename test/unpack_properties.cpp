@@ -18,10 +18,23 @@ struct ThrowingUnpack
 
 struct NonThrowingUnpack
 {
-    template <typename... Args>
-    std::optional<std::string> operator()(Args&&... args) const
+    struct UnpackError
     {
-        return unpackPropertiesNoThrow(std::forward<Args>(args)...);
+        sdbusplus::UnpackErrorReason reason;
+        std::string property;
+    };
+
+    template <typename... Args>
+    std::optional<UnpackError> operator()(Args&&... args) const
+    {
+        std::optional<UnpackError> error;
+        unpackPropertiesNoThrow(
+            [&error](const sdbusplus::UnpackErrorReason reason,
+                     const std::string& property) {
+                error.emplace(reason, property);
+            },
+            std::forward<Args>(args)...);
+        return error;
     }
 };
 
@@ -36,14 +49,8 @@ using VariantType = std::variant<std::string, uint32_t, float, double>;
 using ContainerTypes = testing::Types<
     TestingTypes<NonThrowingUnpack,
                  std::vector<std::pair<std::string, VariantType>>>,
-    TestingTypes<NonThrowingUnpack,
-                 boost::container::flat_map<std::string, VariantType>>,
-    TestingTypes<NonThrowingUnpack, std::map<std::string, VariantType>>,
     TestingTypes<ThrowingUnpack,
-                 std::vector<std::pair<std::string, VariantType>>>,
-    TestingTypes<ThrowingUnpack,
-                 boost::container::flat_map<std::string, VariantType>>,
-    TestingTypes<ThrowingUnpack, std::map<std::string, VariantType>>>;
+                 std::vector<std::pair<std::string, VariantType>>>>;
 
 template <typename Exception, typename F>
 std::optional<Exception> captureException(F&& code)
@@ -96,7 +103,7 @@ TYPED_TEST(UnpackPropertiesTest, returnsValueWhenKeyIsPresentAndTypeMatches)
 }
 
 TYPED_TEST(UnpackPropertiesTest,
-           unpackChangesOriginalDataWhenPassedAsNonConstReference)
+           unpackDoesntChangeOriginalDataWhenPassedAsNonConstReference)
 {
     using namespace testing;
 
@@ -106,75 +113,52 @@ TYPED_TEST(UnpackPropertiesTest,
     EXPECT_FALSE(this->unpackPropertiesCall(this->data, "Key-1", val2));
 
     ASSERT_THAT(val1, Eq("string"));
-    ASSERT_THAT(val2, Not(Eq("string")));
-}
-
-TYPED_TEST(UnpackPropertiesTest,
-           unpackDoesntChangeOriginalDataWhenPassesAsConstReference)
-{
-    using namespace testing;
-
-    std::string val1, val2;
-
-    EXPECT_FALSE(this->unpackPropertiesCall(Const(this->data), "Key-1", val1));
-    EXPECT_FALSE(this->unpackPropertiesCall(Const(this->data), "Key-1", val2));
-
-    ASSERT_THAT(val1, Eq("string"));
     ASSERT_THAT(val2, Eq("string"));
 }
 
-TYPED_TEST(UnpackPropertiesTest,
-           returnsUndefinedValueForDuplicatedKeysWhenDataIsNonConstReference)
+TYPED_TEST(UnpackPropertiesTest, doesntReportMissingPropertyForOptional)
 {
     using namespace testing;
     using namespace std::string_literals;
 
-    std::string val1;
-    float val2 = 0.f;
-    double val3 = 0.;
-    std::string val4;
+    std::optional<std::string> val1;
+    std::optional<std::string> val4;
 
-    EXPECT_FALSE(this->unpackPropertiesCall(this->data, "Key-1", val1, "Key-2",
-                                            val2, "Key-3", val3, "Key-1",
-                                            val4));
+    EXPECT_FALSE(
+        this->unpackPropertiesCall(this->data, "Key-1", val1, "Key-4", val4));
 
     ASSERT_THAT(val1, Eq("string"));
-    ASSERT_THAT(val2, FloatEq(42.f));
-    ASSERT_THAT(val3, DoubleEq(15.));
-    ASSERT_THAT(val4, Not(Eq("string")));
+    ASSERT_THAT(val4, Eq(std::nullopt));
 }
 
-TYPED_TEST(UnpackPropertiesTest,
-           returnsValueForDuplicatedKeysWhenDataIsConstReference)
+TYPED_TEST(UnpackPropertiesTest, setPresentPointersOnSuccess)
 {
     using namespace testing;
     using namespace std::string_literals;
 
-    std::string val1;
-    float val2 = 0.f;
-    double val3 = 0.;
-    std::string val4;
+    const std::string* val1 = nullptr;
+    const float* val2 = nullptr;
+    const double* val3 = nullptr;
+    const std::string* val4 = nullptr;
 
-    EXPECT_FALSE(this->unpackPropertiesCall(Const(this->data), "Key-1", val1,
-                                            "Key-2", val2, "Key-3", val3,
-                                            "Key-1", val4));
+    EXPECT_FALSE(this->unpackPropertiesCall(this->data, "Key-1", val1, "Key-2",
+                                            val2, "Key-3", val3, "Key-4",
+                                            val4));
 
-    ASSERT_THAT(val1, Eq("string"));
-    ASSERT_THAT(val2, FloatEq(42.f));
-    ASSERT_THAT(val3, DoubleEq(15.));
-    ASSERT_THAT(val4, Eq("string"));
+    ASSERT_TRUE(val1 && val2 && val3);
+    ASSERT_TRUE(!val4);
+
+    ASSERT_THAT(*val1, Eq("string"));
+    ASSERT_THAT(*val2, FloatEq(42.f));
+    ASSERT_THAT(*val3, DoubleEq(15.));
 }
 
 template <typename Params>
 struct UnpackPropertiesThrowingTest : public UnpackPropertiesTest<Params>
 {};
 
-using ContainerTypesThrowing = testing::Types<
-    TestingTypes<ThrowingUnpack,
-                 std::vector<std::pair<std::string, VariantType>>>,
-    TestingTypes<ThrowingUnpack,
-                 boost::container::flat_map<std::string, VariantType>>,
-    TestingTypes<ThrowingUnpack, std::map<std::string, VariantType>>>;
+using ContainerTypesThrowing = testing::Types<TestingTypes<
+    ThrowingUnpack, std::vector<std::pair<std::string, VariantType>>>>;
 
 TYPED_TEST_SUITE(UnpackPropertiesThrowingTest, ContainerTypesThrowing);
 
@@ -192,8 +176,7 @@ TYPED_TEST(UnpackPropertiesThrowingTest, throwsErrorWhenKeyIsMissing)
     });
 
     ASSERT_TRUE(error);
-    ASSERT_THAT(error->reason,
-                Eq(exception::UnpackPropertyError::reasonMissingProperty));
+    ASSERT_THAT(error->reason, Eq(UnpackErrorReason::missingProperty));
     ASSERT_THAT(error->propertyName, Eq("Key-4"));
 }
 
@@ -211,8 +194,23 @@ TYPED_TEST(UnpackPropertiesThrowingTest, throwsErrorWhenTypeDoesntMatch)
     });
 
     ASSERT_TRUE(error);
-    ASSERT_THAT(error->reason,
-                Eq(exception::UnpackPropertyError::reasonTypeNotMatched));
+    ASSERT_THAT(error->reason, Eq(UnpackErrorReason::wrongType));
+    ASSERT_THAT(error->propertyName, Eq("Key-2"));
+}
+
+TYPED_TEST(UnpackPropertiesThrowingTest, throwsErrorWhenOptionalTypeDoesntMatch)
+{
+    using namespace testing;
+
+    std::optional<std::string> val1;
+    std::optional<std::string> val2;
+
+    auto error = captureException<exception::UnpackPropertyError>([&] {
+        this->unpackPropertiesCall(this->data, "Key-1", val1, "Key-2", val2);
+    });
+
+    ASSERT_TRUE(error);
+    ASSERT_THAT(error->reason, Eq(UnpackErrorReason::wrongType));
     ASSERT_THAT(error->propertyName, Eq("Key-2"));
 }
 
@@ -220,12 +218,8 @@ template <typename Params>
 struct UnpackPropertiesNonThrowingTest : public UnpackPropertiesTest<Params>
 {};
 
-using ContainerTypesNonThrowing = testing::Types<
-    TestingTypes<NonThrowingUnpack,
-                 std::vector<std::pair<std::string, VariantType>>>,
-    TestingTypes<NonThrowingUnpack,
-                 boost::container::flat_map<std::string, VariantType>>,
-    TestingTypes<NonThrowingUnpack, std::map<std::string, VariantType>>>;
+using ContainerTypesNonThrowing = testing::Types<TestingTypes<
+    NonThrowingUnpack, std::vector<std::pair<std::string, VariantType>>>>;
 
 TYPED_TEST_SUITE(UnpackPropertiesNonThrowingTest, ContainerTypesNonThrowing);
 
@@ -241,7 +235,8 @@ TYPED_TEST(UnpackPropertiesNonThrowingTest, ErrorWhenKeyIsMissing)
                                                   "Key-4", val2, "Key-3", val3);
 
     ASSERT_TRUE(badProperty);
-    ASSERT_THAT(*badProperty, Eq("Key-4"));
+    EXPECT_THAT(badProperty->reason, Eq(UnpackErrorReason::missingProperty));
+    EXPECT_THAT(badProperty->property, Eq("Key-4"));
 }
 
 TYPED_TEST(UnpackPropertiesNonThrowingTest, ErrorWhenTypeDoesntMatch)
@@ -256,7 +251,23 @@ TYPED_TEST(UnpackPropertiesNonThrowingTest, ErrorWhenTypeDoesntMatch)
                                                   "Key-2", val2, "Key-3", val3);
 
     ASSERT_TRUE(badProperty);
-    ASSERT_THAT(*badProperty, Eq("Key-2"));
+    EXPECT_THAT(badProperty->reason, Eq(UnpackErrorReason::wrongType));
+    EXPECT_THAT(badProperty->property, Eq("Key-2"));
+}
+
+TYPED_TEST(UnpackPropertiesNonThrowingTest, ErrorWhenOptionalTypeDoesntMatch)
+{
+    using namespace testing;
+
+    std::optional<std::string> val1;
+    std::optional<std::string> val2;
+
+    auto badProperty =
+        this->unpackPropertiesCall(this->data, "Key-1", val1, "Key-2", val2);
+
+    ASSERT_TRUE(badProperty);
+    EXPECT_THAT(badProperty->reason, Eq(UnpackErrorReason::wrongType));
+    EXPECT_THAT(badProperty->property, Eq("Key-2"));
 }
 
 template <typename Params>

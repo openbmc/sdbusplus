@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstddef>
+#include <optional>
 #include <tuple>
 #include <type_traits>
 
@@ -104,46 +106,43 @@ constexpr std::array<char, N - 2> strip_ends(const std::array<char, N>& s)
 }
 
 template <typename T>
-class has_member_find
+concept has_member_find =
+    requires(std::decay_t<T> t,
+             std::tuple_element_t<0, typename std::decay_t<T>::value_type> val)
 {
-  private:
-    template <typename U>
-    static U& ref();
-
-    template <typename U>
-    static std::true_type check(decltype(ref<U>().find(
-        ref<std::tuple_element_t<0, typename U::value_type>>()))*);
-    template <typename>
-    static std::false_type check(...);
-
-  public:
-    static constexpr bool value =
-        decltype(check<std::decay_t<T>>(nullptr))::value;
+    t.find(val);
 };
 
 template <typename T>
-constexpr bool has_member_find_v = has_member_find<T>::value;
-
-template <typename T>
-class has_member_contains
+concept has_member_contains =
+    requires(std::decay_t<T> t,
+             std::tuple_element_t<0, typename std::decay_t<T>::value_type> val)
 {
-  private:
-    template <typename U>
-    static U& ref();
-
-    template <typename U>
-    static std::true_type check(decltype(ref<U>().contains(
-        ref<std::tuple_element_t<0, typename U::value_type>>()))*);
-    template <typename>
-    static std::false_type check(...);
-
-  public:
-    static constexpr bool value =
-        decltype(check<std::decay_t<T>>(nullptr))::value;
+    t.contains(val);
 };
 
 template <typename T>
-constexpr bool has_member_contains_v = has_member_contains<T>::value;
+struct is_optional : public std::false_type
+{};
+
+template <typename T>
+struct is_optional<std::optional<T>> : public std::true_type
+{};
+
+template <class T>
+concept an_optional = is_optional<std::decay_t<T>>::value;
+
+template <class T>
+struct functor_traits : public functor_traits<decltype(&T::operator())>
+{};
+
+template <class T, class R, class... Args>
+struct functor_traits<R (T::*)(Args...) const>
+{
+    template <size_t Index>
+    using arg_t = std::remove_const_t<std::remove_reference_t<
+        std::tuple_element_t<Index, std::tuple<Args...>>>>;
+};
 
 } // namespace utility
 

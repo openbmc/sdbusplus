@@ -29,11 +29,11 @@ TEST(TypeTraits, Basic)
 
 TEST(TypeTraits, HasMemberFind)
 {
-    using sdbusplus::utility::has_member_find_v;
+    using sdbusplus::utility::has_member_find;
     using namespace testing;
 
-    ASSERT_THAT((has_member_find_v<std::map<std::string, int>>), Eq(true));
-    ASSERT_THAT((has_member_find_v<std::vector<std::pair<std::string, int>>>),
+    ASSERT_THAT((has_member_find<std::map<std::string, int>>), Eq(true));
+    ASSERT_THAT((has_member_find<std::vector<std::pair<std::string, int>>>),
                 Eq(false));
 
     struct Foo
@@ -47,23 +47,22 @@ TEST(TypeTraits, HasMemberFind)
     struct Bar
     {};
 
-    ASSERT_THAT(has_member_find_v<Foo>, Eq(true));
-    ASSERT_THAT(has_member_find_v<Foo&>, Eq(true));
-    ASSERT_THAT(has_member_find_v<const Foo&>, Eq(true));
+    ASSERT_THAT(has_member_find<Foo>, Eq(true));
+    ASSERT_THAT(has_member_find<Foo&>, Eq(true));
+    ASSERT_THAT(has_member_find<const Foo&>, Eq(true));
 
-    ASSERT_THAT(has_member_find_v<Bar>, Eq(false));
+    ASSERT_THAT(has_member_find<Bar>, Eq(false));
 }
 
 TEST(TypeTraits, HasMemberContains)
 {
-    using sdbusplus::utility::has_member_contains_v;
+    using sdbusplus::utility::has_member_contains;
     using namespace testing;
 
     // std::map has member_contains from c++20
-    ASSERT_THAT((has_member_contains_v<std::map<std::string, int>>), Eq(true));
-    ASSERT_THAT(
-        (has_member_contains_v<std::vector<std::pair<std::string, int>>>),
-        Eq(false));
+    ASSERT_THAT((has_member_contains<std::map<std::string, int>>), Eq(true));
+    ASSERT_THAT((has_member_contains<std::vector<std::pair<std::string, int>>>),
+                Eq(false));
 
     struct Foo
     {
@@ -76,11 +75,32 @@ TEST(TypeTraits, HasMemberContains)
     struct Bar
     {};
 
-    ASSERT_THAT(has_member_contains_v<Foo>, Eq(true));
-    ASSERT_THAT(has_member_contains_v<Foo&>, Eq(true));
-    ASSERT_THAT(has_member_contains_v<const Foo&>, Eq(true));
+    ASSERT_THAT(has_member_contains<Foo>, Eq(true));
+    ASSERT_THAT(has_member_contains<Foo&>, Eq(true));
+    ASSERT_THAT(has_member_contains<const Foo&>, Eq(true));
 
-    ASSERT_THAT(has_member_contains_v<Bar>, Eq(false));
+    ASSERT_THAT(has_member_contains<Bar>, Eq(false));
+}
+
+TEST(TypeTraits, IsOptional)
+{
+    using sdbusplus::utility::an_optional;
+
+    ASSERT_TRUE(an_optional<std::optional<int>&>);
+    ASSERT_TRUE(an_optional<std::optional<int>>);
+    ASSERT_FALSE(an_optional<int>);
+}
+
+TEST(TypeTraits, FunctorTraits)
+{
+    using sdbusplus::utility::functor_traits;
+
+    auto functor = [](int, double) {};
+
+    EXPECT_TRUE(
+        (std::is_same_v<functor_traits<decltype(functor)>::arg_t<0>, int>));
+    EXPECT_TRUE(
+        (std::is_same_v<functor_traits<decltype(functor)>::arg_t<1>, double>));
 }
 
 // Tests for dedup_variant.

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstddef>
+#include <optional>
 #include <tuple>
 #include <type_traits>
 
@@ -144,6 +146,31 @@ class has_member_contains
 
 template <typename T>
 constexpr bool has_member_contains_v = has_member_contains<T>::value;
+
+template <typename T>
+struct is_optional : public std::false_type
+{};
+
+template <typename T>
+struct is_optional<std::optional<T>> : public std::true_type
+{};
+
+template <typename T>
+constexpr bool is_optional_v = is_optional<T>::value;
+
+template <class T>
+struct functor_traits : public functor_traits<decltype(&T::operator())>
+{};
+
+template <class T, class R, class... Args>
+struct functor_traits<R (T::*)(Args...) const>
+{
+    static constexpr size_t arity = sizeof...(Args);
+
+    template <size_t Index>
+    using arg_t = std::remove_const_t<std::remove_reference_t<
+        std::tuple_element_t<Index, std::tuple<Args...>>>>;
+};
 
 } // namespace utility
 

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstddef>
+#include <optional>
 #include <tuple>
 #include <type_traits>
 
@@ -144,6 +146,29 @@ class has_member_contains
 
 template <typename T>
 constexpr bool has_member_contains_v = has_member_contains<T>::value;
+
+template <typename T>
+struct is_optional : public std::false_type
+{};
+
+template <typename T>
+struct is_optional<std::optional<T>> : public std::true_type
+{};
+
+template <typename T>
+struct is_optional<const std::optional<T>> : public std::true_type
+{};
+
+template <typename T>
+struct is_optional<std::optional<T>&> : public std::true_type
+{};
+
+template <typename T>
+struct is_optional<const std::optional<T>&> : public std::true_type
+{};
+
+template <typename T>
+constexpr bool is_optional_v = is_optional<T>::value;
 
 } // namespace utility
 

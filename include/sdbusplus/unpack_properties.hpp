@@ -13,23 +13,19 @@
 
 namespace sdbusplus
 {
-namespace detail
-{
 
-template <typename Variant, typename ValueType>
-bool getIf(Variant&& variant, ValueType& outValue) noexcept
+enum class UnpackErrorReason
 {
-    if (auto value = std::get_if<ValueType>(&variant))
-    {
-        outValue = std::move(*value);
-        return true;
-    }
+    missingProperty,
+    wrongType
+};
 
-    return false;
-}
+namespace details
+{
 
 template <typename Container>
-auto findProperty(Container&& container, const std::string& key) noexcept
+inline auto findProperty(const Container& container,
+                         const std::string& key) noexcept
 {
     if constexpr (utility::has_member_find_v<Container>)
     {
@@ -38,126 +34,170 @@ auto findProperty(Container&& container, const std::string& key) noexcept
     else
     {
         return std::find_if(
-            std::begin(container), std::end(container),
+            container.begin(), container.end(),
             [&key](const auto& keyValue) { return keyValue.first == key; });
     }
 }
 
-template <typename Container>
-bool containsProperty(Container&& container, const std::string& key) noexcept
+template <typename OnErrorCallback, typename Container, typename ValueType>
+inline bool readProperty(const OnErrorCallback& onErrorCallback,
+                         const Container& container,
+                         const std::string& expectedKey,
+                         ValueType& outValue) noexcept
 {
-    if constexpr (utility::has_member_contains_v<Container>)
+    auto it = findProperty(container, expectedKey);
+
+    if (it != container.end())
     {
-        return container.contains(key);
+        if constexpr (std::is_pointer_v<ValueType>)
+        {
+            if (const auto* value = std::get_if<
+                    std::remove_const_t<std::remove_pointer_t<ValueType>>>(
+                    &it->second))
+            {
+                outValue = value;
+            }
+            else
+            {
+                onErrorCallback(UnpackErrorReason::wrongType, expectedKey);
+                return false;
+            }
+        }
+        else if constexpr (utility::is_optional_v<std::decay_t<ValueType>>)
+        {
+            using InnerType = typename ValueType::value_type;
+            if constexpr (std::is_pointer_v<InnerType>)
+            {
+                static_assert(!std::is_pointer_v<InnerType>,
+                              "std::optional<T*> is not supported");
+            }
+            else
+            {
+                if (const auto value = std::get_if<InnerType>(&it->second))
+
+                {
+                    outValue = *value;
+                }
+                else
+                {
+                    onErrorCallback(UnpackErrorReason::wrongType, expectedKey);
+                    return false;
+                }
+            }
+        }
+        else
+        {
+            if (const auto value = std::get_if<ValueType>(&it->second))
+            {
+                outValue = *value;
+            }
+            else
+            {
+                onErrorCallback(UnpackErrorReason::wrongType, expectedKey);
+                return false;
+            }
+        }
     }
-    else
+    else if constexpr (!utility::is_optional_v<std::decay_t<ValueType>> &&
+                       !std::is_pointer_v<ValueType>)
     {
-        return findProperty(std::forward<Container>(container), key) !=
-               std::end(container);
+        onErrorCallback(UnpackErrorReason::missingProperty, expectedKey);
+        return false;
     }
+
+    return true;
 }
 
-template <size_t Index, typename Container, size_t N, typename ValueType,
-          typename... Args>
-void readProperties(Container&& container, std::bitset<N>& assigned,
-                    const std::string& expectedKey, ValueType& outValue,
-                    Args&&... args) noexcept
+template <size_t Index, typename OnErrorCallback, typename Container,
+          typename ValueType, typename... Args>
+inline bool readProperties(OnErrorCallback&& onErrorCallback,
+                           const Container& container,
+                           const std::string& expectedKey, ValueType& outValue,
+                           Args&&... args) noexcept
 {
-    static_assert(Index < N);
-
-    auto it = findProperty(std::forward<Container>(container), expectedKey);
-
-    if (it != std::end(container))
+    if (!readProperty(onErrorCallback, container, expectedKey, outValue))
     {
-        if (getIf(it->second, outValue))
-        {
-            assigned.set(Index);
-        }
+        return false;
     }
 
     if constexpr (sizeof...(Args) > 0)
     {
-        readProperties<Index + 1>(std::forward<Container>(container), assigned,
-                                  std::forward<Args>(args)...);
+        return readProperties<Index + 1>(
+            std::forward<OnErrorCallback>(onErrorCallback), container,
+            std::forward<Args>(args)...);
     }
+
+    return true;
 }
 
-template <size_t Index, size_t N, typename ValueType, typename... Args>
-std::string findMissingProperty(std::bitset<N>& assigned,
-                                const std::string& key, ValueType&,
-                                Args&&... args) noexcept
+template <class V, class... Args>
+inline std::string getNthKey(size_t index, const std::string& key, V&&,
+                             Args&&... args) noexcept
 {
-    static_assert(Index < N);
-
-    if (!assigned.test(Index))
+    if (index == 0)
     {
         return key;
     }
 
-    if constexpr (sizeof...(Args) > 0)
+    if constexpr (sizeof...(Args))
     {
-        return findMissingProperty<Index + 1>(assigned,
-                                              std::forward<Args>(args)...);
+        return getNthKey(index - 1, std::forward<Args>(args)...);
     }
 
-    return {};
+    return "";
 }
 
-template <bool ReturnBadProperty, typename Container, typename... Args>
-auto unpackPropertiesCommon(Container&& input,
-                            Args&&... args) noexcept(ReturnBadProperty)
+template <typename OnErrorCallback, typename Container, typename... Args>
+inline auto unpackPropertiesCommon(OnErrorCallback&& onErrorCallback,
+                                   const Container& input,
+                                   Args&&... args) noexcept
 {
     static_assert(sizeof...(Args) % 2 == 0);
 
-    auto assigned = std::bitset<sizeof...(Args) / 2>();
+    return details::readProperties<0>(
+        std::forward<OnErrorCallback>(onErrorCallback), input,
+        std::forward<Args>(args)...);
+}
 
-    detail::readProperties<0>(input, assigned, std::forward<Args>(args)...);
+} // namespace details
 
-    if (!assigned.all())
-    {
-        auto missingProperty = detail::findMissingProperty<0>(
-            assigned, std::forward<Args>(args)...);
+template <typename Container, typename... Args>
+inline void unpackProperties(const Container& input, Args&&... args)
+{
+    std::optional<exception::UnpackPropertyError> exception;
 
-        if constexpr (ReturnBadProperty)
-        {
-            return std::optional{missingProperty};
-        }
-        else
-        {
-            if (detail::containsProperty(std::forward<Container>(input),
-                                         missingProperty))
+    details::unpackPropertiesCommon(
+        [&exception](const UnpackErrorReason reason,
+                     const std::string& property) {
+            if (reason == UnpackErrorReason::wrongType)
             {
-                throw exception::UnpackPropertyError(
-                    missingProperty,
+                exception.emplace(
+                    property,
                     exception::UnpackPropertyError::reasonTypeNotMatched);
             }
             else
             {
-                throw exception::UnpackPropertyError(
-                    missingProperty,
+                exception.emplace(
+                    property,
                     exception::UnpackPropertyError::reasonMissingProperty);
             }
-        }
+        },
+        input, std::forward<Args>(args)...);
+
+    if (exception)
+    {
+        throw *exception;
     }
-    return std::conditional_t<ReturnBadProperty, std::optional<std::string>,
-                              void>();
 }
 
-} // namespace detail
-
-template <typename Container, typename... Args>
-void unpackProperties(Container&& input, Args&&... args)
+template <typename OnErrorCallback, typename Container, typename... Args>
+inline bool unpackPropertiesNoThrow(OnErrorCallback&& onErrorCallback,
+                                    const Container& input,
+                                    Args&&... args) noexcept
 {
-    detail::unpackPropertiesCommon<false, Container, Args...>(
-        std::forward<Container>(input), std::forward<Args>(args)...);
-}
-
-template <typename Container, typename... Args>
-std::optional<std::string> unpackPropertiesNoThrow(Container&& input,
-                                                   Args&&... args) noexcept
-{
-    return detail::unpackPropertiesCommon<true, Container, Args...>(
-        std::forward<Container>(input), std::forward<Args>(args)...);
+    return details::unpackPropertiesCommon(
+        std::forward<OnErrorCallback>(onErrorCallback), input,
+        std::forward<Args>(args)...);
 }
 
 } // namespace sdbusplus

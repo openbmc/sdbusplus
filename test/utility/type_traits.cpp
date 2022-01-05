@@ -84,6 +84,34 @@ TEST(TypeTraits, HasMemberContains)
     ASSERT_THAT(has_member_contains_v<Bar>, Eq(false));
 }
 
+TEST(TypeTraits, IsOptional)
+{
+    using sdbusplus::utility::is_optional_v;
+
+    ASSERT_TRUE(is_optional_v<std::optional<int>>);
+    ASSERT_FALSE(is_optional_v<std::optional<int>&>);
+    ASSERT_FALSE(is_optional_v<int>);
+}
+
+TEST(TypeTraits, FunctorTraits)
+{
+    using sdbusplus::utility::functor_traits;
+
+    auto functor = [](int, double, const float, std::string&, const int&) {};
+
+    EXPECT_EQ(functor_traits<decltype(functor)>::arity, 5);
+    EXPECT_TRUE(
+        (std::is_same_v<functor_traits<decltype(functor)>::arg_t<0>, int>));
+    EXPECT_TRUE(
+        (std::is_same_v<functor_traits<decltype(functor)>::arg_t<1>, double>));
+    EXPECT_TRUE(
+        (std::is_same_v<functor_traits<decltype(functor)>::arg_t<2>, float>));
+    EXPECT_TRUE((std::is_same_v<functor_traits<decltype(functor)>::arg_t<3>,
+                                std::string>));
+    EXPECT_TRUE(
+        (std::is_same_v<functor_traits<decltype(functor)>::arg_t<4>, int>));
+}
+
 // Tests for dedup_variant.
 static_assert(std::is_same_v<std::variant<size_t>,
                              sdbusplus::utility::dedup_variant_t<size_t>>);

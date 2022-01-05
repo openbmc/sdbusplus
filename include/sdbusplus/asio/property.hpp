@@ -1,19 +1,39 @@
 #pragma once
 
+#include <boost/type_traits.hpp>
 #include <sdbusplus/asio/connection.hpp>
+#include <sdbusplus/utility/type_traits.hpp>
 
 namespace sdbusplus::asio
 {
 
-template <typename Handler>
+template <typename T>
+inline void getAllProperties(
+    sdbusplus::asio::connection& bus, const std::string& service,
+    const std::string& path, const std::string& interface,
+    std::function<void(const boost::system::error_code,
+                       const std::vector<std::pair<std::string, T>>&)>&&
+        handler)
+{
+    static_assert(std::is_same_v<T, std::decay_t<T>>);
+
+    bus.async_method_call(std::move(handler), service, path,
+                          "org.freedesktop.DBus.Properties", "GetAll",
+                          interface);
+}
+
+template <typename T>
 inline void getAllProperties(sdbusplus::asio::connection& bus,
                              const std::string& service,
                              const std::string& path,
-                             const std::string& interface, Handler&& handler)
+                             const std::string& interface, T&& handler)
 {
-    bus.async_method_call(std::forward<Handler>(handler), service, path,
-                          "org.freedesktop.DBus.Properties", "GetAll",
-                          interface);
+    using arg1_type =
+        std::tuple_element_t<1, boost::callable_traits::args_t<T>>;
+    using arg1_pair_type = std::decay_t<arg1_type>::value_type;
+    using arg1_value_type = arg1_pair_type::second_type;
+    getAllProperties<arg1_value_type>(bus, service, path, interface,
+                                      std::forward<T>(handler));
 }
 
 template <typename T>

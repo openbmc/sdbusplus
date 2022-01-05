@@ -81,8 +81,8 @@ class Application
     {
         sdbusplus::asio::getAllProperties(
             bus_, demoServiceName, demoObjectPath, demoInterfaceName,
-            [this](boost::system::error_code ec,
-                   std::vector<std::pair<
+            [this](const boost::system::error_code ec,
+                   const std::vector<std::pair<
                        std::string, std::variant<std::monostate, std::string>>>&
                        properties) -> void {
                 if (ec)
@@ -131,8 +131,8 @@ class Application
     {
         sdbusplus::asio::getAllProperties(
             bus_, demoServiceName, demoObjectPath, demoInterfaceName,
-            [this](boost::system::error_code ec,
-                   std::vector<std::pair<
+            [this](const boost::system::error_code ec,
+                   const std::vector<std::pair<
                        std::string,
                        std::variant<std::monostate, std::string, uint32_t>>>&
                        properties) -> void {

@@ -84,6 +84,20 @@ TEST(TypeTraits, HasMemberContains)
     ASSERT_THAT(has_member_contains_v<Bar>, Eq(false));
 }
 
+TEST(TypeTraits, IsOptional)
+{
+    using sdbusplus::utility::is_optional;
+    using sdbusplus::utility::is_optional_v;
+
+    ASSERT_TRUE(is_optional<std::optional<int>>::value);
+    ASSERT_TRUE(is_optional<std::optional<int>&>::value);
+    ASSERT_FALSE(is_optional<int>::value);
+
+    ASSERT_TRUE(is_optional_v<std::optional<int>>);
+    ASSERT_TRUE(is_optional_v<std::optional<int>&>);
+    ASSERT_FALSE(is_optional_v<int>);
+}
+
 // Tests for dedup_variant.
 static_assert(std::is_same_v<std::variant<size_t>,
                              sdbusplus::utility::dedup_variant_t<size_t>>);

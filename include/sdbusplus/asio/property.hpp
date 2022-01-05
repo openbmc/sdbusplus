@@ -1,19 +1,32 @@
 #pragma once
 
 #include <sdbusplus/asio/connection.hpp>
+#include <sdbusplus/utility/type_traits.hpp>
 
 namespace sdbusplus::asio
 {
 
-template <typename Handler>
+template <typename T>
+inline void getAllProperties(
+    sdbusplus::asio::connection& bus, const std::string& service,
+    const std::string& path, const std::string& interface,
+    std::function<void(const boost::system::error_code, T&)>&& handler)
+{
+    static_assert(std::is_same_v<T, std::decay_t<T>>);
+
+    bus.async_method_call(std::move(handler), service, path,
+                          "org.freedesktop.DBus.Properties", "GetAll",
+                          interface);
+}
+
+template <typename T>
 inline void getAllProperties(sdbusplus::asio::connection& bus,
                              const std::string& service,
                              const std::string& path,
-                             const std::string& interface, Handler&& handler)
+                             const std::string& interface, T&& handler)
 {
-    bus.async_method_call(std::forward<Handler>(handler), service, path,
-                          "org.freedesktop.DBus.Properties", "GetAll",
-                          interface);
+    getAllProperties<typename utility::functor_traits<T>::arg_t<1>>(
+        bus, service, path, interface, std::forward<T>(handler));
 }
 
 template <typename T>

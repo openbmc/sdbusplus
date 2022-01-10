@@ -18,6 +18,23 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "950a69b5_3f7931f3",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000869
+      },
+      "writtenOn": "2022-01-10T14:33:54Z",
+      "side": 1,
+      "message": "\u003e Patch Set 3:\n\u003e \n\u003e (2 comments)\n\u003e \n\u003e Hi Ed,\n\u003e \n\u003e Sorry for the late response. Recursive dbus async call has been used in dbus-sensors, which results in CI issue. To avoid the \"misc-no-recursion\" error, boost::asio::post is used in line 193.\n\u003e \n\u003e             boost::asio::post(io_, [\u0026] {\n\u003e                 boost::system::error_code ec \u003d\n\u003e                     boost::system::errc::make_error_code(\n\u003e                         static_cast\u003cboost::system::errc::errc_t\u003e(\n\u003e                             e.get_errno()));\n\u003e                 applyHandler(ec, m);\n\u003e             });\n\u003e \n\u003e Clang-tidy logs after applying above changes:\n\u003e \n\u003e ../subprojects/sdbusplus/include/sdbusplus/asio/connection.hpp:175:17: note: Frame #7: function \u0027operator()\u0027 calls function \u0027apply\u003c(lambda at ../src/IpmbSDRSensor.cpp:118:9) \u0026, std::tuple\u003cboost::system::error_code, std::tuple\u003cint, unsigned char, unsigned char, unsigned char, unsigned char, std::vector\u003cunsigned char\u003e\u003e\u003e \u0026\u003e\u0027 here:\n\u003e                 std::apply(handler, response);\n\u003e                             \n\u003e But the recursion error is not solved. Hence after analyzing the clang-tidy logs, boost::asio::post has been applied in line 180.\n\u003e \n\u003e                 boost::asio::post(self-\u003eio_,\n\u003e                                   [\u0026] { std::apply(handler, response); });            \n\u003e                 \n\u003e While applying in line 180, io_ is not able to access inside that lambda function, so I tried with weak_ptr by enabling std::enable_shared_from_this\u003cconnection\u003e in this class. This crashes the services in runtime.\n\u003e \n\u003e \n\u003e Could you please suggest any other options to solve this issue?\n\nHi Ed,\n\nCould you please suggest any other options to solve this issue?\n\nThanks\n",
+      "revId": "59825bc219beec515dbb94121b51a4e854531e31",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d832d1fa_a3dab7f4",

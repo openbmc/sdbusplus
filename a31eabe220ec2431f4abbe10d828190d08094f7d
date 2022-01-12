@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "054677b4_01ebbf41",
+        "filename": "example/coroutine-example.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000678
+      },
+      "writtenOn": "2022-01-12T09:27:32Z",
+      "side": 1,
+      "message": "Can it be used together with boost::asio::io_context?\n\nIf it is possible it would be nice to have additional example where there is dbus service like https://github.com/openbmc/sdbusplus/blob/master/example/asio-example.cpp or other. Then match is created for single property, property is changed and match produces some output.",
+      "revId": "a31eabe220ec2431f4abbe10d828190d08094f7d",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

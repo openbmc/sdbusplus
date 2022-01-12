@@ -16,6 +16,24 @@
       "message": "Can it be used together with boost::asio::io_context?\n\nIf it is possible it would be nice to have additional example where there is dbus service like https://github.com/openbmc/sdbusplus/blob/master/example/asio-example.cpp or other. Then match is created for single property, property is changed and match produces some output.",
       "revId": "a31eabe220ec2431f4abbe10d828190d08094f7d",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "70e32e4e_7d70285a",
+        "filename": "example/coroutine-example.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-01-12T17:41:57Z",
+      "side": 1,
+      "message": "\u003e Can it be used together with boost::asio::io_context?\n\nNot yet.  Hopefully as I implement this feature a little more we can figure out how to integrate it with the asio::io_context so there is a relatively smooth transition between coroutines and the current callback implementation.\n\n\u003e If it is possible it would be nice to have additional example where there is dbus service...\n\nI\u0027ll look if that is relevant to the code in the current state.  There is quite a bit more work to do here anyhow.",
+      "parentUuid": "054677b4_01ebbf41",
+      "revId": "a31eabe220ec2431f4abbe10d828190d08094f7d",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

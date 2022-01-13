@@ -33,6 +33,24 @@
       "message": "It could be better to add some example code as well.",
       "revId": "2b22fda8fee6deda3fcf5e49676b1fdf0f34e6b7",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "dbe67a85_f64bc708",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000936
+      },
+      "writtenOn": "2022-01-13T09:42:54Z",
+      "side": 1,
+      "message": "\u003e It could be better to add some example code as well.\n\nTo add example code to the doxygen comments? An example like I added to the tests or an example like in https://gerrit.openbmc-project.xyz/c/openbmc/phosphor-dbus-monitor/+/50245 ? For the reference, this change is the result of this discussion: https://lore.kernel.org/openbmc/YcSZlt4HPeBO3sL3@home.paul.comp/T/#u , I just implemented Patrick\u0027s idea.",
+      "parentUuid": "1fc5bd46_1e48b2e5",
+      "revId": "2b22fda8fee6deda3fcf5e49676b1fdf0f34e6b7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

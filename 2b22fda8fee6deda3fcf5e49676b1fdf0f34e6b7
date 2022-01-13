@@ -51,6 +51,24 @@
       "parentUuid": "1fc5bd46_1e48b2e5",
       "revId": "2b22fda8fee6deda3fcf5e49676b1fdf0f34e6b7",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "47e9474c_4926a3d9",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2022-01-13T09:53:31Z",
+      "side": 1,
+      "message": "I mean to add some examples in sdbusplus/example to show the usage.\nBut I\u0027m OK with current status as well because the test already shows the usage.",
+      "parentUuid": "dbe67a85_f64bc708",
+      "revId": "2b22fda8fee6deda3fcf5e49676b1fdf0f34e6b7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

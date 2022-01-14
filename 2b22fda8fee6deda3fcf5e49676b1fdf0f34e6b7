@@ -92,6 +92,30 @@
       },
       "revId": "2b22fda8fee6deda3fcf5e49676b1fdf0f34e6b7",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8c89002d_169b1fae",
+        "filename": "include/sdbusplus/utility/merge_variants.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1000936
+      },
+      "writtenOn": "2022-01-14T22:17:13Z",
+      "side": 1,
+      "message": "I\u0027m not sure about the terminology but I\u0027d say if the template gets two or more arguments then it would be matched by the specialization below. But if it gets just one, \"Unused\" is going to be an empty parameter pack so it\u0027s clear there\u0027s nothing left to merge. Same as in https://github.com/openbmc/sdbusplus/blob/master/include/sdbusplus/utility/dedup_variant.hpp#L24 . Since we need this base case to be referenced from another template which is passing a parameter pack there, we need to accept a parameter pack too, even though it always gets just an empty one. I\u0027m very far from being a C++ expert but I couldn\u0027t make it compile without \"Unused\", and that\u0027s my best explanation.",
+      "parentUuid": "3eb1e191_bcbdcbe9",
+      "range": {
+        "startLine": 25,
+        "startChar": 22,
+        "endLine": 25,
+        "endChar": 40
+      },
+      "revId": "2b22fda8fee6deda3fcf5e49676b1fdf0f34e6b7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

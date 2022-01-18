@@ -25,6 +25,7 @@ template <typename T, typename... Unused>
 struct dedup_variant
 {
     using type = T;
+    static_assert(sizeof...(Unused) == 0);
 };
 
 /** Find the deduplicated variant type.

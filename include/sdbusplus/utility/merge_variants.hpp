@@ -26,6 +26,7 @@ template <typename T, typename... Unused>
 struct merge_variants
 {
     using type = T;
+    static_assert(sizeof...(Unused) == 0);
 };
 
 /** Compute the merged variant type.

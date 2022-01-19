@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "66dfebd4_95ce2bf3",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000936
+      },
+      "writtenOn": "2022-01-19T13:05:07Z",
+      "side": 1,
+      "message": "This should help to avoid confusion for the future contributors (especially given the certain clumsiness of the C++ templates language) and is unlikely to affect compile time significantly so looks good.",
+      "revId": "b40dfec619e0e917e21ccf2b56c0c75f43427d99",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

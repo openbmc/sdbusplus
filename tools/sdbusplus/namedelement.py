@@ -7,6 +7,7 @@ class NamedElement(object):
         super(NamedElement, self).__init__()
         self.name = kwargs.pop('name', "unnamed")
         self.description = kwargs.pop('description', "")
+        self.consumer = kwargs.pop('consumer', "")
 
         if not isinstance(self.name, str):
             raise AttributeError(

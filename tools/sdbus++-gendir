@@ -141,15 +141,17 @@ for d in "$@";
 do
     interfaces="$(find "$d" -name '*.interface.yaml')"
     errors="$(find "$d" -name '*.errors.yaml')"
+    events="$(find "$d" -name '*.events.yaml')"
 
     # Some files are created from multiple YAML sources, but we don't know
     # which YAML sources are present.  For these files, we need to first
     # create an empty file to ensure the file does not carry old data from
     # a previous run.
-    for y in $interfaces $errors;
+    for y in $interfaces $errors $events;
     do
         path="${y%.interface.yaml}"
         path="${path%.errors.yaml}"
+        path="${path%.events.yaml}"
         iface="${path//\//.}"
 
         mkdir -p "$outputdir/$path"
@@ -165,6 +167,17 @@ do
         generate_single interface server-cpp "$iface" "$path/server.cpp"
         generate_single interface client-header "$iface" "$path/client.hpp"
         generate_single interface markdown "$iface" "$path.md" append
+
+    done
+
+    for e in $events;
+    do
+        path="${e%.events.yaml}"
+        iface="${path//\//.}"
+
+        generate_single event event-header "$iface" "$path/event.hpp"
+        generate_single event event-cpp "$iface" "$path/event.cpp"
+        generate_single event markdown "$iface" "$path.md" append
 
     done
     waitall # finish all before continuing

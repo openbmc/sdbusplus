@@ -8,7 +8,8 @@ import os
 def main():
     module_path = os.path.dirname(sdbusplus.__file__)
 
-    valid_types = {"interface": sdbusplus.Interface, "error": sdbusplus.Error}
+    valid_types = {"interface": sdbusplus.Interface, "error": sdbusplus.Error,
+                   "event": sdbusplus.Event}
     valid_processes = {
         "markdown": "markdown",
         "server-header": "server_header",
@@ -16,6 +17,8 @@ def main():
         "exception-header": "exception_header",
         "exception-cpp": "exception_cpp",
         "client-header": "client_header",
+        "event-header": "event_header",
+        "event-cpp": "event_cpp",
     }
 
     parser = argparse.ArgumentParser(description="Process sdbus++ YAML files.")

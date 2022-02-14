@@ -190,6 +190,10 @@ function meson_cpp_target {
                 outputs="${outputs}'server.cpp', 'server.hpp', "
                 outputs="${outputs}'client.hpp', "
                 ;;
+
+            events.yaml)
+                outputs="${outputs}'event.cpp', 'event.hpp', "
+                ;;
         esac
     done
 
@@ -260,7 +264,7 @@ function cmd_meson {
 
         yamls="\
             $yamls \
-            $(find "$dir" -name '*.interface.yaml' -o -name '*.errors.yaml') \
+            $(find "$dir" -name '*.interface.yaml' -o -name '*.errors.yaml' -o -name '*.events.yaml') \
             "
     done
 
@@ -302,7 +306,8 @@ function cmd_cpp {
     fi
 
     if [ ! -e "$rootdir/$1.interface.yaml" ] && \
-        [ ! -e "$rootdir/$1.errors.yaml" ];
+        [ ! -e "$rootdir/$1.errors.yaml" ] && \
+        [ ! -e "$rootdir/$1.events.yaml" ];
     then
         echo "Missing YAML for $1."
         exit 1
@@ -325,6 +330,13 @@ function cmd_cpp {
         $sdbusppcmd error exception-header "$intf" > "$outputdir/error.hpp"
         $sdbusppcmd error exception-cpp "$intf" > "$outputdir/error.cpp"
     fi
+
+    if [ -e "$rootdir/$1.events.yaml" ];
+    then
+        $sdbusppcmd event event-header "$intf" > "$outputdir/event.hpp"
+        $sdbusppcmd event event-cpp "$intf" > "$outputdir/event.cpp"
+    fi
+
 }
 
 ## Handle command=markdown by calling sdbus++ as appropriate.
@@ -340,7 +352,8 @@ function cmd_markdown {
     fi
 
     if [ ! -e "$rootdir/$1.interface.yaml" ] && \
-        [ ! -e "$rootdir/$1.errors.yaml" ];
+        [ ! -e "$rootdir/$1.errors.yaml" ] && \
+        [ ! -e "$rootdir/$1.events.yaml" ];
     then
         echo "Missing YAML for $1."
         exit 1
@@ -361,6 +374,11 @@ function cmd_markdown {
     if [ -e "$rootdir/$1.errors.yaml" ];
     then
         $sdbusppcmd error markdown "$intf" >> "$outputdir/$base.md"
+    fi
+
+    if [ -e "$rootdir/$1.events.yaml" ];
+    then
+        $sdbusppcmd event markdown "$intf" >> "$outputdir/$base.md"
     fi
 }
 

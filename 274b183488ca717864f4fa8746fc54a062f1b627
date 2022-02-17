@@ -24,6 +24,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "5f35fb55_603d8aa1",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1000397
+      },
+      "writtenOn": "2022-02-17T11:16:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8d0afd6c_f57cfae0",
+      "range": {
+        "startLine": 12,
+        "startChar": 48,
+        "endLine": 12,
+        "endChar": 51
+      },
+      "revId": "274b183488ca717864f4fa8746fc54a062f1b627",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "72ae16ca_4e5d7151",
@@ -37,6 +61,24 @@
       "writtenOn": "2022-02-17T10:07:12Z",
       "side": 1,
       "message": "Do you need to add `waitall` here?",
+      "revId": "274b183488ca717864f4fa8746fc54a062f1b627",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d2a278f2_bfd22409",
+        "filename": "tools/sdbus++-gendir",
+        "patchSetId": 2
+      },
+      "lineNbr": 172,
+      "author": {
+        "id": 1000397
+      },
+      "writtenOn": "2022-02-17T11:16:32Z",
+      "side": 1,
+      "message": "\u003e Do you need to add `waitall` here?\n\nyes, added.",
+      "parentUuid": "72ae16ca_4e5d7151",
       "revId": "274b183488ca717864f4fa8746fc54a062f1b627",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }

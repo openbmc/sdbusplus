@@ -3,6 +3,23 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "feff6b31_e70cbab8",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-02-17T04:41:37Z",
+      "side": 1,
+      "message": "I think this is “normal”.  The shellcheck fail causes the python script to exit with failure in order to get the whole job to fail.",
+      "revId": "dce747bcd90cc3dbc5eb3410f112f4a6cea2e384",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "1495d85d_372f7c7c",
         "filename": "tools/sdbus++-gen-meson",
         "patchSetId": 2

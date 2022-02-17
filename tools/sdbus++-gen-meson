@@ -149,7 +149,7 @@ function meson_create_path {
         meson_path="$meson_path/$part"
 
         # Create the meson.build for this segment if it doesn't already exist.
-        if [ "x" == "x${meson_paths[$meson_path]}" ];
+        if [ "" == "${meson_paths[$meson_path]}" ];
         then
             meson_paths["$meson_path"]="1"
             meson_empty_file "$meson_path"
@@ -158,7 +158,7 @@ function meson_create_path {
             # We need to skip adding the links into the 'root' meson.build
             # because most repositories want to selectively add TLDs based
             # on config flags.  Let them figure out their own logic for that.
-            if [ "x$outputdir" != "x$prev_meson_path" ];
+            if [ "$outputdir" != "$prev_meson_path" ];
             then
                 echo "subdir('$part')" >> "$prev_meson_path/meson.build"
             fi
@@ -295,7 +295,7 @@ function cmd_meson {
 ## For an interface foo/bar, the outputdir is expected to be foo/bar.
 function cmd_cpp {
 
-    if [ "x" == "x$1" ];
+    if [ "" == "$1" ];
     then
         show_usage
         exit 1
@@ -333,7 +333,7 @@ function cmd_cpp {
 ## For an interface foo/bar, the outputdir is expected to be foo.
 function cmd_markdown {
 
-    if [ "x" == "x$1" ];
+    if [ "" == "$1" ];
     then
         show_usage
         exit 1

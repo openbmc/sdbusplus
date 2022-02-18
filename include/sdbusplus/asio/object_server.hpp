@@ -293,8 +293,8 @@ class callback_get_instance : public callback
     {}
     int call(message_t& m) override
     {
-        auto r = func_(*value_);
-        m.append(r);
+        *value_ = func_(*value_);
+        m.append(*value_);
         return 1;
     }
 
@@ -314,7 +314,7 @@ class callback_set_instance : public callback_set
     {}
     std::tuple<SetPropertyReturnValue, int> call(message_t& m) override
     {
-        PropertyType input;
+        PropertyType input = {};
         m.read(input);
 
         auto oldValue = *value_;
@@ -373,7 +373,6 @@ class dbus_interface
 
     template <typename PropertyType, typename CallbackTypeGet>
     bool register_property_r(const std::string& name,
-                             const PropertyType& property,
                              decltype(vtable_t::flags) flags,
                              CallbackTypeGet&& getFunction)
     {
@@ -391,7 +390,7 @@ class dbus_interface
             utility::tuple_to_array(message::types::type_id<PropertyType>());
 
         auto nameItr = propertyNames_.emplace(propertyNames_.end(), name);
-        auto propertyPtr = std::make_shared<PropertyType>(property);
+        auto propertyPtr = std::make_shared<PropertyType>();
 
         callbacksGet_[name] = std::make_unique<
             callback_get_instance<PropertyType, CallbackTypeGet>>(
@@ -410,10 +409,18 @@ class dbus_interface
         return true;
     }
 
+    template <typename PropertyType, typename CallbackTypeGet>
+    bool register_property_r(const std::string& name, const PropertyType&,
+                             decltype(vtable_t::flags) flags,
+                             CallbackTypeGet&& getFunction)
+    {
+        return register_property_r<PropertyType>(
+            name, flags, std::forward<CallbackTypeGet>(getFunction));
+    }
+
     template <typename PropertyType, typename CallbackTypeSet,
               typename CallbackTypeGet>
     bool register_property_rw(const std::string& name,
-                              const PropertyType& property,
                               decltype(vtable_t::flags) flags,
                               CallbackTypeSet&& setFunction,
                               CallbackTypeGet&& getFunction)
@@ -432,7 +439,7 @@ class dbus_interface
             utility::tuple_to_array(message::types::type_id<PropertyType>());
 
         auto nameItr = propertyNames_.emplace(propertyNames_.end(), name);
-        auto propertyPtr = std::make_shared<PropertyType>(property);
+        auto propertyPtr = std::make_shared<PropertyType>();
 
         callbacksGet_[name] = std::make_unique<
             callback_get_instance<PropertyType, CallbackTypeGet>>(
@@ -447,22 +454,34 @@ class dbus_interface
         return true;
     }
 
+    template <typename PropertyType, typename CallbackTypeSet,
+              typename CallbackTypeGet>
+    bool register_property_rw(const std::string& name, const PropertyType&,
+                              decltype(vtable_t::flags) flags,
+                              CallbackTypeSet&& setFunction,
+                              CallbackTypeGet&& getFunction)
+    {
+        return register_property_rw<PropertyType>(
+            name, flags, std::forward<CallbackTypeSet>(setFunction),
+            std::forward<CallbackTypeGet>(getFunction));
+    }
+
     // default getter and setter
     template <typename PropertyType>
     bool register_property(
-        const std::string& name, const PropertyType& property,
+        const std::string& name, const PropertyType&,
         PropertyPermission access = PropertyPermission::readOnly)
     {
         if (access == PropertyPermission::readOnly)
         {
-            return register_property_r(
-                name, property, vtable::property_::emits_change,
+            return register_property_r<PropertyType>(
+                name, vtable::property_::emits_change,
                 [](const PropertyType& value) { return value; });
         }
         else
         {
-            return register_property_rw(
-                name, property, vtable::property_::emits_change,
+            return register_property_rw<PropertyType>(
+                name, vtable::property_::emits_change,
                 [](const PropertyType& req, PropertyType& old) {
                     old = req;
                     return 1;
@@ -473,12 +492,11 @@ class dbus_interface
 
     // custom setter, sets take an input property and respond with an int status
     template <typename PropertyType, typename CallbackTypeSet>
-    bool register_property(const std::string& name,
-                           const PropertyType& property,
+    bool register_property(const std::string& name, const PropertyType&,
                            CallbackTypeSet&& setFunction)
     {
-        return register_property_rw(
-            name, property, vtable::property_::emits_change,
+        return register_property_rw<PropertyType>(
+            name, vtable::property_::emits_change,
             std::forward<CallbackTypeSet>(setFunction),
             [](const PropertyType& value) { return value; });
     }
@@ -487,15 +505,14 @@ class dbus_interface
     // property. property is only passed for type deduction
     template <typename PropertyType, typename CallbackTypeSet,
               typename CallbackTypeGet>
-    bool register_property(const std::string& name,
-                           const PropertyType& property,
+    bool register_property(const std::string& name, const PropertyType&,
                            CallbackTypeSet&& setFunction,
                            CallbackTypeGet&& getFunction)
     {
-        return register_property_rw(name, property,
-                                    vtable::property_::emits_change,
-                                    std::forward<CallbackTypeSet>(setFunction),
-                                    std::forward<CallbackTypeGet>(getFunction));
+        return register_property_rw<PropertyType>(
+            name, vtable::property_::emits_change,
+            std::forward<CallbackTypeSet>(setFunction),
+            std::forward<CallbackTypeGet>(getFunction));
     }
 
     template <typename PropertyType, bool changesOnly = false>

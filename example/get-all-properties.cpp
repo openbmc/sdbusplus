@@ -25,22 +25,20 @@ class Application
         demo_ =
             objServer_.add_unique_interface(demoObjectPath, demoInterfaceName);
 
-        demo_->register_property_r(propertyGrettingName, std::string(),
-                                   sdbusplus::vtable::property_::const_,
-                                   [this](const auto&) { return greetings_; });
+        demo_->register_property_r<std::string>(
+            propertyGrettingName, sdbusplus::vtable::property_::const_,
+            [this](const auto&) { return greetings_; });
 
-        demo_->register_property_rw(
-            propertyGoodbyesName, std::string(),
-            sdbusplus::vtable::property_::emits_change,
+        demo_->register_property_rw<std::string>(
+            propertyGoodbyesName, sdbusplus::vtable::property_::emits_change,
             [this](const auto& newPropertyValue, const auto&) {
                 goodbyes_ = newPropertyValue;
                 return 1;
             },
             [this](const auto&) { return goodbyes_; });
 
-        demo_->register_property_r(
-            propertyValueName, uint32_t{42},
-            sdbusplus::vtable::property_::const_,
+        demo_->register_property_r<uint32_t>(
+            propertyValueName, sdbusplus::vtable::property_::const_,
             [](const auto& value) -> uint32_t { return value; });
 
         demo_->initialize();

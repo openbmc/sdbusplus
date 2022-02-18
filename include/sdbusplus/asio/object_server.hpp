@@ -293,8 +293,8 @@ class callback_get_instance : public callback
     {}
     int call(message_t& m) override
     {
-        auto r = func_(*value_);
-        m.append(r);
+        *value_ = func_(*value_);
+        m.append(*value_);
         return 1;
     }
 
@@ -410,6 +410,15 @@ class dbus_interface
         return true;
     }
 
+    template <typename PropertyType, typename CallbackTypeGet>
+    bool register_property_r(const std::string& name,
+                             decltype(vtable_t::flags) flags,
+                             CallbackTypeGet&& getFunction)
+    {
+        return register_property_r(name, PropertyType{}, flags,
+                                   std::forward<CallbackTypeGet>(getFunction));
+    }
+
     template <typename PropertyType, typename CallbackTypeSet,
               typename CallbackTypeGet>
     bool register_property_rw(const std::string& name,
@@ -445,6 +454,18 @@ class dbus_interface
                                               get_handler, set_handler, flags));
 
         return true;
+    }
+
+    template <typename PropertyType, typename CallbackTypeSet,
+              typename CallbackTypeGet>
+    bool register_property_rw(const std::string& name,
+                              decltype(vtable_t::flags) flags,
+                              CallbackTypeSet&& setFunction,
+                              CallbackTypeGet&& getFunction)
+    {
+        return register_property_rw(name, PropertyType{}, flags,
+                                    std::forward<CallbackTypeSet>(setFunction),
+                                    std::forward<CallbackTypeGet>(getFunction));
     }
 
     // default getter and setter

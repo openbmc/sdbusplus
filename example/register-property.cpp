@@ -23,13 +23,12 @@ class Application
         demo_ = objServer_.add_unique_interface(
             demoObjectPath, demoInterfaceName,
             [this](sdbusplus::asio::dbus_interface& demo) {
-                demo.register_property_r(
-                    propertyGrettingName, std::string(),
-                    sdbusplus::vtable::property_::const_,
+                demo.register_property_r<std::string>(
+                    propertyGrettingName, sdbusplus::vtable::property_::const_,
                     [this](const auto&) { return greetings_; });
 
-                demo.register_property_rw(
-                    propertyGoodbyesName, std::string(),
+                demo.register_property_rw<std::string>(
+                    propertyGoodbyesName,
                     sdbusplus::vtable::property_::emits_change,
                     [this](const auto& newPropertyValue, const auto&) {
                         goodbyes_ = newPropertyValue;

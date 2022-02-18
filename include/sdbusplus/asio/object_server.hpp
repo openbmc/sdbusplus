@@ -410,6 +410,16 @@ class dbus_interface
         return true;
     }
 
+    template <typename PropertyType, typename CallbackTypeGet>
+    bool register_property_r(const std::string& name,
+                             decltype(vtable_t::flags) flags,
+                             CallbackTypeGet&& getFunction)
+    {
+        const PropertyType property = getFunction(PropertyType{});
+        return register_property_r(name, property, flags,
+                                   std::forward<CallbackTypeGet>(getFunction));
+    }
+
     template <typename PropertyType, typename CallbackTypeSet,
               typename CallbackTypeGet>
     bool register_property_rw(const std::string& name,
@@ -445,6 +455,19 @@ class dbus_interface
                                               get_handler, set_handler, flags));
 
         return true;
+    }
+
+    template <typename PropertyType, typename CallbackTypeSet,
+              typename CallbackTypeGet>
+    bool register_property_rw(const std::string& name,
+                              decltype(vtable_t::flags) flags,
+                              CallbackTypeSet&& setFunction,
+                              CallbackTypeGet&& getFunction)
+    {
+        const PropertyType property = getFunction(PropertyType{});
+        return register_property_rw(name, property, flags,
+                                    std::forward<CallbackTypeSet>(setFunction),
+                                    std::forward<CallbackTypeGet>(getFunction));
     }
 
     // default getter and setter

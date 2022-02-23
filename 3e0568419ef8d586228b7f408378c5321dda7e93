@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1d22d182_dfd423f7",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000534
+      },
+      "writtenOn": "2022-02-23T10:16:05Z",
+      "side": 1,
+      "message": "My thoughts, wonder what author and maintainers think",
+      "revId": "3e0568419ef8d586228b7f408378c5321dda7e93",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a5311721_c0c1c7f0",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 418,
+      "author": {
+        "id": 1000534
+      },
+      "writtenOn": "2022-02-23T10:16:05Z",
+      "side": 1,
+      "message": "There is one significant difference between your implementation and \u0027organic\u0027 getter at https://gerrit.openbmc-project.xyz/c/openbmc/sdbusplus/+/51361/1/include/sdbusplus/asio/object_server.hpp#648 \n\nIn case getter throws sdbusplus::exception_t to notify about error (like uninitialized object or some unexpected access, which can be common during building D-Bus interfaces) your implementation will just \u0027leak\u0027 it to caller of register_property_r.\n\nI\u0027m not sure if it\u0027s a good or bad thing, however it can be unpleasant surprise for new-api-adopter. I would expect that changing API to \u0027better one\u0027 should be transparent and should not change the behavior. Especially when aforementioned exceptions are supposed to be go-to solution for error handling.",
+      "revId": "3e0568419ef8d586228b7f408378c5321dda7e93",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

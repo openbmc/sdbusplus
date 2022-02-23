@@ -87,6 +87,24 @@
       "parentUuid": "b3eb342e_accb3a83",
       "revId": "3e0568419ef8d586228b7f408378c5321dda7e93",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "11a993f4_239298a8",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 418,
+      "author": {
+        "id": 1000534
+      },
+      "writtenOn": "2022-02-23T14:08:53Z",
+      "side": 1,
+      "message": "Seems reasonable.",
+      "parentUuid": "36092bd1_96e32443",
+      "revId": "3e0568419ef8d586228b7f408378c5321dda7e93",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

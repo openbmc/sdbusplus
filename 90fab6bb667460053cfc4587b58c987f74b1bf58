@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b8afdf06_dd0eaa1a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000534
+      },
+      "writtenOn": "2022-02-23T14:08:53Z",
+      "side": 1,
+      "message": "Now changes are truly minimal and elegant. LGTM",
+      "revId": "90fab6bb667460053cfc4587b58c987f74b1bf58",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

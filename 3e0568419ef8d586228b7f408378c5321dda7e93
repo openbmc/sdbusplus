@@ -69,6 +69,24 @@
       "parentUuid": "191a7c28_b741cd9d",
       "revId": "3e0568419ef8d586228b7f408378c5321dda7e93",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "36092bd1_96e32443",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 418,
+      "author": {
+        "id": 1000678
+      },
+      "writtenOn": "2022-02-23T14:03:55Z",
+      "side": 1,
+      "message": "I dig into details and noticed that when interface is initialized signal \u0027InterfacesAdded\u0027 is send. To create message for \u0027InterfacesAdded\u0027 signal getFunction is called for the first time, but result is ignored. So this is perfect place to get initial value.",
+      "parentUuid": "b3eb342e_accb3a83",
+      "revId": "3e0568419ef8d586228b7f408378c5321dda7e93",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

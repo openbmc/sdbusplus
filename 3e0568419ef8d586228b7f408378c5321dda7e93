@@ -51,6 +51,24 @@
       "parentUuid": "a5311721_c0c1c7f0",
       "revId": "3e0568419ef8d586228b7f408378c5321dda7e93",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b3eb342e_accb3a83",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 418,
+      "author": {
+        "id": 1000678
+      },
+      "writtenOn": "2022-02-23T10:55:46Z",
+      "side": 1,
+      "message": "In all code samples I saw no one is checking if this function returns true or false.\n\nThrow from get handler is only visible on dbus, there will be error message during Get, GetAll, introspect. As Adrian noticed this get handler will be called before adding property and it should be handled by called. It can be good or bad thing depending of how application is designed. For example in case of telemetry service it will be a good thing, but for some other application it can result in unhandled exception.\n\nI will do some tests and investigate some more sdbusplus code if there is another way to do this.",
+      "parentUuid": "191a7c28_b741cd9d",
+      "revId": "3e0568419ef8d586228b7f408378c5321dda7e93",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

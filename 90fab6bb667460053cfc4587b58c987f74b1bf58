@@ -1,6 +1,29 @@
 {
   "comments": [
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "685857d8_6cab8b3c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-02-23T18:14:43Z",
+      "side": 1,
+      "message": "I don\u0027t see this part implemented in the code.",
+      "range": {
+        "startLine": 9,
+        "startChar": 64,
+        "endLine": 10,
+        "endChar": 61
+      },
+      "revId": "90fab6bb667460053cfc4587b58c987f74b1bf58",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "b8afdf06_dd0eaa1a",
@@ -14,6 +37,52 @@
       "writtenOn": "2022-02-23T14:08:53Z",
       "side": 1,
       "message": "Now changes are truly minimal and elegant. LGTM",
+      "revId": "90fab6bb667460053cfc4587b58c987f74b1bf58",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8e57156c_023b4b43",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 413,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-02-23T18:14:43Z",
+      "side": 1,
+      "message": "It\u0027s too bad we can\u0027t default this using a std::result_of(CallbackTypeGet)... or can we?",
+      "range": {
+        "startLine": 413,
+        "startChar": 23,
+        "endLine": 413,
+        "endChar": 37
+      },
+      "revId": "90fab6bb667460053cfc4587b58c987f74b1bf58",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8b0463ef_2eee369f",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 418,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-02-23T18:14:43Z",
+      "side": 1,
+      "message": "The commit message claimed that the result of getFunction would be used for the default/initial value, but it seems here that we\u0027re using a default-initialization instead.  How does this solve the problem posed in the commit message?  Have I missed some additional code elsewhere?",
+      "range": {
+        "startLine": 418,
+        "startChar": 41,
+        "endLine": 418,
+        "endChar": 55
+      },
       "revId": "90fab6bb667460053cfc4587b58c987f74b1bf58",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }

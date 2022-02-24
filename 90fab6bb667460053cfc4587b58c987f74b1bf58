@@ -50,6 +50,30 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "0a69054c_3e716bcb",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-02-24T19:25:34Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "412fa03c_75f6fa7c",
+      "range": {
+        "startLine": 9,
+        "startChar": 64,
+        "endLine": 10,
+        "endChar": 61
+      },
+      "revId": "90fab6bb667460053cfc4587b58c987f74b1bf58",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "b8afdf06_dd0eaa1a",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 3
@@ -112,6 +136,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "935b9c74_4bb02216",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 413,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-02-24T19:25:34Z",
+      "side": 1,
+      "message": "Yeah, the issue is that we somewhere need to know the type passed in.  invoke_result / result_of need to know the arg types in order to be able to deduce the result type.  Since we have auto everywhere (intentionally) we need some template property to fix the value parameter / result types.",
+      "parentUuid": "e47bda39_8d9ed7df",
+      "range": {
+        "startLine": 413,
+        "startChar": 23,
+        "endLine": 413,
+        "endChar": 37
+      },
+      "revId": "90fab6bb667460053cfc4587b58c987f74b1bf58",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "8b0463ef_2eee369f",
@@ -149,6 +197,30 @@
       "side": 1,
       "message": "It\u0027s in line 296, GetFunction is called there for the first time with passed initial value as parameter, but it is possible to return different value, but initialValue was not modified. It was possible to execute set which changed value but because old value was incorrect signal could misbehave.\n\nPrevious code did it like this:\nint member \u003d 10;\nregisterProperty_rw(\"Prop\", int{}, [\u0026member](const auto\u0026 old, auto\u0026 new) { \n  member \u003d old \u003d new;\n  return 1;\n},\n[\u0026member](const auto\u0026 old) {\n  return member\n});\n\nshared_ptr\u003cint\u003e value \u003d int{};\n\nduring signal InterfaceAdded:\nsignal.append(GetHandler(*value)); // returns 10\n\nduring set:\nnew \u003d 0;\nold \u003d *value; // value is 0 because it was not assigned to value returned by GetHandler\n*value \u003d SetHandler(*value, new);\nif (old !\u003d *value) { signalProperty(*value); } // actual value changed from 10 to 0, nothing happens\n\n\nNew code works like this:\nregisterProperty_rw\u003cint\u003e(\"Prop\", [\u0026member](const auto\u0026 old, auto\u0026 new) { \n  member \u003d old \u003d new;\n  return 1;\n},\n[\u0026member](const auto\u0026 old) {\n  return member\n});\n\nshared_ptr\u003cint\u003e value \u003d int{};\n\nduring signal InterfaceAdded:\n*value \u003d GetHandler(*value); // returns 10\nsignal.append(*value); \n\nduring set:\nnew \u003d 0;\nold \u003d *value; // value is 10 because it was assigned to value returned by GetHandler\n*value \u003d SetHandler(*value, new);\nif (old !\u003d *value) { signalProperty(*value); } // actual value changed from 10 to 0, signal is send",
       "parentUuid": "8b0463ef_2eee369f",
+      "range": {
+        "startLine": 418,
+        "startChar": 41,
+        "endLine": 418,
+        "endChar": 55
+      },
+      "revId": "90fab6bb667460053cfc4587b58c987f74b1bf58",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d8f85021_c8d6fa0a",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 418,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-02-24T19:25:34Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "82ad90af_d39f4fb6",
       "range": {
         "startLine": 418,
         "startChar": 41,

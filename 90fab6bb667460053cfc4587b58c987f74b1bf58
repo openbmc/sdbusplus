@@ -24,6 +24,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "412fa03c_75f6fa7c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1000678
+      },
+      "writtenOn": "2022-02-24T08:47:07Z",
+      "side": 1,
+      "message": "Maybe response to other comment will explain it.",
+      "parentUuid": "685857d8_6cab8b3c",
+      "range": {
+        "startLine": 9,
+        "startChar": 64,
+        "endLine": 10,
+        "endChar": 61
+      },
+      "revId": "90fab6bb667460053cfc4587b58c987f74b1bf58",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "b8afdf06_dd0eaa1a",
@@ -66,6 +90,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "e47bda39_8d9ed7df",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 413,
+      "author": {
+        "id": 1000678
+      },
+      "writtenOn": "2022-02-24T08:47:07Z",
+      "side": 1,
+      "message": "Most of usages is like this:\n[](const auto\u0026 old, auto\u0026 new) {\n  return something;\n}\n\nBecause auto return type cannot be defaulted (at least in some cases it cannot).",
+      "parentUuid": "8e57156c_023b4b43",
+      "range": {
+        "startLine": 413,
+        "startChar": 23,
+        "endLine": 413,
+        "endChar": 37
+      },
+      "revId": "90fab6bb667460053cfc4587b58c987f74b1bf58",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "8b0463ef_2eee369f",
         "filename": "include/sdbusplus/asio/object_server.hpp",
         "patchSetId": 3
@@ -77,6 +125,30 @@
       "writtenOn": "2022-02-23T18:14:43Z",
       "side": 1,
       "message": "The commit message claimed that the result of getFunction would be used for the default/initial value, but it seems here that we\u0027re using a default-initialization instead.  How does this solve the problem posed in the commit message?  Have I missed some additional code elsewhere?",
+      "range": {
+        "startLine": 418,
+        "startChar": 41,
+        "endLine": 418,
+        "endChar": 55
+      },
+      "revId": "90fab6bb667460053cfc4587b58c987f74b1bf58",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "82ad90af_d39f4fb6",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 418,
+      "author": {
+        "id": 1000678
+      },
+      "writtenOn": "2022-02-24T08:47:07Z",
+      "side": 1,
+      "message": "It\u0027s in line 296, GetFunction is called there for the first time with passed initial value as parameter, but it is possible to return different value, but initialValue was not modified. It was possible to execute set which changed value but because old value was incorrect signal could misbehave.\n\nPrevious code did it like this:\nint member \u003d 10;\nregisterProperty_rw(\"Prop\", int{}, [\u0026member](const auto\u0026 old, auto\u0026 new) { \n  member \u003d old \u003d new;\n  return 1;\n},\n[\u0026member](const auto\u0026 old) {\n  return member\n});\n\nshared_ptr\u003cint\u003e value \u003d int{};\n\nduring signal InterfaceAdded:\nsignal.append(GetHandler(*value)); // returns 10\n\nduring set:\nnew \u003d 0;\nold \u003d *value; // value is 0 because it was not assigned to value returned by GetHandler\n*value \u003d SetHandler(*value, new);\nif (old !\u003d *value) { signalProperty(*value); } // actual value changed from 10 to 0, nothing happens\n\n\nNew code works like this:\nregisterProperty_rw\u003cint\u003e(\"Prop\", [\u0026member](const auto\u0026 old, auto\u0026 new) { \n  member \u003d old \u003d new;\n  return 1;\n},\n[\u0026member](const auto\u0026 old) {\n  return member\n});\n\nshared_ptr\u003cint\u003e value \u003d int{};\n\nduring signal InterfaceAdded:\n*value \u003d GetHandler(*value); // returns 10\nsignal.append(*value); \n\nduring set:\nnew \u003d 0;\nold \u003d *value; // value is 10 because it was assigned to value returned by GetHandler\n*value \u003d SetHandler(*value, new);\nif (old !\u003d *value) { signalProperty(*value); } // actual value changed from 10 to 0, signal is send",
+      "parentUuid": "8b0463ef_2eee369f",
       "range": {
         "startLine": 418,
         "startChar": 41,

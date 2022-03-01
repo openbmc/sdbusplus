@@ -242,7 +242,7 @@ class coroutine_method_instance : public callback
     }
     template <typename T>
     std::enable_if_t<std::is_void_v<T>, void>
-        callFunction(message_t& m, InputTupleType& inputArgs)
+        callFunction(message_t&, InputTupleType& inputArgs)
     {
         std::apply(func_, inputArgs);
     }

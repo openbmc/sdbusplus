@@ -125,18 +125,14 @@ class callback_method_instance : public callback
     using InputTupleType = utility::decay_tuple_t<CallbackSignature>;
     using ResultType = boost::callable_traits::return_type_t<CallbackType>;
     CallbackType func_;
-    template <typename T>
-    std::enable_if_t<!std::is_void_v<T>, void>
-        callFunction(message_t& m, InputTupleType& inputArgs)
+
+    void callFunction(message_t& m, InputTupleType& inputArgs)
     {
-        ResultType r = std::apply(func_, inputArgs);
-        m.append(r);
-    }
-    template <typename T>
-    std::enable_if_t<std::is_void_v<T>, void>
-        callFunction(message_t&, InputTupleType& inputArgs)
-    {
-        std::apply(func_, inputArgs);
+        auto r = std::apply(func_, inputArgs);
+        if constexpr (!std::is_void_v<decltype(r)>)
+        {
+            m.append(r);
+        }
     }
 
     // optional message-first-argument callback
@@ -161,7 +157,7 @@ class callback_method_instance : public callback
         {
             inputArgs.emplace(dbusArgs);
         }
-        callFunction<ResultType>(ret, *inputArgs);
+        callFunction(ret, *inputArgs);
         ret.method_return();
         return 1;
     };
@@ -214,19 +210,16 @@ class coroutine_method_instance : public callback
     using ResultType = boost::callable_traits::return_type_t<CallbackType>;
     boost::asio::io_context& io_;
     CallbackType func_;
-    template <typename T>
-    std::enable_if_t<!std::is_void_v<T>, void>
-        callFunction(message_t& m, InputTupleType& inputArgs)
+
+    void callFunction(message_t& m, InputTupleType& inputArgs)
     {
-        ResultType r = std::apply(func_, inputArgs);
-        m.append(r);
+        auto r = std::apply(func_, inputArgs);
+        if constexpr (!std::is_void_v<decltype(r)>)
+        {
+            m.append(r);
+        }
     }
-    template <typename T>
-    std::enable_if_t<std::is_void_v<T>, void>
-        callFunction(message_t&, InputTupleType& inputArgs)
-    {
-        std::apply(func_, inputArgs);
-    }
+
     // co-routine body for call
     void expandCall(boost::asio::yield_context yield, message_t& m)
     {
@@ -257,7 +250,7 @@ class coroutine_method_instance : public callback
             inputArgs.emplace(std::tuple_cat(
                 std::forward_as_tuple(std::move(yield)), dbusArgs));
         }
-        callFunction<ResultType>(ret, *inputArgs);
+        callFunction(ret, *inputArgs);
         ret.method_return();
     };
 };

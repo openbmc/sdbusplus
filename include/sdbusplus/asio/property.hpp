@@ -26,8 +26,9 @@ inline void
     static_assert(std::is_same_v<T, std::decay_t<T>>);
 
     bus.async_method_call(
-        [handler = std::move(handler)](boost::system::error_code ec,
-                                       std::variant<std::monostate, T>& ret) {
+        [handler =
+             std::move(handler)](boost::system::error_code ec,
+                                 std::variant<std::monostate, T>& ret) mutable {
             if (ec)
             {
                 handler(ec, {});

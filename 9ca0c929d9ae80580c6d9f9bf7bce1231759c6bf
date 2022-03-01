@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "81fde5c5_00a0668b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2022-03-01T17:37:47Z",
+      "side": 1,
+      "message": "This stuff if ripe for some simplification.  The block of code this is changing is almost 100% duplicated with the method of the same name above it, and that duplicated block already comments out the message argument.  Unless I\u0027m missing something, all 4 of those methods could be collapsed into:\n    template \u003ctypename T\u003e\n    void callFunction(message_t\u0026 m, InputTupleType\u0026 inputArgs)\n    {\n        ResultType \u003d r \u003d std::apply(func_, inputArgs);\n        if constexpr(!std::is_void_v\u003cT\u003e){\n            m.append(r);\n        }\n    }\n\n\nNothing to be done in the context of this commit, but I\u0027ll take a look at that file and see if we can simplify some of the templates a bit.  They\u0027ve devolved a lot since they were originally written.",
+      "revId": "9ca0c929d9ae80580c6d9f9bf7bce1231759c6bf",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

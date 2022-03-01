@@ -75,7 +75,6 @@ template <typename T>
 static constexpr bool callbackWantsMessage = (FirstArgIsMessage_v<T> ||
                                               SecondArgIsMessage_v<T>);
 
-#ifdef __cpp_if_constexpr
 namespace details
 {
 // small helper class to count the number of non-dbus arguments
@@ -109,7 +108,6 @@ struct NonDbusArgsCount<std::tuple<FirstArg, OtherArgs...>>
     }
 };
 } // namespace details
-#endif // __cpp_if_constexpr
 
 template <typename CallbackType>
 class callback_method_instance : public callback
@@ -140,7 +138,7 @@ class callback_method_instance : public callback
     {
         std::apply(func_, inputArgs);
     }
-#ifdef __cpp_if_constexpr
+
     // optional message-first-argument callback
     int expandCall(message_t& m)
     {
@@ -167,25 +165,8 @@ class callback_method_instance : public callback
         ret.method_return();
         return 1;
     };
-#else
-    // normal dbus-types-only callback
-    int expandCall(message_t& m)
-    {
-        InputTupleType inputArgs;
-        if (!utility::read_into_tuple(inputArgs, m))
-        {
-            return -EINVAL;
-        }
-
-        auto ret = m.new_method_return();
-        callFunction<ResultType>(ret, inputArgs);
-        ret.method_return();
-        return 1;
-    };
-#endif
 };
 
-#ifdef __cpp_if_constexpr
 template <typename CallbackType>
 class coroutine_method_instance : public callback
 {
@@ -280,7 +261,6 @@ class coroutine_method_instance : public callback
         ret.method_return();
     };
 };
-#endif // __cpp_if_constexpr
 
 template <typename PropertyType, typename CallbackType>
 class callback_get_instance : public callback
@@ -573,7 +553,6 @@ class dbus_interface
         return true;
     }
 
-#ifdef __cpp_if_constexpr
     template <typename CallbackType>
     bool register_method(const std::string& name, CallbackType&& handler)
     {
@@ -612,36 +591,6 @@ class dbus_interface
                                             resultType.data(), method_handler));
         return true;
     }
-#else  // __cpp_if_constexpr not available
-       // without __cpp_if_constexpr, no support for message or yield in
-       // callback
-    template <typename CallbackType>
-    bool register_method(const std::string& name, CallbackType&& handler)
-    {
-        using CallbackSignature = boost::callable_traits::args_t<CallbackType>;
-        using InputTupleType = utility::decay_tuple_t<CallbackSignature>;
-        using ResultType = boost::callable_traits::return_type_t<CallbackType>;
-
-        if (initialized_)
-        {
-            return false;
-        }
-        static const auto argType = utility::strip_ends(
-            utility::tuple_to_array(message::types::type_id<InputTupleType>()));
-        static const auto resultType =
-            utility::tuple_to_array(message::types::type_id<ResultType>());
-
-        auto nameItr = methodNames_.emplace(methodNames_.end(), name);
-
-        callbacksMethod_[name] =
-            std::make_unique<callback_method_instance<CallbackType>>(
-                std::move(handler));
-
-        vtable_.emplace_back(vtable::method(nameItr->c_str(), argType.data(),
-                                            resultType.data(), method_handler));
-        return true;
-    }
-#endif // __cpp_if_constexpr
 
     static int get_handler(sd_bus* /*bus*/, const char* /*path*/,
                            const char* /*interface*/, const char* property,

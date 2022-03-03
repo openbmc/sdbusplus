@@ -1,0 +1,129 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6f945c59_19a75e04",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-03-03T19:18:50Z",
+      "side": 1,
+      "message": "Do you have any kind of design / design updates to go along with this proposal?  There are aspects that I\u0027m kind of guessing at in the review.",
+      "revId": "5accd470013b3d72788a1cb4d2226d8891d70044",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bcc250a5_f0218a1e",
+        "filename": "include/sdbusplus/event.hpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-03-03T19:18:50Z",
+      "side": 1,
+      "message": "namespace name should be singular.",
+      "range": {
+        "startLine": 8,
+        "startChar": 10,
+        "endLine": 8,
+        "endChar": 16
+      },
+      "revId": "5accd470013b3d72788a1cb4d2226d8891d70044",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "098c1de6_996ea5b5",
+        "filename": "include/sdbusplus/event.hpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-03-03T19:18:50Z",
+      "side": 1,
+      "message": "There is quite a bit of overlap with this and the existing errors.  I would lean towards reusing the generated_exception class as much as we can.  Is there any harm in having this inherit from that?",
+      "revId": "5accd470013b3d72788a1cb4d2226d8891d70044",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2c46b55d_f4e4dff5",
+        "filename": "include/sdbusplus/event.hpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-03-03T19:18:50Z",
+      "side": 1,
+      "message": "What is a \"consumer\"?  Why is it singular?  I would have expect it to be more likely a set.\n\nHow do we define and document valid consumers, whatever they are?",
+      "revId": "5accd470013b3d72788a1cb4d2226d8891d70044",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ecb65ec7_b267d49a",
+        "filename": "include/sdbusplus/event.hpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-03-03T19:18:50Z",
+      "side": 1,
+      "message": "Please add \n\nusing event_t \u003d event::event\n\nso that developers can do simply \u0027sdbusplus::event_t\u0027.\n\n(If we even go this route.  I\u0027m slightly concerned about these events not really being a dbus concept and so not really belonging in this library and also leading to confusion with actual sd_bus/sd_event...)",
+      "revId": "5accd470013b3d72788a1cb4d2226d8891d70044",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bd1652aa_6b1f7ede",
+        "filename": "tools/sdbusplus/templates/event.hpp.mako",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-03-03T19:18:50Z",
+      "side": 1,
+      "message": "These template files are almost identical between event.?pp.mako and error.?pp.mako.  I\u0027d really like it if we can combine the handling for them and maybe have a minor change based on if it is an error.yaml or event.yaml (passed in as a parameter of some sort).",
+      "revId": "5accd470013b3d72788a1cb4d2226d8891d70044",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "34796c45_1b660f0f",
+        "filename": "tools/sdbusplus/templates/event.md.mako",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-03-03T19:18:50Z",
+      "side": 1,
+      "message": "This doesn\u0027t appear to be hooked in anywhere.",
+      "revId": "5accd470013b3d72788a1cb4d2226d8891d70044",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

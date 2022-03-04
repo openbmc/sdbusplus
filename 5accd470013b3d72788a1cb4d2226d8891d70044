@@ -20,6 +20,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "5dabbba0_c8aeb9ff",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1000397
+      },
+      "writtenOn": "2022-03-04T03:33:45Z",
+      "side": 1,
+      "message": "\u003e Do you have any kind of design / design updates to go along with this proposal?  There are aspects that I\u0027m kind of guessing at in the review.\n\nI will update this design doc\nhttps://gerrit.openbmc-project.xyz/c/openbmc/docs/+/46023",
+      "parentUuid": "6f945c59_19a75e04",
+      "revId": "5accd470013b3d72788a1cb4d2226d8891d70044",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "bcc250a5_f0218a1e",
         "filename": "include/sdbusplus/event.hpp",
         "patchSetId": 3
@@ -31,6 +49,30 @@
       "writtenOn": "2022-03-03T19:18:50Z",
       "side": 1,
       "message": "namespace name should be singular.",
+      "range": {
+        "startLine": 8,
+        "startChar": 10,
+        "endLine": 8,
+        "endChar": 16
+      },
+      "revId": "5accd470013b3d72788a1cb4d2226d8891d70044",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "81b6f706_7d851ebb",
+        "filename": "include/sdbusplus/event.hpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1000397
+      },
+      "writtenOn": "2022-03-04T03:33:45Z",
+      "side": 1,
+      "message": "Ack\nWill update it.",
+      "parentUuid": "bcc250a5_f0218a1e",
       "range": {
         "startLine": 8,
         "startChar": 10,
@@ -60,6 +102,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "99fa0b66_63db0e20",
+        "filename": "include/sdbusplus/event.hpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1000397
+      },
+      "writtenOn": "2022-03-04T03:33:45Z",
+      "side": 1,
+      "message": "\u003e There is quite a bit of overlap with this and the existing errors.  I would lean towards reusing the generated_exception class as much as we can.  \n\nDo you mean to extend event in exception.hpp?\n\n\u003e Is there any harm in having this inherit from that?\n\nSince error inherits std::exception, my understanding is that event does not represent an error, and they just have the same `name` and `description`, which I tend to separate.",
+      "parentUuid": "098c1de6_996ea5b5",
+      "revId": "5accd470013b3d72788a1cb4d2226d8891d70044",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "2c46b55d_f4e4dff5",
         "filename": "include/sdbusplus/event.hpp",
         "patchSetId": 3
@@ -71,6 +131,24 @@
       "writtenOn": "2022-03-03T19:18:50Z",
       "side": 1,
       "message": "What is a \"consumer\"?  Why is it singular?  I would have expect it to be more likely a set.\n\nHow do we define and document valid consumers, whatever they are?",
+      "revId": "5accd470013b3d72788a1cb4d2226d8891d70044",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6b689add_e773e7d9",
+        "filename": "include/sdbusplus/event.hpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1000397
+      },
+      "writtenOn": "2022-03-04T03:33:45Z",
+      "side": 1,
+      "message": "\u003e What is a \"consumer\"?  Why is it singular?  I would have expect it to be more likely a set.\n\u003e \n\u003e How do we define and document valid consumers, whatever they are?\n\nMy understanding is that the consumer should be:\n\nAudit: consumer\u003daudit\nRedfish: consumer\u003dredfish\nSEL: consumer\u003dsel\n...",
+      "parentUuid": "2c46b55d_f4e4dff5",
       "revId": "5accd470013b3d72788a1cb4d2226d8891d70044",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
@@ -94,6 +172,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "0e8f3c56_ef123c43",
+        "filename": "include/sdbusplus/event.hpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1000397
+      },
+      "writtenOn": "2022-03-04T03:33:45Z",
+      "side": 1,
+      "message": "Ack\nWill update it.",
+      "parentUuid": "ecb65ec7_b267d49a",
+      "revId": "5accd470013b3d72788a1cb4d2226d8891d70044",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "bd1652aa_6b1f7ede",
         "filename": "tools/sdbusplus/templates/event.hpp.mako",
         "patchSetId": 3
@@ -111,6 +207,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "275e94ce_0cf40978",
+        "filename": "tools/sdbusplus/templates/event.hpp.mako",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1000397
+      },
+      "writtenOn": "2022-03-04T03:33:45Z",
+      "side": 1,
+      "message": "\u003e These template files are almost identical between event.?pp.mako and error.?pp.mako.  I\u0027d really like it if we can combine the handling for them and maybe have a minor change based on if it is an error.yaml or event.yaml (passed in as a parameter of some sort).\n\nSorry, I think we should evaluate whether events really need to rely on exceptions and whether there will be extensions later\nNow, I still tend to separate event from error",
+      "parentUuid": "bd1652aa_6b1f7ede",
+      "revId": "5accd470013b3d72788a1cb4d2226d8891d70044",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "34796c45_1b660f0f",
         "filename": "tools/sdbusplus/templates/event.md.mako",
         "patchSetId": 3
@@ -122,6 +236,24 @@
       "writtenOn": "2022-03-03T19:18:50Z",
       "side": 1,
       "message": "This doesn\u0027t appear to be hooked in anywhere.",
+      "revId": "5accd470013b3d72788a1cb4d2226d8891d70044",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "26d5d22f_deb2d4ec",
+        "filename": "tools/sdbusplus/templates/event.md.mako",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1000397
+      },
+      "writtenOn": "2022-03-04T03:33:45Z",
+      "side": 1,
+      "message": "\u003e This doesn\u0027t appear to be hooked in anywhere.\n\nTBH, Here I copied from error.md.mako\nWill remove it.",
+      "parentUuid": "34796c45_1b660f0f",
       "revId": "5accd470013b3d72788a1cb4d2226d8891d70044",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }

@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "15ca5371_515b8f7f",
+        "filename": "include/sdbusplus/unpack_properties.hpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 1000534
+      },
+      "writtenOn": "2022-03-07T09:08:29Z",
+      "side": 1,
+      "message": "Can\u0027t we just accept only const pointers?",
+      "range": {
+        "startLine": 55,
+        "startChar": 21,
+        "endLine": 55,
+        "endChar": 73
+      },
+      "revId": "1db5d2b1127181810b0bf0612c3c3e5ba94a2fd5",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3c784aa3_9bca456d",
+        "filename": "include/sdbusplus/unpack_properties.hpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 1000534
+      },
+      "writtenOn": "2022-03-07T09:08:29Z",
+      "side": 1,
+      "message": "I assume pointers are added as optional-like alternative. Is it actually necessary?  While optional\u003c\u003e is self explaining, the same behavior for pointers (no error on failure) might come surprising to caller.",
+      "range": {
+        "startLine": 102,
+        "startChar": 23,
+        "endLine": 102,
+        "endChar": 52
+      },
+      "revId": "1db5d2b1127181810b0bf0612c3c3e5ba94a2fd5",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d0c5654c_83a65f6f",
+        "filename": "test/utility/type_traits.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 1000534
+      },
+      "writtenOn": "2022-03-07T09:08:29Z",
+      "side": 1,
+      "message": "If test should also serve as documentation, perhaps it\u0027s good idea to have testcases with const and/or ref?",
+      "revId": "1db5d2b1127181810b0bf0612c3c3e5ba94a2fd5",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

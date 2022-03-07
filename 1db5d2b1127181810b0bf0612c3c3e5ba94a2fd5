@@ -26,6 +26,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "5226e900_f722e658",
+        "filename": "include/sdbusplus/unpack_properties.hpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 1000678
+      },
+      "writtenOn": "2022-03-07T09:32:45Z",
+      "side": 1,
+      "message": "The thing is we can use get_if\u003cint\u003e, but can\u0027t get_if\u003cconst int\u003e, it\u0027s API restriction. Container is const so get_if\u003cint\u003e will return const int* so everything is fine.",
+      "parentUuid": "15ca5371_515b8f7f",
+      "range": {
+        "startLine": 55,
+        "startChar": 21,
+        "endLine": 55,
+        "endChar": 73
+      },
+      "revId": "1db5d2b1127181810b0bf0612c3c3e5ba94a2fd5",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "3c784aa3_9bca456d",
         "filename": "include/sdbusplus/unpack_properties.hpp",
         "patchSetId": 9
@@ -37,6 +61,30 @@
       "writtenOn": "2022-03-07T09:08:29Z",
       "side": 1,
       "message": "I assume pointers are added as optional-like alternative. Is it actually necessary?  While optional\u003c\u003e is self explaining, the same behavior for pointers (no error on failure) might come surprising to caller.",
+      "range": {
+        "startLine": 102,
+        "startChar": 23,
+        "endLine": 102,
+        "endChar": 52
+      },
+      "revId": "1db5d2b1127181810b0bf0612c3c3e5ba94a2fd5",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e5f38659_0989324b",
+        "filename": "include/sdbusplus/unpack_properties.hpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 1000678
+      },
+      "writtenOn": "2022-03-07T09:32:45Z",
+      "side": 1,
+      "message": "Yes it is necessary for bmcweb purposes. If we want to introduce this function in bmcweb it can\u0027t increase binary size and to do this we need to use pointers. Pointers behave exactly like optionals, so users can choose between them.\n\nBmcweb policy is that each pointer needs to be checked before using, so for bmcweb it would be more surprising that there is no need to check pointer before dereferencing.",
+      "parentUuid": "3c784aa3_9bca456d",
       "range": {
         "startLine": 102,
         "startChar": 23,

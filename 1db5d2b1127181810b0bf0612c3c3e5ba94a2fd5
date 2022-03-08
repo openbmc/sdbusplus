@@ -48,6 +48,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "19b3ec33_ebf73134",
+        "filename": "include/sdbusplus/unpack_properties.hpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 1000534
+      },
+      "writtenOn": "2022-03-08T08:47:09Z",
+      "side": 1,
+      "message": "Oh, I read it wrong. This makes sense, thanks!",
+      "parentUuid": "5226e900_f722e658",
+      "range": {
+        "startLine": 55,
+        "startChar": 21,
+        "endLine": 55,
+        "endChar": 73
+      },
+      "revId": "1db5d2b1127181810b0bf0612c3c3e5ba94a2fd5",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "3c784aa3_9bca456d",
@@ -85,6 +109,30 @@
       "side": 1,
       "message": "Yes it is necessary for bmcweb purposes. If we want to introduce this function in bmcweb it can\u0027t increase binary size and to do this we need to use pointers. Pointers behave exactly like optionals, so users can choose between them.\n\nBmcweb policy is that each pointer needs to be checked before using, so for bmcweb it would be more surprising that there is no need to check pointer before dereferencing.",
       "parentUuid": "3c784aa3_9bca456d",
+      "range": {
+        "startLine": 102,
+        "startChar": 23,
+        "endLine": 102,
+        "endChar": 52
+      },
+      "revId": "1db5d2b1127181810b0bf0612c3c3e5ba94a2fd5",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "020fbb87_34bcef83",
+        "filename": "include/sdbusplus/unpack_properties.hpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 1000534
+      },
+      "writtenOn": "2022-03-08T08:47:09Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "e5f38659_0989324b",
       "range": {
         "startLine": 102,
         "startChar": 23,

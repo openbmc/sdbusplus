@@ -158,6 +158,24 @@
       "message": "If test should also serve as documentation, perhaps it\u0027s good idea to have testcases with const and/or ref?",
       "revId": "1db5d2b1127181810b0bf0612c3c3e5ba94a2fd5",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0b8737cc_fc28241d",
+        "filename": "test/utility/type_traits.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 1000534
+      },
+      "writtenOn": "2022-03-08T12:15:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d0c5654c_83a65f6f",
+      "revId": "1db5d2b1127181810b0bf0612c3c3e5ba94a2fd5",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

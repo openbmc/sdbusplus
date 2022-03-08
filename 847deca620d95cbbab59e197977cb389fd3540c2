@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3ff675bc_311bd1d5",
+        "filename": "test/utility/type_traits.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 1000534
+      },
+      "writtenOn": "2022-03-08T12:15:47Z",
+      "side": 1,
+      "message": "nit. Maybe some test-only wrapper for that would help in code clarity. Correct me if I\u0027m wrong but maybe we could do in test body\n```\nusing traits \u003d functor_traits\u003cdecltype(functor)\u003e;\n``` \n?",
+      "range": {
+        "startLine": 104,
+        "startChar": 9,
+        "endLine": 104,
+        "endChar": 67
+      },
+      "revId": "847deca620d95cbbab59e197977cb389fd3540c2",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

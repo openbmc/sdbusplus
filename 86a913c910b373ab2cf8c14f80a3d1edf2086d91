@@ -67,6 +67,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "64e7e592_24be2f35",
+        "filename": "include/sdbusplus/asio/property.hpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-03-12T00:27:33Z",
+      "side": 1,
+      "message": "Ok.",
+      "parentUuid": "b61baf57_138e8f4e",
+      "range": {
+        "startLine": 13,
+        "startChar": 4,
+        "endLine": 13,
+        "endChar": 60
+      },
+      "revId": "86a913c910b373ab2cf8c14f80a3d1edf2086d91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "8c2773f4_9f72b84b",
         "filename": "include/sdbusplus/asio/property.hpp",
         "patchSetId": 11
@@ -112,6 +136,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "cb4e4d1f_cfd81acf",
+        "filename": "include/sdbusplus/asio/property.hpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-03-12T00:27:33Z",
+      "side": 1,
+      "message": "I don\u0027t know what I was thinking.  l-value references can be converted to r-value references without any additional conversion.  I guess there might be a conversion if the T on line 22 is a const\u0026, but that would be the only case.\n\nHaving said that, I\u0027m not sure it is good practice to cast someone\u0027s l-value reference into an r-value reference that you give away somewhere else.  But, if they really wanted no guarantees that it wouldn\u0027t change, it should have been a const\u0026.",
+      "parentUuid": "7b5b7965_a988b582",
+      "range": {
+        "startLine": 17,
+        "startChar": 26,
+        "endLine": 17,
+        "endChar": 44
+      },
+      "revId": "86a913c910b373ab2cf8c14f80a3d1edf2086d91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "58d4a954_5953093d",
@@ -125,6 +173,30 @@
       "writtenOn": "2022-03-12T00:08:13Z",
       "side": 1,
       "message": "I kinda think we don\u0027t even want this overload to be possible.  If you\u0027re loading things into a map, then parsing them to known-at-compile-time parameters, you\u0027re doing something that\u0027s inherently wasteful both performance-wise, and binary size-wise compared to just loading them into an unordered structure (ie vector\u003cpair\u003e) before doing the parameter readout.\n\nWe should help the user make the right data structure decisions by disallowing the structures that we know are less efficient and give the same result.  FWIW, I have patches out against bmcweb (one still left to merge of 10 or so) to basically consolidate on making this consistent.",
+      "range": {
+        "startLine": 30,
+        "startChar": 0,
+        "endLine": 30,
+        "endChar": 56
+      },
+      "revId": "86a913c910b373ab2cf8c14f80a3d1edf2086d91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "32ec1fe1_849ec080",
+        "filename": "include/sdbusplus/unpack_properties.hpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-03-12T00:27:33Z",
+      "side": 1,
+      "message": "I\u0027m not following you here.  Isn\u0027t the Container the stuff that came off the dbus?  This constexpr is just for cases where you\u0027re using a map and not a vector\u003cpair\u003e (flatmap?).",
+      "parentUuid": "58d4a954_5953093d",
       "range": {
         "startLine": 30,
         "startChar": 0,
@@ -171,6 +243,30 @@
       "writtenOn": "2022-03-12T00:08:13Z",
       "side": 1,
       "message": "As written, you\u0027re doing an N^2 loop over the incoming properties, given that findProperty calls find_if (which is the first N), then this is looping over each property (the second N)  maybe this isn\u0027t a huge deal?",
+      "range": {
+        "startLine": 48,
+        "startChar": 0,
+        "endLine": 48,
+        "endChar": 51
+      },
+      "revId": "86a913c910b373ab2cf8c14f80a3d1edf2086d91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "96604bd8_4e8cd177",
+        "filename": "include/sdbusplus/unpack_properties.hpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-03-12T00:27:33Z",
+      "side": 1,
+      "message": "It is N^2 but it is probably M^2 if you aggregate all the args.  Arguably that\u0027s smaller but the aggregation itself requires dynamic memory.  The number of properties is probably small enough to not worry about it now.",
+      "parentUuid": "66a7c8d2_934f4684",
       "range": {
         "startLine": 48,
         "startChar": 0,

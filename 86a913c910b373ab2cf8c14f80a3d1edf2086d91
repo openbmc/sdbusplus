@@ -43,6 +43,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "b61baf57_138e8f4e",
+        "filename": "include/sdbusplus/asio/property.hpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2022-03-12T00:08:13Z",
+      "side": 1,
+      "message": "I was actually playing with this in the context of some bmcweb callbacks, and it used to be the case a few years ago that templatized callbacks optimized/inlined more aggressively, but with our current set of libc++ and gcc, std::function produced the same code as a templated callback....   I can\u0027t fully explain that one, given that I would\u0027ve expected the templated callback to inline differently given it has the exact type information, but from what I could tell, gcc is able to optimize through a type erased std;:function these days for most cases.",
+      "parentUuid": "343cbeb6_50d845ed",
+      "range": {
+        "startLine": 13,
+        "startChar": 4,
+        "endLine": 13,
+        "endChar": 60
+      },
+      "revId": "86a913c910b373ab2cf8c14f80a3d1edf2086d91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "8c2773f4_9f72b84b",
         "filename": "include/sdbusplus/asio/property.hpp",
         "patchSetId": 11
@@ -66,6 +90,53 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "7b5b7965_a988b582",
+        "filename": "include/sdbusplus/asio/property.hpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2022-03-12T00:08:13Z",
+      "side": 1,
+      "message": "Why\u0027s that?  I don\u0027t see it getting used another time?  With that said, I think if we captured the std::function by value on line 13, it would entirely remove the need for the line 23 overload.",
+      "parentUuid": "8c2773f4_9f72b84b",
+      "range": {
+        "startLine": 17,
+        "startChar": 26,
+        "endLine": 17,
+        "endChar": 44
+      },
+      "revId": "86a913c910b373ab2cf8c14f80a3d1edf2086d91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "58d4a954_5953093d",
+        "filename": "include/sdbusplus/unpack_properties.hpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2022-03-12T00:08:13Z",
+      "side": 1,
+      "message": "I kinda think we don\u0027t even want this overload to be possible.  If you\u0027re loading things into a map, then parsing them to known-at-compile-time parameters, you\u0027re doing something that\u0027s inherently wasteful both performance-wise, and binary size-wise compared to just loading them into an unordered structure (ie vector\u003cpair\u003e) before doing the parameter readout.\n\nWe should help the user make the right data structure decisions by disallowing the structures that we know are less efficient and give the same result.  FWIW, I have patches out against bmcweb (one still left to merge of 10 or so) to basically consolidate on making this consistent.",
+      "range": {
+        "startLine": 30,
+        "startChar": 0,
+        "endLine": 30,
+        "endChar": 56
+      },
+      "revId": "86a913c910b373ab2cf8c14f80a3d1edf2086d91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "4faba27d_e80f374a",
         "filename": "include/sdbusplus/unpack_properties.hpp",
         "patchSetId": 11
@@ -82,6 +153,29 @@
         "startChar": 12,
         "endLine": 37,
         "endChar": 46
+      },
+      "revId": "86a913c910b373ab2cf8c14f80a3d1edf2086d91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "66a7c8d2_934f4684",
+        "filename": "include/sdbusplus/unpack_properties.hpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2022-03-12T00:08:13Z",
+      "side": 1,
+      "message": "As written, you\u0027re doing an N^2 loop over the incoming properties, given that findProperty calls find_if (which is the first N), then this is looping over each property (the second N)  maybe this isn\u0027t a huge deal?",
+      "range": {
+        "startLine": 48,
+        "startChar": 0,
+        "endLine": 48,
+        "endChar": 51
       },
       "revId": "86a913c910b373ab2cf8c14f80a3d1edf2086d91",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"

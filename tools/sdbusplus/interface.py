@@ -1,18 +1,21 @@
 import os
+
 import yaml
+
+from .enum import Enum
+from .method import Method
 from .namedelement import NamedElement
 from .property import Property
-from .method import Method
-from .signal import Signal
-from .enum import Enum
 from .renderer import Renderer
+from .signal import Signal
 
 
 class Interface(NamedElement, Renderer):
     @staticmethod
     def load(name, rootdir="."):
-        filename = os.path.join(rootdir,
-                                name.replace(".", "/") + ".interface.yaml")
+        filename = os.path.join(
+            rootdir, name.replace(".", "/") + ".interface.yaml"
+        )
 
         with open(filename) as f:
             data = f.read()
@@ -28,7 +31,7 @@ class Interface(NamedElement, Renderer):
 
         super(Interface, self).__init__(**kwargs)
 
-        self.namespaces = self.name.split('.')
+        self.namespaces = self.name.split(".")
         self.classname = self.namespaces.pop()
 
     def cppNamespace(self):

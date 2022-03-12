@@ -1,8 +1,9 @@
-import sdbusplus
-import mako.lookup
 import argparse
-import sys
 import os
+
+import mako.lookup
+
+import sdbusplus
 
 
 def main():

@@ -16,13 +16,13 @@ application error occurs.
 **How is _transaction id_ used** - Used to identify all the journal entries
 associated with a dbus operation.
 
-* When a journal entry is created, the _transaction id_ is added as metadata.
-Therefore all journal entries created within a message have the same
-_transaction id_ value.
+- When a journal entry is created, the _transaction id_ is added as metadata.
+  Therefore all journal entries created within a message have the same
+  _transaction id_ value.
 
-* When an error/event log is created, the _transaction id_ of that message will
-be used to collect the journal entries associated with that message, providing
-debug information for the complete operation.
+- When an error/event log is created, the _transaction id_ of that message will
+  be used to collect the journal entries associated with that message, providing
+  debug information for the complete operation.
 
 **Multiple _transaction ids_** - The exception object can store multiple
 _transaction ids_ for operations that create multiple messages.

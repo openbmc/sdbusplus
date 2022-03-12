@@ -232,6 +232,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "961dd2fc_cd088d1a",
+        "filename": "include/sdbusplus/unpack_properties.hpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2022-03-12T00:39:45Z",
+      "side": 1,
+      "message": "Yep, this is the stuff that came off dbus, but my point is that there is no case where you should use any kind of map when using unpackProperties to pull stuff off of dbus, given that unpackProperties basically removes the need for find entirely, and saves you a log(n) (as well as a bunch of code size).",
+      "parentUuid": "32ec1fe1_849ec080",
+      "range": {
+        "startLine": 30,
+        "startChar": 0,
+        "endLine": 30,
+        "endChar": 56
+      },
+      "revId": "86a913c910b373ab2cf8c14f80a3d1edf2086d91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "4faba27d_e80f374a",
         "filename": "include/sdbusplus/unpack_properties.hpp",
         "patchSetId": 11

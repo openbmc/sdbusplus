@@ -8,7 +8,7 @@ export LC_ALL=C
 
 function show_usage {
     cat \
-<<EOF
+        << EOF
 Usage: $(basename "$0") [options] <command-args>*
 
 Generate meson.build files from a directory tree containing YAML files and
@@ -51,8 +51,7 @@ rootdir="."
 options="$(getopt -o hc:d:o:t:v --long help,command:,directory:,output:,tool:,version -- "$@")"
 eval set -- "$options"
 
-while true;
-do
+while true; do
     case "$1" in
         -h | --help)
             show_usage
@@ -110,7 +109,7 @@ function meson_create_root {
     meson_empty_file "$outputdir"
 
     cat >> "$outputdir/meson.build" \
-<<EOF
+        << EOF
 sdbuspp_gen_meson_ver = run_command(
     sdbuspp_gen_meson_prog,
     '--version',
@@ -143,14 +142,12 @@ function meson_create_path {
     prev_meson_path=""
 
     # Split the path into segments.
-    for part in $(echo "$1" | tr '/' '\n');
-    do
+    for part in $(echo "$1" | tr '/' '\n'); do
         prev_meson_path="$meson_path"
         meson_path="$meson_path/$part"
 
         # Create the meson.build for this segment if it doesn't already exist.
-        if [ "" == "${meson_paths[$meson_path]}" ];
-        then
+        if [ "" == "${meson_paths[$meson_path]}" ]; then
             meson_paths["$meson_path"]="1"
             meson_empty_file "$meson_path"
 
@@ -158,8 +155,7 @@ function meson_create_path {
             # We need to skip adding the links into the 'root' meson.build
             # because most repositories want to selectively add TLDs based
             # on config flags.  Let them figure out their own logic for that.
-            if [ "$outputdir" != "$prev_meson_path" ];
-            then
+            if [ "$outputdir" != "$prev_meson_path" ]; then
                 echo "subdir('$part')" >> "$prev_meson_path/meson.build"
             fi
         fi
@@ -177,9 +173,8 @@ function meson_cpp_target {
     # Determine the source and output files based on the YAMLs present.
     sources=""
     outputs=""
-    for s in ${interfaces[$1]};
-    do
-      sources="'$yamldir/$1.$s', "
+    for s in ${interfaces[$1]}; do
+        sources="'$yamldir/$1.$s', "
 
         case "$s" in
             errors.yaml)
@@ -195,7 +190,7 @@ function meson_cpp_target {
 
     # Create the target to generate the 'outputs'.
     cat >> "$mesondir/meson.build" \
-<<EOF
+        << EOF
 generated_sources += custom_target(
     '$1__cpp'.underscorify(),
     input: [ $sources ],
@@ -220,14 +215,13 @@ function meson_md_target {
 
     # Determine the source files based on the YAMLs present.
     sources=""
-    for s in ${interfaces[$1]};
-    do
+    for s in ${interfaces[$1]}; do
         sources="'$yamldir/$1.$s', "
     done
 
     # Create the target to generate the interface.md file.
     cat >> "$mesondir/meson.build" \
-<<EOF
+        << EOF
 generated_others += custom_target(
     '$1__markdown'.underscorify(),
     input: [ $sources ],
@@ -250,11 +244,9 @@ function cmd_meson {
     yamls=""
 
     # Find all the YAML files in the TLD subdirectories.
-    for d in $TLDs;
-    do
+    for d in $TLDs; do
         dir="$rootdir/$d"
-        if [ ! -d "$dir" ];
-        then
+        if [ ! -d "$dir" ]; then
             continue
         fi
 
@@ -268,21 +260,19 @@ function cmd_meson {
     yamls="$(echo "$yamls" | tr " " "\n" | sort)"
 
     # Assign the YAML files into the hash-table by interface name.
-    for y in $yamls;
-    do
+    for y in $yamls; do
         rel="$(realpath "--relative-to=$rootdir" "$y")"
         dir="$(dirname "$rel")"
         ext="${rel#*.}"
         base="$(basename "$rel" ".$ext")"
 
-        interfaces["$dir/$base"]="${interfaces[$dir/$base]} $ext"
+        interfaces["$dir/$base"]="${interfaces[dir / base]} $ext"
     done
 
     # Create the meson.build files.
     meson_create_root
     sorted_ifaces="$(echo "${!interfaces[@]}" | tr " " "\n" | sort)"
-    for i in ${sorted_ifaces};
-    do
+    for i in ${sorted_ifaces}; do
         meson_create_path "$i"
         meson_cpp_target "$i"
         meson_md_target "$i"
@@ -295,15 +285,13 @@ function cmd_meson {
 ## For an interface foo/bar, the outputdir is expected to be foo/bar.
 function cmd_cpp {
 
-    if [ "" == "$1" ];
-    then
+    if [ "" == "$1" ]; then
         show_usage
         exit 1
     fi
 
-    if [ ! -e "$rootdir/$1.interface.yaml" ] && \
-        [ ! -e "$rootdir/$1.errors.yaml" ];
-    then
+    if [ ! -e "$rootdir/$1.interface.yaml" ] &&
+        [ ! -e "$rootdir/$1.errors.yaml" ]; then
         echo "Missing YAML for $1."
         exit 1
     fi
@@ -313,15 +301,13 @@ function cmd_cpp {
     sdbusppcmd="$sdbuspp -r $rootdir"
     intf="${1//\//.}"
 
-    if [ -e "$rootdir/$1.interface.yaml" ];
-    then
+    if [ -e "$rootdir/$1.interface.yaml" ]; then
         $sdbusppcmd interface server-header "$intf" > "$outputdir/server.hpp"
         $sdbusppcmd interface server-cpp "$intf" > "$outputdir/server.cpp"
         $sdbusppcmd interface client-header "$intf" > "$outputdir/client.hpp"
     fi
 
-    if [ -e "$rootdir/$1.errors.yaml" ];
-    then
+    if [ -e "$rootdir/$1.errors.yaml" ]; then
         $sdbusppcmd error exception-header "$intf" > "$outputdir/error.hpp"
         $sdbusppcmd error exception-cpp "$intf" > "$outputdir/error.cpp"
     fi
@@ -333,15 +319,13 @@ function cmd_cpp {
 ## For an interface foo/bar, the outputdir is expected to be foo.
 function cmd_markdown {
 
-    if [ "" == "$1" ];
-    then
+    if [ "" == "$1" ]; then
         show_usage
         exit 1
     fi
 
-    if [ ! -e "$rootdir/$1.interface.yaml" ] && \
-        [ ! -e "$rootdir/$1.errors.yaml" ];
-    then
+    if [ ! -e "$rootdir/$1.interface.yaml" ] &&
+        [ ! -e "$rootdir/$1.errors.yaml" ]; then
         echo "Missing YAML for $1."
         exit 1
     fi
@@ -353,13 +337,11 @@ function cmd_markdown {
     base="$(basename "$1")"
 
     echo -n > "$outputdir/$base.md"
-    if [ -e "$rootdir/$1.interface.yaml" ];
-    then
+    if [ -e "$rootdir/$1.interface.yaml" ]; then
         $sdbusppcmd interface markdown "$intf" >> "$outputdir/$base.md"
     fi
 
-    if [ -e "$rootdir/$1.errors.yaml" ];
-    then
+    if [ -e "$rootdir/$1.errors.yaml" ]; then
         $sdbusppcmd error markdown "$intf" >> "$outputdir/$base.md"
     fi
 }

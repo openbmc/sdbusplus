@@ -162,6 +162,29 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "2b14687b_0131f61d",
+        "filename": "include/sdbusplus/asio/property.hpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2022-03-12T00:34:12Z",
+      "side": 1,
+      "message": "The only use of this is to allow the user to pick their own data structure.  That seems kinda wrong.  Use of this call should require std::vector (or at least something iterable)",
+      "range": {
+        "startLine": 28,
+        "startChar": 39,
+        "endLine": 28,
+        "endChar": 53
+      },
+      "revId": "86a913c910b373ab2cf8c14f80a3d1edf2086d91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "58d4a954_5953093d",
         "filename": "include/sdbusplus/unpack_properties.hpp",
         "patchSetId": 11
@@ -232,6 +255,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "91a407e4_76e7c0a4",
+        "filename": "include/sdbusplus/unpack_properties.hpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2022-03-12T00:34:12Z",
+      "side": 1,
+      "message": "\u003cbikeshedding\u003e If we\u0027re going to change it anyway, we might as well change it to std::ranges::find_if and avoid the iterators entirely \u003c/bikeshedding\u003e",
+      "parentUuid": "4faba27d_e80f374a",
+      "range": {
+        "startLine": 37,
+        "startChar": 12,
+        "endLine": 37,
+        "endChar": 46
+      },
+      "revId": "86a913c910b373ab2cf8c14f80a3d1edf2086d91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "66a7c8d2_934f4684",
         "filename": "include/sdbusplus/unpack_properties.hpp",
         "patchSetId": 11
@@ -279,6 +326,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "5a301052_a1eaed0c",
+        "filename": "include/sdbusplus/unpack_properties.hpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2022-03-12T00:34:12Z",
+      "side": 1,
+      "message": "FWIW, take a look at the structure of readJson in the bmcweb code.  It does a very similar unpack on nlohmann::json objects, but does it with a single O(N) loop",
+      "parentUuid": "66a7c8d2_934f4684",
+      "range": {
+        "startLine": 48,
+        "startChar": 0,
+        "endLine": 48,
+        "endChar": 51
+      },
+      "revId": "86a913c910b373ab2cf8c14f80a3d1edf2086d91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "7c2bec44_72b10bf4",
         "filename": "include/sdbusplus/unpack_properties.hpp",
         "patchSetId": 11
@@ -290,6 +361,30 @@
       "writtenOn": "2022-03-11T22:41:30Z",
       "side": 1,
       "message": "Do you want std::decay_t instead?  \u0027remove_cv\u0027?",
+      "range": {
+        "startLine": 55,
+        "startChar": 20,
+        "endLine": 55,
+        "endChar": 39
+      },
+      "revId": "86a913c910b373ab2cf8c14f80a3d1edf2086d91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a23b0d75_d00011bd",
+        "filename": "include/sdbusplus/unpack_properties.hpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2022-03-12T00:34:12Z",
+      "side": 1,
+      "message": "Why are we removing const here at all?  you can\u0027t unpack into a const out param.",
+      "parentUuid": "7c2bec44_72b10bf4",
       "range": {
         "startLine": 55,
         "startChar": 20,
@@ -325,6 +420,53 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "79ec7691_a71b44b8",
+        "filename": "include/sdbusplus/unpack_properties.hpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2022-03-12T00:34:12Z",
+      "side": 1,
+      "message": "I\u0027m not sure why we would even want to decay here.  I think we want std::remove_reference?",
+      "parentUuid": "4ac862bb_8e05a8fd",
+      "range": {
+        "startLine": 66,
+        "startChar": 27,
+        "endLine": 66,
+        "endChar": 62
+      },
+      "revId": "86a913c910b373ab2cf8c14f80a3d1edf2086d91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7aba1382_d3c6b8db",
+        "filename": "include/sdbusplus/unpack_properties.hpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2022-03-12T00:34:12Z",
+      "side": 1,
+      "message": "Isn\u0027t the if constexpr redundant if it has the same condition that\u0027s in the static_assert?",
+      "range": {
+        "startLine": 69,
+        "startChar": 0,
+        "endLine": 70,
+        "endChar": 13
+      },
+      "revId": "86a913c910b373ab2cf8c14f80a3d1edf2086d91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "f06e8695_407384a9",
         "filename": "include/sdbusplus/unpack_properties.hpp",
         "patchSetId": 11
@@ -342,6 +484,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "c6ad5b3b_a7f72f7d",
+        "filename": "include/sdbusplus/unpack_properties.hpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2022-03-12T00:34:12Z",
+      "side": 1,
+      "message": "+1",
+      "parentUuid": "f06e8695_407384a9",
+      "revId": "86a913c910b373ab2cf8c14f80a3d1edf2086d91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "5f7518d8_4c534d92",
         "filename": "include/sdbusplus/unpack_properties.hpp",
         "patchSetId": 11
@@ -353,6 +513,47 @@
       "writtenOn": "2022-03-11T22:41:30Z",
       "side": 1,
       "message": "Should we add an assert string on this?",
+      "revId": "86a913c910b373ab2cf8c14f80a3d1edf2086d91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b49c0f24_2c618737",
+        "filename": "include/sdbusplus/unpack_properties.hpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 155,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2022-03-12T00:34:12Z",
+      "side": 1,
+      "message": "+1",
+      "parentUuid": "5f7518d8_4c534d92",
+      "revId": "86a913c910b373ab2cf8c14f80a3d1edf2086d91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "346869aa_db8ded51",
+        "filename": "include/sdbusplus/unpack_properties.hpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 165,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2022-03-12T00:34:12Z",
+      "side": 1,
+      "message": "Pursuant to the comment above, if we made that change to only support iterable data types that make sense, this could change to be std::span which might reduce the template overloading.",
+      "range": {
+        "startLine": 165,
+        "startChar": 29,
+        "endLine": 165,
+        "endChar": 51
+      },
       "revId": "86a913c910b373ab2cf8c14f80a3d1edf2086d91",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
@@ -393,6 +594,29 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "cae0c1d4_0745c222",
+        "filename": "include/sdbusplus/utility/type_traits.hpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 162,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2022-03-12T00:34:12Z",
+      "side": 1,
+      "message": "this function already exists in boost under boost::function_traits, and considering the only use is in the asio stuff, I don\u0027t think it makes sense to duplicate it when the boost version handles a lot more corner cases than this does (see docs for all of its supported callable overloads, I think there\u0027s 6 you need to handle to have full callable support)\n\nWith that said, these days, we should use boost::callable, which is a similar struct, with different params, and reports most things as std::tuple, which is better.  I have a patch out to move bmcweb to move to boost callable if you need examples, but the docs are pretty good.\n\nFWIW, I\u0027m pretty sure that async_method_call already uses callable_traits",
+      "range": {
+        "startLine": 162,
+        "startChar": 0,
+        "endLine": 162,
+        "endChar": 71
+      },
+      "revId": "86a913c910b373ab2cf8c14f80a3d1edf2086d91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "dcd476be_6aa56166",
         "filename": "include/sdbusplus/utility/type_traits.hpp",
         "patchSetId": 11
@@ -404,6 +628,30 @@
       "writtenOn": "2022-03-11T22:41:30Z",
       "side": 1,
       "message": "sizeof... already returns std::size_t.  If you included cstddef just to get this it isn\u0027t necessary.  Just use auto.",
+      "range": {
+        "startLine": 168,
+        "startChar": 21,
+        "endLine": 168,
+        "endChar": 27
+      },
+      "revId": "86a913c910b373ab2cf8c14f80a3d1edf2086d91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9797e055_e7f51fb3",
+        "filename": "include/sdbusplus/utility/type_traits.hpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2022-03-12T00:34:12Z",
+      "side": 1,
+      "message": "Arity doesn\u0027t even get used in non-test code.  This can just be removed.",
+      "parentUuid": "dcd476be_6aa56166",
       "range": {
         "startLine": 168,
         "startChar": 21,
@@ -432,6 +680,76 @@
         "startChar": 23,
         "endLine": 171,
         "endChar": 61
+      },
+      "revId": "86a913c910b373ab2cf8c14f80a3d1edf2086d91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "820b3884_64727812",
+        "filename": "include/sdbusplus/utility/type_traits.hpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2022-03-12T00:34:12Z",
+      "side": 1,
+      "message": "Also, in the guarantees that this template should give, it should return the ACTUAL type that is accepted, with const, pointer, volatile and references.  if the calling code needs the decayed/non-const/non-pointer version, it should be calling decay in that scope, to keep this method as common as possible\n\nFWIW, this is how the boost implementations handle it.",
+      "parentUuid": "ae328ee7_c7233de5",
+      "range": {
+        "startLine": 171,
+        "startChar": 23,
+        "endLine": 171,
+        "endChar": 61
+      },
+      "revId": "86a913c910b373ab2cf8c14f80a3d1edf2086d91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2f06b26f_1fada8f5",
+        "filename": "test/utility/type_traits.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2022-03-12T00:34:12Z",
+      "side": 1,
+      "message": "Considering the lambda takes std::string\u0026 as the third argument, this should be a reference.",
+      "range": {
+        "startLine": 108,
+        "startChar": 50,
+        "endLine": 108,
+        "endChar": 61
+      },
+      "revId": "86a913c910b373ab2cf8c14f80a3d1edf2086d91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "71319889_7c37231c",
+        "filename": "test/utility/type_traits.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2022-03-12T00:34:12Z",
+      "side": 1,
+      "message": "same here, this should be const int\u0026",
+      "range": {
+        "startLine": 109,
+        "startChar": 50,
+        "endLine": 109,
+        "endChar": 53
       },
       "revId": "86a913c910b373ab2cf8c14f80a3d1edf2086d91",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"

@@ -91,6 +91,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "dc7f3a04_e7f9fdb2",
+        "filename": "include/sdbusplus/asio/property.hpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2022-03-12T00:49:43Z",
+      "side": 1,
+      "message": "If you\u0027re curious, here\u0027s my playing around with this recently.\n\nhttps://gerrit.openbmc-project.xyz/c/openbmc/bmcweb/+/51585\n\nTL; DR, replacing a bunch of non-trivial templated callbacks with std::function produced the same binary.",
+      "parentUuid": "64e7e592_24be2f35",
+      "range": {
+        "startLine": 13,
+        "startChar": 4,
+        "endLine": 13,
+        "endChar": 60
+      },
+      "revId": "86a913c910b373ab2cf8c14f80a3d1edf2086d91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "8c2773f4_9f72b84b",
         "filename": "include/sdbusplus/asio/property.hpp",
         "patchSetId": 11

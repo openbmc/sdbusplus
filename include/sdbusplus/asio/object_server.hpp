@@ -128,9 +128,13 @@ class callback_method_instance : public callback
 
     void callFunction(message_t& m, InputTupleType& inputArgs)
     {
-        auto r = std::apply(func_, inputArgs);
-        if constexpr (!std::is_void_v<decltype(r)>)
+        if constexpr (std::is_void_v<ResultType>)
         {
+            std::apply(func_, inputArgs);
+        }
+        else
+        {
+            auto r = std::apply(func_, inputArgs);
             m.append(r);
         }
     }
@@ -213,9 +217,13 @@ class coroutine_method_instance : public callback
 
     void callFunction(message_t& m, InputTupleType& inputArgs)
     {
-        auto r = std::apply(func_, inputArgs);
-        if constexpr (!std::is_void_v<decltype(r)>)
+        if constexpr (std::is_void_v<ResultType>)
         {
+            std::apply(func_, inputArgs);
+        }
+        else
+        {
+            auto r = std::apply(func_, inputArgs);
             m.append(r);
         }
     }

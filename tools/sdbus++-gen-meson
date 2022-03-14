@@ -265,8 +265,9 @@ function cmd_meson {
         dir="$(dirname "$rel")"
         ext="${rel#*.}"
         base="$(basename "$rel" ".$ext")"
+        key="$dir/$base"
 
-        interfaces["$dir/$base"]="${interfaces[dir / base]} $ext"
+        interfaces["$key"]="${interfaces[$key]} $ext"
     done
 
     # Create the meson.build files.

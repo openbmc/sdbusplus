@@ -993,6 +993,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "24dbd225_2c9d78ce",
+        "filename": "include/sdbusplus/utility/type_traits.hpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 162,
+      "author": {
+        "id": 1000678
+      },
+      "writtenOn": "2022-03-15T14:31:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cae0c1d4_0745c222",
+      "range": {
+        "startLine": 162,
+        "startChar": 0,
+        "endLine": 162,
+        "endChar": 71
+      },
+      "revId": "86a913c910b373ab2cf8c14f80a3d1edf2086d91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "dcd476be_6aa56166",
@@ -1030,6 +1054,30 @@
       "side": 1,
       "message": "Arity doesn\u0027t even get used in non-test code.  This can just be removed.",
       "parentUuid": "dcd476be_6aa56166",
+      "range": {
+        "startLine": 168,
+        "startChar": 21,
+        "endLine": 168,
+        "endChar": 27
+      },
+      "revId": "86a913c910b373ab2cf8c14f80a3d1edf2086d91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f8ab3108_4664138f",
+        "filename": "include/sdbusplus/utility/type_traits.hpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 1000678
+      },
+      "writtenOn": "2022-03-15T14:31:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9797e055_e7f51fb3",
       "range": {
         "startLine": 168,
         "startChar": 21,
@@ -1087,6 +1135,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "8dfca079_b6e04da8",
+        "filename": "include/sdbusplus/utility/type_traits.hpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 1000678
+      },
+      "writtenOn": "2022-03-15T14:31:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "820b3884_64727812",
+      "range": {
+        "startLine": 171,
+        "startChar": 23,
+        "endLine": 171,
+        "endChar": 61
+      },
+      "revId": "86a913c910b373ab2cf8c14f80a3d1edf2086d91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "2f06b26f_1fada8f5",
@@ -1110,6 +1182,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "8d3373f7_a74d9157",
+        "filename": "test/utility/type_traits.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 1000678
+      },
+      "writtenOn": "2022-03-15T14:31:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2f06b26f_1fada8f5",
+      "range": {
+        "startLine": 108,
+        "startChar": 50,
+        "endLine": 108,
+        "endChar": 61
+      },
+      "revId": "86a913c910b373ab2cf8c14f80a3d1edf2086d91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "71319889_7c37231c",
@@ -1123,6 +1219,30 @@
       "writtenOn": "2022-03-12T00:34:12Z",
       "side": 1,
       "message": "same here, this should be const int\u0026",
+      "range": {
+        "startLine": 109,
+        "startChar": 50,
+        "endLine": 109,
+        "endChar": 53
+      },
+      "revId": "86a913c910b373ab2cf8c14f80a3d1edf2086d91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5f54e6fe_946432d8",
+        "filename": "test/utility/type_traits.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 1000678
+      },
+      "writtenOn": "2022-03-15T14:31:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "71319889_7c37231c",
       "range": {
         "startLine": 109,
         "startChar": 50,

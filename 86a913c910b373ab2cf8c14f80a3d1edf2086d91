@@ -115,6 +115,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "e4714f68_6be8c308",
+        "filename": "include/sdbusplus/asio/property.hpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1000678
+      },
+      "writtenOn": "2022-03-15T09:14:03Z",
+      "side": 1,
+      "message": "That was also the result of introducing getProperty in bmcweb, when std::function was used binary size was smaller than when lambda was used. To follow up this changes getAllProperties to follow same pattern.",
+      "parentUuid": "dc7f3a04_e7f9fdb2",
+      "range": {
+        "startLine": 13,
+        "startChar": 4,
+        "endLine": 13,
+        "endChar": 60
+      },
+      "revId": "86a913c910b373ab2cf8c14f80a3d1edf2086d91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "8c2773f4_9f72b84b",
         "filename": "include/sdbusplus/asio/property.hpp",
         "patchSetId": 11
@@ -209,6 +233,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "965ee5bb_516516ea",
+        "filename": "include/sdbusplus/asio/property.hpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1000678
+      },
+      "writtenOn": "2022-03-15T09:14:03Z",
+      "side": 1,
+      "message": "This can be performed in overload above.\n\nThis overload is only used to change all lambdas to common std::function_type. Thanks to that instead of calling async_method_call with different lambda types we are calling async_method_call with same template type.",
+      "parentUuid": "2b14687b_0131f61d",
+      "range": {
+        "startLine": 28,
+        "startChar": 39,
+        "endLine": 28,
+        "endChar": 53
+      },
+      "revId": "86a913c910b373ab2cf8c14f80a3d1edf2086d91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "58d4a954_5953093d",
         "filename": "include/sdbusplus/unpack_properties.hpp",
         "patchSetId": 11
@@ -280,6 +328,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "df1db8e8_170553c1",
+        "filename": "include/sdbusplus/unpack_properties.hpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1000678
+      },
+      "writtenOn": "2022-03-15T09:14:03Z",
+      "side": 1,
+      "message": "Are you suggesting to force one most efficient container type?\n\nFrom my point of view it\u0027s ok. I didn\u0027t do any research related to which container will produce smaller binary size so if you could share which container should be used here I can implement it.",
+      "parentUuid": "961dd2fc_cd088d1a",
+      "range": {
+        "startLine": 30,
+        "startChar": 0,
+        "endLine": 30,
+        "endChar": 56
+      },
+      "revId": "86a913c910b373ab2cf8c14f80a3d1edf2086d91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "4faba27d_e80f374a",
         "filename": "include/sdbusplus/unpack_properties.hpp",
         "patchSetId": 11
@@ -315,6 +387,30 @@
       "side": 1,
       "message": "\u003cbikeshedding\u003e If we\u0027re going to change it anyway, we might as well change it to std::ranges::find_if and avoid the iterators entirely \u003c/bikeshedding\u003e",
       "parentUuid": "4faba27d_e80f374a",
+      "range": {
+        "startLine": 37,
+        "startChar": 12,
+        "endLine": 37,
+        "endChar": 46
+      },
+      "revId": "86a913c910b373ab2cf8c14f80a3d1edf2086d91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7264f865_bd64a78c",
+        "filename": "include/sdbusplus/unpack_properties.hpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1000678
+      },
+      "writtenOn": "2022-03-15T09:14:03Z",
+      "side": 1,
+      "message": "container.begin() should also return const iterator in case where container is const, it  should work exactly like std::begin(container). I didn\u0027t notice many uses of std::begin in openbmc code and decided to change it.",
+      "parentUuid": "91a407e4_76e7c0a4",
       "range": {
         "startLine": 37,
         "startChar": 12,
@@ -398,6 +494,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "1cb4b1ea_905315e0",
+        "filename": "include/sdbusplus/unpack_properties.hpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 1000678
+      },
+      "writtenOn": "2022-03-15T09:14:03Z",
+      "side": 1,
+      "message": "This has two benefits, code using find is much simpler and binary size is smaller. Number of properties is quite small so there should be no visible differences in performance. I would like to keep it this way, since there are no visible benefits.\n\n@Ed In one of the attempts I tried to do it with single loop, it worked fine, but it produced bigger bmcweb binary.",
+      "parentUuid": "5a301052_a1eaed0c",
+      "range": {
+        "startLine": 48,
+        "startChar": 0,
+        "endLine": 48,
+        "endChar": 51
+      },
+      "revId": "86a913c910b373ab2cf8c14f80a3d1edf2086d91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "7c2bec44_72b10bf4",
         "filename": "include/sdbusplus/unpack_properties.hpp",
         "patchSetId": 11
@@ -433,6 +553,30 @@
       "side": 1,
       "message": "Why are we removing const here at all?  you can\u0027t unpack into a const out param.",
       "parentUuid": "7c2bec44_72b10bf4",
+      "range": {
+        "startLine": 55,
+        "startChar": 20,
+        "endLine": 55,
+        "endChar": 39
+      },
+      "revId": "86a913c910b373ab2cf8c14f80a3d1edf2086d91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "35b3a22f_716d6a6b",
+        "filename": "include/sdbusplus/unpack_properties.hpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 1000678
+      },
+      "writtenOn": "2022-03-15T09:14:03Z",
+      "side": 1,
+      "message": "Ed is correct, remove_pointer_t should be enough.",
+      "parentUuid": "a23b0d75_d00011bd",
       "range": {
         "startLine": 55,
         "startChar": 20,
@@ -492,6 +636,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "9d1b0198_ad3c12b4",
+        "filename": "include/sdbusplus/unpack_properties.hpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 1000678
+      },
+      "writtenOn": "2022-03-15T09:14:03Z",
+      "side": 1,
+      "message": "I will put remove_reference inside is_optional_v",
+      "parentUuid": "79ec7691_a71b44b8",
+      "range": {
+        "startLine": 66,
+        "startChar": 27,
+        "endLine": 66,
+        "endChar": 62
+      },
+      "revId": "86a913c910b373ab2cf8c14f80a3d1edf2086d91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "7aba1382_d3c6b8db",
         "filename": "include/sdbusplus/unpack_properties.hpp",
         "patchSetId": 11
@@ -503,6 +671,30 @@
       "writtenOn": "2022-03-12T00:34:12Z",
       "side": 1,
       "message": "Isn\u0027t the if constexpr redundant if it has the same condition that\u0027s in the static_assert?",
+      "range": {
+        "startLine": 69,
+        "startChar": 0,
+        "endLine": 70,
+        "endChar": 13
+      },
+      "revId": "86a913c910b373ab2cf8c14f80a3d1edf2086d91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "09fbc042_0b513618",
+        "filename": "include/sdbusplus/unpack_properties.hpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 1000678
+      },
+      "writtenOn": "2022-03-15T09:14:03Z",
+      "side": 1,
+      "message": "Without this if condition else branch wont compile. If condition has to stay, all I can do is move static_assert above this is and reverse condition.",
+      "parentUuid": "7aba1382_d3c6b8db",
       "range": {
         "startLine": 69,
         "startChar": 0,
@@ -625,6 +817,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "14ec1dd4_928cec01",
+        "filename": "include/sdbusplus/unpack_properties.hpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 172,
+      "author": {
+        "id": 1000678
+      },
+      "writtenOn": "2022-03-15T09:14:03Z",
+      "side": 1,
+      "message": "It is unit tested so it won\u0027t be changed by accident, but you are right it might not be clear.\n\nSince exceptions are forbidden in bmcweb we had to implement solution that doesn\u0027t throw exception and at the same time have common code for components that want to use exceptions. This way it is kept as small as possible for case where there are no exceptions.",
+      "parentUuid": "94c22787_95765aaf",
+      "revId": "86a913c910b373ab2cf8c14f80a3d1edf2086d91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "f8fbe603_56492291",
         "filename": "include/sdbusplus/unpack_properties.hpp",
         "patchSetId": 11
@@ -636,6 +846,24 @@
       "writtenOn": "2022-03-11T22:41:30Z",
       "side": 1,
       "message": "Is there a reason for not reusing a single enum?",
+      "revId": "86a913c910b373ab2cf8c14f80a3d1edf2086d91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ec5820b3_f849d240",
+        "filename": "include/sdbusplus/unpack_properties.hpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 1000678
+      },
+      "writtenOn": "2022-03-15T09:14:03Z",
+      "side": 1,
+      "message": "You are right, I will use same enum.",
+      "parentUuid": "f8fbe603_56492291",
       "revId": "86a913c910b373ab2cf8c14f80a3d1edf2086d91",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },

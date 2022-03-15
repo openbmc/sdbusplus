@@ -658,6 +658,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "c291b2bd_88aa7f9d",
+        "filename": "include/sdbusplus/unpack_properties.hpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 1000678
+      },
+      "writtenOn": "2022-03-15T14:26:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9d1b0198_ad3c12b4",
+      "range": {
+        "startLine": 66,
+        "startChar": 27,
+        "endLine": 66,
+        "endChar": 62
+      },
+      "revId": "86a913c910b373ab2cf8c14f80a3d1edf2086d91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "7aba1382_d3c6b8db",
@@ -705,6 +729,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "58d7667e_9a0382d5",
+        "filename": "include/sdbusplus/unpack_properties.hpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 1000678
+      },
+      "writtenOn": "2022-03-15T14:26:34Z",
+      "side": 1,
+      "message": "My bad, you were right I can delete this if condition.\n\nDone.",
+      "parentUuid": "09fbc042_0b513618",
+      "range": {
+        "startLine": 69,
+        "startChar": 0,
+        "endLine": 70,
+        "endChar": 13
+      },
+      "revId": "86a913c910b373ab2cf8c14f80a3d1edf2086d91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "f06e8695_407384a9",
@@ -740,6 +788,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2329776e_628079f2",
+        "filename": "include/sdbusplus/unpack_properties.hpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 1000678
+      },
+      "writtenOn": "2022-03-15T14:26:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c6ad5b3b_a7f72f7d",
+      "revId": "86a913c910b373ab2cf8c14f80a3d1edf2086d91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "5f7518d8_4c534d92",
@@ -771,6 +837,24 @@
       "side": 1,
       "message": "+1",
       "parentUuid": "5f7518d8_4c534d92",
+      "revId": "86a913c910b373ab2cf8c14f80a3d1edf2086d91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9d3a504f_ba2c8a27",
+        "filename": "include/sdbusplus/unpack_properties.hpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 155,
+      "author": {
+        "id": 1000678
+      },
+      "writtenOn": "2022-03-15T14:26:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b49c0f24_2c618737",
       "revId": "86a913c910b373ab2cf8c14f80a3d1edf2086d91",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
@@ -829,6 +913,24 @@
       "side": 1,
       "message": "It is unit tested so it won\u0027t be changed by accident, but you are right it might not be clear.\n\nSince exceptions are forbidden in bmcweb we had to implement solution that doesn\u0027t throw exception and at the same time have common code for components that want to use exceptions. This way it is kept as small as possible for case where there are no exceptions.",
       "parentUuid": "94c22787_95765aaf",
+      "revId": "86a913c910b373ab2cf8c14f80a3d1edf2086d91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2be3af3c_c80361f6",
+        "filename": "include/sdbusplus/unpack_properties.hpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 172,
+      "author": {
+        "id": 1000678
+      },
+      "writtenOn": "2022-03-15T14:26:34Z",
+      "side": 1,
+      "message": "unpackPropertiesCommon is marked as noexcept that\u0027s only reason there is no direct throw in this lambda",
+      "parentUuid": "14ec1dd4_928cec01",
       "revId": "86a913c910b373ab2cf8c14f80a3d1edf2086d91",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },

@@ -587,6 +587,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "30b0357a_7919fb13",
+        "filename": "include/sdbusplus/unpack_properties.hpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 1000678
+      },
+      "writtenOn": "2022-03-16T13:13:55Z",
+      "side": 1,
+      "message": "std::is_same_v\u003cconst int, std::remove_pointer_t\u003cconst int*\u003e\u003e this expression return true\n\nstd::is_same_v\u003cconst int*, std::decay_t\u003cconst int*\u003e\u003e this expression return true\n\nSo after all additional remove_const or cv is needed and decay cannot be used.\n\nDone",
+      "parentUuid": "35b3a22f_716d6a6b",
+      "range": {
+        "startLine": 55,
+        "startChar": 20,
+        "endLine": 55,
+        "endChar": 39
+      },
+      "revId": "86a913c910b373ab2cf8c14f80a3d1edf2086d91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "4ac862bb_8e05a8fd",
@@ -966,6 +990,24 @@
       "side": 1,
       "message": "You are right, I will use same enum.",
       "parentUuid": "f8fbe603_56492291",
+      "revId": "86a913c910b373ab2cf8c14f80a3d1edf2086d91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9e4c2b8a_818dd379",
+        "filename": "include/sdbusplus/unpack_properties.hpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 1000678
+      },
+      "writtenOn": "2022-03-16T13:13:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ec5820b3_f849d240",
       "revId": "86a913c910b373ab2cf8c14f80a3d1edf2086d91",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },

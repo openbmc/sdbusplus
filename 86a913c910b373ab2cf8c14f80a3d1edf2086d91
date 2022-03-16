@@ -352,6 +352,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "9caeddeb_3a7d7ed6",
+        "filename": "include/sdbusplus/unpack_properties.hpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1000678
+      },
+      "writtenOn": "2022-03-16T15:26:08Z",
+      "side": 1,
+      "message": "unpackProperties was changed to accept vector only",
+      "parentUuid": "df1db8e8_170553c1",
+      "range": {
+        "startLine": 30,
+        "startChar": 0,
+        "endLine": 30,
+        "endChar": 56
+      },
+      "revId": "86a913c910b373ab2cf8c14f80a3d1edf2086d91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "4faba27d_e80f374a",
         "filename": "include/sdbusplus/unpack_properties.hpp",
         "patchSetId": 11
@@ -896,6 +920,30 @@
       "writtenOn": "2022-03-12T00:34:12Z",
       "side": 1,
       "message": "Pursuant to the comment above, if we made that change to only support iterable data types that make sense, this could change to be std::span which might reduce the template overloading.",
+      "range": {
+        "startLine": 165,
+        "startChar": 29,
+        "endLine": 165,
+        "endChar": 51
+      },
+      "revId": "86a913c910b373ab2cf8c14f80a3d1edf2086d91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8c6682f5_451146f0",
+        "filename": "include/sdbusplus/unpack_properties.hpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 165,
+      "author": {
+        "id": 1000678
+      },
+      "writtenOn": "2022-03-16T15:26:08Z",
+      "side": 1,
+      "message": "unpackProperties was changed to accept vector only",
+      "parentUuid": "346869aa_db8ded51",
       "range": {
         "startLine": 165,
         "startChar": 29,

@@ -208,6 +208,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "871f01a0_75f9fcd8",
+        "filename": "include/sdbusplus/asio/property.hpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2022-03-21T18:03:42Z",
+      "side": 1,
+      "message": "In this context we have an rvalue reference as an input, so either the user gave us an rvalue explicitly, or a copy got made implicitly by the compiler so I don\u0027t think we\u0027re casting \"somone elses\" reference here.",
+      "parentUuid": "cb4e4d1f_cfd81acf",
+      "range": {
+        "startLine": 17,
+        "startChar": 26,
+        "endLine": 17,
+        "endChar": 44
+      },
+      "revId": "86a913c910b373ab2cf8c14f80a3d1edf2086d91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "2b14687b_0131f61d",
@@ -529,6 +553,30 @@
       "writtenOn": "2022-03-15T09:14:03Z",
       "side": 1,
       "message": "This has two benefits, code using find is much simpler and binary size is smaller. Number of properties is quite small so there should be no visible differences in performance. I would like to keep it this way, since there are no visible benefits.\n\n@Ed In one of the attempts I tried to do it with single loop, it worked fine, but it produced bigger bmcweb binary.",
+      "parentUuid": "5a301052_a1eaed0c",
+      "range": {
+        "startLine": 48,
+        "startChar": 0,
+        "endLine": 48,
+        "endChar": 51
+      },
+      "revId": "86a913c910b373ab2cf8c14f80a3d1edf2086d91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "dcffab2a_6839f199",
+        "filename": "include/sdbusplus/unpack_properties.hpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2022-03-21T18:03:42Z",
+      "side": 1,
+      "message": "didn\u0027t see your last reply before I hit send;; Last message was meant for Krzysztof.  The way we usually write this loop is O(N)\n\nfor (property : propertiesVector){\n   if property.first \u003d\u003d \"FirstArg\":\n       Do firstargunpack on property.second.\n   if property.first \u003d\u003d \"Secondarg\":\n       do secondArgUnpack.\n\n}\n\n\nThat\u0027s ideally the logic the template should be implementing.  Instead, right now it\u0027s doing more loops.  When we did this same thing for readJson, we found that the above optimized better if we unrolled the inner loop, and made sure that the inner loop was known at compile time.\n\nfor (property_name in {FirstArg, SecondArg}){\n   for (property in PropertiesVector){\n       if (propertyName \u003d\u003d property.first){\n           // Do unpack.\n       }\n    } \n}",
       "parentUuid": "5a301052_a1eaed0c",
       "range": {
         "startLine": 48,

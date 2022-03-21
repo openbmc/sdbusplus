@@ -22,6 +22,30 @@
       },
       "revId": "4a763a11405c5d0d9200c99a81cd4dd491cbb668",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4fa4731c_3a3fe047",
+        "filename": "include/sdbusplus/exception.hpp",
+        "patchSetId": 16
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2022-03-21T18:03:42Z",
+      "side": 1,
+      "message": "I\u0027ve long thought of \"ed\" as a synonym for \"failed\" 😄",
+      "parentUuid": "db8da97f_5835d32e",
+      "range": {
+        "startLine": 115,
+        "startChar": 26,
+        "endLine": 115,
+        "endChar": 29
+      },
+      "revId": "4a763a11405c5d0d9200c99a81cd4dd491cbb668",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

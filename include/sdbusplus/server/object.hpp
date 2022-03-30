@@ -177,9 +177,14 @@ struct object :
 
     enum class action
     {
+        /** sd_bus_emit_object_{added, removed} */
         emit_object_added,
+        /** sd_bus_emit_interfaces_{added, removed} */
         emit_interface_added,
+        /** no automatic added signal, but sd_bus_emit_object_removed on
+         *  destruct */
         defer_emit,
+        /** no interface signals */
         emit_no_signals,
     };
 
@@ -187,17 +192,13 @@ struct object :
      *
      *  @param[in] bus - The bus to place the object on.
      *  @param[in] path - The path the object resides at.
-     *  @param[in] deferSignal - Set to true if emit_object_added should be
-     *                           deferred.  This would likely be true if the
-     *                           object needs custom property init before the
-     *                           signal can be sent.
+     *  @param[in] act - Set to the desired InterfacesAdded signal behavior.
      */
     object(bus_t& bus, const char* path,
            action act = action::emit_object_added) :
         details::compose<Args...>(bus, path),
         __sdbusplus_server_object_bus(get_busp(bus), bus.getInterface()),
         __sdbusplus_server_object_path(path),
-        __sdbusplus_server_object_emitremoved(false),
         __sdbusplus_server_object_intf(bus.getInterface())
     {
         // Default ctor
@@ -213,7 +214,7 @@ struct object :
 
     ~object()
     {
-        if (__sdbusplus_server_object_emitremoved)
+        if (__sdbusplus_server_object_signalstate != action::emit_no_signals)
         {
             __sdbusplus_server_object_intf->sd_bus_emit_object_removed(
                 get_busp(__sdbusplus_server_object_bus),
@@ -224,12 +225,12 @@ struct object :
     /** Emit the 'object-added' signal, if not already sent. */
     void emit_object_added()
     {
-        if (!__sdbusplus_server_object_emitremoved)
+        if (__sdbusplus_server_object_signalstate == action::defer_emit)
         {
             __sdbusplus_server_object_intf->sd_bus_emit_object_added(
                 get_busp(__sdbusplus_server_object_bus),
                 __sdbusplus_server_object_path.c_str());
-            __sdbusplus_server_object_emitremoved = true;
+            __sdbusplus_server_object_signalstate = action::emit_object_added;
         }
     }
 
@@ -240,21 +241,36 @@ struct object :
     // ambiguity.
     bus_t __sdbusplus_server_object_bus;
     std::string __sdbusplus_server_object_path;
-    bool __sdbusplus_server_object_emitremoved;
+    action __sdbusplus_server_object_signalstate = action::defer_emit;
     SdBusInterface* __sdbusplus_server_object_intf;
 
     /** Check and run the action */
     void check_action(action act)
     {
-        if (act == action::emit_object_added)
+        switch (act)
         {
-            emit_object_added();
+            case action::emit_object_added:
+                // We are wanting to call emit_object_added to set up in
+                // deferred state temporarily and then emit the signal.
+                __sdbusplus_server_object_signalstate = action::defer_emit;
+                emit_object_added();
+                break;
+
+            case action::emit_interface_added:
+                details::compose<Args...>::maybe_emit_iface_added();
+                // If we are emitting at an interface level, we should never
+                // also emit at the object level.
+                __sdbusplus_server_object_signalstate = action::emit_no_signals;
+                break;
+
+            case action::defer_emit:
+                __sdbusplus_server_object_signalstate = action::defer_emit;
+                break;
+
+            case action::emit_no_signals:
+                __sdbusplus_server_object_signalstate = action::emit_no_signals;
+                break;
         }
-        else if (act == action::emit_interface_added)
-        {
-            details::compose<Args...>::maybe_emit_iface_added();
-        }
-        // Otherwise, do nothing
     }
 };
 

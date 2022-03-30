@@ -83,9 +83,38 @@ TEST_F(Object, DeferAddInterface)
     // Now invoke emit_object_added()
     test->emit_object_added();
 
-    // After destruction, the object will be removed
     EXPECT_CALL(sdbusMock, sd_bus_emit_object_removed(_, StrEq(objPath)))
         .Times(1);
+    EXPECT_CALL(sdbusMock,
+                sd_bus_emit_interfaces_removed_strv(_, StrEq(objPath), _))
+        .Times(0);
+}
+
+TEST_F(Object, NeverAddInterface)
+{
+    // Simulate the typical usage of a service
+    sdbusplus::server::manager_t objManager(bus, objPath);
+    bus.request_name(busName);
+
+    EXPECT_CALL(sdbusMock, sd_bus_emit_object_added(_, StrEq(objPath)))
+        .Times(0);
+    EXPECT_CALL(sdbusMock,
+                sd_bus_emit_interfaces_added_strv(_, StrEq(objPath), _))
+        .Times(0);
+
+    // It defers emit_object_added()
+    auto test = std::make_unique<TestInherit>(
+        bus, objPath, TestInherit::action::emit_no_signals);
+
+    EXPECT_CALL(sdbusMock, sd_bus_emit_object_added(_, StrEq(objPath)))
+        .Times(0);
+    EXPECT_CALL(sdbusMock,
+                sd_bus_emit_interfaces_added_strv(_, StrEq(objPath), _))
+        .Times(0);
+
+    // After destruction, the object will be removed
+    EXPECT_CALL(sdbusMock, sd_bus_emit_object_removed(_, StrEq(objPath)))
+        .Times(0);
     EXPECT_CALL(sdbusMock,
                 sd_bus_emit_interfaces_removed_strv(_, StrEq(objPath), _))
         .Times(0);

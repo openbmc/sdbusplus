@@ -180,6 +180,7 @@ struct object :
         emit_object_added,
         emit_interface_added,
         defer_emit,
+        emit_no_signals,
     };
 
     /** Construct an 'object' on a bus with a path.

@@ -205,13 +205,6 @@ struct object :
         check_action(act);
     }
 
-    object(bus_t& bus, const char* path, bool deferSignal) :
-        object(bus, path,
-               deferSignal ? action::defer_emit : action::emit_object_added)
-    {
-        // Delegate to default ctor
-    }
-
     ~object()
     {
         if (__sdbusplus_server_object_signalstate != action::emit_no_signals)

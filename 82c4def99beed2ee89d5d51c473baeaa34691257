@@ -85,6 +85,29 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "004098bc_db508f23",
+        "filename": "include/sdbusplus/server/object.hpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 243,
+      "author": {
+        "id": 1000678
+      },
+      "writtenOn": "2022-03-31T12:57:08Z",
+      "side": 1,
+      "message": "while it was boolean this name was meaningful, now it is confusing for example:\n\n__sdbusplus_server_object_emitremoved \u003d action::emit_object_added;",
+      "range": {
+        "startLine": 243,
+        "startChar": 11,
+        "endLine": 243,
+        "endChar": 49
+      },
+      "revId": "82c4def99beed2ee89d5d51c473baeaa34691257",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "dd7e540c_e44bab82",
         "filename": "include/sdbusplus/server/object.hpp",
         "patchSetId": 3

@@ -52,6 +52,24 @@
       "parentUuid": "84c0a838_7b57eb6c",
       "revId": "82c4def99beed2ee89d5d51c473baeaa34691257",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "054a9793_5d28a96b",
+        "filename": "include/sdbusplus/server/object.hpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 207,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-03-31T12:25:42Z",
+      "side": 0,
+      "message": "\u003e 1. In which case a service needs to not emit object removed on destruction?\n\nphosphor-hwmon\u0027s implementation is a good example of this.  They have one object_t to hold the Value, which has in it unique_ptr\u0027s to optional additional object_t for the thresholds.  These are 1-3 different object_t\u0027s that are hosted at the same dbus location and end up being destructed together.\n\nWhat they do is:\n - Create Value with deferred_emit.\n - Create Threshold(s) with deferred_emit.\n - Call emit_object_added on the Value.\n    - This creates the InterfacesAdded signal for Value and Threshold since they are hosted at the same dbus path.\n - In destruction, only Value should emit InterfacesRemoved.\n\nThis situation is why I\u0027m adding the \u0027emit_no_signals\u0027 action.  The Threshold objects will have that and the Value will have \u0027defer_emit\u0027.  Then when the object(s) are deleted only Value\u0027s destructor will call \u0027sd_bus_emit_object_removed\u0027 which will emit all the interfaces at that object path (Value + Threshold).\n\n\u003e 2. Why a service shall not emit both interfaces_removed and object_removed?\n\nThere are very few cases where you should do both.  \u0027object_removed\u0027 isn\u0027t a signal; it is a helper function from sd_bus.  The only signals are InterfacesAdded/InterfacesRemoved.  \u0027object_removed\u0027 is a helper that creates a single InterfacesAdded for all the interfaces hosted at that object path.\n\nIf you were to call both interfaces_removed and object_removed you are duplicating the same information on multiple signals (multiple InterfacesRemoved signals where each interface gets signaled as removed twice).\n\nThere _are_ situations where it makes sense to use both interface-level signalling and object-level signalling, but it is rarer.  The example I found was, I think, in code update.  They have a \"static\" object that holds the software version information.  They have a \"dynamic\" Progress object that only exists while an update is in progress.  Both of these object\u0027s are hosted at the same path.\n\nThe Version is handled with object_added/object_removed, which is appropriate.  The Progress is handled with interfaces_added/interfaces_removed.  The reasons are:\n  - When the Progress is created there is already a Version object at that path, so object_added is not appropriate because it will \"re-advertise\" the Version object.  By using interfaces_added, they can be certain the signal is only for the Progress portion.\n  - When the Progress is deleted the Version object remains at that path, so object_removed would end up sending InterfacesRemoved for the Version object, which is not appropriate.  Again, using just interfaces_removed on Progress, the appropriate state can be reflected via the signal(s).",
+      "parentUuid": "4c008189_59e92c85",
+      "revId": "82c4def99beed2ee89d5d51c473baeaa34691257",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

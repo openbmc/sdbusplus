@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0d692bb3_b1ad540e",
+        "filename": "include/sdbusplus/server/object.hpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 207,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2022-03-31T02:14:51Z",
+      "side": 0,
+      "message": "This is already used by services where a service could set the `deferSignal` to true to defer the emit of object added signal.\n\nWhen I add the `action` related code, this ctor is left on purpose for compatibility.\n\nWe probably could mark it deprecated and encourage users to use the `action` API, and fix all the use cases of `deferSignal` in openbmc repos, then we could remove it.",
+      "revId": "82c4def99beed2ee89d5d51c473baeaa34691257",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

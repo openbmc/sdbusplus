@@ -26,6 +26,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "8072ae65_b123f928",
+        "filename": "include/sdbusplus/server/object.hpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 184,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-03-31T12:02:26Z",
+      "side": 1,
+      "message": "I will improve the wording.",
+      "parentUuid": "3e062c9a_8c7b33eb",
+      "range": {
+        "startLine": 184,
+        "startChar": 12,
+        "endLine": 184,
+        "endChar": 67
+      },
+      "revId": "82c4def99beed2ee89d5d51c473baeaa34691257",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "a954abca_d8257404",
         "filename": "include/sdbusplus/server/object.hpp",
         "patchSetId": 3
@@ -37,6 +61,47 @@
       "writtenOn": "2022-03-31T05:18:55Z",
       "side": 1,
       "message": "Should this check action::emit_object_added as well?\nOtherwise it will not call sd_bus_emit_object_added() for the default check action::emit_object_added",
+      "revId": "82c4def99beed2ee89d5d51c473baeaa34691257",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c3541840_dc830c0c",
+        "filename": "include/sdbusplus/server/object.hpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 227,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-03-31T12:02:26Z",
+      "side": 1,
+      "message": "No.  If we allow \u0027emit_object_added\u0027 then people could call this function multiple times.  \n\nMaybe the state machine isn\u0027t obvious.  Let me know if I can improve it.\n\nOn line 243, in all cases, we initialize to \"defer_emit\" because the object is in deferred-emit state.  For action \u0027emit_object_added\u0027 (line 251) we end up immediately calling this function, which moves to \"object_added\" state so that we cannot call this function a second time.",
+      "parentUuid": "a954abca_d8257404",
+      "revId": "82c4def99beed2ee89d5d51c473baeaa34691257",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "dd7e540c_e44bab82",
+        "filename": "include/sdbusplus/server/object.hpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 269,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-03-31T12:02:26Z",
+      "side": 1,
+      "message": "I think these comments became redundant so let me rework them.",
+      "range": {
+        "startLine": 263,
+        "startChar": 0,
+        "endLine": 269,
+        "endChar": 35
+      },
       "revId": "82c4def99beed2ee89d5d51c473baeaa34691257",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }

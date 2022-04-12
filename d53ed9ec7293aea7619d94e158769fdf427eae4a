@@ -72,6 +72,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "5d3eb204_5c0f6a0b",
+        "filename": "include/sdbusplus/unpack_properties.hpp",
+        "patchSetId": 17
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-04-12T21:32:12Z",
+      "side": 1,
+      "message": "It is used in 35 ( `noexcept(Noexcept)` ), but I didn\u0027t expect this to be a template parameter like this.  We already have OnErrorCallback and we end up doing `onErrorCallback(...)`.  We should be able to automatically set `noexcept(onErrorCallback(...))` and then you need to mark the lambda as noexcept for the noexcept lambda.",
+      "parentUuid": "fc3486a0_da18b85a",
+      "range": {
+        "startLine": 30,
+        "startChar": 10,
+        "endLine": 30,
+        "endChar": 23
+      },
+      "revId": "d53ed9ec7293aea7619d94e158769fdf427eae4a",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "aeed7e38_89bf62c9",
         "filename": "include/sdbusplus/unpack_properties.hpp",
         "patchSetId": 17

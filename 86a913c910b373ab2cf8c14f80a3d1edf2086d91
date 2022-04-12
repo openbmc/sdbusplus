@@ -400,6 +400,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "6ece018d_e7c95a34",
+        "filename": "include/sdbusplus/unpack_properties.hpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2022-04-12T18:03:25Z",
+      "side": 1,
+      "message": "\u003e Are you suggesting to force one most efficient container type?\n\nYes, we should build an API that coerces users to do the right thing.",
+      "parentUuid": "9caeddeb_3a7d7ed6",
+      "range": {
+        "startLine": 30,
+        "startChar": 0,
+        "endLine": 30,
+        "endChar": 56
+      },
+      "revId": "86a913c910b373ab2cf8c14f80a3d1edf2086d91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "4faba27d_e80f374a",
         "filename": "include/sdbusplus/unpack_properties.hpp",
         "patchSetId": 11
@@ -626,6 +650,30 @@
       "side": 1,
       "message": "Implementing it as you suggested increases binary size from 2632828 to 2649244",
       "parentUuid": "189ae9ef_eb4871ba",
+      "range": {
+        "startLine": 48,
+        "startChar": 0,
+        "endLine": 48,
+        "endChar": 51
+      },
+      "revId": "86a913c910b373ab2cf8c14f80a3d1edf2086d91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "23f6be0e_dde6ad94",
+        "filename": "include/sdbusplus/unpack_properties.hpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2022-04-12T18:03:25Z",
+      "side": 1,
+      "message": "How are you measuring?  bmcweb compressed size should be on the order of 850KB these days;  Maybe you were measuring uncompressed?  Is the patchset where we did the N loop instead of the N^2 loop available in the series somewhere?  I\u0027d like to understand it, because what you\u0027re describing falls outside of what we\u0027ve seen in the past, and in terms of code, an O(N) algorithm is better than O(N^2) so I\u0027d like to understand where the difference lies.",
+      "parentUuid": "00c5813f_bccc02ad",
       "range": {
         "startLine": 48,
         "startChar": 0,

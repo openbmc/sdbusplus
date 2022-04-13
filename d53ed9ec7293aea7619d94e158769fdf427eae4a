@@ -139,6 +139,30 @@
       },
       "revId": "d53ed9ec7293aea7619d94e158769fdf427eae4a",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d1b84412_f8abe161",
+        "filename": "include/sdbusplus/unpack_properties.hpp",
+        "patchSetId": 17
+      },
+      "lineNbr": 148,
+      "author": {
+        "id": 1000678
+      },
+      "writtenOn": "2022-04-13T07:56:13Z",
+      "side": 1,
+      "message": "If we change to std::function they it won\u0027t be possible to remove `bool Noexcept` and use `noexcept(onErrorCallback(...))` instead.",
+      "parentUuid": "aeed7e38_89bf62c9",
+      "range": {
+        "startLine": 148,
+        "startChar": 11,
+        "endLine": 148,
+        "endChar": 35
+      },
+      "revId": "d53ed9ec7293aea7619d94e158769fdf427eae4a",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

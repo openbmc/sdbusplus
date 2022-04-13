@@ -118,6 +118,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "918bea83_3ddede64",
+        "filename": "include/sdbusplus/unpack_properties.hpp",
+        "patchSetId": 17
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1000678
+      },
+      "writtenOn": "2022-04-13T09:07:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ae645af1_dd771cc9",
+      "range": {
+        "startLine": 30,
+        "startChar": 10,
+        "endLine": 30,
+        "endChar": 23
+      },
+      "revId": "d53ed9ec7293aea7619d94e158769fdf427eae4a",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "aeed7e38_89bf62c9",

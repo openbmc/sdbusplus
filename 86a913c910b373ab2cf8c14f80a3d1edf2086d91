@@ -137,6 +137,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "9a65356c_d2c3bcc5",
+        "filename": "include/sdbusplus/asio/property.hpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1000678
+      },
+      "writtenOn": "2022-04-20T05:19:59Z",
+      "side": 1,
+      "message": "Marking it as resolved. Please reopen it if needed.",
+      "parentUuid": "e4714f68_6be8c308",
+      "range": {
+        "startLine": 13,
+        "startChar": 4,
+        "endLine": 13,
+        "endChar": 60
+      },
+      "revId": "86a913c910b373ab2cf8c14f80a3d1edf2086d91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "8c2773f4_9f72b84b",
@@ -269,6 +293,30 @@
       "side": 1,
       "message": "This can be performed in overload above.\n\nThis overload is only used to change all lambdas to common std::function_type. Thanks to that instead of calling async_method_call with different lambda types we are calling async_method_call with same template type.",
       "parentUuid": "2b14687b_0131f61d",
+      "range": {
+        "startLine": 28,
+        "startChar": 39,
+        "endLine": 28,
+        "endChar": 53
+      },
+      "revId": "86a913c910b373ab2cf8c14f80a3d1edf2086d91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0ae99961_75e723b8",
+        "filename": "include/sdbusplus/asio/property.hpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1000678
+      },
+      "writtenOn": "2022-04-20T05:19:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "965ee5bb_516516ea",
       "range": {
         "startLine": 28,
         "startChar": 39,
@@ -422,6 +470,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "39848024_6df8ce87",
+        "filename": "include/sdbusplus/unpack_properties.hpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1000678
+      },
+      "writtenOn": "2022-04-20T05:19:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6ece018d_e7c95a34",
+      "range": {
+        "startLine": 30,
+        "startChar": 0,
+        "endLine": 30,
+        "endChar": 56
+      },
+      "revId": "86a913c910b373ab2cf8c14f80a3d1edf2086d91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "4faba27d_e80f374a",
@@ -483,6 +555,30 @@
       "side": 1,
       "message": "container.begin() should also return const iterator in case where container is const, it  should work exactly like std::begin(container). I didn\u0027t notice many uses of std::begin in openbmc code and decided to change it.",
       "parentUuid": "91a407e4_76e7c0a4",
+      "range": {
+        "startLine": 37,
+        "startChar": 12,
+        "endLine": 37,
+        "endChar": 46
+      },
+      "revId": "86a913c910b373ab2cf8c14f80a3d1edf2086d91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ef114042_395be1b9",
+        "filename": "include/sdbusplus/unpack_properties.hpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1000678
+      },
+      "writtenOn": "2022-04-20T05:19:59Z",
+      "side": 1,
+      "message": "Marking it as resolved. Please reopen it if needed.",
+      "parentUuid": "7264f865_bd64a78c",
       "range": {
         "startLine": 37,
         "startChar": 12,
@@ -722,6 +818,30 @@
       "side": 1,
       "message": "Pleast take a look at Patchset 20",
       "parentUuid": "a26c6ca3_e45addfd",
+      "range": {
+        "startLine": 48,
+        "startChar": 0,
+        "endLine": 48,
+        "endChar": 51
+      },
+      "revId": "86a913c910b373ab2cf8c14f80a3d1edf2086d91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "162a2ed7_725bf410",
+        "filename": "include/sdbusplus/unpack_properties.hpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 1000678
+      },
+      "writtenOn": "2022-04-20T05:19:59Z",
+      "side": 1,
+      "message": "Marking it as resolved. Please reopen it if needed.",
+      "parentUuid": "9003f66b_ff4da8c8",
       "range": {
         "startLine": 48,
         "startChar": 0,
@@ -1136,6 +1256,30 @@
       "side": 1,
       "message": "unpackProperties was changed to accept vector only",
       "parentUuid": "346869aa_db8ded51",
+      "range": {
+        "startLine": 165,
+        "startChar": 29,
+        "endLine": 165,
+        "endChar": 51
+      },
+      "revId": "86a913c910b373ab2cf8c14f80a3d1edf2086d91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "02bf47b8_b6433ddf",
+        "filename": "include/sdbusplus/unpack_properties.hpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 165,
+      "author": {
+        "id": 1000678
+      },
+      "writtenOn": "2022-04-20T05:19:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8c6682f5_451146f0",
       "range": {
         "startLine": 165,
         "startChar": 29,

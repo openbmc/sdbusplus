@@ -24,6 +24,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f27e81e2_aa819add",
+        "filename": "include/sdbusplus/asio/property.hpp",
+        "patchSetId": 17
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1000678
+      },
+      "writtenOn": "2022-04-20T05:19:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a9f692b1_32547898",
+      "range": {
+        "startLine": 10,
+        "startChar": 19,
+        "endLine": 10,
+        "endChar": 20
+      },
+      "revId": "d53ed9ec7293aea7619d94e158769fdf427eae4a",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "818baff2_289adaf6",
@@ -37,6 +61,30 @@
       "writtenOn": "2022-04-12T18:03:25Z",
       "side": 1,
       "message": "Same as above, can this be a more descriptive variable name?  \"Handler\" was better here.",
+      "range": {
+        "startLine": 25,
+        "startChar": 19,
+        "endLine": 25,
+        "endChar": 20
+      },
+      "revId": "d53ed9ec7293aea7619d94e158769fdf427eae4a",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e5ca3883_3600b6d6",
+        "filename": "include/sdbusplus/asio/property.hpp",
+        "patchSetId": 17
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1000678
+      },
+      "writtenOn": "2022-04-20T05:19:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "818baff2_289adaf6",
       "range": {
         "startLine": 25,
         "startChar": 19,
@@ -179,6 +227,30 @@
       "side": 1,
       "message": "If we change to std::function they it won\u0027t be possible to remove `bool Noexcept` and use `noexcept(onErrorCallback(...))` instead.",
       "parentUuid": "aeed7e38_89bf62c9",
+      "range": {
+        "startLine": 148,
+        "startChar": 11,
+        "endLine": 148,
+        "endChar": 35
+      },
+      "revId": "d53ed9ec7293aea7619d94e158769fdf427eae4a",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b3d826c1_883efcc2",
+        "filename": "include/sdbusplus/unpack_properties.hpp",
+        "patchSetId": 17
+      },
+      "lineNbr": 148,
+      "author": {
+        "id": 1000678
+      },
+      "writtenOn": "2022-04-20T05:19:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d1b84412_f8abe161",
       "range": {
         "startLine": 148,
         "startChar": 11,

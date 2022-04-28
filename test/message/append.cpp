@@ -6,6 +6,7 @@
 #include <array>
 #include <map>
 #include <set>
+#include <span>
 #include <string>
 #include <tuple>
 #include <unordered_map>
@@ -80,6 +81,8 @@ class AppendTest : public testing::Test
 
 TEST_F(AppendTest, RValueInt)
 {
+    static_assert(
+        sdbusplus::message::details::can_append_multiple_v<decltype(1)>);
     expect_basic<int>(SD_BUS_TYPE_INT32, 1);
     new_message().append(1);
 }
@@ -87,6 +90,8 @@ TEST_F(AppendTest, RValueInt)
 TEST_F(AppendTest, LValueInt)
 {
     const int a = 1;
+    static_assert(
+        sdbusplus::message::details::can_append_multiple_v<decltype(a)>);
     expect_basic<int>(SD_BUS_TYPE_INT32, a);
     new_message().append(a);
 }
@@ -154,6 +159,8 @@ TEST_F(AppendTest, LValueCString)
 TEST_F(AppendTest, XValueCString)
 {
     const char* s = "asdf";
+    static_assert(
+        sdbusplus::message::details::can_append_multiple_v<decltype(s)>);
     expect_basic_string(SD_BUS_TYPE_STRING, s);
     new_message().append(std::move(s));
 }
@@ -167,6 +174,8 @@ TEST_F(AppendTest, RValueString)
 TEST_F(AppendTest, LValueString)
 {
     std::string s{"asdf"};
+    static_assert(
+        !sdbusplus::message::details::can_append_multiple_v<decltype(s)>);
     expect_basic_string(SD_BUS_TYPE_STRING, s.c_str());
     new_message().append(s);
 }
@@ -213,6 +222,8 @@ TEST_F(AppendTest, CombinedBasic)
 TEST_F(AppendTest, Array)
 {
     const std::array<double, 4> a{1.1, 2.2, 3.3, 4.4};
+    static_assert(
+        !sdbusplus::message::details::can_append_multiple_v<decltype(a)>);
 
     {
         testing::InSequence seq;
@@ -224,6 +235,25 @@ TEST_F(AppendTest, Array)
         expect_close_container();
     }
     new_message().append(a);
+}
+
+TEST_F(AppendTest, Span)
+{
+    const std::array<double, 4> a{1.1, 2.2, 3.3, 4.4};
+    auto s = std::span{a};
+    static_assert(
+        !sdbusplus::message::details::can_append_multiple_v<decltype(s)>);
+
+    {
+        testing::InSequence seq;
+        expect_open_container(SD_BUS_TYPE_ARRAY, "d");
+        for (const auto& i : s)
+        {
+            expect_basic<double>(SD_BUS_TYPE_DOUBLE, i);
+        }
+        expect_close_container();
+    }
+    new_message().append(s);
 }
 
 TEST_F(AppendTest, Vector)

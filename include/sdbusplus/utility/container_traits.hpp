@@ -1,5 +1,7 @@
 #pragma once
 
+#include <utility>
+
 namespace sdbusplus
 {
 namespace utility
@@ -22,7 +24,7 @@ struct has_const_iterator
     } no;
 
     template <typename C>
-    static constexpr yes test(typename C::const_iterator*);
+    static constexpr yes test(decltype(std::cbegin(std::declval<C>()))*);
     template <typename C>
     static constexpr no test(...);
 

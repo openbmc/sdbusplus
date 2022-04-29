@@ -3,6 +3,7 @@
 set -e
 
 function show_usage {
+    proc=$(nproc)
     echo "Usage: $0 [options] <dirs>+"
     echo
     echo "Generate the sdbus++ sources from a directory path."
@@ -11,7 +12,7 @@ function show_usage {
     echo "    --tool <path>    - path to processing tool (default 'sdbus++')."
     echo "    --output <path>  - directory to place output files (default '.')."
     echo "    --list-all       - include all generated files in stdout list."
-    echo "    --jobs <N>       - number to run in parallel (default: $(nproc))."
+    echo "    --jobs <N>       - number to run in parallel (default: ${proc})."
     echo "    <dirs>+          - any number of subdirectories to generate."
     echo
     echo "The output on stdout is a list of generated files, which is intended"
@@ -30,7 +31,7 @@ listall="no"
 parallel=$(nproc || grep -c ^processor < /proc/cpuinfo)
 
 options="$(getopt -o ho:t:j: --long help,list-all,output:,tool:,jobs: -- "$@")"
-eval set -- "$options"
+eval set -- "${options}"
 
 while true; do
     case "$1" in
@@ -66,10 +67,15 @@ while true; do
             shift
             break
             ;;
+
+        *)
+            echo "Invalid argument: $1"
+            exit 1
+            ;;
     esac
 done
 
-if [ $# -eq 0 ]; then
+if [[ $# -eq 0 ]]; then
     show_usage
     exit 1
 fi
@@ -85,31 +91,31 @@ declare -A emitted_file_names
 #   $5: 'append-mode' if present.
 function generate_single {
 
-    if [ "empty" == "$1" ]; then
-        echo -n > "$outputdir/$4"
-    elif [ "" == "$5" ]; then
-        $sdbuspp "$1" "$2" "$3" > "$outputdir/$4" &
-        all_jobs="$all_jobs $!"
+    if [[ "empty" == "$1" ]]; then
+        echo -n > "${outputdir}/$4"
+    elif [[ "" == "$5" ]]; then
+        ${sdbuspp} "$1" "$2" "$3" > "${outputdir}/$4" &
+        all_jobs="${all_jobs} $!"
     else
-        $sdbuspp "$1" "$2" "$3" >> "$outputdir/$4" &
-        all_jobs="$all_jobs $!"
+        ${sdbuspp} "$1" "$2" "$3" >> "${outputdir}/$4" &
+        all_jobs="${all_jobs} $!"
     fi
 
     # Emit filename as needed.
-    filename=$outputdir/$4
-    if [ "x1" != "x${emitted_file_names[$filename]}" ]; then
-        emitted_file_names[$filename]="1"
+    filename=${outputdir}/$4
+    if [[ "x1" != "x${emitted_file_names[${filename}]}" ]]; then
+        emitted_file_names[${filename}]="1"
 
         # Always emit generated file name for foo-cpp and foo-header.
         # Conditionally emit for everything else depending on $listall.
         case "$2" in
             *-cpp | *-header)
-                echo "$filename"
+                echo "${filename}"
                 ;;
 
             *)
-                if [ "yes" == "$listall" ]; then
-                    echo "$filename"
+                if [[ "yes" == "${listall}" ]]; then
+                    echo "${filename}"
                 fi
                 ;;
         esac
@@ -117,54 +123,55 @@ function generate_single {
 
     # Ensure that no more than ${parallel} jobs are running at a time and if so
     # wait for them to finish.
-    if [[ $(echo "$all_jobs" | wc -w) -ge $parallel ]]; then
+    # shellcheck disable=SC2312
+    if [[ $(echo "${all_jobs}" | wc -w) -ge ${parallel} ]]; then
         waitall
     fi
 }
 
 function waitall {
-    for job in $all_jobs; do
-        wait "$job"
+    for job in ${all_jobs}; do
+        wait "${job}"
     done
     all_jobs=""
 }
 
 for d in "$@"; do
-    interfaces="$(find "$d" -name '*.interface.yaml')"
-    errors="$(find "$d" -name '*.errors.yaml')"
+    interfaces="$(find "${d}" -name '*.interface.yaml')"
+    errors="$(find "${d}" -name '*.errors.yaml')"
 
     # Some files are created from multiple YAML sources, but we don't know
     # which YAML sources are present.  For these files, we need to first
     # create an empty file to ensure the file does not carry old data from
     # a previous run.
-    for y in $interfaces $errors; do
+    for y in ${interfaces} ${errors}; do
         path="${y%.interface.yaml}"
         path="${path%.errors.yaml}"
         iface="${path//\//.}"
 
-        mkdir -p "$outputdir/$path"
-        generate_single empty markdown "$iface" "$path.md"
+        mkdir -p "${outputdir}/${path}"
+        generate_single empty markdown "${iface}" "${path}.md"
     done
 
-    for i in $interfaces; do
+    for i in ${interfaces}; do
         path="${i%.interface.yaml}"
         iface="${path//\//.}"
 
-        generate_single interface server-header "$iface" "$path/server.hpp"
-        generate_single interface server-cpp "$iface" "$path/server.cpp"
-        generate_single interface client-header "$iface" "$path/client.hpp"
-        generate_single interface markdown "$iface" "$path.md" append
+        generate_single interface server-header "${iface}" "${path}/server.hpp"
+        generate_single interface server-cpp "${iface}" "${path}/server.cpp"
+        generate_single interface client-header "${iface}" "${path}/client.hpp"
+        generate_single interface markdown "${iface}" "${path}.md" append
 
     done
     waitall # finish all before continuing
 
-    for e in $errors; do
+    for e in ${errors}; do
         path="${e%.errors.yaml}"
         iface="${path//\//.}"
 
-        generate_single error exception-header "$iface" "$path/error.hpp"
-        generate_single error exception-cpp "$iface" "$path/error.cpp"
-        generate_single error markdown "$iface" "$path.md" append
+        generate_single error exception-header "${iface}" "${path}/error.hpp"
+        generate_single error exception-cpp "${iface}" "${path}/error.cpp"
+        generate_single error markdown "${iface}" "${path}.md" append
 
     done
     waitall # finish all before continuing

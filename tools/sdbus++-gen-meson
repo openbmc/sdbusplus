@@ -38,7 +38,7 @@ EOF
 ## resulting meson.build would change.
 tool_version="sdbus++-gen-meson version 3"
 function show_version {
-    echo "$tool_version"
+    echo "${tool_version}"
 }
 
 # Set up defaults.
@@ -49,7 +49,7 @@ rootdir="."
 
 # Parse options.
 options="$(getopt -o hc:d:o:t:v --long help,command:,directory:,output:,tool:,version -- "$@")"
-eval set -- "$options"
+eval set -- "${options}"
 
 while true; do
     case "$1" in
@@ -91,6 +91,11 @@ while true; do
             shift
             break
             ;;
+
+        *)
+            echo "Invalid argument $1"
+            exit 1
+            ;;
     esac
 done
 
@@ -106,19 +111,19 @@ function meson_empty_file {
 ## Inserts rules to run the available version of this tool to ensure the
 ## version has not changed.
 function meson_create_root {
-    meson_empty_file "$outputdir"
+    meson_empty_file "${outputdir}"
 
-    cat >> "$outputdir/meson.build" \
+    cat >> "${outputdir}/meson.build" \
         << EOF
 sdbuspp_gen_meson_ver = run_command(
     sdbuspp_gen_meson_prog,
     '--version',
 ).stdout().strip().split('\n')[0]
 
-if sdbuspp_gen_meson_ver != '$tool_version'
+if sdbuspp_gen_meson_ver != '${tool_version}'
     warning('Generated meson files from wrong version of sdbus++-gen-meson.')
     warning(
-        'Expected "$tool_version", got:',
+        'Expected "${tool_version}", got:',
         sdbuspp_gen_meson_ver
     )
 endif
@@ -138,25 +143,25 @@ declare -A interfaces
 ## $1 - The path requiring to be created.
 function meson_create_path {
 
-    meson_path="$outputdir"
+    meson_path="${outputdir}"
     prev_meson_path=""
 
     # Split the path into segments.
     for part in $(echo "$1" | tr '/' '\n'); do
-        prev_meson_path="$meson_path"
-        meson_path="$meson_path/$part"
+        prev_meson_path="${meson_path}"
+        meson_path="${meson_path}/${part}"
 
         # Create the meson.build for this segment if it doesn't already exist.
-        if [ "" == "${meson_paths[$meson_path]}" ]; then
-            meson_paths["$meson_path"]="1"
-            meson_empty_file "$meson_path"
+        if [[ "" == "${meson_paths[${meson_path}]}" ]]; then
+            meson_paths["${meson_path}"]="1"
+            meson_empty_file "${meson_path}"
 
             # Add the 'subdir' link into the parent's meson.build.
             # We need to skip adding the links into the 'root' meson.build
             # because most repositories want to selectively add TLDs based
             # on config flags.  Let them figure out their own logic for that.
-            if [ "$outputdir" != "$prev_meson_path" ]; then
-                echo "subdir('$part')" >> "$prev_meson_path/meson.build"
+            if [[ ${outputdir} != "${prev_meson_path}" ]]; then
+                echo "subdir('${part}')" >> "${prev_meson_path}/meson.build"
             fi
         fi
     done
@@ -167,16 +172,16 @@ function meson_create_path {
 ##
 ## $1 - The interface to generate a target for.
 function meson_cpp_target {
-    mesondir="$outputdir/$1"
-    yamldir="$(realpath --relative-to="$mesondir" "$rootdir")"
+    mesondir="${outputdir}/$1"
+    yamldir="$(realpath --relative-to="${mesondir}" "${rootdir}")"
 
     # Determine the source and output files based on the YAMLs present.
     sources=""
     outputs=""
     for s in ${interfaces[$1]}; do
-        sources="'$yamldir/$1.$s', "
+        sources="'${yamldir}/$1.${s}', "
 
-        case "$s" in
+        case "${s}" in
             errors.yaml)
                 outputs="${outputs}'error.cpp', 'error.hpp', "
                 ;;
@@ -185,21 +190,26 @@ function meson_cpp_target {
                 outputs="${outputs}'server.cpp', 'server.hpp', "
                 outputs="${outputs}'client.hpp', "
                 ;;
+
+            *)
+                echo "Unknown interface type: ${s}"
+                exit 1
+                ;;
         esac
     done
 
     # Create the target to generate the 'outputs'.
-    cat >> "$mesondir/meson.build" \
+    cat >> "${mesondir}/meson.build" \
         << EOF
 generated_sources += custom_target(
     '$1__cpp'.underscorify(),
-    input: [ $sources ],
-    output: [ $outputs ],
+    input: [ ${sources} ],
+    output: [ ${outputs} ],
     command: [
         sdbuspp_gen_meson_prog, '--command', 'cpp',
         '--output', meson.current_build_dir(),
         '--tool', sdbusplusplus_prog,
-        '--directory', meson.current_source_dir() / '$yamldir',
+        '--directory', meson.current_source_dir() / '${yamldir}',
         '$1',
     ],
 )
@@ -210,27 +220,27 @@ EOF
 ## Generate the meson target for the markdown files from a YAML interface.
 ## $1 - The interface to generate a target for.
 function meson_md_target {
-    mesondir="$outputdir/$(dirname "$1")"
-    yamldir="$(realpath --relative-to="$mesondir" "$rootdir")"
+    mesondir="${outputdir}/$(dirname "$1")"
+    yamldir="$(realpath --relative-to="${mesondir}" "${rootdir}")"
 
     # Determine the source files based on the YAMLs present.
     sources=""
     for s in ${interfaces[$1]}; do
-        sources="'$yamldir/$1.$s', "
+        sources="'${yamldir}/$1.${s}', "
     done
 
     # Create the target to generate the interface.md file.
-    cat >> "$mesondir/meson.build" \
+    cat >> "${mesondir}/meson.build" \
         << EOF
 generated_others += custom_target(
     '$1__markdown'.underscorify(),
-    input: [ $sources ],
+    input: [ ${sources} ],
     output: [ '$(basename "$1").md' ],
     command: [
         sdbuspp_gen_meson_prog, '--command', 'markdown',
         '--output', meson.current_build_dir(),
         '--tool', sdbusplusplus_prog,
-        '--directory', meson.current_source_dir() / '$yamldir',
+        '--directory', meson.current_source_dir() / '${yamldir}',
         '$1',
     ],
 )
@@ -244,39 +254,41 @@ function cmd_meson {
     yamls=""
 
     # Find all the YAML files in the TLD subdirectories.
-    for d in $TLDs; do
-        dir="$rootdir/$d"
-        if [ ! -d "$dir" ]; then
+    for d in ${TLDs}; do
+        dir="${rootdir}/${d}"
+        if [[ ! -d ${dir} ]]; then
             continue
         fi
 
         yamls="\
-            $yamls \
-            $(find "$dir" -name '*.interface.yaml' -o -name '*.errors.yaml') \
+            ${yamls} \
+            $(find "${dir}" -name '*.interface.yaml' -o -name '*.errors.yaml') \
             "
     done
 
     # Sort YAMLs
-    yamls="$(echo "$yamls" | tr " " "\n" | sort)"
+    # shellcheck disable=SC2312
+    yamls="$(echo "${yamls}" | tr " " "\n" | sort)"
 
     # Assign the YAML files into the hash-table by interface name.
-    for y in $yamls; do
-        rel="$(realpath "--relative-to=$rootdir" "$y")"
-        dir="$(dirname "$rel")"
+    for y in ${yamls}; do
+        rel="$(realpath "--relative-to=${rootdir}" "${y}")"
+        dir="$(dirname "${rel}")"
         ext="${rel#*.}"
-        base="$(basename "$rel" ".$ext")"
-        key="$dir/$base"
+        base="$(basename "${rel}" ".${ext}")"
+        key="${dir}/${base}"
 
-        interfaces["$key"]="${interfaces[$key]} $ext"
+        interfaces["${key}"]="${interfaces[${key}]} ${ext}"
     done
 
     # Create the meson.build files.
     meson_create_root
+    # shellcheck disable=SC2312
     sorted_ifaces="$(echo "${!interfaces[@]}" | tr " " "\n" | sort)"
     for i in ${sorted_ifaces}; do
-        meson_create_path "$i"
-        meson_cpp_target "$i"
-        meson_md_target "$i"
+        meson_create_path "${i}"
+        meson_cpp_target "${i}"
+        meson_md_target "${i}"
     done
 }
 
@@ -286,31 +298,31 @@ function cmd_meson {
 ## For an interface foo/bar, the outputdir is expected to be foo/bar.
 function cmd_cpp {
 
-    if [ "" == "$1" ]; then
+    if [[ "" == "$1" ]]; then
         show_usage
         exit 1
     fi
 
-    if [ ! -e "$rootdir/$1.interface.yaml" ] &&
-        [ ! -e "$rootdir/$1.errors.yaml" ]; then
+    if [[ ! -e "${rootdir}/$1.interface.yaml" ]] &&
+        [[ ! -e "${rootdir}/$1.errors.yaml" ]]; then
         echo "Missing YAML for $1."
         exit 1
     fi
 
-    mkdir -p "$outputdir"
+    mkdir -p "${outputdir}"
 
-    sdbusppcmd="$sdbuspp -r $rootdir"
+    sdbusppcmd="${sdbuspp} -r ${rootdir}"
     intf="${1//\//.}"
 
-    if [ -e "$rootdir/$1.interface.yaml" ]; then
-        $sdbusppcmd interface server-header "$intf" > "$outputdir/server.hpp"
-        $sdbusppcmd interface server-cpp "$intf" > "$outputdir/server.cpp"
-        $sdbusppcmd interface client-header "$intf" > "$outputdir/client.hpp"
+    if [[ -e "${rootdir}/$1.interface.yaml" ]]; then
+        ${sdbusppcmd} interface server-header "${intf}" > "${outputdir}/server.hpp"
+        ${sdbusppcmd} interface server-cpp "${intf}" > "${outputdir}/server.cpp"
+        ${sdbusppcmd} interface client-header "${intf}" > "${outputdir}/client.hpp"
     fi
 
-    if [ -e "$rootdir/$1.errors.yaml" ]; then
-        $sdbusppcmd error exception-header "$intf" > "$outputdir/error.hpp"
-        $sdbusppcmd error exception-cpp "$intf" > "$outputdir/error.cpp"
+    if [[ -e "${rootdir}/$1.errors.yaml" ]]; then
+        ${sdbusppcmd} error exception-header "${intf}" > "${outputdir}/error.hpp"
+        ${sdbusppcmd} error exception-cpp "${intf}" > "${outputdir}/error.cpp"
     fi
 }
 
@@ -320,30 +332,30 @@ function cmd_cpp {
 ## For an interface foo/bar, the outputdir is expected to be foo.
 function cmd_markdown {
 
-    if [ "" == "$1" ]; then
+    if [[ "" == "$1" ]]; then
         show_usage
         exit 1
     fi
 
-    if [ ! -e "$rootdir/$1.interface.yaml" ] &&
-        [ ! -e "$rootdir/$1.errors.yaml" ]; then
+    if [[ ! -e "${rootdir}/$1.interface.yaml" ]] &&
+        [[ ! -e "${rootdir}/$1.errors.yaml" ]]; then
         echo "Missing YAML for $1."
         exit 1
     fi
 
-    mkdir -p "$outputdir"
+    mkdir -p "${outputdir}"
 
-    sdbusppcmd="$sdbuspp -r $rootdir"
+    sdbusppcmd="${sdbuspp} -r ${rootdir}"
     intf="${1//\//.}"
     base="$(basename "$1")"
 
-    echo -n > "$outputdir/$base.md"
-    if [ -e "$rootdir/$1.interface.yaml" ]; then
-        $sdbusppcmd interface markdown "$intf" >> "$outputdir/$base.md"
+    echo -n > "${outputdir}/${base}.md"
+    if [[ -e "${rootdir}/$1.interface.yaml" ]]; then
+        ${sdbusppcmd} interface markdown "${intf}" >> "${outputdir}/${base}.md"
     fi
 
-    if [ -e "$rootdir/$1.errors.yaml" ]; then
-        $sdbusppcmd error markdown "$intf" >> "$outputdir/$base.md"
+    if [[ -e "${rootdir}/$1.errors.yaml" ]]; then
+        ${sdbusppcmd} error markdown "${intf}" >> "${outputdir}/${base}.md"
     fi
 }
 
@@ -352,4 +364,4 @@ function cmd_version {
     show_version
 }
 
-"cmd_$cmd" "$*"
+"cmd_${cmd}" "$*"

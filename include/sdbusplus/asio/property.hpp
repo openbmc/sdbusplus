@@ -30,8 +30,8 @@ inline void getAllProperties(sdbusplus::asio::connection& bus,
 {
     using arg1_type =
         std::tuple_element_t<1, boost::callable_traits::args_t<Handler>>;
-    using arg1_pair_type = std::decay_t<arg1_type>::value_type;
-    using arg1_value_type = arg1_pair_type::second_type;
+    using arg1_pair_type = typename std::decay_t<arg1_type>::value_type;
+    using arg1_value_type = typename arg1_pair_type::second_type;
     getAllProperties<arg1_value_type>(bus, service, path, interface,
                                       std::forward<Handler>(handler));
 }

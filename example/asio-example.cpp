@@ -219,17 +219,17 @@ int server()
                              [](const int& req, int& propertyValue) {
                                  if (req >= 50)
                                  {
-                                     return -EINVAL;
+                                     return false;
                                  }
                                  propertyValue = req;
-                                 return 1; // success
+                                 return true;
                              });
     iface->register_property(
         "TrailTime", std::string("foo"),
         // custom set
         [](const std::string& req, std::string& propertyValue) {
             propertyValue = req;
-            return 1; // success
+            return true;
         },
         // custom get
         [](const std::string& property) {

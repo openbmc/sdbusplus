@@ -19,7 +19,6 @@
 #include <list>
 #include <optional>
 #include <set>
-#include <tuple>
 #include <unordered_map>
 
 namespace sdbusplus
@@ -45,7 +44,7 @@ class callback_set
 {
   public:
     virtual ~callback_set() = default;
-    virtual std::tuple<SetPropertyReturnValue, int> call(message_t& m) = 0;
+    virtual SetPropertyReturnValue call(message_t& m) = 0;
     virtual SetPropertyReturnValue set(const std::any& value) = 0;
 };
 
@@ -293,28 +292,22 @@ class callback_set_instance : public callback_set
         value_(value),
         func_(std::move(func))
     {}
-    std::tuple<SetPropertyReturnValue, int> call(message_t& m) override
+    SetPropertyReturnValue call(message_t& m) override
     {
         PropertyType input;
         m.read(input);
-
-        auto oldValue = *value_;
-        auto ret = func_(input, *value_);
-
-        if (ret < 0)
-        {
-            return {SetPropertyReturnValue::fail, ret};
-        }
-        if (oldValue == *value_)
-        {
-            return {SetPropertyReturnValue::sameValueUpdated, ret};
-        }
-        return {SetPropertyReturnValue::valueUpdated, ret};
+        return set_(input);
     }
     SetPropertyReturnValue set(const std::any& value) override
     {
-        auto oldValue = *value_;
-        if (func_(std::any_cast<PropertyType>(value), *value_))
+        return set_(std::any_cast<PropertyType>(value));
+    }
+
+  private:
+    SetPropertyReturnValue set_(const PropertyType& newValue)
+    {
+        PropertyType oldValue = *value_;
+        if (func_(newValue, *value_))
         {
             if (oldValue == *value_)
             {
@@ -465,7 +458,7 @@ class dbus_interface
                 name, property, vtable::property_::emits_change,
                 [](const PropertyType& req, PropertyType& old) {
                     old = req;
-                    return 1;
+                    return true;
                 },
                 [](const PropertyType& value) { return value; });
         }
@@ -631,26 +624,18 @@ class dbus_interface
             try
             {
 #endif
-                auto [status, rc] = func->second->call(mesg);
-
-                switch (status)
+                SetPropertyReturnValue status = func->second->call(mesg);
+                if ((status == SetPropertyReturnValue::valueUpdated) ||
+                    (status == SetPropertyReturnValue::sameValueUpdated))
                 {
-                    case SetPropertyReturnValue::sameValueUpdated:
-                    {
-                        return true;
-                    }
-                    case SetPropertyReturnValue::valueUpdated:
+                    if (status != SetPropertyReturnValue::sameValueUpdated)
                     {
                         data->signal_property(property);
-                        return true;
                     }
-                    case SetPropertyReturnValue::fail:
-                    {
-                        sd_bus_error_set_errno(error, rc);
-                        return false;
-                    }
+                    // There shouldn't be any other callbacks that want to
+                    // handle the message so just return a positive integer.
+                    return 1;
                 }
-
 #ifdef __EXCEPTIONS
             }
 

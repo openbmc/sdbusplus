@@ -32,7 +32,7 @@ class Application
                     sdbusplus::vtable::property_::emits_change,
                     [this](const auto& newPropertyValue, const auto&) {
                         goodbyes_ = newPropertyValue;
-                        return 1;
+                        return true;
                     },
                     [this](const auto&) { return goodbyes_; });
             });

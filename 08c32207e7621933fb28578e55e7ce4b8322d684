@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a820c5e0_0326490b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-06-04T00:27:37Z",
+      "side": 1,
+      "message": "can you please add reviewers including the author of the reverting commit. can you point to issues caused by this commit?",
+      "revId": "08c32207e7621933fb28578e55e7ce4b8322d684",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

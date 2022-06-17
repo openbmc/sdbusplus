@@ -12,6 +12,15 @@ project('sdbusplus', 'cpp', 'c',
 )
 
 libsystemd_pkg = dependency('libsystemd')
+
+python = import('python')
+python_bin = python.find_installation('python3', modules:['inflection', 'yaml', 'mako'])
+
+if not python_bin.found()
+  error('No valid python3 installation found')
+endif
+
+
 root_inc = include_directories('include')
 
 libsdbusplus_src = files(

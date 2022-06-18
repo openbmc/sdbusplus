@@ -34,6 +34,24 @@
       "parentUuid": "75286dec_1714aa11",
       "revId": "5c48b75bfea6f2c6f47b9729bd3467362fc9b7d5",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "017f4686_68ae1bb1",
+        "filename": "meson.build",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1000206
+      },
+      "writtenOn": "2022-06-18T04:21:22Z",
+      "side": 1,
+      "message": "may be they come pre-installed in fedora \u0026 Ubuntu.",
+      "parentUuid": "57b041c4_26a5c61b",
+      "revId": "5c48b75bfea6f2c6f47b9729bd3467362fc9b7d5",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

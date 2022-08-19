@@ -151,7 +151,7 @@ class NamedElement(object):
         upper_name = inflection.camelize(name)
 
         # If it is all upper case, return as all lower.  ex. "MAC"
-        if re.match(r"^[A-Z]*$", upper_name):
+        if re.match(r"^[A-Z0-9]*$", upper_name):
             return upper_name.lower()
 
         # If it doesn't start with 2 upper case, it isn't an acronym.

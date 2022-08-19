@@ -195,6 +195,10 @@ class coroutine_method_instance : public callback
                     // Catch D-Bus error explicitly called by method handler
                     err = mcpy.new_method_errno(e.get_errno(), e.get_error());
                 }
+                catch (const sdbusplus::exception_t& e)
+                {
+                    err = mcpy.new_method_error(e);
+                }
                 catch (...)
                 {
                     err = mcpy.new_method_errno(-EIO);

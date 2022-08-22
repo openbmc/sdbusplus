@@ -22,6 +22,30 @@
       },
       "revId": "91e0135a71583018201570fbefcbcf67d8056421",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b4cf66b4_c16b7639",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 201,
+      "author": {
+        "id": 1000678
+      },
+      "writtenOn": "2022-08-22T07:32:07Z",
+      "side": 1,
+      "message": "I will explain a bit more why I wanted to use exception_t instead of SdBusError.\nOn dbus error message contains some parameters. SdBusError has this message tied with error code. As far as I know it would require to create mapping between new error code and message, and that mapping should exist in every application that uses this method to be working. This approach is not very flexible.\n\nWith exception_t I can send different parameter in error message, then I can read it for example in bmcweb and send response with detailed information which property had invalid value. Caller can still use error codes so it doesn\u0027t break anything. I am not sure if this will be accepted in bmcweb, but it can be still useful feature.\n\n  ErrorName\u003dorg.freedesktop.DBus.Error.InvalidArgs  ErrorMessage\u003d\"Id\"\n  UniqueName\u003d:1.386\n  MESSAGE \"s\" {\n          STRING \"Id\";\n  };\n  ErrorName\u003dorg.freedesktop.DBus.Error.InvalidArgs  ErrorMessage\u003d\"Id\"\n  UniqueName\u003d:1.386\n  MESSAGE \"s\" {\n          STRING \"Name\";\n  };\n  \nCommon code still can be made, but it would be nice if it allowed to send different string in message over dbus for more detailed error handling.",
+      "parentUuid": "143384b8_6316ff6b",
+      "range": {
+        "startLine": 193,
+        "startChar": 0,
+        "endLine": 201,
+        "endChar": 17
+      },
+      "revId": "91e0135a71583018201570fbefcbcf67d8056421",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

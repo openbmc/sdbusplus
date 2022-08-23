@@ -1,0 +1,14 @@
+#!/bin/bash -e
+
+execution_dir="$(git rev-parse --show-toplevel)/../wg21_p2300_std_execution"
+
+git -C "${execution_dir}" rev-parse HEAD > commit.info
+cp "${execution_dir}"/include/*.hpp .
+
+for f in *.hpp; do
+    sed -i "s#${f}#sdbusplus/async/std_execution/${f}#g" -- *.hpp
+done
+
+for f in *.hpp; do
+    clang-format -i "${f}"
+done

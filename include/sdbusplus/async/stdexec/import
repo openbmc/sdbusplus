@@ -1,0 +1,14 @@
+#!/bin/bash -e
+
+execution_dir="$(git rev-parse --show-toplevel)/../stdexec"
+
+git -C "${execution_dir}" rev-parse HEAD > commit.info
+cp -r "${execution_dir}"/include/stdexec/* .
+cp "${execution_dir}"/include/exec/{scope,task}.hpp .
+
+(find . -name "*.hpp" -print0 || true) | while IFS= read -r -d '' f
+do
+    sed -i "s#include <stdexec/#include <sdbusplus/async/stdexec/#" -- "${f}"
+    sed -i "s#include <exec/#include <sdbusplus/async/stdexec/#" -- "${f}"
+    clang-format -i "${f}"
+done

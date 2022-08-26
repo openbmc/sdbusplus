@@ -119,8 +119,7 @@ struct compose_impl<T> : compose_inherit_t<T>
 template <class... Args>
 struct compose : compose_impl<Args...>
 {
-    compose(bus_t& bus, const char* path) : compose_impl<Args...>(bus, path)
-    {}
+    compose(bus_t& bus, const char* path) : compose_impl<Args...>(bus, path) {}
 
     friend struct compose_inherit<object<Args...>>;
 
@@ -135,8 +134,7 @@ struct compose : compose_impl<Args...>
 template <>
 struct compose<>
 {
-    compose(bus_t& /*bus*/, const char* /*path*/)
-    {}
+    compose(bus_t& /*bus*/, const char* /*path*/) {}
 
   protected:
     void maybe_emit_iface_added(){};

@@ -42,8 +42,7 @@ namespace details
 struct BusDeleter
 {
     BusDeleter() = delete;
-    explicit BusDeleter(SdBusInterface* interface) : m_interface(interface)
-    {}
+    explicit BusDeleter(SdBusInterface* interface) : m_interface(interface) {}
 
     void operator()(sd_bus* ptr) const
     {

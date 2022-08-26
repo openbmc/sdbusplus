@@ -24,8 +24,7 @@ namespace message
  *  (This is an empty no-op function that is useful in some cases for
  *   variadic template reasons.)
  */
-inline void read(sdbusplus::SdBusInterface* /*intf*/, sd_bus_message* /*m*/)
-{}
+inline void read(sdbusplus::SdBusInterface* /*intf*/, sd_bus_message* /*m*/) {}
 /** @brief Read data from an sdbus message.
  *
  *  @param[in] msg - The message to read from.

@@ -68,7 +68,6 @@ TEST_F(Match, FunctorIs_LambdaTakingMessage)
 
 TEST_F(Match, FunctorIs_MemberFunctionTakingMessage)
 {
-
     class BoolHolder
     {
       public:

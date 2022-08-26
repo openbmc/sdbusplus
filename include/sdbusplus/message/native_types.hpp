@@ -27,10 +27,8 @@ struct string_wrapper
     string_wrapper& operator=(string_wrapper&&) = default;
     ~string_wrapper() = default;
 
-    string_wrapper(const std::string& str) : str(str)
-    {}
-    string_wrapper(std::string&& str) : str(std::move(str))
-    {}
+    string_wrapper(const std::string& str) : str(str) {}
+    string_wrapper(std::string&& str) : str(std::move(str)) {}
 
     operator const std::string&() const volatile&
     {
@@ -93,10 +91,8 @@ struct string_path_wrapper
     string_path_wrapper& operator=(string_path_wrapper&&) = default;
     ~string_path_wrapper() = default;
 
-    string_path_wrapper(const std::string& str) : str(str)
-    {}
-    string_path_wrapper(std::string&& str) : str(std::move(str))
-    {}
+    string_path_wrapper(const std::string& str) : str(str) {}
+    string_path_wrapper(std::string&& str) : str(std::move(str)) {}
 
     operator const std::string&() const volatile&
     {
@@ -160,8 +156,7 @@ struct unix_fd_type
     int fd;
 
     unix_fd_type() = default;
-    unix_fd_type(int f) : fd(f)
-    {}
+    unix_fd_type(int f) : fd(f) {}
 
     operator int() const
     {

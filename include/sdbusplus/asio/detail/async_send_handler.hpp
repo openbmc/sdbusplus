@@ -31,10 +31,8 @@ template <typename Handler>
 struct async_send_handler
 {
     Handler handler_;
-    async_send_handler(Handler&& handler) : handler_(std::move(handler))
-    {}
-    async_send_handler(Handler& handler) : handler_(handler)
-    {}
+    async_send_handler(Handler&& handler) : handler_(std::move(handler)) {}
+    async_send_handler(Handler& handler) : handler_(handler) {}
     void operator()(sd_bus* conn, message_t& mesg, uint64_t timeout)
     {
         async_send_handler* context = new async_send_handler(std::move(*this));

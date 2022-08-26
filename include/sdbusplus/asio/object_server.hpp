@@ -113,8 +113,7 @@ template <typename CallbackType>
 class callback_method_instance : public callback
 {
   public:
-    callback_method_instance(CallbackType&& func) : func_(std::move(func))
-    {}
+    callback_method_instance(CallbackType&& func) : func_(std::move(func)) {}
     int call(message_t& m) override
     {
         return expandCall(m);

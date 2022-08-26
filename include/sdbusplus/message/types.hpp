@@ -126,7 +126,6 @@ struct undefined_type_id
 template <char C1, char... C>
 struct tuple_type_id
 {
-
 /* This version check is required because a fix for auto is in 5.2+.
  * https://gcc.gnu.org/bugzilla/show_bug.cgi?id=66421
  */

@@ -14,7 +14,6 @@ using std::is_same_v;
 
 TEST(TypeTraits, Basic)
 {
-
     static_assert(is_same_v<char, array_to_ptr_t<char, char>>,
                   "array_to_ptr_t<char, char> != char");
 
@@ -41,8 +40,7 @@ TEST(TypeTraits, HasMemberFind)
     {
         using value_type = std::pair<int, int>;
 
-        void find(std::tuple_element_t<0, value_type>)
-        {}
+        void find(std::tuple_element_t<0, value_type>) {}
     };
 
     struct Bar
@@ -70,8 +68,7 @@ TEST(TypeTraits, HasMemberContains)
     {
         using value_type = std::pair<int, int>;
 
-        void contains(std::tuple_element_t<0, value_type>)
-        {}
+        void contains(std::tuple_element_t<0, value_type>) {}
     };
 
     struct Bar

@@ -24,8 +24,9 @@ endif
 root_inc = include_directories('include')
 
 libsdbusplus_src = files(
-    'src/exception.cpp',
+    'src/async/context.cpp',
     'src/bus.cpp',
+    'src/exception.cpp',
     'src/message/native_types.cpp',
     'src/sdbus.cpp',
     'src/server/interface.cpp',

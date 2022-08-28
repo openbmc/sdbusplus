@@ -33,6 +33,12 @@ executable(
 )
 
 executable(
+    'coroutine-example',
+    'coroutine-example.cpp',
+    dependencies: [ sdbusplus_dep ],
+)
+
+executable(
     'register-property',
     'register-property.cpp',
     dependencies: asio_dep,

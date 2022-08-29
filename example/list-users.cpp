@@ -18,8 +18,9 @@ int main()
                           "org.freedesktop.login1.Manager", "ListUsers");
     auto reply = b.call(m);
 
-    std::vector<std::tuple<uint32_t, std::string, message::object_path>> users;
-    reply.read(users);
+    using return_type =
+        std::vector<std::tuple<uint32_t, std::string, message::object_path>>;
+    auto users = reply.unpack<return_type>();
 
     for (auto& user : users)
     {

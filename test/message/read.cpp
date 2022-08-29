@@ -649,4 +649,44 @@ TEST_F(ReadTest, LargeCombo)
     EXPECT_EQ(msv, ret_msv);
 }
 
+// Unpack tests.
+// Since unpack uses read, we're mostly just testing the compilation.
+// Duplicate a few tests from Read using 'unpack'.
+
+TEST_F(ReadTest, UnpackSingleVector)
+{
+    const std::vector<int> vi{1, 2, 3, 4};
+
+    {
+        testing::InSequence seq;
+        expect_enter_container(SD_BUS_TYPE_ARRAY, "i");
+        for (const auto& i : vi)
+        {
+            expect_at_end(false, 0);
+            expect_basic<int>(SD_BUS_TYPE_INT32, i);
+        }
+        expect_at_end(false, 1);
+        expect_exit_container();
+    }
+
+    auto ret_vi = new_message().unpack<std::vector<int>>();
+    EXPECT_EQ(vi, ret_vi);
+}
+
+TEST_F(ReadTest, UnpackMultiple)
+{
+    const std::tuple<int, std::string, bool> tisb{3, "hi", false};
+
+    {
+        testing::InSequence seq;
+        expect_basic<int>(SD_BUS_TYPE_INT32, std::get<0>(tisb));
+        expect_basic<const char*>(SD_BUS_TYPE_STRING,
+                                  std::get<1>(tisb).c_str());
+        expect_basic<int>(SD_BUS_TYPE_BOOLEAN, std::get<2>(tisb));
+    }
+
+    auto ret_tisb = new_message().unpack<int, std::string, bool>();
+    EXPECT_EQ(tisb, ret_tisb);
+}
+
 } // namespace

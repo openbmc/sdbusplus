@@ -12,6 +12,7 @@
 #include <exception>
 #include <memory>
 #include <optional>
+#include <tuple>
 #include <type_traits>
 #include <utility>
 
@@ -154,6 +155,32 @@ class message : private sdbusplus::slot::details::slot_friend
     {
         sdbusplus::message::read(_intf, _msg.get(),
                                  std::forward<Args>(args)...);
+    }
+
+    /** @brief Perform sd_bus_message_read with results returned.
+     *
+     *  @tparam ...Args - Type of items to read from the message.
+     *  @return One of { void, Args, std::tuple<Args...> }.
+     */
+    template <typename... Args>
+    auto unpack()
+    {
+        if constexpr (sizeof...(Args) == 0)
+        {
+            return;
+        }
+        else if constexpr (sizeof...(Args) == 1)
+        {
+            std::tuple_element_t<0, std::tuple<Args...>> r{};
+            read(r);
+            return r;
+        }
+        else
+        {
+            std::tuple<Args...> r{};
+            std::apply([this](auto&&... v) { this->read(v...); }, r);
+            return r;
+        }
     }
 
     /** @brief Get the dbus bus from the message. */

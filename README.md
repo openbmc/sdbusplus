@@ -58,6 +58,9 @@ auto reply = b.call(m);
 
 std::vector<std::tuple<uint32_t, std::string, message::object_path>> users;
 reply.read(users);
+    // or
+auto users = reply.unpack<
+    std::vector<std::tuple<uint32_t, std::string, message::object_path>>>();
 ```
 
 In a few, relatively succinct, C++ lines this snippet will create a D-Bus

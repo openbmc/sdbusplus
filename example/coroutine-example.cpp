@@ -69,6 +69,26 @@ auto runner(sdbusplus::async::context& ctx) -> sdbusplus::async::task<>
                   << e.what() << std::endl;
     }
 
+    // Create a match for the NameOwnerChanged signal.
+    namespace rules = sdbusplus::bus::match::rules;
+    auto match = sdbusplus::async::match(ctx, rules::nameOwnerChanged());
+
+    // Listen for the signal 4 times...
+    for (size_t i = 0; i < 4; ++i)
+    {
+        auto [service, old_name, new_name] =
+            co_await match.next<std::string, std::string, std::string>();
+
+        if (!new_name.empty())
+        {
+            std::cout << new_name << " owns " << service << std::endl;
+        }
+        else
+        {
+            std::cout << service << " released" << std::endl;
+        }
+    };
+
     co_return;
 }
 

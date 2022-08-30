@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bb4e50e3_8fcff08d",
+        "filename": "include/sdbusplus/message.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 166,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2022-08-30T10:31:07Z",
+      "side": 1,
+      "message": "Better to add this API\u0027s example and test case",
+      "revId": "b8a3c59f11784f87e388ef5c4e4b4ed8c14f4179",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

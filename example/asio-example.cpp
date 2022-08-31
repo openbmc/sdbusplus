@@ -107,7 +107,7 @@ void do_start_async_ipmi_call(std::shared_ptr<sdbusplus::asio::connection> conn,
     std::vector<uint8_t> commandData = {4, 3, 2, 1};
     method.append(netFn, lun, cmd, commandData, options);
     boost::system::error_code ec;
-    sdbusplus::message_t reply = conn->async_send(method, yield[ec]);
+    sdbusplus::message_t reply = conn->async_send_yield(method, yield[ec]);
     std::tuple<uint8_t, uint8_t, uint8_t, uint8_t, std::vector<uint8_t>>
         tupleOut;
     try

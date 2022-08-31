@@ -27,40 +27,55 @@ namespace asio
 {
 namespace detail
 {
-template <typename Handler>
-struct async_send_handler
+
+/* Class meant for converting a static callback, and void* userdata from sd-bus
+ * back into a structured class to be returned to the user.
+ */
+template <typename CompletionToken>
+struct unpack_userdata
 {
-    Handler handler_;
-    async_send_handler(Handler&& handler) : handler_(std::move(handler)) {}
-    async_send_handler(Handler& handler) : handler_(handler) {}
-    void operator()(sd_bus* conn, message_t& mesg, uint64_t timeout)
-    {
-        async_send_handler* context = new async_send_handler(std::move(*this));
-        int ec = sd_bus_call_async(conn, NULL, mesg.get(), &callback, context,
-                                   timeout);
-        if (ec < 0)
-        {
-            // add a deleter to context because handler may throw
-            std::unique_ptr<async_send_handler> safe_context(context);
-            auto err =
-                make_error_code(static_cast<boost::system::errc::errc_t>(ec));
-            context->handler_(err, mesg);
-        }
-    }
-    static int callback(sd_bus_message* mesg, void* userdata,
-                        sd_bus_error* /*error*/)
+    CompletionToken handler_;
+
+    static int do_unpack(sd_bus_message* mesg, void* userdata,
+                         sd_bus_error* /*error*/)
     {
         if (userdata == nullptr || mesg == nullptr)
         {
             return -1;
         }
-        std::unique_ptr<async_send_handler> context(
-            static_cast<async_send_handler*>(userdata));
+        using self_t = unpack_userdata<CompletionToken>;
+        self_t* context = static_cast<self_t*>(userdata);
         message_t message(mesg);
         auto ec = make_error_code(
             static_cast<boost::system::errc::errc_t>(message.get_errno()));
         context->handler_(ec, message);
         return 1;
+    }
+};
+
+struct async_send_handler
+{
+    sd_bus* bus;
+    message_t& mesg;
+    uint64_t timeout;
+    async_send_handler(sd_bus* busIn, message_t& mesgIn, uint64_t timeoutIn) :
+        bus(busIn), mesg(mesgIn), timeout(timeoutIn){};
+
+    template <typename CompletionToken>
+    void operator()(CompletionToken&& token)
+    {
+        using unpack_t = unpack_userdata<CompletionToken>;
+        unpack_t* context = new unpack_t(std::move(token));
+        int ec = sd_bus_call_async(bus, NULL, mesg.get(), &unpack_t::do_unpack,
+                                   context, timeout);
+        if (ec < 0)
+        {
+            // add a deleter to context because handler may throw
+            std::unique_ptr<unpack_t> safe_context(context);
+            auto err =
+                make_error_code(static_cast<boost::system::errc::errc_t>(ec));
+            context->handler_(err, mesg);
+        }
     }
 };
 } // namespace detail

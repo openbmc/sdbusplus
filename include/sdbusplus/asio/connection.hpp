@@ -83,20 +83,13 @@ class connection : public sdbusplus::bus_t
      *          the return type is the result of the handler registration,
      *          while the resulting message will get passed into the handler.
      */
-    template <typename MessageHandler>
-    inline BOOST_ASIO_INITFN_RESULT_TYPE(MessageHandler,
-                                         void(boost::system::error_code,
-                                              message_t&))
-        async_send(message_t& m, MessageHandler&& handler, uint64_t timeout = 0)
+    template <typename CompletionToken>
+    inline auto async_send(message_t& m, CompletionToken&& token,
+                           uint64_t timeout = 0)
     {
-        boost::asio::async_completion<
-            MessageHandler, void(boost::system::error_code, message_t)>
-            init(handler);
-        detail::async_send_handler<typename boost::asio::async_result<
-            MessageHandler, void(boost::system::error_code,
-                                 message_t)>::completion_handler_type>(
-            std::move(init.completion_handler))(get(), m, timeout);
-        return init.result.get();
+        using callback_t = void(boost::system::error_code, message_t);
+        return boost::asio::async_initiate<CompletionToken, callback_t>(
+            detail::async_send_handler(get(), m, timeout), token);
     }
 
     /** @brief Perform an asynchronous method call, with input parameter packing
@@ -143,7 +136,7 @@ class connection : public sdbusplus::bus_t
                                                          FunctionTupleType>;
         auto applyHandler = [handler = std::forward<MessageHandler>(handler)](
                                 boost::system::error_code ec,
-                                message_t& r) mutable {
+                                message_t r) mutable {
             UnpackType responseData;
             if (!ec)
             {

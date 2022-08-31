@@ -40,7 +40,7 @@ int fooYield(boost::asio::yield_context yield,
     return testCount;
 }
 
-int methodWithMessage(sdbusplus::message_t& /*m*/, int test)
+int methodWithMessage(sdbusplus::message_t /*m*/, int test)
 {
     std::cout << "methodWithMessage(m, " << test << ") -> " << (test + 1)
               << "\n";
@@ -307,7 +307,7 @@ int client()
         "xyz.openbmc_project.Sensor.Value"};
     mesg.append("/xyz/openbmc_project/Sensors", depth, interfaces);
 
-    conn->async_send(mesg, [](boost::system::error_code ec, message& ret) {
+    conn->async_send(mesg, [](boost::system::error_code ec, message ret) {
         std::cout << "async_send callback\n";
         if (ec || ret.is_method_error())
         {

@@ -74,29 +74,33 @@ class connection : public sdbusplus::bus_t
      *         upon return and return
      *
      *  @param[in] m - A message ready to send
-     *  @param[in] handler - handler to execute upon completion; this may be an
-     *                       asio::yield_context to execute asynchronously as a
-     *                       coroutine
-     *
-     *  @return If a yield context is passed as the handler, the return type is
-     *          a message. If a function object is passed in as the handler,
-     *          the return type is the result of the handler registration,
-     *          while the resulting message will get passed into the handler.
+     *  @param[in] token- The completion token to execute upon completion;
      */
-    template <typename MessageHandler>
-    inline BOOST_ASIO_INITFN_RESULT_TYPE(MessageHandler,
-                                         void(boost::system::error_code,
-                                              message_t&))
-        async_send(message_t& m, MessageHandler&& handler, uint64_t timeout = 0)
+    template <typename CompletionToken>
+    inline void async_send(message_t& m, CompletionToken&& token,
+                           uint64_t timeout = 0)
     {
-        boost::asio::async_completion<
-            MessageHandler, void(boost::system::error_code, message_t)>
-            init(handler);
-        detail::async_send_handler<typename boost::asio::async_result<
-            MessageHandler, void(boost::system::error_code,
-                                 message_t)>::completion_handler_type>(
-            std::move(init.completion_handler))(get(), m, timeout);
-        return init.result.get();
+        using callback_t = void(boost::system::error_code, message_t&);
+        boost::asio::async_initiate<CompletionToken, callback_t>(
+            detail::async_send_handler(get(), m, timeout), token);
+    }
+
+    /** @brief Perform an asynchronous send of a message, executing the handler
+     *         upon return and return
+     *
+     *  @param[in] m - A message ready to send
+     *  @param[in] token - the asio::yield_context to yield to on completion
+     *
+     *  @return The message response.
+     */
+    inline auto async_send_yield(message_t& m,
+                                 boost::asio::yield_context&& token,
+                                 uint64_t timeout = 0)
+    {
+        using callback_t = void(boost::system::error_code, message_t);
+        return boost::asio::async_initiate<boost::asio::yield_context,
+                                           callback_t>(
+            detail::async_send_handler(get(), m, timeout), token);
     }
 
     /** @brief Perform an asynchronous method call, with input parameter packing
@@ -143,7 +147,7 @@ class connection : public sdbusplus::bus_t
                                                          FunctionTupleType>;
         auto applyHandler = [handler = std::forward<MessageHandler>(handler)](
                                 boost::system::error_code ec,
-                                message_t& r) mutable {
+                                message_t r) mutable {
             UnpackType responseData;
             if (!ec)
             {
@@ -258,7 +262,7 @@ class connection : public sdbusplus::bus_t
         message_t r;
         if (!ec)
         {
-            r = async_send(m, yield[ec]);
+            r = async_send_yield(m, yield[ec]);
         }
         if constexpr (sizeof...(RetTypes) == 0)
         {

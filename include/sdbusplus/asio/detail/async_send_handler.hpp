@@ -41,7 +41,7 @@ struct unpack_userdata
     {
         if (userdata == nullptr)
         {
-            return -1;
+            return -EINVAL;
         }
 
         // Take RAII ownership of the pointer again
@@ -50,13 +50,13 @@ struct unpack_userdata
 
         if (mesg == nullptr)
         {
-            return -1;
+            return -EINVAL;
         }
         message_t message(mesg);
         auto ec = make_error_code(
             static_cast<boost::system::errc::errc_t>(message.get_errno()));
         context->handler_(ec, message);
-        return 1;
+        return 0;
     }
 };
 

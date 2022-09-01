@@ -34,6 +34,24 @@
       "parentUuid": "3a5f9df8_d23d7dd1",
       "revId": "9cde21ff1c4f2e4a4c1d9e3cd3bc19c06dded95f",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "235d46a4_13d5689f",
+        "filename": "include/sdbusplus/message.hpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 163,
+      "author": {
+        "id": 1000188
+      },
+      "writtenOn": "2022-09-01T20:32:05Z",
+      "side": 1,
+      "message": "I don\u0027t believe that\n```\n  // always-tuple\n  auto [f] \u003d m.unpack\u003cfoo\u003e();\n```\nis doing what you are expecting, it\u0027s unpacking the inner type.",
+      "parentUuid": "08ce9ef8_8004ba28",
+      "revId": "9cde21ff1c4f2e4a4c1d9e3cd3bc19c06dded95f",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

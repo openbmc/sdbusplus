@@ -49,9 +49,9 @@ struct match : private sdbusplus::bus::details::bus_friend
 
         _slot = std::move(slot);
     }
-    match(sdbusplus::bus_t& bus, const std::string& _match,
+    match(sdbusplus::bus_t& bus, const std::string_view& _match,
           sd_bus_message_handler_t handler, void* context = nullptr) :
-        match(bus, _match.c_str(), handler, context)
+        match(bus, _match.data(), handler, context)
     {}
 
     using callback_t = std::function<void(sdbusplus::message_t&)>;
@@ -71,17 +71,20 @@ struct match : private sdbusplus::bus::details::bus_friend
 
         _slot = std::move(slot);
     }
-    match(sdbusplus::bus_t& bus, const std::string& _match,
+    match(sdbusplus::bus_t& bus, const std::string_view& _match,
           callback_t callback) :
-        match(bus, _match.c_str(), callback)
+        match(bus, _match.data(), callback)
     {}
 
   private:
     slot_t _slot{};
     std::unique_ptr<callback_t> _callback = nullptr;
 
+    // The callback is 'noexcept' because it is called from C code (sd-bus).
+    // If it were to throw, this will cause undefined behavior so force noexcept
+    // and we'll std::terminate instead.
     static int callCallback(sd_bus_message* m, void* context,
-                            sd_bus_error* /*e*/)
+                            sd_bus_error* /*e*/) noexcept
     {
         auto c = static_cast<callback_t*>(context);
         message_t message{m};
@@ -101,108 +104,119 @@ using namespace std::string_literals;
 namespace type
 {
 
-inline auto signal()
+inline constexpr auto signal() noexcept
 {
-    return "type='signal',"s;
+    return "type='signal',";
 }
-inline auto method()
+inline constexpr auto method() noexcept
 {
-    return "type='method',"s;
+    return "type='method',";
 }
-inline auto method_return()
+inline constexpr auto method_return() noexcept
 {
-    return "type='method_return',"s;
+    return "type='method_return',";
 }
-inline auto error()
+inline constexpr auto error() noexcept
 {
-    return "type='error',"s;
+    return "type='error',";
 }
 
 } // namespace type
 
-inline auto sender(const std::string& s)
+inline constexpr auto sender(const std::string_view& s) noexcept
 {
-    return "sender='"s + s + "',";
+    return "sender='"s.append(s).append("',");
 }
-inline auto interface(const std::string& s)
+inline constexpr auto interface(const std::string_view& s) noexcept
 {
-    return "interface='"s + s + "',";
+    return "interface='"s.append(s).append("',");
 }
-inline auto member(const std::string& s)
+inline constexpr auto member(const std::string_view& s) noexcept
 {
-    return "member='"s + s + "',";
+    return "member='"s.append(s).append("',");
 }
-inline auto path(const std::string& s)
+inline constexpr auto path(const std::string_view& s) noexcept
 {
-    return "path='"s + s + "',";
+    return "path='"s.append(s).append("',");
 }
-inline auto path_namespace(const std::string& s)
+inline constexpr auto path_namespace(const std::string_view& s) noexcept
 {
-    return "path_namespace='"s + s + "',";
+    return "path_namespace='"s.append(s).append("',");
 }
-inline auto destination(const std::string& s)
+inline constexpr auto destination(const std::string_view& s) noexcept
 {
-    return "destination='"s + s + "',";
+    return "destination='"s.append(s).append("',");
 }
-inline auto argN(size_t n, const std::string& s)
+inline auto argN(size_t n, const std::string_view& s) noexcept
 {
-    return "arg"s + std::to_string(n) + "='"s + s + "',";
+    return "arg"s.append(std::to_string(n)).append("='").append(s).append("',");
 }
-inline auto argNpath(size_t n, const std::string& s)
+inline auto argNpath(size_t n, const std::string_view& s) noexcept
 {
-    return "arg"s + std::to_string(n) + "path='"s + s + "',";
+    return "arg"s.append(std::to_string(n))
+        .append("path='"s)
+        .append(s)
+        .append("',");
 }
-inline auto arg0namespace(const std::string& s)
+inline constexpr auto arg0namespace(const std::string_view& s) noexcept
 {
-    return "arg0namespace='"s + s + "',";
+    return "arg0namespace='"s.append(s).append("',");
 }
-inline auto eavesdrop()
+inline constexpr auto eavesdrop() noexcept
 {
-    return "eavesdrop='true',"s;
+    return "eavesdrop='true',";
 }
 
-inline auto nameOwnerChanged()
+inline constexpr auto nameOwnerChanged() noexcept
 {
     return "type='signal',"
            "sender='org.freedesktop.DBus',"
-           "member='NameOwnerChanged',"s;
+           "member='NameOwnerChanged',";
 }
 
-inline auto interfacesAdded()
+inline constexpr auto interfacesAdded() noexcept
 {
     return "type='signal',"
            "interface='org.freedesktop.DBus.ObjectManager',"
-           "member='InterfacesAdded',"s;
+           "member='InterfacesAdded',";
 }
 
-inline auto interfacesRemoved()
+inline constexpr auto interfacesRemoved() noexcept
 {
     return "type='signal',"
            "interface='org.freedesktop.DBus.ObjectManager',"
-           "member='InterfacesRemoved',"s;
+           "member='InterfacesRemoved',";
 }
 
-inline auto interfacesAdded(const std::string& p)
+inline constexpr std::string interfacesAdded(const std::string_view& p) noexcept
 {
-    return interfacesAdded() + path(p);
+    return std::string(interfacesAdded()).append(path(p));
 }
 
-inline auto interfacesRemoved(const std::string& p)
+inline constexpr std::string
+    interfacesRemoved(const std::string_view& p) noexcept
 {
-    return interfacesRemoved() + path(p);
+    return std::string(interfacesRemoved()).append(path(p));
 }
 
-inline auto propertiesChanged(const std::string& p, const std::string& i)
+inline auto propertiesChanged(const std::string_view& p,
+                              const std::string_view& i) noexcept
 {
-    return type::signal() + path(p) + member("PropertiesChanged"s) +
-           interface("org.freedesktop.DBus.Properties"s) + argN(0, i);
+    return std::string(type::signal())
+        .append(path(p))
+        .append(member("PropertiesChanged"s))
+        .append(interface("org.freedesktop.DBus.Properties"s))
+        .append(argN(0, i));
 }
 
-inline auto propertiesChangedNamespace(const std::string& p,
-                                       const std::string& i)
+inline auto propertiesChangedNamespace(const std::string_view& p,
+                                       const std::string_view& i) noexcept
 {
-    return type::signal() + path_namespace(p) + member("PropertiesChanged"s) +
-           interface("org.freedesktop.DBus.Properties"s) + arg0namespace(i);
+    return std::string(type::signal())
+        .append(path_namespace(p))
+        .append(member("PropertiesChanged"s))
+        .append(interface("org.freedesktop.DBus.Properties"s))
+        .append(arg0namespace(i));
 }
 /**
  * @brief Constructs a NameOwnerChanged match string for a service name
@@ -211,9 +225,9 @@ inline auto propertiesChangedNamespace(const std::string& p,
  *
  * @return NameOwnerChanged match string for a service name
  */
-inline auto nameOwnerChanged(const std::string& s)
+inline auto nameOwnerChanged(const std::string_view& s) noexcept
 {
-    return nameOwnerChanged() + argN(0, s);
+    return std::string(nameOwnerChanged()).append(argN(0, s));
 }
 
 } // namespace rules

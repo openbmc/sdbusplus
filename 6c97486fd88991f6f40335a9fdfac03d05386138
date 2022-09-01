@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "be6abcb5_2a3952b7",
+        "filename": "include/sdbusplus/asio/detail/async_send_handler.hpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-09-01T16:03:01Z",
+      "side": 1,
+      "message": "I bet we have this problem in many cases, but by returning -1 we\u0027re effectively returning \"EPERM\".  That\u0027s probably not what we\u0027re intending.  Maybe -EINVAL in this case?",
+      "revId": "6c97486fd88991f6f40335a9fdfac03d05386138",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

@@ -58,6 +58,10 @@ struct unpack_userdata
         context->handler_(ec, message);
         return 0;
     }
+
+    explicit unpack_userdata(CompletionToken&& handler) :
+        handler_(std::forward<CompletionToken>(handler))
+    {}
 };
 
 struct async_send_handler

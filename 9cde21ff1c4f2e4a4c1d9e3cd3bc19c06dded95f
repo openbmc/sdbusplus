@@ -16,6 +16,24 @@
       "message": "Doesn\u0027t this make it harder to use generically in a wrapper? I guess anyone could write the \n```\n            std::tuple\u003cArgs...\u003e r{};\n            std::apply([this](auto\u0026\u0026... v) { this-\u003eread(v...); }, r);\n            return r;\n```\nform by hand.\n\nI can see why the current behavior is desirable for concrete callers.",
       "revId": "9cde21ff1c4f2e4a4c1d9e3cd3bc19c06dded95f",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "08ce9ef8_8004ba28",
+        "filename": "include/sdbusplus/message.hpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 163,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-09-01T19:58:15Z",
+      "side": 1,
+      "message": "I must not be following you.  I\u0027ve generally found that this form is much more applicable than always-return-tuple.  See later commits in this series:\n\n  async/match.hpp:                           [](message_t\u0026\u0026 m) { return m.unpack\u003cRs...\u003e(); });\n  async/proxy.hpp:            [](message_t\u0026\u0026 m) { return m.unpack\u003cRs...\u003e(); });\n\nAlso, in cases where someone only has one variable:\n\n  // old\n  foo f{};\n  m.read(f);\n\n  // this\n  auto f \u003d m.unpack\u003cfoo\u003e();\n\n  // always-tuple\n  auto [f] \u003d m.unpack\u003cfoo\u003e();",
+      "parentUuid": "3a5f9df8_d23d7dd1",
+      "revId": "9cde21ff1c4f2e4a4c1d9e3cd3bc19c06dded95f",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

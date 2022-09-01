@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b9f9ff38_8c1d87dc",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-09-01T16:19:54Z",
+      "side": 1,
+      "message": "I\u0027ll give 24 hours for others to give feedback and then merge this one.",
+      "revId": "099248c1c61f73cc6a1c29761c0fdb1b5716cee3",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

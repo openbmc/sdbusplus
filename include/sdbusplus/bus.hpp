@@ -197,6 +197,18 @@ struct bus
         return r > 0;
     }
 
+    /** @brief Process waiting dbus messages or signals forever, discarding
+     * unhandled.
+     */
+    void process_loop()
+    {
+        while (true)
+        {
+            process_discard();
+            wait();
+        }
+    }
+
     /** @brief Claim a service name on the dbus.
      *
      *  @param[in] service - The service name to claim.

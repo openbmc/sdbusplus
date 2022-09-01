@@ -16,6 +16,24 @@
       "message": "I bet we have this problem in many cases, but by returning -1 we\u0027re effectively returning \"EPERM\".  That\u0027s probably not what we\u0027re intending.  Maybe -EINVAL in this case?",
       "revId": "6c97486fd88991f6f40335a9fdfac03d05386138",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2b71ed0c_174b79b0",
+        "filename": "include/sdbusplus/asio/detail/async_send_handler.hpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2022-09-01T16:16:10Z",
+      "side": 1,
+      "message": "A quick look at sd-bus shows that:\nhttps://github.com/systemd/systemd/blob/2ab1fb77e2e09baf7b34bf91604b995bb32ea5bf/src/libsystemd/sd-bus/sd-bus.c#L3106\n\nis where the callback is called, then pops the error code in here:\n\nhttps://github.com/systemd/systemd/blob/e386a6d69bd206b031636df1fa952047db3d1a6e/src/libsystemd/sd-bus/bus-internal.c#L314\n\nWhich I think because we\u0027re a SD_BUS_MESSAGE_METHOD_RETURN, not an SD_BUS_MESSAGE_METHOD_CALL, means that that code just always returns 1.\n\nIn short, I don\u0027t think this -1 has any effect functionally, although I agree, we probably should be using some more descriptive errorno.  I can stick that in a patch.",
+      "parentUuid": "be6abcb5_2a3952b7",
+      "revId": "6c97486fd88991f6f40335a9fdfac03d05386138",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

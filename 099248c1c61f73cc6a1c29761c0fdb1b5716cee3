@@ -33,6 +33,24 @@
       "message": "@Nan, please hold off on submitting this until after this bump commit is merged:\n\nhttps://gerrit.openbmc.org/c/openbmc/openbmc/+/56902",
       "revId": "099248c1c61f73cc6a1c29761c0fdb1b5716cee3",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "dc3117f1_eafec3c5",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000682
+      },
+      "writtenOn": "2022-09-01T19:52:38Z",
+      "side": 1,
+      "message": "Yes, will do",
+      "parentUuid": "de19ad04_dd873f79",
+      "revId": "099248c1c61f73cc6a1c29761c0fdb1b5716cee3",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

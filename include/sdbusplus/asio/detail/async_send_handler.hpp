@@ -58,14 +58,19 @@ struct unpack_userdata
         context->handler_(ec, message);
         return 0;
     }
+
+    explicit unpack_userdata(CompletionToken&& handler) :
+        handler_(std::forward<CompletionToken>(handler))
+    {}
 };
 
-struct async_send_handler
+class async_send_handler
 {
     sd_bus* bus;
     message_t& mesg;
     uint64_t timeout;
 
+  public:
     template <typename CompletionToken>
     void operator()(CompletionToken&& token)
     {
@@ -84,6 +89,10 @@ struct async_send_handler
         // without freeing.
         context.release();
     }
+
+    async_send_handler(sd_bus* busIn, message_t mesgIn, uint64_t timeoutIn) :
+        bus(busIn), mesg(mesgIn), timeout(timeoutIn)
+    {}
 };
 } // namespace detail
 } // namespace asio

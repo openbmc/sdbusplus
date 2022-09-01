@@ -34,7 +34,7 @@ int fooYield(boost::asio::yield_context yield,
     if (ec || testCount != (test + 1))
     {
         std::cout << "call to foo failed: ec = " << ec << '\n';
-        return -1;
+        return -ec.value();
     }
     std::cout << "yielding call to foo OK! (-> " << testCount << ")\n";
     return testCount;

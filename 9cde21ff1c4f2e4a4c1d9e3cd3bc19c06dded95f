@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3a5f9df8_d23d7dd1",
+        "filename": "include/sdbusplus/message.hpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 163,
+      "author": {
+        "id": 1000188
+      },
+      "writtenOn": "2022-09-01T19:48:24Z",
+      "side": 1,
+      "message": "Doesn\u0027t this make it harder to use generically in a wrapper? I guess anyone could write the \n```\n            std::tuple\u003cArgs...\u003e r{};\n            std::apply([this](auto\u0026\u0026... v) { this-\u003eread(v...); }, r);\n            return r;\n```\nform by hand.\n\nI can see why the current behavior is desirable for concrete callers.",
+      "revId": "9cde21ff1c4f2e4a4c1d9e3cd3bc19c06dded95f",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

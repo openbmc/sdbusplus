@@ -71,11 +71,7 @@ int main()
     Calculator c1{b, path};
 
     // Handle dbus processing forever.
-    while (1)
-    {
-        b.process_discard(); // discard any unhandled messages
-        b.wait();
-    }
+    b.process_forever();
 
     return 0;
 }

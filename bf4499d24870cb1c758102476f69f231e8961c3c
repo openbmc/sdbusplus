@@ -16,6 +16,24 @@
       "message": "Maybe get rid of the second function with this:\n\nvoid(boost::system:error_code, std::conditional_t\u003cstd::is_same_v\u003cstd::decay_t\u003cCompletionToken\u003e, boost::asio::yield_context\u003e, message_t, message_t\u0026\u003e)\n\nOr if you don\u0027t like the ugliness of the conditional can we just do a template specialization?",
       "revId": "bf4499d24870cb1c758102476f69f231e8961c3c",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1d8007ed_69e5628c",
+        "filename": "include/sdbusplus/asio/connection.hpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2022-09-01T14:53:14Z",
+      "side": 1,
+      "message": "I was trying to avoid having to document the varying return types, but sure, I guess I could do a std::conditional",
+      "parentUuid": "b64e7118_3836841d",
+      "revId": "bf4499d24870cb1c758102476f69f231e8961c3c",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

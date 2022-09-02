@@ -34,6 +34,24 @@
       "parentUuid": "8ab26c7e_966e8e2e",
       "revId": "2e37e97c5e9eb4637827bdb46db36fc78d7b9af4",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6b99dab7_2ff0d2db",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1000188
+      },
+      "writtenOn": "2022-09-02T21:21:47Z",
+      "side": 1,
+      "message": "Being able to run `sd_bus_call_async` on a `const message_t` is incorrect as it modifies the underlying `sd_bus_message`. You should be using a mutable lambda in this case.",
+      "parentUuid": "13f26bc4_4ac36eb5",
+      "revId": "2e37e97c5e9eb4637827bdb46db36fc78d7b9af4",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

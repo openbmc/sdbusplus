@@ -1,8 +1,7 @@
-#include "Test/server.hpp"
-
 #include <sdbusplus/bus.hpp>
 #include <sdbusplus/server/manager.hpp>
 #include <sdbusplus/test/sdbus_mock.hpp>
+#include <server/Test/server.hpp>
 
 #include <gtest/gtest.h>
 

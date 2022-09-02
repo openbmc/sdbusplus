@@ -81,15 +81,22 @@ test(
     ),
 )
 
-server_buildroot = meson.current_build_dir()
-server_files = files(
-    run_command(
-        sdbusgen_prog,
-        '--tool', sdbusplusplus_prog,
-        '--output', server_buildroot,
-        'server',
-        check: true
-    ).stdout().strip().split('\n')
+subdir('server/Test')
+server_test_lib = static_library(
+    'server-test',
+    server_test_sources,
+    dependencies: sdbusplus_dep,
+)
+server_test_hpp = []
+foreach f : server_test_sources.to_list()
+    if f.full_path().endswith('.hpp')
+        server_test_hpp += f
+    endif
+endforeach
+server_test_dep = declare_dependency(
+    link_with: server_test_lib,
+    dependencies: sdbusplus_dep,
+    sources: server_test_hpp,
 )
 
 test(
@@ -97,12 +104,10 @@ test(
     executable(
         'test-server',
         'server/object.cpp',
-        server_files,
-        include_directories: include_directories('server'),
         dependencies: [
             gmock_dep,
             gtest_dep,
-            sdbusplus_dep,
+            server_test_dep,
         ],
     ),
 )
@@ -112,12 +117,10 @@ test(
     executable(
         'test-server-message-variant',
         'server/message_variant.cpp',
-        server_files,
-        include_directories: include_directories('server'),
         dependencies: [
             gmock_dep,
             gtest_dep,
-            sdbusplus_dep,
+            server_test_dep,
         ],
     ),
 )

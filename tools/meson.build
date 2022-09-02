@@ -1,8 +1,8 @@
-sdbusplusplus_prog = find_program('.sdbus++')
-meson.override_find_program('sdbus++', sdbusplusplus_prog)
+meson.override_find_program('sdbus++', files('sdbus++'))
+sdbusplusplus_prog = find_program('sdbus++', native: true)
 
-sdbusgen_prog = find_program('.sdbus++-gendir')
-meson.override_find_program('sdbus++-gendir', sdbusgen_prog)
+meson.override_find_program('sdbus++-gendir', files('sdbus++-gendir'))
+sdbusgen_prog = find_program('sdbus++-gendir', native: true)
 
-sdbuspp_gen_meson_prog = find_program('.sdbus++-gen-meson')
-meson.override_find_program('sdbus++-gen-meson', sdbuspp_gen_meson_prog)
+meson.override_find_program('sdbus++-gen-meson', files('sdbus++-gen-meson'))
+sdbuspp_gen_meson_prog = find_program('sdbus++-gen-meson', native: true)

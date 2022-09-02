@@ -205,6 +205,7 @@ generated_sources += custom_target(
     '$1__cpp'.underscorify(),
     input: [ ${sources} ],
     output: [ ${outputs} ],
+    depend_files: get_variable('sdbusplusplus_depfiles', files()),
     command: [
         sdbuspp_gen_meson_prog, '--command', 'cpp',
         '--output', meson.current_build_dir(),
@@ -236,6 +237,7 @@ generated_others += custom_target(
     '$1__markdown'.underscorify(),
     input: [ ${sources} ],
     output: [ '$(basename "$1").md' ],
+    depend_files: get_variable('sdbusplusplus_depfiles', files()),
     command: [
         sdbuspp_gen_meson_prog, '--command', 'markdown',
         '--output', meson.current_build_dir(),

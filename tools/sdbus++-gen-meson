@@ -36,7 +36,7 @@ EOF
 ## if a repository contains old copies of the generated meson.build files and
 ## needs an update.  We should increment the version number whenever the
 ## resulting meson.build would change.
-tool_version="sdbus++-gen-meson version 3"
+tool_version="sdbus++-gen-meson version 4"
 function show_version {
     echo "${tool_version}"
 }
@@ -205,6 +205,7 @@ generated_sources += custom_target(
     '$1__cpp'.underscorify(),
     input: [ ${sources} ],
     output: [ ${outputs} ],
+    depend_files: sdbusplusplus_depfiles,
     command: [
         sdbuspp_gen_meson_prog, '--command', 'cpp',
         '--output', meson.current_build_dir(),
@@ -236,6 +237,7 @@ generated_others += custom_target(
     '$1__markdown'.underscorify(),
     input: [ ${sources} ],
     output: [ '$(basename "$1").md' ],
+    depend_files: sdbusplusplus_depfiles,
     command: [
         sdbuspp_gen_meson_prog, '--command', 'markdown',
         '--output', meson.current_build_dir(),

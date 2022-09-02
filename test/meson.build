@@ -81,15 +81,11 @@ test(
     ),
 )
 
-server_buildroot = meson.current_build_dir()
-server_files = files(
-    run_command(
-        sdbusgen_prog,
-        '--tool', sdbusplusplus_prog,
-        '--output', server_buildroot,
-        'server',
-        check: true
-    ).stdout().strip().split('\n')
+subdir('server/Test')
+server_test_lib = static_library(
+    'server-test',
+    server_test_sources,
+    dependencies: sdbusplus_dep,
 )
 
 test(
@@ -97,8 +93,7 @@ test(
     executable(
         'test-server',
         'server/object.cpp',
-        server_files,
-        include_directories: include_directories('server'),
+        link_with: server_test_lib,
         dependencies: [
             gmock_dep,
             gtest_dep,
@@ -112,8 +107,7 @@ test(
     executable(
         'test-server-message-variant',
         'server/message_variant.cpp',
-        server_files,
-        include_directories: include_directories('server'),
+        link_with: server_test_lib,
         dependencies: [
             gmock_dep,
             gtest_dep,

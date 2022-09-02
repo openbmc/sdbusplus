@@ -1,6 +1,23 @@
 {
   "comments": [
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e321e8c4_4a903d21",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 9
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2022-09-02T08:52:07Z",
+      "side": 1,
+      "message": "It looks like clang does not like the code and gives compiling issues.\nSee https://gerrit.openbmc.org/c/openbmc/dbus-sensors/+/56941\nAnd the log at https://jenkins.openbmc.org/job/ci-repository/50294/console\n\nI guess we should add some extra CI on this repo to make sure both gcc and clang accept the code?",
+      "revId": "6c97486fd88991f6f40335a9fdfac03d05386138",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "be6abcb5_2a3952b7",

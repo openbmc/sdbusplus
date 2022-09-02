@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8ab26c7e_966e8e2e",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1000188
+      },
+      "writtenOn": "2022-09-02T20:37:55Z",
+      "side": 1,
+      "message": "It\u0027s not needless, it\u0027s correct. Performing an sd_bus_call_async() on a message finalizes it and it can\u0027t be used again. This is a mutation of the message so it\u0027s a bit surprising it would work on a const message.",
+      "revId": "2e37e97c5e9eb4637827bdb46db36fc78d7b9af4",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

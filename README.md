@@ -27,7 +27,7 @@ ninja install
 ```
 
 Optionally, building the tests and examples can be disabled by passing
-`-Dtests=disabled` and `-Dexamples=disabled` respectively to `meson.
+`-Dtests=disabled` and `-Dexamples=disabled` respectively to `meson`.
 
 The sdbus++ application is installed as a standard Python package
 using `setuptools`.
@@ -39,12 +39,11 @@ cd tools
 
 ## C++ library
 
-The sdbusplus library builds on top of the
-[sd-bus](http://0pointer.net/blog/the-new-sd-bus-api-of-systemd.html)
-library to create a modern C++ API for D-Bus. The library attempts to be
-as lightweight as possible, usually compiling to exactly the sd-bus API
-calls that would have been necessary, while also providing compile-time
-type-safety and memory leak protection afforded by modern C++ practices.
+The sdbusplus library builds on top of the [sd-bus] library to create a modern
+C++ API for D-Bus. The library attempts to be as lightweight as possible,
+usually compiling to exactly the sd-bus API calls that would have been
+necessary, while also providing compile-time type-safety and memory leak
+protection afforded by modern C++ practices.
 
 Consider the following code:
 
@@ -68,7 +67,7 @@ connection to the system bus, and call the systemd login manager to get a
 list of active users. The message and bus objects are automatically freed
 when they leave scope and the message format strings are generated at compile
 time based on the types being read. Compare this to the corresponding server
-code within [logind](https://github.com/systemd/systemd/blob/d60c527009133a1ed3d69c14b8c837c790e78d10/src/login/logind-dbus.c#L496).
+code within [logind].
 
 In general, the library attempts to mimic the naming conventions of the sd-bus
 library: ex. `sd_bus_call` becomes `sdbusplus::bus::call`,
@@ -76,6 +75,9 @@ library: ex. `sd_bus_call` becomes `sdbusplus::bus::call`,
 `sd_bus_message_get_signature` becomes `sdbusplus::message::get_signature`,
 etc. This allows a relatively straight-forward translation back to the sd-bus
 functions for looking up the manpage details.
+
+[sd-bus]: http://0pointer.net/blog/the-new-sd-bus-api-of-systemd.html
+[logind]: https://github.com/systemd/systemd/blob/d60c527009133a1ed3d69c14b8c837c790e78d10/src/login/logind-dbus.c#L496
 
 ## Binding generation tool
 

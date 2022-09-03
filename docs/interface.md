@@ -25,8 +25,9 @@ An interface YAML may have the following sections:
 A common problem we have found with D-Bus interfaces is having a consistent
 way to define enumerations. Two common practices are to either assign
 special meaning to integers, as a C compiler might do, or to have specific
-strings representing the enumeration name. The [D-Bus API design guidelines](https://dbus.freedesktop.org/doc/dbus-api-design.html)
-specify both of these options:
+strings representing the enumeration name. The
+[D-Bus API design guidelines][dbus-design-guidelines] specify both of these
+options:
 
 > For APIs being used in constrained situations, enumerated values should be
 > transmitted as unsigned integers. For APIs which need to be extended by
@@ -70,8 +71,8 @@ enumerations:
 ### Base types
 
 Types are identified in YAML using their typename found in the
-[D-Bus specification](https://dbus.freedesktop.org/doc/dbus-specification.html),
-but listed using lowercases: `int64` instead of `INT64` or C++ `int64_t`.
+[D-Bus specification][dbus-spec], but listed using lowercases: `int64`
+instead of `INT64` or C++ `int64_t`.
 
 - `byte`
 - `boolean`
@@ -233,3 +234,6 @@ signals:
       - name: CardToTop
         type: struct[enum[self.Suit], byte]
 ```
+
+[dbus-design-guidelines]: https://dbus.freedesktop.org/doc/dbus-api-design.html
+[dbus-spec]: https://dbus.freedesktop.org/doc/dbus-specification.html

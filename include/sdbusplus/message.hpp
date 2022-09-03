@@ -485,7 +485,7 @@ class message : private sdbusplus::slot::details::slot_friend
      * This api should be used sparingly and carefully, as it opens a number of
      * possibilities for race conditions, RAII destruction issues, and runtime
      * problems when using the sd-bus c api.  Here be dragons. */
-    msgp_t get() const
+    msgp_t get()
     {
         return _msg.get();
     }

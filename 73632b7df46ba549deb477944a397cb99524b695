@@ -69,6 +69,24 @@
       "parentUuid": "4f97cf73_c78d414b",
       "revId": "73632b7df46ba549deb477944a397cb99524b695",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "78905d59_3aa37d29",
+        "filename": "tools/sdbus++-gen-meson",
+        "patchSetId": 3
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-09-06T19:50:39Z",
+      "side": 1,
+      "message": "Did you have more changes coming?\n\nI think I\u0027ve added code to P-D-I that causes a CI failure if there would be a change to the generated files (via diff).  Likely we\u0027re going to force a regen anyhow.",
+      "parentUuid": "d2ddea98_45a4c171",
+      "revId": "73632b7df46ba549deb477944a397cb99524b695",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

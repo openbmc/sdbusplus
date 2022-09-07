@@ -2,10 +2,11 @@
 
 #include <systemd/sd-bus.h>
 
+#include <function2/function2.hpp>
 #include <sdbusplus/bus.hpp>
 #include <sdbusplus/slot.hpp>
+#include <stdplus/zstring.hpp>
 
-#include <functional>
 #include <memory>
 #include <string>
 
@@ -33,12 +34,8 @@ struct match : private sdbusplus::bus::details::bus_friend
      *  @param[in] handler - The callback for matches.
      *  @param[in] context - An optional context to pass to the handler.
      */
-    match(sdbusplus::bus_t& bus, const char* _match,
+    match(sdbusplus::bus_t& bus, stdplus::const_zstring _match,
           sd_bus_message_handler_t handler, void* context = nullptr);
-    inline match(sdbusplus::bus_t& bus, const std::string& _match,
-                 sd_bus_message_handler_t handler, void* context = nullptr) :
-        match(bus, _match.c_str(), handler, context)
-    {}
 
     /** @brief Register a signal match.
      *
@@ -46,12 +43,8 @@ struct match : private sdbusplus::bus::details::bus_friend
      *  @param[in] match - The match to register.
      *  @param[in] callback - The callback for matches.
      */
-    using callback_t = std::function<void(sdbusplus::message_t&)>;
-    match(sdbusplus::bus_t& bus, const char* _match, callback_t&& callback);
-    inline match(sdbusplus::bus_t& bus, const std::string& _match,
-                 callback_t&& callback) :
-        match(bus, _match.c_str(), std::move(callback))
-    {}
+    using callback_t = fu2::unique_function<void(sdbusplus::message_t&)>;
+    match(sdbusplus::bus_t& bus, stdplus::const_zstring _match, callback_t&& callback);
 
   private:
     std::unique_ptr<callback_t> _callback;

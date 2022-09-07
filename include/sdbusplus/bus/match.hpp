@@ -2,10 +2,10 @@
 
 #include <systemd/sd-bus.h>
 
+#include <function2/function2.hpp>
 #include <sdbusplus/bus.hpp>
 #include <sdbusplus/slot.hpp>
 
-#include <functional>
 #include <memory>
 #include <string>
 
@@ -46,7 +46,7 @@ struct match : private sdbusplus::bus::details::bus_friend
      *  @param[in] match - The match to register.
      *  @param[in] callback - The callback for matches.
      */
-    using callback_t = std::function<void(sdbusplus::message_t&)>;
+    using callback_t = fu2::unique_function<void(sdbusplus::message_t&)>;
     match(sdbusplus::bus_t& bus, const char* _match, callback_t&& callback);
     inline match(sdbusplus::bus_t& bus, const std::string& _match,
                  callback_t&& callback) :

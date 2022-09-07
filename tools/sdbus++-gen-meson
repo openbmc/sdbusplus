@@ -252,25 +252,9 @@ EOF
 
 ## Handle command=meson by generating the tree of meson.build files.
 function cmd_meson {
-    TLDs="com net org xyz"
-    yamls=""
-
-    # Find all the YAML files in the TLD subdirectories.
-    for d in ${TLDs}; do
-        dir="${rootdir}/${d}"
-        if [[ ! -d ${dir} ]]; then
-            continue
-        fi
-
-        yamls="\
-            ${yamls} \
-            $(find "${dir}" -name '*.interface.yaml' -o -name '*.errors.yaml') \
-            "
-    done
-
-    # Sort YAMLs
-    # shellcheck disable=SC2312
-    yamls="$(echo "${yamls}" | tr " " "\n" | sort)"
+    # Find and sort all the YAML files
+    yamls="$(find "${rootdir}" -name '*.interface.yaml' -o -name '*.errors.yaml')"
+    yamls="$(echo "${yamls}" | sort)"
 
     # Assign the YAML files into the hash-table by interface name.
     for y in ${yamls}; do

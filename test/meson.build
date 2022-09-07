@@ -81,23 +81,34 @@ test(
     ),
 )
 
-subdir('server/Test')
+generated_sources = []
+generated_others = []
+subdir('gen')
+subdir('gen/server')
+
+server_test_pre = declare_dependency(
+    include_directories: include_directories('gen'),
+    dependencies: sdbusplus_dep)
+
 server_test_lib = static_library(
     'server-test',
-    server_test_sources,
-    dependencies: sdbusplus_dep,
-)
-server_test_hpp = []
-foreach f : server_test_sources.to_list()
-    if f.full_path().endswith('.hpp')
-        server_test_hpp += f
-    endif
+    generated_sources,
+    implicit_include_directories: false,
+    dependencies: server_test_pre)
+
+generated_sources_header = []
+foreach s : generated_sources
+    foreach f : s.to_list()
+        if f.full_path().endswith('.hpp')
+            generated_sources_header += f
+        endif
+    endforeach
 endforeach
+
 server_test_dep = declare_dependency(
-    link_with: server_test_lib,
-    dependencies: sdbusplus_dep,
-    sources: server_test_hpp,
-)
+  sources: generated_sources_header,
+  link_with: server_test_lib,
+  dependencies: server_test_pre)
 
 test(
     'test-server',

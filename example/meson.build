@@ -44,10 +44,16 @@ executable(
     dependencies: asio_dep,
 )
 
-subdir('net/poettering/Calculator')
+generated_sources = []
+generated_others = []
+subdir('gen')
+subdir('gen/net')
+
 executable(
     'calculator-server',
     'calculator-server.cpp',
-    calculator_sources,
+    generated_sources,
+    implicit_include_directories: false,
+    include_directories: include_directories('gen'),
     dependencies: sdbusplus_dep,
 )

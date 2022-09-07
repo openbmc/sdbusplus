@@ -97,19 +97,15 @@ int ${interface_name()}::_callback_${ method.CamelCase }(
     try
     % endif
     {
-        return sdbusplus::sdbuspp::method_callback\
-    % if len(method.returns) > 1:
-<true>\
-    % endif
-(
+        return sdbusplus::sdbuspp::method_callback<\
+${method.cpp_return_type(interface)}(${parameters_as_arg_list()}), \
+${'true' if len(method.returns) > 1 else 'false'}>(
                 msg, o->_intf, error,
-                std::function(
-                    [=](${parameters_as_arg_list()})
-                    {
-                        return o->${ method.camelCase }(
-                                ${parameters_as_list()});
-                    }
-                ));
+                [=](${parameters_as_arg_list()})
+                {
+                    return o->${ method.camelCase }(
+                            ${parameters_as_list()});
+                });
     }
     % for e in method.errors:
     catch(const sdbusplus::${error_namespace(e)}::${error_name(e)}& e)

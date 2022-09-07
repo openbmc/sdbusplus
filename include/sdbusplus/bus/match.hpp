@@ -1,5 +1,7 @@
 #pragma once
 
+#include <systemd/sd-bus.h>
+
 #include <sdbusplus/bus.hpp>
 #include <sdbusplus/message.hpp>
 #include <sdbusplus/slot.hpp>
@@ -8,10 +10,7 @@
 #include <memory>
 #include <string>
 
-namespace sdbusplus
-{
-
-namespace bus
+namespace sdbusplus::bus
 {
 
 namespace match
@@ -19,21 +18,6 @@ namespace match
 
 struct match : private sdbusplus::bus::details::bus_friend
 {
-    /* Define all of the basic class operations:
-     *     Not allowed:
-     *         - Default constructor to avoid nullptrs.
-     *         - Copy operations due to internal unique_ptr.
-     *     Allowed:
-     *         - Move operations.
-     *         - Destructor.
-     */
-    match() = delete;
-    match(const match&) = delete;
-    match& operator=(const match&) = delete;
-    match(match&&) = default;
-    match& operator=(match&&) = default;
-    ~match() = default;
-
     /** @brief Register a signal match.
      *
      *  @param[in] bus - The bus to register on.
@@ -41,20 +25,12 @@ struct match : private sdbusplus::bus::details::bus_friend
      *  @param[in] handler - The callback for matches.
      *  @param[in] context - An optional context to pass to the handler.
      */
-    match(sdbusplus::bus_t& bus, const char* match,
-          sd_bus_message_handler_t handler, void* context = nullptr)
-    {
-        sd_bus_slot* slot = nullptr;
-        sd_bus_add_match(get_busp(bus), &slot, match, handler, context);
-
-        _slot = std::move(slot);
-    }
-    match(sdbusplus::bus_t& bus, const std::string& _match,
-          sd_bus_message_handler_t handler, void* context = nullptr) :
+    match(sdbusplus::bus_t& bus, const char* _match,
+          sd_bus_message_handler_t handler, void* context = nullptr);
+    inline match(sdbusplus::bus_t& bus, const std::string& _match,
+                 sd_bus_message_handler_t handler, void* context = nullptr) :
         match(bus, _match.c_str(), handler, context)
     {}
-
-    using callback_t = std::function<void(sdbusplus::message_t&)>;
 
     /** @brief Register a signal match.
      *
@@ -62,37 +38,16 @@ struct match : private sdbusplus::bus::details::bus_friend
      *  @param[in] match - The match to register.
      *  @param[in] callback - The callback for matches.
      */
-    match(sdbusplus::bus_t& bus, const char* match, callback_t callback) :
-        _callback(std::make_unique<callback_t>(std::move(callback)))
-    {
-        sd_bus_slot* slot = nullptr;
-        sd_bus_add_match(get_busp(bus), &slot, match, callCallback,
-                         _callback.get());
-
-        _slot = std::move(slot);
-    }
-    match(sdbusplus::bus_t& bus, const std::string& _match,
-          callback_t callback) :
-        match(bus, _match.data(), callback)
+    using callback_t = std::function<void(sdbusplus::message_t&)>;
+    match(sdbusplus::bus_t& bus, const char* _match, callback_t callback);
+    inline match(sdbusplus::bus_t& bus, const std::string& _match,
+                 callback_t callback) :
+        match(bus, _match.c_str(), std::move(callback))
     {}
 
   private:
-    slot_t _slot{};
-    std::unique_ptr<callback_t> _callback = nullptr;
-
-    // The callback is 'noexcept' because it is called from C code (sd-bus).
-    // If it were to throw, this will cause undefined behavior so force noexcept
-    // and we'll std::terminate instead.
-    static int callCallback(sd_bus_message* m, void* context,
-                            sd_bus_error* /*e*/) noexcept
-    {
-        auto c = static_cast<callback_t*>(context);
-        message_t message{m};
-
-        (*c)(message);
-
-        return 0;
-    }
+    std::unique_ptr<callback_t> _callback;
+    slot_t _slot;
 };
 
 /** Utilities for defining match rules based on the DBus specification */
@@ -233,5 +188,4 @@ inline auto nameOwnerChanged(std::string_view s) noexcept
 
 using match_t = match::match;
 
-} // namespace bus
-} // namespace sdbusplus
+} // namespace sdbusplus::bus

@@ -1,6 +1,7 @@
 #pragma once
 #include <sdbusplus/message.hpp>
 #include <sdbusplus/server.hpp>
+#include <stdplus/function_view.hpp>
 
 #include <type_traits>
 
@@ -12,6 +13,31 @@ namespace sdbusplus
 {
 namespace sdbuspp
 {
+namespace detail
+{
+
+/** @brief Decompose a function into arguments are return types */
+template <typename>
+struct Func;
+
+template <typename R, bool Nx, typename... As>
+struct Func<R(As...) noexcept(Nx)>
+{
+    using r = R;
+    using as = std::tuple<std::remove_cvref_t<As>...>;
+};
+
+template <typename R, bool Nx, typename... As>
+struct Func<R(As...) const noexcept(Nx)> : Func<R(As...) noexcept(Nx)>
+{};
+
+template <typename... T>
+inline void tupleRead(message_t& m, std::tuple<T...>& t)
+{
+    std::apply([&](T&... t) { m.read(t...); }, t);
+}
+
+} // namespace detail
 
 /** Handle common parts of a get/set property callback.
  *
@@ -23,9 +49,9 @@ namespace sdbuspp
  *  This function will unpack a message's contents, redirect them to the
  *  function 'f', and then pack them into the response message.
  */
-template <typename... Args, typename Return>
+template <typename F>
 int property_callback(sd_bus_message* msg, sdbusplus::SdBusInterface* intf,
-                      sd_bus_error* error, std::function<Return(Args&&...)> f)
+                      sd_bus_error* error, stdplus::function_view<F> f)
 {
     try
     {
@@ -36,11 +62,11 @@ int property_callback(sd_bus_message* msg, sdbusplus::SdBusInterface* intf,
         server::transaction::set_id(m);
 
         // Read arguments from the message.
-        std::tuple<Args...> arg{};
-        std::apply([&](Args&... a) { (m.read(a), ...); }, arg);
+        typename detail::Func<F>::as arg{};
+        detail::tupleRead(m, arg);
 
         // Call the function with the arguments.
-        if constexpr (!std::is_same_v<void, Return>)
+        if constexpr (!std::is_same_v<void, typename detail::Func<F>::r>)
         {
             // Pack results back into message.
             m.append(std::apply(f, std::move(arg)));
@@ -79,9 +105,9 @@ int property_callback(sd_bus_message* msg, sdbusplus::SdBusInterface* intf,
  *  This function will unpack a message's contents, redirect them to the
  *  function 'f', and then pack them into the response message.
  */
-template <bool multi_return = false, typename... Args, typename Return>
+template <bool multi_return = false, typename F>
 int method_callback(sd_bus_message* msg, sdbusplus::SdBusInterface* intf,
-                    sd_bus_error* error, std::function<Return(Args&&...)> f)
+                    sd_bus_error* error, stdplus::function_view<F> f)
 {
     try
     {
@@ -92,14 +118,14 @@ int method_callback(sd_bus_message* msg, sdbusplus::SdBusInterface* intf,
         server::transaction::set_id(m);
 
         // Read arguments from the message.
-        std::tuple<Args...> arg{};
-        std::apply([&](Args&... a) { (m.read(a), ...); }, arg);
+        typename detail::Func<F>::as arg{};
+        detail::tupleRead(m, arg);
 
         // Get the reply message.
         auto reply = m.new_method_return();
 
         // Call the function with the arguments.
-        if constexpr (std::is_same_v<void, Return>)
+        if constexpr (std::is_same_v<void, typename detail::Func<F>::r>)
         {
             // No return value, direct call.
             std::apply(f, std::move(arg));
@@ -117,7 +143,7 @@ int method_callback(sd_bus_message* msg, sdbusplus::SdBusInterface* intf,
             // Step 2: append each return from f into the reply message one
             //         at a time.
             //      - Apply on return from 'f' into lambda that does an append.
-            std::apply([&](auto&&... v) { (reply.append(std::move(v)), ...); },
+            std::apply([&](auto&&... v) { reply.append(std::move(v)...); },
                        std::apply(f, std::move(arg)));
         }
 

@@ -28,6 +28,7 @@ libsdbusplus_src = files(
     'src/async/match.cpp',
     'src/async/scope.cpp',
     'src/bus.cpp',
+    'src/bus/match.cpp',
     'src/event.cpp',
     'src/exception.cpp',
     'src/message/native_types.cpp',

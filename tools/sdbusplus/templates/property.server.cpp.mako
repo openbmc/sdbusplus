@@ -13,14 +13,9 @@ int ${interface.classname}::_callback_get_${property.name}(
 
     try
     {
+        auto cb = [o]() { return o->${property.camelCase}(); };
         return sdbusplus::sdbuspp::property_callback(
-                reply, o->get_bus().getInterface(), error,
-                std::function(
-                    [=]()
-                    {
-                        return o->${property.camelCase}();
-                    }
-                ));
+                reply, o->get_bus().getInterface(), error, sdbusplus::sdbuspp::fview(cb));
     }
     % for e in property.errors:
     catch(const ${interface.errorNamespacedClass(e)}& e)
@@ -67,14 +62,11 @@ int ${interface.classname}::_callback_set_${property.name}(
 
     try
     {
+        auto cb = [o](${property.cppTypeParam(interface.name)}&& arg) {
+            o->${property.camelCase}(std::move(arg));
+        };
         return sdbusplus::sdbuspp::property_callback(
-                value, o->get_bus().getInterface(), error,
-                std::function(
-                    [=](${property.cppTypeParam(interface.name)}&& arg)
-                    {
-                        o->${property.camelCase}(std::move(arg));
-                    }
-                ));
+                value, o->get_bus().getInterface(), error, sdbusplus::sdbuspp::fview(cb));
     }
     % for e in property.errors:
     catch(const ${interface.errorNamespacedClass(e)}& e)

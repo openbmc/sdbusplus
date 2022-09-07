@@ -39,19 +39,12 @@ int ${interface.classname}::_callback_${ method.CamelCase }(
 
     try
     {
-        return sdbusplus::sdbuspp::method_callback\
-    % if len(method.returns) > 1:
-<true>\
-    % endif
-(
-                msg, o->get_bus().getInterface(), error,
-                std::function(
-                    [=](${method.parameters_as_arg_list(interface)})
-                    {
-                        return o->${ method.camelCase }(
-                                ${method.parameters_as_list()});
-                    }
-                ));
+        auto cb = [o](${method.parameters_as_arg_list(interface)}) {
+            return o->${method.camelCase}(${method.parameters_as_list()});
+        };
+        return sdbusplus::sdbuspp::method_callback<\
+${'true' if len(method.returns) > 1 else 'false'}>(
+                msg, o->get_bus().getInterface(), error, sdbusplus::sdbuspp::fview(cb));
     }
     % for e in method.errors:
     catch(const ${interface.errorNamespacedClass(e)}& e)

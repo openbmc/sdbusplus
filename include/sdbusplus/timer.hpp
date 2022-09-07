@@ -2,8 +2,9 @@
 
 #include <systemd/sd-event.h>
 
+#include <function2/function2.hpp>
+
 #include <chrono>
-#include <functional>
 #include <stdexcept>
 
 namespace phosphor
@@ -28,9 +29,9 @@ class Timer
      *  @param[in] funcCallBack - optional function callback for timer
      *                            expirations
      */
-    Timer(std::function<void()> userCallBack = nullptr) :
+    Timer(fu2::unique_function<void()>&& userCallBack = nullptr) :
         event(nullptr), eventSource(nullptr), expired(false),
-        userCallBack(userCallBack)
+        userCallBack(std::move(userCallBack))
     {
         // take a reference to the default event object
         sd_event_default(&event);
@@ -44,9 +45,11 @@ class Timer
      *  @param[in] funcCallBack - optional function callback for timer
      *                            expirations
      */
-    Timer(sd_event* event, std::function<void()> userCallBack = nullptr) :
-        event(event), eventSource(nullptr), expired(false),
-        userCallBack(userCallBack)
+    Timer(sd_event* event,
+          fu2::unique_function<void()>&& userCallBack = nullptr) :
+        event(event),
+        eventSource(nullptr), expired(false),
+        userCallBack(std::move(userCallBack))
     {
         if (!event)
         {
@@ -145,7 +148,7 @@ class Timer
     bool expired;
 
     /** @brief Optional function to call on timer expiration */
-    std::function<void()> userCallBack;
+    fu2::unique_function<void()> userCallBack;
 
     /** @brief timer duration */
     std::chrono::microseconds duration;

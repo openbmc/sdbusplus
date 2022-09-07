@@ -38,14 +38,9 @@ int ${classname}::_callback_get_${property.name}(
     try
     % endif
     {
+        auto cb = [o]() { return o->${property.camelCase}(); };
         return sdbusplus::sdbuspp::property_callback(
-                reply, o->_intf, error,
-                std::function(
-                    [=]()
-                    {
-                        return o->${property.camelCase}();
-                    }
-                ));
+                reply, o->_intf, error, sdbusplus::sdbuspp::fview(cb));
     }
     % for e in property.errors:
     catch(const sdbusplus::${error_namespace(e)}::${error_name(e)}& e)
@@ -89,14 +84,11 @@ int ${classname}::_callback_set_${property.name}(
     try
     % endif
     {
+        auto cb = [o](${property.cppTypeParam(interface.name)}&& arg) {
+            o->${property.camelCase}(std::move(arg));
+        };
         return sdbusplus::sdbuspp::property_callback(
-                value, o->_intf, error,
-                std::function(
-                    [=](${property.cppTypeParam(interface.name)}&& arg)
-                    {
-                        o->${property.camelCase}(std::move(arg));
-                    }
-                ));
+                value, o->_intf, error, sdbusplus::sdbuspp::fview(cb));
     }
     % for e in property.errors:
     catch(const sdbusplus::${error_namespace(e)}::${error_name(e)}& e)

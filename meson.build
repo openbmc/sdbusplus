@@ -20,10 +20,32 @@ if not python_bin.found()
   error('No valid python3 installation found')
 endif
 
-
 root_inc = include_directories('include')
 
-libsdbusplus_src = files(
+boost_dep = dependency('boost', required: false)
+
+libsdbusplus_deps = [
+    boost_dep,
+    libsystemd_pkg,
+    dependency('stdplus'),
+]
+
+libsdbusplus_cflags = [
+    '-DBOOST_ASIO_DISABLE_THREADS',
+    '-DBOOST_ALL_NO_LIB',
+    '-DBOOST_SYSTEM_NO_DEPRECATED',
+    '-DBOOST_ERROR_CODE_HEADER_ONLY',
+    '-DBOOST_COROUTINES_NO_DEPRECATION_WARNING',
+]
+
+libsdbusplus_pre = declare_dependency(
+    include_directories: root_inc,
+    compile_args: libsdbusplus_cflags,
+    dependencies: libsdbusplus_deps,
+)
+
+libsdbusplus = library(
+    'sdbusplus',
     'src/async/context.cpp',
     'src/async/match.cpp',
     'src/async/scope.cpp',
@@ -35,33 +57,14 @@ libsdbusplus_src = files(
     'src/sdbus.cpp',
     'src/server/interface.cpp',
     'src/server/transaction.cpp',
-)
-
-libsdbusplus = library(
-    'sdbusplus',
-    libsdbusplus_src,
-    include_directories: root_inc,
-    dependencies: libsystemd_pkg,
+    dependencies: libsdbusplus_pre,
     version: meson.project_version(),
     install: true,
 )
 
-boost_compile_args = [
-    '-DBOOST_ASIO_DISABLE_THREADS',
-    '-DBOOST_ALL_NO_LIB',
-    '-DBOOST_SYSTEM_NO_DEPRECATED',
-    '-DBOOST_ERROR_CODE_HEADER_ONLY',
-    '-DBOOST_COROUTINES_NO_DEPRECATION_WARNING',
-]
-
-boost_dep = declare_dependency(
-    dependencies: dependency('boost', required: false),
-    compile_args: boost_compile_args)
-
 sdbusplus_dep = declare_dependency(
-    include_directories: root_inc,
     link_with: libsdbusplus,
-    dependencies: [ libsystemd_pkg, boost_dep ],
+    dependencies: libsdbusplus_pre,
 )
 
 subdir('tools')
@@ -79,11 +82,18 @@ install_subdir(
     strip_directory: false,
 )
 
+libsdbusplus_reqs = []
+foreach dep : libsdbusplus_deps
+    if dep.type_name() == 'pkgconfig'
+        libsdbusplus_reqs += dep
+    endif
+endforeach
+
 import('pkgconfig').generate(
     libsdbusplus,
     name: meson.project_name(),
     version: meson.project_version(),
-    requires: libsystemd_pkg,
-    extra_cflags: boost_compile_args,
+    requires: libsdbusplus_reqs,
+    extra_cflags: libsdbusplus_cflags,
     description: 'C++ bindings for sdbus',
 )

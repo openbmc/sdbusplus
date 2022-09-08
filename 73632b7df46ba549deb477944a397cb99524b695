@@ -87,6 +87,24 @@
       "parentUuid": "d2ddea98_45a4c171",
       "revId": "73632b7df46ba549deb477944a397cb99524b695",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5deb3a4d_c23eec76",
+        "filename": "tools/sdbus++-gen-meson",
+        "patchSetId": 3
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1000188
+      },
+      "writtenOn": "2022-09-08T00:59:52Z",
+      "side": 1,
+      "message": "Not really, I\u0027ll just make it mandatory and the commit provides more info on how to provide the new variable that is required.",
+      "parentUuid": "78905d59_3aa37d29",
+      "revId": "73632b7df46ba549deb477944a397cb99524b695",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

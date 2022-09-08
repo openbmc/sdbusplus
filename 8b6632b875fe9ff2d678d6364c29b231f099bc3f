@@ -16,6 +16,24 @@
       "message": "I feel like this is most desirable as users should have separate yaml directories. This can be split out into a different change or we can just fix the test schema to use net.example.Test or something.",
       "revId": "8b6632b875fe9ff2d678d6364c29b231f099bc3f",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c6c47d60_02ba117c",
+        "filename": "tools/sdbus++-gen-meson",
+        "patchSetId": 1
+      },
+      "lineNbr": 255,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-09-08T01:48:00Z",
+      "side": 1,
+      "message": "I know the PDI code is moved to yaml already.  We probably need to search around for other repos that have transitioned to using gen-meson and move them before we merge this.",
+      "parentUuid": "c1e452b9_8593287b",
+      "revId": "8b6632b875fe9ff2d678d6364c29b231f099bc3f",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

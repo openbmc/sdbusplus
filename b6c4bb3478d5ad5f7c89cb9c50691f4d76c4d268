@@ -1,0 +1,90 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3dc665c7_2e8cd4d6",
+        "filename": "include/sdbusplus/sdbuspp_support/server.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-09-08T01:44:27Z",
+      "side": 1,
+      "message": "What does this one end up being used for?",
+      "range": {
+        "startLine": 19,
+        "startChar": 0,
+        "endLine": 20,
+        "endChar": 12
+      },
+      "revId": "b6c4bb3478d5ad5f7c89cb9c50691f4d76c4d268",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8951197a_dc0712fd",
+        "filename": "include/sdbusplus/sdbuspp_support/server.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-09-08T01:44:27Z",
+      "side": 1,
+      "message": "I wonder why I didn\u0027t implement this originally as:\n\n    m.read(t, ...);\n    \nIn many cases it is much more efficient to read as a set than one at a time.\n\n\nI guess I didn\u0027t implement it that way originally because folding was added in C++17 and this was written for C++14 before.",
+      "range": {
+        "startLine": 32,
+        "startChar": 38,
+        "endLine": 32,
+        "endChar": 45
+      },
+      "revId": "b6c4bb3478d5ad5f7c89cb9c50691f4d76c4d268",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8ffd71bf_d3466611",
+        "filename": "tools/sdbusplus/templates/method.prototype.hpp.mako",
+        "patchSetId": 2
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-09-08T01:44:27Z",
+      "side": 1,
+      "message": "Can\u0027t F be deduced if you swap the order here?  I don\u0027t understand why we have to express it now when we use to have everything deduced.",
+      "range": {
+        "startLine": 100,
+        "startChar": 0,
+        "endLine": 102,
+        "endChar": 49
+      },
+      "revId": "b6c4bb3478d5ad5f7c89cb9c50691f4d76c4d268",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1273d4a1_95f3fc96",
+        "filename": "tools/sdbusplus/templates/property.prototype.hpp.mako",
+        "patchSetId": 2
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-09-08T01:44:27Z",
+      "side": 1,
+      "message": "Seems like we\u0027ve lost deduction on everything?",
+      "revId": "b6c4bb3478d5ad5f7c89cb9c50691f4d76c4d268",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

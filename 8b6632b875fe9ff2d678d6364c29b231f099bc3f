@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c1e452b9_8593287b",
+        "filename": "tools/sdbus++-gen-meson",
+        "patchSetId": 1
+      },
+      "lineNbr": 255,
+      "author": {
+        "id": 1000188
+      },
+      "writtenOn": "2022-09-08T01:00:58Z",
+      "side": 1,
+      "message": "I feel like this is most desirable as users should have separate yaml directories. This can be split out into a different change or we can just fix the test schema to use net.example.Test or something.",
+      "revId": "8b6632b875fe9ff2d678d6364c29b231f099bc3f",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

@@ -37,7 +37,7 @@ struct wait_process_completion : bus::details::bus_friend
 
     // Data to share with the worker.
     context& ctx;
-    std::chrono::microseconds timeout{};
+    event_t::time_resolution timeout{};
 
     static task<> loop(context& ctx);
     static void wait_once(context& ctx);

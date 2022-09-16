@@ -23,6 +23,7 @@ tests = [
     'async/task',
     'bus/list_names',
     'bus/match',
+    'event/event',
     'exception/sdbus_error',
     'message/append',
     'message/call',

@@ -22,6 +22,7 @@ endif
 tests = [
     'async/context',
     'async/task',
+    'async/timer',
     'bus/list_names',
     'bus/match',
     'event/event',

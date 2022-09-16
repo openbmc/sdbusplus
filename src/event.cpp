@@ -90,7 +90,7 @@ event::event()
     run_condition = add_condition(run_wakeup, this);
 }
 
-void event::run_one(std::chrono::microseconds timeout)
+void event::run_one(time_resolution timeout)
 {
     auto l = obtain_lock<false>();
 
@@ -146,8 +146,7 @@ condition event::add_condition(sd_event_io_handler_t handler, void* data)
 }
 
 source event::add_oneshot_timer(sd_event_time_handler_t handler, void* data,
-                                std::chrono::microseconds time,
-                                std::chrono::microseconds accuracy)
+                                time_resolution time, time_resolution accuracy)
 {
     auto l = obtain_lock();
 

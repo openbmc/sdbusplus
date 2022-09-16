@@ -56,3 +56,27 @@ TEST_F(Event, ConditionSignals)
     EXPECT_TRUE(ran);
     c.ack();
 }
+
+TEST_F(Event, Timer)
+{
+    static constexpr auto timeout = 50ms;
+
+    struct handler
+    {
+        static int _(sd_event_source*, uint64_t, void* data)
+        {
+            *static_cast<bool*>(data) = true;
+            return 0;
+        }
+    };
+    bool ran = false;
+
+    auto start = std::chrono::steady_clock::now();
+    auto c = ev.add_oneshot_timer(handler::_, &ran, timeout);
+    ev.run_one();
+    auto stop = std::chrono::steady_clock::now();
+
+    EXPECT_TRUE(ran);
+    EXPECT_TRUE(stop - start > timeout);
+    EXPECT_TRUE(stop - start < timeout * 2);
+}

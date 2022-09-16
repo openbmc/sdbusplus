@@ -89,6 +89,9 @@ auto runner(sdbusplus::async::context& ctx) -> sdbusplus::async::task<>
         }
     };
 
+    // We are all done, so shutdown the server.
+    ctx.request_stop();
+
     co_return;
 }
 

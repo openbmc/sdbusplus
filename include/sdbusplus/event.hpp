@@ -110,6 +110,12 @@ class event
     /** Add a eventfd-based sdbusplus::event::condition to the run-loop. */
     condition add_condition(sd_event_io_handler_t handler, void* data);
 
+    /** Add a one shot timer source to the run-loop. */
+    source add_oneshot_timer(
+        sd_event_time_handler_t handler, void* data,
+        std::chrono::microseconds time,
+        std::chrono::microseconds accuracy = std::chrono::milliseconds(1));
+
     friend source;
 
   private:

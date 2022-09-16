@@ -1,10 +1,17 @@
-#include <poll.h>
 #include <systemd/sd-bus.h>
 
 #include <sdbusplus/async/context.hpp>
 
+#include <chrono>
+
 namespace sdbusplus::async
 {
+
+context::context(bus_t&& b) : bus(std::move(b))
+{
+    dbus_source = event_loop.add_io(bus.get_fd(), EPOLLIN, dbus_event_handle,
+                                    this);
+}
 
 namespace details
 {
@@ -22,14 +29,15 @@ struct wait_process_completion : bus::details::bus_friend
 
     // Called by the `caller` to indicate the Sender is completed.
     virtual void complete() noexcept = 0;
+    // Called by the `caller` to indicate the Sender should be stopped.
+    virtual void stop() noexcept = 0;
 
     // Arm the completion event.
     void arm() noexcept;
 
     // Data to share with the worker.
     context& ctx;
-    pollfd fd{};
-    int timeout = 0;
+    std::chrono::microseconds timeout{};
 
     static task<> loop(context& ctx);
     static void wait_once(context& ctx);
@@ -51,6 +59,13 @@ struct wait_process_operation : public wait_process_completion
 
     void complete() noexcept override final
     {
+        execution::set_value(std::move(this->receiver));
+    }
+
+    void stop() noexcept override final
+    {
+        // Stop can be called when the context is shutting down,
+        // so treat it as if the receiver completed.
         execution::set_value(std::move(this->receiver));
     }
 
@@ -86,7 +101,7 @@ struct wait_process_sender
 
 task<> wait_process_completion::loop(context& ctx)
 {
-    while (1)
+    while (!ctx.stop_requested())
     {
         // Handle the next sdbus event.
         co_await wait_process_sender(ctx);
@@ -108,6 +123,19 @@ context::~context() noexcept(false)
     }
 }
 
+bool context::request_stop() noexcept
+{
+    auto first_stop = stop.request_stop();
+
+    if (first_stop)
+    {
+        caller_wait.notify_one();
+        event_loop.break_run();
+    }
+
+    return first_stop;
+}
+
 void context::caller_run(task<> startup)
 {
     // Start up the worker thread.
@@ -115,14 +143,14 @@ void context::caller_run(task<> startup)
         worker_run(std::move(startup));
     }};
 
-    while (1)
+    // Run until the context requested to stop.
+    while (!stop_requested())
     {
-        // Handle 'sd_bus_wait's.
+        // Handle waiting on all the sd-events.
         details::wait_process_completion::wait_once(*this);
     }
 
-    // TODO: We can't actually get here.  Need to deal with stop conditions and
-    // then we'll need this code.
+    // Stop has been requested, so finish up the loop.
     loop.finish();
     if (worker_thread.joinable())
     {
@@ -156,42 +184,32 @@ void details::wait_process_completion::arm() noexcept
         return;
     }
 
-    // We need to call wait now, so formulate all the data that the 'caller'
-    // needs.
-
-    // Get the bus' pollfd data.
-    auto b = get_busp(ctx.get_bus());
-    fd = pollfd{sd_bus_get_fd(b), static_cast<short>(sd_bus_get_events(b)), 0};
+    // We need to call wait now, get the current timeout and stage ourselves
+    // as the next completion.
 
     // Get the bus' timeout.
-    uint64_t to_nsec = 0;
-    sd_bus_get_timeout(b, &to_nsec);
+    uint64_t to_usec = 0;
+    sd_bus_get_timeout(get_busp(ctx.get_bus()), &to_usec);
 
-    if (to_nsec == UINT64_MAX)
+    if (to_usec == UINT64_MAX)
     {
         // sd_bus_get_timeout returns UINT64_MAX to indicate 'wait forever'.
-        // Turn this into a negative number for `poll`.
-        timeout = -1;
+        // Turn this into -1 for sd-event.
+        timeout = std::chrono::microseconds{-1};
     }
     else
     {
-        // Otherwise, convert usec from sd_bus to msec for poll.
-        // sd_bus manpage suggests you should round-up (ceil).
-        timeout = std::chrono::ceil<std::chrono::milliseconds>(
-                      std::chrono::microseconds(to_nsec))
-                      .count();
+        timeout = std::chrono::microseconds(to_usec);
     }
 
     // Assign ourselves as the pending completion and release the caller.
     std::lock_guard lock{ctx.lock};
-    ctx.complete = this;
+    ctx.staged = this;
     ctx.caller_wait.notify_one();
 }
 
 void details::wait_process_completion::wait_once(context& ctx)
 {
-    details::wait_process_completion* c = nullptr;
-
     // Scope for lock.
     {
         std::unique_lock lock{ctx.lock};
@@ -199,17 +217,75 @@ void details::wait_process_completion::wait_once(context& ctx)
         // If there isn't a completion waiting already, wait on the condition
         // variable for one to show up (we can't call `poll` yet because we
         // don't have the required parameters).
-        ctx.caller_wait.wait(lock, [&] { return ctx.complete != nullptr; });
+        ctx.caller_wait.wait(lock, [&] {
+            return (ctx.pending != nullptr) || (ctx.staged != nullptr) ||
+                   (ctx.stop_requested());
+        });
 
-        // Save the waiter and call `poll`.
-        c = std::exchange(ctx.complete, nullptr);
-        poll(&c->fd, 1, c->timeout);
+        // Save the waiter as pending.
+        if (ctx.pending == nullptr)
+        {
+            ctx.pending = std::exchange(ctx.staged, nullptr);
+        }
     }
 
-    // Outside the lock complete the operation; this can cause the Receiver
-    // task (the worker) to start executing, hence why we do not want the
-    // lock held.
-    c->complete();
+    // If the context has been requested to be stopped, exit now instead of
+    // running the context event loop.
+    if (ctx.stop_requested())
+    {
+        return;
+    }
+
+    // Run the event loop to process one request.
+    ctx.event_loop.run_one(ctx.pending->timeout);
+
+    // If there is a stop requested, we need to stop the pending operation.
+    if (ctx.stop_requested())
+    {
+        decltype(ctx.pending) pending = nullptr;
+
+        {
+            std::lock_guard lock{ctx.lock};
+            pending = std::exchange(ctx.pending, nullptr);
+        }
+
+        // Do the stop outside the lock to prevent potential deadlocks due to
+        // the stop handler running.
+        if (pending != nullptr)
+        {
+            pending->stop();
+        }
+    }
+}
+
+int context::dbus_event_handle(sd_event_source*, int, uint32_t, void* data)
+{
+    auto self = static_cast<context*>(data);
+
+    decltype(self->pending) pending = nullptr;
+    {
+        std::lock_guard lock{self->lock};
+        pending = std::exchange(self->pending, nullptr);
+    }
+
+    // Outside the lock complete the pending operation.
+    //
+    // This can cause the Receiver task (the worker) to start executing (on
+    // this thread!), hence we do not want the lock held in order to avoid
+    // deadlocks.
+    if (pending != nullptr)
+    {
+        if (self->stop_requested())
+        {
+            pending->stop();
+        }
+        else
+        {
+            pending->complete();
+        }
+    }
+
+    return 0;
 }
 
 } // namespace sdbusplus::async

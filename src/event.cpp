@@ -174,9 +174,9 @@ int event::run_wakeup(sd_event_source*, int, uint32_t, void* data)
 }
 
 template <bool Signal>
-std::unique_lock<std::mutex> event::obtain_lock()
+std::unique_lock<std::recursive_mutex> event::obtain_lock()
 {
-    std::unique_lock<std::mutex> l{this->lock, std::defer_lock_t()};
+    std::unique_lock<std::recursive_mutex> l{this->lock, std::defer_lock_t()};
     if constexpr (Signal)
     {
         if (!l.try_lock())

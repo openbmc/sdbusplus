@@ -126,11 +126,17 @@ class event
 
     // Condition to allow 'break_run' to exit the run-loop.
     condition run_condition{*this};
-    std::mutex lock{};
+
+    // Lock for the sd_event.
+    //
+    // There are cases where we need to lock the mutex from inside the context
+    // of a sd-event callback, while the lock is already held.  Use a
+    // recursive_mutex to allow this.
+    std::recursive_mutex lock{};
 
     // Safely get the lock, possibly signaling the running 'run_one' to exit.
     template <bool Signal = true>
-    std::unique_lock<std::mutex> obtain_lock();
+    std::unique_lock<std::recursive_mutex> obtain_lock();
 };
 
 } // namespace event

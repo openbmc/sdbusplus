@@ -20,6 +20,7 @@ if not gtest_dep.found() or not gmock_dep.found()
 endif
 
 tests = [
+    'async/context',
     'async/task',
     'bus/list_names',
     'bus/match',

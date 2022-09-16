@@ -16,7 +16,8 @@ namespace sdbusplus::async
 namespace details
 {
 struct wait_process_completion;
-}
+struct context_friend;
+} // namespace details
 
 /** @brief A run-loop context for handling asynchronous dbus operations.
  *
@@ -68,7 +69,8 @@ class context : public bus::details::bus_friend
         return stop.stop_requested();
     }
 
-    friend struct details::wait_process_completion;
+    friend details::wait_process_completion;
+    friend details::context_friend;
 
   private:
     bus_t bus;
@@ -116,5 +118,21 @@ void context::run(Snd&& startup)
         }(std::forward<Snd>(startup)));
     }
 }
+
+namespace details
+{
+struct context_friend
+{
+    static event_t& get_event_loop(context& ctx)
+    {
+        return ctx.event_loop;
+    }
+
+    static auto get_scheduler(context& ctx)
+    {
+        return ctx.loop.get_scheduler();
+    }
+};
+} // namespace details
 
 } // namespace sdbusplus::async

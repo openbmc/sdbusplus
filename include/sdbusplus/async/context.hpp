@@ -3,9 +3,11 @@
 #include <sdbusplus/async/execution.hpp>
 #include <sdbusplus/async/task.hpp>
 #include <sdbusplus/bus.hpp>
+#include <sdbusplus/event.hpp>
 
 #include <condition_variable>
 #include <mutex>
+#include <stop_token>
 #include <thread>
 
 namespace sdbusplus::async
@@ -39,7 +41,7 @@ struct wait_process_completion;
 class context : public bus::details::bus_friend
 {
   public:
-    explicit context(bus_t&& bus = bus::new_default()) : bus(std::move(bus)) {}
+    explicit context(bus_t&& bus = bus::new_default());
     context(context&&) = delete;
     context(const context&) = delete;
 
@@ -60,25 +62,38 @@ class context : public bus::details::bus_friend
         return bus;
     }
 
+    bool request_stop() noexcept;
+    bool stop_requested() noexcept
+    {
+        return stop.stop_requested();
+    }
+
     friend struct details::wait_process_completion;
 
   private:
     bus_t bus;
+    event_source_t dbus_source;
+    event_t event_loop{};
 
     /** The async run-loop from std::execution. */
     execution::run_loop loop{};
     /** The worker thread to handle async tasks. */
     std::thread worker_thread{};
+    /** Stop source */
+    std::stop_source stop{};
 
     // Lock and condition variable to signal `caller`.
     std::mutex lock{};
     std::condition_variable caller_wait{};
 
     /** Completion object to signal the worker that 'sd_bus_wait' is done. */
-    details::wait_process_completion* complete = nullptr;
+    details::wait_process_completion* staged = nullptr;
+    details::wait_process_completion* pending = nullptr;
 
     void worker_run(task<> startup);
     void caller_run(task<> startup);
+
+    static int dbus_event_handle(sd_event_source*, int, uint32_t, void*);
 };
 
 template <execution::sender_of<execution::set_value_t()> Snd>

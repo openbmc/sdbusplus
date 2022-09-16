@@ -89,6 +89,8 @@ class condition
 class event
 {
   public:
+    using time_resolution = std::chrono::microseconds;
+
     event();
     event(const event&) = delete;
     event(event&& e) = delete;
@@ -99,8 +101,7 @@ class event
     }
 
     /** Execute a single iteration of the run-loop (see sd_event_run). */
-    void run_one(
-        std::chrono::microseconds timeout = std::chrono::microseconds::max());
+    void run_one(time_resolution timeout = time_resolution::max());
     /** Force a pending `run_one` to exit. */
     void break_run();
 
@@ -113,9 +114,8 @@ class event
 
     /** Add a one shot timer source to the run-loop. */
     source add_oneshot_timer(
-        sd_event_time_handler_t handler, void* data,
-        std::chrono::microseconds time,
-        std::chrono::microseconds accuracy = std::chrono::milliseconds(1));
+        sd_event_time_handler_t handler, void* data, time_resolution time,
+        time_resolution accuracy = std::chrono::milliseconds(1));
 
     friend source;
 

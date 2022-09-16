@@ -145,6 +145,26 @@ condition event::add_condition(sd_event_io_handler_t handler, void* data)
     }
 }
 
+source event::add_oneshot_timer(sd_event_time_handler_t handler, void* data,
+                                std::chrono::microseconds time,
+                                std::chrono::microseconds accuracy)
+{
+    auto l = obtain_lock();
+
+    source s{*this};
+
+    auto rc = sd_event_add_time_relative(eventp, &s.sourcep, CLOCK_BOOTTIME,
+                                         time.count(), accuracy.count(),
+                                         handler, data);
+
+    if (rc < 0)
+    {
+        throw exception::SdBusError(-rc, __func__);
+    }
+
+    return s;
+}
+
 int event::run_wakeup(sd_event_source*, int, uint32_t, void* data)
 {
     auto self = static_cast<event*>(data);

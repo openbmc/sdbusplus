@@ -8,7 +8,6 @@
 
 #include <boost/any.hpp>
 #include <boost/asio/spawn.hpp>
-#include <boost/container/flat_map.hpp>
 #include <sdbusplus/asio/connection.hpp>
 #include <sdbusplus/exception.hpp>
 #include <sdbusplus/message/read.hpp>
@@ -21,6 +20,7 @@
 #include <optional>
 #include <set>
 #include <tuple>
+#include <unordered_map>
 
 namespace sdbusplus
 {
@@ -781,12 +781,10 @@ class dbus_interface
     std::list<std::string> propertyNames_;
     std::list<std::string> methodNames_;
     std::set<std::string> signalNames_;
-    boost::container::flat_map<std::string, std::unique_ptr<callback>>
-        callbacksGet_;
-    boost::container::flat_map<std::string, std::unique_ptr<callback_set>>
+    std::unordered_map<std::string, std::unique_ptr<callback>> callbacksGet_;
+    std::unordered_map<std::string, std::unique_ptr<callback_set>>
         callbacksSet_;
-    boost::container::flat_map<std::string, std::unique_ptr<callback>>
-        callbacksMethod_;
+    std::unordered_map<std::string, std::unique_ptr<callback>> callbacksMethod_;
     std::vector<sd_bus_vtable> vtable_;
     std::unique_ptr<sdbusplus::server::interface_t> interface_;
 

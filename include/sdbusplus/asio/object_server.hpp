@@ -27,9 +27,6 @@ namespace sdbusplus
 namespace asio
 {
 
-constexpr const char* PropertyNameAllowedCharacters =
-    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_";
-
 class callback
 {
   public:
@@ -366,8 +363,7 @@ class dbus_interface
         {
             return false;
         }
-        if (name.find_first_not_of(PropertyNameAllowedCharacters) !=
-            std::string::npos)
+        if (sd_bus_member_name_is_valid(name.c_str()) != 1)
         {
             return false;
         }
@@ -416,8 +412,7 @@ class dbus_interface
         {
             return false;
         }
-        if (name.find_first_not_of(PropertyNameAllowedCharacters) !=
-            std::string::npos)
+        if (sd_bus_member_name_is_valid(name.c_str()) != 1)
         {
             return false;
         }
@@ -538,8 +533,7 @@ class dbus_interface
         {
             return false;
         }
-        if (name.find_first_not_of(PropertyNameAllowedCharacters) !=
-            std::string::npos)
+        if (sd_bus_member_name_is_valid(name.c_str()) != 1)
         {
             return false;
         }

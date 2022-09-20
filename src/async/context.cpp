@@ -164,10 +164,10 @@ void context::worker_run(task<> startup)
     // This shouldn't start detached because we want to be able to forward
     // failures back to the 'run'.  execution::ensure_started isn't
     // implemented yet, so we don't have a lot of other options.
-    execution::start_detached(std::move(startup));
+    spawn(std::move(startup));
 
     // Also start up the sdbus 'wait/process' loop.
-    execution::start_detached(details::wait_process_completion::loop(*this));
+    spawn(details::wait_process_completion::loop(*this));
 
     // Run the execution::run_loop to handle all the tasks.
     loop.run();

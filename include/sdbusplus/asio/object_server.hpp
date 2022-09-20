@@ -6,7 +6,6 @@
 #define BOOST_COROUTINES_NO_DEPRECATION_WARNING
 #endif
 
-#include <boost/any.hpp>
 #include <boost/asio/spawn.hpp>
 #include <sdbusplus/asio/connection.hpp>
 #include <sdbusplus/exception.hpp>
@@ -16,6 +15,7 @@
 #include <sdbusplus/utility/tuple_to_array.hpp>
 #include <sdbusplus/utility/type_traits.hpp>
 
+#include <any>
 #include <list>
 #include <optional>
 #include <set>
@@ -49,7 +49,7 @@ class callback_set
   public:
     virtual ~callback_set() = default;
     virtual std::tuple<SetPropertyReturnValue, int> call(message_t& m) = 0;
-    virtual SetPropertyReturnValue set(const boost::any& value) = 0;
+    virtual SetPropertyReturnValue set(const std::any& value) = 0;
 };
 
 template <typename T>
@@ -314,10 +314,10 @@ class callback_set_instance : public callback_set
         }
         return {SetPropertyReturnValue::valueUpdated, ret};
     }
-    SetPropertyReturnValue set(const boost::any& value) override
+    SetPropertyReturnValue set(const std::any& value) override
     {
         auto oldValue = *value_;
-        if (func_(boost::any_cast<PropertyType>(value), *value_))
+        if (func_(std::any_cast<PropertyType>(value), *value_))
         {
             if (oldValue == *value_)
             {

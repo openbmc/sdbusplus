@@ -541,13 +541,8 @@ class dbus_interface
         static constexpr auto signature = utility::tuple_to_array(
             message::types::type_id<SignalSignature...>());
 
-        auto [itr, inserted] = signalNames_.insert(name);
-        if (!inserted)
-        {
-            return false;
-        }
-
-        vtable_.emplace_back(vtable::signal(itr->c_str(), signature.data()));
+        const std::string& itr = methodOrSignalNames_.emplace_back(name);
+        vtable_.emplace_back(vtable::signal(itr.c_str(), signature.data()));
         return true;
     }
 
@@ -570,7 +565,7 @@ class dbus_interface
         static const auto resultType =
             utility::tuple_to_array(message::types::type_id<ResultType>());
 
-        auto nameItr = methodNames_.emplace(methodNames_.end(), name);
+        const std::string& nameItr = methodOrSignalNames_.emplace_back(name);
 
         if constexpr (callbackYields<CallbackType>)
         {
@@ -585,7 +580,7 @@ class dbus_interface
                     std::move(handler));
         }
 
-        vtable_.emplace_back(vtable::method(nameItr->c_str(), argType.data(),
+        vtable_.emplace_back(vtable::method(nameItr.c_str(), argType.data(),
                                             resultType.data(), method_handler));
         return true;
     }
@@ -773,8 +768,7 @@ class dbus_interface
     std::string path_;
     std::string name_;
     std::list<std::string> propertyNames_;
-    std::list<std::string> methodNames_;
-    std::set<std::string> signalNames_;
+    std::list<std::string> methodOrSignalNames_;
     std::unordered_map<std::string, std::unique_ptr<callback>> callbacksGet_;
     std::unordered_map<std::string, std::unique_ptr<callback_set>>
         callbacksSet_;

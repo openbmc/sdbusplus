@@ -1,6 +1,7 @@
 #pragma once
 
 #include <sdbusplus/async/execution.hpp>
+#include <sdbusplus/async/scope.hpp>
 #include <sdbusplus/async/task.hpp>
 #include <sdbusplus/bus.hpp>
 #include <sdbusplus/event.hpp>
@@ -58,6 +59,16 @@ class context : public bus::details::bus_friend
     template <execution::sender_of<execution::set_value_t()> Snd>
     void run(Snd&& startup);
 
+    /** Spawn a Sender to run on the context.
+     *
+     * @param[in] sender - The Sender to run.
+     */
+    template <execution::sender_of<execution::set_value_t()> Snd>
+    void spawn(Snd&& sender)
+    {
+        pending_tasks.spawn(std::forward<Snd>(sender));
+    }
+
     bus_t& get_bus() noexcept
     {
         return bus;
@@ -76,6 +87,7 @@ class context : public bus::details::bus_friend
     bus_t bus;
     event_source_t dbus_source;
     event_t event_loop{};
+    scope pending_tasks{};
 
     /** The async run-loop from std::execution. */
     execution::run_loop loop{};

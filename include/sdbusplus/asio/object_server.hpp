@@ -839,9 +839,8 @@ class object_server
 
     void add_manager(const std::string& path)
     {
-        managers_.emplace_back(
-            std::make_unique<server::manager_t>(server::manager_t(
-                static_cast<sdbusplus::bus_t&>(*conn_), path.c_str())));
+        managers_.emplace_back(static_cast<sdbusplus::bus_t&>(*conn_),
+                               path.c_str());
     }
 
     bool remove_interface(const std::shared_ptr<dbus_interface>& iface)
@@ -859,7 +858,7 @@ class object_server
   private:
     std::shared_ptr<sdbusplus::asio::connection> conn_;
     std::vector<std::shared_ptr<dbus_interface>> interfaces_;
-    std::vector<std::unique_ptr<server::manager_t>> managers_;
+    std::vector<server::manager_t> managers_;
 };
 
 } // namespace asio

@@ -733,10 +733,10 @@ class dbus_interface
         initialized_ = true;
         vtable_.emplace_back(vtable::end());
 
-        interface_ = std::make_unique<sdbusplus::server::interface_t>(
-            static_cast<sdbusplus::bus_t&>(*conn_), path_.c_str(),
-            name_.c_str(), static_cast<const sd_bus_vtable*>(&vtable_[0]),
-            this);
+        interface_.emplace(static_cast<sdbusplus::bus_t&>(*conn_),
+                           path_.c_str(), name_.c_str(),
+                           static_cast<const sd_bus_vtable*>(&vtable_[0]),
+                           this);
         conn_->emit_interfaces_added(path_.c_str(),
                                      std::vector<std::string>{name_});
         if (!skipPropertyChangedSignal)
@@ -786,7 +786,7 @@ class dbus_interface
         callbacksSet_;
     std::unordered_map<std::string, std::unique_ptr<callback>> callbacksMethod_;
     std::vector<sd_bus_vtable> vtable_;
-    std::unique_ptr<sdbusplus::server::interface_t> interface_;
+    std::optional<sdbusplus::server::interface_t> interface_;
 
     bool initialized_ = false;
 };

@@ -66,6 +66,11 @@ class context : public bus::details::bus_friend
     template <execution::sender_of<execution::set_value_t()> Snd>
     void spawn(Snd&& sender)
     {
+        if (stop_requested())
+        {
+            throw std::logic_error(
+                "sdbusplus::async::context spawn called while already stopped.");
+        }
         pending_tasks.spawn(std::forward<Snd>(sender));
     }
 
@@ -77,7 +82,7 @@ class context : public bus::details::bus_friend
     bool request_stop() noexcept;
     bool stop_requested() noexcept
     {
-        return stop.stop_requested();
+        return initial_stop.stop_requested();
     }
 
     friend details::wait_process_completion;
@@ -94,7 +99,13 @@ class context : public bus::details::bus_friend
     /** The worker thread to handle async tasks. */
     std::thread worker_thread{};
     /** Stop source */
-    std::stop_source stop{};
+    std::stop_source initial_stop{};
+
+    // In order to coordinate final completion of work, we keep some tasks
+    // on a separate scope (the ones which maintain the sd-event/dbus state
+    // and keep a final stop-source for them.
+    scope internal_tasks{};
+    std::stop_source final_stop{};
 
     // Lock and condition variable to signal `caller`.
     std::mutex lock{};

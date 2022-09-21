@@ -2,7 +2,7 @@
 
 #include <sdbusplus/async/execution.hpp>
 
-#include <atomic>
+#include <mutex>
 
 namespace sdbusplus::async
 {
@@ -11,7 +11,11 @@ namespace scope_ns
 {
 template <execution::sender Sender>
 struct scope_receiver;
-}
+
+struct scope_sender;
+
+struct scope_completion;
+} // namespace scope_ns
 
 /** A collection of tasks.
  *
@@ -41,14 +45,21 @@ struct scope
     template <execution::sender_of<execution::set_value_t()> Sender>
     void spawn(Sender&& sender);
 
+    /** Get a Sender that awaits for all tasks to complete. */
+    scope_ns::scope_sender empty() noexcept;
+
     template <execution::sender>
     friend struct scope_ns::scope_receiver;
+
+    friend scope_ns::scope_completion;
 
   private:
     void started_task() noexcept;
     void ended_task() noexcept;
 
-    std::atomic<size_t> count = 0;
+    std::mutex lock{};
+    size_t pending_count = 0;
+    scope_ns::scope_completion* pending = nullptr;
 };
 
 namespace scope_ns
@@ -118,6 +129,67 @@ void scope_receiver<Sender>::complete() noexcept
     // Inform the scope that a task has completed.
     owning_scope->ended_task();
 }
+
+// Virtual class to handle the scope completions.
+struct scope_completion
+{
+    scope_completion() = delete;
+    scope_completion(scope_completion&&) = delete;
+
+    explicit scope_completion(scope& s) : s(s){};
+    virtual ~scope_completion() = default;
+
+    friend scope;
+
+    friend void tag_invoke(execution::start_t, scope_completion& self) noexcept
+    {
+        self.arm();
+    }
+
+  private:
+    virtual void complete() noexcept = 0;
+    void arm() noexcept;
+
+    scope& s;
+};
+
+// Implementation (templated based on Reciever) of scope_completion.
+template <execution::receiver Reciever>
+struct scope_operation : scope_completion
+{
+    scope_operation(scope& s, Reciever r) :
+        scope_completion(s), receiver(std::move(r))
+    {}
+
+  private:
+    void complete() noexcept override final
+    {
+        execution::set_value(std::move(receiver));
+    }
+
+    Reciever receiver;
+};
+
+// Scope completion Sender implementation.
+struct scope_sender
+{
+    scope_sender() = delete;
+    explicit scope_sender(scope& m) noexcept : m(m){};
+
+    friend auto tag_invoke(execution::get_completion_signatures_t,
+                           const scope_sender&, auto)
+        -> execution::completion_signatures<execution::set_value_t()>;
+
+    template <execution::receiver R>
+    friend auto tag_invoke(execution::connect_t, scope_sender&& self, R r)
+        -> scope_operation<R>
+    {
+        return {self.m, std::move(r)};
+    }
+
+  private:
+    scope& m;
+};
 
 // Most (non-movable) receivers cannot be emplaced without this template magic.
 // Ex. `spawn(std::execution::just())` doesnt' work without this.

@@ -101,7 +101,7 @@ struct wait_process_sender
 
 task<> wait_process_completion::loop(context& ctx)
 {
-    while (!ctx.stop_requested())
+    while (!ctx.final_stop.stop_requested())
     {
         // Handle the next sdbus event.
         co_await wait_process_sender(ctx);
@@ -125,12 +125,17 @@ context::~context() noexcept(false)
 
 bool context::request_stop() noexcept
 {
-    auto first_stop = stop.request_stop();
+    auto first_stop = initial_stop.request_stop();
 
     if (first_stop)
     {
-        caller_wait.notify_one();
-        event_loop.break_run();
+        // Now that the workers have been requested to stop, we need to wait
+        // until they all drain and then stop the internal tasks.
+        internal_tasks.spawn(pending_tasks.empty() | execution::then([this]() {
+                                 final_stop.request_stop();
+                                 caller_wait.notify_one();
+                                 event_loop.break_run();
+                             }));
     }
 
     return first_stop;
@@ -144,14 +149,14 @@ void context::caller_run(task<> startup)
     }};
 
     // Run until the context requested to stop.
-    while (!stop_requested())
+    while (!final_stop.stop_requested())
     {
         // Handle waiting on all the sd-events.
         details::wait_process_completion::wait_once(*this);
     }
 
-    // Wait for all the tasks to complete.
-    std::this_thread::sync_wait(pending_tasks.empty());
+    // Wait for all the internal tasks to complete.
+    std::this_thread::sync_wait(internal_tasks.empty());
 
     // Stop has been requested, so finish up the loop.
     loop.finish();
@@ -169,8 +174,8 @@ void context::worker_run(task<> startup)
     // implemented yet, so we don't have a lot of other options.
     spawn(std::move(startup));
 
-    // Also start up the sdbus 'wait/process' loop.
-    spawn(details::wait_process_completion::loop(*this));
+    // Also start the sdbus 'wait/process' loop; treat it as an internal task.
+    internal_tasks.spawn(details::wait_process_completion::loop(*this));
 
     // Run the execution::run_loop to handle all the tasks.
     loop.run();
@@ -222,7 +227,7 @@ void details::wait_process_completion::wait_once(context& ctx)
         // don't have the required parameters).
         ctx.caller_wait.wait(lock, [&] {
             return (ctx.pending != nullptr) || (ctx.staged != nullptr) ||
-                   (ctx.stop_requested());
+                   (ctx.final_stop.stop_requested());
         });
 
         // Save the waiter as pending.
@@ -234,7 +239,7 @@ void details::wait_process_completion::wait_once(context& ctx)
 
     // If the context has been requested to be stopped, exit now instead of
     // running the context event loop.
-    if (ctx.stop_requested())
+    if (ctx.final_stop.stop_requested())
     {
         return;
     }
@@ -243,7 +248,7 @@ void details::wait_process_completion::wait_once(context& ctx)
     ctx.event_loop.run_one(ctx.pending->timeout);
 
     // If there is a stop requested, we need to stop the pending operation.
-    if (ctx.stop_requested())
+    if (ctx.final_stop.stop_requested())
     {
         decltype(ctx.pending) pending = nullptr;
 
@@ -278,7 +283,7 @@ int context::dbus_event_handle(sd_event_source*, int, uint32_t, void* data)
     // deadlocks.
     if (pending != nullptr)
     {
-        if (self->stop_requested())
+        if (self->final_stop.stop_requested())
         {
             pending->stop();
         }

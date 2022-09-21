@@ -20,6 +20,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "a6c110b4_91de6343",
+        "filename": "include/sdbusplus/bus/match.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-09-21T18:12:00Z",
+      "side": 1,
+      "message": "Do you think there are realistically any cases where someone doesn\u0027t have a zstring?  I was trying to ensure we had constexpr values where possible and handle both c-string and string.  I\u0027m annoyed by how often I see callers of this library having to do \u0027c_str()\u0027 in seemingly random places so I\u0027d like to consolidate on something consistent.",
+      "parentUuid": "9b5dead1_f941c746",
+      "revId": "88196433e3317e70d39c8a1b7448279f7834c445",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "95bf0e4a_feb6d3f8",
         "filename": "include/sdbusplus/bus/match.hpp",
         "patchSetId": 2
@@ -31,6 +49,24 @@
       "writtenOn": "2022-09-21T17:40:48Z",
       "side": 1,
       "message": "All string_views should be passed by value\nhttps://quuxplusone.github.io/blog/2021/11/09/pass-string-view-by-value/",
+      "revId": "88196433e3317e70d39c8a1b7448279f7834c445",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "60489fe0_62bf6415",
+        "filename": "include/sdbusplus/bus/match.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-09-21T18:12:00Z",
+      "side": 1,
+      "message": "There seems to be some disagreement about which is best.  I followed what seems to be used in the string_view API itself.\n\nhttps://en.cppreference.com/w/cpp/string/basic_string_view/operator%3D\n\nI can certainly change them to pass-by-value though.  I think it\u0027ll have minimal impact.  Will follow up with another commit.",
+      "parentUuid": "95bf0e4a_feb6d3f8",
       "revId": "88196433e3317e70d39c8a1b7448279f7834c445",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }

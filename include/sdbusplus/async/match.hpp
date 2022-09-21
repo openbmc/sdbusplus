@@ -30,7 +30,7 @@ class match : private bus::details::bus_friend
     match& operator=(const match&) = delete;
     match(match&&) = delete;
     match& operator=(match&&) = delete;
-    ~match() = default;
+    ~match();
 
     /** Construct the match using the `pattern` string on the bus managed by the
      *  context. */
@@ -91,6 +91,7 @@ struct match_completion
 
   private:
     virtual void complete(message_t&&) noexcept = 0;
+    virtual void stop() noexcept = 0;
     void arm() noexcept;
 
     match& m;
@@ -108,6 +109,11 @@ struct match_operation : match_completion
     void complete(message_t&& msg) noexcept override final
     {
         execution::set_value(std::move(receiver), std::move(msg));
+    }
+
+    void stop() noexcept override final
+    {
+        execution::set_stopped(std::move(receiver));
     }
 
     Receiver receiver;

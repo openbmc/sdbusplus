@@ -49,9 +49,9 @@ struct match : private sdbusplus::bus::details::bus_friend
 
         _slot = std::move(slot);
     }
-    match(sdbusplus::bus_t& bus, const std::string_view& _match,
+    match(sdbusplus::bus_t& bus, const std::string& _match,
           sd_bus_message_handler_t handler, void* context = nullptr) :
-        match(bus, _match.data(), handler, context)
+        match(bus, _match.c_str(), handler, context)
     {}
 
     using callback_t = std::function<void(sdbusplus::message_t&)>;
@@ -71,7 +71,7 @@ struct match : private sdbusplus::bus::details::bus_friend
 
         _slot = std::move(slot);
     }
-    match(sdbusplus::bus_t& bus, const std::string_view& _match,
+    match(sdbusplus::bus_t& bus, const std::string& _match,
           callback_t callback) :
         match(bus, _match.data(), callback)
     {}
@@ -123,42 +123,42 @@ inline constexpr auto error() noexcept
 
 } // namespace type
 
-inline constexpr auto sender(const std::string_view& s) noexcept
+inline constexpr auto sender(std::string_view s) noexcept
 {
     return "sender='"s.append(s).append("',");
 }
-inline constexpr auto interface(const std::string_view& s) noexcept
+inline constexpr auto interface(std::string_view s) noexcept
 {
     return "interface='"s.append(s).append("',");
 }
-inline constexpr auto member(const std::string_view& s) noexcept
+inline constexpr auto member(std::string_view s) noexcept
 {
     return "member='"s.append(s).append("',");
 }
-inline constexpr auto path(const std::string_view& s) noexcept
+inline constexpr auto path(std::string_view s) noexcept
 {
     return "path='"s.append(s).append("',");
 }
-inline constexpr auto path_namespace(const std::string_view& s) noexcept
+inline constexpr auto path_namespace(std::string_view s) noexcept
 {
     return "path_namespace='"s.append(s).append("',");
 }
-inline constexpr auto destination(const std::string_view& s) noexcept
+inline constexpr auto destination(std::string_view s) noexcept
 {
     return "destination='"s.append(s).append("',");
 }
-inline auto argN(size_t n, const std::string_view& s) noexcept
+inline auto argN(size_t n, std::string_view s) noexcept
 {
     return "arg"s.append(std::to_string(n)).append("='").append(s).append("',");
 }
-inline auto argNpath(size_t n, const std::string_view& s) noexcept
+inline auto argNpath(size_t n, std::string_view s) noexcept
 {
     return "arg"s.append(std::to_string(n))
         .append("path='"s)
         .append(s)
         .append("',");
 }
-inline constexpr auto arg0namespace(const std::string_view& s) noexcept
+inline constexpr auto arg0namespace(std::string_view s) noexcept
 {
     return "arg0namespace='"s.append(s).append("',");
 }
@@ -188,19 +188,17 @@ inline constexpr auto interfacesRemoved() noexcept
            "member='InterfacesRemoved',";
 }
 
-inline constexpr std::string interfacesAdded(const std::string_view& p) noexcept
+inline constexpr std::string interfacesAdded(std::string_view p) noexcept
 {
     return std::string(interfacesAdded()).append(path(p));
 }
 
-inline constexpr std::string
-    interfacesRemoved(const std::string_view& p) noexcept
+inline constexpr std::string interfacesRemoved(std::string_view p) noexcept
 {
     return std::string(interfacesRemoved()).append(path(p));
 }
 
-inline auto propertiesChanged(const std::string_view& p,
-                              const std::string_view& i) noexcept
+inline auto propertiesChanged(std::string_view p, std::string_view i) noexcept
 {
     return std::string(type::signal())
         .append(path(p))
@@ -209,8 +207,8 @@ inline auto propertiesChanged(const std::string_view& p,
         .append(argN(0, i));
 }
 
-inline auto propertiesChangedNamespace(const std::string_view& p,
-                                       const std::string_view& i) noexcept
+inline auto propertiesChangedNamespace(std::string_view p,
+                                       std::string_view i) noexcept
 {
     return std::string(type::signal())
         .append(path_namespace(p))
@@ -225,7 +223,7 @@ inline auto propertiesChangedNamespace(const std::string_view& p,
  *
  * @return NameOwnerChanged match string for a service name
  */
-inline auto nameOwnerChanged(const std::string_view& s) noexcept
+inline auto nameOwnerChanged(std::string_view s) noexcept
 {
     return std::string(nameOwnerChanged()).append(argN(0, s));
 }

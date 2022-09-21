@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9b5dead1_f941c746",
+        "filename": "include/sdbusplus/bus/match.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 1000188
+      },
+      "writtenOn": "2022-09-21T17:40:48Z",
+      "side": 1,
+      "message": "We can\u0027t use string_views here because the underlying mechanism needs to be a zstring.",
+      "revId": "88196433e3317e70d39c8a1b7448279f7834c445",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "95bf0e4a_feb6d3f8",
+        "filename": "include/sdbusplus/bus/match.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 1000188
+      },
+      "writtenOn": "2022-09-21T17:40:48Z",
+      "side": 1,
+      "message": "All string_views should be passed by value\nhttps://quuxplusone.github.io/blog/2021/11/09/pass-string-view-by-value/",
+      "revId": "88196433e3317e70d39c8a1b7448279f7834c445",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

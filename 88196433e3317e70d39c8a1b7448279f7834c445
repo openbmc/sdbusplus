@@ -38,6 +38,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "8437972a_1886b3f9",
+        "filename": "include/sdbusplus/bus/match.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 1000188
+      },
+      "writtenOn": "2022-09-21T18:27:19Z",
+      "side": 1,
+      "message": "I have stdplus::zstring_view for this purpose because I was also annoyed that I had to handle `const char *` and `std::string` everywhere. It implicitly converts both types so you don\u0027t need multiple function declarations.\n\nhttps://github.com/openbmc/stdplus/blob/master/include/stdplus/zstring_view.hpp",
+      "parentUuid": "a6c110b4_91de6343",
+      "revId": "88196433e3317e70d39c8a1b7448279f7834c445",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "95bf0e4a_feb6d3f8",
         "filename": "include/sdbusplus/bus/match.hpp",
         "patchSetId": 2
@@ -67,6 +85,24 @@
       "side": 1,
       "message": "There seems to be some disagreement about which is best.  I followed what seems to be used in the string_view API itself.\n\nhttps://en.cppreference.com/w/cpp/string/basic_string_view/operator%3D\n\nI can certainly change them to pass-by-value though.  I think it\u0027ll have minimal impact.  Will follow up with another commit.",
       "parentUuid": "95bf0e4a_feb6d3f8",
+      "revId": "88196433e3317e70d39c8a1b7448279f7834c445",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "04164daa_a32ded48",
+        "filename": "include/sdbusplus/bus/match.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 1000188
+      },
+      "writtenOn": "2022-09-21T18:27:19Z",
+      "side": 1,
+      "message": "I think that is just to be consistent with the definition of the assignment operator though. It does make the argument definition visibly shorter though.",
+      "parentUuid": "60489fe0_62bf6415",
       "revId": "88196433e3317e70d39c8a1b7448279f7834c445",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }

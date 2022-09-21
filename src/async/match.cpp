@@ -23,6 +23,21 @@ match::match(context& ctx, const std::string_view& pattern)
     slot = std::move(s);
 }
 
+match::~match()
+{
+    match_ns::match_completion* c = nullptr;
+
+    {
+        std::lock_guard l{lock};
+        c = std::exchange(complete, nullptr);
+    }
+
+    if (c)
+    {
+        c->stop();
+    }
+}
+
 void match_ns::match_completion::arm() noexcept
 {
     // Set ourselves as the awaiting Receiver and see if there is a message

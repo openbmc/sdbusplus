@@ -150,6 +150,9 @@ void context::caller_run(task<> startup)
         details::wait_process_completion::wait_once(*this);
     }
 
+    // Wait for all the tasks to complete.
+    std::this_thread::sync_wait(pending_tasks.empty());
+
     // Stop has been requested, so finish up the loop.
     loop.finish();
     if (worker_thread.joinable())

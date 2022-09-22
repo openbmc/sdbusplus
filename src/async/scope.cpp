@@ -16,6 +16,7 @@ scope::~scope() noexcept(false)
 void scope::started_task() noexcept
 {
     std::lock_guard l{lock};
+    started = true;
     ++pending_count;
 }
 
@@ -74,7 +75,11 @@ void scope_completion::arm() noexcept
 
     {
         std::lock_guard l{s.lock};
-        if (s.pending_count == 0)
+        if (!s.started)
+        {
+            done = false;
+        }
+        else if (s.pending_count == 0)
         {
             done = true;
         }

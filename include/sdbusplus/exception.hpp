@@ -129,6 +129,23 @@ class UnpackPropertyError final : public internal_exception
     const std::string errWhatDetailed;
 };
 
+class UnhandledStop final : public internal_exception
+{
+  public:
+    static constexpr auto errName =
+        "xyz.openbmc_project.sdbusplus.Error.UnhandledStop";
+    static constexpr auto errDesc =
+        "An async Sender failed to handle a stop condition.";
+    static constexpr auto errWhat =
+        "xyz.openbmc_project.sdbusplus.Error.UnhandledStop: "
+        "An async Sender failed to handle a stop condition.";
+
+    const char* name() const noexcept override;
+    const char* description() const noexcept override;
+    const char* what() const noexcept override;
+    int get_errno() const noexcept override;
+};
+
 } // namespace exception
 
 using exception_t = exception::exception;

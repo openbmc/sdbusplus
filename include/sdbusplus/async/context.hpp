@@ -28,8 +28,6 @@ struct context_friend;
  *  both the startup routine and any further asynchronous operations until
  *  the context is stopped.
  *
- *  TODO: Stopping is not currently supported.
- *
  *  The context has two threads:
  *      - The thread which called `run`, often from `main`, and named the
  *        `caller`.

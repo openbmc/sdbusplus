@@ -59,6 +59,7 @@ struct scope
     void ended_task(std::exception_ptr&&) noexcept;
 
     std::mutex lock{};
+    bool started = false;
     size_t pending_count = 0;
     std::exception_ptr pending_exception = {};
     scope_ns::scope_completion* pending = nullptr;

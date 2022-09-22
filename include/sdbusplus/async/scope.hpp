@@ -1,6 +1,7 @@
 #pragma once
 
 #include <sdbusplus/async/execution.hpp>
+#include <sdbusplus/exception.hpp>
 
 #include <mutex>
 
@@ -55,10 +56,11 @@ struct scope
 
   private:
     void started_task() noexcept;
-    void ended_task() noexcept;
+    void ended_task(std::exception_ptr) noexcept;
 
     std::mutex lock{};
     size_t pending_count = 0;
+    std::optional<std::exception_ptr> pending_exception = {};
     scope_ns::scope_completion* pending = nullptr;
 };
 
@@ -80,18 +82,15 @@ struct scope_receiver
     }
 
     friend void tag_invoke(execution::set_error_t, scope_receiver&& self,
-                           auto&&) noexcept
+                           std::exception_ptr&& e) noexcept
     {
-        std::terminate(); // TODO: save the exception back into the scope.
-        self.complete();
+        self.complete(std::move(e));
     }
 
     friend void tag_invoke(execution::set_stopped_t,
                            scope_receiver&& self) noexcept
     {
-        // std::terminate(); // TODO: this implies a child had an
-        // unhandled_stop.  Need to turn it into an exception.
-        self.complete();
+        self.complete(std::make_exception_ptr(exception::UnhandledStop{}));
     }
 
     friend decltype(auto) tag_invoke(execution::get_env_t,
@@ -100,7 +99,7 @@ struct scope_receiver
         return self;
     }
 
-    void complete() noexcept;
+    void complete(std::exception_ptr = {}) noexcept;
 
     void* op_state;
     scope* s = nullptr;
@@ -115,7 +114,7 @@ struct scope_operation_state
 };
 
 template <execution::sender Sender>
-void scope_receiver<Sender>::complete() noexcept
+void scope_receiver<Sender>::complete(std::exception_ptr e) noexcept
 {
     // The Sender is complete, so we need to clean up the saved operational
     // state.
@@ -127,7 +126,7 @@ void scope_receiver<Sender>::complete() noexcept
     delete static_cast<scope_ns::scope_operation_state<Sender>*>(op_state);
 
     // Inform the scope that a task has completed.
-    owning_scope->ended_task();
+    owning_scope->ended_task(e);
 }
 
 // Virtual class to handle the scope completions.
@@ -147,7 +146,7 @@ struct scope_completion
     }
 
   private:
-    virtual void complete() noexcept = 0;
+    virtual void complete(std::exception_ptr = {}) noexcept = 0;
     void arm() noexcept;
 
     scope& s;
@@ -162,9 +161,16 @@ struct scope_operation : scope_completion
     {}
 
   private:
-    void complete() noexcept override final
+    void complete(std::exception_ptr e) noexcept override final
     {
-        execution::set_value(std::move(receiver));
+        if (e)
+        {
+            execution::set_error(std::move(receiver), std::move(e));
+        }
+        else
+        {
+            execution::set_value(std::move(receiver));
+        }
     }
 
     Reciever receiver;

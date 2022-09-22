@@ -208,6 +208,17 @@ struct task_awaitable
 {
     std::coroutine_handle<promise<T>> handle;
 
+    ~task_awaitable()
+    {
+        // In the case of a 'stop' we can end up with the task_awaitable never
+        // being resumed, which is where we normally clean up the handle.
+        // Check if it is still around and take care of it.
+        if (handle)
+        {
+            handle.destroy();
+        }
+    }
+
     static auto await_ready() noexcept
     {
         return std::false_type{};

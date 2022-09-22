@@ -19,23 +19,44 @@ void scope::started_task() noexcept
     ++pending_count;
 }
 
-void scope::ended_task() noexcept
+void scope::ended_task(std::exception_ptr&& e) noexcept
 {
     scope_ns::scope_completion* p = nullptr;
 
     {
         std::lock_guard l{lock};
-        --pending_count;
+        --pending_count; // decrement count.
 
-        if (pending_count == 0)
+        if (e && pending_exception)
+        {
+            // Received a second exception without delivering the first
+            // to a pending completion.  Terminate using the first one.
+            try
+            {
+                std::rethrow_exception(std::exchange(pending_exception, {}));
+            }
+            catch (...)
+            {
+                std::terminate();
+            }
+        }
+
+        // If the scope is complete, get the pending completion, if it exists.
+        if (e || (pending_count == 0))
         {
             p = std::exchange(pending, nullptr);
+        }
+
+        // If we have an exception but no pending completion, save it away.
+        if (e && !p)
+        {
+            pending_exception = std::move(e);
         }
     }
 
     if (p)
     {
-        p->complete();
+        p->complete(std::move(e));
     }
 }
 
@@ -49,11 +70,17 @@ namespace scope_ns
 void scope_completion::arm() noexcept
 {
     bool done = false;
+    std::exception_ptr e{};
 
     {
         std::lock_guard l{s.lock};
         if (s.pending_count == 0)
         {
+            done = true;
+        }
+        else if (s.pending_exception)
+        {
+            e = std::exchange(s.pending_exception, {});
             done = true;
         }
         else
@@ -64,7 +91,7 @@ void scope_completion::arm() noexcept
 
     if (done)
     {
-        this->complete();
+        this->complete(std::move(e));
     }
 }
 } // namespace scope_ns

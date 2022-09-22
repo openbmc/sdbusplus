@@ -178,6 +178,26 @@ int UnpackPropertyError::get_errno() const noexcept
     return EINVAL;
 }
 
+const char* UnhandledStop::name() const noexcept
+{
+    return errName;
+}
+
+const char* UnhandledStop::description() const noexcept
+{
+    return errDesc;
+}
+
+const char* UnhandledStop::what() const noexcept
+{
+    return errWhat;
+}
+
+int UnhandledStop::get_errno() const noexcept
+{
+    return ECANCELED;
+}
+
 } // namespace exception
 } // namespace sdbusplus
 

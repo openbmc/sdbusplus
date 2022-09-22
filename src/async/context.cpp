@@ -131,10 +131,17 @@ bool context::request_stop() noexcept
     {
         // Now that the workers have been requested to stop, we need to wait
         // until they all drain and then stop the internal tasks.
-        internal_tasks.spawn(pending_tasks.empty() | execution::then([this]() {
-                                 final_stop.request_stop();
-                                 caller_wait.notify_one();
-                                 event_loop.break_run();
+
+        auto complete = [this]() {
+            final_stop.request_stop();
+            caller_wait.notify_one();
+            event_loop.break_run();
+        };
+
+        internal_tasks.spawn(pending_tasks.empty() | execution::then(complete) |
+                             execution::upon_error([=](auto&& e) {
+                                 complete();
+                                 std::rethrow_exception(e);
                              }));
     }
 
@@ -155,14 +162,25 @@ void context::caller_run(task<> startup)
         details::wait_process_completion::wait_once(*this);
     }
 
+    std::optional<std::exception_ptr> pending_exception{};
+
     // Wait for all the internal tasks to complete.
-    std::this_thread::sync_wait(internal_tasks.empty());
+    std::this_thread::sync_wait(internal_tasks.empty() |
+                                execution::upon_error([&](auto&& e) {
+                                    pending_exception = std::move(e);
+                                }));
 
     // Stop has been requested, so finish up the loop.
     loop.finish();
     if (worker_thread.joinable())
     {
         worker_thread.join();
+    }
+
+    // If there was an exception inside the context, rethrow it.
+    if (pending_exception)
+    {
+        std::rethrow_exception(*std::move(pending_exception));
     }
 }
 

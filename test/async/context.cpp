@@ -71,8 +71,7 @@ TEST_F(Context, DestructMatcherWithPendingAwait)
 
     ctx->spawn(std::execution::just());
 
-    runToStop();
-
+    EXPECT_THROW(runToStop(), sdbusplus::exception::UnhandledStop);
     EXPECT_FALSE(ran);
 }
 
@@ -100,7 +99,6 @@ TEST_F(Context, DestructMatcherWithPendingAwaitAsTask)
     ctx->spawn(sdbusplus::async::sleep_for(*ctx, 1ms) |
                std::execution::then([&]() { m.reset(); }));
 
-    runToStop();
-
+    EXPECT_THROW(runToStop(), sdbusplus::exception::UnhandledStop);
     EXPECT_FALSE(ran);
 }

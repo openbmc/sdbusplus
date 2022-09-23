@@ -13,10 +13,15 @@ struct Context : public testing::Test
         ctx.reset();
     }
 
-    void runToStop()
+    void spawnStop()
     {
         ctx->spawn(std::execution::just() |
                    std::execution::then([this]() { ctx->request_stop(); }));
+    }
+
+    void runToStop()
+    {
+        spawnStop();
         ctx->run();
     }
 
@@ -49,6 +54,24 @@ TEST_F(Context, SpawnThrowingTask)
                std::execution::then([]() { throw std::logic_error("Oops"); }));
 
     EXPECT_THROW(runToStop(), std::logic_error);
+    ctx->run();
+}
+
+TEST_F(Context, SpawnManyThrowingTasks)
+{
+    static constexpr size_t count = 100;
+    for (size_t i = 0; i < count; ++i)
+    {
+        ctx->spawn(std::execution::just() | std::execution::then([]() {
+                       throw std::logic_error("Oops");
+                   }));
+    }
+    spawnStop();
+
+    for (size_t i = 0; i < count; ++i)
+    {
+        EXPECT_THROW(ctx->run(), std::logic_error);
+    }
     ctx->run();
 }
 

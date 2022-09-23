@@ -142,10 +142,10 @@ void context::run()
     wait_for_wait_process_stopped();
 
     // Wait for all the internal tasks to complete.
-    std::this_thread::sync_wait(internal_tasks.empty() |
-                                execution::upon_error([&](auto&& e) {
-                                    pending_exception = std::move(e);
-                                }));
+    std::this_thread::sync_wait(
+        internal_tasks.empty() | execution::upon_error([&](auto&& e) {
+            pending_exceptions.emplace_back(std::move(e));
+        }));
 
     // Finish up the loop and join the thread.
     // (There shouldn't be anything going on by this point anyhow.)
@@ -177,7 +177,7 @@ void context::spawn_complete(std::exception_ptr&& e)
 
         if (e)
         {
-            pending_exception = std::move(e);
+            pending_exceptions.emplace_back(std::move(e));
         }
     }
 
@@ -225,7 +225,7 @@ void context::caller_run()
     // we get an exception.
     auto keep_running = [this]() {
         std::lock_guard l{lock};
-        return !final_stop.stop_requested() && !pending_exception;
+        return !final_stop.stop_requested() && pending_exceptions.empty();
     };
 
     // If we are suppose to keep running, start the run loop.
@@ -284,9 +284,11 @@ void context::rethrow_pending_exception()
 {
     {
         std::lock_guard l{lock};
-        if (pending_exception)
+        if (!pending_exceptions.empty())
         {
-            std::rethrow_exception(std::exchange(pending_exception, {}));
+            auto e = pending_exceptions.front();
+            pending_exceptions.pop_front();
+            std::rethrow_exception(std::move(e));
         }
     }
 }
@@ -338,7 +340,7 @@ void details::wait_process_completion::wait_once(context& ctx)
         ctx.caller_wait.wait(lock, [&] {
             return (ctx.pending != nullptr) || (ctx.staged != nullptr) ||
                    ctx.final_stop.stop_requested() ||
-                   (ctx.pending_exception != nullptr);
+                   !ctx.pending_exceptions.empty();
         });
 
         // Save the waiter as pending.

@@ -24,9 +24,9 @@ struct context_friend;
  *
  *  This class encapsulates the run-loop for asynchronous operations,
  *  especially those using co-routines.  Primarily, the object is given
- *  a co-routine for the 'startup' processing of a daemon and it runs
- *  both the startup routine and any further asynchronous operations until
- *  the context is stopped.
+ *  co-routines (or Senders) for the processing, via `spawn`, and then the
+ *  object is `run` which handles all asynchronous operations until the
+ *  context is stopped, via `request_stop`.
  *
  *  The context has two threads:
  *      - The thread which called `run`, often from `main`, and named the
@@ -50,12 +50,8 @@ class context : public bus::details::bus_friend
     // work.
     ~context() noexcept(false);
 
-    /** Run the loop.
-     *
-     *  @param[in] startup - The initialization operation to run.
-     */
-    template <execution::sender_of<execution::set_value_t()> Snd>
-    void run(Snd&& startup);
+    /** Run the loop. */
+    void run();
 
     /** Spawn a Sender to run on the context.
      *
@@ -114,32 +110,10 @@ class context : public bus::details::bus_friend
     details::wait_process_completion* staged = nullptr;
     details::wait_process_completion* pending = nullptr;
 
-    void worker_run(task<> startup);
-    void caller_run(task<> startup);
+    void worker_run();
 
     static int dbus_event_handle(sd_event_source*, int, uint32_t, void*);
 };
-
-template <execution::sender_of<execution::set_value_t()> Snd>
-void context::run(Snd&& startup)
-{
-    // If Snd is a task, we can simply forward it on to the `caller_run`,
-    // but if it is a generic Sender we need to do a transformation first.
-    // In most cases, we expect users to use co-routines (ie. task<>).
-
-    if constexpr (std::is_same_v<task<>, std::decay_t<Snd>>)
-    {
-        caller_run(std::forward<Snd>(startup));
-    }
-    else
-    {
-        // Transform the generic sender into a task by a simple lambda.
-        caller_run([](Snd&& s) -> task<> {
-            co_await std::forward<Snd>(s);
-            co_return;
-        }(std::forward<Snd>(startup)));
-    }
-}
 
 namespace details
 {

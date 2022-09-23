@@ -53,6 +53,34 @@ TEST_F(Context, SpawnDelayedTask)
     EXPECT_LT(stop - start, timeout * 2);
 }
 
+TEST_F(Context, SpawnRecursiveTask)
+{
+    struct _
+    {
+        static auto one(size_t count, size_t& executed)
+            -> sdbusplus::async::task<size_t>
+        {
+            if (count)
+            {
+                ++executed;
+                co_return (co_await one(count - 1, executed)) + 1;
+            }
+            co_return co_await std::execution::just(0);
+        }
+    };
+
+    static constexpr size_t count = 100;
+    size_t executed = 0;
+
+    ctx->spawn(_::one(count, executed) | std::execution::then([=](auto result) {
+                   EXPECT_EQ(result, count);
+               }));
+
+    runToStop();
+
+    EXPECT_EQ(executed, count);
+}
+
 TEST_F(Context, DestructMatcherWithPendingAwait)
 {
     using namespace std::literals;

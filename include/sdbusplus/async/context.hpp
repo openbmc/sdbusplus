@@ -69,7 +69,8 @@ class context : public bus::details::bus_friend
             throw std::logic_error(
                 "sdbusplus::async::context spawn called while already stopped.");
         }
-        pending_tasks.spawn(std::forward<Snd>(sender));
+        pending_tasks.spawn(
+            std::move(execution::on(loop.get_scheduler(), std::move(sender))));
     }
 
     bus_t& get_bus() noexcept

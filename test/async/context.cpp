@@ -34,6 +34,24 @@ TEST_F(Context, SpawnedTask)
     runToStop();
 }
 
+TEST_F(Context, ReentrantRun)
+{
+    runToStop();
+    for (int i = 0; i < 100; ++i)
+    {
+        ctx->run();
+    }
+}
+
+TEST_F(Context, SpawnThrowingTask)
+{
+    ctx->spawn(std::execution::just() |
+               std::execution::then([]() { throw std::logic_error("Oops"); }));
+
+    EXPECT_THROW(runToStop(), std::logic_error);
+    ctx->run();
+}
+
 TEST_F(Context, SpawnDelayedTask)
 {
     using namespace std::literals;
@@ -99,6 +117,7 @@ TEST_F(Context, DestructMatcherWithPendingAwait)
                std::execution::then([&m](...) { m.reset(); }));
 
     EXPECT_THROW(runToStop(), sdbusplus::exception::UnhandledStop);
+    EXPECT_NO_THROW(ctx->run());
     EXPECT_FALSE(ran);
 }
 
@@ -127,5 +146,6 @@ TEST_F(Context, DestructMatcherWithPendingAwaitAsTask)
                std::execution::then([&]() { m.reset(); }));
 
     EXPECT_THROW(runToStop(), sdbusplus::exception::UnhandledStop);
+    EXPECT_NO_THROW(ctx->run());
     EXPECT_FALSE(ran);
 }

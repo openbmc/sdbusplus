@@ -60,13 +60,12 @@ class context : public bus::details::bus_friend
     template <execution::sender_of<execution::set_value_t()> Snd>
     void spawn(Snd&& sender)
     {
-        if (stop_requested())
-        {
-            throw std::logic_error(
-                "sdbusplus::async::context spawn called while already stopped.");
-        }
+        check_stop_requested();
+
         pending_tasks.spawn(
             std::move(execution::on(loop.get_scheduler(), std::move(sender))));
+
+        spawn_watcher();
     }
 
     bus_t& get_bus() noexcept
@@ -74,7 +73,10 @@ class context : public bus::details::bus_friend
         return bus;
     }
 
-    bool request_stop() noexcept;
+    bool request_stop() noexcept
+    {
+        return initial_stop.request_stop();
+    }
     bool stop_requested() noexcept
     {
         return initial_stop.stop_requested();
@@ -106,11 +108,22 @@ class context : public bus::details::bus_friend
     std::mutex lock{};
     std::condition_variable caller_wait{};
 
+    std::exception_ptr pending_exception{};
+    bool spawn_watcher_running = false;
+
     /** Completion object to signal the worker that 'sd_bus_wait' is done. */
     details::wait_process_completion* staged = nullptr;
     details::wait_process_completion* pending = nullptr;
+    bool wait_process_stopped = false;
 
     void worker_run();
+    void spawn_complete(std::exception_ptr&& = {});
+    void check_stop_requested();
+    void spawn_watcher();
+
+    void caller_run();
+    void rethrow_pending_exception();
+    void wait_for_wait_process_stopped();
 
     static int dbus_event_handle(sd_event_source*, int, uint32_t, void*);
 };

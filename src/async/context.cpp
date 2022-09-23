@@ -148,11 +148,11 @@ bool context::request_stop() noexcept
     return first_stop;
 }
 
-void context::caller_run(task<> startup)
+void context::run()
 {
     // Start up the worker thread.
-    worker_thread = std::thread{[this, startup = std::move(startup)]() mutable {
-        worker_run(std::move(startup));
+    worker_thread = std::thread{[this]() {
+        worker_run();
     }};
 
     // Run until the context requested to stop.
@@ -184,15 +184,9 @@ void context::caller_run(task<> startup)
     }
 }
 
-void context::worker_run(task<> startup)
+void context::worker_run()
 {
-    // Begin the 'startup' task.
-    // This shouldn't start detached because we want to be able to forward
-    // failures back to the 'run'.  execution::ensure_started isn't
-    // implemented yet, so we don't have a lot of other options.
-    spawn(std::move(startup));
-
-    // Also start the sdbus 'wait/process' loop; treat it as an internal task.
+    // Start the sdbus 'wait/process' loop; treat it as an internal task.
     internal_tasks.spawn(details::wait_process_completion::loop(*this));
 
     // Run the execution::run_loop to handle all the tasks.

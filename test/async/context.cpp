@@ -15,8 +15,9 @@ struct Context : public testing::Test
 
     void runToStop()
     {
-        ctx->run(std::execution::just() |
-                 std::execution::then([this]() { ctx->request_stop(); }));
+        ctx->spawn(std::execution::just() |
+                   std::execution::then([this]() { ctx->request_stop(); }));
+        ctx->run();
     }
 
     std::optional<sdbusplus::async::context> ctx{std::in_place};

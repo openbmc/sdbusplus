@@ -5,7 +5,7 @@
 #include <variant>
 #include <vector>
 
-auto runner(sdbusplus::async::context& ctx) -> sdbusplus::async::task<>
+auto startup(sdbusplus::async::context& ctx) -> sdbusplus::async::task<>
 {
     // Create a proxy to the systemd manager object.
     constexpr auto systemd = sdbusplus::async::proxy()
@@ -98,7 +98,8 @@ auto runner(sdbusplus::async::context& ctx) -> sdbusplus::async::task<>
 int main()
 {
     sdbusplus::async::context ctx;
-    ctx.run(runner(ctx));
+    ctx.spawn(startup(ctx));
+    ctx.run();
 
     return 0;
 }

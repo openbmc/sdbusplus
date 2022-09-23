@@ -10,6 +10,7 @@
 #include <mutex>
 #include <stop_token>
 #include <thread>
+#include <deque>
 
 namespace sdbusplus::async
 {
@@ -108,7 +109,7 @@ class context : public bus::details::bus_friend
     std::mutex lock{};
     std::condition_variable caller_wait{};
 
-    std::exception_ptr pending_exception{};
+    std::deque<std::exception_ptr> pending_exceptions = {};
     bool spawn_watcher_running = false;
 
     /** Completion object to signal the worker that 'sd_bus_wait' is done. */

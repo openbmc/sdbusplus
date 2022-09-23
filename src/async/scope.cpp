@@ -28,36 +28,27 @@ void scope::ended_task(std::exception_ptr&& e) noexcept
         std::lock_guard l{lock};
         --pending_count; // decrement count.
 
-        if (e && pending_exception)
+        if (e)
         {
-            // Received a second exception without delivering the first
-            // to a pending completion.  Terminate using the first one.
-            try
-            {
-                std::rethrow_exception(std::exchange(pending_exception, {}));
-            }
-            catch (...)
-            {
-                std::terminate();
-            }
+            pending_exceptions.emplace_back(std::exchange(e, {}));
         }
 
         // If the scope is complete, get the pending completion, if it exists.
-        if (e || (pending_count == 0))
+        if (!pending_exceptions.empty() || (pending_count == 0))
         {
             p = std::exchange(pending, nullptr);
-        }
-
-        // If we have an exception but no pending completion, save it away.
-        if (e && !p)
-        {
-            pending_exception = std::move(e);
         }
     }
 
     if (p)
     {
-        p->complete(std::move(e));
+        std::exception_ptr fwd_exception = {};
+        if (!pending_exceptions.empty())
+        {
+            fwd_exception = pending_exceptions.front();
+            pending_exceptions.pop_front();
+        }
+        p->complete(std::move(fwd_exception));
     }
 }
 
@@ -79,13 +70,14 @@ void scope_completion::arm() noexcept
         {
             done = false;
         }
-        else if (s.pending_count == 0)
+        else if (!s.pending_exceptions.empty())
         {
+            e = s.pending_exceptions.front();
+            s.pending_exceptions.pop_front();
             done = true;
         }
-        else if (s.pending_exception)
+        else if (s.pending_count == 0)
         {
-            e = std::exchange(s.pending_exception, {});
             done = true;
         }
         else

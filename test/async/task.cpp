@@ -76,3 +76,28 @@ TEST(Task, CoAwaitThrow)
     std::this_thread::sync_wait(_::two(caught));
     EXPECT_TRUE(caught);
 }
+
+TEST(Task, RecursiveTask)
+{
+    struct _
+    {
+        static auto one(size_t count, size_t& executed) -> task<size_t>
+        {
+            if (count)
+            {
+                ++executed;
+                co_return (co_await one(count - 1, executed)) + 1;
+            }
+            co_return co_await std::execution::just(0);
+        }
+    };
+
+    static constexpr size_t count = 100;
+    size_t executed = 0;
+
+    std::this_thread::sync_wait(
+        _::one(count, executed) |
+        std::execution::then([=](auto result) { EXPECT_EQ(result, count); }));
+
+    EXPECT_EQ(executed, count);
+}

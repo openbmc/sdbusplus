@@ -3,6 +3,7 @@
 #include <sdbusplus/async/execution.hpp>
 #include <sdbusplus/exception.hpp>
 
+#include <deque>
 #include <mutex>
 
 namespace sdbusplus::async
@@ -61,7 +62,7 @@ struct scope
     std::mutex lock{};
     bool started = false;
     size_t pending_count = 0;
-    std::exception_ptr pending_exception = {};
+    std::deque<std::exception_ptr> pending_exceptions = {};
     scope_ns::scope_completion* pending = nullptr;
 };
 

@@ -13,9 +13,9 @@ int main()
     using namespace sdbusplus;
 
     auto b = bus::new_default_system();
-    auto m =
-        b.new_method_call("org.freedesktop.login1", "/org/freedesktop/login1",
-                          "org.freedesktop.login1.Manager", "ListUsers");
+    auto m = b.new_method_call("org.freedesktop.login1",
+                               "/org/freedesktop/login1",
+                               "org.freedesktop.login1.Manager", "ListUsers");
     auto reply = b.call(m);
 
     using return_type =

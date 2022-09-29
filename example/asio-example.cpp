@@ -297,10 +297,10 @@ int client()
     }
 
     // test async method call and async send
-    auto mesg =
-        conn->new_method_call("xyz.openbmc_project.ObjectMapper",
-                              "/xyz/openbmc_project/object_mapper",
-                              "xyz.openbmc_project.ObjectMapper", "GetSubTree");
+    auto mesg = conn->new_method_call("xyz.openbmc_project.ObjectMapper",
+                                      "/xyz/openbmc_project/object_mapper",
+                                      "xyz.openbmc_project.ObjectMapper",
+                                      "GetSubTree");
 
     static const auto depth = 2;
     static const std::vector<std::string> interfaces = {

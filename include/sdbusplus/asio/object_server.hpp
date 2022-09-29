@@ -69,8 +69,8 @@ inline const bool SecondArgIsMessage_v = std::is_same_v<
 template <typename T>
 static constexpr bool callbackYields = FirstArgIsYield_v<T>;
 template <typename T>
-static constexpr bool callbackWantsMessage = (FirstArgIsMessage_v<T> ||
-                                              SecondArgIsMessage_v<T>);
+static constexpr bool callbackWantsMessage = FirstArgIsMessage_v<T> ||
+                                             SecondArgIsMessage_v<T>;
 
 namespace details
 {
@@ -833,8 +833,8 @@ class object_server
 
     bool remove_interface(const std::shared_ptr<dbus_interface>& iface)
     {
-        auto findIface =
-            std::find(interfaces_.begin(), interfaces_.end(), iface);
+        auto findIface = std::find(interfaces_.begin(), interfaces_.end(),
+                                   iface);
         if (findIface != interfaces_.end())
         {
             interfaces_.erase(findIface);

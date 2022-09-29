@@ -60,7 +60,7 @@ class SdBusError final : public internal_exception
     SdBusError& operator=(const SdBusError&) = delete;
     SdBusError(SdBusError&& other);
     SdBusError& operator=(SdBusError&& other);
-    virtual ~SdBusError();
+    ~SdBusError() override;
 
     const char* name() const noexcept override;
     const char* description() const noexcept override;

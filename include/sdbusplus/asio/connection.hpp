@@ -141,7 +141,7 @@ class connection : public sdbusplus::bus_t
                 {
                     utility::read_into_tuple(responseData, r);
                 }
-                catch (const std::exception& e)
+                catch (const std::exception&)
                 {
                     // Set error code if not already set
                     ec = boost::system::errc::make_error_code(
@@ -275,7 +275,7 @@ class connection : public sdbusplus::bus_t
                 {
                     r.read(responseData);
                 }
-                catch (const std::exception& e)
+                catch (const std::exception&)
                 {
                     ec = boost::system::errc::make_error_code(
                         boost::system::errc::invalid_argument);
@@ -297,7 +297,7 @@ class connection : public sdbusplus::bus_t
             {
                 r.read(responseData);
             }
-            catch (const std::exception& e)
+            catch (const std::exception&)
             {
                 ec = boost::system::errc::make_error_code(
                     boost::system::errc::invalid_argument);

@@ -29,7 +29,7 @@ struct has_const_iterator
     static constexpr no test(...);
 
   public:
-    static constexpr bool value = sizeof(test<T>(0)) == sizeof(yes);
+    static constexpr bool value = sizeof(test<T>(nullptr)) == sizeof(yes);
 };
 
 template <typename T>

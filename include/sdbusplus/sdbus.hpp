@@ -172,7 +172,7 @@ class SdBusImpl : public SdBusInterface
 {
   public:
     SdBusImpl() = default;
-    ~SdBusImpl() = default;
+    ~SdBusImpl() override = default;
     SdBusImpl(const SdBusImpl&) = default;
     SdBusImpl& operator=(const SdBusImpl&) = default;
     SdBusImpl(SdBusImpl&&) = default;

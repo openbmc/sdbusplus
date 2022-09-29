@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "dbff3525_51c98b6d",
+        "filename": "include/sdbusplus/asio/connection.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-09-29T15:55:44Z",
+      "side": 1,
+      "message": "Were these auto-fixes?  Why not just drop the \u0027e\u0027?",
+      "revId": "7544ac34f7b7828704e4aed6955000e77d748cef",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

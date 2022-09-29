@@ -76,9 +76,9 @@ class async_send_handler
     {
         using unpack_t = unpack_userdata<CompletionToken>;
         auto context = std::make_unique<unpack_t>(std::move(token));
-        int ec =
-            sd_bus_call_async(bus, nullptr, mesg.get(), &unpack_t::do_unpack,
-                              context.get(), timeout);
+        int ec = sd_bus_call_async(bus, nullptr, mesg.get(),
+                                   &unpack_t::do_unpack, context.get(),
+                                   timeout);
         if (ec < 0)
         {
             auto err =

@@ -281,8 +281,8 @@ struct bus
     {
         sd_bus_error error = SD_BUS_ERROR_NULL;
         sd_bus_message* reply = nullptr;
-        int r =
-            _intf->sd_bus_call(_bus.get(), m.get(), timeout_us, &error, &reply);
+        int r = _intf->sd_bus_call(_bus.get(), m.get(), timeout_us, &error,
+                                   &reply);
         if (r < 0)
         {
             throw exception::SdBusError(&error, "sd_bus_call");

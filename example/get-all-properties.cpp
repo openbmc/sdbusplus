@@ -22,8 +22,8 @@ class Application
         ioc_(ioc),
         bus_(bus), objServer_(objServer)
     {
-        demo_ =
-            objServer_.add_unique_interface(demoObjectPath, demoInterfaceName);
+        demo_ = objServer_.add_unique_interface(demoObjectPath,
+                                                demoInterfaceName);
 
         demo_->register_property_r<std::string>(
             propertyGrettingName, sdbusplus::vtable::property_::const_,

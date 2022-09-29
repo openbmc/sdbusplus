@@ -264,8 +264,8 @@ TYPED_TEST(UnpackPropertiesNonThrowingTest, ErrorWhenOptionalTypeDoesntMatch)
     std::optional<std::string> val1;
     std::optional<std::string> val2;
 
-    auto badProperty =
-        this->unpackPropertiesCall(this->data, "Key-1", val1, "Key-2", val2);
+    auto badProperty = this->unpackPropertiesCall(this->data, "Key-1", val1,
+                                                  "Key-2", val2);
 
     ASSERT_TRUE(badProperty);
     EXPECT_THAT(badProperty->reason, Eq(UnpackErrorReason::wrongType));

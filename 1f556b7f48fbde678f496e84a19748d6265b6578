@@ -34,6 +34,24 @@
       "parentUuid": "1a5e9b52_a29a009e",
       "revId": "1f556b7f48fbde678f496e84a19748d6265b6578",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5624153f_57f64bb9",
+        "filename": "include/sdbusplus/exception.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 1000002
+      },
+      "writtenOn": "2022-09-29T17:24:42Z",
+      "side": 1,
+      "message": "My change would seem to violate C.128\n\nhttps://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#c128-virtual-functions-should-specify-exactly-one-of-virtual-override-or-final\n\n\u003e However, writing more than one of these three is both redundant and a potential source of errors.",
+      "parentUuid": "3aabe6d6_cca63905",
+      "revId": "1f556b7f48fbde678f496e84a19748d6265b6578",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

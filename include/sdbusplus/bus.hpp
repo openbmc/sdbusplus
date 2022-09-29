@@ -200,7 +200,7 @@ struct bus
     /** @brief Process waiting dbus messages or signals forever, discarding
      * unhandled.
      */
-    void process_loop()
+    [[noreturn]] void process_loop()
     {
         while (true)
         {

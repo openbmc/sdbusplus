@@ -52,6 +52,24 @@
       "parentUuid": "3aabe6d6_cca63905",
       "revId": "1f556b7f48fbde678f496e84a19748d6265b6578",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a08e60af_5e1daf66",
+        "filename": "include/sdbusplus/exception.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 1000002
+      },
+      "writtenOn": "2022-09-29T17:25:02Z",
+      "side": 1,
+      "message": "More background:\n\nhttps://github.com/isocpp/CppCoreGuidelines/pull/1448",
+      "parentUuid": "5624153f_57f64bb9",
+      "revId": "1f556b7f48fbde678f496e84a19748d6265b6578",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

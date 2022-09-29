@@ -16,6 +16,24 @@
       "message": "Were these auto-fixes?  Why not just drop the \u0027e\u0027?",
       "revId": "7544ac34f7b7828704e4aed6955000e77d748cef",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2ac76799_14d49fa7",
+        "filename": "include/sdbusplus/asio/connection.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 1000002
+      },
+      "writtenOn": "2022-09-29T16:41:42Z",
+      "side": 1,
+      "message": "Ack.  I thought it would complain about unnamed parameters but I guess that is just for functions.",
+      "parentUuid": "dbff3525_51c98b6d",
+      "revId": "7544ac34f7b7828704e4aed6955000e77d748cef",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

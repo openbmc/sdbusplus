@@ -309,7 +309,7 @@ struct hash<sdbusplus::message::details::string_wrapper>
     using argument_type = sdbusplus::message::details::string_wrapper;
     using result_type = std::size_t;
 
-    result_type operator()(argument_type const& s) const
+    result_type operator()(const argument_type& s) const
     {
         return hash<std::string>()(s.str);
     }
@@ -322,7 +322,7 @@ struct hash<sdbusplus::message::details::string_path_wrapper>
     using argument_type = sdbusplus::message::details::string_path_wrapper;
     using result_type = std::size_t;
 
-    result_type operator()(argument_type const& s) const
+    result_type operator()(const argument_type& s) const
     {
         return hash<std::string>()(s.str);
     }

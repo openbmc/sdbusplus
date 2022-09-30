@@ -75,7 +75,7 @@ size_t hash<sdbusplus::message_t>::operator()(sdbusplus::message_t& m) const
 }
 
 size_t hash<sdbusplus::server::transaction::Transaction>::operator()(
-    sdbusplus::server::transaction::Transaction const& t) const
+    const sdbusplus::server::transaction::Transaction& t) const
 {
     auto hash1 = std::hash<sdbusplus::bus_t>{}(t.bus);
     auto hash2 = std::hash<sdbusplus::message_t>{}(t.msg);
@@ -86,7 +86,7 @@ size_t hash<sdbusplus::server::transaction::Transaction>::operator()(
 }
 
 size_t hash<sdbusplus::server::transaction::details::Transaction>::operator()(
-    sdbusplus::server::transaction::details::Transaction const& t) const
+    const sdbusplus::server::transaction::details::Transaction& t) const
 {
     auto hash1 = std::hash<int>{}(t.time);
     auto hash2 = std::hash<std::thread::id>{}(t.thread);

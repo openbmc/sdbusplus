@@ -613,7 +613,7 @@ class dbus_interface
             }
 #endif
         }
-        return sd_bus_error_set_const(error, SD_BUS_ERROR_INVALID_ARGS, NULL);
+        return sd_bus_error_set_const(error, SD_BUS_ERROR_INVALID_ARGS, nullptr);
     }
 
     static int set_handler(sd_bus* /*bus*/, const char* /*path*/,
@@ -663,7 +663,7 @@ class dbus_interface
             }
 #endif
         }
-        return sd_bus_error_set_const(error, SD_BUS_ERROR_INVALID_ARGS, NULL);
+        return sd_bus_error_set_const(error, SD_BUS_ERROR_INVALID_ARGS, nullptr);
     }
 
     static int method_handler(sd_bus_message* m, void* userdata,
@@ -696,7 +696,7 @@ class dbus_interface
             }
 #endif
         }
-        return sd_bus_error_set_const(error, SD_BUS_ERROR_INVALID_ARGS, NULL);
+        return sd_bus_error_set_const(error, SD_BUS_ERROR_INVALID_ARGS, nullptr);
     }
 
     /** @brief Create a new signal message.

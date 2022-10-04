@@ -127,7 +127,7 @@ struct compose : compose_impl<Args...>
     void maybe_emit_iface_added()
     {
         compose_impl<Args...>::maybe_emit_iface_added();
-    };
+    }
 };
 
 /** Specialization for zero variadic arguments. */
@@ -137,7 +137,7 @@ struct compose<>
     compose(bus_t& /*bus*/, const char* /*path*/) {}
 
   protected:
-    void maybe_emit_iface_added(){};
+    void maybe_emit_iface_added(){}
 };
 
 } // namespace details

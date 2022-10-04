@@ -160,7 +160,7 @@ class callback_method_instance : public callback
         callFunction(ret, *inputArgs);
         ret.method_return();
         return 1;
-    };
+    }
 };
 
 template <typename CallbackType>
@@ -260,7 +260,7 @@ class coroutine_method_instance : public callback
         }
         callFunction(ret, *inputArgs);
         ret.method_return();
-    };
+    }
 };
 
 template <typename PropertyType, typename CallbackType>

@@ -1,6 +1,7 @@
 {
   "comments": [
     {
+      "unresolved": true,
       "key": {
         "uuid": "abba3243_67d342fb",
         "filename": "/COMMIT_MSG",
@@ -20,10 +21,10 @@
         "endChar": 14
       },
       "revId": "00976517aa0d4eb0f287aad1171bc988ed40e9d3",
-      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
-      "unresolved": true
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": true,
       "key": {
         "uuid": "645095b0_60626b94",
         "filename": "/COMMIT_MSG",
@@ -44,10 +45,34 @@
         "endChar": 14
       },
       "revId": "00976517aa0d4eb0f287aad1171bc988ed40e9d3",
-      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
-      "unresolved": true
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "90afa64c_3a8ae822",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-10-13T23:58:36Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "645095b0_60626b94",
+      "range": {
+        "startLine": 27,
+        "startChar": 56,
+        "endLine": 28,
+        "endChar": 14
+      },
+      "revId": "00976517aa0d4eb0f287aad1171bc988ed40e9d3",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
       "key": {
         "uuid": "630e7189_817224e5",
         "filename": "include/sdbusplus/asio/connection.hpp",
@@ -61,10 +86,10 @@
       "side": 1,
       "message": "I\u0027d prefer this to be `SDBUSPLUS_DISABLE_BOOST_COROUTINES`.  C++20 co-routines are likely coming in this code-base soon and I wouldn\u0027t want there to be confusion.",
       "revId": "00976517aa0d4eb0f287aad1171bc988ed40e9d3",
-      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
-      "unresolved": true
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": true,
       "key": {
         "uuid": "b31dfe72_d5c0527f",
         "filename": "include/sdbusplus/asio/connection.hpp",
@@ -79,8 +104,25 @@
       "message": "Renamed to your suggestion.\n\nDone.",
       "parentUuid": "630e7189_817224e5",
       "revId": "00976517aa0d4eb0f287aad1171bc988ed40e9d3",
-      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
-      "unresolved": true
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d1316005_8c82dbed",
+        "filename": "include/sdbusplus/asio/connection.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-10-13T23:58:36Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "b31dfe72_d5c0527f",
+      "revId": "00976517aa0d4eb0f287aad1171bc988ed40e9d3",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

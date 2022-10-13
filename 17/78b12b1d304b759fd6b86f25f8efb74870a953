@@ -1,0 +1,9 @@
+Verified+1: OpenBMC CI <openbmcbump-ci@yahoo.com>
+Code-Review+1: Vernon Mauery <vernon.mauery@linux.intel.com>
+Code-Review+2: Patrick Williams <patrick@stwcx.xyz>
+Code-Review+1: Krzysztof Grobelny <krzysztof.grobelny@intel.com>
+Submitted-by: Patrick Williams <patrick@stwcx.xyz>
+Submitted-at: Thu, 13 Oct 2022 23:58:39 +0000
+Reviewed-on: https://gerrit.openbmc.org/c/openbmc/sdbusplus/+/46843
+Project: openbmc/sdbusplus
+Branch: refs/heads/master

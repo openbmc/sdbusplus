@@ -91,10 +91,10 @@ D-Bus interface. This class has a set of virtual functions for each method
 and property, which you can overload to create your own customized behavior
 for the interface.
 
-There are currently two types of YAML files: [interface](docs/interface.md) and
-[error](docs/error.md). Interfaces are used to create server and client D-Bus
-interfaces. Errors are used to define C++ exceptions which can be thrown and
-will automatically turn into D-Bus error responses.
+There are currently two types of YAML files: [interface](docs/yaml/interface.md)
+and [error](docs/yaml/error.md). Interfaces are used to create server and client
+D-Bus interfaces. Errors are used to define C++ exceptions which can be thrown
+and will automatically turn into D-Bus error responses.
 
 [[D-Bus client bindings are not yet implemented.  See openbmc/openbmc#851.]]
 

@@ -21,7 +21,7 @@ TEST_F(Event, TimeoutWorks)
     auto stop = std::chrono::steady_clock::now();
 
     EXPECT_TRUE(stop - start > timeout);
-    EXPECT_TRUE(stop - start < timeout * 2);
+    EXPECT_TRUE(stop - start < timeout * 3);
 }
 
 TEST_F(Event, Runnable)
@@ -78,5 +78,5 @@ TEST_F(Event, Timer)
 
     EXPECT_TRUE(ran);
     EXPECT_TRUE(stop - start > timeout);
-    EXPECT_TRUE(stop - start < timeout * 2);
+    EXPECT_TRUE(stop - start < timeout * 3);
 }

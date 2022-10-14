@@ -21,5 +21,5 @@ TEST(Timer, DelaySome)
     auto stop = std::chrono::steady_clock::now();
 
     EXPECT_GT(stop - start, timeout);
-    EXPECT_LT(stop - start, timeout * 2);
+    EXPECT_LT(stop - start, timeout * 3);
 }

@@ -92,7 +92,7 @@ TEST_F(Context, SpawnDelayedTask)
 
     EXPECT_TRUE(ran);
     EXPECT_GT(stop - start, timeout);
-    EXPECT_LT(stop - start, timeout * 2);
+    EXPECT_LT(stop - start, timeout * 3);
 }
 
 TEST_F(Context, SpawnRecursiveTask)

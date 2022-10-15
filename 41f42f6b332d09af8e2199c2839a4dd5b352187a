@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5bcbedef_8f1f4090",
+        "filename": "include/sdbusplus/asio/connection.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 182,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-10-15T20:46:19Z",
+      "side": 0,
+      "message": "I\u0027m not sure why this wasn\u0027t std::move orginally.  std::forward isn\u0027t intended to be used outside of templates, but with a `decltype` passed in here it isn\u0027t a template type.",
+      "range": {
+        "startLine": 182,
+        "startChar": 22,
+        "endLine": 182,
+        "endChar": 72
+      },
+      "revId": "41f42f6b332d09af8e2199c2839a4dd5b352187a",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

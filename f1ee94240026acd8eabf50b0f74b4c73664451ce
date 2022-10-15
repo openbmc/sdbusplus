@@ -3,6 +3,29 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "58aa5b33_0504dac9",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-10-15T13:12:20Z",
+      "side": 1,
+      "message": "What is the potential memory leak?  I\u0027m not seeing it.\n\nI don\u0027t think two copies of the same code is better so I\u0027d like to avoid it if we can come up with a better solution.",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 44
+      },
+      "revId": "f1ee94240026acd8eabf50b0f74b4c73664451ce",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "16d3a874_70c601f4",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 1

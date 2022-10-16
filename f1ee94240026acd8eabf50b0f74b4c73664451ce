@@ -26,6 +26,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "5887494f_dcf15eaa",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1000885
+      },
+      "writtenOn": "2022-10-16T06:01:26Z",
+      "side": 1,
+      "message": "I added the comment in the other thread in more detail. https://gerrit.openbmc.org/c/openbmc/sdbusplus/+/57948/comments/16d3a874_70c601f4\n\n```\n#include \u003csdbusplus/asio/property.hpp\u003e\n#include \u003csdbusplus/bus.hpp\u003e\n\n#include \u003cfunctional\u003e\n\nvoid handler(const std::string\u0026 /*unused*/,\n             const boost::system::error_code /*unused*/,\n             const std::vector\u003c\n                 std::pair\u003cstd::string, std::variant\u003cstd::string\u003e\u003e\u003e\u0026 /*unused*/)\n{}\n\nvoid test(sdbusplus::asio::connection* conn)\n{\n    std::string test \u003d \"test\";\n    sdbusplus::asio::getAllProperties\u003cstd::variant\u003cstd::string\u003e\u003e(\n        *conn, \"xyz.openbmc_project.EntityManager\", \"path\",\n        \"xyz.openbmc_project.Inventory.Decorator.Asset\",\n        std::bind_front(handler, test));\n}\n```\n\nThe issue only happen if we are capturing any variables. I also don\u0027t really see the leak.\n\nI don\u0027t have a great way to resolve that issue",
+      "parentUuid": "58aa5b33_0504dac9",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 44
+      },
+      "revId": "f1ee94240026acd8eabf50b0f74b4c73664451ce",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "16d3a874_70c601f4",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 1

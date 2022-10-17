@@ -17,9 +17,12 @@ inline void getAllProperties(
 {
     static_assert(std::is_same_v<VariantType, std::decay_t<VariantType>>);
 
-    bus.async_method_call(std::move(handler), service, path,
-                          "org.freedesktop.DBus.Properties", "GetAll",
-                          interface);
+    bus.async_method_call(
+        [handler = std::move(handler)](
+            const boost::system::error_code ec,
+            const std::vector<std::pair<std::string, VariantType>>&
+                data) mutable { handler(ec, data); },
+        service, path, "org.freedesktop.DBus.Properties", "GetAll", interface);
 }
 
 template <typename Handler>

@@ -74,6 +74,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "21b80c34_c8ea713c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1000885
+      },
+      "writtenOn": "2022-10-17T05:55:55Z",
+      "side": 1,
+      "message": "yeah, I also tried it with lambda and have similar issue.\n\nBut with lambda, it is fine with if the captured variables are primitive.\n\nI\u0027ll try to recreate it and send it to clang. with a smaller code snippet and see.",
+      "parentUuid": "17abfe40_c32cbe35",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 44
+      },
+      "revId": "f1ee94240026acd8eabf50b0f74b4c73664451ce",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "16d3a874_70c601f4",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 1

@@ -46,6 +46,30 @@
       },
       "revId": "41f42f6b332d09af8e2199c2839a4dd5b352187a",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "04f40b37_0c4a1e06",
+        "filename": "include/sdbusplus/asio/connection.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 182,
+      "author": {
+        "id": 1000885
+      },
+      "writtenOn": "2022-10-17T07:11:01Z",
+      "side": 0,
+      "message": "should we also update this to std::move (in a different change)?",
+      "parentUuid": "68fe4cc1_ed8bc8d0",
+      "range": {
+        "startLine": 182,
+        "startChar": 22,
+        "endLine": 182,
+        "endChar": 72
+      },
+      "revId": "41f42f6b332d09af8e2199c2839a4dd5b352187a",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

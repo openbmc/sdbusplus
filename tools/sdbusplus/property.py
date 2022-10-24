@@ -223,10 +223,6 @@ class Property(NamedElement, Renderer):
             "double": {"cppName": "double", "params": 0},
             "unixfd": {"cppName": "sdbusplus::message::unix_fd", "params": 0},
             "string": {"cppName": "std::string", "params": 0},
-            "path": {
-                "cppName": "sdbusplus::message::object_path",
-                "params": 0,
-            },
             "object_path": {
                 "cppName": "sdbusplus::message::object_path",
                 "params": 0,

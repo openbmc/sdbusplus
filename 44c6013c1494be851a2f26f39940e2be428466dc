@@ -16,6 +16,24 @@
       "message": "Does this impact phosphor-dbus-interfaces, where it uses `type: path`.\nOh, just noticed that pdi is already updated.\n\nCould this be \"deprecated\" for a while? The other users of sdbusplus may still use `path` in their code and it should deserve some transition time before it\u0027s unsupported.",
       "revId": "44c6013c1494be851a2f26f39940e2be428466dc",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "721042e7_3a58bbfb",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-10-27T18:14:45Z",
+      "side": 1,
+      "message": "We don\u0027t really have a way to deprecate in a meaningful way.  Nobody is going to look at any sort of warning in the console.  I\u0027d prefer to just break them since it is a trivial `sed -i s/type: path/type: object_path/` to fix it.",
+      "parentUuid": "75e1c4f4_a38e1505",
+      "revId": "44c6013c1494be851a2f26f39940e2be428466dc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

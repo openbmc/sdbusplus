@@ -18,13 +18,7 @@ ${ m.cpp_prototype(loader, interface=interface, ptype='callback-cpp-includes') }
     def interface_instance():
         return "_".join(interface.name.split('.') + ['interface'])
 %>
-namespace sdbusplus
-{
-    % for s in namespaces:
-namespace ${s}
-{
-    % endfor
-namespace server
+namespace sdbusplus::${interface.cppNamespace()}
 {
 
 ${classname}::${classname}(bus_t& bus, const char* path)
@@ -175,8 +169,4 @@ ${ s.cpp_prototype(loader, interface=interface, ptype='vtable') }
     vtable::end()
 };
 
-} // namespace server
-    % for s in reversed(namespaces):
-} // namespace ${s}
-    % endfor
-} // namespace sdbusplus
+} // namespace sdbusplus::${interface.cppNamespace()}

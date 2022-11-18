@@ -20,13 +20,7 @@ ${ m.cpp_prototype(loader, interface=interface, ptype='callback-hpp-includes') }
                    interface.properties);
 %>
 
-namespace sdbusplus
-{
-    % for s in namespaces:
-namespace ${s}
-{
-    % endfor
-namespace server
+namespace sdbusplus::${interface.cppNamespace()}
 {
 
 class ${classname}
@@ -208,31 +202,27 @@ inline std::string convertForMessage(${classname}::${e.name} e)
 }
     % endfor
 
-} // namespace server
-    % for s in reversed(namespaces):
-} // namespace ${s}
-    % endfor
+} // namespace sdbusplus::${interface.cppNamespace()}
 
-namespace message::details
+namespace sdbusplus::message::details
 {
     % for e in interface.enums:
 template <>
-struct convert_from_string<${interface.cppNamespace()}::${e.name}>
+struct convert_from_string<${interface.cppNamespacedClass()}::${e.name}>
 {
     static auto op(const std::string& value) noexcept
     {
-        return ${interface.cppNamespace()}::convertStringTo${e.name}(value);
+        return ${interface.cppNamespacedClass()}::convertStringTo${e.name}(value);
     }
 };
 
 template <>
-struct convert_to_string<${interface.cppNamespace()}::${e.name}>
+struct convert_to_string<${interface.cppNamespacedClass()}::${e.name}>
 {
-    static std::string op(${interface.cppNamespace()}::${e.name} value)
+    static std::string op(${interface.cppNamespacedClass()}::${e.name} value)
     {
-        return ${interface.cppNamespace()}::convert${e.name}ToString(value);
+        return ${interface.cppNamespacedClass()}::convert${e.name}ToString(value);
     }
 };
     % endfor
-} // namespace message::details
-} // namespace sdbusplus
+} // namespace sdbusplus::message::details

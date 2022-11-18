@@ -35,7 +35,10 @@ class Interface(NamedElement, Renderer):
         self.classname = self.namespaces.pop()
 
     def cppNamespace(self):
-        return "::".join(self.namespaces) + "::server::" + self.classname
+        return "::".join(self.namespaces) + "::server"
+
+    def cppNamespacedClass(self):
+        return self.cppNamespace() + "::" + self.classname
 
     def enum_includes(self, inc_list):
         includes = []

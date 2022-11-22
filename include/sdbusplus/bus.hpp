@@ -163,13 +163,14 @@ struct bus
      *
      *  @param[in] timeout_us - Timeout in usec.
      */
-    void wait(uint64_t timeout_us)
+    int wait(uint64_t timeout_us) noexcept
     {
-        _intf->sd_bus_wait(_bus.get(), timeout_us);
+        return _intf->sd_bus_wait(_bus.get(), timeout_us);
     }
-    void wait(std::optional<SdBusDuration> timeout = std::nullopt)
+
+    int wait(std::optional<SdBusDuration> timeout = std::nullopt) noexcept
     {
-        wait(timeout ? timeout->count() : UINT64_MAX);
+        return wait(timeout ? timeout->count() : UINT64_MAX);
     }
 
     /** @brief Process waiting dbus messages or signals. */

@@ -159,6 +159,17 @@ struct bus
         _intf->sd_bus_close(_bus.get());
     }
 
+    /** @brief Determine if the bus is open to the broker */
+    bool is_open()
+    {
+        int r = _intf->sd_bus_is_open(_bus.get());
+        if (r < 0)
+        {
+            throw exception::SdBusError(-r, "sd_bus_is_open");
+        }
+        return r;
+    }
+
     /** @brief Wait for new dbus messages or signals.
      *
      *  @param[in] timeout_us - Timeout in usec.

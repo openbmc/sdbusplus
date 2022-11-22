@@ -150,6 +150,7 @@ class SdBusMock : public SdBusInterface
     MOCK_METHOD(sd_bus*, sd_bus_flush_close_unref, (sd_bus*), (override));
     MOCK_METHOD(int, sd_bus_flush, (sd_bus*), (override));
     MOCK_METHOD(void, sd_bus_close, (sd_bus*), (override));
+    MOCK_METHOD(int, sd_bus_is_open, (sd_bus*), (override));
     MOCK_METHOD(int, sd_bus_wait, (sd_bus*, uint64_t), (override));
 };
 

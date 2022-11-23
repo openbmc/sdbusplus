@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "aead50a0_b50af52b",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2022-11-23T02:17:20Z",
+      "side": 1,
+      "message": "Could you elaborate the use of zstring?\nFrom the code it looks like it could handle `const char*` and `const std::string\u0026`.\n\nBut the below description only mentions move-only lambda that is supposed to related to unique_function only.",
+      "range": {
+        "startLine": 7,
+        "startChar": 37,
+        "endLine": 7,
+        "endChar": 44
+      },
+      "revId": "60f931ca370965553c5dd1dfaa3285260ec0b29d",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

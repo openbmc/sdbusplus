@@ -6,6 +6,7 @@
 #include <sdbusplus/bus.hpp>
 #include <sdbusplus/message.hpp>
 #include <sdbusplus/slot.hpp>
+#include <stdplus/str/cat.hpp>
 #include <stdplus/zstring.hpp>
 
 #include <memory>
@@ -47,7 +48,9 @@ struct match : private sdbusplus::bus::details::bus_friend
 namespace rules
 {
 
+using namespace std::string_view_literals;
 using namespace std::string_literals;
+using stdplus::strCat;
 
 namespace type
 {
@@ -73,42 +76,39 @@ constexpr auto error()
 
 constexpr auto sender(std::string_view s)
 {
-    return "sender='"s.append(s).append("',");
+    return strCat("sender='"sv, s, "',"sv);
 }
 constexpr auto interface(std::string_view s)
 {
-    return "interface='"s.append(s).append("',");
+    return strCat("interface='"sv, s, "',"sv);
 }
 constexpr auto member(std::string_view s)
 {
-    return "member='"s.append(s).append("',");
+    return strCat("member='"sv, s, "',"sv);
 }
 constexpr auto path(std::string_view s)
 {
-    return "path='"s.append(s).append("',");
+    return strCat("path='"sv, s, "',"sv);
 }
 constexpr auto path_namespace(std::string_view s)
 {
-    return "path_namespace='"s.append(s).append("',");
+    return strCat("path_namespace='"sv, s, "',"sv);
 }
 constexpr auto destination(std::string_view s)
 {
-    return "destination='"s.append(s).append("',");
+    return strCat("destination='"sv, s, "',"sv);
 }
 inline auto argN(size_t n, std::string_view s)
 {
-    return "arg"s.append(std::to_string(n)).append("='").append(s).append("',");
+    return strCat("arg"sv, std::to_string(n), "='"sv, s, "',"sv);
 }
 inline auto argNpath(size_t n, std::string_view s)
 {
-    return "arg"s.append(std::to_string(n))
-        .append("path='"s)
-        .append(s)
-        .append("',");
+    return strCat("arg"sv, std::to_string(n), "path='"sv, s, "',"sv);
 }
 constexpr auto arg0namespace(std::string_view s)
 {
-    return "arg0namespace='"s.append(s).append("',");
+    return strCat("arg0namespace='"sv, s, "',"sv);
 }
 constexpr auto eavesdrop()
 {
@@ -125,38 +125,33 @@ constexpr auto interfacesAdded()
     return "type='signal',interface='org.freedesktop.DBus.ObjectManager',member='InterfacesAdded',"s;
 }
 
+constexpr auto interfacesAdded(std::string_view p)
+{
+    return strCat(interfacesAdded(), path(p));
+}
+
 constexpr auto interfacesRemoved()
 {
     return "type='signal',interface='org.freedesktop.DBus.ObjectManager',member='InterfacesRemoved',"s;
 }
 
-constexpr auto interfacesAdded(std::string_view p)
-{
-    return interfacesAdded().append(path(p));
-}
-
 constexpr auto interfacesRemoved(std::string_view p)
 {
-    return interfacesRemoved().append(path(p));
+    return strCat(interfacesRemoved(), path(p));
 }
 
 inline auto propertiesChanged(std::string_view p, std::string_view i)
 {
-    return type::signal()
-        .append(path(p))
-        .append(member("PropertiesChanged"s))
-        .append(interface("org.freedesktop.DBus.Properties"s))
-        .append(argN(0, i));
+    return strCat(type::signal(), path(p), member("PropertiesChanged"sv),
+                  interface("org.freedesktop.DBus.Properties"sv), argN(0, i));
 }
 
 constexpr auto propertiesChangedNamespace(std::string_view p,
                                           std::string_view i)
 {
-    return type::signal()
-        .append(path_namespace(p))
-        .append(member("PropertiesChanged"s))
-        .append(interface("org.freedesktop.DBus.Properties"s))
-        .append(arg0namespace(i));
+    return strCat(
+        type::signal(), path_namespace(p), member("PropertiesChanged"sv),
+        interface("org.freedesktop.DBus.Properties"sv), arg0namespace(i));
 }
 /**
  * @brief Constructs a NameOwnerChanged match string for a service name
@@ -167,7 +162,7 @@ constexpr auto propertiesChangedNamespace(std::string_view p,
  */
 inline auto nameOwnerChanged(std::string_view s)
 {
-    return nameOwnerChanged().append(argN(0, s));
+    return strCat(nameOwnerChanged(), argN(0, s));
 }
 
 } // namespace rules

@@ -104,113 +104,107 @@ using namespace std::string_literals;
 namespace type
 {
 
-inline constexpr auto signal() noexcept
+constexpr auto signal()
 {
-    return "type='signal',";
+    return "type='signal',"s;
 }
-inline constexpr auto method() noexcept
+constexpr auto method()
 {
-    return "type='method',";
+    return "type='method',"s;
 }
-inline constexpr auto method_return() noexcept
+constexpr auto method_return()
 {
-    return "type='method_return',";
+    return "type='method_return',"s;
 }
-inline constexpr auto error() noexcept
+constexpr auto error()
 {
-    return "type='error',";
+    return "type='error',"s;
 }
 
 } // namespace type
 
-inline constexpr auto sender(std::string_view s) noexcept
+constexpr auto sender(std::string_view s)
 {
     return "sender='"s.append(s).append("',");
 }
-inline constexpr auto interface(std::string_view s) noexcept
+constexpr auto interface(std::string_view s)
 {
     return "interface='"s.append(s).append("',");
 }
-inline constexpr auto member(std::string_view s) noexcept
+constexpr auto member(std::string_view s)
 {
     return "member='"s.append(s).append("',");
 }
-inline constexpr auto path(std::string_view s) noexcept
+constexpr auto path(std::string_view s)
 {
     return "path='"s.append(s).append("',");
 }
-inline constexpr auto path_namespace(std::string_view s) noexcept
+constexpr auto path_namespace(std::string_view s)
 {
     return "path_namespace='"s.append(s).append("',");
 }
-inline constexpr auto destination(std::string_view s) noexcept
+constexpr auto destination(std::string_view s)
 {
     return "destination='"s.append(s).append("',");
 }
-inline auto argN(size_t n, std::string_view s) noexcept
+inline auto argN(size_t n, std::string_view s)
 {
     return "arg"s.append(std::to_string(n)).append("='").append(s).append("',");
 }
-inline auto argNpath(size_t n, std::string_view s) noexcept
+inline auto argNpath(size_t n, std::string_view s)
 {
     return "arg"s.append(std::to_string(n))
         .append("path='"s)
         .append(s)
         .append("',");
 }
-inline constexpr auto arg0namespace(std::string_view s) noexcept
+constexpr auto arg0namespace(std::string_view s)
 {
     return "arg0namespace='"s.append(s).append("',");
 }
-inline constexpr auto eavesdrop() noexcept
+constexpr auto eavesdrop()
 {
-    return "eavesdrop='true',";
+    return "eavesdrop='true',"s;
 }
 
-inline constexpr auto nameOwnerChanged() noexcept
+constexpr auto nameOwnerChanged()
 {
-    return "type='signal',"
-           "sender='org.freedesktop.DBus',"
-           "member='NameOwnerChanged',";
+    return "type='signal',sender='org.freedesktop.DBus',member='NameOwnerChanged',"s;
 }
 
-inline constexpr auto interfacesAdded() noexcept
+constexpr auto interfacesAdded()
 {
-    return "type='signal',"
-           "interface='org.freedesktop.DBus.ObjectManager',"
-           "member='InterfacesAdded',";
+    return "type='signal',interface='org.freedesktop.DBus.ObjectManager',member='InterfacesAdded',"s;
 }
 
-inline constexpr auto interfacesRemoved() noexcept
+constexpr auto interfacesRemoved()
 {
-    return "type='signal',"
-           "interface='org.freedesktop.DBus.ObjectManager',"
-           "member='InterfacesRemoved',";
+    return "type='signal',interface='org.freedesktop.DBus.ObjectManager',member='InterfacesRemoved',"s;
 }
 
-inline constexpr std::string interfacesAdded(std::string_view p) noexcept
+constexpr auto interfacesAdded(std::string_view p)
 {
-    return std::string(interfacesAdded()).append(path(p));
+    return interfacesAdded().append(path(p));
 }
 
-inline constexpr std::string interfacesRemoved(std::string_view p) noexcept
+constexpr auto interfacesRemoved(std::string_view p)
 {
-    return std::string(interfacesRemoved()).append(path(p));
+    return interfacesRemoved().append(path(p));
 }
 
-inline auto propertiesChanged(std::string_view p, std::string_view i) noexcept
+inline auto propertiesChanged(std::string_view p, std::string_view i)
 {
-    return std::string(type::signal())
+    return type::signal()
         .append(path(p))
         .append(member("PropertiesChanged"s))
         .append(interface("org.freedesktop.DBus.Properties"s))
         .append(argN(0, i));
 }
 
-inline auto propertiesChangedNamespace(std::string_view p,
-                                       std::string_view i) noexcept
+constexpr auto propertiesChangedNamespace(std::string_view p,
+                                          std::string_view i)
 {
-    return std::string(type::signal())
+    return type::signal()
         .append(path_namespace(p))
         .append(member("PropertiesChanged"s))
         .append(interface("org.freedesktop.DBus.Properties"s))
@@ -223,9 +217,9 @@ inline auto propertiesChangedNamespace(std::string_view p,
  *
  * @return NameOwnerChanged match string for a service name
  */
-inline auto nameOwnerChanged(std::string_view s) noexcept
+inline auto nameOwnerChanged(std::string_view s)
 {
-    return std::string(nameOwnerChanged()).append(argN(0, s));
+    return nameOwnerChanged().append(argN(0, s));
 }
 
 } // namespace rules

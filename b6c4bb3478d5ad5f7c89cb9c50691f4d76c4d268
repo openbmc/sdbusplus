@@ -24,6 +24,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "cd1fc3fb_90aeb78e",
+        "filename": "include/sdbusplus/sdbuspp_support/server.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1000188
+      },
+      "writtenOn": "2022-12-03T03:18:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3dc665c7_2e8cd4d6",
+      "range": {
+        "startLine": 19,
+        "startChar": 0,
+        "endLine": 20,
+        "endChar": 12
+      },
+      "revId": "b6c4bb3478d5ad5f7c89cb9c50691f4d76c4d268",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "8951197a_dc0712fd",
@@ -37,6 +61,30 @@
       "writtenOn": "2022-09-08T01:44:27Z",
       "side": 1,
       "message": "I wonder why I didn\u0027t implement this originally as:\n\n    m.read(t, ...);\n    \nIn many cases it is much more efficient to read as a set than one at a time.\n\n\nI guess I didn\u0027t implement it that way originally because folding was added in C++17 and this was written for C++14 before.",
+      "range": {
+        "startLine": 32,
+        "startChar": 38,
+        "endLine": 32,
+        "endChar": 45
+      },
+      "revId": "b6c4bb3478d5ad5f7c89cb9c50691f4d76c4d268",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ee532bc3_b5185a88",
+        "filename": "include/sdbusplus/sdbuspp_support/server.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1000188
+      },
+      "writtenOn": "2022-12-03T03:18:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8951197a_dc0712fd",
       "range": {
         "startLine": 32,
         "startChar": 38,
@@ -70,6 +118,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "c8e16833_0bdd888d",
+        "filename": "tools/sdbusplus/templates/method.prototype.hpp.mako",
+        "patchSetId": 2
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 1000188
+      },
+      "writtenOn": "2022-12-03T03:18:21Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "8ffd71bf_d3466611",
+      "range": {
+        "startLine": 100,
+        "startChar": 0,
+        "endLine": 102,
+        "endChar": 49
+      },
+      "revId": "b6c4bb3478d5ad5f7c89cb9c50691f4d76c4d268",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "1273d4a1_95f3fc96",
@@ -83,6 +155,24 @@
       "writtenOn": "2022-09-08T01:44:27Z",
       "side": 1,
       "message": "Seems like we\u0027ve lost deduction on everything?",
+      "revId": "b6c4bb3478d5ad5f7c89cb9c50691f4d76c4d268",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d135ff10_da7f3f8f",
+        "filename": "tools/sdbusplus/templates/property.prototype.hpp.mako",
+        "patchSetId": 2
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1000188
+      },
+      "writtenOn": "2022-12-03T03:18:21Z",
+      "side": 1,
+      "message": "It\u0027s fixed in the latest change and I opened an issue upstream\nhttps://github.com/Naios/function2/issues/56",
+      "parentUuid": "1273d4a1_95f3fc96",
       "revId": "b6c4bb3478d5ad5f7c89cb9c50691f4d76c4d268",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }

@@ -5,6 +5,7 @@
 #include <function2/function2.hpp>
 #include <sdbusplus/bus.hpp>
 #include <sdbusplus/slot.hpp>
+#include <stdplus/str/cat.hpp>
 #include <stdplus/zstring.hpp>
 
 #include <memory>
@@ -56,6 +57,8 @@ namespace rules
 {
 
 using namespace std::string_literals;
+using namespace std::string_view_literals;
+using stdplus::strCat;
 
 namespace type
 {
@@ -81,42 +84,39 @@ constexpr auto error() noexcept
 
 constexpr auto sender(std::string_view s) noexcept
 {
-    return "sender='"s.append(s).append("',");
+    return strCat("sender='"sv, s, "',"sv);
 }
 constexpr auto interface(std::string_view s) noexcept
 {
-    return "interface='"s.append(s).append("',");
+    return strCat("interface='"sv, s, "',"sv);
 }
 constexpr auto member(std::string_view s) noexcept
 {
-    return "member='"s.append(s).append("',");
+    return strCat("member='"sv, s, "',"sv);
 }
 constexpr auto path(std::string_view s) noexcept
 {
-    return "path='"s.append(s).append("',");
+    return strCat("path='"sv, s, "',"sv);
 }
 constexpr auto path_namespace(std::string_view s) noexcept
 {
-    return "path_namespace='"s.append(s).append("',");
+    return strCat("path_namespace='"sv, s, "',"sv);
 }
 constexpr auto destination(std::string_view s) noexcept
 {
-    return "destination='"s.append(s).append("',");
+    return strCat("destination='"sv, s, "',"sv);
 }
 inline auto argN(size_t n, std::string_view s) noexcept
 {
-    return "arg"s.append(std::to_string(n)).append("='").append(s).append("',");
+    return strCat("arg"sv, std::to_string(n), "='"sv, s, "',"sv);
 }
 inline auto argNpath(size_t n, std::string_view s) noexcept
 {
-    return "arg"s.append(std::to_string(n))
-        .append("path='"s)
-        .append(s)
-        .append("',");
+    return strCat("arg"sv, std::to_string(n), "path='"sv, s, "',"sv);
 }
 constexpr auto arg0namespace(std::string_view s) noexcept
 {
-    return "arg0namespace='"s.append(s).append("',");
+    return strCat("arg0namespace='"sv, s, "',"sv);
 }
 constexpr auto eavesdrop() noexcept
 {
@@ -133,38 +133,33 @@ constexpr auto interfacesAdded() noexcept
     return "type='signal',interface='org.freedesktop.DBus.ObjectManager',member='InterfacesAdded',"s;
 }
 
+constexpr auto interfacesAdded(std::string_view p) noexcept
+{
+    return strCat(interfacesAdded(), path(p));
+}
+
 constexpr auto interfacesRemoved() noexcept
 {
     return "type='signal',interface='org.freedesktop.DBus.ObjectManager',member='InterfacesRemoved',"s;
 }
 
-constexpr auto interfacesAdded(std::string_view p) noexcept
-{
-    return interfacesAdded().append(path(p));
-}
-
 constexpr auto interfacesRemoved(std::string_view p) noexcept
 {
-    return interfacesRemoved().append(path(p));
+    return strCat(interfacesRemoved(), path(p));
 }
 
 inline auto propertiesChanged(std::string_view p, std::string_view i) noexcept
 {
-    return type::signal()
-        .append(path(p))
-        .append(member("PropertiesChanged"s))
-        .append(interface("org.freedesktop.DBus.Properties"s))
-        .append(argN(0, i));
+    return strCat(type::signal(), path(p), member("PropertiesChanged"sv),
+                  interface("org.freedesktop.DBus.Properties"sv), argN(0, i));
 }
 
 constexpr auto propertiesChangedNamespace(std::string_view p,
                                           std::string_view i) noexcept
 {
-    return type::signal()
-        .append(path_namespace(p))
-        .append(member("PropertiesChanged"s))
-        .append(interface("org.freedesktop.DBus.Properties"s))
-        .append(arg0namespace(i));
+    return strCat(
+        type::signal(), path_namespace(p), member("PropertiesChanged"sv),
+        interface("org.freedesktop.DBus.Properties"sv), arg0namespace(i));
 }
 /**
  * @brief Constructs a NameOwnerChanged match string for a service name
@@ -175,7 +170,7 @@ constexpr auto propertiesChangedNamespace(std::string_view p,
  */
 inline auto nameOwnerChanged(std::string_view s) noexcept
 {
-    return nameOwnerChanged().append(argN(0, s));
+    return strCat(nameOwnerChanged(), argN(0, s));
 }
 
 } // namespace rules

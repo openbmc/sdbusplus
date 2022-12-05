@@ -1,3 +1,7 @@
-tabWidth: 2
+tabWidth: 4
+printWidth: 80
+proseWrap: "always"
 overrides:
-    - { "files": "*.yaml", "options": { "tabWidth": 4 } }
+    - files: "*.md"
+      options:
+          tabWidth: 2

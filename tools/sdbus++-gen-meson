@@ -6,7 +6,7 @@ set -e
 # to be stable on all machines.  Force the locale to 'C' for consistency.
 export LC_ALL=C
 
-function show_usage {
+function show_usage() {
     cat \
         << EOF
 Usage: $(basename "$0") [options] <command-args>*
@@ -37,7 +37,7 @@ EOF
 ## needs an update.  We should increment the version number whenever the
 ## resulting meson.build would change.
 tool_version="sdbus++-gen-meson version 4"
-function show_version {
+function show_version() {
     echo "${tool_version}"
 }
 
@@ -101,7 +101,7 @@ done
 
 ## Create an initially empty meson.build file.
 ## $1 - path to create meson.build at.
-function meson_empty_file {
+function meson_empty_file() {
     mkdir -p "$1"
     echo "# Generated file; do not modify." > "$1/meson.build"
 }
@@ -110,7 +110,7 @@ function meson_empty_file {
 ##
 ## Inserts rules to run the available version of this tool to ensure the
 ## version has not changed.
-function meson_create_root {
+function meson_create_root() {
     meson_empty_file "${outputdir}"
 
     cat >> "${outputdir}/meson.build" \
@@ -141,7 +141,7 @@ declare -A interfaces
 
 ## Ensure the meson.build files to a path have been created.
 ## $1 - The path requiring to be created.
-function meson_create_path {
+function meson_create_path() {
 
     meson_path="${outputdir}"
     prev_meson_path=""
@@ -171,7 +171,7 @@ function meson_create_path {
 ## interface.
 ##
 ## $1 - The interface to generate a target for.
-function meson_cpp_target {
+function meson_cpp_target() {
     mesondir="${outputdir}/$1"
     yamldir="$(realpath --relative-to="${mesondir}" "${rootdir}")"
 
@@ -220,7 +220,7 @@ EOF
 
 ## Generate the meson target for the markdown files from a YAML interface.
 ## $1 - The interface to generate a target for.
-function meson_md_target {
+function meson_md_target() {
     mesondir="${outputdir}/$(dirname "$1")"
     yamldir="$(realpath --relative-to="${mesondir}" "${rootdir}")"
 
@@ -251,7 +251,7 @@ EOF
 }
 
 ## Handle command=meson by generating the tree of meson.build files.
-function cmd_meson {
+function cmd_meson() {
     # Find and sort all the YAML files
     yamls="$(find "${rootdir}" -name '*.interface.yaml' -o -name '*.errors.yaml')"
     yamls="$(echo "${yamls}" | sort)"
@@ -282,7 +282,7 @@ function cmd_meson {
 ## $1 - interface to generate.
 ##
 ## For an interface foo/bar, the outputdir is expected to be foo/bar.
-function cmd_cpp {
+function cmd_cpp() {
 
     if [[ "" == "$1" ]]; then
         show_usage
@@ -290,7 +290,7 @@ function cmd_cpp {
     fi
 
     if [[ ! -e "${rootdir}/$1.interface.yaml" ]] &&
-        [[ ! -e "${rootdir}/$1.errors.yaml" ]]; then
+    [[ ! -e "${rootdir}/$1.errors.yaml" ]]; then
         echo "Missing YAML for $1."
         exit 1
     fi
@@ -316,7 +316,7 @@ function cmd_cpp {
 ## $1 - interface to generate.
 ##
 ## For an interface foo/bar, the outputdir is expected to be foo.
-function cmd_markdown {
+function cmd_markdown() {
 
     if [[ "" == "$1" ]]; then
         show_usage
@@ -324,7 +324,7 @@ function cmd_markdown {
     fi
 
     if [[ ! -e "${rootdir}/$1.interface.yaml" ]] &&
-        [[ ! -e "${rootdir}/$1.errors.yaml" ]]; then
+    [[ ! -e "${rootdir}/$1.errors.yaml" ]]; then
         echo "Missing YAML for $1."
         exit 1
     fi
@@ -346,7 +346,7 @@ function cmd_markdown {
 }
 
 ## Handle command=version.
-function cmd_version {
+function cmd_version() {
     show_version
 }
 

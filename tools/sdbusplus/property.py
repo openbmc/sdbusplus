@@ -5,7 +5,6 @@ from .renderer import Renderer
 
 
 class Property(NamedElement, Renderer):
-
     LOCAL_ENUM_MAGIC = "<LOCAL_ENUM>"
     NONLOCAL_ENUM_MAGIC = "<NONLOCAL_ENUM>"
 
@@ -94,7 +93,6 @@ class Property(NamedElement, Renderer):
             return ""
 
     def __cppTypeParam(self, interface, cppTypeName, full=False, server=True):
-
         ns_type = "server" if server else "client"
 
         iface = interface.split(".")

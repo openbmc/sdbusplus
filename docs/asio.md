@@ -8,17 +8,19 @@ property, it should follow the guidelines in this section.
 
 To return a D-Bus error reply for either GetProperty or SetProperty, throw a
 custom exception derived from `sdbusplus::exception_t`. For the custom
-exception, you can return a well-defined org.freedesktop.DBus.Error
-(https://www.freedesktop.org/software/systemd/man/sd-bus-errors.html#) from the
-`name()` or a custom/arbitrary name. The former will be automatically translated
-into a matching error code
-(https://github.com/systemd/systemd/blob/485c9e19e7ebcd912d5fbf11f40afc62951173f8/src/libsystemd/sd-bus/bus-error.c)
-that can be consumed by the caller, while the latter will always be mapped to
-`EIO`, requiring a `strcmp` to determine the exact error name.
+exception, you can return a well-defined [org.freedesktop.DBus.Error][1] from
+the `name()` or a custom/arbitrary name. The former will be automatically
+translated into a matching [error code][2] that can be consumed by the caller,
+while the latter will always be mapped to `EIO`, requiring a `strcmp` to
+determine the exact error name.
 
 The handler may also throw any exception not derived from
 `sdbusplus::exception_t`, in which case a generic
 org.freedesktop.DBus.Error.InvalidArgs error will be returned to the caller.
+
+[1]: https://www.freedesktop.org/software/systemd/man/sd-bus-errors.html#
+[2]:
+  https://github.com/systemd/systemd/blob/485c9e19e7ebcd912d5fbf11f40afc62951173f8/src/libsystemd/sd-bus/bus-error.c
 
 ### Get Property callback
 

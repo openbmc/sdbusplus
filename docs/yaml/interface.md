@@ -1,16 +1,15 @@
 # Interface YAML
 
-D-Bus interfaces can be defined by creating a YAML file to describe the
-methods, properties, and signals they contain. From this YAML file,
-both documentation and binding code may be generated.
+D-Bus interfaces can be defined by creating a YAML file to describe the methods,
+properties, and signals they contain. From this YAML file, both documentation
+and binding code may be generated.
 
 ## YAML sections
 
 An interface YAML may have the following sections:
 
 - description
-  - A small documentation section describing the purpose of the
-    interface.
+  - A small documentation section describing the purpose of the interface.
 - methods
   - A list of methods provided by this D-Bus interface.
 - properties
@@ -22,33 +21,32 @@ An interface YAML may have the following sections:
 
 ## Enumerations
 
-A common problem we have found with D-Bus interfaces is having a consistent
-way to define enumerations. Two common practices are to either assign
-special meaning to integers, as a C compiler might do, or to have specific
-strings representing the enumeration name. The
-[D-Bus API design guidelines][dbus-design-guidelines] specify both of these
-options:
+A common problem we have found with D-Bus interfaces is having a consistent way
+to define enumerations. Two common practices are to either assign special
+meaning to integers, as a C compiler might do, or to have specific strings
+representing the enumeration name. The [D-Bus API design
+guidelines][dbus-design-guidelines] specify both of these options:
 
 > For APIs being used in constrained situations, enumerated values should be
-> transmitted as unsigned integers. For APIs which need to be extended by
-> third parties or which are used in more loosely coupled systems, enumerated
-> values should be strings in some defined format.
+> transmitted as unsigned integers. For APIs which need to be extended by third
+> parties or which are used in more loosely coupled systems, enumerated values
+> should be strings in some defined format.
 
 What we have done in `sdbus++` is to consider enumerations as a first-class
-type. Within an interface you can define an enumeration and the bindings
-will have a C++ enumeration defined for it. At a D-Bus level any property or
-method parameter will be a string, but the string will contain a
-fully-qualified name "interface.enum-name.enum-value" like
-"org.freedesktop.Example.Color.Red". Within the generated bindings, an
-automatic conversion is done between strings and C++ enumeration values and
-clients will get an "xyz.openbmc_project.sdbusplus.Error.InvalidEnumString"
-error response if they attempt to use an invalid string value.
+type. Within an interface you can define an enumeration and the bindings will
+have a C++ enumeration defined for it. At a D-Bus level any property or method
+parameter will be a string, but the string will contain a fully-qualified name
+"interface.enum-name.enum-value" like "org.freedesktop.Example.Color.Red".
+Within the generated bindings, an automatic conversion is done between strings
+and C++ enumeration values and clients will get an
+"xyz.openbmc_project.sdbusplus.Error.InvalidEnumString" error response if they
+attempt to use an invalid string value.
 
 An enumeration must have the YAML properties `name` and `values` and may
-optionally contain a `description`. The `name` is a word corresponding to
-the desired "enum-name" portion of the fully-qualified name and the resulting
-C++ enum type. The `values` are a list of enumeration values each containing
-their own `name` and optional `description`.
+optionally contain a `description`. The `name` is a word corresponding to the
+desired "enum-name" portion of the fully-qualified name and the resulting C++
+enum type. The `values` are a list of enumeration values each containing their
+own `name` and optional `description`.
 
 Example:
 
@@ -70,9 +68,9 @@ enumerations:
 
 ### Base types
 
-Types are identified in YAML using their typename found in the
-[D-Bus specification][dbus-spec], but listed using lowercases: `int64`
-instead of `INT64` or C++ `int64_t`.
+Types are identified in YAML using their typename found in the [D-Bus
+specification][dbus-spec], but listed using lowercases: `int64` instead of
+`INT64` or C++ `int64_t`.
 
 - `byte`
 - `boolean`
@@ -122,8 +120,8 @@ expressed within square-brackets `[]`. The following containers are supported:
 
 It may seem odd that variants are required to list the types they may contain,
 but this is due to C++ being a strongly-typed language. In order to generate
-bindings, to read from and append to a message, the binding generator must
-know all possible types the variant may contain.
+bindings, to read from and append to a message, the binding generator must know
+all possible types the variant may contain.
 
 ### Enumeration Types
 
@@ -194,12 +192,11 @@ The supported values for `flags` are and their equivalent sd-bus flag setting:
 
 If no flag is given, a property will default to `emits_change`.
 
-Both `const` and `readonly` prevent D-Bus clients from being able to write
-to a property. `const` is a D-Bus indication that the property can never
-change, while `readonly` properties can be changed by the D-Bus server itself.
-As examples, the `Version` property on a software object might be appropriate
-to be `const` and the `Value` property on a sensor object would likely be
-`readonly`.
+Both `const` and `readonly` prevent D-Bus clients from being able to write to a
+property. `const` is a D-Bus indication that the property can never change,
+while `readonly` properties can be changed by the D-Bus server itself. As
+examples, the `Version` property on a software object might be appropriate to be
+`const` and the `Value` property on a sensor object would likely be `readonly`.
 
 Example:
 
@@ -219,8 +216,8 @@ properties:
 ## Signals
 
 A signal must have the YAML property `name` and may optionally have a
-`description` and list of `properties`. Properties are specified the same
-as interface properties.
+`description` and list of `properties`. Properties are specified the same as
+interface properties.
 
 Example:
 

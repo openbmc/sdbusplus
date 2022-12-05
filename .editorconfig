@@ -1,6 +1,0 @@
-[*]
-indent_style = space
-indent_size = 4
-# Config for shfmt
-switch_case_indent = true
-space_redirects = true

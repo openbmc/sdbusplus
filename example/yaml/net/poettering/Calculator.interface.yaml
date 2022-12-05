@@ -1,6 +1,6 @@
 description: >
-    An example interface originally described as part of the announcement
-    of new sd-bus interfaces at:
+    An example interface originally described as part of the announcement of new
+    sd-bus interfaces at:
         http://0pointer.net/blog/the-new-sd-bus-api-of-systemd.html
 methods:
     - name: Multiply

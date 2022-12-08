@@ -2,6 +2,7 @@ import argparse
 import os
 
 import mako.lookup
+
 import sdbusplus
 
 

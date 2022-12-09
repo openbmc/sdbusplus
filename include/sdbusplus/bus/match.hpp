@@ -5,6 +5,7 @@
 #include <function2/function2.hpp>
 #include <sdbusplus/bus.hpp>
 #include <sdbusplus/slot.hpp>
+#include <stdplus/numeric/str.hpp>
 #include <stdplus/str/cat.hpp>
 #include <stdplus/zstring.hpp>
 
@@ -106,13 +107,13 @@ constexpr auto destination(std::string_view s) noexcept
 {
     return strCat("destination='"sv, s, "',"sv);
 }
-inline auto argN(size_t n, std::string_view s) noexcept
+constexpr auto argN(size_t n, std::string_view s) noexcept
 {
-    return strCat("arg"sv, std::to_string(n), "='"sv, s, "',"sv);
+    return strCat("arg"sv, stdplus::to_string(n), "='"sv, s, "',"sv);
 }
-inline auto argNpath(size_t n, std::string_view s) noexcept
+constexpr auto argNpath(size_t n, std::string_view s) noexcept
 {
-    return strCat("arg"sv, std::to_string(n), "path='"sv, s, "',"sv);
+    return strCat("arg"sv, stdplus::to_string(n), "path='"sv, s, "',"sv);
 }
 constexpr auto arg0namespace(std::string_view s) noexcept
 {
@@ -148,7 +149,8 @@ constexpr auto interfacesRemoved(std::string_view p) noexcept
     return strCat(interfacesRemoved(), path(p));
 }
 
-inline auto propertiesChanged(std::string_view p, std::string_view i) noexcept
+constexpr auto propertiesChanged(std::string_view p,
+                                 std::string_view i) noexcept
 {
     return strCat(type::signal(), path(p), member("PropertiesChanged"sv),
                   interface("org.freedesktop.DBus.Properties"sv), argN(0, i));
@@ -168,7 +170,7 @@ constexpr auto propertiesChangedNamespace(std::string_view p,
  *
  * @return NameOwnerChanged match string for a service name
  */
-inline auto nameOwnerChanged(std::string_view s) noexcept
+constexpr auto nameOwnerChanged(std::string_view s) noexcept
 {
     return strCat(nameOwnerChanged(), argN(0, s));
 }

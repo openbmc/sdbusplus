@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a68b4c59_fc895a3d",
+        "filename": "include/sdbusplus/bus/match.hpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-12-09T22:20:08Z",
+      "side": 0,
+      "message": "Is there some advantage of removing this header and forward declaring?  It doesn\u0027t really seem worthwhile to me since any code trying to really use match is going to end up also needing message.hpp.",
+      "revId": "d7acc8a04e51dddbd13f3e668300e3c1509eb596",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "da60e680_fbea1107",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-12-09T22:23:04Z",
+      "side": 1,
+      "message": "Why?  The way it was they could be string_views if it was all constexpr content.\n\n\nWe will need to run clang-tidy against EM and bmcweb before merging this if we go forward.  There were a number of gotchas I ran into previously with clang\u0027s worse support and that\u0027s how I arrived at which pieces were strings and which weren\u0027t.",
+      "revId": "d7acc8a04e51dddbd13f3e668300e3c1509eb596",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

@@ -22,6 +22,7 @@ namespace
 
 using testing::Eq;
 using testing::MatcherCast;
+using testing::NotNull;
 using testing::Pointee;
 using testing::Return;
 using testing::SafeMatcherCast;
@@ -62,6 +63,13 @@ class AppendTest : public testing::Test
                               nullptr, type,
                               MatcherCast<const void*>(
                                   SafeMatcherCast<const char*>(StrEq(str)))))
+            .WillOnce(Return(0));
+    }
+
+    void expect_basic_string_iovec(const char* /*str*/, size_t /*size*/)
+    {
+        EXPECT_CALL(mock,
+                    sd_bus_message_append_string_iovec(nullptr, NotNull(), 1))
             .WillOnce(Return(0));
     }
 
@@ -185,6 +193,20 @@ TEST_F(AppendTest, XValueString)
     std::string s{"asdf"};
     expect_basic_string(SD_BUS_TYPE_STRING, s.c_str());
     new_message().append(std::move(s));
+}
+
+TEST_F(AppendTest, LValueStringView)
+{
+    std::string_view s{"asdf"};
+    expect_basic_string_iovec(s.data(), s.size());
+    new_message().append(s);
+}
+
+TEST_F(AppendTest, RValueStringView)
+{
+    std::string_view s{"asdf"};
+    expect_basic_string_iovec(s.data(), s.size());
+    new_message().append(std::string_view{"asdf"});
 }
 
 TEST_F(AppendTest, ObjectPath)

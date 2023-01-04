@@ -73,6 +73,10 @@ class SdBusInterface
     virtual int sd_bus_message_append_basic(sd_bus_message* message, char type,
                                             const void* value) = 0;
 
+    virtual int sd_bus_message_append_string_iovec(sd_bus_message* message,
+                                                   const struct iovec* iov,
+                                                   int iovcnt) = 0;
+
     virtual int sd_bus_message_at_end(sd_bus_message* m, int complete) = 0;
 
     virtual int sd_bus_message_close_container(sd_bus_message* m) = 0;
@@ -313,6 +317,13 @@ class SdBusImpl : public SdBusInterface
                                     const void* value) override
     {
         return ::sd_bus_message_append_basic(message, type, value);
+    }
+
+    int sd_bus_message_append_string_iovec(sd_bus_message* message,
+                                           const struct iovec* iov,
+                                           int iovcnt) override
+    {
+        return ::sd_bus_message_append_string_iovec(message, iov, iovcnt);
     }
 
     int sd_bus_message_at_end(sd_bus_message* m, int complete) override

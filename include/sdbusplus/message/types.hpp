@@ -222,6 +222,9 @@ template <>
 struct type_id<std::string> : tuple_type_id<SD_BUS_TYPE_STRING>
 {};
 template <>
+struct type_id<std::string_view> : tuple_type_id<SD_BUS_TYPE_STRING>
+{};
+template <>
 struct type_id<object_path> : tuple_type_id<SD_BUS_TYPE_OBJECT_PATH>
 {};
 template <>

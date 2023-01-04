@@ -73,6 +73,9 @@ class SdBusInterface
     virtual int sd_bus_message_append_basic(sd_bus_message* message, char type,
                                             const void* value) = 0;
 
+    virtual int sd_bus_message_append_string_space(sd_bus_message* message,
+                                                   size_t size, char** s) = 0;
+
     virtual int sd_bus_message_at_end(sd_bus_message* m, int complete) = 0;
 
     virtual int sd_bus_message_close_container(sd_bus_message* m) = 0;
@@ -313,6 +316,12 @@ class SdBusImpl : public SdBusInterface
                                     const void* value) override
     {
         return ::sd_bus_message_append_basic(message, type, value);
+    }
+
+    int sd_bus_message_append_string_space(sd_bus_message* message, size_t size,
+                                           char** s) override
+    {
+        return ::sd_bus_message_append_string_space(message, size, s);
     }
 
     int sd_bus_message_at_end(sd_bus_message* m, int complete) override

@@ -138,7 +138,7 @@ int InvalidEnumString::get_errno() const noexcept
     return EINVAL;
 }
 
-std::string unpackErrorReasonToString(const UnpackErrorReason reason)
+static std::string unpackErrorReasonToString(const UnpackErrorReason reason)
 {
     switch (reason)
     {

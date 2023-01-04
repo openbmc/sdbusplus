@@ -8,6 +8,8 @@
 #include <sdbusplus/utility/tuple_to_array.hpp>
 #include <sdbusplus/utility/type_traits.hpp>
 
+#include <cstring>
+#include <string_view>
 #include <tuple>
 #include <type_traits>
 #include <variant>
@@ -212,6 +214,22 @@ struct append_single<std::string>
     {
         constexpr auto dbusType = std::get<0>(types::type_id<T>());
         intf->sd_bus_message_append_basic(m, dbusType, s.c_str());
+    }
+};
+
+/** @brief Specialization of append_single for std::string_views. */
+template <>
+struct append_single<std::string_view>
+{
+    template <typename T>
+    static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, T&& s)
+    {
+        char* stringStart = nullptr;
+        intf->sd_bus_message_append_string_space(m, s.size(), &stringStart);
+        std::memcpy(stringStart, s.data(), s.size());
+        stringStart += s.size();
+        // Null terminator
+        *stringStart = '\0';
     }
 };
 

@@ -48,7 +48,7 @@ class condition
     friend event;
 
     condition() = delete;
-    explicit condition(event& e) : condition_source(e){};
+    explicit condition(event& e) : condition_source(e){}
     condition(const condition&) = delete;
     condition(condition&&);
 

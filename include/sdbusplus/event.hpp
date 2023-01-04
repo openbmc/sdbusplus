@@ -88,7 +88,7 @@ class condition
 class event
 {
   public:
-    using time_resolution = std::chrono::microseconds;
+    using time_resolution = std::chrono::duration<uint64_t, std::micro>;
 
     event();
     event(const event&) = delete;

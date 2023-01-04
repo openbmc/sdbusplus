@@ -20,11 +20,16 @@
 namespace
 {
 
+using testing::ContainerEq;
+using testing::DoAll;
+using testing::ElementsAre;
 using testing::Eq;
 using testing::MatcherCast;
+using testing::NotNull;
 using testing::Pointee;
 using testing::Return;
 using testing::SafeMatcherCast;
+using testing::SetArgPointee;
 using testing::StrEq;
 
 class AppendTest : public testing::Test
@@ -63,6 +68,20 @@ class AppendTest : public testing::Test
                               MatcherCast<const void*>(
                                   SafeMatcherCast<const char*>(StrEq(str)))))
             .WillOnce(Return(0));
+    }
+
+    std::vector<char> buf;
+    void expect_basic_string_space(const char* /*str*/, size_t size)
+    {
+        buf.resize(size + 1, '\42');
+        EXPECT_CALL(
+            mock, sd_bus_message_append_string_space(nullptr, size, NotNull()))
+            .WillOnce(DoAll(SetArgPointee<2>(buf.data()), Return(0)));
+    }
+
+    const std::vector<char>& get_basic_string_space_buffer()
+    {
+        return buf;
     }
 
     void expect_open_container(char type, const char* contents)
@@ -185,6 +204,24 @@ TEST_F(AppendTest, XValueString)
     std::string s{"asdf"};
     expect_basic_string(SD_BUS_TYPE_STRING, s.c_str());
     new_message().append(std::move(s));
+}
+
+TEST_F(AppendTest, LValueStringView)
+{
+    std::string_view s{"asdf"};
+    expect_basic_string_space(s.data(), s.size());
+    new_message().append(s);
+    EXPECT_THAT(get_basic_string_space_buffer(),
+                ElementsAre('a', 's', 'd', 'f', '\0'));
+}
+
+TEST_F(AppendTest, RValueStringView)
+{
+    std::string_view s{"asdf"};
+    expect_basic_string_space(s.data(), s.size());
+    new_message().append(std::string_view{"asdf"});
+    EXPECT_THAT(get_basic_string_space_buffer(),
+                ElementsAre('a', 's', 'd', 'f', '\0'));
 }
 
 TEST_F(AppendTest, ObjectPath)

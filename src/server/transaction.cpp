@@ -67,7 +67,7 @@ size_t hash<sdbusplus::message_t>::operator()(sdbusplus::message_t& m) const
         // Outgoing signals don't have a cookie so we need to use
         // something else as an id. Just use a monotonic unique one.
         case SD_BUS_MESSAGE_SIGNAL:
-            return std::hash<uint64_t>{}(
+            return std::hash<std::chrono::steady_clock::duration::rep>{}(
                 std::chrono::steady_clock::now().time_since_epoch().count());
         default:
             throw std::runtime_error("hash message: Unknown message type");
@@ -88,7 +88,7 @@ size_t hash<sdbusplus::server::transaction::Transaction>::operator()(
 size_t hash<sdbusplus::server::transaction::details::Transaction>::operator()(
     const sdbusplus::server::transaction::details::Transaction& t) const
 {
-    auto hash1 = std::hash<int>{}(t.time);
+    auto hash1 = std::hash<std::time_t>{}(t.time);
     auto hash2 = std::hash<std::thread::id>{}(t.thread);
 
     // boost::hash_combine() algorithm.

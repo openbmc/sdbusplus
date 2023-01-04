@@ -22,10 +22,9 @@ extern thread_local uint64_t id;
 
 struct Transaction
 {
-    Transaction() : time(std::time(nullptr)), thread(std::this_thread::get_id())
-    {}
+    Transaction() : time(std::time(nullptr)), thread(std::this_thread::get_id()) {}
 
-    int time;
+    std::time_t time;
     std::thread::id thread;
 };
 

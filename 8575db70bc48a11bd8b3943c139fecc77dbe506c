@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d537bbcc_071ecc05",
+        "filename": "include/sdbusplus/event.hpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-01-05T13:29:55Z",
+      "side": 1,
+      "message": "I\u0027ve read the commit message but I don\u0027t understand why we\u0027d want to do this.  We\u0027ve gone from using a pretty standard type to now using our own type.  That means that we similarly can\u0027t use `5 ms` and have it automatically do the right thing because there would be an implicit cast from unsigned to signed.\n\nDo you have some examples where this improves the ergonomics of using this?",
+      "revId": "8575db70bc48a11bd8b3943c139fecc77dbe506c",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "05edcae8_7c289d41",
+        "filename": "include/sdbusplus/server/transaction.hpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-01-05T13:29:55Z",
+      "side": 1,
+      "message": "This is a functional change now.  You\u0027ve gone from getting the current time to now setting the time to 0.",
+      "revId": "8575db70bc48a11bd8b3943c139fecc77dbe506c",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

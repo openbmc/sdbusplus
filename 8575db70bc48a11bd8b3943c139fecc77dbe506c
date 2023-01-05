@@ -56,6 +56,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "df684c41_897924e3",
+        "filename": "include/sdbusplus/event.hpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-01-05T17:38:20Z",
+      "side": 1,
+      "message": "Aren\u0027t you only not seeing an issue in clang because of the commit right above it that disables all users of this code?",
+      "parentUuid": "6b539daa_6980116f",
+      "revId": "8575db70bc48a11bd8b3943c139fecc77dbe506c",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "05edcae8_7c289d41",
         "filename": "include/sdbusplus/server/transaction.hpp",
         "patchSetId": 4

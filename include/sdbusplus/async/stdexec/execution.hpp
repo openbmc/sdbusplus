@@ -4725,7 +4725,7 @@ struct __receiver1
 
     template <class _Tag, class... _Args>
     static void
-        __complete_(_Tag __tag, __receiver1&& __self,
+        __complete_(_Tag /*__tag*/, __receiver1&& __self,
                     _Args&&... __args) noexcept(__nothrow_complete_<_Args...>)
     {
         // Write the tag and the args into the operation state so that

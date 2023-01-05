@@ -38,6 +38,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "6b539daa_6980116f",
+        "filename": "include/sdbusplus/event.hpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2023-01-05T16:44:03Z",
+      "side": 1,
+      "message": "The biggest motivator is clang warns on this, because in theory if you loaded std::chrono::milliseconds(-4), it would overflow into a large positive number.  Does it matter?  probably not, but considering systemd uses uint64_t, and this isn\u0027t used anywhere, I expected this to not have any impact.\n\nAlternatively, I could static_cast\u003cuint64_to\u003e or a duration_cast to this to shut up clang, but it\u0027d still be wrong for boundary values, and this seemed better.  Happy to do whatever.",
+      "parentUuid": "0c18befa_d3d24269",
+      "revId": "8575db70bc48a11bd8b3943c139fecc77dbe506c",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "05edcae8_7c289d41",
         "filename": "include/sdbusplus/server/transaction.hpp",
         "patchSetId": 4
@@ -67,6 +85,24 @@
       "side": 1,
       "message": "Yeah, I was kinda wondering how this was used in practice given the change.",
       "parentUuid": "05edcae8_7c289d41",
+      "revId": "8575db70bc48a11bd8b3943c139fecc77dbe506c",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6eae8518_cac9ef2f",
+        "filename": "include/sdbusplus/server/transaction.hpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2023-01-05T16:44:03Z",
+      "side": 1,
+      "message": "ug... good point.  I should\u0027ve thought of that.  Let me poke at it a little more and see if there\u0027s a way to avoid an implicit conversion.",
+      "parentUuid": "b52b19d4_45393c7e",
       "revId": "8575db70bc48a11bd8b3943c139fecc77dbe506c",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }

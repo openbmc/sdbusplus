@@ -21,14 +21,16 @@ int generated_exception::get_errno() const noexcept
     return EIO;
 }
 
-SdBusError::SdBusError(int error, const char* prefix, SdBusInterface* intf) :
-    error(SD_BUS_ERROR_NULL), intf(intf)
+SdBusError::SdBusError(int error_in, const char* prefix,
+                       SdBusInterface* intf_in) :
+    error(SD_BUS_ERROR_NULL),
+    intf(intf_in)
 {
     // We can't check the output of intf->sd_bus_error_set_errno() because
     // it returns the input errorcode. We don't want to try and guess
     // possible error statuses. Instead, check to see if the error was
     // constructed to determine success.
-    intf->sd_bus_error_set_errno(&this->error, error);
+    intf->sd_bus_error_set_errno(&this->error, error_in);
     if (!intf->sd_bus_error_is_set(&this->error))
     {
         throw std::runtime_error("Failed to create SdBusError");
@@ -37,13 +39,13 @@ SdBusError::SdBusError(int error, const char* prefix, SdBusInterface* intf) :
     populateMessage(prefix);
 }
 
-SdBusError::SdBusError(sd_bus_error* error, const char* prefix,
-                       SdBusInterface* intf) :
-    error(*error),
-    intf(intf)
+SdBusError::SdBusError(sd_bus_error* error_in, const char* prefix,
+                       SdBusInterface* intf_in) :
+    error(*error_in),
+    intf(intf_in)
 {
     // We own the error so remove the caller's reference
-    *error = SD_BUS_ERROR_NULL;
+    *error_in = SD_BUS_ERROR_NULL;
 
     populateMessage(prefix);
 }

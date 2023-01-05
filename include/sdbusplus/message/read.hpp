@@ -412,16 +412,16 @@ struct read_single<std::variant<Args...>>
         {
             std::string str{};
             sdbusplus::message::read(intf, m, str);
-            auto r =
+            auto ret =
                 sdbusplus::message::convert_from_string<std::variant<Args...>>(
                     str);
 
-            if (!r)
+            if (!ret)
             {
                 throw sdbusplus::exception::InvalidEnumString();
             }
 
-            s = std::move(*r);
+            s = std::move(*ret);
         }
         else // otherise, read it out directly.
         {

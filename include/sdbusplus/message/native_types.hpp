@@ -27,8 +27,8 @@ struct string_wrapper
     string_wrapper& operator=(string_wrapper&&) = default;
     ~string_wrapper() = default;
 
-    string_wrapper(const std::string& str) : str(str) {}
-    string_wrapper(std::string&& str) : str(std::move(str)) {}
+    string_wrapper(const std::string& str_in) : str(str_in) {}
+    string_wrapper(std::string&& str_in) : str(std::move(str_in)) {}
 
     operator const std::string&() const volatile&
     {
@@ -91,8 +91,8 @@ struct string_path_wrapper
     string_path_wrapper& operator=(string_path_wrapper&&) = default;
     ~string_path_wrapper() = default;
 
-    string_path_wrapper(const std::string& str) : str(str) {}
-    string_path_wrapper(std::string&& str) : str(std::move(str)) {}
+    string_path_wrapper(const std::string& str_in) : str(str_in) {}
+    string_path_wrapper(std::string&& str_in) : str(std::move(str_in)) {}
 
     operator const std::string&() const volatile&
     {

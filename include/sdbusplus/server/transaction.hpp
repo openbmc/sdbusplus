@@ -33,8 +33,8 @@ struct Transaction
 
 struct Transaction
 {
-    Transaction(sdbusplus::bus_t& bus, sdbusplus::message_t& msg) :
-        bus(bus), msg(msg)
+    Transaction(sdbusplus::bus_t& bus_in, sdbusplus::message_t& msg_in) :
+        bus(bus_in), msg(msg_in)
     {}
 
     sdbusplus::bus_t& bus;

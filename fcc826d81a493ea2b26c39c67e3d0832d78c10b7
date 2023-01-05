@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5d5ac8a7_b81e7bbe",
+        "filename": "include/sdbusplus/message/append.hpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 228,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-01-05T13:36:01Z",
+      "side": 1,
+      "message": "Probably don\u0027t want to ignore the result here?  Though... I see we ignore the result pretty much everywhere in this file.",
+      "revId": "fcc826d81a493ea2b26c39c67e3d0832d78c10b7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8637c442_62c8049b",
+        "filename": "include/sdbusplus/message/append.hpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 229,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-01-05T13:36:01Z",
+      "side": 1,
+      "message": "Would it be better to use `sd_bus_message_append_string_iovec(m, { s.data(), s.size() }, 1)` ?",
+      "revId": "fcc826d81a493ea2b26c39c67e3d0832d78c10b7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

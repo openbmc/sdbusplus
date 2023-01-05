@@ -16,6 +16,24 @@
       "message": "nit: Already done by the systemd code\nhttps://github.com/systemd/systemd/blob/57e7af551edafa8ad840a26c28184bc6339e09ad/src/libsystemd/sd-bus/bus-message.c#L1474\n\nAlso, I guess the systemd API does allow nul terminators inside the string? It seems to prepend the length of the string in the message, but I haven\u0027t verified the message accessor doesn\u0027t do something weird.",
       "revId": "2b708979782ce377d35e30c0f7420ece225405e4",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a3f7015c_634ea56a",
+        "filename": "include/sdbusplus/message/append.hpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 232,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2023-01-05T00:31:15Z",
+      "side": 1,
+      "message": "Odd;  I guess I read the docs wrong.  Oh well, fixed.\n\n\u003e does allow nul terminators inside the string?\n\nI was kind of surprised it was null terminated for a modern API, but idk.",
+      "parentUuid": "1694172d_5183a4fd",
+      "revId": "2b708979782ce377d35e30c0f7420ece225405e4",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

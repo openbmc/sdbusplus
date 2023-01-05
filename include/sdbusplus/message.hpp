@@ -135,7 +135,7 @@ class message : private sdbusplus::slot::details::slot_friend
 
     /** @brief Perform sd_bus_message_append, with automatic type deduction.
      *
-     *  @tparam ...Args - Type of items to append to message.
+     *  @tparam Args - Type of items to append to message.
      *  @param[in] args - Items to append to message.
      */
     template <typename... Args>
@@ -147,7 +147,7 @@ class message : private sdbusplus::slot::details::slot_friend
 
     /** @brief Perform sd_bus_message_read, with automatic type deduction.
      *
-     *  @tparam ...Args - Type of items to read from message.
+     *  @tparam Args - Type of items to read from message.
      *  @param[out] args - Items to read from message.
      */
     template <typename... Args>
@@ -159,7 +159,7 @@ class message : private sdbusplus::slot::details::slot_friend
 
     /** @brief Perform sd_bus_message_read with results returned.
      *
-     *  @tparam ...Args - Type of items to read from the message.
+     *  @tparam Args - Type of items to read from the message.
      *  @return One of { void, Args, std::tuple<Args...> }.
      */
     template <typename... Args>
@@ -412,8 +412,7 @@ class message : private sdbusplus::slot::details::slot_friend
      *         in a METHOD_ERROR. This means you do not need to check
      *         is_method_error() on the returned message.
      *
-     *  @param[in] m - The method_call message.
-     *  @param[in] timeout_us - The timeout for the method call.
+     *  @param[in] timeout - The timeout for the method call.
      *
      *  @return The response message.
      */
@@ -434,7 +433,7 @@ class message : private sdbusplus::slot::details::slot_friend
     /** @brief Perform an async message call.
      *
      *  @param[in] cb - The callback to run when the response is available.
-     *  @param[in] timeout_us - The timeout for the method call.
+     *  @param[in] timeout - The timeout for the method call.
      *
      *  @return The slot handle that manages the lifetime of the call object.
      */

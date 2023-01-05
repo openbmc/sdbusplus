@@ -21,7 +21,7 @@ namespace details
  *  @tparam I - Sequence of integral indexes (0...N) for each tuple elemeent.
  *
  *  @param tuple - Tuple of N same-typed elements.
- *  @param [unnamed] - std::integer_sequence of tuple's index values.
+ *  @param @exclude [unnamed] - std::integer_sequence of tuple's index values.
  *
  *  @return A std::array where each I-th element is tuple's I-th element.
  */

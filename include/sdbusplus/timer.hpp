@@ -25,7 +25,7 @@ class Timer
     /** @brief Constructs timer object
      *         Uses the default sd_event object
      *
-     *  @param[in] funcCallBack - optional function callback for timer
+     *  @param[in] userCallBack - optional function callback for timer
      *                            expirations
      */
     Timer(std::function<void()> userCallBack = nullptr) :
@@ -40,8 +40,8 @@ class Timer
 
     /** @brief Constructs timer object
      *
-     *  @param[in] events - sd_event pointer
-     *  @param[in] funcCallBack - optional function callback for timer
+     *  @param[in] event - sd_event pointer
+     *  @param[in] userCallBack - optional function callback for timer
      *                            expirations
      */
     Timer(sd_event* event, std::function<void()> userCallBack = nullptr) :
@@ -156,8 +156,6 @@ class Timer
     /** @brief Initializes the timer object with infinite
      *         expiration time and sets up the callback handler
      *
-     *  @return None.
-     *
      *  @error std::runtime exception thrown
      */
     void initialize()
@@ -206,10 +204,6 @@ class Timer
     /** @brief Callback function when timer goes off
      *
      *  On getting the signal, initiate the hard power off request
-     *
-     *  @param[in] eventSource - Source of the event
-     *  @param[in] usec        - time in micro seconds
-     *  @param[in] userData    - User data pointer
      *
      */
     int timeoutHandler()

@@ -27,7 +27,7 @@ namespace message
 inline void read(sdbusplus::SdBusInterface* /*intf*/, sd_bus_message* /*m*/) {}
 /** @brief Read data from an sdbus message.
  *
- *  @param[in] msg - The message to read from.
+ *  @param[in] m - The message to read from.
  *  @tparam Args - C++ types of arguments to read from message.
  *  @param[out] args - References to place contents read from message.
  *
@@ -42,8 +42,7 @@ void read(sdbusplus::SdBusInterface* intf, sd_bus_message* m, Args&&... args);
 namespace details
 {
 
-/** @struct can_read_multiple
- *  @brief Utility to identify C++ types that may not be grouped into a
+/** @brief Utility to identify C++ types that may not be grouped into a
  *         single sd_bus_message_read call and instead need special
  *         handling.
  *
@@ -103,8 +102,7 @@ struct can_read_multiple<std::variant<Args...>> : std::false_type
 template <typename... Args>
 inline constexpr bool can_read_multiple_v = can_read_multiple<Args...>::value;
 
-/** @struct read_single
- *  @brief Utility to read a single C++ element from a sd_bus_message.
+/** @brief Utility to read a single C++ element from a sd_bus_message.
  *
  *  User-defined types are expected to specialize this template in order to
  *  get their functionality.

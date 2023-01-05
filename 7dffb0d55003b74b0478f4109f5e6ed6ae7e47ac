@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "eaed01e4_fe04f9ca",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-01-05T18:31:57Z",
+      "side": 1,
+      "message": "I\u0027ll let @wak confirm but it looks fine.",
+      "revId": "7dffb0d55003b74b0478f4109f5e6ed6ae7e47ac",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

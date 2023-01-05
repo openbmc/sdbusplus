@@ -15,8 +15,8 @@ struct Context : public testing::Test
 
     void spawnStop()
     {
-        ctx->spawn(std::execution::just() |
-                   std::execution::then([this]() { ctx->request_stop(); }));
+        ctx->spawn(stdexec::just() |
+                   stdexec::then([this]() { ctx->request_stop(); }));
     }
 
     void runToStop()
@@ -35,7 +35,7 @@ TEST_F(Context, RunSimple)
 
 TEST_F(Context, SpawnedTask)
 {
-    ctx->spawn(std::execution::just());
+    ctx->spawn(stdexec::just());
     runToStop();
 }
 
@@ -50,8 +50,8 @@ TEST_F(Context, ReentrantRun)
 
 TEST_F(Context, SpawnThrowingTask)
 {
-    ctx->spawn(std::execution::just() |
-               std::execution::then([]() { throw std::logic_error("Oops"); }));
+    ctx->spawn(stdexec::just() |
+               stdexec::then([]() { throw std::logic_error("Oops"); }));
 
     EXPECT_THROW(runToStop(), std::logic_error);
     ctx->run();
@@ -62,9 +62,8 @@ TEST_F(Context, SpawnManyThrowingTasks)
     static constexpr size_t count = 100;
     for (size_t i = 0; i < count; ++i)
     {
-        ctx->spawn(std::execution::just() | std::execution::then([]() {
-                       throw std::logic_error("Oops");
-                   }));
+        ctx->spawn(stdexec::just() |
+                   stdexec::then([]() { throw std::logic_error("Oops"); }));
     }
     spawnStop();
 
@@ -84,7 +83,7 @@ TEST_F(Context, SpawnDelayedTask)
 
     bool ran = false;
     ctx->spawn(sdbusplus::async::sleep_for(*ctx, timeout) |
-               std::execution::then([&ran]() { ran = true; }));
+               stdexec::then([&ran]() { ran = true; }));
 
     runToStop();
 
@@ -107,16 +106,15 @@ TEST_F(Context, SpawnRecursiveTask)
                 ++executed;
                 co_return (co_await one(count - 1, executed)) + 1;
             }
-            co_return co_await std::execution::just(0);
+            co_return co_await stdexec::just(0);
         }
     };
 
     static constexpr size_t count = 100;
     size_t executed = 0;
 
-    ctx->spawn(_::one(count, executed) | std::execution::then([=](auto result) {
-                   EXPECT_EQ(result, count);
-               }));
+    ctx->spawn(_::one(count, executed) |
+               stdexec::then([=](auto result) { EXPECT_EQ(result, count); }));
 
     runToStop();
 
@@ -133,11 +131,11 @@ TEST_F(Context, DestructMatcherWithPendingAwait)
                   "/this/is/a/bogus/path/for/SpawnMatcher"));
 
     // Await the match completion (which will never happen).
-    ctx->spawn(m->next() | std::execution::then([&ran](...) { ran = true; }));
+    ctx->spawn(m->next() | stdexec::then([&ran](...) { ran = true; }));
 
     // Destruct the match.
     ctx->spawn(sdbusplus::async::sleep_for(*ctx, 1ms) |
-               std::execution::then([&m](...) { m.reset(); }));
+               stdexec::then([&m](...) { m.reset(); }));
 
     EXPECT_THROW(runToStop(), sdbusplus::exception::UnhandledStop);
     EXPECT_NO_THROW(ctx->run());
@@ -166,7 +164,7 @@ TEST_F(Context, DestructMatcherWithPendingAwaitAsTask)
     bool ran = false;
     ctx->spawn(_::fn(m->next(), ran));
     ctx->spawn(sdbusplus::async::sleep_for(*ctx, 1ms) |
-               std::execution::then([&]() { m.reset(); }));
+               stdexec::then([&]() { m.reset(); }));
 
     EXPECT_THROW(runToStop(), sdbusplus::exception::UnhandledStop);
     EXPECT_NO_THROW(ctx->run());

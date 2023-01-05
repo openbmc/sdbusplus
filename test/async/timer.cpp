@@ -15,7 +15,7 @@ TEST(Timer, DelaySome)
     auto start = std::chrono::steady_clock::now();
 
     ctx.spawn(sdbusplus::async::sleep_for(ctx, timeout) |
-              std::execution::then([&ctx]() { ctx.request_stop(); }));
+              stdexec::then([&ctx]() { ctx.request_stop(); }));
     ctx.run();
 
     auto stop = std::chrono::steady_clock::now();

@@ -15,7 +15,7 @@
  */
 #pragma once
 
-#include <sdbusplus/async/stdexec/concepts.hpp>
+#include "concepts.hpp"
 
 #include <version>
 #if __cpp_impl_coroutine >= 201902 && __cpp_lib_coroutine >= 201902
@@ -103,7 +103,7 @@ template <class _Awaitable, class _Promise = void>
 concept __awaitable =
     requires(_Awaitable&& __await, _Promise* __promise) {
         {
-            (__get_awaiter)((_Awaitable &&) __await, __promise)
+            stdexec::__get_awaiter((_Awaitable &&) __await, __promise)
             } -> __awaiter<_Promise>;
     };
 
@@ -113,8 +113,9 @@ _T& __as_lvalue(_T&&);
 template <class _Awaitable, class _Promise = void>
     requires __awaitable<_Awaitable, _Promise>
 using __await_result_t =
-    decltype((__as_lvalue)((__get_awaiter)(std::declval<_Awaitable>(),
-                                           (_Promise*)nullptr))
+    decltype(stdexec::__as_lvalue(
+                 stdexec::__get_awaiter(std::declval<_Awaitable>(),
+                                        (_Promise*)nullptr))
                  .await_resume());
 
 #else

@@ -142,7 +142,7 @@ void context::run()
     wait_for_wait_process_stopped();
 
     // Wait for all the internal tasks to complete.
-    std::this_thread::sync_wait(
+    stdexec::this_thread::sync_wait(
         internal_tasks.empty() | execution::upon_error([&](auto&& e) {
             pending_exceptions.emplace_back(std::move(e));
         }));

@@ -15,8 +15,8 @@
  */
 #pragma once
 
-#include <sdbusplus/async/stdexec/__detail/__meta.hpp>
-#include <sdbusplus/async/stdexec/concepts.hpp>
+#include "../concepts.hpp"
+#include "__meta.hpp"
 
 #include <atomic>
 #include <memory>

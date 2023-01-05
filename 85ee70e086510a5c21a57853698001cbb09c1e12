@@ -16,6 +16,24 @@
       "message": "Probably it should just be `inline` instead?",
       "revId": "85ee70e086510a5c21a57853698001cbb09c1e12",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6c921219_a6685bb3",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2023-01-05T16:36:32Z",
+      "side": 1,
+      "message": "I didn\u0027t think inline on a template did anything?  Templates already allow multiple definitions in a compile unit.",
+      "parentUuid": "02dfc4f7_8554ec33",
+      "revId": "85ee70e086510a5c21a57853698001cbb09c1e12",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

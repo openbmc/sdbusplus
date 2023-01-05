@@ -17,10 +17,10 @@ const std::string propertyValueName = "Value";
 class Application
 {
   public:
-    Application(boost::asio::io_context& ioc, sdbusplus::asio::connection& bus,
+    Application(sdbusplus::asio::connection& bus,
                 sdbusplus::asio::object_server& objServer) :
-        ioc_(ioc),
-        bus_(bus), objServer_(objServer)
+        bus_(bus),
+        objServer_(objServer)
     {
         demo_ = objServer_.add_unique_interface(demoObjectPath,
                                                 demoInterfaceName);
@@ -194,7 +194,6 @@ class Application
     }
 
   private:
-    boost::asio::io_context& ioc_;
     sdbusplus::asio::connection& bus_;
     sdbusplus::asio::object_server& objServer_;
 
@@ -218,7 +217,7 @@ int main(int, char**)
 
     bus->request_name(demoServiceName.c_str());
 
-    Application app(ioc, *bus, *objServer);
+    Application app(*bus, *objServer);
 
     boost::asio::post(ioc,
                       [&app] { app.asyncGetAllPropertiesStringTypeOnly(); });

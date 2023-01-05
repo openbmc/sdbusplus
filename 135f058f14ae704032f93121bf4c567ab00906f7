@@ -34,6 +34,24 @@
       "parentUuid": "aef8a39e_0644a07f",
       "revId": "135f058f14ae704032f93121bf4c567ab00906f7",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0df7168e_55d25fdc",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-01-05T17:08:14Z",
+      "side": 1,
+      "message": "\u003e uses of internal identifiers starting with two underscores\n\nWhat flag is causing this?  The stdexec library is written in the style of an internal library because their plan is to contribute it right into clang as soon as it is approved (ie. it uses a lot of __ purposefully).  We should probably turn that off for these headers.\n\n\u003e answer for folks not using this stuff yet\n\nMaybe.  I\u0027m concerned about this becoming a limiting factor of using it then, which is going to be pretty unfortunate.",
+      "parentUuid": "9b665aef_844bb243",
+      "revId": "135f058f14ae704032f93121bf4c567ab00906f7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

@@ -15,38 +15,15 @@
  */
 #pragma once
 
-#include <sdbusplus/async/stdexec/__detail/__config.hpp>
+#include "__config.hpp"
 
+#include <cassert>
 #include <exception>
 #include <type_traits>
 #include <utility>
 
-#ifdef STDEXEC_ASSERT
-#error                                                                         \
-    "Redefinition of STDEXEC_ASSERT is not permitted. Define STDEXEC_ASSERT_FN instead."
-#endif
-
-#define STDEXEC_ASSERT(_X)                                                     \
-    do                                                                         \
-    {                                                                          \
-        static_assert(noexcept(_X));                                           \
-        STDEXEC_ASSERT_FN(_X);                                                 \
-    } while (false)
-
-#ifndef STDEXEC_ASSERT_FN
-#define STDEXEC_ASSERT_FN stdexec::__stdexec_assert
-#endif
-
 namespace stdexec
 {
-
-inline constexpr void __stdexec_assert(bool valid)
-{
-    if (!valid)
-    {
-        std::terminate();
-    }
-}
 
 struct __
 {};
@@ -134,19 +111,38 @@ struct __q
     using __f = _Fn<_Args...>;
 };
 
-template <template <class> class _Fn>
+template <template <class...> class _Fn>
 struct __q1
 {
     template <class _Arg>
     using __f = _Fn<_Arg>;
 };
 
-template <template <class, class> class _Fn>
+template <template <class...> class _Fn>
 struct __q2
 {
     template <class _First, class _Second>
     using __f = _Fn<_First, _Second>;
 };
+
+template <template <class...> class _Fn>
+struct __q3
+{
+    template <class _First, class _Second, class _Third>
+    using __f = _Fn<_First, _Second, _Third>;
+};
+
+template <template <class...> class _T, std::size_t _Count>
+struct __qN;
+template <template <class...> class _T>
+struct __qN<_T, 1u> : __q1<_T>
+{};
+template <template <class...> class _T>
+struct __qN<_T, 2u> : __q2<_T>
+{};
+template <template <class...> class _T>
+struct __qN<_T, 3u> : __q3<_T>
+{};
 
 template <template <class...> class _Fn, class... _Front>
 struct __mbind_front_q
@@ -228,13 +224,6 @@ using __mbind_back2 = __mbind_back_q2<_Fn::template __f, _Back...>;
 template <class _Fn, class... _Back>
 using __mbind_back3 = __mbind_back_q3<_Fn::template __f, _Back...>;
 
-template <template <class, class, class> class _Fn>
-struct __q3
-{
-    template <class _First, class _Second, class _Third>
-    using __f = _Fn<_First, _Second, _Third>;
-};
-
 template <class _Fn, class... _Args>
 using __minvoke = typename _Fn::template __f<_Args...>;
 
@@ -272,6 +261,17 @@ concept __minvocable2 = __valid2<_Fn::template __f, _First, _Second>;
 template <class _Fn, class _First, class _Second, class _Third>
 concept __minvocable3 = __valid3<_Fn::template __f, _First, _Second, _Third>;
 
+template <bool>
+struct __make_dependent_
+{
+    template <class _Ty>
+    using __f = _Ty;
+};
+template <class _NonDependent, class _Dependent>
+using __make_dependent_on =
+    __minvoke<__make_dependent_<sizeof(__types<_Dependent>*) == 0>,
+              _NonDependent>;
+
 template <class _Fn, class _Default, class... _Args>
 struct __with_default_
 {
@@ -291,49 +291,11 @@ struct __with_default
     using __f = __t<__with_default_<_Fn, _Default, _Args...>>;
 };
 
-template <template <class...> class _T, class... _Args>
-    requires __valid<_T, _Args...>
-struct __defer_
-{
-    using __t = _T<_Args...>;
-};
-template <template <class...> class _T, class _A>
-    requires requires { typename _T<_A>; }
-struct __defer_<_T, _A>
-{
-    using __t = _T<_A>;
-};
-template <template <class...> class _T, class _A, class _B>
-    requires requires { typename _T<_A, _B>; }
-struct __defer_<_T, _A, _B>
-{
-    using __t = _T<_A, _B>;
-};
-template <template <class...> class _T, class _A, class _B, class _C>
-    requires requires { typename _T<_A, _B, _C>; }
-struct __defer_<_T, _A, _B, _C>
-{
-    using __t = _T<_A, _B, _C>;
-};
-template <template <class...> class _T, class _A, class _B, class _C, class _D>
-    requires requires { typename _T<_A, _B, _C, _D>; }
-struct __defer_<_T, _A, _B, _C, _D>
-{
-    using __t = _T<_A, _B, _C, _D>;
-};
-template <template <class...> class _T, class _A, class _B, class _C, class _D,
-          class _E>
-    requires requires { typename _T<_A, _B, _C, _D, _E>; }
-struct __defer_<_T, _A, _B, _C, _D, _E>
-{
-    using __t = _T<_A, _B, _C, _D, _E>;
-};
-
 template <template <class...> class _T>
-struct __defer
+struct __mdefer
 {
     template <class... _Args>
-    using __f = __t<__defer_<_T, _Args...>>;
+    using __f = __minvoke<__qN<_T, sizeof...(_Args)>, _Args...>;
 };
 
 template <class _T>
@@ -445,10 +407,20 @@ struct __curry
     using __f = __minvoke<_Fn, _Ts...>;
 };
 
+template <class _Fn, class _T>
+struct __uncurry_;
+template <class _Fn, template <class...> class _A, class... _As>
+    requires __minvocable<_Fn, _As...>
+struct __uncurry_<_Fn, _A<_As...>>
+{
+    using __t = __minvoke<_Fn, _As...>;
+};
 template <class _Fn>
-struct __uncurry : __concat<_Fn>
-{};
-
+struct __uncurry
+{
+    template <class _T>
+    using __f = __t<__uncurry_<_Fn, _T>>;
+};
 template <class _Fn, class _List>
 using __mapply = __minvoke<__uncurry<_Fn>, _List>;
 
@@ -563,22 +535,24 @@ using __member_t =
     decltype((__declval<_Self>().*__memptr<_Member>(__declval<_Self>())));
 
 template <class... _As>
-    requires(sizeof...(_As) != 0)
-struct __front;
+struct __front_;
 template <class _A, class... _As>
-struct __front<_A, _As...>
+struct __front_<_A, _As...>
 {
     using __t = _A;
 };
 template <class... _As>
+    requires(sizeof...(_As) != 0)
+using __front = __t<__front_<_As...>>;
+template <class... _As>
     requires(sizeof...(_As) == 1)
-using __single_t = __t<__front<_As...>>;
+using __single = __front<_As...>;
 template <class _Ty>
 struct __single_or
 {
     template <class... _As>
         requires(sizeof...(_As) <= 1)
-    using __f = __t<__front<_As..., _Ty>>;
+    using __f = __front<_As..., _Ty>;
 };
 
 template <class _Fun, class... _As>
@@ -657,8 +631,133 @@ using __mmake_index_sequence =
 template <class... _Ts>
 using __mindex_sequence_for = __mmake_index_sequence<sizeof...(_Ts)>;
 
+template <class _Fn, class _Continuation, class... _Args>
+struct __mfind_if_
+{
+    using __t = __minvoke<_Continuation, _Args...>;
+};
+template <class _Fn, class _Continuation, class _Head, class... _Tail>
+struct __mfind_if_<_Fn, _Continuation, _Head, _Tail...> :
+    __mfind_if_<_Fn, _Continuation, _Tail...>
+{};
+template <class _Fn, class _Continuation, class _Head, class... _Tail>
+    requires __v<__minvoke1<_Fn, _Head>>
+struct __mfind_if_<_Fn, _Continuation, _Head, _Tail...>
+{
+    using __t = __minvoke<_Continuation, _Head, _Tail...>;
+};
+template <class _Fn, class _Continuation = __q<__types>>
+struct __mfind_if
+{
+    template <class... _Args>
+    using __f = __t<__mfind_if_<_Fn, _Continuation, _Args...>>;
+};
+
+template <class _Fn>
+struct __mfind_if_i
+{
+    template <class... _Args>
+    using __f = __index<(sizeof...(_Args) -
+                         __v<__minvoke<__mfind_if<_Fn, __mcount>, _Args...>>)>;
+};
+
 template <class... _Bools>
 using __mand = __bool<(__v<_Bools> && ...)>;
 template <class... _Bools>
 using __mor = __bool<(__v<_Bools> || ...)>;
+template <class _Bool>
+using __mnot = __bool<!__v<_Bool>>;
+
+template <class _Fn>
+struct __mall_of
+{
+    template <class... _Args>
+    using __f = __mand<__minvoke1<_Fn, _Args>...>;
+};
+template <class _Fn>
+struct __mnone_of
+{
+    template <class... _Args>
+    using __f = __mand<__mnot<__minvoke1<_Fn, _Args>>...>;
+};
+template <class _Fn>
+struct __many_of
+{
+    template <class... _Args>
+    using __f = __mor<__minvoke1<_Fn, _Args>...>;
+};
+
+template <class _Ty>
+struct __mtypeof__
+{
+    using __t = _Ty;
+};
+template <class _Ty>
+using __mtypeof__t = __t<__mtypeof__<_Ty>>;
+template <class _Ret, class... _Args>
+    requires __callable<_Ret, __mtypeof__t<_Args>...>
+struct __mtypeof__<_Ret (*)(_Args...)>
+{
+    using __t = __call_result_t<_Ret, __mtypeof__t<_Args>...>;
+};
+template <class _Ty>
+struct __mtypeof_
+{};
+template <class _Ret, class... _Args>
+    requires __callable<_Ret, __mtypeof__t<_Args>...>
+struct __mtypeof_<_Ret(_Args...)>
+{
+    using __t = __call_result_t<_Ret, __mtypeof__t<_Args>...>;
+};
+template <class _Ty>
+using __mtypeof = __t<__mtypeof_<_Ty>>;
+
+template <class _Ty>
+using __mrequires = __bool<__valid1<__mtypeof, _Ty>>;
+template <class _Ty>
+concept __mrequires_v = __valid1<__mtypeof, _Ty>;
+
+template <class _Ty>
+inline constexpr bool __mnoexcept__ = true;
+template <class _Ret, class... _Args>
+    requires __callable<_Ret, __mtypeof__t<_Args>...>
+inline constexpr bool __mnoexcept__<_Ret (*)(_Args...)> =
+    (__mnoexcept__<_Args> && ...) &&
+    __nothrow_callable<_Ret, __mtypeof__t<_Args>...>;
+template <class _Ty>
+inline constexpr bool __mnoexcept_v = false;
+template <class _Ret, class... _Args>
+    requires __callable<_Ret, __mtypeof__t<_Args>...>
+inline constexpr bool __mnoexcept_v<_Ret(_Args...)> =
+    (__mnoexcept__<_Args> && ...) &&
+    __nothrow_callable<_Ret, __mtypeof__t<_Args>...>;
+template <class _Ty>
+using __mnoexcept = __bool<__mnoexcept_v<_Ty>>;
+
+template <class... _Sigs>
+struct __msignatures
+{
+    template <class _Continuation, class... _Extra>
+    using __f = __minvoke<_Continuation, _Sigs..., _Extra...>;
+};
+template <class _Signatures>
+using __many_well_formed =
+    __minvoke1<_Signatures, __many_of<__q1<__mrequires>>>;
+template <class _Signatures, class... _Extra>
+using __mwhich_t =
+    __minvoke<_Signatures, __mfind_if<__q1<__mrequires>, __q<__front>>,
+              _Extra...>;
+template <class _Signatures, class... _Extra>
+using __mwhich_i =
+    __index<(__v<__minvoke<_Signatures, __mcount, _Extra...>> -
+             __v<__minvoke<_Signatures, __mfind_if<__q1<__mrequires>, __mcount>,
+                           _Extra...>>)>;
+template <class _Ty, bool _Noexcept = true>
+struct __mconstruct
+{
+    template <class... _As>
+    auto operator()(_As&&... __as) const
+        noexcept(_Noexcept&& noexcept(_Ty((_As &&) __as...)))
+            -> decltype(_Ty((_As &&) __as...));
+};
 } // namespace stdexec

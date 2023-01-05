@@ -15,8 +15,8 @@
  */
 #pragma once
 
-#include <sdbusplus/async/stdexec/__detail/__meta.hpp>
-#include <sdbusplus/async/stdexec/concepts.hpp>
+#include "__detail/__meta.hpp"
+#include "concepts.hpp"
 
 #include <functional>
 
@@ -53,13 +53,14 @@ concept __nothrow_invocable = invocable<_F, _As...> &&
 template <auto _Fun>
 struct __fun_c_t
 {
+    using _FunT = decltype(_Fun);
     template <class... _Args>
-        requires __callable<decltype(_Fun), _Args...>
+        requires __callable<_FunT, _Args...>
     auto operator()(_Args&&... __args) const
-        noexcept(noexcept(((decltype(_Fun)&&)_Fun)((_Args &&) __args...)))
-            -> __call_result_t<decltype(_Fun), _Args...>
+        noexcept(noexcept(_Fun((_Args &&) __args...)))
+            -> __call_result_t<_FunT, _Args...>
     {
-        return ((decltype(_Fun)&&)_Fun)((_Args &&) __args...);
+        return _Fun((_Args &&) __args...);
     }
 };
 template <auto _Fun>
@@ -103,7 +104,7 @@ struct tag_invoke_result<_Tag, _Args...>
     using type = tag_invoke_result_t<_Tag, _Args...>;
 };
 
-struct __tag
+struct tag_invoke_t
 {
     template <class _Tag, class... _Args>
         requires tag_invocable<_Tag, _Args...>
@@ -116,7 +117,8 @@ struct __tag
 };
 } // namespace __tag_invoke
 
-inline constexpr __tag_invoke::__tag tag_invoke{};
+using __tag_invoke::tag_invoke_t;
+inline constexpr tag_invoke_t tag_invoke{};
 
 template <auto& _Tag>
 using tag_t = decay_t<decltype(_Tag)>;

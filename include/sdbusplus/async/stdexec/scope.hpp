@@ -15,7 +15,7 @@
  */
 #pragma once
 
-#include <sdbusplus/async/stdexec/__detail/__meta.hpp>
+#include "../stdexec/__detail/__meta.hpp"
 
 namespace exec
 {

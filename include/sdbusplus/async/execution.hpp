@@ -14,5 +14,5 @@
 // reference to any parts of it we use internally.
 namespace sdbusplus::async
 {
-namespace execution = std::execution;
+namespace execution = stdexec;
 }

@@ -17,7 +17,6 @@
 #pragma once
 
 #include <atomic>
-#include <cassert>
 #include <cstdint>
 #include <thread>
 #include <type_traits>
@@ -27,6 +26,9 @@
 #if __has_include(<stop_token>) && __cpp_lib_jthread >= 201911
 #include <stop_token>
 #endif
+
+#include "__detail/__config.hpp"
+#include "concepts.hpp"
 
 namespace stdexec
 {
@@ -275,8 +277,9 @@ inline void __in_place_stop_callback_base::__register_callback_() noexcept
 
 inline in_place_stop_source::~in_place_stop_source()
 {
-    assert((__state_.load(std::memory_order_relaxed) & __locked_flag_) == 0);
-    assert(__callbacks_ == nullptr);
+    STDEXEC_ASSERT(
+        (__state_.load(std::memory_order_relaxed) & __locked_flag_) == 0);
+    STDEXEC_ASSERT(__callbacks_ == nullptr);
 }
 
 inline bool in_place_stop_source::request_stop() noexcept

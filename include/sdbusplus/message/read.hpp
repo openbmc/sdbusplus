@@ -466,7 +466,7 @@ struct read_single<std::monostate>
 };
 
 template <typename T>
-static void tuple_item_read(sdbusplus::SdBusInterface* intf, sd_bus_message* m,
+void tuple_item_read(sdbusplus::SdBusInterface* intf, sd_bus_message* m,
                             T&& t)
 {
     sdbusplus::message::read(intf, m, t);

@@ -76,7 +76,8 @@ class connection : public sdbusplus::bus_t
      *         upon return and return
      *
      *  @param[in] m - A message ready to send
-     *  @param[in] token- The completion token to execute upon completion;
+     *  @param[in] token - The completion token to execute upon completion;
+     *  @param[in] timeout - The timeout in microseconds
      *
      */
     template <typename CompletionToken>
@@ -105,12 +106,8 @@ class connection : public sdbusplus::bus_t
      *  @param[in] method - The object's method to call.
      *  @param[in] timeout - The timeout for the method call in usec (0 results
      *                       in using the default value).
-     *  @param[in] a... - Optional parameters for the method call.
+     *  @param[in] a - Optional parameters for the method call.
      *
-     *  @return immediate return of the internal handler registration. The
-     *          result of the actual asynchronous call will get unpacked from
-     *          the message and passed into the handler when the call is
-     *          complete.
      */
     template <typename MessageHandler, typename... InputArgs>
     void async_method_call_timed(MessageHandler&& handler,
@@ -197,12 +194,8 @@ class connection : public sdbusplus::bus_t
      *  @param[in] objpath - The object's path for the call.
      *  @param[in] interf - The object's interface to call.
      *  @param[in] method - The object's method to call.
-     *  @param[in] a... - Optional parameters for the method call.
+     *  @param[in] a - Optional parameters for the method call.
      *
-     *  @return immediate return of the internal handler registration. The
-     *          result of the actual asynchronous call will get unpacked from
-     *          the message and passed into the handler when the call is
-     *          complete.
      */
     template <typename MessageHandler, typename... InputArgs>
     void async_method_call(MessageHandler&& handler, const std::string& service,
@@ -224,7 +217,7 @@ class connection : public sdbusplus::bus_t
      *  @param[in] objpath - The object's path for the call.
      *  @param[in] interf - The object's interface to call.
      *  @param[in] method - The object's method to call.
-     *  @param[in] a... - Optional parameters for the method call.
+     *  @param[in] a - Optional parameters for the method call.
      *
      *  @return Unpacked value of RetType
      */

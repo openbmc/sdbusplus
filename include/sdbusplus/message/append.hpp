@@ -27,7 +27,7 @@ inline void append(sdbusplus::SdBusInterface* /*intf*/, sd_bus_message* /*m*/)
 {}
 /** @brief Append data into an sdbus message.
  *
- *  @param[in] msg - The message to append to.
+ *  @param[in] m - The message to append to.
  *  @tparam Args - C++ types of arguments to append to message.
  *  @param[in] args - values to append to message.
  *
@@ -42,8 +42,7 @@ void append(sdbusplus::SdBusInterface* intf, sd_bus_message* m, Args&&... args);
 namespace details
 {
 
-/** @struct can_append_multiple
- *  @brief Utility to identify C++ types that may not be grouped into a
+/** @brief Utility to identify C++ types that may not be grouped into a
  *         single sd_bus_message_append call and instead need special
  *         handling.
  *
@@ -99,8 +98,7 @@ template <typename... Args>
 inline constexpr bool can_append_multiple_v =
     can_append_multiple<Args...>::value;
 
-/** @struct append_single
- *  @brief Utility to append a single C++ element into a sd_bus_message.
+/** @brief Utility to append a single C++ element into a sd_bus_message.
  *
  *  User-defined types are expected to specialize this template in order to
  *  get their functionality.

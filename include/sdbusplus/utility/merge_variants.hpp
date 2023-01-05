@@ -31,7 +31,7 @@ struct merge_variants
 
 /** Compute the merged variant type.
  *
- * @tparam D, Done - Head and tail of the alternative types list of the
+ * @tparam D - Done - Head and tail of the alternative types list of the
  * first variant.
  * @tparam Next - The types of the next variant<...> to be merged with the
  * first.

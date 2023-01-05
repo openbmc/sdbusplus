@@ -26,7 +26,7 @@ namespace types
  *  @brief Get a tuple containing the dbus type character(s) for a
  *         sequence of C++ types.
  *
- *  @tparam ...Args - Types to get the type_id sequence for.
+ *  @tparam Args - Types to get the type_id sequence for.
  *  @returns A tuple of characters representing the dbus types for ...Args.
  *
  *  The design uses a tuple because a tuple can, at compile-time, be easily
@@ -114,11 +114,10 @@ struct undefined_type_id
     static constexpr auto value = std::make_tuple();
 };
 
-/** @struct tuple_type_id
- *  @brief Special type indicating a tuple of dbus-type_id's.
+/** @brief Special type indicating a tuple of dbus-type_id's.
  *
  *  @tparam C1 - The first dbus type character character.
- *  @tparam ...C - The remaining sequence of dbus type characters.
+ *  @tparam C - The remaining sequence of dbus type characters.
  *
  *  A tuple_type_id must be one or more characters.  The C1 template param
  *  ensures at least one is present.
@@ -154,13 +153,12 @@ constexpr auto type_id_single();
  *         C++ types.
  *
  *  @tparam T - The first type to get the dbus type character(s) for.
- *  @tparam ...Args - The remaining types.
+ *  @tparam Args - The remaining types.
  */
 template <typename T, typename... Args>
 constexpr auto type_id_multiple();
 
-/** @struct type_id
- *  @brief Defined dbus type tuple for a C++ type.
+/** @brief Defined dbus type tuple for a C++ type.
  *
  *  @tparam T - C++ type.
  *

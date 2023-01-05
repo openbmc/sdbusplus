@@ -16,6 +16,24 @@
       "message": "Let me look into this.  The upstream library (stdexec) was primarily written with Clang and I contributed most of the fixes for GCC, so I\u0027m surprised it doesn\u0027t compile on Clang.  It\u0027s probably something I\u0027ve messed up in our repo.",
       "revId": "135f058f14ae704032f93121bf4c567ab00906f7",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9b665aef_844bb243",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2023-01-05T17:00:42Z",
+      "side": 1,
+      "message": "A lot of what\u0027s being warned on is #pragmas that are missing from clang (which it\u0027s weird clang looks for a gcc pragma) and uses of internal identifiers starting with two underscores.  There\u0027s some other little stuff that could be resolved, but this seemed like the easiest (albeit heavy handed) answer for folks not using this stuff yet.",
+      "parentUuid": "aef8a39e_0644a07f",
+      "revId": "135f058f14ae704032f93121bf4c567ab00906f7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

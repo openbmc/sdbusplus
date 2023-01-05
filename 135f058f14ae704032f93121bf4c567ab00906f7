@@ -52,6 +52,24 @@
       "parentUuid": "9b665aef_844bb243",
       "revId": "135f058f14ae704032f93121bf4c567ab00906f7",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "474ddbfe_967024fb",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2023-01-05T17:57:16Z",
+      "side": 1,
+      "message": "\u003e \u003e uses of internal identifiers starting with two underscores\n\u003e \n\u003e What flag is causing this?  The stdexec library is written in the style of an internal library because their plan is to contribute it right into clang as soon as it is approved (ie. it uses a lot of __ purposefully).  We should probably turn that off for these headers.\n\nhttps://clang.llvm.org/docs/DiagnosticsReference.html#wreserved-identifier\n\n\u003e \n\u003e \u003e answer for folks not using this stuff yet\n\u003e \n\u003e Maybe.  I\u0027m concerned about this becoming a limiting factor of using it then, which is going to be pretty unfortunate.\n\nWe can always iterate, or we can walk through and pragma out the warnings in all the headers that need it.  Up to you.",
+      "parentUuid": "0df7168e_55d25fdc",
+      "revId": "135f058f14ae704032f93121bf4c567ab00906f7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

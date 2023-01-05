@@ -20,13 +20,9 @@ if not python_bin.found()
   error('No valid python3 installation found')
 endif
 
-
 root_inc = include_directories('include')
 
 libsdbusplus_src = files(
-    'src/async/context.cpp',
-    'src/async/match.cpp',
-    'src/async/scope.cpp',
     'src/bus.cpp',
     'src/event.cpp',
     'src/exception.cpp',
@@ -35,6 +31,24 @@ libsdbusplus_src = files(
     'src/server/interface.cpp',
     'src/server/transaction.cpp',
 )
+
+cxx = meson.get_compiler('cpp')
+if cxx.get_id() == 'gcc'
+   libsdbusplus_src += files(
+    'src/async/context.cpp',
+    'src/async/match.cpp',
+    'src/async/scope.cpp',
+  )
+endif
+
+if (cxx.get_id() == 'clang')
+add_project_arguments(
+  cxx.get_supported_arguments([
+    '-Wno-gnu-zero-variadic-macro-arguments',
+    '-Wno-c99-extensions',
+  ]),
+  language:'cpp')
+endif
 
 libsdbusplus = library(
     'sdbusplus',

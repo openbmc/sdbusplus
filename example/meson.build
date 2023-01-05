@@ -32,11 +32,6 @@ executable(
     ],
 )
 
-executable(
-    'coroutine-example',
-    'coroutine-example.cpp',
-    dependencies: [ sdbusplus_dep ],
-)
 
 executable(
     'register-property',
@@ -55,20 +50,26 @@ generated_others = []
 subdir('gen')
 subdir('gen/net')
 
-executable(
-    'calculator-server',
-    'calculator-server.cpp',
-    generated_sources,
-    implicit_include_directories: false,
-    include_directories: include_directories('gen'),
-    dependencies: sdbusplus_dep,
-)
-
-executable(
-    'calculator-client',
-    'calculator-client.cpp',
-    generated_sources,
-    implicit_include_directories: false,
-    include_directories: include_directories('gen'),
-    dependencies: sdbusplus_dep,
-)
+if (cxx.get_id() != 'clang')
+  executable(
+      'coroutine-example',
+      'coroutine-example.cpp',
+      dependencies: [ sdbusplus_dep ],
+  )
+  executable(
+      'calculator-server',
+      'calculator-server.cpp',
+      generated_sources,
+      implicit_include_directories: false,
+      include_directories: include_directories('gen'),
+      dependencies: sdbusplus_dep,
+  )
+  executable(
+      'calculator-client',
+      'calculator-client.cpp',
+      generated_sources,
+      implicit_include_directories: false,
+      include_directories: include_directories('gen'),
+      dependencies: sdbusplus_dep,
+  )
+endif

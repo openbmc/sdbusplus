@@ -20,9 +20,6 @@ if not gtest_dep.found() or not gmock_dep.found()
 endif
 
 tests = [
-    'async/context',
-    'async/task',
-    'async/timer',
     'bus/exception',
     'bus/list_names',
     'bus/match',
@@ -38,6 +35,14 @@ tests = [
     'utility/tuple_to_array',
     'utility/type_traits',
 ]
+
+if (cxx.get_id() != 'clang')
+  tests += [
+    'async/context',
+    'async/task',
+    'async/timer',
+  ]
+endif
 
 foreach t : tests
     test(

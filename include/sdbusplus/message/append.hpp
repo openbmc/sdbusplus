@@ -337,8 +337,8 @@ struct append_single<std::variant<Args...>>
 };
 
 template <typename T>
-static void tuple_item_append(sdbusplus::SdBusInterface* intf,
-                              sd_bus_message* m, T&& t)
+void tuple_item_append(sdbusplus::SdBusInterface* intf, sd_bus_message* m,
+                       T&& t)
 {
     sdbusplus::message::append(intf, m, t);
 }

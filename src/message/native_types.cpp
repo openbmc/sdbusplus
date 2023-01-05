@@ -88,7 +88,7 @@ std::string string_path_wrapper::filename() const
         {
             return "";
         }
-        out.append(1, (ch << 4) | cl);
+        out.append(1, static_cast<char>((ch << 4) | cl));
         i += 2;
     }
     return out;

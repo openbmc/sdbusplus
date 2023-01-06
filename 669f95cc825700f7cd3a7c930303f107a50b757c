@@ -34,6 +34,24 @@
       "parentUuid": "1b8c562f_0bce0e80",
       "revId": "669f95cc825700f7cd3a7c930303f107a50b757c",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "af59f4bc_d3d9aae3",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2023-01-06T22:49:06Z",
+      "side": 1,
+      "message": "If there\u0027s no way to link against it because it\u0027s not in a header, why would someone want the symbols exposed?  I can disable the warning if you\u0027d rather, it just seemed less controversial than I thought, which is why I didn\u0027t add a huge explanation to the commit message.  Sorry for that.",
+      "parentUuid": "0699bd41_64e6845c",
+      "revId": "669f95cc825700f7cd3a7c930303f107a50b757c",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

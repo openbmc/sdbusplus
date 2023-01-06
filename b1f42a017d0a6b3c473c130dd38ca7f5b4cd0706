@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "37ff8808_7936018e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000188
+      },
+      "writtenOn": "2023-01-06T23:08:47Z",
+      "side": 1,
+      "message": "Why does it not default to `check: true`...",
+      "revId": "b1f42a017d0a6b3c473c130dd38ca7f5b4cd0706",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

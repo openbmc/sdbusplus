@@ -38,6 +38,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "a7217350_e29c63af",
+        "filename": "include/sdbusplus/message/append.hpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 228,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2023-01-06T00:35:59Z",
+      "side": 1,
+      "message": "This is gonna be a mess.  Everywhere that uses append needs an error propagated and handled, and some of those contexts (async) can\u0027t handle a throw, because it wouldn\u0027t call the callback.  Ok if I look at this in the future, or do you want it done now?",
+      "parentUuid": "5eecab3c_ff78815a",
+      "revId": "fcc826d81a493ea2b26c39c67e3d0832d78c10b7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "8637c442_62c8049b",
         "filename": "include/sdbusplus/message/append.hpp",
         "patchSetId": 4
@@ -67,6 +85,24 @@
       "side": 1,
       "message": "I coded this up pretty quick so we can compare.  I haven\u0027t tested it as well.",
       "parentUuid": "8637c442_62c8049b",
+      "revId": "fcc826d81a493ea2b26c39c67e3d0832d78c10b7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d1b885cd_80e92aec",
+        "filename": "include/sdbusplus/message/append.hpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 229,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2023-01-06T00:35:59Z",
+      "side": 1,
+      "message": "Figured out the gmock matcher stuff, which gets worse with iovec, but the actual code seems better.",
+      "parentUuid": "4d171190_44ab2729",
       "revId": "fcc826d81a493ea2b26c39c67e3d0832d78c10b7",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }

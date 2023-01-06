@@ -34,6 +34,24 @@
       "parentUuid": "63e78e16_c5aa922c",
       "revId": "de8406d2d55672bc98a28eacf841f9384e80423b",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9eba2f77_7067325e",
+        "filename": "tools/sdbus++-gen-meson",
+        "patchSetId": 1
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-01-06T23:05:39Z",
+      "side": 1,
+      "message": "The gen-meson is ran statically.  We increment the version to let other repositories with static ones know \"there is a new version of the meson generator\".  Most of them have something in CI that breaks if the meson stuff hasn\u0027t been updated.\n\nI\u0027m not sure if we want to force this one or not.  I\u0027d probably do it myself on PDI once this lands anyhow.  There are only a few other repos that have their own YAML (phosphor-logging is another).",
+      "parentUuid": "727a8ea7_6235077d",
+      "revId": "de8406d2d55672bc98a28eacf841f9384e80423b",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

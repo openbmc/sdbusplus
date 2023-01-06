@@ -52,6 +52,24 @@
       "parentUuid": "a8c9410b_976ae84e",
       "revId": "ba5281e4af8ce8193732b4887e8e05ecbb7caa41",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f392f050_e722dfd2",
+        "filename": "include/sdbusplus/server/object.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 206,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2023-01-06T23:00:20Z",
+      "side": 1,
+      "message": "Overall, it allows clang to pass with -Winconsistent-missing-override.  Yes, on destruction, this annotation is kind of useless, but does allow us to catch missing override keywords on non-destructors, so it seems (at least to me) that adding useless boilerplate to these was a good idea to get the benefit in other places.",
+      "parentUuid": "a8c9410b_976ae84e",
+      "revId": "ba5281e4af8ce8193732b4887e8e05ecbb7caa41",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

@@ -5,7 +5,7 @@
 #include <variant>
 #include <vector>
 
-auto startup(sdbusplus::async::context& ctx) -> sdbusplus::async::task<>
+static auto startup(sdbusplus::async::context& ctx) -> sdbusplus::async::task<>
 {
     // Create a proxy to the systemd manager object.
     constexpr auto systemd = sdbusplus::async::proxy()

@@ -15,15 +15,15 @@
 
 using variant = std::variant<int, std::string>;
 
-int foo(int test)
+static int foo(int test)
 {
     std::cout << "foo(" << test << ") -> " << (test + 1) << "\n";
     return ++test;
 }
 
 // called from coroutine context, can make yielding dbus calls
-int fooYield(boost::asio::yield_context yield,
-             std::shared_ptr<sdbusplus::asio::connection> conn, int test)
+static int fooYield(boost::asio::yield_context yield,
+                    std::shared_ptr<sdbusplus::asio::connection> conn, int test)
 {
     // fetch the real value from testFunction
     boost::system::error_code ec;
@@ -40,20 +40,20 @@ int fooYield(boost::asio::yield_context yield,
     return testCount;
 }
 
-int methodWithMessage(sdbusplus::message_t& /*m*/, int test)
+static int methodWithMessage(sdbusplus::message_t& /*m*/, int test)
 {
     std::cout << "methodWithMessage(m, " << test << ") -> " << (test + 1)
               << "\n";
     return ++test;
 }
 
-int voidBar(void)
+static int voidBar(void)
 {
     std::cout << "voidBar() -> 42\n";
     return 42;
 }
 
-void do_start_async_method_call_one(
+static void do_start_async_method_call_one(
     std::shared_ptr<sdbusplus::asio::connection> conn,
     boost::asio::yield_context yield)
 {
@@ -93,8 +93,9 @@ void do_start_async_method_call_one(
     }
 }
 
-void do_start_async_ipmi_call(std::shared_ptr<sdbusplus::asio::connection> conn,
-                              boost::asio::yield_context yield)
+static void
+    do_start_async_ipmi_call(std::shared_ptr<sdbusplus::asio::connection> conn,
+                             boost::asio::yield_context yield)
 {
     auto method = conn->new_method_call("xyz.openbmc_project.asio-test",
                                         "/xyz/openbmc_project/test",
@@ -132,9 +133,10 @@ void do_start_async_ipmi_call(std::shared_ptr<sdbusplus::asio::connection> conn,
     }
 }
 
-auto ipmiInterface(boost::asio::yield_context /*yield*/, uint8_t netFn,
-                   uint8_t lun, uint8_t cmd, std::vector<uint8_t>& /*data*/,
-                   const std::map<std::string, variant>& /*options*/)
+static auto ipmiInterface(boost::asio::yield_context /*yield*/, uint8_t netFn,
+                          uint8_t lun, uint8_t cmd,
+                          std::vector<uint8_t>& /*data*/,
+                          const std::map<std::string, variant>& /*options*/)
 {
     std::vector<uint8_t> reply = {1, 2, 3, 4};
     uint8_t cc = 0;
@@ -142,8 +144,9 @@ auto ipmiInterface(boost::asio::yield_context /*yield*/, uint8_t netFn,
     return std::make_tuple(uint8_t(netFn + 1), lun, cmd, cc, reply);
 }
 
-void do_start_async_to_yield(std::shared_ptr<sdbusplus::asio::connection> conn,
-                             boost::asio::yield_context yield)
+static void
+    do_start_async_to_yield(std::shared_ptr<sdbusplus::asio::connection> conn,
+                            boost::asio::yield_context yield)
 {
     boost::system::error_code ec;
     int testValue = 0;
@@ -191,7 +194,7 @@ void do_start_async_to_yield(std::shared_ptr<sdbusplus::asio::connection> conn,
     }
 }
 
-int server()
+static int server()
 {
     // setup connection to dbus
     boost::asio::io_context io;
@@ -266,7 +269,7 @@ int server()
     return 0;
 }
 
-int client()
+static int client()
 {
     using GetSubTreeType = std::vector<std::pair<
         std::string,

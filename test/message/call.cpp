@@ -13,20 +13,20 @@ namespace message
 
 using namespace std::literals::chrono_literals;
 
-std::string globalId;
+static std::string globalId;
 
-void setGlobalId(message&& m)
+static void setGlobalId(message&& m)
 {
     m.read(globalId);
 }
 
-message newBusIdReq(bus_t& b)
+static message newBusIdReq(bus_t& b)
 {
     return b.new_method_call("org.freedesktop.DBus", "/org/freedesktop/DBus",
                              "org.freedesktop.DBus", "GetId");
 }
 
-std::string syncBusId(bus_t& b)
+static std::string syncBusId(bus_t& b)
 {
     std::string ret;
     newBusIdReq(b).call().read(ret);

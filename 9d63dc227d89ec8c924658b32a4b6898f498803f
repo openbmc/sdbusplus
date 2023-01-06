@@ -16,6 +16,24 @@
       "message": ";)",
       "revId": "9d63dc227d89ec8c924658b32a4b6898f498803f",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0c2d78bc_0013afd6",
+        "filename": "test/gen/meson.build",
+        "patchSetId": 3
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2023-01-06T23:47:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7132f9c4_3359a58a",
+      "revId": "9d63dc227d89ec8c924658b32a4b6898f498803f",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

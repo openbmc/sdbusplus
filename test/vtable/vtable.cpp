@@ -49,14 +49,12 @@ constexpr bool operator==(const sd_bus_vtable& t1, const sd_bus_vtable& t2)
             // check it yet.
             // && t1.x.start.vtable_format_reference
             //      == t2.x.start.vtable_format_reference;
-            break;
         case _SD_BUS_VTABLE_END:
         {
             // The union x shall be all zeros for END
             constexpr uint8_t allZeors[sizeof(t1.x)] = {0};
             return memcmp(&t1.x, allZeors, sizeof(t1.x)) == 0 &&
                    memcmp(&t2.x, allZeors, sizeof(t2.x)) == 0;
-            break;
         }
         case _SD_BUS_VTABLE_METHOD:
             return strcmp(t1.x.method.member, t2.x.method.member) == 0 &&
@@ -65,12 +63,10 @@ constexpr bool operator==(const sd_bus_vtable& t1, const sd_bus_vtable& t2)
                    t1.x.method.handler == t2.x.method.handler &&
                    t1.x.method.offset == t2.x.method.offset &&
                    strcmp(t1.x.method.names, t2.x.method.names) == 0;
-            break;
         case _SD_BUS_VTABLE_SIGNAL:
             return strcmp(t1.x.signal.member, t2.x.signal.member) == 0 &&
                    strcmp(t1.x.signal.signature, t2.x.signal.signature) == 0 &&
                    strcmp(t1.x.signal.names, t2.x.signal.names) == 0;
-            break;
         case _SD_BUS_VTABLE_PROPERTY:
         case _SD_BUS_VTABLE_WRITABLE_PROPERTY:
             return strcmp(t1.x.property.member, t2.x.property.member) == 0 &&
@@ -79,7 +75,6 @@ constexpr bool operator==(const sd_bus_vtable& t1, const sd_bus_vtable& t2)
                    t1.x.property.get == t2.x.property.get &&
                    t1.x.property.set == t2.x.property.set &&
                    t1.x.property.offset == t2.x.property.offset;
-            break;
     }
     return false;
 }

@@ -104,8 +104,6 @@ int ${classname}::_callback_set_${property.name}(
         return o->_intf->sd_bus_error_set(error, e.name(), e.description());
     }
     % endfor
-
-    return true;
 }
 % endif
 

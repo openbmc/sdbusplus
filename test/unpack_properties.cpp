@@ -21,7 +21,8 @@ struct NonThrowingUnpack
     struct UnpackError
     {
         UnpackError(sdbusplus::UnpackErrorReason r, const std::string& p) :
-            reason(r), property(p){};
+            reason(r), property(p)
+        {}
         sdbusplus::UnpackErrorReason reason;
         std::string property;
     };

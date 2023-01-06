@@ -41,7 +41,7 @@ class ReadTest : public testing::Test
                                                          nullptr, nullptr,
                                                          nullptr, nullptr))
             .WillRepeatedly(Return(0));
-    };
+    }
 
     sdbusplus::message_t new_message()
     {

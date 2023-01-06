@@ -87,7 +87,7 @@ auto startup(sdbusplus::async::context& ctx) -> sdbusplus::async::task<>
         {
             std::cout << service << " released" << std::endl;
         }
-    };
+    }
 
     // We are all done, so shutdown the server.
     ctx.request_stop();

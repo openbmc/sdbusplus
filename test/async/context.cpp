@@ -4,7 +4,7 @@
 
 struct Context : public testing::Test
 {
-    ~Context() noexcept = default;
+    ~Context() noexcept override = default;
 
     void TearDown() override
     {

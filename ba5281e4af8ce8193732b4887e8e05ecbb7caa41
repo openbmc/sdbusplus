@@ -34,6 +34,24 @@
       "parentUuid": "8f9e41d1_3e8d9116",
       "revId": "ba5281e4af8ce8193732b4887e8e05ecbb7caa41",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5b796b31_323e41b3",
+        "filename": "include/sdbusplus/server/object.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 206,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-01-06T22:53:20Z",
+      "side": 1,
+      "message": "Every compiler already catches this with -Wall though.  Does adding override catch it more with no warnings?",
+      "parentUuid": "a8c9410b_976ae84e",
+      "revId": "ba5281e4af8ce8193732b4887e8e05ecbb7caa41",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

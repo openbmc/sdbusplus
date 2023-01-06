@@ -203,7 +203,7 @@ struct object :
         check_action(act);
     }
 
-    ~object()
+    ~object() override
     {
         if (__sdbusplus_server_object_signalstate != action::emit_no_signals)
         {

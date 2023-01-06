@@ -31,7 +31,7 @@ class TimerTest : public ::testing::Test
     }
 
     // Gets called as part of each TEST_F destruction
-    ~TimerTest()
+    ~TimerTest() override
     {
         events = sd_event_unref(events);
     }
@@ -74,7 +74,7 @@ class TimerTestCallBack : public ::testing::Test
     }
 
     // Gets called as part of each TEST_F destruction
-    ~TimerTestCallBack()
+    ~TimerTestCallBack() override
     {
         events = sd_event_unref(events);
     }

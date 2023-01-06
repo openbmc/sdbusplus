@@ -118,6 +118,7 @@ function meson_create_root() {
 sdbuspp_gen_meson_ver = run_command(
     sdbuspp_gen_meson_prog,
     '--version',
+    check: true,
 ).stdout().strip().split('\n')[0]
 
 if sdbuspp_gen_meson_ver != '${tool_version}'

@@ -56,6 +56,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "3669d136_fadcc38e",
+        "filename": "include/sdbusplus/message/append.hpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 228,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-01-06T16:51:48Z",
+      "side": 1,
+      "message": "Now that you\u0027ve switched to iovec, I don\u0027t need it done now.  My concern was primarily that you were ignoring the RC and then writing to a buffer that might not have been allocated.",
+      "parentUuid": "a7217350_e29c63af",
+      "revId": "fcc826d81a493ea2b26c39c67e3d0832d78c10b7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "8637c442_62c8049b",
         "filename": "include/sdbusplus/message/append.hpp",
         "patchSetId": 4

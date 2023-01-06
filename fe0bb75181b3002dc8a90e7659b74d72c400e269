@@ -63,6 +63,30 @@
       },
       "revId": "fe0bb75181b3002dc8a90e7659b74d72c400e269",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6747c0d3_0fb3d474",
+        "filename": "example/asio-example.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 309,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-01-06T23:03:39Z",
+      "side": 1,
+      "message": "Well, in this case the point of the \u0027static\u0027 is that the construction only ever happens once.  Since this is an example it probably doesn\u0027t matter that much.\n\nRe array.  Can\u0027t you have constexpr-vector with an initializer list now in C++20?",
+      "parentUuid": "a3db2922_8f12f291",
+      "range": {
+        "startLine": 308,
+        "startChar": 0,
+        "endLine": 309,
+        "endChar": 49
+      },
+      "revId": "fe0bb75181b3002dc8a90e7659b74d72c400e269",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

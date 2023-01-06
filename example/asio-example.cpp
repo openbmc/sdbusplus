@@ -115,7 +115,7 @@ static void
     {
         reply.read(tupleOut);
     }
-    catch (const sdbusplus::exception::SdBusError& e)
+    catch (const sdbusplus::exception::SdBusError&)
     {
         std::cerr << "failed to unpack; sig is " << reply.get_signature()
                   << "\n";
@@ -291,7 +291,7 @@ static int client()
             message intMsg = conn->call(readyMsg);
             intMsg.read(ready);
         }
-        catch (const sdbusplus::exception::SdBusError& e)
+        catch (const sdbusplus::exception::SdBusError&)
         {
             ready = 0;
             // pause to give the server a chance to start up
@@ -305,8 +305,8 @@ static int client()
                                       "xyz.openbmc_project.ObjectMapper",
                                       "GetSubTree");
 
-    static const auto depth = 2;
-    static const std::vector<std::string> interfaces = {
+    const auto depth = 2;
+    const std::vector<std::string> interfaces = {
         "xyz.openbmc_project.Sensor.Value"};
     mesg.append("/xyz/openbmc_project/Sensors", depth, interfaces);
 

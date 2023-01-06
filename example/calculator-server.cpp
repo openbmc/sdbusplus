@@ -72,6 +72,4 @@ int main()
 
     // Handle dbus processing forever.
     b.process_loop();
-
-    return 0;
 }

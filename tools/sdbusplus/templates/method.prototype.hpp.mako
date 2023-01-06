@@ -117,8 +117,6 @@ int ${interface_name()}::_callback_${ method.CamelCase }(
         return o->_intf->sd_bus_error_set(error, e.name(), e.description());
     }
     % endfor
-
-    return 0;
 }
 
 namespace details

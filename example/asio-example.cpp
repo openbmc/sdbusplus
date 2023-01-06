@@ -302,8 +302,8 @@ int client()
                                       "xyz.openbmc_project.ObjectMapper",
                                       "GetSubTree");
 
-    static const auto depth = 2;
-    static const std::vector<std::string> interfaces = {
+    int32_t depth = 2;
+    constexpr std::vector<std::string_view> interfaces{
         "xyz.openbmc_project.Sensor.Value"};
     mesg.append("/xyz/openbmc_project/Sensors", depth, interfaces);
 

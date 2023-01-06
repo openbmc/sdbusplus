@@ -16,6 +16,24 @@
       "message": "Destructors require override??  That doesn\u0027t really make sense to me.\n\nIt actually isn\u0027t even true that this function _is_ an override.  Yes, the class being inherited from has a virtual destructor, but this is a _separate_ virtual destructor.  *BOTH* of them run.",
       "revId": "ba5281e4af8ce8193732b4887e8e05ecbb7caa41",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a8c9410b_976ae84e",
+        "filename": "include/sdbusplus/server/object.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 206,
+      "author": {
+        "id": 1000188
+      },
+      "writtenOn": "2023-01-06T22:40:34Z",
+      "side": 1,
+      "message": "It\u0027s used to make sure that the base class has the destructor marked virtual, otherwise downcasted deletes would not execute the destructor correctly. If you don\u0027t specify override you won\u0027t get compile failures when the base isn\u0027t marked.",
+      "parentUuid": "8f9e41d1_3e8d9116",
+      "revId": "ba5281e4af8ce8193732b4887e8e05ecbb7caa41",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

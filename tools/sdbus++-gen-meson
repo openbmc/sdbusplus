@@ -36,7 +36,7 @@ EOF
 ## if a repository contains old copies of the generated meson.build files and
 ## needs an update.  We should increment the version number whenever the
 ## resulting meson.build would change.
-tool_version="sdbus++-gen-meson version 4"
+tool_version="sdbus++-gen-meson version 5"
 function show_version() {
     echo "${tool_version}"
 }
@@ -118,6 +118,7 @@ function meson_create_root() {
 sdbuspp_gen_meson_ver = run_command(
     sdbuspp_gen_meson_prog,
     '--version',
+    check: true,
 ).stdout().strip().split('\n')[0]
 
 if sdbuspp_gen_meson_ver != '${tool_version}'

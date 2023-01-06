@@ -11,7 +11,7 @@ namespace sdbusplus
 class SdBusMock : public SdBusInterface
 {
   public:
-    virtual ~SdBusMock(){};
+    virtual ~SdBusMock() override {}
 
     MOCK_METHOD(int, sd_bus_add_object_manager,
                 (sd_bus*, sd_bus_slot**, const char*), (override));

@@ -70,6 +70,24 @@
       "parentUuid": "af59f4bc_d3d9aae3",
       "revId": "669f95cc825700f7cd3a7c930303f107a50b757c",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "01d32804_569972f3",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2023-01-07T21:15:05Z",
+      "side": 1,
+      "message": "While I agree with your statement, it definitely isn\u0027t every function, only those that don\u0027t get used or defined outside the compile unit, which in most of these cases is the \"main\" file for the examples.\n\nlet me do some more research and see how much I really care.  You\u0027re right that this is a warning that has the potential to cause more boilerplate which isn\u0027t worth it compared to the bad design patterns it catches.",
+      "parentUuid": "4d60a04a_c5234051",
+      "revId": "669f95cc825700f7cd3a7c930303f107a50b757c",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

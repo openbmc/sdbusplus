@@ -300,12 +300,12 @@ inline bool in_place_stop_source::request_stop() noexcept
 
         __state_.store(__stop_requested_flag_, std::memory_order_release);
 
-        bool removed_during_callback = false;
-        __callbk->__removed_during_callback_ = &removed_during_callback;
+        bool __removed_during_callback = false;
+        __callbk->__removed_during_callback_ = &__removed_during_callback;
 
         __callbk->__execute();
 
-        if (!removed_during_callback)
+        if (!__removed_during_callback)
         {
             __callbk->__removed_during_callback_ = nullptr;
             __callbk->__callback_completed_.store(true,
@@ -415,12 +415,12 @@ inline void in_place_stop_source::__remove_callback_(
     }
     else
     {
-        auto notifying_thread = __notifying_thread_;
+        auto __notifying_thread = __notifying_thread_;
         __unlock_(__old_state);
 
         // Callback has either already been executed or is
         // currently executing on another thread.
-        if (std::this_thread::get_id() == notifying_thread)
+        if (std::this_thread::get_id() == __notifying_thread)
         {
             if (__callbk->__removed_during_callback_ != nullptr)
             {

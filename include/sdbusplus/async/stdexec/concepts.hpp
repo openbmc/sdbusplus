@@ -22,41 +22,45 @@
 #include <version>
 
 // Perhaps the stdlib lacks support for concepts though:
-#if __has_include(<concepts>) && __cpp_lib_concepts	>= 202002
+#if __has_include(<concepts>) && __cpp_lib_concepts >= 202002
+#define STDEXEC_HAS_STD_CONCEPTS_HEADER() 1
+#else
+#define STDEXEC_HAS_STD_CONCEPTS_HEADER() 0
+#endif
+
+#if STDEXEC_HAS_STD_CONCEPTS_HEADER()
 #include <concepts>
-namespace __std_concepts_polyfill
-{
-using std::constructible_from;
-using std::convertible_to;
-using std::copy_constructible;
-using std::derived_from;
-using std::destructible;
-using std::equality_comparable;
-using std::integral;
-using std::move_constructible;
-using std::same_as;
-} // namespace __std_concepts_polyfill
 #else
 #include <type_traits>
+#endif
 
-namespace __std_concepts_polyfill
+namespace stdexec::__std_concepts
 {
-// C++20 concepts
 #if defined(__clang__)
 template <class _A, class _B>
-concept same_as = __is_same(_A, _B) && __is_same(_B, _A);
+concept __same_as = __is_same(_A, _B);
 #elif defined(__GNUC__)
 template <class _A, class _B>
-concept same_as = __is_same_as(_A, _B) && __is_same_as(_B, _A);
+concept __same_as = __is_same_as(_A, _B);
 #else
 template <class _A, class _B>
-inline constexpr bool __same_as_v = false;
+inline constexpr bool __same_as = false;
 template <class _A>
-inline constexpr bool __same_as_v<_A, _A> = true;
-
-template <class _A, class _B>
-concept same_as = __same_as_v<_A, _B> && __same_as_v<_B, _A>;
+inline constexpr bool __same_as<_A, _A> = true;
 #endif
+
+// Make sure we're using a same_as concept that doesn't instantiate std::is_same
+template <class _A, class _B>
+concept same_as = __same_as<_A, _B> && __same_as<_B, _A>;
+
+#if STDEXEC_HAS_STD_CONCEPTS_HEADER()
+
+using std::convertible_to;
+using std::derived_from;
+using std::equality_comparable;
+using std::integral;
+
+#else
 
 template <class T>
 concept integral = std::is_integral_v<T>;
@@ -80,9 +84,69 @@ concept equality_comparable = requires(const std::remove_reference_t<_T>& __t) {
                                       __t != __t
                                       } -> convertible_to<bool>;
                               };
+#endif
+} // namespace stdexec::__std_concepts
 
+namespace stdexec
+{
+using namespace __std_concepts;
+using std::decay_t;
+
+// // TODO: this makes nvc++ sad. Find out why.
+// template <class _Ty>
+//   _Ty __decay__(const _Ty&);
+// template <class _Ty>
+//   _Ty* __decay__(_Ty*);
+
+// template <class _Ty>
+//   auto __decay_(_Ty&&(*__fn)()) -> decltype((__decay__)(__fn()));
+// template <class>
+//   void __decay_(...);
+
+// template <class _Ty>
+//   using decay_t = decltype((__decay_<_Ty>)(0));
+
+// C++20 concepts
+template <class _T, class _U>
+concept __decays_to = __same_as<decay_t<_T>, _U>;
+
+template <class...>
+concept __true = true;
+
+template <class _C>
+concept __class = __true<int _C::*> && (!__same_as<const _C, _C>);
+
+template <class _T, class... _As>
+concept __one_of = (__same_as<_T, _As> || ...);
+
+template <class _T, class... _Us>
+concept __all_of = (__same_as<_T, _Us> && ...);
+
+template <class _T, class... _Us>
+concept __none_of = ((!__same_as<_T, _Us>) && ...);
+
+// Not exactly right, but close.
 template <class _T>
-concept destructible = std::is_nothrow_destructible_v<_T>;
+concept __boolean_testable_ = convertible_to<_T, bool>;
+
+// Avoid using libstdc++'s object concepts because they instantiate a
+// lot of templates.
+template <class _Ty>
+inline constexpr bool __destructible_ =
+    requires {
+        {
+            ((_Ty && (*)() noexcept) nullptr)().~_Ty()
+        } noexcept;
+    };
+template <class _Ty>
+inline constexpr bool __destructible_<_Ty&> = true;
+template <class _Ty>
+inline constexpr bool __destructible_<_Ty&&> = true;
+template <class _Ty, std::size_t _N>
+inline constexpr bool __destructible_<_Ty[_N]> = __destructible_<_Ty>;
+
+template <class T>
+concept destructible = __destructible_<T>;
 
 #if __has_builtin(__is_constructible)
 template <class _T, class... _As>
@@ -98,37 +162,6 @@ concept move_constructible = constructible_from<_T, _T>;
 template <class _T>
 concept copy_constructible = move_constructible<_T> &&
                              constructible_from<_T, _T const&>;
-} // namespace __std_concepts_polyfill
-
-namespace std
-{
-using namespace __std_concepts_polyfill;
-}
-#endif
-
-namespace stdexec
-{
-using namespace __std_concepts_polyfill;
-using std::decay_t;
-
-template <class _T, class _U>
-concept __decays_to = same_as<decay_t<_T>, _U>;
-
-template <class _C>
-concept __class = std::is_class_v<_C> && __decays_to<_C, _C>;
-
-template <class _T, class... _As>
-concept __one_of = (same_as<_T, _As> || ...);
-
-template <class _T, class... _Us>
-concept __all_of = (same_as<_T, _Us> && ...);
-
-template <class _T, class... _Us>
-concept __none_of = ((!same_as<_T, _Us>) && ...);
-
-// Not exactly right, but close.
-template <class _T>
-concept __boolean_testable_ = convertible_to<_T, bool>;
 
 template <class _T>
 concept __movable_value = move_constructible<decay_t<_T>> &&
@@ -164,3 +197,10 @@ template <class _Ty>
 concept __nothrow_decay_copyable =
     __nothrow_constructible_from<decay_t<_Ty>, _Ty>;
 } // namespace stdexec
+
+#if !STDEXEC_HAS_STD_CONCEPTS_HEADER()
+namespace std
+{
+using namespace stdexec::__std_concepts;
+}
+#endif

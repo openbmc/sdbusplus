@@ -26,8 +26,8 @@
 #include <utility>
 #include <variant>
 
-_PRAGMA_PUSH()
-_PRAGMA_IGNORE("-Wundefined-inline")
+STDEXEC_PRAGMA_PUSH()
+STDEXEC_PRAGMA_IGNORE("-Wundefined-inline")
 
 namespace exec
 {
@@ -239,6 +239,8 @@ class basic_task
     struct __promise;
 
   public:
+    using __t = basic_task;
+    using __id = basic_task;
     using promise_type = __promise;
 
     basic_task(basic_task&& __that) noexcept :
@@ -347,7 +349,7 @@ class basic_task
 
     // Make this task awaitable within a particular context:
     template <class _ParentPromise>
-        requires std::constructible_from<
+        requires stdexec::constructible_from<
             awaiter_context_t<__promise, _ParentPromise>, __promise&,
             _ParentPromise&>
     friend __task_awaitable<_ParentPromise> tag_invoke(stdexec::as_awaitable_t,
@@ -369,7 +371,7 @@ class basic_task
     //   the resulting list to __qf<set_value_t>, which uses the list of types
     //   as arguments of a function type. In other words, set_value_t() if _Ty
     //   is void, and set_value_t(_Ty) otherwise.
-    using __set_value_sig_t = stdexec::__minvoke1<
+    using __set_value_sig_t = stdexec::__minvoke<
         stdexec::__remove<void, stdexec::__qf<stdexec::set_value_t>>, _Ty>;
 
     // Specify basic_task's completion signatures
@@ -405,4 +407,4 @@ template <class _Ty>
 using task = basic_task<_Ty, default_task_context<_Ty>>;
 } // namespace exec
 
-_PRAGMA_POP()
+STDEXEC_PRAGMA_POP()

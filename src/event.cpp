@@ -1,4 +1,5 @@
 #include <sys/eventfd.h>
+#include <unistd.h>
 
 #include <sdbusplus/event.hpp>
 #include <sdbusplus/exception.hpp>

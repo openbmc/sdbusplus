@@ -79,7 +79,10 @@ class __intrusive_queue<_Next>
     {
         STDEXEC_ASSERT(!empty());
         _Item* __item = std::exchange(__head_, __head_->*_Next);
-        if (__head_ == nullptr)
+        // This should test if __head_ == nullptr, but due to a bug in
+        // nvc++'s optimization, `__head_` isn't assigned until later.
+        // Filed as NVBug#3952534.
+        if (__item->*_Next == nullptr)
         {
             __tail_ = nullptr;
         }

@@ -18,19 +18,6 @@ ${ m.cpp_prototype(loader, interface=interface, ptype='callback-cpp-includes') }
 namespace sdbusplus::${interface.cppNamespace()}
 {
 
-    % if interface.properties:
-${classname}::${classname}(bus_t& bus, const char* path,
-                           const std::map<std::string, PropertiesVariant>& vals,
-                           bool skipSignal)
-        : ${classname}(bus, path)
-{
-    for (const auto& v : vals)
-    {
-        setPropertyByName(v.first, v.second, skipSignal);
-    }
-}
-
-    % endif
     % for m in interface.methods:
 ${ m.cpp_prototype(loader, interface=interface, ptype='callback-cpp') }
     % endfor

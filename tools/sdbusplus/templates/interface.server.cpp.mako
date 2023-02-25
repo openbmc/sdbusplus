@@ -14,18 +14,9 @@ ${ m.cpp_prototype(loader, interface=interface, ptype='callback-cpp-includes') }
 <%
     namespaces = interface.name.split('.')
     classname = namespaces.pop()
-
-    def interface_instance():
-        return "_".join(interface.name.split('.') + ['interface'])
 %>
 namespace sdbusplus::${interface.cppNamespace()}
 {
-
-${classname}::${classname}(bus_t& bus, const char* path)
-        : _${interface_instance()}(
-                bus, path, interface, _vtable, this), _intf(bus.getInterface())
-{
-}
 
     % if interface.properties:
 ${classname}::${classname}(bus_t& bus, const char* path,

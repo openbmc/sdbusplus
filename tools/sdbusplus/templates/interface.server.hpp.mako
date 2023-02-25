@@ -18,6 +18,9 @@ ${ m.cpp_prototype(loader, interface=interface, ptype='callback-hpp-includes') }
     def setOfPropertyTypes():
         return set(p.cppTypeParam(interface.name) for p in
                    interface.properties);
+
+    def interface_instance():
+        return "_".join(interface.name.split('.') + ['interface'])
 %>
 
 namespace sdbusplus::${interface.cppNamespace()}
@@ -46,7 +49,11 @@ class ${classname}
          *  @param[in] bus - Bus to attach to.
          *  @param[in] path - Path to attach at.
          */
-        ${classname}(bus_t& bus, const char* path);
+        ${classname}(bus_t& bus, const char* path) :
+            _${interface_instance()}(
+                bus, path, interface, _vtable, this),
+            _intf(bus.getInterface()) {}
+
 
     % for e in interface.enums:
         enum class ${e.name}

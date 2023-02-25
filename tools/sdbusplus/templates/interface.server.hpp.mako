@@ -9,7 +9,7 @@
 #include <systemd/sd-bus.h>
 #include <tuple>
 % for m in interface.methods + interface.properties + interface.signals:
-${ m.cpp_prototype(loader, interface=interface, ptype='callback-hpp-includes') }
+${ m.cpp_prototype(loader, interface=interface, ptype='callback-hpp-includes') }\
 % endfor
 <%
     namespaces = interface.namespaces
@@ -57,7 +57,6 @@ class ${classname}
                 bus, path, interface, _vtable, this),
             _intf(bus.getInterface()) {}
 
-
     % for e in interface.enums:
         enum class ${e.name}
         {
@@ -66,7 +65,7 @@ class ${classname}
         % endfor
         };
     % endfor
-
+\
     % if interface.properties:
         using PropertiesVariant = sdbusplus::utility::dedup_variant_t<
                 ${",\n                ".join(sorted(setOfPropertyTypes()))}>;
@@ -92,11 +91,11 @@ class ${classname}
     % for m in interface.methods:
 ${ m.cpp_prototype(loader, interface=interface, ptype='header') }
     % endfor
-
+\
     % for s in interface.signals:
 ${ s.cpp_prototype(loader, interface=interface, ptype='header') }
     % endfor
-
+\
     % for p in interface.properties:
         /** Get value of ${p.name} */
         virtual ${p.cppTypeParam(interface.name)} ${p.camelCase}() const;
@@ -163,7 +162,6 @@ ${p.camelCase}(${p.cppTypeParam(interface.name)} value);
             _${"_".join(interface.name.split('.'))}_interface.emit_removed();
         }
 
-
     private:
     % for m in interface.methods:
 ${ m.cpp_prototype(loader, interface=interface, ptype='callback-header') }
@@ -182,12 +180,10 @@ ${ m.cpp_prototype(loader, interface=interface, ptype='callback-header') }
         % endif
 
     % endfor
-
         static const vtable_t _vtable[];
         sdbusplus::server::interface_t
                 _${"_".join(interface.name.split('.'))}_interface;
-        sdbusplus::SdBusInterface *_intf;
-
+        sdbusplus::SdBusInterface* _intf;
     % for p in interface.properties:
         % if p.defaultValue is not None:
         ${p.cppTypeParam(interface.name)} _${p.camelCase} = \
@@ -198,6 +194,7 @@ ${p.defaultValue};
         % else:
         ${p.cppTypeParam(interface.name)} _${p.camelCase}{};
         % endif
+
     % endfor
 
 };

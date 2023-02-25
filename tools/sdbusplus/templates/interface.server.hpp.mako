@@ -29,6 +29,9 @@ namespace sdbusplus::${interface.cppNamespace()}
 class ${classname}
 {
     public:
+        static constexpr auto interface =
+                "${interface.name}";
+
         /* Define all of the basic class operations:
          *     Not allowed:
          *         - Default constructor to avoid nullptrs.
@@ -67,7 +70,6 @@ class ${classname}
     % if interface.properties:
         using PropertiesVariant = sdbusplus::utility::dedup_variant_t<
                 ${",\n                ".join(sorted(setOfPropertyTypes()))}>;
-
         /** @brief Constructor to initialize the object from a map of
          *         properties.
          *
@@ -77,7 +79,14 @@ class ${classname}
          */
         ${classname}(bus_t& bus, const char* path,
                      const std::map<std::string, PropertiesVariant>& vals,
-                     bool skipSignal = false);
+                     bool skipSignal = false) :
+            ${classname}(bus, path)
+        {
+            for (const auto& v : vals)
+            {
+                setPropertyByName(v.first, v.second, skipSignal);
+            }
+        }
 
     % endif
     % for m in interface.methods:
@@ -154,7 +163,6 @@ ${p.camelCase}(${p.cppTypeParam(interface.name)} value);
             _${"_".join(interface.name.split('.'))}_interface.emit_removed();
         }
 
-        static constexpr auto interface = "${interface.name}";
 
     private:
     % for m in interface.methods:

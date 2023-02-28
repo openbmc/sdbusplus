@@ -1,4 +1,4 @@
-#include <boost/asio/io_service.hpp>
+#include <boost/asio/io_context.hpp>
 #include <sdbusplus/asio/object_server.hpp>
 #include <sdbusplus/bus.hpp>
 
@@ -8,7 +8,7 @@ constexpr auto this_name = "xyz.openbmc_project.sdbusplus.test.Aio";
 
 TEST(AioTest, BasicTest)
 {
-    boost::asio::io_service io;
+    boost::asio::io_context io;
     auto systemBus = std::make_shared<sdbusplus::asio::connection>(io);
     EXPECT_NE(nullptr, systemBus);
 

@@ -108,7 +108,7 @@ class sd_event_wrapper
   private:
     void async_run()
     {
-        io.post([this]() { run(); });
+        boost::asio::post(io, [this]() { run(); });
     }
     void async_wait()
     {

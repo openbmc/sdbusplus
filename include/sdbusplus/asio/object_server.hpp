@@ -5,7 +5,6 @@
 // but by defining it here, warnings won't cause problems with a compile
 #define BOOST_COROUTINES_NO_DEPRECATION_WARNING
 #endif
-
 #include <boost/asio/spawn.hpp>
 #include <sdbusplus/asio/connection.hpp>
 #include <sdbusplus/exception.hpp>
@@ -16,36 +15,45 @@
 #include <sdbusplus/utility/type_traits.hpp>
 
 #include <any>
-#include <list>
 #include <optional>
 #include <set>
-#include <unordered_map>
+#include <utility>
+#include <vector>
 
 namespace sdbusplus
 {
 namespace asio
 {
 
-class callback
-{
-  public:
-    virtual ~callback() = default;
-    virtual int call(message_t& m) = 0;
-};
-
-enum class SetPropertyReturnValue : size_t
+enum class SetPropertyReturnValue
 {
     fail = 0,
     valueUpdated,
     sameValueUpdated,
 };
 
-class callback_set
+struct property_callback
 {
-  public:
-    virtual ~callback_set() = default;
-    virtual SetPropertyReturnValue call(message_t& m) = 0;
-    virtual SetPropertyReturnValue set(const std::any& value) = 0;
+    std::string name;
+    std::function<int(message_t&)> on_get;
+    std::function<SetPropertyReturnValue(message_t&)> on_set_message;
+    std::function<SetPropertyReturnValue(const std::any&)> on_set_value;
+    const char* signature;
+    decltype(vtable_t::flags) flags;
+};
+
+struct method_callback
+{
+    std::string name;
+    std::function<int(message_t&)> call;
+    const char* arg_signature;
+    const char* return_signature;
+};
+
+struct signal
+{
+    std::string name;
+    const char* signature;
 };
 
 template <typename T>
@@ -65,8 +73,7 @@ inline const bool SecondArgIsMessage_v = std::is_same_v<
     utility::get_first_arg_t<utility::strip_first_arg_t<
         utility::decay_tuple_t<boost::callable_traits::args_t<T>>>>,
     message_t>;
-template <typename T>
-static constexpr bool callbackYields = FirstArgIsYield_v<T>;
+
 template <typename T>
 static constexpr bool callbackWantsMessage = FirstArgIsMessage_v<T> ||
                                              SecondArgIsMessage_v<T>;
@@ -105,38 +112,30 @@ struct NonDbusArgsCount<std::tuple<FirstArg, OtherArgs...>>
 };
 } // namespace details
 
+template <typename InputArgs, typename Callback>
+void apply(message_t& m, InputArgs& inputArgs, Callback callback)
+{
+    using ResultType = boost::callable_traits::return_type_t<Callback>;
+    if constexpr (std::is_void_v<ResultType>)
+    {
+        std::apply(callback, inputArgs);
+    }
+    else
+    {
+        auto r = std::apply(callback, inputArgs);
+        m.append(r);
+    }
+}
+
 template <typename CallbackType>
-class callback_method_instance : public callback
+class callback_method_instance
 {
   public:
     callback_method_instance(CallbackType&& func) : func_(std::move(func)) {}
-    int call(message_t& m) override
+    int operator()(message_t& m)
     {
-        return expandCall(m);
-    }
-
-  private:
-    using CallbackSignature = boost::callable_traits::args_t<CallbackType>;
-    using InputTupleType = utility::decay_tuple_t<CallbackSignature>;
-    using ResultType = boost::callable_traits::return_type_t<CallbackType>;
-    CallbackType func_;
-
-    void callFunction(message_t& m, InputTupleType& inputArgs)
-    {
-        if constexpr (std::is_void_v<ResultType>)
-        {
-            std::apply(func_, inputArgs);
-        }
-        else
-        {
-            auto r = std::apply(func_, inputArgs);
-            m.append(r);
-        }
-    }
-
-    // optional message-first-argument callback
-    int expandCall(message_t& m)
-    {
+        using CallbackSignature = boost::callable_traits::args_t<CallbackType>;
+        using InputTupleType = utility::decay_tuple_t<CallbackSignature>;
         using DbusTupleType = utility::strip_first_n_args_t<
             details::NonDbusArgsCount<InputTupleType>::size(), InputTupleType>;
 
@@ -149,87 +148,46 @@ class callback_method_instance : public callback
         std::optional<InputTupleType> inputArgs;
         if constexpr (callbackWantsMessage<CallbackType>)
         {
-            inputArgs.emplace(
-                std::tuple_cat(std::forward_as_tuple(std::move(m)), dbusArgs));
+            InputTupleType inputArgs =
+                std::tuple_cat(std::forward_as_tuple(std::move(m)), dbusArgs);
+            apply(m, inputArgs, func_);
         }
         else
         {
-            inputArgs.emplace(dbusArgs);
+            apply(m, dbusArgs, func_);
         }
-        callFunction(ret, *inputArgs);
         ret.method_return();
         return 1;
     }
+
+  private:
+    CallbackType func_;
 };
 
 template <typename CallbackType>
-class coroutine_method_instance : public callback
+class coroutine_method_instance
 {
+    using self_t = coroutine_method_instance<CallbackType>;
+
   public:
     coroutine_method_instance(boost::asio::io_context& io,
                               CallbackType&& func) :
         io_(io),
         func_(std::move(func))
     {}
-    int call(message_t& m) override
+
+    int operator()(message_t& m)
     {
-        // make a copy of m to move into the coroutine
-        message_t b{m};
         // spawn off a new coroutine to handle the method call
-        boost::asio::spawn(
-            io_, [this, b = std::move(b)](boost::asio::yield_context yield) {
-                message_t mcpy{std::move(b)};
-                std::optional<message_t> err{};
-
-                try
-                {
-                    expandCall(yield, mcpy);
-                }
-                catch (const sdbusplus::exception::SdBusError& e)
-                {
-                    // Catch D-Bus error explicitly called by method handler
-                    err = mcpy.new_method_errno(e.get_errno(), e.get_error());
-                }
-                catch (const sdbusplus::exception_t& e)
-                {
-                    err = mcpy.new_method_error(e);
-                }
-                catch (...)
-                {
-                    err = mcpy.new_method_errno(-EIO);
-                }
-
-                if (err)
-                {
-                    err->method_return();
-                }
-            });
+        boost::asio::spawn(io_, std::bind_front(&self_t::after_spawn, this, m));
         return 1;
     }
 
   private:
-    using CallbackSignature = boost::callable_traits::args_t<CallbackType>;
-    using InputTupleType = utility::decay_tuple_t<CallbackSignature>;
-    using ResultType = boost::callable_traits::return_type_t<CallbackType>;
-    boost::asio::io_context& io_;
-    CallbackType func_;
-
-    void callFunction(message_t& m, InputTupleType& inputArgs)
+    void after_spawn(message_t m, boost::asio::yield_context yield)
     {
-        if constexpr (std::is_void_v<ResultType>)
-        {
-            std::apply(func_, inputArgs);
-        }
-        else
-        {
-            auto r = std::apply(func_, inputArgs);
-            m.append(r);
-        }
-    }
-
-    // co-routine body for call
-    void expandCall(boost::asio::yield_context yield, message_t& m)
-    {
+        using CallbackSignature = boost::callable_traits::args_t<CallbackType>;
+        using InputTupleType = utility::decay_tuple_t<CallbackSignature>;
         using DbusTupleType = utility::strip_first_n_args_t<
             details::NonDbusArgsCount<InputTupleType>::size(), InputTupleType>;
         DbusTupleType dbusArgs;
@@ -244,26 +202,48 @@ class coroutine_method_instance : public callback
             return;
         }
 
-        auto ret = m.new_method_return();
-        std::optional<InputTupleType> inputArgs;
-        if constexpr (callbackWantsMessage<CallbackType>)
+        try
         {
-            inputArgs.emplace(
-                std::tuple_cat(std::forward_as_tuple(std::move(yield)),
-                               std::forward_as_tuple(std::move(m)), dbusArgs));
+            auto ret = m.new_method_return();
+            if constexpr (callbackWantsMessage<CallbackType>)
+            {
+                InputTupleType inputArgs = std::tuple_cat(
+                    std::forward_as_tuple(std::move(yield)),
+                    std::forward_as_tuple(std::move(m)), dbusArgs);
+                apply(m, inputArgs, func_);
+            }
+            else
+            {
+                InputTupleType inputArgs = std::tuple_cat(
+                    std::forward_as_tuple(std::move(yield)), dbusArgs);
+                apply(m, inputArgs, func_);
+            }
+            ret.method_return();
         }
-        else
+        catch (const sdbusplus::exception::SdBusError& e)
         {
-            inputArgs.emplace(std::tuple_cat(
-                std::forward_as_tuple(std::move(yield)), dbusArgs));
+            // Catch D-Bus error explicitly called by method handler
+            message_t err = m.new_method_errno(e.get_errno(), e.get_error());
+            err.method_return();
         }
-        callFunction(ret, *inputArgs);
-        ret.method_return();
+        catch (const sdbusplus::exception_t& e)
+        {
+            message_t err = m.new_method_error(e);
+            err.method_return();
+        }
+        catch (...)
+        {
+            message_t err = m.new_method_errno(-EIO);
+            err.method_return();
+        }
     }
+
+    boost::asio::io_context& io_;
+    CallbackType func_;
 };
 
 template <typename PropertyType, typename CallbackType>
-class callback_get_instance : public callback
+class callback_get_instance
 {
   public:
     callback_get_instance(const std::shared_ptr<PropertyType>& value,
@@ -271,7 +251,7 @@ class callback_get_instance : public callback
         value_(value),
         func_(std::move(func))
     {}
-    int call(message_t& m) override
+    int operator()(message_t& m)
     {
         *value_ = func_(*value_);
         m.append(*value_);
@@ -283,44 +263,65 @@ class callback_get_instance : public callback
     CallbackType func_;
 };
 
-template <typename PropertyType, typename CallbackType>
-class callback_set_instance : public callback_set
+template <typename PropertyType>
+class callback_set_message_instance
 {
   public:
-    callback_set_instance(const std::shared_ptr<PropertyType>& value,
-                          CallbackType&& func) :
+    callback_set_message_instance(
+        const std::shared_ptr<PropertyType>& value,
+        std::function<bool(const PropertyType&, PropertyType&)> func) :
         value_(value),
         func_(std::move(func))
     {}
-    SetPropertyReturnValue call(message_t& m) override
+    SetPropertyReturnValue operator()(message_t& m)
     {
         PropertyType input;
         m.read(input);
-        return set_(input);
-    }
-    SetPropertyReturnValue set(const std::any& value) override
-    {
-        return set_(std::any_cast<PropertyType>(value));
-    }
-
-  private:
-    SetPropertyReturnValue set_(const PropertyType& newValue)
-    {
         PropertyType oldValue = *value_;
-        if (func_(newValue, *value_))
+        if (!func_(input, *value_))
         {
-            if (oldValue == *value_)
-            {
-                return SetPropertyReturnValue::sameValueUpdated;
-            }
-            return SetPropertyReturnValue::valueUpdated;
+            return SetPropertyReturnValue::fail;
         }
-        return SetPropertyReturnValue::fail;
+        if (oldValue == *value_)
+        {
+            return SetPropertyReturnValue::sameValueUpdated;
+        }
+        return SetPropertyReturnValue::valueUpdated;
     }
 
   private:
     std::shared_ptr<PropertyType> value_;
-    CallbackType func_;
+    std::function<bool(const PropertyType&, PropertyType&)> func_;
+};
+
+template <typename PropertyType>
+class callback_set_value_instance
+{
+  public:
+    callback_set_value_instance(
+        const std::shared_ptr<PropertyType>& value,
+        std::function<int(const PropertyType&, PropertyType&)> func) :
+        value_(value),
+        func_(std::move(func))
+    {}
+    SetPropertyReturnValue operator()(const std::any& value)
+    {
+        const PropertyType& newValue = std::any_cast<PropertyType>(value);
+        PropertyType oldValue = *value_;
+        if (!func_(newValue, *value_))
+        {
+            return SetPropertyReturnValue::fail;
+        }
+        if (oldValue == *value_)
+        {
+            return SetPropertyReturnValue::sameValueUpdated;
+        }
+        return SetPropertyReturnValue::valueUpdated;
+    }
+
+  private:
+    std::shared_ptr<PropertyType> value_;
+    std::function<int(const PropertyType&, PropertyType&)> func_;
 };
 
 enum class PropertyPermission
@@ -328,6 +329,20 @@ enum class PropertyPermission
     readOnly,
     readWrite
 };
+
+template <typename PropertyType>
+PropertyType nop_get_value(const PropertyType& value)
+{
+    return value;
+}
+
+template <typename PropertyType>
+bool nop_set_value(const PropertyType& req, PropertyType& old)
+{
+    old = req;
+    return true;
+}
+
 class dbus_interface
 {
   public:
@@ -336,9 +351,7 @@ class dbus_interface
         conn_(conn),
         path_(path), name_(name)
 
-    {
-        vtable_.emplace_back(vtable::start());
-    }
+    {}
     ~dbus_interface()
     {
         conn_->emit_interfaces_removed(path_.c_str(),
@@ -352,7 +365,7 @@ class dbus_interface
                              CallbackTypeGet&& getFunction)
     {
         // can only register once
-        if (initialized_)
+        if (is_initialized())
         {
             return false;
         }
@@ -363,22 +376,17 @@ class dbus_interface
         static const auto type =
             utility::tuple_to_array(message::types::type_id<PropertyType>());
 
-        auto nameItr = propertyNames_.emplace(propertyNames_.end(), name);
         auto propertyPtr = std::make_shared<PropertyType>(property);
 
-        callbacksGet_[name] = std::make_unique<
-            callback_get_instance<PropertyType, CallbackTypeGet>>(
-            propertyPtr, std::move(getFunction));
-        callbacksSet_[name] = std::make_unique<callback_set_instance<
-            PropertyType,
-            std::function<int(const PropertyType&, PropertyType&)>>>(
-            propertyPtr, [](const PropertyType& req, PropertyType& old) {
-                old = req;
-                return 1;
-            });
-
-        vtable_.emplace_back(vtable::property(nameItr->c_str(), type.data(),
-                                              get_handler, flags));
+        property_callbacks_.emplace_back(
+            name,
+            callback_get_instance<PropertyType, CallbackTypeGet>(
+                propertyPtr, std::move(getFunction)),
+            callback_set_message_instance<PropertyType>(
+                propertyPtr, nop_set_value<PropertyType>),
+            callback_set_value_instance<PropertyType>(
+                propertyPtr, nop_set_value<PropertyType>),
+            type.data(), flags);
 
         return true;
     }
@@ -401,7 +409,7 @@ class dbus_interface
                               CallbackTypeGet&& getFunction)
     {
         // can only register once
-        if (initialized_)
+        if (is_initialized())
         {
             return false;
         }
@@ -412,18 +420,18 @@ class dbus_interface
         static const auto type =
             utility::tuple_to_array(message::types::type_id<PropertyType>());
 
-        auto nameItr = propertyNames_.emplace(propertyNames_.end(), name);
         auto propertyPtr = std::make_shared<PropertyType>(property);
 
-        callbacksGet_[name] = std::make_unique<
-            callback_get_instance<PropertyType, CallbackTypeGet>>(
-            propertyPtr, std::move(getFunction));
-        callbacksSet_[name] = std::make_unique<
-            callback_set_instance<PropertyType, CallbackTypeSet>>(
-            propertyPtr, std::move(setFunction));
+        property_callbacks_.emplace_back(
+            name,
+            callback_get_instance<PropertyType, CallbackTypeGet>(
+                propertyPtr, std::move(getFunction)),
+            callback_set_message_instance<PropertyType>(propertyPtr,
+                                                        std::move(setFunction)),
+            callback_set_value_instance<PropertyType>(propertyPtr,
+                                                      std::move(setFunction)),
 
-        vtable_.emplace_back(vtable::property(nameItr->c_str(), type.data(),
-                                              get_handler, set_handler, flags));
+            type.data(), flags);
 
         return true;
     }
@@ -448,19 +456,15 @@ class dbus_interface
     {
         if (access == PropertyPermission::readOnly)
         {
-            return register_property_r(
-                name, property, vtable::property_::emits_change,
-                [](const PropertyType& value) { return value; });
+            return register_property_r(name, property,
+                                       vtable::property_::emits_change,
+                                       nop_get_value<PropertyType>);
         }
         else
         {
             return register_property_rw(
                 name, property, vtable::property_::emits_change,
-                [](const PropertyType& req, PropertyType& old) {
-                    old = req;
-                    return true;
-                },
-                [](const PropertyType& value) { return value; });
+                nop_set_value<PropertyType>, nop_get_value<PropertyType>);
         }
     }
 
@@ -470,10 +474,10 @@ class dbus_interface
                            const PropertyType& property,
                            CallbackTypeSet&& setFunction)
     {
-        return register_property_rw(
-            name, property, vtable::property_::emits_change,
-            std::forward<CallbackTypeSet>(setFunction),
-            [](const PropertyType& value) { return value; });
+        return register_property_rw(name, property,
+                                    vtable::property_::emits_change,
+                                    std::forward<CallbackTypeSet>(setFunction),
+                                    nop_get_value<PropertyType>);
     }
 
     // custom getter and setter, gets take an input of void and respond with a
@@ -494,14 +498,16 @@ class dbus_interface
     template <typename PropertyType, bool changesOnly = false>
     bool set_property(const std::string& name, const PropertyType& value)
     {
-        if (!initialized_)
+        if (is_initialized())
         {
             return false;
         }
-        auto func = callbacksSet_.find(name);
-        if (func != callbacksSet_.end())
+        auto func = std::find_if(
+            property_callbacks_.begin(), property_callbacks_.end(),
+            [&name](const auto& element) { return element.name == name; });
+        if (func != property_callbacks_.end())
         {
-            SetPropertyReturnValue status = func->second->set(value);
+            SetPropertyReturnValue status = func->on_set_value(value);
             if ((status == SetPropertyReturnValue::valueUpdated) ||
                 (status == SetPropertyReturnValue::sameValueUpdated))
             {
@@ -522,7 +528,7 @@ class dbus_interface
     template <typename... SignalSignature>
     bool register_signal(const std::string& name)
     {
-        if (initialized_)
+        if (is_initialized())
         {
             return false;
         }
@@ -534,8 +540,7 @@ class dbus_interface
         static constexpr auto signature = utility::tuple_to_array(
             message::types::type_id<SignalSignature...>());
 
-        const std::string& itr = methodOrSignalNames_.emplace_back(name);
-        vtable_.emplace_back(vtable::signal(itr.c_str(), signature.data()));
+        signals_.emplace_back(name, signature);
         return true;
     }
 
@@ -549,7 +554,7 @@ class dbus_interface
         using InputTupleType = utility::decay_tuple_t<CallbackSignature>;
         using ResultType = boost::callable_traits::return_type_t<CallbackType>;
 
-        if (initialized_)
+        if (is_initialized())
         {
             return false;
         }
@@ -558,23 +563,19 @@ class dbus_interface
         static const auto resultType =
             utility::tuple_to_array(message::types::type_id<ResultType>());
 
-        const std::string& nameItr = methodOrSignalNames_.emplace_back(name);
-
-        if constexpr (callbackYields<CallbackType>)
+        std::function<int(message_t&)> func;
+        if constexpr (FirstArgIsYield_v<CallbackType>)
         {
-            callbacksMethod_[name] =
-                std::make_unique<coroutine_method_instance<CallbackType>>(
-                    conn_->get_io_context(), std::move(handler));
+            func = coroutine_method_instance<CallbackType>(
+                conn_->get_io_context(), std::move(handler));
         }
         else
         {
-            callbacksMethod_[name] =
-                std::make_unique<callback_method_instance<CallbackType>>(
-                    std::move(handler));
+            func = callback_method_instance<CallbackType>(std::move(handler));
         }
+        method_callbacks_.emplace_back(name, std::move(func), argType.data(),
+                                       resultType.data());
 
-        vtable_.emplace_back(vtable::method(nameItr.c_str(), argType.data(),
-                                            resultType.data(), method_handler));
         return true;
     }
 
@@ -584,15 +585,19 @@ class dbus_interface
                            sd_bus_error* error)
     {
         dbus_interface* data = static_cast<dbus_interface*>(userdata);
-        auto func = data->callbacksGet_.find(property);
+        auto func = std::find_if(data->property_callbacks_.begin(),
+                                 data->property_callbacks_.end(),
+                                 [&property](const auto& element) {
+                                     return element.name == property;
+                                 });
         auto mesg = message_t(reply);
-        if (func != data->callbacksGet_.end())
+        if (func != data->property_callbacks_.end())
         {
 #ifdef __EXCEPTIONS
             try
             {
 #endif
-                return func->second->call(mesg);
+                return func->on_get(mesg);
 #ifdef __EXCEPTIONS
             }
 
@@ -616,15 +621,19 @@ class dbus_interface
                            sd_bus_error* error)
     {
         dbus_interface* data = static_cast<dbus_interface*>(userdata);
-        auto func = data->callbacksSet_.find(property);
+        auto func = std::find_if(data->property_callbacks_.begin(),
+                                 data->property_callbacks_.end(),
+                                 [property](const auto& element) {
+                                     return element.name == property;
+                                 });
         auto mesg = message_t(value);
-        if (func != data->callbacksSet_.end())
+        if (func != data->property_callbacks_.end())
         {
 #ifdef __EXCEPTIONS
             try
             {
 #endif
-                SetPropertyReturnValue status = func->second->call(mesg);
+                SetPropertyReturnValue status = func->on_set_message(mesg);
                 if ((status == SetPropertyReturnValue::valueUpdated) ||
                     (status == SetPropertyReturnValue::sameValueUpdated))
                 {
@@ -658,14 +667,17 @@ class dbus_interface
     {
         dbus_interface* data = static_cast<dbus_interface*>(userdata);
         auto mesg = message_t(m);
-        auto func = data->callbacksMethod_.find(mesg.get_member());
-        if (func != data->callbacksMethod_.end())
+        auto member = mesg.get_member();
+        auto func = std::find_if(
+            data->method_callbacks_.begin(), data->method_callbacks_.end(),
+            [&member](const auto& element) { return element.name == member; });
+        if (func != data->method_callbacks_.end())
         {
 #ifdef __EXCEPTIONS
             try
             {
 #endif
-                int status = func->second->call(mesg);
+                int status = func->call(mesg);
                 if (status == 1)
                 {
                     return status;
@@ -693,7 +705,7 @@ class dbus_interface
      */
     auto new_signal(const char* member)
     {
-        if (!initialized_)
+        if (!is_initialized())
         {
             return message_t(nullptr);
         }
@@ -703,12 +715,36 @@ class dbus_interface
     bool initialize(const bool skipPropertyChangedSignal = false)
     {
         // can only register once
-        if (initialized_)
+        if (is_initialized())
         {
             return false;
         }
-        initialized_ = true;
+        vtable_.reserve(2 + property_callbacks_.size() +
+                        method_callbacks_.size() + signals_.size());
+        vtable_.emplace_back(vtable::start());
+        property_callbacks_.shrink_to_fit();
+        for (const auto& element : property_callbacks_)
+        {
+            vtable_.emplace_back(vtable::property(element.name.c_str(),
+                                                  element.signature,
+                                                  get_handler, element.flags));
+        }
+        method_callbacks_.shrink_to_fit();
+        for (const auto& element : method_callbacks_)
+        {
+            vtable_.emplace_back(
+                vtable::method(element.name.c_str(), element.arg_signature,
+                               element.return_signature, method_handler));
+        }
+        signals_.shrink_to_fit();
+        for (const auto& element : signals_)
+        {
+            vtable_.emplace_back(
+                vtable::signal(element.name.c_str(), element.signature));
+        }
+
         vtable_.emplace_back(vtable::end());
+        vtable_.shrink_to_fit();
 
         interface_.emplace(static_cast<sdbusplus::bus_t&>(*conn_),
                            path_.c_str(), name_.c_str(),
@@ -718,9 +754,9 @@ class dbus_interface
                                      std::vector<std::string>{name_});
         if (!skipPropertyChangedSignal)
         {
-            for (const std::string& name : propertyNames_)
+            for (const auto& element : property_callbacks_)
             {
-                signal_property(name);
+                signal_property(element.name);
             }
         }
         return true;
@@ -728,12 +764,12 @@ class dbus_interface
 
     bool is_initialized()
     {
-        return initialized_;
+        return interface_.has_value();
     }
 
     bool signal_property(const std::string& name)
     {
-        if (!initialized_)
+        if (!is_initialized())
         {
             return false;
         }
@@ -755,23 +791,20 @@ class dbus_interface
     std::shared_ptr<sdbusplus::asio::connection> conn_;
     std::string path_;
     std::string name_;
-    std::list<std::string> propertyNames_;
-    std::list<std::string> methodOrSignalNames_;
-    std::unordered_map<std::string, std::unique_ptr<callback>> callbacksGet_;
-    std::unordered_map<std::string, std::unique_ptr<callback_set>>
-        callbacksSet_;
-    std::unordered_map<std::string, std::unique_ptr<callback>> callbacksMethod_;
+
+    std::vector<signal> signals_;
+    std::vector<property_callback> property_callbacks_;
+    std::vector<method_callback> method_callbacks_;
+
     std::vector<sd_bus_vtable> vtable_;
     std::optional<sdbusplus::server::interface_t> interface_;
-
-    bool initialized_ = false;
 };
 
 class object_server
 {
   public:
     object_server(const std::shared_ptr<sdbusplus::asio::connection>& conn,
-                  const bool skipManager = false) :
+                  bool skipManager = false) :
         conn_(conn)
     {
         if (!skipManager)

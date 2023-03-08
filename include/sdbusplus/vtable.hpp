@@ -83,7 +83,7 @@ constexpr vtable_t property(const char* member, const char* signature,
  * @param[in] flags - optional sdbusplus::vtable::property_ value.
  */
 constexpr vtable_t property_o(const char* member, const char* signature,
-                              size_t offset,
+                              sd_bus_property_get_t get, size_t offset,
                               decltype(vtable_t::flags) flags = 0);
 
 /** Create a SD_BUS_WRITABLE_PROPERTY entry.
@@ -95,6 +95,7 @@ constexpr vtable_t property_o(const char* member, const char* signature,
  * @param[in] flags - optional sdbusplus::vtable::property_ value.
  */
 constexpr vtable_t property_o(const char* member, const char* signature,
+                              sd_bus_property_get_t get,
                               sd_bus_property_set_t set, size_t offset,
                               decltype(vtable_t::flags) flags = 0);
 
@@ -168,16 +169,18 @@ constexpr vtable_t property(const char* member, const char* signature,
 }
 
 constexpr vtable_t property_o(const char* member, const char* signature,
-                              size_t offset, decltype(vtable_t::flags) flags)
+                              sd_bus_property_get_t get, size_t offset,
+                              decltype(vtable_t::flags) flags)
 {
-    return vtable_t SD_BUS_PROPERTY(member, signature, nullptr, offset, flags);
+    return vtable_t SD_BUS_PROPERTY(member, signature, get, offset, flags);
 }
 
 constexpr vtable_t property_o(const char* member, const char* signature,
+                              sd_bus_property_get_t get,
                               sd_bus_property_set_t set, size_t offset,
                               decltype(vtable_t::flags) flags)
 {
-    return vtable_t SD_BUS_WRITABLE_PROPERTY(member, signature, nullptr, set,
+    return vtable_t SD_BUS_WRITABLE_PROPERTY(member, signature, get, set,
                                              offset, flags);
 }
 

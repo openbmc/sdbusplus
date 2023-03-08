@@ -105,6 +105,21 @@ struct NonDbusArgsCount<std::tuple<FirstArg, OtherArgs...>>
 };
 } // namespace details
 
+template <typename InputArgs, typename Callback>
+void callFunction(message_t& m, InputArgs& inputArgs, Callback callback)
+{
+    using ResultType = boost::callable_traits::return_type_t<Callback>;
+    if constexpr (std::is_void_v<ResultType>)
+    {
+        std::apply(callback, inputArgs);
+    }
+    else
+    {
+        auto r = std::apply(callback, inputArgs);
+        m.append(r);
+    }
+}
+
 template <typename CallbackType>
 class callback_method_instance : public callback
 {
@@ -120,19 +135,6 @@ class callback_method_instance : public callback
     using InputTupleType = utility::decay_tuple_t<CallbackSignature>;
     using ResultType = boost::callable_traits::return_type_t<CallbackType>;
     CallbackType func_;
-
-    void callFunction(message_t& m, InputTupleType& inputArgs)
-    {
-        if constexpr (std::is_void_v<ResultType>)
-        {
-            std::apply(func_, inputArgs);
-        }
-        else
-        {
-            auto r = std::apply(func_, inputArgs);
-            m.append(r);
-        }
-    }
 
     // optional message-first-argument callback
     int expandCall(message_t& m)
@@ -156,7 +158,7 @@ class callback_method_instance : public callback
         {
             inputArgs.emplace(dbusArgs);
         }
-        callFunction(ret, *inputArgs);
+        callFunction(ret, *inputArgs, func_);
         ret.method_return();
         return 1;
     }
@@ -214,19 +216,6 @@ class coroutine_method_instance : public callback
     boost::asio::io_context& io_;
     CallbackType func_;
 
-    void callFunction(message_t& m, InputTupleType& inputArgs)
-    {
-        if constexpr (std::is_void_v<ResultType>)
-        {
-            std::apply(func_, inputArgs);
-        }
-        else
-        {
-            auto r = std::apply(func_, inputArgs);
-            m.append(r);
-        }
-    }
-
     // co-routine body for call
     void expandCall(boost::asio::yield_context yield, message_t& m)
     {
@@ -257,7 +246,7 @@ class coroutine_method_instance : public callback
             inputArgs.emplace(std::tuple_cat(
                 std::forward_as_tuple(std::move(yield)), dbusArgs));
         }
-        callFunction(ret, *inputArgs);
+        callFunction(ret, *inputArgs, func_);
         ret.method_return();
     }
 };

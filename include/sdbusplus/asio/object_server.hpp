@@ -65,8 +65,7 @@ inline const bool SecondArgIsMessage_v = std::is_same_v<
     utility::get_first_arg_t<utility::strip_first_arg_t<
         utility::decay_tuple_t<boost::callable_traits::args_t<T>>>>,
     message_t>;
-template <typename T>
-static constexpr bool callbackYields = FirstArgIsYield_v<T>;
+
 template <typename T>
 static constexpr bool callbackWantsMessage = FirstArgIsMessage_v<T> ||
                                              SecondArgIsMessage_v<T>;
@@ -549,7 +548,7 @@ class dbus_interface
 
         const std::string& nameItr = methodOrSignalNames_.emplace_back(name);
 
-        if constexpr (callbackYields<CallbackType>)
+        if constexpr (FirstArgIsYield_v<CallbackType>)
         {
             callbacksMethod_[name] =
                 std::make_unique<coroutine_method_instance<CallbackType>>(

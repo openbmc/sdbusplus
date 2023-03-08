@@ -4,19 +4,7 @@ executable(
     dependencies: sdbusplus_dep,
 )
 
-has_asio = meson.get_compiler('cpp').has_header_symbol(
-  'boost/asio.hpp',
-  'boost::asio::io_context',
-  required: false)
-asio_dep = sdbusplus_dep
-if not has_asio
   asio_dep = disabler()
-endif
-
-assert(
-    not get_option('examples').enabled() or has_asio,
-    'Boost is required when examples are enabled'
-)
 
 executable(
     'asio-example',

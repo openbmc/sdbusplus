@@ -33,7 +33,7 @@ class callback
     virtual int call(message_t& m) = 0;
 };
 
-enum class SetPropertyReturnValue : size_t
+enum class SetPropertyReturnValue
 {
     fail = 0,
     valueUpdated,

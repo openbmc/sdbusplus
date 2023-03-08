@@ -24,7 +24,7 @@ static const sdbusplus::vtable_t example[] = {
     sdbusplus::vtable::property("7", "8", &test_get,
                                 sdbusplus::vtable::property_::const_),
     sdbusplus::vtable::property("10", "11", &test_get, &test_set),
-    sdbusplus::vtable::property_o("14", "15", 16),
+    sdbusplus::vtable::property_o("14", "15", &test_get, 16),
     sdbusplus::vtable::end()};
 
 TEST(VtableTest, SameSize)

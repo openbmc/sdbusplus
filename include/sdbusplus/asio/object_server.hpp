@@ -352,7 +352,7 @@ class dbus_interface
                              CallbackTypeGet&& getFunction)
     {
         // can only register once
-        if (initialized_)
+        if (is_initialized())
         {
             return false;
         }
@@ -401,7 +401,7 @@ class dbus_interface
                               CallbackTypeGet&& getFunction)
     {
         // can only register once
-        if (initialized_)
+        if (is_initialized())
         {
             return false;
         }
@@ -494,7 +494,7 @@ class dbus_interface
     template <typename PropertyType, bool changesOnly = false>
     bool set_property(const std::string& name, const PropertyType& value)
     {
-        if (!initialized_)
+        if (!is_initialized())
         {
             return false;
         }
@@ -522,7 +522,7 @@ class dbus_interface
     template <typename... SignalSignature>
     bool register_signal(const std::string& name)
     {
-        if (initialized_)
+        if (is_initialized())
         {
             return false;
         }
@@ -549,7 +549,7 @@ class dbus_interface
         using InputTupleType = utility::decay_tuple_t<CallbackSignature>;
         using ResultType = boost::callable_traits::return_type_t<CallbackType>;
 
-        if (initialized_)
+        if (is_initialized())
         {
             return false;
         }
@@ -693,7 +693,7 @@ class dbus_interface
      */
     auto new_signal(const char* member)
     {
-        if (!initialized_)
+        if (is_initialized())
         {
             return message_t(nullptr);
         }
@@ -703,11 +703,10 @@ class dbus_interface
     bool initialize(const bool skipPropertyChangedSignal = false)
     {
         // can only register once
-        if (initialized_)
+        if (is_initialized())
         {
             return false;
         }
-        initialized_ = true;
         vtable_.emplace_back(vtable::end());
 
         interface_.emplace(static_cast<sdbusplus::bus_t&>(*conn_),
@@ -728,12 +727,12 @@ class dbus_interface
 
     bool is_initialized()
     {
-        return initialized_;
+        return interface_.has_value();
     }
 
     bool signal_property(const std::string& name)
     {
-        if (!initialized_)
+        if (!is_initialized())
         {
             return false;
         }
@@ -763,8 +762,6 @@ class dbus_interface
     std::unordered_map<std::string, std::unique_ptr<callback>> callbacksMethod_;
     std::vector<sd_bus_vtable> vtable_;
     std::optional<sdbusplus::server::interface_t> interface_;
-
-    bool initialized_ = false;
 };
 
 class object_server

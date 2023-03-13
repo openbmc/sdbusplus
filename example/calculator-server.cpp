@@ -3,6 +3,7 @@
 #include <net/poettering/Calculator/server.hpp>
 #include <sdbusplus/server.hpp>
 
+#include <cstdlib>
 #include <iostream>
 #include <string_view>
 
@@ -42,10 +43,7 @@ struct Calculator : Calculator_inherit
     /** Clear lastResult, broadcast 'Cleared' signal */
     void clear() override
     {
-        auto v = lastResult();
-        lastResult(0);
-        cleared(v);
-        return;
+        throw std::runtime_error{"A propagating exception"};
     }
 };
 
@@ -71,5 +69,13 @@ int main()
     Calculator c1{b, path};
 
     // Handle dbus processing forever.
-    b.process_loop();
+    try
+    {
+        b.process_loop();
+    }
+    catch (const std::exception& e)
+    {
+        std::cerr << "Terminating due to a fatal condition: " << e.what() << std::endl;
+        return EXIT_FAILURE;
+    }
 }

@@ -9,6 +9,7 @@
 
 #include <algorithm>
 #include <climits>
+#include <exception>
 #include <memory>
 #include <optional>
 #include <string>
@@ -194,6 +195,11 @@ struct bus
     {
         sd_bus_message* m = nullptr;
         int r = _intf->sd_bus_process(_bus.get(), &m);
+        if (current_exception)
+        {
+            auto ex = std::exchange(current_exception, nullptr);
+            std::rethrow_exception(ex);
+        }
         if (r < 0)
         {
             throw exception::SdBusError(-r, "sd_bus_process");
@@ -207,6 +213,11 @@ struct bus
     auto process_discard()
     {
         int r = _intf->sd_bus_process(_bus.get(), nullptr);
+        if (current_exception)
+        {
+            auto ex = std::exchange(current_exception, nullptr);
+            std::rethrow_exception(ex);
+        }
         if (r < 0)
         {
             throw exception::SdBusError(-r, "sd_bus_process discard");
@@ -477,6 +488,11 @@ struct bus
         return _intf;
     }
 
+    void set_current_exception(std::exception_ptr exception)
+    {
+        current_exception = exception;
+    }
+
     friend struct details::bus_friend;
 
   protected:
@@ -486,6 +502,9 @@ struct bus
     }
     sdbusplus::SdBusInterface* _intf;
     details::bus _bus;
+
+  private:
+    std::exception_ptr current_exception;
 };
 
 inline bus::bus(busp_t b, sdbusplus::SdBusInterface* intf) :

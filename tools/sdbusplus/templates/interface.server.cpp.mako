@@ -1,3 +1,4 @@
+#include <exception>
 #include <map>
 #include <sdbusplus/sdbus.hpp>
 #include <sdbusplus/sdbuspp_support/server.hpp>

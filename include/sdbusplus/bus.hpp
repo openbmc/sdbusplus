@@ -194,6 +194,10 @@ struct bus
     {
         sd_bus_message* m = nullptr;
         int r = _intf->sd_bus_process(_bus.get(), &m);
+        if (_intf->get_current_exception())
+        {
+            std::rethrow_exception(_intf->get_current_exception());
+        }
         if (r < 0)
         {
             throw exception::SdBusError(-r, "sd_bus_process");
@@ -207,6 +211,10 @@ struct bus
     auto process_discard()
     {
         int r = _intf->sd_bus_process(_bus.get(), nullptr);
+        if (_intf->get_current_exception())
+        {
+            std::rethrow_exception(_intf->get_current_exception());
+        }
         if (r < 0)
         {
             throw exception::SdBusError(-r, "sd_bus_process discard");

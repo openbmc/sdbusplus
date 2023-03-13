@@ -23,6 +23,7 @@ tests = [
     'async/context',
     'async/task',
     'async/timer',
+    'bus/exception',
     'bus/list_names',
     'bus/match',
     'event/event',

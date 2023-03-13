@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <exception>
 #include <map>
 #include <sdbusplus/exception.hpp>
 #include <sdbusplus/sdbus.hpp>

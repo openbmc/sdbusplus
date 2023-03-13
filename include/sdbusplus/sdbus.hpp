@@ -3,6 +3,7 @@
 #include <systemd/sd-bus.h>
 
 #include <chrono>
+#include <exception>
 
 // ABC for sdbus implementation.
 namespace sdbusplus
@@ -171,6 +172,10 @@ class SdBusInterface
     virtual int sd_bus_is_open(sd_bus* bus) = 0;
 
     virtual int sd_bus_wait(sd_bus* bus, uint64_t timeout_usec) = 0;
+
+    virtual void set_current_exception(std::exception_ptr current) = 0;
+
+    virtual std::exception_ptr get_current_exception() const = 0;
 };
 
 class SdBusImpl : public SdBusInterface
@@ -553,6 +558,19 @@ class SdBusImpl : public SdBusInterface
     {
         return ::sd_bus_wait(bus, timeout_usec);
     }
+
+    void set_current_exception(std::exception_ptr exception) override
+    {
+        current_exception = exception;
+    }
+
+    std::exception_ptr get_current_exception() const override
+    {
+        return current_exception;
+    }
+
+  private:
+    std::exception_ptr current_exception;
 };
 
 extern SdBusImpl sdbus_impl;

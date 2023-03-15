@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "08f852da_fe486f13",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-03-15T22:17:44Z",
+      "side": 1,
+      "message": "Callback\u0026 ?  Otherwise we\u0027re potentially making copies of the function from `func_` right?",
+      "range": {
+        "startLine": 109,
+        "startChar": 54,
+        "endLine": 109,
+        "endChar": 63
+      },
+      "revId": "4edc52454ee998a00e51f78095d4860590c87b97",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

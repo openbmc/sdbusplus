@@ -116,6 +116,24 @@
       "parentUuid": "e8d44f2d_2a313fe9",
       "revId": "471da17b337a7966eca4e0e310276e0808eac8b9",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3f3a4e4e_cf646fe4",
+        "filename": "include/sdbusplus/vtable.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-03-16T17:00:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c6680869_46268b75",
+      "revId": "471da17b337a7966eca4e0e310276e0808eac8b9",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

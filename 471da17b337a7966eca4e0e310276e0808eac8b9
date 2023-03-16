@@ -24,6 +24,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "3ae37094_578db905",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2023-03-16T16:39:06Z",
+      "side": 1,
+      "message": "Fixed the commit message.",
+      "parentUuid": "ebd3d758_c4441db3",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 8
+      },
+      "revId": "471da17b337a7966eca4e0e310276e0808eac8b9",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "3226ee53_bab37eaa",
@@ -41,6 +65,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "3baeeaad_2e7a0c66",
+        "filename": "include/sdbusplus/vtable.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2023-03-16T16:39:06Z",
+      "side": 1,
+      "message": "Added the docstring.",
+      "parentUuid": "3226ee53_bab37eaa",
+      "revId": "471da17b337a7966eca4e0e310276e0808eac8b9",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e8d44f2d_2a313fe9",
@@ -54,6 +96,24 @@
       "writtenOn": "2023-03-15T22:25:57Z",
       "side": 1,
       "message": "So, this was partially intended as is, but it turns out nobody is using it so I have no concerns with changing it.\n\n```\nThe setter and getter methods may be omitted (specified as NULL), if the property is one of the\nbasic types or \"as\" in case of read-only properties. In those cases, the userdata and offset\nparameters must together point to a valid variable of the corresponding type. A default setter and\ngetter will be provided, which simply copy the argument between this variable and the message.\n```\n\nThe intention was someone would use property_o if they wanted just the default property handler from sd-bus.  We don\u0027t use that anywhere though and it probably should have had a different name.",
+      "revId": "471da17b337a7966eca4e0e310276e0808eac8b9",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c6680869_46268b75",
+        "filename": "include/sdbusplus/vtable.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2023-03-16T16:39:06Z",
+      "side": 1,
+      "message": "Gotcha.  I guess a set only property kinda makes sense then.  Agreed, if we add it back, it should have a different name.",
+      "parentUuid": "e8d44f2d_2a313fe9",
       "revId": "471da17b337a7966eca4e0e310276e0808eac8b9",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }

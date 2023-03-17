@@ -1,10 +1,4 @@
 <%
-    namespaces = interface.name.split('.')
-    classname = namespaces.pop()
-
-    def interface_instance():
-        return "_".join(interface.name.split('.') + ['interface'])
-
     def error_namespace(e):
         n = e.split('.');
         n.pop(); # Remove error name.
@@ -21,18 +15,18 @@
         return '/'.join(l) + '/error.hpp';
 %>
 % if ptype == 'callback-cpp':
-auto ${classname}::${property.camelCase}() const ->
+auto ${interface.classname}::${property.camelCase}() const ->
         ${property.cppTypeParam(interface.name)}
 {
     return _${property.camelCase};
 }
 
-int ${classname}::_callback_get_${property.name}(
+int ${interface.classname}::_callback_get_${property.name}(
         sd_bus* /*bus*/, const char* /*path*/, const char* /*interface*/,
         const char* /*property*/, sd_bus_message* reply, void* context,
         sd_bus_error* error)
 {
-    auto o = static_cast<${classname}*>(context);
+    auto o = static_cast<${interface.classname}*>(context);
 
     % if property.errors:
     try
@@ -55,7 +49,7 @@ int ${classname}::_callback_get_${property.name}(
     % endfor
 }
 
-auto ${classname}::${property.camelCase}(${property.cppTypeParam(interface.name)} value,
+auto ${interface.classname}::${property.camelCase}(${property.cppTypeParam(interface.name)} value,
                                          bool skipSignal) ->
         ${property.cppTypeParam(interface.name)}
 {
@@ -64,26 +58,26 @@ auto ${classname}::${property.camelCase}(${property.cppTypeParam(interface.name)
         _${property.camelCase} = value;
         if (!skipSignal)
         {
-            _${interface_instance()}.property_changed("${property.name}");
+            _${interface.joinedName("_", "interface")}.property_changed("${property.name}");
         }
     }
 
     return _${property.camelCase};
 }
 
-auto ${classname}::${property.camelCase}(${property.cppTypeParam(interface.name)} val) ->
+auto ${interface.classname}::${property.camelCase}(${property.cppTypeParam(interface.name)} val) ->
         ${property.cppTypeParam(interface.name)}
 {
     return ${property.camelCase}(val, false);
 }
 
 % if 'const' not in property.flags and 'readonly' not in property.flags:
-int ${classname}::_callback_set_${property.name}(
+int ${interface.classname}::_callback_set_${property.name}(
         sd_bus* /*bus*/, const char* /*path*/, const char* /*interface*/,
         const char* /*property*/, sd_bus_message* value, void* context,
         sd_bus_error* error)
 {
-    auto o = static_cast<${classname}*>(context);
+    auto o = static_cast<${interface.classname}*>(context);
 
     % if property.errors:
     try
@@ -109,7 +103,7 @@ int ${classname}::_callback_set_${property.name}(
 
 namespace details
 {
-namespace ${classname}
+namespace ${interface.classname}
 {
 static const auto _property_${property.name} =
     utility::tuple_to_array(message::types::type_id<

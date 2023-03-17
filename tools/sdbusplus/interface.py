@@ -40,6 +40,9 @@ class Interface(NamedElement, Renderer):
     def cppNamespacedClass(self):
         return self.cppNamespace() + "::" + self.classname
 
+    def joinedName(self, join_str, append):
+        return join_str.join(self.namespaces + [self.classname, append])
+
     def enum_includes(self, inc_list):
         includes = []
         namespaces = []

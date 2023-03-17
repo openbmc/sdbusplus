@@ -22,9 +22,6 @@
             return " = " + str(p.defaultValue)
         else:
             return ""
-
-    def interface_name():
-        return interface.name.split('.').pop()
 %>
 ###
 ### Emit 'header'
@@ -47,13 +44,13 @@
 ###
     % elif ptype == 'vtable':
     vtable::signal("${signal.name}",
-                   details::${interface_name()}::_signal_${signal.CamelCase }
+                   details::${interface.classname}::_signal_${signal.CamelCase }
                         .data()),
 ###
 ### Emit 'callback-cpp'
 ###
     % elif ptype == 'callback-cpp':
-void ${interface_name()}::${ signal.camelCase }(
+void ${interface.classname}::${ signal.camelCase }(
             ${ parameters() })
 {
     auto& i = _${"_".join(interface.name.split('.'))}_interface;
@@ -65,7 +62,7 @@ void ${interface_name()}::${ signal.camelCase }(
 
 namespace details
 {
-namespace ${interface_name()}
+namespace ${interface.classname}
 {
 static const auto _signal_${ signal.CamelCase } =
     % if len(signal.properties) == 0:

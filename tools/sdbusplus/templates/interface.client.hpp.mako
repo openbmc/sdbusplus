@@ -1,25 +1,21 @@
 #pragma once
 
-<%
-    namespaces = interface.name.split('.')
-    classname = namespaces.pop()
-%>
 namespace sdbusplus
 {
-% for s in namespaces:
+% for s in interface.namespaces:
 namespace ${s}
 {
 % endfor
 namespace client
 {
-namespace ${classname}
+namespace ${interface.classname}
 {
 
 static constexpr auto interface = "${interface.name}";
 
-} // namespace ${classname}
+} // namespace ${interface.classname}
 } // namespace client
-% for s in reversed(namespaces):
+% for s in reversed(interface.namespaces):
 } // namespace ${s}
 % endfor
 } // namespace sdbusplus

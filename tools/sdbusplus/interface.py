@@ -34,11 +34,11 @@ class Interface(NamedElement, Renderer):
         self.namespaces = self.name.split(".")
         self.classname = self.namespaces.pop()
 
-    def cppNamespace(self):
-        return "::".join(self.namespaces) + "::server"
+    def cppNamespace(self, typename="server"):
+        return "::".join(self.namespaces) + "::" + typename
 
-    def cppNamespacedClass(self):
-        return self.cppNamespace() + "::" + self.classname
+    def cppNamespacedClass(self, typename="server"):
+        return self.cppNamespace(typename) + "::" + self.classname
 
     def joinedName(self, join_str, append):
         return join_str.join(self.namespaces + [self.classname, append])

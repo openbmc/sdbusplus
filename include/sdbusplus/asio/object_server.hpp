@@ -166,48 +166,53 @@ template <typename CallbackType>
 class coroutine_method_instance : public callback
 {
   public:
+    using self_t = coroutine_method_instance<CallbackType>;
+
     coroutine_method_instance(boost::asio::io_context& io,
                               CallbackType&& func) :
         io_(io),
         func_(std::move(func))
     {}
+
     int call(message_t& m) override
     {
         // make a copy of m to move into the coroutine
         message_t b{m};
         // spawn off a new coroutine to handle the method call
-        boost::asio::spawn(
-            io_, [this, b = std::move(b)](boost::asio::yield_context yield) {
-                message_t mcpy{std::move(b)};
-                std::optional<message_t> err{};
-
-                try
-                {
-                    expandCall(yield, mcpy);
-                }
-                catch (const sdbusplus::exception::SdBusError& e)
-                {
-                    // Catch D-Bus error explicitly called by method handler
-                    err = mcpy.new_method_errno(e.get_errno(), e.get_error());
-                }
-                catch (const sdbusplus::exception_t& e)
-                {
-                    err = mcpy.new_method_error(e);
-                }
-                catch (...)
-                {
-                    err = mcpy.new_method_errno(-EIO);
-                }
-
-                if (err)
-                {
-                    err->method_return();
-                }
-            });
+        boost::asio::spawn(io_, std::bind_front(&self_t::after_spawn, this, b));
         return 1;
     }
 
   private:
+    void after_spawn(message_t b, boost::asio::yield_context yield)
+    {
+        message_t mcpy{std::move(b)};
+        std::optional<message_t> err{};
+
+        try
+        {
+            expandCall(yield, mcpy);
+        }
+        catch (const sdbusplus::exception::SdBusError& e)
+        {
+            // Catch D-Bus error explicitly called by method handler
+            err = mcpy.new_method_errno(e.get_errno(), e.get_error());
+        }
+        catch (const sdbusplus::exception_t& e)
+        {
+            err = mcpy.new_method_error(e);
+        }
+        catch (...)
+        {
+            err = mcpy.new_method_errno(-EIO);
+        }
+
+        if (err)
+        {
+            err->method_return();
+        }
+    }
+
     using CallbackSignature = boost::callable_traits::args_t<CallbackType>;
     using InputTupleType = utility::decay_tuple_t<CallbackSignature>;
     boost::asio::io_context& io_;

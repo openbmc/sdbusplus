@@ -100,6 +100,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "c280f282_2f534982",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 136,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2023-03-17T20:08:33Z",
+      "side": 1,
+      "message": "Removed.",
+      "parentUuid": "d6000fe9_8ec6f061",
+      "revId": "4edc52454ee998a00e51f78095d4860590c87b97",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "349c80bc_03b3e8a6",
@@ -131,6 +149,24 @@
       "side": 1,
       "message": "Ack",
       "parentUuid": "349c80bc_03b3e8a6",
+      "revId": "4edc52454ee998a00e51f78095d4860590c87b97",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e749dc37_c8e7430a",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 215,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2023-03-17T20:08:33Z",
+      "side": 1,
+      "message": "Removed.",
+      "parentUuid": "d98dc9c1_8bde967f",
       "revId": "4edc52454ee998a00e51f78095d4860590c87b97",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }

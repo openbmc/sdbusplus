@@ -102,6 +102,20 @@ struct NonDbusArgsCount<std::tuple<FirstArg, OtherArgs...>>
         }
     }
 };
+
+template <typename PropertyType>
+PropertyType nop_get_value(const PropertyType& value)
+{
+    return value;
+}
+
+template <typename PropertyType>
+int nop_set_value(const PropertyType& req, PropertyType& old)
+{
+    old = req;
+    return 1;
+}
+
 } // namespace details
 
 template <typename InputArgs, typename Callback>
@@ -318,6 +332,7 @@ enum class PropertyPermission
     readOnly,
     readWrite
 };
+
 class dbus_interface
 {
   public:
@@ -362,10 +377,7 @@ class dbus_interface
         callbacksSet_[name] = std::make_unique<callback_set_instance<
             PropertyType,
             std::function<int(const PropertyType&, PropertyType&)>>>(
-            propertyPtr, [](const PropertyType& req, PropertyType& old) {
-                old = req;
-                return 1;
-            });
+            propertyPtr, details::nop_set_value<PropertyType>);
 
         vtable_.emplace_back(vtable::property(nameItr->c_str(), type.data(),
                                               get_handler, flags));
@@ -438,19 +450,15 @@ class dbus_interface
     {
         if (access == PropertyPermission::readOnly)
         {
-            return register_property_r(
-                name, property, vtable::property_::emits_change,
-                [](const PropertyType& value) { return value; });
+            return register_property_r(name, property,
+                                       vtable::property_::emits_change,
+                                       details::nop_get_value<PropertyType>);
         }
         else
         {
             return register_property_rw(
                 name, property, vtable::property_::emits_change,
-                [](const PropertyType& req, PropertyType& old) {
-                    old = req;
-                    return true;
-                },
-                [](const PropertyType& value) { return value; });
+                details::nop_set_value<PropertyType>, details::nop_get_value<PropertyType>);
         }
     }
 
@@ -460,10 +468,10 @@ class dbus_interface
                            const PropertyType& property,
                            CallbackTypeSet&& setFunction)
     {
-        return register_property_rw(
-            name, property, vtable::property_::emits_change,
-            std::forward<CallbackTypeSet>(setFunction),
-            [](const PropertyType& value) { return value; });
+        return register_property_rw(name, property,
+                                    vtable::property_::emits_change,
+                                    std::forward<CallbackTypeSet>(setFunction),
+                                    details::nop_get_value<PropertyType>);
     }
 
     // custom getter and setter, gets take an input of void and respond with a

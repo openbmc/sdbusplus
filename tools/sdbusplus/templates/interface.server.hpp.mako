@@ -12,21 +12,15 @@
 ${ m.cpp_prototype(loader, interface=interface, ptype='callback-hpp-includes') }\
 % endfor
 <%
-    namespaces = interface.namespaces
-    classname = interface.classname
-
     def setOfPropertyTypes():
         return set(p.cppTypeParam(interface.name) for p in
                    interface.properties);
-
-    def interface_instance():
-        return "_".join(interface.name.split('.') + ['interface'])
 %>
 
 namespace sdbusplus::${interface.cppNamespace()}
 {
 
-class ${classname}
+class ${interface.classname}
 {
     public:
         static constexpr auto interface =
@@ -41,19 +35,19 @@ class ${classname}
          *     Allowed:
          *         - Destructor.
          */
-        ${classname}() = delete;
-        ${classname}(const ${classname}&) = delete;
-        ${classname}& operator=(const ${classname}&) = delete;
-        ${classname}(${classname}&&) = delete;
-        ${classname}& operator=(${classname}&&) = delete;
-        virtual ~${classname}() = default;
+        ${interface.classname}() = delete;
+        ${interface.classname}(const ${interface.classname}&) = delete;
+        ${interface.classname}& operator=(const ${interface.classname}&) = delete;
+        ${interface.classname}(${interface.classname}&&) = delete;
+        ${interface.classname}& operator=(${interface.classname}&&) = delete;
+        virtual ~${interface.classname}() = default;
 
         /** @brief Constructor to put object onto bus at a dbus path.
          *  @param[in] bus - Bus to attach to.
          *  @param[in] path - Path to attach at.
          */
-        ${classname}(bus_t& bus, const char* path) :
-            _${interface_instance()}(
+        ${interface.classname}(bus_t& bus, const char* path) :
+            _${interface.joinedName("_", "interface")}(
                 bus, path, interface, _vtable, this),
             _intf(bus.getInterface()) {}
 
@@ -76,10 +70,10 @@ class ${classname}
          *  @param[in] path - Path to attach at.
          *  @param[in] vals - Map of property name to value for initialization.
          */
-        ${classname}(bus_t& bus, const char* path,
+        ${interface.classname}(bus_t& bus, const char* path,
                      const std::map<std::string, PropertiesVariant>& vals,
                      bool skipSignal = false) :
-            ${classname}(bus, path)
+            ${interface.classname}(bus, path)
         {
             for (const auto& v : vals)
             {
@@ -153,13 +147,13 @@ ${p.camelCase}(${p.cppTypeParam(interface.name)} value);
         /** @brief Emit interface added */
         void emit_added()
         {
-            _${"_".join(interface.name.split('.'))}_interface.emit_added();
+            _${interface.joinedName("_", "interface")}.emit_added();
         }
 
         /** @brief Emit interface removed */
         void emit_removed()
         {
-            _${"_".join(interface.name.split('.'))}_interface.emit_removed();
+            _${interface.joinedName("_", "interface")}.emit_removed();
         }
 
     private:
@@ -182,7 +176,7 @@ ${ m.cpp_prototype(loader, interface=interface, ptype='callback-header') }
     % endfor
         static const vtable_t _vtable[];
         sdbusplus::server::interface_t
-                _${"_".join(interface.name.split('.'))}_interface;
+                _${interface.joinedName("_", "interface")};
         sdbusplus::SdBusInterface* _intf;
     % for p in interface.properties:
         % if p.defaultValue is not None:
@@ -201,16 +195,16 @@ ${p.defaultValue};
 
     % for e in interface.enums:
 /* Specialization of sdbusplus::server::convertForMessage
- * for enum-type ${classname}::${e.name}.
+ * for enum-type ${interface.classname}::${e.name}.
  *
  * This converts from the enum to a constant c-string representing the enum.
  *
  * @param[in] e - Enum value to convert.
  * @return C-string representing the name for the enum value.
  */
-inline std::string convertForMessage(${classname}::${e.name} e)
+inline std::string convertForMessage(${interface.classname}::${e.name} e)
 {
-    return ${classname}::convert${e.name}ToString(e);
+    return ${interface.classname}::convert${e.name}ToString(e);
 }
     % endfor
 

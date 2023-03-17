@@ -7,14 +7,10 @@
 #include <string>
 #include <tuple>
 
-#include <${"/".join(interface.name.split('.') + [ 'server.hpp' ])}>
+#include <${interface.joinedName("/", "server.hpp")}>
 % for m in interface.methods + interface.properties + interface.signals:
 ${ m.cpp_prototype(loader, interface=interface, ptype='callback-cpp-includes') }
 % endfor
-<%
-    namespaces = interface.name.split('.')
-    classname = namespaces.pop()
-%>
 namespace sdbusplus::${interface.cppNamespace()}
 {
 
@@ -31,7 +27,7 @@ ${ p.cpp_prototype(loader, interface=interface, ptype='callback-cpp') }
     % endfor
 
     % if interface.properties:
-void ${classname}::setPropertyByName(const std::string& _name,
+void ${interface.classname}::setPropertyByName(const std::string& _name,
                                      const PropertiesVariant& val,
                                      bool skipSignal)
 {
@@ -46,7 +42,7 @@ val);
         % endfor
 }
 
-auto ${classname}::getPropertyByName(const std::string& _name) ->
+auto ${interface.classname}::getPropertyByName(const std::string& _name) ->
         PropertiesVariant
 {
     % for p in interface.properties:
@@ -64,26 +60,26 @@ auto ${classname}::getPropertyByName(const std::string& _name) ->
 
 namespace
 {
-/** String to enum mapping for ${classname}::${e.name} */
-static const std::tuple<const char*, ${classname}::${e.name}> \
-mapping${classname}${e.name}[] =
+/** String to enum mapping for ${interface.classname}::${e.name} */
+static const std::tuple<const char*, ${interface.classname}::${e.name}> \
+mapping${interface.classname}${e.name}[] =
         {
         % for v in e.values:
             std::make_tuple( "${interface.name}.${e.name}.${v.name}", \
-                ${classname}::${e.name}::${v.name} ),
+                ${interface.classname}::${e.name}::${v.name} ),
         % endfor
         };
 
 } // anonymous namespace
 
-auto ${classname}::convertStringTo${e.name}(const std::string& s) noexcept ->
+auto ${interface.classname}::convertStringTo${e.name}(const std::string& s) noexcept ->
         std::optional<${e.name}>
 {
     auto i = std::find_if(
-            std::begin(mapping${classname}${e.name}),
-            std::end(mapping${classname}${e.name}),
+            std::begin(mapping${interface.classname}${e.name}),
+            std::end(mapping${interface.classname}${e.name}),
             [&s](auto& e){ return 0 == strcmp(s.c_str(), std::get<0>(e)); } );
-    if (std::end(mapping${classname}${e.name}) == i)
+    if (std::end(mapping${interface.classname}${e.name}) == i)
     {
         return std::nullopt;
     }
@@ -93,7 +89,7 @@ auto ${classname}::convertStringTo${e.name}(const std::string& s) noexcept ->
     }
 }
 
-auto ${classname}::convert${e.name}FromString(const std::string& s) ->
+auto ${interface.classname}::convert${e.name}FromString(const std::string& s) ->
         ${e.name}
 {
     auto r = convertStringTo${e.name}(s);
@@ -108,13 +104,13 @@ auto ${classname}::convert${e.name}FromString(const std::string& s) ->
     }
 }
 
-std::string ${classname}::convert${e.name}ToString(${classname}::${e.name} v)
+std::string ${interface.classname}::convert${e.name}ToString(${interface.classname}::${e.name} v)
 {
     auto i = std::find_if(
-            std::begin(mapping${classname}${e.name}),
-            std::end(mapping${classname}${e.name}),
+            std::begin(mapping${interface.classname}${e.name}),
+            std::end(mapping${interface.classname}${e.name}),
             [v](auto& e){ return v == std::get<1>(e); });
-    if (i == std::end(mapping${classname}${e.name}))
+    if (i == std::end(mapping${interface.classname}${e.name}))
     {
         throw std::invalid_argument(std::to_string(static_cast<int>(v)));
     }
@@ -122,7 +118,7 @@ std::string ${classname}::convert${e.name}ToString(${classname}::${e.name} v)
 }
     % endfor
 
-const vtable_t ${classname}::_vtable[] = {
+const vtable_t ${interface.classname}::_vtable[] = {
     vtable::start(),
     % for m in interface.methods:
 ${ m.cpp_prototype(loader, interface=interface, ptype='vtable') }
@@ -132,7 +128,7 @@ ${ s.cpp_prototype(loader, interface=interface, ptype='vtable') }
     % endfor
     % for p in interface.properties:
     vtable::property("${p.name}",
-                     details::${classname}::_property_${p.name}
+                     details::${interface.classname}::_property_${p.name}
                         .data(),
                      _callback_get_${p.name},
         % if 'const' not in p.flags and 'readonly' not in p.flags:

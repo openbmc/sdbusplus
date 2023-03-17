@@ -1,7 +1,4 @@
 <%
-    def interface_name():
-        return interface.name.split('.').pop()
-
     def error_namespace(e):
         n = e.split('.');
         n.pop(); # Remove error name.
@@ -52,9 +49,9 @@
 ###
     % elif ptype == 'vtable':
     vtable::method("${method.name}",
-                   details::${interface_name()}::_param_${ method.CamelCase }
+                   details::${interface.classname}::_param_${ method.CamelCase }
                         .data(),
-                   details::${interface_name()}::_return_${ method.CamelCase }
+                   details::${interface.classname}::_return_${ method.CamelCase }
                         .data(),
         % if method.cpp_flags:
                    _callback_${method.CamelCase},
@@ -66,10 +63,10 @@
 ### Emit 'callback-cpp'
 ###
     % elif ptype == 'callback-cpp':
-int ${interface_name()}::_callback_${ method.CamelCase }(
+int ${interface.classname}::_callback_${ method.CamelCase }(
         sd_bus_message* msg, void* context, sd_bus_error* error)
 {
-    auto o = static_cast<${interface_name()}*>(context);
+    auto o = static_cast<${interface.classname}*>(context);
 
     % if method.errors:
     try
@@ -99,7 +96,7 @@ int ${interface_name()}::_callback_${ method.CamelCase }(
 
 namespace details
 {
-namespace ${interface_name()}
+namespace ${interface.classname}
 {
 static const auto _param_${ method.CamelCase } =
     % if len(method.parameters) == 0:

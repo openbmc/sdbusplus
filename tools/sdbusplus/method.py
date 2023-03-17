@@ -39,18 +39,31 @@ class Method(NamedElement, Renderer):
         else:
             return "std::tuple<" + self.returns_as_list(interface) + ">"
 
-    def parameter(self, interface, p, defaultValue=False):
-        r = "%s %s" % (p.cppTypeParam(interface.name), p.camelCase)
+    def parameter(self, interface, p, defaultValue=False, ref=""):
+        r = "%s%s %s" % (p.cppTypeParam(interface.name), ref, p.camelCase)
         if defaultValue:
             r += p.default_value()
         return r
 
+    def parameters_as_list(
+        self, transform=lambda p: p.camelCase, join_str=", "
+    ):
+        return join_str.join([transform(p) for p in self.parameters])
+
+    def parameters_as_arg_list(self, interface):
+        return self.parameters_as_list(
+            lambda p: self.parameter(interface, p, ref="&&")
+        )
+
+    def parameter_types_as_list(self, interface):
+        return self.parameters_as_list(
+            lambda p: p.cppTypeParam(interface.name, full=True)
+        )
+
     def get_parameters_str(self, interface, defaultValue=False):
-        return ",\n            ".join(
-            [
-                self.parameter(interface, p, defaultValue)
-                for p in self.parameters
-            ]
+        return self.parameters_as_list(
+            lambda p: self.parameter(interface, p, defaultValue),
+            ",\n            ",
         )
 
     def or_cpp_flags(self, flags):

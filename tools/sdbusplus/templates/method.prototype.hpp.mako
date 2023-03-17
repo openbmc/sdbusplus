@@ -1,26 +1,4 @@
 <%
-    def parameters_as_arg_list():
-        return ", ".join([ parameter(p, ref="&&") for p in method.parameters ])
-
-    def parameters_as_list(transform=lambda p: p.camelCase):
-        return ", ".join([ transform(p) for p in method.parameters ])
-
-    def parameters_types_as_list():
-        return ", ".join([ p.cppTypeParam(interface.name, full=True)
-                for p in method.parameters ])
-
-    def parameter(p, defaultValue=False, ref=""):
-        r = "%s%s %s" % (p.cppTypeParam(interface.name), ref, p.camelCase)
-        if defaultValue:
-            r += default_value(p)
-        return r
-
-    def default_value(p):
-        if p.defaultValue != None:
-            return " = " + str(p.defaultValue)
-        else:
-            return ""
-
     def interface_name():
         return interface.name.split('.').pop()
 
@@ -104,10 +82,10 @@ int ${interface_name()}::_callback_${ method.CamelCase }(
 (
                 msg, o->_intf, error,
                 std::function(
-                    [=](${parameters_as_arg_list()})
+                    [=](${method.parameters_as_arg_list(interface)})
                     {
                         return o->${ method.camelCase }(
-                                ${parameters_as_list()});
+                                ${method.parameters_as_list()});
                     }
                 ));
     }
@@ -128,7 +106,7 @@ static const auto _param_${ method.CamelCase } =
         utility::tuple_to_array(std::make_tuple('\0'));
     % else:
         utility::tuple_to_array(message::types::type_id<
-                ${ parameters_types_as_list() }>());
+                ${ method.parameter_types_as_list(interface) }>());
     % endif
 static const auto _return_${ method.CamelCase } =
     % if len(method.returns) == 0:

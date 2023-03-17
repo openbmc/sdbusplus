@@ -319,6 +319,20 @@ enum class PropertyPermission
     readOnly,
     readWrite
 };
+
+template <typename PropertyType>
+PropertyType nop_get_value(const PropertyType& value)
+{
+    return value;
+}
+
+template <typename PropertyType>
+bool nop_set_value(const PropertyType& req, PropertyType& old)
+{
+    old = req;
+    return true;
+}
+
 class dbus_interface
 {
   public:
@@ -363,10 +377,7 @@ class dbus_interface
         callbacksSet_[name] = std::make_unique<callback_set_instance<
             PropertyType,
             std::function<int(const PropertyType&, PropertyType&)>>>(
-            propertyPtr, [](const PropertyType& req, PropertyType& old) {
-                old = req;
-                return 1;
-            });
+            propertyPtr, nop_set_value<PropertyType>);
 
         vtable_.emplace_back(vtable::property(nameItr->c_str(), type.data(),
                                               get_handler, flags));
@@ -439,19 +450,15 @@ class dbus_interface
     {
         if (access == PropertyPermission::readOnly)
         {
-            return register_property_r(
-                name, property, vtable::property_::emits_change,
-                [](const PropertyType& value) { return value; });
+            return register_property_r(name, property,
+                                       vtable::property_::emits_change,
+                                       nop_get_value<PropertyType>);
         }
         else
         {
             return register_property_rw(
                 name, property, vtable::property_::emits_change,
-                [](const PropertyType& req, PropertyType& old) {
-                    old = req;
-                    return true;
-                },
-                [](const PropertyType& value) { return value; });
+                nop_set_value<PropertyType>, nop_get_value<PropertyType>);
         }
     }
 
@@ -461,10 +468,10 @@ class dbus_interface
                            const PropertyType& property,
                            CallbackTypeSet&& setFunction)
     {
-        return register_property_rw(
-            name, property, vtable::property_::emits_change,
-            std::forward<CallbackTypeSet>(setFunction),
-            [](const PropertyType& value) { return value; });
+        return register_property_rw(name, property,
+                                    vtable::property_::emits_change,
+                                    std::forward<CallbackTypeSet>(setFunction),
+                                    nop_get_value<PropertyType>);
     }
 
     // custom getter and setter, gets take an input of void and respond with a

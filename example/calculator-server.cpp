@@ -6,8 +6,8 @@
 #include <iostream>
 #include <string_view>
 
-using Calculator_inherit =
-    sdbusplus::server::object_t<sdbusplus::net::poettering::server::Calculator>;
+using Calculator_inherit = sdbusplus::server::object_t<
+    sdbusplus::bindings::server::net::poettering::Calculator>;
 
 /** Example implementation of net.poettering.Calculator */
 struct Calculator : Calculator_inherit
@@ -54,10 +54,9 @@ int main()
     // Define a dbus path location to place the object.
     constexpr auto path = "/net/poettering/calculator";
 
-    static_assert(
-        std::string_view(
-            sdbusplus::net::poettering::client::Calculator::interface) ==
-        std::string_view(Calculator::interface));
+    static_assert(std::string_view(sdbusplus::bindings::client::net::
+                                       poettering::Calculator::interface) ==
+                  std::string_view(Calculator::interface));
 
     // Create a new bus and affix an object manager for the subtree path we
     // intend to place objects at..

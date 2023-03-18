@@ -21,7 +21,7 @@ struct UselessInherit
 // done.
 using TestInherit = sdbusplus::server::object_t<
     UselessInherit,
-    sdbusplus::server::object_t<sdbusplus::server::server::Test>>;
+    sdbusplus::server::object_t<sdbusplus::bindings::server::server::Test>>;
 
 class Object : public ::testing::Test
 {

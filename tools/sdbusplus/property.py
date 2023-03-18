@@ -95,10 +95,8 @@ class Property(NamedElement, Renderer):
     def __cppTypeParam(self, interface, cppTypeName, full=False, server=True):
         ns_type = "server" if server else "client"
 
-        iface = interface.split(".")
-        iface.insert(-1, ns_type)
-        iface = "::".join(iface)
-        iface = "sdbusplus::" + iface
+        iface = "::".join(interface.split("."))
+        iface = f"sdbusplus::bindings::{ns_type}::{iface}"
 
         r = cppTypeName
 
@@ -270,9 +268,14 @@ class Property(NamedElement, Renderer):
                 return result.replace("self.", self.LOCAL_ENUM_MAGIC + "::")
 
             # Insert place-holder for header-type namespace (ex. "server")
-            result = result.split(".")
-            result.insert(-2, self.NONLOCAL_ENUM_MAGIC)
-            result = "::".join(result)
+            result = "::".join(
+                [
+                    "sdbusplus",
+                    "bindings",
+                    self.NONLOCAL_ENUM_MAGIC,
+                ]
+                + result.split(".")
+            )
             return result
 
         # Parse each parameter entry, if appropriate, and create C++ template

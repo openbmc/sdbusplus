@@ -34,11 +34,17 @@ class Interface(NamedElement, Renderer):
         self.namespaces = self.name.split(".")
         self.classname = self.namespaces.pop()
 
-    def cppNamespace(self, typename="server"):
+    def old_cppNamespace(self, typename="server"):
         return "::".join(self.namespaces) + "::" + typename
 
-    def cppNamespacedClass(self, typename="server"):
-        return self.cppNamespace(typename) + "::" + self.classname
+    def old_cppNamespacedClass(self, typename="server"):
+        return self.old_cppNamespace(typename) + "::" + self.classname
+
+    def cppNamespace(self):
+        return "::".join(self.namespaces)
+
+    def cppNamespacedClass(self):
+        return self.cppNamespace() + "::" + self.classname
 
     def joinedName(self, join_str, append):
         return join_str.join(self.namespaces + [self.classname, append])
@@ -56,13 +62,12 @@ class Interface(NamedElement, Renderer):
             # All elements will be formatted (x::)+
             # If the requested enum is xyz.openbmc_project.Network.IP.Protocol
             # for a server_* configuration, the enum_namespace will be
-            # xyz::openbmc_project::Network::server::IP:: and we need to
-            # convert to xyz/openbmc_project/Network/IP/server.hpp
+            # sdbuspp::bindings::server::xyz::openbmc_project::Network::IP:: and
+            # we need to convert to xyz/openbmc_project/Network/IP/server.hpp
             es.pop()  # Remove trailing empty element
-            e_class = es.pop()  # Remove class name
-            e_type = es.pop()  # Remove injected type namespace
-            es.append(e_class)
-            es.append(e_type)
+            es = es[2:]
+            ns_type = es.pop(0)
+            es.append(ns_type)
             includes.append("/".join(es) + ".hpp")
         return includes
 

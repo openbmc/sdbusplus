@@ -53,7 +53,7 @@
 void ${interface.classname}::${ signal.camelCase }(
             ${ parameters() })
 {
-    auto& i = _${"_".join(interface.name.split('.'))}_interface;
+    auto& i = _${interface.joinedName("_", "interface")};
     auto m = i.new_signal("${ signal.name }");
 
     m.append(${ parameters_as_list() });

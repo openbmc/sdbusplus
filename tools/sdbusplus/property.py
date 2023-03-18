@@ -83,8 +83,8 @@ class Property(NamedElement, Renderer):
         Currently only 'enum' requires conversion.
     """
 
-    def cppTypeParam(self, interface, full=False, server=True):
-        return self.__cppTypeParam(interface, self.cppTypeName, full, server)
+    def cppTypeParam(self, interface, full=False, typename="server"):
+        return self.__cppTypeParam(interface, self.cppTypeName, full, typename)
 
     def default_value(self):
         if self.defaultValue is not None:
@@ -92,14 +92,10 @@ class Property(NamedElement, Renderer):
         else:
             return ""
 
-    def __cppTypeParam(self, interface, cppTypeName, full=False, server=True):
-        ns_type = "server" if server else "client"
-
-        iface = interface.split(".")
-        iface.insert(-1, ns_type)
-        iface = "::".join(iface)
-        iface = "sdbusplus::" + iface
-
+    def __cppTypeParam(
+        self, interface, cppTypeName, full=False, typename="server"
+    ):
+        iface = NamedElement(name=interface).cppNamespacedClass()
         r = cppTypeName
 
         # Fix up local enum placeholders.
@@ -109,27 +105,29 @@ class Property(NamedElement, Renderer):
             r = r.replace(self.LOCAL_ENUM_MAGIC + "::", "")
 
         # Fix up non-local enum placeholders.
-        r = r.replace(self.NONLOCAL_ENUM_MAGIC, ns_type)
+        r = r.replace(self.NONLOCAL_ENUM_MAGIC, typename)
 
         return r
 
-    """ Determine the C++ namespaces of an enumeration-type property.
+    """ Determine the C++ header of an enumeration-type property.
     """
 
-    def enum_namespaces(self, interface):
+    def enum_headers(self, interface, typename="server"):
         typeTuple = self.__type_tuple()
-        return self.__enum_namespaces(interface, typeTuple)
+        return self.__enum_headers(interface, typeTuple, typename)
 
-    def __enum_namespaces(self, interface, typeTuple):
+    def __enum_headers(self, interface, typeTuple, typename):
         # Enums can be processed directly.
         if "enum" == typeTuple[0]:
-            cppType = self.__cppTypeParam(
-                interface, self.__parse_cpp_type__(typeTuple)
-            )
-            ns = cppType.split("::")[0:-1]
-            if len(ns) != 0:
-                return ["::".join(ns) + "::"]
-            return []
+            # Get enum type from typeTuple.
+            enumType = typeTuple[1][0][0]
+
+            # Local enums don't need a header.
+            if "self." in enumType:
+                return []
+
+            enumType = ".".join(enumType.split(".")[0:-1])
+            return [NamedElement(name=enumType).headerFile(typename)]
 
         # If the details part of the tuple has zero entries, no enums are
         # present
@@ -140,7 +138,7 @@ class Property(NamedElement, Renderer):
         # them recursively.
         r = []
         for t in typeTuple[1]:
-            r.extend(self.__enum_namespaces(interface, t))
+            r.extend(self.__enum_headers(interface, t, typename))
         return r
 
     """ Convert the property type into a C++ type.
@@ -271,8 +269,16 @@ class Property(NamedElement, Renderer):
 
             # Insert place-holder for header-type namespace (ex. "server")
             result = result.split(".")
-            result.insert(-2, self.NONLOCAL_ENUM_MAGIC)
-            result = "::".join(result)
+            result = "::".join(
+                [
+                    "sdbusplus",
+                    self.NONLOCAL_ENUM_MAGIC,
+                    NamedElement(
+                        name=".".join(result[0:-1])
+                    ).cppNamespacedClass(),
+                    NamedElement(name=result[-1]).classname,
+                ]
+            )
             return result
 
         # Parse each parameter entry, if appropriate, and create C++ template

@@ -7,7 +7,7 @@
 #include <string_view>
 
 using Calculator_inherit =
-    sdbusplus::server::object_t<sdbusplus::net::poettering::server::Calculator>;
+    sdbusplus::server::object_t<sdbusplus::server::net::poettering::Calculator>;
 
 /** Example implementation of net.poettering.Calculator */
 struct Calculator : Calculator_inherit
@@ -56,7 +56,7 @@ int main()
 
     static_assert(
         std::string_view(
-            sdbusplus::net::poettering::client::Calculator::interface) ==
+            sdbusplus::client::net::poettering::Calculator::interface) ==
         std::string_view(Calculator::interface));
 
     // Create a new bus and affix an object manager for the subtree path we

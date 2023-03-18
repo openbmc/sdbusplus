@@ -15,6 +15,13 @@ class NamedElement(object):
                 "missing quotes around original name."
             )
 
+        self.old_namespaces = self.name.split(".")
+        self.old_classname = self.old_namespaces.pop()
+        self.namespaces = [
+            inflection.underscore(x) for x in self.old_namespaces
+        ]
+        self.classname = inflection.camelize(self.old_classname)
+
     def __getattribute__(self, name):
         lam = {
             "CamelCase": lambda: inflection.camelize(self.name),
@@ -31,6 +38,21 @@ class NamedElement(object):
                 "Attribute '%s' not found in %s.NamedElement"
                 % (name, self.__module__)
             )
+
+    def old_cppNamespace(self, typename="server"):
+        return "::".join(self.old_namespaces) + "::" + typename
+
+    def old_cppNamespacedClass(self, typename="server"):
+        return self.old_cppNamespace(typename) + "::" + self.old_classname
+
+    def headerFile(self, typename):
+        return self.name.replace(".", "/") + f"/{typename}.hpp"
+
+    def cppNamespace(self):
+        return "::".join(self.namespaces)
+
+    def cppNamespacedClass(self):
+        return self.cppNamespace() + "::" + self.classname
 
     """ Some names are reserved in some languages.  Fixup names to avoid using
         reserved words.

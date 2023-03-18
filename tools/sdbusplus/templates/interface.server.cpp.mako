@@ -7,11 +7,11 @@
 #include <string>
 #include <tuple>
 
-#include <${interface.joinedName("/", "server.hpp")}>
+#include <${interface.headerFile("server")}>
 % for m in interface.methods + interface.properties + interface.signals:
 ${ m.cpp_prototype(loader, interface=interface, ptype='callback-cpp-includes') }
 % endfor
-namespace sdbusplus::${interface.cppNamespace()}
+namespace sdbusplus::server::${interface.cppNamespace()}
 {
 
     % for m in interface.methods:
@@ -72,8 +72,8 @@ mapping${interface.classname}${e.name}[] =
 
 } // anonymous namespace
 
-auto ${interface.classname}::convertStringTo${e.name}(const std::string& s) noexcept ->
-        std::optional<${e.name}>
+auto ${interface.classname}::convertStringTo${e.name}(
+    const std::string& s) noexcept -> std::optional<${e.name}>
 {
     auto i = std::find_if(
             std::begin(mapping${interface.classname}${e.name}),
@@ -90,7 +90,7 @@ auto ${interface.classname}::convertStringTo${e.name}(const std::string& s) noex
 }
 
 auto ${interface.classname}::convert${e.name}FromString(const std::string& s) ->
-        ${e.name}
+    ${e.name}
 {
     auto r = convertStringTo${e.name}(s);
 
@@ -104,7 +104,8 @@ auto ${interface.classname}::convert${e.name}FromString(const std::string& s) ->
     }
 }
 
-std::string ${interface.classname}::convert${e.name}ToString(${interface.classname}::${e.name} v)
+std::string ${interface.classname}::convert${e.name}ToString(
+    ${interface.classname}::${e.name} v)
 {
     auto i = std::find_if(
             std::begin(mapping${interface.classname}${e.name}),
@@ -143,4 +144,4 @@ ${ s.cpp_prototype(loader, interface=interface, ptype='vtable') }
     vtable::end()
 };
 
-} // namespace sdbusplus::${interface.cppNamespace()}
+} // namespace sdbusplus::server::${interface.cppNamespace()}

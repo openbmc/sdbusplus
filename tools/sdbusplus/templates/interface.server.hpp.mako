@@ -17,7 +17,7 @@ ${ m.cpp_prototype(loader, interface=interface, ptype='callback-hpp-includes') }
                    interface.properties);
 %>
 
-namespace sdbusplus::${interface.cppNamespace()}
+namespace sdbusplus::bindings::server::${interface.cppNamespace()}
 {
 
 class ${interface.classname}
@@ -208,26 +208,39 @@ inline std::string convertForMessage(${interface.classname}::${e.name} e)
 }
     % endfor
 
-} // namespace sdbusplus::${interface.cppNamespace()}
+} // namespace sdbusplus::bindings::server::${interface.cppNamespace()}
+
+#ifndef SDBUSPP_REMOVE_DEPRECATED_NAMESPACE
+namespace sdbusplus::${interface.old_cppNamespace()} {
+
+using namespace sdbusplus::bindings::server::${interface.cppNamespace()};
+
+} // namespace sdbusplus::${interface.old_cppNamespace()}
+#endif
 
 namespace sdbusplus::message::details
 {
     % for e in interface.enums:
 template <>
-struct convert_from_string<${interface.cppNamespacedClass()}::${e.name}>
+struct convert_from_string<
+    bindings::server::${interface.cppNamespacedClass()}::${e.name}>
 {
     static auto op(const std::string& value) noexcept
     {
-        return ${interface.cppNamespacedClass()}::convertStringTo${e.name}(value);
+        return bindings::server::
+            ${interface.cppNamespacedClass()}::convertStringTo${e.name}(value);
     }
 };
 
 template <>
-struct convert_to_string<${interface.cppNamespacedClass()}::${e.name}>
+struct convert_to_string<
+    bindings::server::${interface.cppNamespacedClass()}::${e.name}>
 {
-    static std::string op(${interface.cppNamespacedClass()}::${e.name} value)
+    static std::string op(
+        bindings::server::${interface.cppNamespacedClass()}::${e.name} value)
     {
-        return ${interface.cppNamespacedClass()}::convert${e.name}ToString(value);
+        return bindings::server::
+            ${interface.cppNamespacedClass()}::convert${e.name}ToString(value);
     }
 };
     % endfor

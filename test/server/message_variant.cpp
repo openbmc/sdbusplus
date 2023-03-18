@@ -3,7 +3,7 @@
 
 #include <gtest/gtest.h>
 
-using TestIf = sdbusplus::server::server::Test;
+using TestIf = sdbusplus::bindings::server::server::Test;
 
 struct Object : public ::testing::Test
 {

@@ -18,6 +18,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "7296920f_b5706e02",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 322,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2023-03-20T16:14:00Z",
+      "side": 1,
+      "message": "Moved to the details namespace on line 106.",
+      "parentUuid": "e0f64c9d_6456f79d",
+      "revId": "b79b3aefaf4608d9edac72457cd1fc6012602fe8",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "0ce6df9c_2514c5f6",
@@ -49,6 +67,24 @@
       "side": 1,
       "message": "There was some subtlety here that I think someone from Intel had to revert last time we touched these functions.  I suspect `int` is the right direction as well.",
       "parentUuid": "0ce6df9c_2514c5f6",
+      "revId": "b79b3aefaf4608d9edac72457cd1fc6012602fe8",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "dbd09326_0acfe449",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 330,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2023-03-20T16:14:00Z",
+      "side": 1,
+      "message": "At one point I had changed them to bool, but decided the mismatch between sdbus apis and sdbusplus callbacks wasn\u0027t worth the complexity.  Looks like I just missed this one when I moved everything back to int.\n\nFixed.",
+      "parentUuid": "8cfb54b5_ea99b75b",
       "revId": "b79b3aefaf4608d9edac72457cd1fc6012602fe8",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }

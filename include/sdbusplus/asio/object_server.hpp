@@ -186,25 +186,24 @@ class coroutine_method_instance : public callback
   private:
     void after_spawn(message_t b, boost::asio::yield_context yield)
     {
-        message_t mcpy{std::move(b)};
         std::optional<message_t> err{};
 
         try
         {
-            expandCall(yield, mcpy);
+            expandCall(yield, b);
         }
         catch (const sdbusplus::exception::SdBusError& e)
         {
             // Catch D-Bus error explicitly called by method handler
-            err = mcpy.new_method_errno(e.get_errno(), e.get_error());
+            err = b.new_method_errno(e.get_errno(), e.get_error());
         }
         catch (const sdbusplus::exception_t& e)
         {
-            err = mcpy.new_method_error(e);
+            err = b.new_method_error(e);
         }
         catch (...)
         {
-            err = mcpy.new_method_errno(-EIO);
+            err = b.new_method_errno(-EIO);
         }
 
         if (err)

@@ -38,6 +38,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "d2eeec46_cf9c746e",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 187,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2023-03-20T16:12:39Z",
+      "side": 1,
+      "message": "Yep, Patrick got it right.  We need to make a copy either way.  In the case of callbacks, it makes sense to pass by rvalue reference, because we don\u0027t know the size of the callback.  While there could be a way to make message_t pass by rvalue reference as well, I don\u0027t think it\u0027s worth it, given that message_t is just a thin wrapper around a message pointer, it should be relatively cheap to copy.",
+      "parentUuid": "4a2a8e44_1f94598e",
+      "revId": "0290a4f2f585916b5a9bc5bdd2d3aad36390938d",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "2f61a1ea_2b5e1104",
         "filename": "include/sdbusplus/asio/object_server.hpp",
         "patchSetId": 1
@@ -49,6 +67,24 @@
       "writtenOn": "2023-03-20T11:45:40Z",
       "side": 1,
       "message": "Not sure what the point of this is, other than it is a copy/paste.",
+      "revId": "0290a4f2f585916b5a9bc5bdd2d3aad36390938d",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a99be502_84e42ddd",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 189,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2023-03-20T16:12:39Z",
+      "side": 1,
+      "message": "It\u0027s a copy paste.  I was trying to keep this as \"just\" a code rearrangement.\n\nnext patch now removes it.  Let me know if you\u0027d prefer it squashed into this patch.",
+      "parentUuid": "2f61a1ea_2b5e1104",
       "revId": "0290a4f2f585916b5a9bc5bdd2d3aad36390938d",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }

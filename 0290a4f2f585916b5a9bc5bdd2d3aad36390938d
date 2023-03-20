@@ -16,6 +16,23 @@
       "message": "To be consistent with the previous lambda, is it better to pass `b` by `std::move()` and use `message_t\u0026\u0026` here?",
       "revId": "0290a4f2f585916b5a9bc5bdd2d3aad36390938d",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2f61a1ea_2b5e1104",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 189,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-03-20T11:45:40Z",
+      "side": 1,
+      "message": "Not sure what the point of this is, other than it is a copy/paste.",
+      "revId": "0290a4f2f585916b5a9bc5bdd2d3aad36390938d",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

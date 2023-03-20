@@ -20,6 +20,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "4a2a8e44_1f94598e",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 187,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-03-20T11:49:35Z",
+      "side": 1,
+      "message": "I think the non-ref is the right direction to go here.  The old code, I believe, was buggy.  There was probably an attempt to \"fix\" the bug with the code that ended up in line 189 but it is similarly buggy.\n\nThe issue is that `spawn` is not required to start the co-routine immediately, but it can be deferred onto some task queue.  The local context (which contains `b`) can be destructed before that happens.\n\nThe code that ended up on line 189 attempted to fix this by making a copy before the first suspension point, but even that is an implementation detail that could easily be broken in the next version of Boost.  The `stdexec` library, for instance, doesn\u0027t ever run the co-routine immediately on spawn.  (Its task always uses https://en.cppreference.com/w/cpp/coroutine/suspend_always )",
+      "parentUuid": "8defbbf7_e32ff0d9",
+      "revId": "0290a4f2f585916b5a9bc5bdd2d3aad36390938d",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "2f61a1ea_2b5e1104",
         "filename": "include/sdbusplus/asio/object_server.hpp",
         "patchSetId": 1

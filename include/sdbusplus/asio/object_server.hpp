@@ -35,28 +35,49 @@ enum class SetPropertyReturnValue
 class property_callback
 {
   public:
-    std::string name;
-    std::function<int(message_t&)> on_get;
-    std::function<SetPropertyReturnValue(message_t&)> on_set_message;
-    std::function<SetPropertyReturnValue(const std::any&)> on_set_value;
-    const char* signature;
-    decltype(vtable_t::flags) flags;
+    property_callback(
+        const std::string& name, std::function<int(message_t&)>&& on_get,
+        std::function<SetPropertyReturnValue(message_t&)>&& on_set_message,
+        std::function<SetPropertyReturnValue(const std::any&)>&& on_set_value,
+        const char* signature, decltype(vtable_t::flags) flags) :
+        name_(name),
+        on_get_(std::move(on_get)), on_set_message_(std::move(on_set_message)),
+        on_set_value_(std::move(on_set_value)), signature_(signature),
+        flags_(flags)
+    {}
+    std::string name_;
+    std::function<int(message_t&)> on_get_;
+    std::function<SetPropertyReturnValue(message_t&)> on_set_message_;
+    std::function<SetPropertyReturnValue(const std::any&)> on_set_value_;
+    const char* signature_;
+    decltype(vtable_t::flags) flags_;
 };
 
 class method_callback
 {
   public:
-    std::string name;
-    std::function<int(message_t&)> call;
-    const char* arg_signature;
-    const char* return_signature;
+    method_callback(const std::string& name,
+                    std::function<int(message_t&)>&& call,
+                    const char* arg_signature, const char* return_signature) :
+        name_(name),
+        call_(std::move(call)), arg_signature_(arg_signature),
+        return_signature_(return_signature)
+    {}
+    std::string name_;
+    std::function<int(message_t&)> call_;
+    const char* arg_signature_;
+    const char* return_signature_;
 };
 
 class signal
 {
+    signal(const std::string& name, const char* signature) :
+        name_(name), signature_(signature)
+    {}
+
   public:
-    std::string name;
-    const char* signature;
+    std::string name_;
+    const char* signature_;
 };
 
 template <typename T>
@@ -151,8 +172,10 @@ class callback_method_instance
     using CallbackSignature = boost::callable_traits::args_t<CallbackType>;
     using InputTupleType = utility::decay_tuple_t<CallbackSignature>;
 
-  public:
     CallbackType func_;
+
+  public:
+    callback_method_instance(CallbackType&& func) : func_(func) {}
 
     int operator()(message_t& m)
     {
@@ -185,8 +208,11 @@ class coroutine_method_instance
 {
   public:
     using self_t = coroutine_method_instance<CallbackType>;
-    boost::asio::io_context& io_;
-    CallbackType func_;
+    coroutine_method_instance(boost::asio::io_context& io,
+                              CallbackType&& func) :
+        io_(io),
+        func_(func)
+    {}
 
     int operator()(message_t& m)
     {
@@ -199,6 +225,8 @@ class coroutine_method_instance
     }
 
   private:
+    boost::asio::io_context& io_;
+    CallbackType func_;
     void after_spawn(message_t b, boost::asio::yield_context yield)
     {
         using CallbackSignature = boost::callable_traits::args_t<CallbackType>;
@@ -255,8 +283,14 @@ class coroutine_method_instance
 };
 
 template <typename PropertyType, typename CallbackType>
-struct callback_get_instance
+class callback_get_instance
 {
+  public:
+    callback_get_instance(const std::shared_ptr<PropertyType>& value,
+                          CallbackType&& func) :
+        value_(value),
+        func_(std::forward<CallbackType>(func))
+    {}
     int operator()(message_t& m)
     {
         *value_ = func_(*value_);
@@ -264,13 +298,21 @@ struct callback_get_instance
         return 1;
     }
 
+  private:
     std::shared_ptr<PropertyType> value_;
     CallbackType func_;
 };
 
 template <typename PropertyType>
-struct callback_set_message_instance
+class callback_set_message_instance
 {
+  public:
+    callback_set_message_instance(
+        const std::shared_ptr<PropertyType>& value,
+        std::function<bool(const PropertyType&, PropertyType&)>&& func) :
+        value_(value),
+        func_(std::move(func))
+    {}
     SetPropertyReturnValue operator()(message_t& m)
     {
         PropertyType input;
@@ -287,13 +329,21 @@ struct callback_set_message_instance
         return SetPropertyReturnValue::valueUpdated;
     }
 
+  private:
     std::shared_ptr<PropertyType> value_;
     std::function<bool(const PropertyType&, PropertyType&)> func_;
 };
 
 template <typename PropertyType>
-struct callback_set_value_instance
+class callback_set_value_instance
 {
+  public:
+    callback_set_value_instance(
+        const std::shared_ptr<PropertyType>& value,
+        std::function<bool(const PropertyType&, PropertyType&)>&& func) :
+        value_(value),
+        func_(std::move(func))
+    {}
     SetPropertyReturnValue operator()(const std::any& value)
     {
         const PropertyType& newValue = std::any_cast<PropertyType>(value);
@@ -309,6 +359,7 @@ struct callback_set_value_instance
         return SetPropertyReturnValue::valueUpdated;
     }
 
+  private:
     std::shared_ptr<PropertyType> value_;
     std::function<bool(const PropertyType&, PropertyType&)> func_;
 };
@@ -567,7 +618,7 @@ class dbus_interface
         try
         {
 #endif
-            return (*func)->on_get(mesg);
+            return (*func)->on_get_(mesg);
 #ifdef __EXCEPTIONS
         }
 
@@ -596,7 +647,7 @@ class dbus_interface
         try
         {
 #endif
-            SetPropertyReturnValue status = (*func)->on_set_message(mesg);
+            SetPropertyReturnValue status = (*func)->on_set_message_(mesg);
             if ((status == SetPropertyReturnValue::valueUpdated) ||
                 (status == SetPropertyReturnValue::sameValueUpdated))
             {
@@ -633,7 +684,7 @@ class dbus_interface
         try
         {
 #endif
-            int status = (*func)->call(mesg);
+            int status = (*func)->call_(mesg);
             if (status == 1)
             {
                 return status;
@@ -685,8 +736,8 @@ class dbus_interface
             pointers.push_back(&element);
             size_t pointer_off = (pointers.size() - 1) * sizeof(void*);
             vtable_.emplace_back(vtable::property_o(
-                element.name.c_str(), element.signature, get_handler,
-                set_handler, pointer_off, element.flags));
+                element.name_.c_str(), element.signature_, get_handler,
+                set_handler, pointer_off, element.flags_));
         }
 
         method_callbacks_.shrink_to_fit();
@@ -695,15 +746,15 @@ class dbus_interface
             pointers.push_back(&element);
             size_t pointer_off = (pointers.size() - 1) * sizeof(void*);
             vtable_.emplace_back(vtable::method_o(
-                element.name.c_str(), element.arg_signature,
-                element.return_signature, method_handler, pointer_off));
+                element.name_.c_str(), element.arg_signature_,
+                element.return_signature_, method_handler, pointer_off));
         }
 
         signals_.shrink_to_fit();
         for (const auto& element : signals_)
         {
             vtable_.emplace_back(
-                vtable::signal(element.name.c_str(), element.signature));
+                vtable::signal(element.name_.c_str(), element.signature_));
         }
 
         vtable_.emplace_back(vtable::end());
@@ -719,7 +770,7 @@ class dbus_interface
         {
             for (const auto& element : property_callbacks_)
             {
-                signal_property(element.name);
+                signal_property(element.name_);
             }
         }
         return true;

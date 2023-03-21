@@ -20,6 +20,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "0771b8af_e754430e",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 263,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2023-03-21T17:28:36Z",
+      "side": 1,
+      "message": "Changed to std::forward, because it\u0027s a template arg.",
+      "parentUuid": "a3563d67_7da1d751",
+      "revId": "3c360211f8eaebe53fb3f36de41b8dbe0d555999",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "200a1002_433c153a",
         "filename": "include/sdbusplus/asio/object_server.hpp",
         "patchSetId": 1
@@ -31,6 +49,24 @@
       "writtenOn": "2023-03-21T17:26:24Z",
       "side": 1,
       "message": "std::move",
+      "revId": "3c360211f8eaebe53fb3f36de41b8dbe0d555999",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8420d19c_3cee9940",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 283,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2023-03-21T17:28:36Z",
+      "side": 1,
+      "message": "Fixed.",
+      "parentUuid": "200a1002_433c153a",
       "revId": "3c360211f8eaebe53fb3f36de41b8dbe0d555999",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
@@ -48,6 +84,24 @@
       "writtenOn": "2023-03-21T17:26:24Z",
       "side": 1,
       "message": "std::move",
+      "revId": "3c360211f8eaebe53fb3f36de41b8dbe0d555999",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "22ae9167_6f7ef6a3",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 312,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2023-03-21T17:28:36Z",
+      "side": 1,
+      "message": "Fixed.",
+      "parentUuid": "b565d191_8d665d19",
       "revId": "3c360211f8eaebe53fb3f36de41b8dbe0d555999",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }

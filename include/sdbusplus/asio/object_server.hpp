@@ -257,6 +257,11 @@ class coroutine_method_instance
 template <typename PropertyType, typename CallbackType>
 struct callback_get_instance
 {
+    callback_get_instance(const std::shared_ptr<PropertyType>& value,
+                          CallbackType&& func) :
+        value_(value_),
+        func_(std::forward<CallbackType>(func))
+    {}
     int operator()(message_t& m)
     {
         *value_ = func_(*value_);
@@ -271,6 +276,12 @@ struct callback_get_instance
 template <typename PropertyType>
 struct callback_set_message_instance
 {
+    callback_set_message_instance(
+        const std::shared_ptr<PropertyType>& value,
+        std::function<bool(const PropertyType&, PropertyType&)>&& func) :
+        value_(value_),
+        func_(std::move(func))
+    {}
     SetPropertyReturnValue operator()(message_t& m)
     {
         PropertyType input;
@@ -294,6 +305,12 @@ struct callback_set_message_instance
 template <typename PropertyType>
 struct callback_set_value_instance
 {
+    callback_set_value_instance(
+        std::shared_ptr<PropertyType>& value,
+        std::function<bool(const PropertyType&, PropertyType&)>&& func) :
+        value_(value_),
+        func_(std::move(func))
+    {}
     SetPropertyReturnValue operator()(const std::any& value)
     {
         const PropertyType& newValue = std::any_cast<PropertyType>(value);

@@ -29,10 +29,11 @@ namespace stdexec::__std_concepts
 #if STDEXEC_HAS_STD_CONCEPTS_HEADER()
 using std::invocable;
 #else
-template <class _F, class... _As>
-concept invocable = requires(_F&& __f, _As&&... __as) {
-                        std::invoke((_F &&) __f, (_As &&) __as...);
-                    };
+template <class _Fun, class... _As>
+concept invocable = //
+    requires(_Fun&& __f, _As&&... __as) {
+        std::invoke((_Fun &&) __f, (_As &&) __as...);
+    };
 #endif
 } // namespace stdexec::__std_concepts
 
@@ -43,18 +44,20 @@ using namespace stdexec::__std_concepts;
 
 namespace stdexec
 {
-template <class _F, class... _As>
-concept __nothrow_invocable = invocable<_F, _As...> &&
-                              requires(_F&& __f, _As&&... __as) {
-                                  {
-                                      std::invoke((_F &&) __f, (_As &&) __as...)
-                                  } noexcept;
-                              };
+template <class _Fun, class... _As>
+concept __nothrow_invocable =  //
+    invocable<_Fun, _As...> && //
+    requires(_Fun&& __f, _As&&... __as) {
+        {
+            std::invoke((_Fun &&) __f, (_As &&) __as...)
+        } noexcept;
+    };
 
 template <auto _Fun>
 struct __fun_c_t
 {
     using _FunT = decltype(_Fun);
+
     template <class... _Args>
         requires __callable<_FunT, _Args...>
     auto operator()(_Args&&... __args) const
@@ -64,6 +67,7 @@ struct __fun_c_t
         return _Fun((_Args &&) __args...);
     }
 };
+
 template <auto _Fun>
 inline constexpr __fun_c_t<_Fun> __fun_c{};
 
@@ -76,14 +80,23 @@ void tag_invoke();
 // std::invoke is more expensive at compile time than necessary,
 // and results in diagnostics that are more verbose than necessary.
 template <class _Tag, class... _Args>
-concept tag_invocable = requires(_Tag __tag, _Args&&... __args) {
-                            tag_invoke((_Tag &&) __tag, (_Args &&) __args...);
-                        };
+concept tag_invocable = //
+    requires(_Tag __tag, _Args&&... __args) {
+        tag_invoke((_Tag &&) __tag, (_Args &&) __args...);
+    };
+
+template <class _Ret, class _Tag, class... _Args>
+concept __tag_invocable_r = //
+    requires(_Tag __tag, _Args&&... __args) {
+        {
+            static_cast<_Ret>(tag_invoke((_Tag &&) __tag, (_Args &&) __args...))
+        };
+    };
 
 // NOT TO SPEC: nothrow_tag_invocable subsumes tag_invocable
 template <class _Tag, class... _Args>
 concept nothrow_tag_invocable =
-    tag_invocable<_Tag, _Args...> &&
+    tag_invocable<_Tag, _Args...> && //
     requires(_Tag __tag, _Args&&... __args) {
         {
             tag_invoke((_Tag &&) __tag, (_Args &&) __args...)
@@ -124,8 +137,9 @@ using __tag_invoke::tag_invoke_t;
 inline constexpr tag_invoke_t tag_invoke{};
 
 template <auto& _Tag>
-using tag_t = decay_t<decltype(_Tag)>;
+using tag_t = __decay_t<decltype(_Tag)>;
 
+using __tag_invoke::__tag_invocable_r;
 using __tag_invoke::nothrow_tag_invocable;
 using __tag_invoke::tag_invocable;
 using __tag_invoke::tag_invoke_result;

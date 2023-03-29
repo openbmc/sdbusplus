@@ -22,7 +22,9 @@
 #else
 #define STDEXEC_STD_DEPRECATED                                                 \
     [[deprecated(                                                              \
-        "Please access this entity in the ::stdexec:: namespace. Define STDEXEC_DISABLE_STD_DEPRECATIONS to silence this warning.")]]
+        "Please access this entity in the ::stdexec:: namespace. Define "      \
+        "STDEXEC_DISABLE_STD_DEPRECATIONS to silence this "                    \
+        "warning.")]]
 #endif
 
 namespace std
@@ -161,7 +163,7 @@ inline constexpr stdexec::start_t start{};
 
 // [exec.snd], senders
 template <class _Sender, class _Env = stdexec::no_env>
-concept sender /*STDEXEC_STD_DEPRECATED*/ = stdexec::sender<_Sender, _Env>;
+concept sender /*STDEXEC_STD_DEPRECATED*/ = stdexec::sender_in<_Sender, _Env>;
 
 template <class _Sender, class _Receiver>
 concept sender_to /*STDEXEC_STD_DEPRECATED*/ =
@@ -186,14 +188,18 @@ template <class _Env>
 using dependent_completion_signatures STDEXEC_STD_DEPRECATED =
     stdexec::dependent_completion_signatures<_Env>;
 
-template <class _Sender, class _Env = stdexec::no_env,
-          template <class...> class _Tuple = stdexec::__decayed_tuple,
-          template <class...> class _Variant = stdexec::__variant>
+template <                                                       //
+    class _Sender,                                               //
+    class _Env = stdexec::no_env,                                //
+    template <class...> class _Tuple = stdexec::__decayed_tuple, //
+    template <class...> class _Variant = stdexec::__variant>
 using value_types_of_t STDEXEC_STD_DEPRECATED =
     stdexec::value_types_of_t<_Sender, _Env, _Tuple, _Variant>;
 
-template <class _Sender, class _Env = stdexec::no_env,
-          template <class...> class _Variant = stdexec::__variant>
+template <                        //
+    class _Sender,                //
+    class _Env = stdexec::no_env, //
+    template <class...> class _Variant = stdexec::__variant>
 using error_types_of_t STDEXEC_STD_DEPRECATED =
     stdexec::error_types_of_t<_Sender, _Env, _Variant>;
 
@@ -329,14 +335,16 @@ using completion_signatures STDEXEC_STD_DEPRECATED =
     stdexec::completion_signatures<_Sigs...>;
 
 // [exec.utils.mkcmplsigs]
-template <class _Sender, class _Env = stdexec::no_env,
-          class _Sigs = stdexec::completion_signatures<>,
-          template <class...>
-          class _SetValue = stdexec::__compl_sigs::__default_set_value,
-          template <class>
-          class _SetError = stdexec::__compl_sigs::__default_set_error,
-          class _SetStopped =
-              stdexec::completion_signatures<stdexec::set_stopped_t()>>
+template <         //
+    class _Sender, //
+    class _Env = stdexec::no_env,
+    class _Sigs = stdexec::completion_signatures<>, //
+    template <class...>
+    class _SetValue = stdexec::__compl_sigs::__default_set_value, //
+    template <class>
+    class _SetError = stdexec::__compl_sigs::__default_set_error, //
+    class _SetStopped =
+        stdexec::completion_signatures<stdexec::set_stopped_t()>>
 using make_completion_signatures STDEXEC_STD_DEPRECATED =
     stdexec::make_completion_signatures<_Sender, _Env, _Sigs, _SetValue,
                                         _SetError, _SetStopped>;
@@ -349,7 +357,7 @@ using execute_t STDEXEC_STD_DEPRECATED = stdexec::execute_t;
 STDEXEC_STD_DEPRECATED
 inline constexpr auto execute = stdexec::execute;
 
-#if !_STD_NO_COROUTINES_
+#if !STDEXEC_STD_NO_COROUTINES_
 // [exec.as_awaitable]
 using as_awaitable_t STDEXEC_STD_DEPRECATED = stdexec::as_awaitable_t;
 STDEXEC_STD_DEPRECATED
@@ -359,7 +367,7 @@ inline constexpr auto as_awaitable = stdexec::as_awaitable;
 template <class _Promise>
 using with_awaitable_senders STDEXEC_STD_DEPRECATED =
     stdexec::with_awaitable_senders<_Promise>;
-#endif // !_STD_NO_COROUTINES_
+#endif // !STDEXEC_STD_NO_COROUTINES_
 } // namespace execution
 
 namespace this_thread

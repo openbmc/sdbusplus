@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ecbb5589_ed358613",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000276
+      },
+      "writtenOn": "2023-03-29T14:45:55Z",
+      "side": 1,
+      "message": "I\u0027m not sure if this is the right fix, but it adds back the call to .data() that was on `signature` which allows the build to succeed.",
+      "revId": "0439f333629ecea6511367c7d4ed811d9b64edc1",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

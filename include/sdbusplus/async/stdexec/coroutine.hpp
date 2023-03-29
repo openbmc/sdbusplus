@@ -25,20 +25,21 @@ namespace __coro = std;
 #include <experimental/coroutine>
 namespace __coro = std::experimental;
 #else
-#define _STD_NO_COROUTINES_ 1
+#define STDEXEC_STD_NO_COROUTINES_ 1
 #endif
 
 namespace stdexec
 {
-#if !_STD_NO_COROUTINES_
+#if !STDEXEC_STD_NO_COROUTINES_
 // Define some concepts and utilities for working with awaitables
-template <class _T>
-concept __await_suspend_result = __one_of<_T, void, bool> ||
-                                 __is_instance_of<_T, __coro::coroutine_handle>;
+template <class _Tp>
+concept __await_suspend_result =
+    __one_of<_Tp, void, bool> ||
+    __is_instance_of<_Tp, __coro::coroutine_handle>;
 
 template <class _Awaiter, class _Promise>
 concept __with_await_suspend =
-    same_as<_Promise, void> ||
+    same_as<_Promise, void> || //
     requires(_Awaiter& __await, __coro::coroutine_handle<_Promise> __h) {
         {
             __await.await_suspend(__h)
@@ -46,10 +47,12 @@ concept __with_await_suspend =
     };
 
 template <class _Awaiter, class _Promise = void>
-concept __awaiter = requires(_Awaiter& __await) {
-                        __await.await_ready() ? 1 : 0;
-                        __await.await_resume();
-                    } && __with_await_suspend<_Awaiter, _Promise>;
+concept __awaiter = //
+    requires(_Awaiter& __await) {
+        __await.await_ready() ? 1 : 0;
+        __await.await_resume();
+    } && //
+    __with_await_suspend<_Awaiter, _Promise>;
 
 template <class _Awaitable>
 decltype(auto) __get_awaiter(_Awaitable&& __await, void*)
@@ -97,15 +100,15 @@ decltype(auto) __get_awaiter(_Awaitable&& __await, _Promise* __promise)
 }
 
 template <class _Awaitable, class _Promise = void>
-concept __awaitable =
+concept __awaitable = //
     requires(_Awaitable&& __await, _Promise* __promise) {
         {
             stdexec::__get_awaiter((_Awaitable &&) __await, __promise)
             } -> __awaiter<_Promise>;
     };
 
-template <class _T>
-_T& __as_lvalue(_T&&);
+template <class _Tp>
+_Tp& __as_lvalue(_Tp&&);
 
 template <class _Awaitable, class _Promise = void>
     requires __awaitable<_Awaitable, _Promise>

@@ -53,8 +53,10 @@ struct __in_place_stop_callback_base
 
   protected:
     using __execute_fn_t = void(__in_place_stop_callback_base*) noexcept;
-    explicit __in_place_stop_callback_base(const in_place_stop_source* __source,
-                                           __execute_fn_t* __execute) noexcept :
+
+    explicit __in_place_stop_callback_base(   //
+        const in_place_stop_source* __source, //
+        __execute_fn_t* __execute) noexcept :
         __source_(__source),
         __execute_(__execute)
     {}
@@ -110,14 +112,17 @@ struct never_stop_token
   public:
     template <class>
     using callback_type = __callback_type;
+
     static constexpr bool stop_requested() noexcept
     {
         return false;
     }
+
     static constexpr bool stop_possible() noexcept
     {
         return false;
     }
+
     bool operator==(const never_stop_token&) const noexcept = default;
 };
 
@@ -135,6 +140,7 @@ class in_place_stop_source
     in_place_stop_token get_token() const noexcept;
 
     bool request_stop() noexcept;
+
     bool stop_requested() const noexcept
     {
         return (__state_.load(std::memory_order_acquire) &
@@ -232,9 +238,9 @@ class in_place_stop_callback : __stok::__in_place_stop_callback_base
   public:
     template <class _Fun2>
         requires constructible_from<_Fun, _Fun2>
-    explicit in_place_stop_callback(
-        in_place_stop_token __token,
-        _Fun2&& __fun) noexcept(std::is_nothrow_constructible_v<_Fun, _Fun2>) :
+    explicit in_place_stop_callback(in_place_stop_token __token,
+                                    _Fun2&& __fun) //
+        noexcept(__nothrow_constructible_from<_Fun, _Fun2>) :
         __stok::__in_place_stop_callback_base(
             __token.__source_, &in_place_stop_callback::__execute_impl_),
         __fun_((_Fun2 &&) __fun)
@@ -442,11 +448,11 @@ inline void in_place_stop_source::__remove_callback_(
 }
 
 template <class _Token>
-concept stoppable_token = copy_constructible<_Token> &&
-                          move_constructible<_Token> &&
-                          std::is_nothrow_copy_constructible_v<_Token> &&
-                          std::is_nothrow_move_constructible_v<_Token> &&
-                          equality_comparable<_Token> &&
+concept stoppable_token = copy_constructible<_Token> &&                   //
+                          move_constructible<_Token> &&                   //
+                          std::is_nothrow_copy_constructible_v<_Token> && //
+                          std::is_nothrow_move_constructible_v<_Token> && //
+                          equality_comparable<_Token> &&                  //
                           requires(const _Token& __token) {
                               {
                                   __token.stop_requested()
@@ -463,23 +469,28 @@ concept stoppable_token = copy_constructible<_Token> &&
 
 template <class _Token, typename _Callback, typename _Initializer = _Callback>
 concept stoppable_token_for =
-    stoppable_token<_Token> && __callable<_Callback> &&
-    requires { typename _Token::template callback_type<_Callback>; } &&
-    constructible_from<_Callback, _Initializer> &&
-    constructible_from<typename _Token::template callback_type<_Callback>,
-                       _Token, _Initializer> &&
-    constructible_from<typename _Token::template callback_type<_Callback>,
-                       _Token&, _Initializer> &&
-    constructible_from<typename _Token::template callback_type<_Callback>,
-                       const _Token, _Initializer> &&
+    stoppable_token<_Token> && __callable<_Callback> &&                 //
+    requires { typename _Token::template callback_type<_Callback>; } && //
+    constructible_from<_Callback, _Initializer> &&                      //
+    constructible_from<                                                 //
+        typename _Token::template callback_type<_Callback>, _Token,
+        _Initializer> && //
+    constructible_from<  //
+        typename _Token::template callback_type<_Callback>, _Token&,
+        _Initializer> && //
+    constructible_from<  //
+        typename _Token::template callback_type<_Callback>, const _Token,
+        _Initializer> && //
     constructible_from<typename _Token::template callback_type<_Callback>,
                        const _Token&, _Initializer>;
 
 template <class _Token>
-concept unstoppable_token = stoppable_token<_Token> &&
-                            requires {
-                                {
-                                    _Token::stop_possible()
-                                    } -> __boolean_testable_;
-                            } && (!_Token::stop_possible());
+concept unstoppable_token =    //
+    stoppable_token<_Token> && //
+    requires {
+        {
+            _Token::stop_possible()
+            } -> __boolean_testable_;
+    } && //
+    (!_Token::stop_possible());
 } // namespace stdexec

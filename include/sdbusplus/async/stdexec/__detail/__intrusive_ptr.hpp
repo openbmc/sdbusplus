@@ -48,6 +48,7 @@ struct __control_block
         // __intrusive_from_this() (which increments the atomic):
         ::new ((void*)__value_) _Ty{(_Us &&) __us...};
     }
+
     ~__control_block()
     {
         __value().~_Ty();
@@ -156,6 +157,7 @@ class __intrusive_ptr
     }
 
     bool operator==(const __intrusive_ptr&) const = default;
+
     bool operator==(std::nullptr_t) const noexcept
     {
         return __data_ == nullptr;

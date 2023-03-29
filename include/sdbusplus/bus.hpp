@@ -232,7 +232,9 @@ struct bus
      */
     void request_name(const char* service)
     {
-        int r = _intf->sd_bus_request_name(_bus.get(), service, 0);
+        int r = _intf->sd_bus_request_name(
+            _bus.get(), service,
+            (SD_BUS_NAME_ALLOW_REPLACEMENT | SD_BUS_NAME_REPLACE_EXISTING));
         if (r < 0)
         {
             throw exception::SdBusError(-r, "sd_bus_request_name");

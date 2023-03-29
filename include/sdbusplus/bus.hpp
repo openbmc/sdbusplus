@@ -107,7 +107,6 @@ struct bus
 
     bus(bus&&) = default;
     bus& operator=(bus&&) = default;
-    ~bus() = default;
 
     bus(busp_t b, sdbusplus::SdBusInterface* intf);
 
@@ -122,6 +121,18 @@ struct bus
      *  Takes ownership of the bus-pointer and releases it when done.
      */
     bus(busp_t b, std::false_type);
+
+    /** @brief Destructor for 'bus'.
+     *
+     *  Releases service name in case it was acquired earlier.
+     */
+    ~bus()
+    {
+        if (!service_name.empty())
+        {
+            _intf->sd_bus_release_name(_bus.get(), service_name.c_str());
+        }
+    }
 
     /** @brief Sets the bus to be closed when this handle is destroyed. */
     void set_should_close(bool shouldClose)
@@ -237,6 +248,7 @@ struct bus
         {
             throw exception::SdBusError(-r, "sd_bus_request_name");
         }
+        service_name = std::string(service);
     }
 
     /** @brief Create a method_call message.
@@ -484,6 +496,9 @@ struct bus
     }
     sdbusplus::SdBusInterface* _intf;
     details::bus _bus;
+
+  private:
+    std::string service_name;
 };
 
 inline bus::bus(busp_t b, sdbusplus::SdBusInterface* intf) :

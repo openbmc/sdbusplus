@@ -148,6 +148,7 @@ class SdBusMock : public SdBusInterface
     MOCK_METHOD(sd_bus*, sd_bus_ref, (sd_bus*), (override));
     MOCK_METHOD(int, sd_bus_request_name, (sd_bus*, const char*, uint64_t),
                 (override));
+    MOCK_METHOD(int, sd_bus_release_name, (sd_bus*, const char*), (override));
     MOCK_METHOD(int, sd_bus_send, (sd_bus*, sd_bus_message*, uint64_t*),
                 (override));
     MOCK_METHOD(sd_bus*, sd_bus_unref, (sd_bus*), (override));

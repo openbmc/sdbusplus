@@ -71,11 +71,11 @@ class method_callback
 
 class signal
 {
+  public:
     signal(const std::string& name, const char* signature) :
         name_(name), signature_(signature)
     {}
 
-  public:
     std::string name_;
     const char* signature_;
 };
@@ -568,7 +568,7 @@ class dbus_interface
         static constexpr auto signature = utility::tuple_to_array(
             message::types::type_id<SignalSignature...>());
 
-        signals_.emplace_back(name, signature);
+        signals_.emplace_back(name, signature.data());
         return true;
     }
 

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c66ebb5f_5e697984",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-03-29T17:03:10Z",
+      "side": 1,
+      "message": "I\u0027m not sure I understand why this is necessary, but it is also broken.\n\nDBus should already be cleaning up the service name if the connection is closed.  It has to do this in the event of a process crash.  If you are having trouble with this as-is, you\u0027re also going to have trouble with process restarts due to coredump, etc.\n\nThis code doesn\u0027t work because there are processes that request multiple service names.  I don\u0027t think it is necessary to start holding a whole array (or set) of the service names previously claimed by the process.\n\nAlso, another way this is likely broken (and might be the cause of what you are seeing) is that many processes like to use the \u0027new_default\u0027 method to create a bus connection.  This is a shared bus connection type that is stored in thread-local-storage.  It is actually possible to reserve the bus name on one instance of the bus-connection and then utilize it on another.\n\nThis shared TLS instance is used in the IPMI code for sure because they don\u0027t end up passing the connection down to all the IPMI handlers.",
+      "revId": "b3c5cfc1344ea003d8a9d7539410ab50045a3686",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

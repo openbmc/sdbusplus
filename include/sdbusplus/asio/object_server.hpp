@@ -711,7 +711,7 @@ class dbus_interface
      */
     auto new_signal(const char* member)
     {
-        if (is_initialized())
+        if (!is_initialized())
         {
             return message_t(nullptr);
         }

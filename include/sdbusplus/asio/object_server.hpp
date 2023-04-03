@@ -409,8 +409,7 @@ class dbus_interface
             name,
             callback_get_instance<PropertyType, CallbackTypeGet>(
                 propertyPtr, std::move(getFunction)),
-            callback_set_message_instance<PropertyType>(
-                propertyPtr, details::nop_set_value<PropertyType>),
+            nullptr,
             callback_set_value_instance<PropertyType>(
                 propertyPtr, details::nop_set_value<PropertyType>),
             type.data(), flags);
@@ -735,9 +734,18 @@ class dbus_interface
         {
             pointers.push_back(&element);
             size_t pointer_off = (pointers.size() - 1) * sizeof(void*);
-            vtable_.emplace_back(vtable::property_o(
-                element.name_.c_str(), element.signature_, get_handler,
-                set_handler, pointer_off, element.flags_));
+            if (element.on_set_message_)
+            {
+                vtable_.emplace_back(vtable::property_o(
+                    element.name_.c_str(), element.signature_, get_handler,
+                    set_handler, pointer_off, element.flags_));
+            }
+            else
+            {
+                vtable_.emplace_back(vtable::property_o(
+                    element.name_.c_str(), element.signature_, get_handler,
+                    pointer_off, element.flags_));
+            }
         }
 
         method_callbacks_.shrink_to_fit();

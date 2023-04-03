@@ -379,6 +379,12 @@ class dbus_interface
         path_(path), name_(name)
 
     {}
+
+    dbus_interface(const dbus_interface&) = delete;
+    dbus_interface& operator=(const dbus_interface&) = delete;
+    dbus_interface(dbus_interface&&) = delete;
+    dbus_interface& operator=(dbus_interface&&) = delete;
+
     ~dbus_interface()
     {
         conn_->emit_interfaces_removed(path_.c_str(),

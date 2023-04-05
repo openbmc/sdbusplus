@@ -34,7 +34,8 @@ struct scope_completion;
  */
 struct scope
 {
-    scope() = default;
+    scope() = delete;
+    explicit scope(execution::run_loop& loop) : loop(loop) {}
 
     // The scope destructor can throw if it was destructed while there are
     // outstanding tasks.
@@ -64,6 +65,8 @@ struct scope
     size_t pending_count = 0;
     std::deque<std::exception_ptr> pending_exceptions = {};
     scope_ns::scope_completion* pending = nullptr;
+
+    execution::run_loop& loop;
 };
 
 namespace scope_ns
@@ -101,10 +104,22 @@ struct scope_receiver
         return self;
     }
 
+    friend decltype(auto) tag_invoke(execution::get_scheduler_t,
+                                     const scope_receiver& self) noexcept
+    {
+        return self.get_scheduler();
+    }
+
     void complete(std::exception_ptr&& = {}) noexcept;
 
     void* op_state;
     scope* s = nullptr;
+
+  private:
+    decltype(auto) get_scheduler() const
+    {
+        return s->loop.get_scheduler();
+    }
 };
 
 /** The holder of the connect operational-state. */

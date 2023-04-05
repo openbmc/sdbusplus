@@ -90,7 +90,6 @@ class context : public bus::details::bus_friend
     bus_t bus;
     event_source_t dbus_source;
     event_t event_loop{};
-    scope pending_tasks{};
 
     /** The async run-loop from std::execution. */
     execution::run_loop loop{};
@@ -99,10 +98,11 @@ class context : public bus::details::bus_friend
     /** Stop source */
     std::stop_source initial_stop{};
 
+    scope pending_tasks{loop};
     // In order to coordinate final completion of work, we keep some tasks
     // on a separate scope (the ones which maintain the sd-event/dbus state
     // and keep a final stop-source for them.
-    scope internal_tasks{};
+    scope internal_tasks{loop};
     std::stop_source final_stop{};
 
     // Lock and condition variable to signal `caller`.

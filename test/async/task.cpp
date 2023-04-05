@@ -17,7 +17,7 @@ TEST(Task, CoAwaitVoid)
     EXPECT_FALSE(value);
 
     // Run it and confirm the value is updated.
-    stdexec::this_thread::sync_wait(t());
+    stdexec::sync_wait(t());
     EXPECT_TRUE(value);
 }
 
@@ -41,7 +41,7 @@ TEST(Task, CoAwaitInt)
     // Add boolean to confirm that co-routine actually executed by the
     // end.
     bool executed = false;
-    stdexec::this_thread::sync_wait(_::two(executed));
+    stdexec::sync_wait(_::two(executed));
     EXPECT_TRUE(executed);
 }
 
@@ -69,11 +69,11 @@ TEST(Task, CoAwaitThrow)
     };
 
     // Ensure throws surface up.
-    EXPECT_THROW(stdexec::this_thread::sync_wait(_::one()), std::logic_error);
+    EXPECT_THROW(stdexec::sync_wait(_::one()), std::logic_error);
 
     // Ensure throws can be caught inside a co-routine.
     bool caught = false;
-    stdexec::this_thread::sync_wait(_::two(caught));
+    stdexec::sync_wait(_::two(caught));
     EXPECT_TRUE(caught);
 }
 
@@ -95,7 +95,7 @@ TEST(Task, RecursiveTask)
     static constexpr size_t count = 100;
     size_t executed = 0;
 
-    stdexec::this_thread::sync_wait(
+    stdexec::sync_wait(
         _::one(count, executed) |
         stdexec::then([=](auto result) { EXPECT_EQ(result, count); }));
 

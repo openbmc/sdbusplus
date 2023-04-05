@@ -142,10 +142,10 @@ void context::run()
     wait_for_wait_process_stopped();
 
     // Wait for all the internal tasks to complete.
-    stdexec::this_thread::sync_wait(
-        internal_tasks.empty() | execution::upon_error([&](auto&& e) {
-            pending_exceptions.emplace_back(std::move(e));
-        }));
+    stdexec::sync_wait(internal_tasks.empty() |
+                       execution::upon_error([&](auto&& e) {
+                           pending_exceptions.emplace_back(std::move(e));
+                       }));
 
     // Finish up the loop and join the thread.
     // (There shouldn't be anything going on by this point anyhow.)

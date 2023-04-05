@@ -179,10 +179,9 @@ std::unique_lock<std::recursive_mutex> event::obtain_lock()
     std::unique_lock<std::recursive_mutex> l{this->lock, std::defer_lock_t()};
     if constexpr (Signal)
     {
-        if (!l.try_lock())
+        while (!l.try_lock())
         {
             run_condition.signal();
-            l.lock();
         }
     }
     else

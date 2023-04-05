@@ -34,6 +34,24 @@
       "parentUuid": "c66ebb5f_5e697984",
       "revId": "b3c5cfc1344ea003d8a9d7539410ab50045a3686",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9d8f950e_4950e8ce",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000188
+      },
+      "writtenOn": "2023-04-05T09:53:16Z",
+      "side": 1,
+      "message": "Note that for your problem you could pass the flags `SD_BUS_NAME_ALLOW_REPLACEMENT | SD_BUS_NAME_REPLACE_EXISTING` to fix your issue with a new service starting too fast for the other client to properly tear down. The alternative would be to add some kind of restart delay config to the service.",
+      "parentUuid": "b87d644f_c7774f27",
+      "revId": "b3c5cfc1344ea003d8a9d7539410ab50045a3686",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

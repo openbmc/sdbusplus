@@ -16,6 +16,24 @@
       "message": "I\u0027m not sure I understand why this is necessary, but it is also broken.\n\nDBus should already be cleaning up the service name if the connection is closed.  It has to do this in the event of a process crash.  If you are having trouble with this as-is, you\u0027re also going to have trouble with process restarts due to coredump, etc.\n\nThis code doesn\u0027t work because there are processes that request multiple service names.  I don\u0027t think it is necessary to start holding a whole array (or set) of the service names previously claimed by the process.\n\nAlso, another way this is likely broken (and might be the cause of what you are seeing) is that many processes like to use the \u0027new_default\u0027 method to create a bus connection.  This is a shared bus connection type that is stored in thread-local-storage.  It is actually possible to reserve the bus name on one instance of the bus-connection and then utilize it on another.\n\nThis shared TLS instance is used in the IPMI code for sure because they don\u0027t end up passing the connection down to all the IPMI handlers.",
       "revId": "b3c5cfc1344ea003d8a9d7539410ab50045a3686",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b87d644f_c7774f27",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1001329
+      },
+      "writtenOn": "2023-04-05T08:13:51Z",
+      "side": 1,
+      "message": "How about moving the release code to a public method instead of doing it in destructor? Like:\nint bus::release_name(const char* service);\n\nThat would leave an option for a service to release its name, whenever it was needed.\n\nOur service uses asio::connection, which indeed uses new_default. However I don\u0027t think that we\u0027re passing that specific bus instance to another service. The sporadical issue I mentioned appears when a significant number of object paths is utilized (4097 different ones). In that case it seems that during systemctl restart not all objects are removed before starting another service instance, that is why request_name fails. We\u0027ve observed that problem disappears when we call sd_bus_release_name right after io_context cleanup, hence this change proposal.",
+      "parentUuid": "c66ebb5f_5e697984",
+      "revId": "b3c5cfc1344ea003d8a9d7539410ab50045a3686",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

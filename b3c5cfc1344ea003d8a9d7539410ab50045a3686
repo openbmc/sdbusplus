@@ -88,6 +88,24 @@
       "parentUuid": "739a53fe_ce3cf08e",
       "revId": "b3c5cfc1344ea003d8a9d7539410ab50045a3686",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "07d6312c_c1debd6b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-04-05T17:39:07Z",
+      "side": 1,
+      "message": "We might as well default to `SD_BUS_NAME_ALLOW_REPLACEMENT | SD_BUS_NAME_REPLACE_EXISTING` instead of 0.  I can\u0027t really think of cases where people would want something else by default.\n\nWilliam, agree?",
+      "parentUuid": "f40bba83_3cbb41fa",
+      "revId": "b3c5cfc1344ea003d8a9d7539410ab50045a3686",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

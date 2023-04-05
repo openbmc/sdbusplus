@@ -127,7 +127,8 @@ struct match_sender
 
     friend auto tag_invoke(execution::get_completion_signatures_t,
                            const match_sender&, auto)
-        -> execution::completion_signatures<execution::set_value_t(message_t)>;
+        -> execution::completion_signatures<execution::set_value_t(message_t),
+                                            execution::set_stopped_t()>;
 
     template <execution::receiver R>
     friend auto tag_invoke(execution::connect_t, match_sender&& self, R r)

@@ -137,7 +137,8 @@ struct callback_sender
     // This Sender yields a message_t.
     friend auto tag_invoke(execution::get_completion_signatures_t,
                            const callback_sender&, auto)
-        -> execution::completion_signatures<execution::set_value_t(message_t)>;
+        -> execution::completion_signatures<execution::set_value_t(message_t),
+                                            execution::set_stopped_t()>;
 
     template <execution::receiver R>
     friend auto tag_invoke(execution::connect_t, callback_sender&& self, R r)

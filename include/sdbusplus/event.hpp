@@ -136,6 +136,11 @@ class event
     // Safely get the lock, possibly signaling the running 'run_one' to exit.
     template <bool Signal = true>
     std::unique_lock<std::recursive_mutex> obtain_lock();
+    // When obtain_lock signals 'run_one' to exit, we want a priority of
+    // obtaining the lock so that the 'run_one' task doesn't run and reclaim
+    // the lock before the signaller can run.  This stage is first obtained
+    // prior to getting the primary lock in order to set an order.
+    std::mutex obtain_lock_stage{};
 };
 
 } // namespace event

@@ -578,7 +578,8 @@ class dbus_interface
     }
 
     template <typename CallbackType>
-    bool register_method(const std::string& name, CallbackType&& handler)
+    bool register_method(const std::string& name, CallbackType&& handler,
+        decltype(vtable_t::flags) flags = 0)
     {
         using ActualSignature = boost::callable_traits::args_t<CallbackType>;
         using CallbackSignature = utility::strip_first_n_args_t<
@@ -607,7 +608,7 @@ class dbus_interface
             func = callback_method_instance<CallbackType>(std::move(handler));
         }
         method_callbacks_.emplace_back(name, std::move(func), argType.data(),
-                                       resultType.data());
+                                       resultType.data(), flags);
 
         return true;
     }

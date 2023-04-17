@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "83862e90_feccd61a",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-04-17T15:20:23Z",
+      "side": 1,
+      "message": "It\u0027s unfortunate we\u0027ve let this bleed out so far.  I probably should have added a saner typedef in vtable.hpp.",
+      "range": {
+        "startLine": 53,
+        "startChar": 4,
+        "endLine": 53,
+        "endChar": 29
+      },
+      "revId": "2eb78c889eb5a21c378cd9d4588a0a9e7236c8b8",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c2348ad0_45e1d90d",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-04-17T15:20:23Z",
+      "side": 1,
+      "message": "Since this is just an integer, we shouldn\u0027t need the reference.",
+      "revId": "2eb78c889eb5a21c378cd9d4588a0a9e7236c8b8",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

@@ -86,6 +86,30 @@
       },
       "revId": "2eb78c889eb5a21c378cd9d4588a0a9e7236c8b8",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "beed882d_abc1e18c",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 584,
+      "author": {
+        "id": 1001321
+      },
+      "writtenOn": "2023-04-17T18:14:55Z",
+      "side": 1,
+      "message": "No matter what we default to, does the security become worse in any scenario compared to what we have today? if no, for now, it wont matter. There are 2 scenarios to consider.\n\n1. Accessing privileged information on DBUS\n2. Accessing privileged information on the system e.g. filesystem.\n\nMy contention is, no matter what the default, this change is better in one scenario and no worse in the other (since everything else runs as root anyways). \n\nThe answer to what should be a default will depend on, is there anything on the D-Bus worth protecting from non-root? Should we address that separately?",
+      "parentUuid": "39042da0_b8b7ca9f",
+      "range": {
+        "startLine": 584,
+        "startChar": 59,
+        "endLine": 584,
+        "endChar": 60
+      },
+      "revId": "2eb78c889eb5a21c378cd9d4588a0a9e7236c8b8",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

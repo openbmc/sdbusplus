@@ -1,0 +1,78 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "dce36b91_e76b2cfb",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1001745
+      },
+      "writtenOn": "2023-04-17T06:11:44Z",
+      "side": 1,
+      "message": "Marked the PR as WIP as the change is currently only an RFC and requires further changes prior to being considered for merging.",
+      "revId": "c9c03ad2f607024743c1e11c109a908d5e4b54fd",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c430b418_ba167a40",
+        "filename": "include/sdbusplus/bus.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 1001745
+      },
+      "writtenOn": "2023-04-17T06:11:44Z",
+      "side": 1,
+      "message": "(Couldn\u0027t find a way / place to add a cover letter in Gerrit, so added the description here as a comment for the time being; will move the relevant parts into the commit message when updating the pull request if the concept in general looks good).\n\n## The problem\n\nsdbusplus calls the D-Bus method implementation functions in such a way that the callstack contains `sd_bus` C functions from libsystemd, and sdbusplus only catches the specific exceptions that match the errors defined for the D-Bus method before returning execution to the C functions. If any D-Bus method implementation propagates any other exception than the errors the method declares, the C functions in the callstack may leak resources.\n\nWe didn\u0027t find any documentation or other statement that would prohibit exceptions from being thrown / propagated from method implementations. This seems to be a known issue though [1]:\n\n    By throwing an exception, you\u0027re not making an error return to the calling client, but instead blowing through all of the `sd_bus` C code with your C++ exception and putting your application into an invalid state. At a minimum you are leaking memory.\n\n## The proposed solution\n\nWe propose changing sdbusplus to catch any exceptions propagated from method implementations and to re-throw them from `sdbusplus::bus::bus::process*()`.\n\nFirst of all catching and re-throwing would avoid resource leaks from `sd_bus` C functions. And as a consequence it would allow propagating exceptions in the normal way until the caller that is prepared to handle them. Ultimately exceptions could propagate even up to `main()`, which is what we\u0027d like to do in our applications: if no other layer before `main()` catches and handles the exception, it propagates to `main()`, `main()` logs the exception and its message as a fatal event to be stored in the system journal and the systemd unit is (typically) configured to restart the application. Restarting the application allows for a chance to recover from potential failures modes that persist (e.g. due to some invalid state stored in RAM) until application restart. Also, terminating the application, in which case the D-Bus daemon returns the standard error `org.freedesktop.DBus.Error.NoReply` to the client, avoids the need to declare an error for internal failures in the D-Bus API. Internal errors in the API specification do not really add value over `org.freedesktop.DBus.Error.NoReply` but only bloat the API as clients can\u0027t handle them in any better way than `org.freedesktop.DBus.Error.NoReply`.\n\nThe change should be backwards compatible as any code that hasn\u0027t propagated unexpected exceptions should still work as before while unexpected exceptions would still propagate through the callstack (excluding the `sd_bus` C functions) but just avoid the resource leaks from the `sd_bus` C functions.\n\n## Other options considered\n\nResources leaks from the `sd_bus` C functions could of course be avoided by catching all exceptions (or even `catch (...)`) in method implementations. That, however, would require adding some hand-written boilerplate to each and every method implementation. Additionally, as far as we see, there wouldn\u0027t be any means to propagate errors to `main()` as (unexpected) exceptions would cause resource leaks and the return value cannot be used to pass error codes.\n\nThe GCC option `-fexceptions` isn\u0027t really an option either as it still wouldn\u0027t automagically deallocate resources from the C code, many times one can\u0027t affect the compiler options used to build libsystemd, and -fexceptions is still a compiler specific option.\n\n## Pending actions\n\nThe implementation at this point is only a proof-of-concept or demonstration. We are not sure if e.g. `SdBusImpl` is the best / correct place to store the current exception, and secondly, if the change in principle looks good, we should extend the implementation to properties and potentially other necessary places. Also, tests were not modified yet and should be updated accordingly. Finally, the Git history needs to be cleaned up (the first commit dropped and at least a proper commit message written for the second commit).\n\n## Testing\n\nThe calculator example was modified to demonstrate the problem (the first commit) and the proposed change (the second commit).\n\nThe test can be reproduced with the following commands in the sdbusplus root directory for both commits:\n```\nrm -rf build/ \u0026\u0026 meson setup -Dtests\u003ddisabled build \u0026\u0026 cd build \u0026\u0026 ninja \u0026\u0026 valgrind --leak-check\u003dfull --show-leak-kinds\u003dall ./example/calculator-server\nbusctl --user call net.poettering.Calculator /net/poettering/calculator net.poettering.Calculator Clear\n```\n\nAfter checking out the first commit, building it and running the calculator server with Valgrind\n```\nsdbusplus$ rm -rf build/ \u0026\u0026 meson setup -Dtests\u003ddisabled build \u0026\u0026 cd build \u0026\u0026 ninja\nThe Meson build system\nVersion: 1.0.1\nSource dir: /path/to/sdbusplus\nBuild dir: /path/to/sdbusplus/build\nBuild type: native build\nProject name: sdbusplus\nProject version: 1.0.0\nC compiler for the host machine: ccache cc (gcc 12.2.1 \"cc (GCC) 12.2.1 20221121 (Red Hat 12.2.1-4)\")\nC linker for the host machine: cc ld.bfd 2.37-37\nC++ compiler for the host machine: ccache c++ (gcc 12.2.1 \"c++ (GCC) 12.2.1 20221121 (Red Hat 12.2.1-4)\")\nC++ linker for the host machine: c++ ld.bfd 2.37-37\nHost machine cpu family: x86_64\nHost machine cpu: x86_64\nFound pkg-config: /usr/bin/pkg-config (1.8.0)\nRun-time dependency libsystemd found: YES 250\nProgram python3 (inflection, yaml, mako) found: YES (/path/to/bin/python3) modules: inflection, yaml, mako\nRun-time dependency Boost found: YES 1.76.0 (/usr)\nProgram sdbus++ found: YES (/path/to/sdbusplus/tools/sdbus++)\nProgram sdbus++ found: YES (overridden)\nProgram sdbus++-gen-meson found: YES (/path/to/sdbusplus/tools/sdbus++-gen-meson)\nProgram sdbus++-gen-meson found: YES (overridden)\nHeader \"boost/asio.hpp\" has symbol \"boost::asio::io_context\" : YES\nRun-time dependency Boost (found: context, coroutine) found: YES 1.76.0 (/usr)\nBuild targets in project: 9\n\nsdbusplus 1.0.0\n\n  User defined options\n    tests: disabled\n\nFound ninja-1.10.2 at /usr/bin/ninja\n[27/27] Linking target example/calculator-server\nbuild$ valgrind --leak-check\u003dfull --show-leak-kinds\u003dall ./example/calculator-server\n\u003d\u003d451108\u003d\u003d Memcheck, a memory error detector\n\u003d\u003d451108\u003d\u003d Copyright (C) 2002-2022, and GNU GPL\u0027d, by Julian Seward et al.\n\u003d\u003d451108\u003d\u003d Using Valgrind-3.19.0 and LibVEX; rerun with -h for copyright info\n\u003d\u003d451108\u003d\u003d Command: ./example/calculator-server\n\u003d\u003d451108\u003d\u003d\n```\nand issuing the call\n```\n$ busctl --user call net.poettering.Calculator /net/poettering/calculator net.poettering.Calculator Clear\n```\nthe client reports the error\n```\nCall failed: Remote peer disconnected\n```\nand the server produces the following results (full Valgrind output omitted):\n```\nTerminating due to a fatal condition: A propagating exception\n\u003d\u003d451108\u003d\u003d\n\u003d\u003d451108\u003d\u003d HEAP SUMMARY:\n\u003d\u003d451108\u003d\u003d     in use at exit: 3,946 bytes in 32 blocks\n\u003d\u003d451108\u003d\u003d   total heap usage: 142 allocs, 110 frees, 96,623 bytes allocated\n\u003d\u003d451108\u003d\u003d\n\u003d\u003d451108\u003d\u003d 2 bytes in 1 blocks are still reachable in loss record 1 of 27\n\u003d\u003d451108\u003d\u003d    at 0x484586F: malloc (vg_replace_malloc.c:381)\n\u003d\u003d451108\u003d\u003d    by 0x4C6152D: strdup (strdup.c:42)\n\u003d\u003d451108\u003d\u003d    by 0x48C4D7D: bus_node_allocate (bus-objects.c:1503)\n\u003d\u003d451108\u003d\u003d    by 0x48C4EE7: bus_node_allocate (bus-objects.c:1515)\n\u003d\u003d451108\u003d\u003d    by 0x48C4EE7: bus_node_allocate (bus-objects.c:1515)\n\u003d\u003d451108\u003d\u003d    by 0x48C4EE7: bus_node_allocate (bus-objects.c:1515)\n\u003d\u003d451108\u003d\u003d    by 0x48CC0BA: sd_bus_add_object_manager (bus-objects.c:3003)\n\u003d\u003d451108\u003d\u003d    by 0x403A17: sd_bus_add_object_manager (sdbus.hpp:189)\n\u003d\u003d451108\u003d\u003d    by 0x403A17: manager (manager.hpp:49)\n\u003d\u003d451108\u003d\u003d    by 0x403A17: main (calculator-server.cpp:63)\n\u003d\u003d451108\u003d\u003d\n[...]\n\u003d\u003d451108\u003d\u003d\n\u003d\u003d451108\u003d\u003d LEAK SUMMARY:\n\u003d\u003d451108\u003d\u003d    definitely lost: 0 bytes in 0 blocks\n\u003d\u003d451108\u003d\u003d    indirectly lost: 0 bytes in 0 blocks\n\u003d\u003d451108\u003d\u003d      possibly lost: 0 bytes in 0 blocks\n\u003d\u003d451108\u003d\u003d    still reachable: 3,946 bytes in 32 blocks\n\u003d\u003d451108\u003d\u003d         suppressed: 0 bytes in 0 blocks\n\u003d\u003d451108\u003d\u003d\n\u003d\u003d451108\u003d\u003d For lists of detected and suppressed errors, rerun with: -s\n\u003d\u003d451108\u003d\u003d ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)\n```\n\nWith the second commit and the same procedure Valgrding reports no leaks (output not redacted)\n```\nbuild$ ninja \u0026\u0026 valgrind --leak-check\u003dfull --show-leak-kinds\u003dall ./example/calculator-server\n[26/26] Linking target example/calculator-server\n\u003d\u003d454408\u003d\u003d Memcheck, a memory error detector\n\u003d\u003d454408\u003d\u003d Copyright (C) 2002-2022, and GNU GPL\u0027d, by Julian Seward et al.\n\u003d\u003d454408\u003d\u003d Using Valgrind-3.19.0 and LibVEX; rerun with -h for copyright info\n\u003d\u003d454408\u003d\u003d Command: ./example/calculator-server\n\u003d\u003d454408\u003d\u003d\nTerminating due to a fatal condition: A propagating exception\n\u003d\u003d454408\u003d\u003d\n\u003d\u003d454408\u003d\u003d HEAP SUMMARY:\n\u003d\u003d454408\u003d\u003d     in use at exit: 0 bytes in 0 blocks\n\u003d\u003d454408\u003d\u003d   total heap usage: 154 allocs, 154 frees, 98,221 bytes allocated\n\u003d\u003d454408\u003d\u003d\n\u003d\u003d454408\u003d\u003d All heap blocks were freed -- no leaks are possible\n\u003d\u003d454408\u003d\u003d\n\u003d\u003d454408\u003d\u003d For lists of detected and suppressed errors, rerun with: -s\n\u003d\u003d454408\u003d\u003d ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)\n```\nand the client still reports the same error (as expected)\n```\nCall failed: Remote peer disconnected\n```\n\n## References\n\n[1] https://lore.kernel.org/openbmc/YTDvfIn4Z05mGdCx@heinlein/",
+      "revId": "c9c03ad2f607024743c1e11c109a908d5e4b54fd",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b363f737_be7f468e",
+        "filename": "include/sdbusplus/sdbus.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 1001745
+      },
+      "writtenOn": "2023-04-17T06:11:44Z",
+      "side": 1,
+      "message": "The implementation at this point is only a proof-of-concept or demonstration. We are not sure if e.g. `SdBusImpl` is the best / correct place to store the current exception.",
+      "range": {
+        "startLine": 176,
+        "startChar": 4,
+        "endLine": 176,
+        "endChar": 11
+      },
+      "revId": "c9c03ad2f607024743c1e11c109a908d5e4b54fd",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "52fb10c5_cc76cec2",
+        "filename": "tools/sdbusplus/templates/method.prototype.hpp.mako",
+        "patchSetId": 2
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 1001745
+      },
+      "writtenOn": "2023-04-17T06:11:44Z",
+      "side": 1,
+      "message": "The implementation at this point is only a proof-of-concept or demonstration, and if the concept looks good in general, we should extend the implementation to properties and potentially other necessary places.",
+      "revId": "c9c03ad2f607024743c1e11c109a908d5e4b54fd",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

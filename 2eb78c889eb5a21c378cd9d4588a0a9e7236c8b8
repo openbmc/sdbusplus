@@ -158,6 +158,30 @@
       },
       "revId": "2eb78c889eb5a21c378cd9d4588a0a9e7236c8b8",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "30b8dac0_61903542",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 584,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-04-17T20:39:25Z",
+      "side": 1,
+      "message": "\u003e So long as the plan isn\u0027t to submit 400 PRs to every OpenBMC daemon to turn this on for every method call,\n\n100% agree.  This can be used for experimentation, but we should not be punting a fundamental change like this out to all the repos.  sdbusplus is suppose to make dbus easier.",
+      "parentUuid": "f7f1d748_6aaf30f0",
+      "range": {
+        "startLine": 584,
+        "startChar": 59,
+        "endLine": 584,
+        "endChar": 60
+      },
+      "revId": "2eb78c889eb5a21c378cd9d4588a0a9e7236c8b8",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

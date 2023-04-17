@@ -134,6 +134,30 @@
       },
       "revId": "2eb78c889eb5a21c378cd9d4588a0a9e7236c8b8",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f7f1d748_6aaf30f0",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 584,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2023-04-17T20:17:08Z",
+      "side": 1,
+      "message": "Sure, not doing it yet seems reasonable;  So long as the plan isn\u0027t to submit 400 PRs to every OpenBMC daemon to turn this on for every method call, because that seems like the logical result of this patchset.  Agreed, we should look at the security of the option, but I\u0027m not following how it\u0027s possible that this makes security worse?  Maybe it\u0027s non-ideal, and maybe it makes DBus security no better, but it still seems like an improvement.  Something I\u0027m missing that would make this worse than just running as root?",
+      "parentUuid": "91acc37c_27571295",
+      "range": {
+        "startLine": 584,
+        "startChar": 59,
+        "endLine": 584,
+        "endChar": 60
+      },
+      "revId": "2eb78c889eb5a21c378cd9d4588a0a9e7236c8b8",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

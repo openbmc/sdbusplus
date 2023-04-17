@@ -62,6 +62,30 @@
       },
       "revId": "2eb78c889eb5a21c378cd9d4588a0a9e7236c8b8",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "39042da0_b8b7ca9f",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 584,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-04-17T16:53:52Z",
+      "side": 1,
+      "message": "I don\u0027t know enough yet to assess if that\u0027s what we should be doing or not.  I know people are claiming \"it works\" but it seems like the security implications to it put us in just as bad (or worse?) state than where we are now with everything running as root.  Unless we fully enable polkit which I don\u0027t know if we can do on the 32MB platforms.\n\nhttps://www.freedesktop.org/software/systemd/man/sd_bus_add_object.html#SD_BUS_VTABLE_UNPRIVILEGED\n\nBased on the word in that manpage it seems like adding CAP_SYS_ADMIN to the non-root users also gets past the issue, but that seems almost as bad as root itself:\n\n\u003e If not specified, either for an individual entry or the whole array, CAP_SYS_ADMIN is checked by default",
+      "parentUuid": "777ff546_61b74356",
+      "range": {
+        "startLine": 584,
+        "startChar": 59,
+        "endLine": 584,
+        "endChar": 60
+      },
+      "revId": "2eb78c889eb5a21c378cd9d4588a0a9e7236c8b8",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

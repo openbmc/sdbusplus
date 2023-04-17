@@ -230,6 +230,30 @@
       },
       "revId": "2eb78c889eb5a21c378cd9d4588a0a9e7236c8b8",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "935c876e_ccee84c6",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 584,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-04-17T20:55:20Z",
+      "side": 1,
+      "message": "You are fine experimenting with bmcweb and getting something to work.  But, just because something \"works\" doesn\u0027t mean that is the direction we\u0027re going to go.  I\u0027m suspicious that UNPRIVILEGED is the only way forward here and I suspect we are more likely to want to use CAPABILITY(...).  In either case we need to understand the security implications of what we\u0027re setting as the default and/or direction in this area.",
+      "parentUuid": "74809b38_58449660",
+      "range": {
+        "startLine": 584,
+        "startChar": 59,
+        "endLine": 584,
+        "endChar": 60
+      },
+      "revId": "2eb78c889eb5a21c378cd9d4588a0a9e7236c8b8",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

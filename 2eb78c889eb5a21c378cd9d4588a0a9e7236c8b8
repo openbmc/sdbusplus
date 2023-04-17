@@ -182,6 +182,30 @@
       },
       "revId": "2eb78c889eb5a21c378cd9d4588a0a9e7236c8b8",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e324cc42_445149f8",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 584,
+      "author": {
+        "id": 1001321
+      },
+      "writtenOn": "2023-04-17T20:45:25Z",
+      "side": 1,
+      "message": "So once we figure out all the moving parts with running BMCWeb as non-root which I believe we are close to, then there are no objections having the default be unprivileged? Am i understanding this correctly?",
+      "parentUuid": "30b8dac0_61903542",
+      "range": {
+        "startLine": 584,
+        "startChar": 59,
+        "endLine": 584,
+        "endChar": 60
+      },
+      "revId": "2eb78c889eb5a21c378cd9d4588a0a9e7236c8b8",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

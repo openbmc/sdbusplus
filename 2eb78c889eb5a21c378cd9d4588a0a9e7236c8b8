@@ -39,6 +39,29 @@
       "message": "Since this is just an integer, we shouldn\u0027t need the reference.",
       "revId": "2eb78c889eb5a21c378cd9d4588a0a9e7236c8b8",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "777ff546_61b74356",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 584,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2023-04-17T16:32:10Z",
+      "side": 1,
+      "message": "Should the default be unprivileged if that\u0027s what we expect going forward?",
+      "range": {
+        "startLine": 584,
+        "startChar": 59,
+        "endLine": 584,
+        "endChar": 60
+      },
+      "revId": "2eb78c889eb5a21c378cd9d4588a0a9e7236c8b8",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

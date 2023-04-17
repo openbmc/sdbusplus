@@ -58,15 +58,17 @@ class method_callback
   public:
     method_callback(const std::string& name,
                     std::function<int(message_t&)>&& call,
-                    const char* arg_signature, const char* return_signature) :
+                    const char* arg_signature, const char* return_signature,
+                    decltype(vtable_t::flags)& flags) :
         name_(name),
         call_(std::move(call)), arg_signature_(arg_signature),
-        return_signature_(return_signature)
+        return_signature_(return_signature), flags_(flags)
     {}
     std::string name_;
     std::function<int(message_t&)> call_;
     const char* arg_signature_;
     const char* return_signature_;
+    decltype(vtable_t::flags) flags_;
 };
 
 class signal
@@ -578,7 +580,8 @@ class dbus_interface
     }
 
     template <typename CallbackType>
-    bool register_method(const std::string& name, CallbackType&& handler)
+    bool register_method(const std::string& name, CallbackType&& handler,
+                         decltype(vtable_t::flags) flags = 0)
     {
         using ActualSignature = boost::callable_traits::args_t<CallbackType>;
         using CallbackSignature = utility::strip_first_n_args_t<
@@ -607,7 +610,7 @@ class dbus_interface
             func = callback_method_instance<CallbackType>(std::move(handler));
         }
         method_callbacks_.emplace_back(name, std::move(func), argType.data(),
-                                       resultType.data());
+                                       resultType.data(), flags);
 
         return true;
     }
@@ -759,9 +762,10 @@ class dbus_interface
         {
             pointers.push_back(&element);
             size_t pointer_off = (pointers.size() - 1) * sizeof(void*);
-            vtable_.emplace_back(vtable::method_o(
-                element.name_.c_str(), element.arg_signature_,
-                element.return_signature_, method_handler, pointer_off));
+            vtable_.emplace_back(
+                vtable::method_o(element.name_.c_str(), element.arg_signature_,
+                                 element.return_signature_, method_handler,
+                                 pointer_off, element.flags_));
         }
 
         signals_.shrink_to_fit();

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1419e809_14cd59f2",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-04-17T15:21:21Z",
+      "side": 1,
+      "message": "You mentioned you had submitted a CLA.  Do you know where that was sent?",
+      "revId": "80ee79896463fa899e3874167980892b75464dd0",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

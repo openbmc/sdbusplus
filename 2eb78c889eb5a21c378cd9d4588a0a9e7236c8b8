@@ -326,6 +326,30 @@
       },
       "revId": "2eb78c889eb5a21c378cd9d4588a0a9e7236c8b8",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2b491276_f4401964",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 584,
+      "author": {
+        "id": 1001049
+      },
+      "writtenOn": "2023-04-18T06:47:00Z",
+      "side": 1,
+      "message": "The discussion happened on sysyemd mail chain and polkit mail chain and anyone subscribed to it can see the conversation.\n\nSystemd discussion:\nhttps://www.spinics.net/lists/systemd-devel/msg08392.html\nhttps://www.spinics.net/lists/systemd-devel/msg08496.html\n\npolkit discussion \nhttps://gitlab.freedesktop.org/polkit/polkit/-/issues/192\n\nAnd as far as the PR is concerned register_method is not providing an option to change the flag, and PR address the same. And like you said we can take discussion of running bmcweb as non-root somewhere in discord and not in this PR. \n\nOn a quick summery to run bmcweb as non root we need the following:\n1) Make a non root user and give the required file access.\n2) Move libpam functionality from bmcweb to a different demon \n3) Make changes in this PR + dbus conf files to let non-root user make dbus calls.\n\nLike you suggested we can make a design document and share with all details.",
+      "parentUuid": "dd2e8597_80017e3b",
+      "range": {
+        "startLine": 584,
+        "startChar": 59,
+        "endLine": 584,
+        "endChar": 60
+      },
+      "revId": "2eb78c889eb5a21c378cd9d4588a0a9e7236c8b8",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

@@ -302,6 +302,30 @@
       },
       "revId": "2eb78c889eb5a21c378cd9d4588a0a9e7236c8b8",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "dd2e8597_80017e3b",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 584,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-04-18T05:01:19Z",
+      "side": 1,
+      "message": "Do you have links to these discussions?  I would hope they’re happening in public, but my reading of what you wrote leads me to believe otherwise. Who is the maintainer you’re talking with?  Do you have specific links to the code you referenced here?  Did the maintainer have any explanation on why their suggestion doesn’t align with the documentation I linked to?  There are a lot of questions I have that I think you could be less vague on, otherwise it feels like you’re just trying to appeal to authority.  Frankly, private conversations don’t hold much water in the open source world. \n\nI’m not really sure what you want me to do with this information. Is there a decision you want made?  I’ve already said I’m mostly fine with this commit as-is, but Ed and I both agree that we do not want to see a bunch of changes across the codebase to individual vtable inits. Is there some other code change you want to propose or we need to decide on?\n\nOverall, I don’t know how we get from where we are today with everything running as root to something different, partially because:\n1. It isn’t a particularly interesting problem to me personally so I’ve not done any investigation. \n2. I don’t fully understand where the people involved would like to see we end up. \n\nIt is fine for you and your team to be doing experimentation and gathering data. Ultimately, we need a design document of where we want to go, how we’re going to get there, and what the alternatives are. I don’t think we’re ever going to merge a fundamental change, like setting all dbus vtables to unprivileged, without having that bigger discussion. Trying to discuss that in this code review doesn’t seem like the right venue.",
+      "parentUuid": "7264b8c4_7dc811c1",
+      "range": {
+        "startLine": 584,
+        "startChar": 59,
+        "endLine": 584,
+        "endChar": 60
+      },
+      "revId": "2eb78c889eb5a21c378cd9d4588a0a9e7236c8b8",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

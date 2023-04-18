@@ -350,6 +350,30 @@
       },
       "revId": "2eb78c889eb5a21c378cd9d4588a0a9e7236c8b8",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0886097d_c291b465",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 584,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2023-04-18T16:59:05Z",
+      "side": 1,
+      "message": "I would also note that exposing these flags can have unintended consequences to users of this library, as I unfortunately discovered here:\nhttps://gerrit.openbmc.org/c/openbmc/sdbusplus/+/62122\n\nI\u0027m not a huge fan of exposing them wholesale to a public API in the long term.  For a temporary thing, it\u0027s fine, but the end goal should ideally be to go back to the non-flag supported API we had before.",
+      "parentUuid": "2b491276_f4401964",
+      "range": {
+        "startLine": 584,
+        "startChar": 59,
+        "endLine": 584,
+        "endChar": 60
+      },
+      "revId": "2eb78c889eb5a21c378cd9d4588a0a9e7236c8b8",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

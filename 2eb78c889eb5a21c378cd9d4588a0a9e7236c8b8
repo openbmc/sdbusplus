@@ -254,6 +254,30 @@
       },
       "revId": "2eb78c889eb5a21c378cd9d4588a0a9e7236c8b8",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4cf3a7b0_b0bfdbe7",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 584,
+      "author": {
+        "id": 1001049
+      },
+      "writtenOn": "2023-04-18T03:51:12Z",
+      "side": 1,
+      "message": "CAPABILITY can not be safely used as per maintainer of systemd. \nHis reply was \"This is stuff that cannot safely be implemented on the AF_UNIX. It was a safe concept when kdbus was a thing.\"\n\nWe had gone extensively over different ways to handle it. And had mail discussion with systemd and polkit maintainers. \n\nIssue 1 is systemd needs to let the call pass through, for that we need UNPRIVILAGED. Then we can refine access by polkit or dbus conf. And dbus conf is easier approach as it does not touch code.\n\n@Ed, I agree that making UNPRIVILAGED as default will save us lot of effort. I also had same concerns as Patrick about others who use the repo will see a change in behavior in code if we do that. Can we think of taking the default value as some option coming from meson?",
+      "parentUuid": "935c876e_ccee84c6",
+      "range": {
+        "startLine": 584,
+        "startChar": 59,
+        "endLine": 584,
+        "endChar": 60
+      },
+      "revId": "2eb78c889eb5a21c378cd9d4588a0a9e7236c8b8",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

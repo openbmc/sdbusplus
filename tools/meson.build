@@ -1,8 +1,8 @@
 sdbusplusplus_depfiles = files(
   'sdbus++',
+  'sdbusplus/__init__.py',
   'sdbusplus/enum.py',
   'sdbusplus/error.py',
-  'sdbusplus/__init__.py',
   'sdbusplus/interface.py',
   'sdbusplus/main.py',
   'sdbusplus/method.py',
@@ -14,6 +14,7 @@ sdbusplusplus_depfiles = files(
   'sdbusplus/templates/error.hpp.mako',
   'sdbusplus/templates/error.md.mako',
   'sdbusplus/templates/interface.client.hpp.mako',
+  'sdbusplus/templates/interface.common.hpp.mako',
   'sdbusplus/templates/interface.md.mako',
   'sdbusplus/templates/interface.server.cpp.mako',
   'sdbusplus/templates/interface.server.hpp.mako',

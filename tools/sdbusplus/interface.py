@@ -54,3 +54,7 @@ class Interface(NamedElement, Renderer):
     def client_header(self, loader):
         self.typename = "client"
         return self.render(loader, "interface.client.hpp.mako", interface=self)
+
+    def common_header(self, loader):
+        self.typename = "common"
+        return self.render(loader, "interface.common.hpp.mako", interface=self)

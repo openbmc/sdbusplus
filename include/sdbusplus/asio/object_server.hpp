@@ -617,13 +617,13 @@ class dbus_interface
                            sd_bus_message* reply, void* userdata,
                            sd_bus_error* error)
     {
-        property_callback** func = static_cast<property_callback**>(userdata);
+        property_callback* func = static_cast<property_callback*>(userdata);
         auto mesg = message_t(reply);
 #ifdef __EXCEPTIONS
         try
         {
 #endif
-            return (*func)->on_get_(mesg);
+            return func->on_get_(mesg);
 #ifdef __EXCEPTIONS
         }
 
@@ -645,14 +645,14 @@ class dbus_interface
                            sd_bus_message* value, void* userdata,
                            sd_bus_error* error)
     {
-        property_callback** func = static_cast<property_callback**>(userdata);
+        property_callback* func = static_cast<property_callback*>(userdata);
 
         auto mesg = message_t(value);
 #ifdef __EXCEPTIONS
         try
         {
 #endif
-            SetPropertyReturnValue status = (*func)->on_set_message_(mesg);
+            SetPropertyReturnValue status = func->on_set_message_(mesg);
             if ((status == SetPropertyReturnValue::valueUpdated) ||
                 (status == SetPropertyReturnValue::sameValueUpdated))
             {
@@ -683,13 +683,13 @@ class dbus_interface
     static int method_handler(sd_bus_message* m, void* userdata,
                               sd_bus_error* error)
     {
-        method_callback** func = static_cast<method_callback**>(userdata);
+        method_callback* func = static_cast<method_callback*>(userdata);
         auto mesg = message_t(m);
 #ifdef __EXCEPTIONS
         try
         {
 #endif
-            int status = (*func)->call_(mesg);
+            int status = func->call_(mesg);
             if (status == 1)
             {
                 return status;
@@ -733,35 +733,33 @@ class dbus_interface
         vtable_.reserve(2 + property_callbacks_.size() +
                         method_callbacks_.size() + signals_.size());
         vtable_.emplace_back(vtable::start());
-        pointers.push_back(this);
-
         property_callbacks_.shrink_to_fit();
         for (auto& element : property_callbacks_)
         {
-            pointers.push_back(&element);
-            size_t pointer_off = (pointers.size() - 1) * sizeof(void*);
             if (element.on_set_message_)
             {
                 vtable_.emplace_back(vtable::property_o(
                     element.name_.c_str(), element.signature_, get_handler,
-                    set_handler, pointer_off, element.flags_));
+                    set_handler, reinterpret_cast<size_t>(&element),
+                    element.flags_ | SD_BUS_VTABLE_ABSOLUTE_OFFSET));
             }
             else
             {
                 vtable_.emplace_back(vtable::property_o(
                     element.name_.c_str(), element.signature_, get_handler,
-                    pointer_off, element.flags_));
+                    reinterpret_cast<size_t>(&element),
+                    element.flags_ | SD_BUS_VTABLE_ABSOLUTE_OFFSET));
             }
         }
 
         method_callbacks_.shrink_to_fit();
         for (auto& element : method_callbacks_)
         {
-            pointers.push_back(&element);
-            size_t pointer_off = (pointers.size() - 1) * sizeof(void*);
-            vtable_.emplace_back(vtable::method_o(
-                element.name_.c_str(), element.arg_signature_,
-                element.return_signature_, method_handler, pointer_off));
+            vtable_.emplace_back(
+                vtable::method_o(element.name_.c_str(), element.arg_signature_,
+                                 element.return_signature_, method_handler,
+                                 reinterpret_cast<size_t>(&element),
+                                 SD_BUS_VTABLE_ABSOLUTE_OFFSET));
         }
 
         signals_.shrink_to_fit();
@@ -777,7 +775,7 @@ class dbus_interface
         interface_.emplace(static_cast<sdbusplus::bus_t&>(*conn_),
                            path_.c_str(), name_.c_str(),
                            static_cast<const sd_bus_vtable*>(&vtable_[0]),
-                           pointers.data());
+                           nullptr);
         conn_->emit_interfaces_added(path_.c_str(),
                                      std::vector<std::string>{name_});
         if (!skipPropertyChangedSignal)
@@ -823,8 +821,6 @@ class dbus_interface
     std::vector<signal> signals_;
     std::vector<property_callback> property_callbacks_;
     std::vector<method_callback> method_callbacks_;
-
-    std::vector<void*> pointers;
 
     std::vector<sd_bus_vtable> vtable_;
     std::optional<sdbusplus::server::interface_t> interface_;

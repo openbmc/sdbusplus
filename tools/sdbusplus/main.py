@@ -11,12 +11,13 @@ def main():
 
     valid_types = {"interface": sdbusplus.Interface, "error": sdbusplus.Error}
     valid_processes = {
-        "markdown": "markdown",
-        "server-header": "server_header",
-        "server-cpp": "server_cpp",
-        "exception-header": "exception_header",
-        "exception-cpp": "exception_cpp",
         "client-header": "client_header",
+        "common-header": "common_header",
+        "exception-cpp": "exception_cpp",
+        "exception-header": "exception_header",
+        "markdown": "markdown",
+        "server-cpp": "server_cpp",
+        "server-header": "server_header",
     }
 
     parser = argparse.ArgumentParser(description="Process sdbus++ YAML files.")

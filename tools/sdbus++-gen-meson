@@ -36,7 +36,7 @@ EOF
 ## if a repository contains old copies of the generated meson.build files and
 ## needs an update.  We should increment the version number whenever the
 ## resulting meson.build would change.
-tool_version="sdbus++-gen-meson version 5"
+tool_version="sdbus++-gen-meson version 6"
 function show_version() {
     echo "${tool_version}"
 }
@@ -188,6 +188,7 @@ function meson_cpp_target() {
                 ;;
 
             interface.yaml)
+                outputs="${outputs}'common.hpp', "
                 outputs="${outputs}'server.cpp', 'server.hpp', "
                 outputs="${outputs}'client.hpp', "
                 ;;
@@ -302,6 +303,7 @@ function cmd_cpp() {
     intf="${1//\//.}"
 
     if [[ -e "${rootdir}/$1.interface.yaml" ]]; then
+        ${sdbusppcmd} interface common-header "${intf}" > "${outputdir}/common.hpp"
         ${sdbusppcmd} interface server-header "${intf}" > "${outputdir}/server.hpp"
         ${sdbusppcmd} interface server-cpp "${intf}" > "${outputdir}/server.cpp"
         ${sdbusppcmd} interface client-header "${intf}" > "${outputdir}/client.hpp"

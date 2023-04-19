@@ -458,8 +458,8 @@ class dbus_interface
             name,
             callback_get_instance<PropertyType, CallbackTypeGet>(
                 propertyPtr, std::move(getFunction)),
-            callback_set_message_instance<PropertyType>(propertyPtr,
-                                                        std::move(setFunction)),
+            callback_set_message_instance<PropertyType>(
+                propertyPtr, CallbackTypeSet(setFunction)),
             callback_set_value_instance<PropertyType>(propertyPtr,
                                                       std::move(setFunction)),
 

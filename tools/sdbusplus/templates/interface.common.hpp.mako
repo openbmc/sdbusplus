@@ -1,4 +1,9 @@
 #pragma once
+#include <array>
+#include <optional>
+#include <string>
+#include <string_view>
+#include <tuple>
 
 namespace sdbusplus::bindings::common::${interface.cppNamespace()}
 {
@@ -6,6 +11,145 @@ namespace sdbusplus::bindings::common::${interface.cppNamespace()}
 struct ${interface.classname}
 {
     static constexpr auto interface = "${interface.name}";
+
+    % for e in interface.enums:
+    enum class ${e.name}
+    {
+        % for v in e.values:
+        ${v.name},
+        % endfor
+    };
+    % endfor
+
+    % for e in interface.enums:
+    /** @brief Convert a string to an appropriate enum value.
+     *  @param[in] s - The string to convert in the form of
+     *                 "${interface.name}.<value name>"
+     *  @return - The enum value.
+     *
+     *  @note Throws if string is not a valid mapping.
+     */
+    static ${e.name} convert${e.name}FromString(const std::string& s);
+
+    /** @brief Convert a string to an appropriate enum value.
+     *  @param[in] s - The string to convert in the form of
+     *                 "${interface.name}.<value name>"
+     *  @return - The enum value or std::nullopt
+     */
+    static std::optional<${e.name}>
+        convertStringTo${e.name}(const std::string& s) noexcept;
+
+    /** @brief Convert an enum value to a string.
+     *  @param[in] e - The enum to convert to a string.
+     *  @return - The string conversion in the form of
+     *            "${interface.name}.<value name>"
+     */
+    static std::string convert${e.name}ToString(${e.name} e);
+    % endfor
 };
 
+% for e in interface.enums:
+/* Specialization of sdbusplus::common::convertForMessage
+ * for enum-type ${interface.classname}::${e.name}.
+ *
+ * This converts from the enum to a constant string representing the enum.
+ *
+ * @param[in] e - Enum value to convert.
+ * @return string representing the name for the enum value.
+ */
+inline std::string convertForMessage(${interface.classname}::${e.name} e)
+{
+    return ${interface.classname}::convert${e.name}ToString(e);
+}
+% endfor
+
+    % for e in interface.enums:
+
+namespace details
+{
+using namespace std::literals::string_view_literals;
+
+/** String to enum mapping for ${interface.classname}::${e.name} */
+inline constexpr std::array mapping${interface.classname}${e.name} = {
+    % for v in e.values:
+    std::make_tuple("${interface.name}.${e.name}.${v.name}"sv,
+                    ${interface.classname}::${e.name}::${v.name} ),
+    % endfor
+};
+} //  namespace details
+
+inline auto ${interface.classname}::convertStringTo${e.name}(const std::string& s) noexcept
+    -> std::optional<${e.name}>
+{
+    auto i = std::find_if(std::begin(details::mapping${interface.classname}${e.name}),
+                          std::end(details::mapping${interface.classname}${e.name}),
+                          [&s](auto& e){ return s == std::get<0>(e); } );
+
+    if (std::end(details::mapping${interface.classname}${e.name}) == i)
+    {
+        return std::nullopt;
+    }
+    else
+    {
+        return std::get<1>(*i);
+    }
+}
+
+inline auto ${interface.classname}::convert${e.name}FromString(const std::string& s) -> ${e.name}
+{
+    auto r = convertStringTo${e.name}(s);
+
+    if (!r)
+    {
+        throw sdbusplus::exception::InvalidEnumString();
+    }
+    else
+    {
+        return *r;
+    }
+}
+
+inline std::string ${interface.classname}::convert${e.name}ToString(
+    ${interface.classname}::${e.name} v)
+{
+    auto i = std::find_if(std::begin(details::mapping${interface.classname}${e.name}),
+                          std::end(details::mapping${interface.classname}${e.name}),
+                          [v](auto& e){ return v == std::get<1>(e); });
+
+    if (i == std::end(details::mapping${interface.classname}${e.name}))
+    {
+        throw std::invalid_argument(std::to_string(static_cast<int>(v)));
+    }
+    return std::string(std::get<0>(*i));
+}
+    % endfor
+
 } // sdbusplus::bindings::common::${interface.cppNamespace()}
+
+namespace sdbusplus::message::details
+{
+    % for e in interface.enums:
+template <>
+struct convert_from_string<
+    bindings::common::${interface.cppNamespacedClass()}::${e.name}>
+{
+    static auto op(const std::string& value) noexcept
+    {
+        return bindings::common::${interface.cppNamespacedClass()}::
+            convertStringTo${e.name}(value);
+    }
+};
+
+template <>
+struct convert_to_string<
+    bindings::common::${interface.cppNamespacedClass()}::${e.name}>
+{
+    static std::string
+        op(bindings::common::${interface.cppNamespacedClass()}::${e.name} value)
+    {
+        return bindings::common::${interface.cppNamespacedClass()}::
+            convert${e.name}ToString(value);
+    }
+};
+    % endfor
+} // namespace sdbusplus::message::details

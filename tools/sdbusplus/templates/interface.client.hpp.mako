@@ -1,16 +1,17 @@
 #pragma once
 
-namespace sdbusplus::bindings::client::${interface.cppNamespacedClass()}
-{
-
-static constexpr auto interface = "${interface.name}";
-
-} // namespace sdbusplus::bindings::client::${interface.cppNamespacedClass()}
+#include <${interface.headerFile("common")}>
 
 #ifndef SDBUSPP_REMOVE_DEPRECATED_NAMESPACE
 namespace sdbusplus::${interface.old_cppNamespacedClass("client")} {
 
-using sdbusplus::bindings::client::${interface.cppNamespacedClass()}::interface;
+constexpr auto interface =
+    sdbusplus::bindings::common::${interface.cppNamespacedClass()}::interface;
 
 } // namespace sdbusplus::${interface.old_cppNamespacedClass("client")}
 #endif
+
+namespace sdbusplus::bindings::client::${interface.cppNamespacedClass()}
+{
+
+} // namespace sdbusplus::bindings::client::${interface.cppNamespacedClass()}

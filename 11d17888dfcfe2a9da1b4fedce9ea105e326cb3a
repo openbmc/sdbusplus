@@ -18,6 +18,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "019cde89_b9d3fb76",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-04-20T11:41:54Z",
+      "side": 1,
+      "message": "Are you asking why the whole change-set was done or the alias specifically?  The whole change-set I\u0027m pretty sure I gave an explanation for the rationale in the commit message.  This greatly simplifies the code and makes the namespaces much more obvious.  The old code had to do a bunch of \"split string, insert \u0027server\u0027 in the second-to-last position, and join\".  It was painful and spread across multiple place.  I\u0027m writing the client and async bindings now so I want to avoid spreading this pain further.\n\nThe alias is done because I want to have a migration path for existing code rather than break the universe today.  `openbmc/openbmc` still compiles with this change as long as the alias is there.  I put if-def guards around it so that on a per-repository basis we can `-DSDBUSPP_REMOVE_DEPRECATED_NAMESPACE` and fix what is broken.  This allows people to do it over a ~6 month window.\n\nI\u0027ll send an email to the mailing list informing about this change when it merges.",
+      "parentUuid": "8cf4785d_d8aeeb96",
+      "revId": "11d17888dfcfe2a9da1b4fedce9ea105e326cb3a",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "f9ec3326_c43ff477",

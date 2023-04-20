@@ -1,6 +1,23 @@
 {
   "comments": [
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "8cf4785d_d8aeeb96",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2023-04-20T08:37:04Z",
+      "side": 1,
+      "message": "May I ask why are we going to make this change?\nIt will break existing code in the future anyway as long as the alias are removed.",
+      "revId": "11d17888dfcfe2a9da1b4fedce9ea105e326cb3a",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "f9ec3326_c43ff477",

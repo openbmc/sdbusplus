@@ -8,9 +8,11 @@
 #include <string>
 #include <systemd/sd-bus.h>
 #include <tuple>
+
 % for m in interface.methods + interface.properties + interface.signals:
-${ m.cpp_prototype(loader, interface=interface, ptype='callback-hpp-includes') }\
+${ m.cpp_prototype(loader, interface=interface, ptype='callback-hpp-includes') }
 % endfor
+#include <${interface.headerFile("common")}> \
 <%
     def setOfPropertyTypes():
         return set(p.cppTypeParam(interface.name) for p in
@@ -20,12 +22,10 @@ ${ m.cpp_prototype(loader, interface=interface, ptype='callback-hpp-includes') }
 namespace sdbusplus::server::${interface.cppNamespace()}
 {
 
-class ${interface.classname}
+class ${interface.classname} :
+    public sdbusplus::common::${interface.cppNamespacedClass()}
 {
     public:
-        static constexpr auto interface =
-                "${interface.name}";
-
         /* Define all of the basic class operations:
          *     Not allowed:
          *         - Default constructor to avoid nullptrs.

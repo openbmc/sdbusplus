@@ -54,7 +54,7 @@ int main()
     // Define a dbus path location to place the object.
     constexpr auto path = "/net/poettering/calculator";
 
-    static_assert(std::string_view(sdbusplus::bindings::client::net::
+    static_assert(std::string_view(sdbusplus::bindings::common::net::
                                        poettering::Calculator::interface) ==
                   std::string_view(Calculator::interface));
 

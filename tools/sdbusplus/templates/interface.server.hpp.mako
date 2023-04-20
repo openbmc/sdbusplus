@@ -1,13 +1,11 @@
 #pragma once
 #include <limits>
 #include <map>
-#include <optional>
 #include <sdbusplus/sdbus.hpp>
 #include <sdbusplus/server.hpp>
 #include <sdbusplus/utility/dedup_variant.hpp>
 #include <string>
 #include <systemd/sd-bus.h>
-#include <tuple>
 
 % for m in interface.methods + interface.properties + interface.signals:
 ${ m.cpp_prototype(loader, interface=interface, ptype='callback-hpp-includes') }
@@ -51,15 +49,6 @@ class ${interface.classname} :
                 bus, path, interface, _vtable, this),
             _intf(bus.getInterface()) {}
 
-    % for e in interface.enums:
-        enum class ${e.name}
-        {
-        % for v in e.values:
-            ${v.name},
-        % endfor
-        };
-    % endfor
-\
     % if interface.properties:
         using PropertiesVariant = sdbusplus::utility::dedup_variant_t<
                 ${",\n                ".join(sorted(setOfPropertyTypes()))}>;
@@ -118,31 +107,7 @@ ${p.camelCase}(${p.cppTypeParam(interface.name)} value);
         PropertiesVariant getPropertyByName(const std::string& _name);
 
     % endif
-    % for e in interface.enums:
-        /** @brief Convert a string to an appropriate enum value.
-         *  @param[in] s - The string to convert in the form of
-         *                 "${interface.name}.<value name>"
-         *  @return - The enum value.
-         *
-         *  @note Throws if string is not a valid mapping.
-         */
-        static ${e.name} convert${e.name}FromString(const std::string& s);
 
-        /** @brief Convert a string to an appropriate enum value.
-         *  @param[in] s - The string to convert in the form of
-         *                 "${interface.name}.<value name>"
-         *  @return - The enum value or std::nullopt
-         */
-        static std::optional<${e.name}> convertStringTo${e.name}(
-                const std::string& s) noexcept;
-
-        /** @brief Convert an enum value to a string.
-         *  @param[in] e - The enum to convert to a string.
-         *  @return - The string conversion in the form of
-         *            "${interface.name}.<value name>"
-         */
-        static std::string convert${e.name}ToString(${e.name} e);
-    % endfor
 
         /** @brief Emit interface added */
         void emit_added()
@@ -193,21 +158,6 @@ ${p.defaultValue};
 
 };
 
-    % for e in interface.enums:
-/* Specialization of sdbusplus::server::convertForMessage
- * for enum-type ${interface.classname}::${e.name}.
- *
- * This converts from the enum to a constant c-string representing the enum.
- *
- * @param[in] e - Enum value to convert.
- * @return C-string representing the name for the enum value.
- */
-inline std::string convertForMessage(${interface.classname}::${e.name} e)
-{
-    return ${interface.classname}::convert${e.name}ToString(e);
-}
-    % endfor
-
 } // namespace sdbusplus::server::${interface.cppNamespace()}
 
 #ifndef SDBUSPP_REMOVE_DEPRECATED_NAMESPACE
@@ -215,36 +165,8 @@ namespace sdbusplus::${interface.old_cppNamespace()} {
 
 using sdbusplus::server::${interface.cppNamespacedClass()};
     % if interface.enums:
-using sdbusplus::server::${interface.cppNamespace()}::convertForMessage;
+using sdbusplus::common::${interface.cppNamespace()}::convertForMessage;
     % endif
 
 } // namespace sdbusplus::${interface.old_cppNamespace()}
 #endif
-
-namespace sdbusplus::message::details
-{
-    % for e in interface.enums:
-template <>
-struct convert_from_string<
-    server::${interface.cppNamespacedClass()}::${e.name}>
-{
-    static auto op(const std::string& value) noexcept
-    {
-        return server::
-            ${interface.cppNamespacedClass()}::convertStringTo${e.name}(value);
-    }
-};
-
-template <>
-struct convert_to_string<
-    server::${interface.cppNamespacedClass()}::${e.name}>
-{
-    static std::string op(
-        server::${interface.cppNamespacedClass()}::${e.name} value)
-    {
-        return server::
-            ${interface.cppNamespacedClass()}::convert${e.name}ToString(value);
-    }
-};
-    % endfor
-} // namespace sdbusplus::message::details

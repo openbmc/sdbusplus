@@ -56,7 +56,7 @@ int main()
 
     static_assert(
         std::string_view(
-            sdbusplus::client::net::poettering::Calculator::interface) ==
+            sdbusplus::common::net::poettering::Calculator::interface) ==
         std::string_view(Calculator::interface));
 
     // Create a new bus and affix an object manager for the subtree path we

@@ -36,6 +36,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "2eca45c1_d6c226aa",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2023-04-21T05:58:01Z",
+      "side": 1,
+      "message": "OK, I see the server and client binding now:\n\n sdbusplus::bindings::server::xyz::openbmc_project::Foo\n sdbusplus::bindings::client::xyz::openbmc_project::Foo\n \nThis looks better than before.\n\nBut could we remove the `binding` string and just produce below?\n\n sdbusplus::server::xyz::openbmc_project::Foo\n sdbusplus::client::xyz::openbmc_project::Foo",
+      "parentUuid": "019cde89_b9d3fb76",
+      "revId": "11d17888dfcfe2a9da1b4fedce9ea105e326cb3a",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "f9ec3326_c43ff477",

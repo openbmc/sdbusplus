@@ -56,6 +56,24 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "35101fb8_a28f7b17",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-04-21T14:38:37Z",
+      "side": 1,
+      "message": "I was torn between being explicit and the extra verbosity of having binding in it.\n\nI\u0027ll go ahead and remove `binding` from the namespace throughout this series.",
+      "parentUuid": "2eca45c1_d6c226aa",
+      "revId": "11d17888dfcfe2a9da1b4fedce9ea105e326cb3a",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "f9ec3326_c43ff477",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 4

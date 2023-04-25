@@ -195,14 +195,12 @@ struct proxy : private sdbusplus::bus::details::bus_friend
         requires((S) && (P) && (I))
     {
         auto prop_intf = proxy(s, p, dbus_prop_intf);
-
         return prop_intf.template call<>(ctx, "Set", c_str(i), property.data(),
                                          std::forward<T>(value));
     }
 
   private:
-    static constexpr std::string_view dbus_prop_intf =
-        "org.freedesktop.DBus.Properties";
+    static constexpr auto dbus_prop_intf = "org.freedesktop.DBus.Properties";
 
     // Helper to get the underlying c-string of a string_view or string.
     static auto c_str(string_ref v)

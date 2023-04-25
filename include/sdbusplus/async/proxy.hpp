@@ -195,8 +195,9 @@ struct proxy : private sdbusplus::bus::details::bus_friend
         requires((S) && (P) && (I))
     {
         auto prop_intf = proxy(s, p, dbus_prop_intf);
-        return prop_intf.template call<>(ctx, "Set", c_str(i), property.data(),
-                                         std::forward<T>(value));
+        return prop_intf.template call<>(
+            ctx, "Set", c_str(i), property.data(),
+            std::variant<std::decay_t<T>>{std::forward<T>(value)});
     }
 
   private:

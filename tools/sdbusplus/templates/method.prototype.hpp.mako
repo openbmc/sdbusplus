@@ -118,8 +118,4 @@ static const auto _return_${ method.CamelCase } =
         % for e in method.errors:
 #include <${error_include(e)}>
         % endfor
-    % elif ptype == 'callback-hpp-includes':
-        % for i in interface.enum_includes(method.returns + method.parameters):
-#include <${i}>
-        % endfor
     % endif

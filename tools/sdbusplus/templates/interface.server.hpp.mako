@@ -7,8 +7,8 @@
 #include <string>
 #include <systemd/sd-bus.h>
 
-% for m in interface.methods + interface.properties + interface.signals:
-${ m.cpp_prototype(loader, interface=interface, ptype='callback-hpp-includes') }
+% for h in interface.cpp_includes():
+#include <${h}>
 % endfor
 #include <${interface.headerFile("common")}> \
 <%

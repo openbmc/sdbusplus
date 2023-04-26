@@ -114,8 +114,4 @@ static const auto _property_${property.name} =
         % for e in property.errors:
 #include <${error_include(e)}>
         % endfor
-% elif ptype == 'callback-hpp-includes':
-        % for i in interface.enum_includes([property]):
-#include <${i}>
-        % endfor
 % endif

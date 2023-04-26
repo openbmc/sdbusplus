@@ -304,6 +304,9 @@ class Property(NamedElement, Renderer):
             post=str.rstrip,
         )
 
+    def cpp_includes(self, interface):
+        return interface.enum_includes([self])
+
     def or_cpp_flags(self, flags):
         """Return the corresponding ORed cpp flags."""
         flags_dict = {

@@ -38,22 +38,9 @@ class ${interface.classname} :
     % for m in interface.methods:
 ${m.render(loader, "method.client.hpp.mako", method=m, interface=interface)}
     % endfor
-
-    // To be replaced by generators...
-    template <typename T>
-    auto get_property(auto& property) const
-    {
-        return proxy.template get_property<T>(ctx, property);
-    }
-
-    // To be replaced by generators...
-    template <typename T>
-    auto set_property(auto& property, T&& value) const
-    {
-        return proxy.template set_property<T>(ctx, property,
-                                              std::forward<T>(value));
-    }
-
+    % for p in interface.properties:
+${p.render(loader, "property.client.hpp.mako", property=p, interface=interface)}
+    % endfor
   private:
     // Conversion constructor from proxy used by client_t.
     constexpr ${interface.classname}(sdbusplus::async::context& ctx, Proxy p) :

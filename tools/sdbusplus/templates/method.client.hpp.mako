@@ -16,17 +16,15 @@
      */
     auto ${method.camelCase}(\
     % if len(method.parameters) != 0:
-
-            ${method.get_parameters_str(interface)}\
+${method.get_parameters_str(interface, join_str=", ")}\
     % else:
     % endif
 )
     {
-        return proxy.template call<${method.returns_as_list(interface)}>(
-            ctx, "${method.name}"\
+        return proxy.template call<\
+${method.returns_as_list(interface)}>(ctx, "${method.name}"\
     % if len(method.parameters) != 0:
-,
-            ${method.parameters_as_list()}\
+, ${method.parameters_as_list()}\
     % else:
     % endif
 );

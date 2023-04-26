@@ -63,10 +63,12 @@ class Method(NamedElement, Renderer):
             lambda p: p.cppTypeParam(interface.name, full=True)
         )
 
-    def get_parameters_str(self, interface, defaultValue=False):
+    def get_parameters_str(
+        self, interface, defaultValue=False, join_str=",\n            "
+    ):
         return self.parameters_as_list(
             lambda p: self.parameter(interface, p, defaultValue),
-            ",\n            ",
+            join_str,
         )
 
     def or_cpp_flags(self, flags):

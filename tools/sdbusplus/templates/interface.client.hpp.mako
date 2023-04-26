@@ -83,7 +83,8 @@ struct ${interface.classname} : public
         std::conditional_t<std::is_void_v<Proxy>,
                            sdbusplus::async::client_t<details::${interface.classname}>,
                            details::${interface.classname}<Proxy>>(
-            std::forward<Args>(args)...) {}
+            std::forward<Args>(args)...)
+    {}
 };
 
 } // namespace sdbusplus::client::${interface.cppNamespacedClass()}

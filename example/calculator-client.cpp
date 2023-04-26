@@ -16,8 +16,7 @@ auto startup(sdbusplus::async::context& ctx) -> sdbusplus::async::task<>
     // been used to combine multiple interfaces into a single client-proxy.
 
     {
-        auto _ = co_await c.call<int64_t>(ctx, "Multiply", int64_t(7),
-                                          int64_t(6));
+        auto _ = co_await c.multiply(ctx, 7, 6);
         std::cout << "Should be 42: " << _ << std::endl;
     }
 
@@ -27,7 +26,7 @@ auto startup(sdbusplus::async::context& ctx) -> sdbusplus::async::task<>
     }
 
     {
-        co_await c.call<>(ctx, "Clear");
+        co_await c.clear(ctx);
     }
 
     {

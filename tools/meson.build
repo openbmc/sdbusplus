@@ -19,6 +19,7 @@ sdbusplusplus_depfiles = files(
   'sdbusplus/templates/interface.server.cpp.mako',
   'sdbusplus/templates/interface.server.hpp.mako',
   'sdbusplus/templates/method.md.mako',
+  'sdbusplus/templates/method.client.hpp.mako',
   'sdbusplus/templates/method.prototype.hpp.mako',
   'sdbusplus/templates/property.md.mako',
   'sdbusplus/templates/property.prototype.hpp.mako',

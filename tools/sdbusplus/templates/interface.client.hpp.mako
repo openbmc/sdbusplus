@@ -35,12 +35,9 @@ class ${interface.classname} :
     // indirectly through sdbusplus::async::client_t.
     ${interface.classname}() = delete;
 
-    // To be replaced by generators...
-    template <typename... Rs, typename... Ss>
-    auto call(sdbusplus::async::context& ctx, auto& method, Ss&&... ss) const
-    {
-        return proxy.template call<Rs...>(ctx, method, std::forward<Ss>(ss)...);
-    }
+    % for m in interface.methods:
+${m.render(loader, "method.client.hpp.mako", method=m, interface=interface)}
+    % endfor
 
     // To be replaced by generators...
     template <typename T>

@@ -58,3 +58,12 @@ class Interface(NamedElement, Renderer):
     def common_header(self, loader):
         self.typename = "common"
         return self.render(loader, "interface.common.hpp.mako", interface=self)
+
+    def cpp_includes(self):
+        return set.union(
+            set(),
+            *[
+                set(m.cpp_includes(self))
+                for m in self.methods + self.properties + self.signals
+            ]
+        )

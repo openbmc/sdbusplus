@@ -21,3 +21,6 @@ class Signal(NamedElement, Renderer):
             ptype=ptype,
             post=str.rstrip,
         )
+
+    def cpp_includes(self, interface):
+        return interface.enum_includes(self.properties)

@@ -26,6 +26,9 @@ class Method(NamedElement, Renderer):
             post=str.rstrip,
         )
 
+    def cpp_includes(self, interface):
+        return interface.enum_includes(self.returns + self.parameters)
+
     def returns_as_list(self, interface, full=False):
         return ", ".join(
             [r.cppTypeParam(interface.name, full=full) for r in self.returns]

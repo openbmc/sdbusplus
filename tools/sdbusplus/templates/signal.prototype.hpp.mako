@@ -73,8 +73,4 @@ static const auto _signal_${ signal.CamelCase } =
     % endif
 }
 }
-    % elif ptype == 'callback-hpp-includes':
-        % for i in interface.enum_includes(signal.properties):
-#include <${i}>
-        % endfor
     % endif

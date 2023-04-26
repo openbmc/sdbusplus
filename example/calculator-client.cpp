@@ -16,26 +16,32 @@ auto startup(sdbusplus::async::context& ctx) -> sdbusplus::async::task<>
     // been used to combine multiple interfaces into a single client-proxy.
 
     {
+        // Call the Multiply method.
         auto _ = co_await c.multiply(7, 6);
         std::cout << "Should be 42: " << _ << std::endl;
     }
 
     {
+        // Get the LastResult property.
         auto _ = co_await c.lastResult();
         std::cout << "Should be 42: " << _ << std::endl;
     }
 
     {
+        // Call the Clear method.
         co_await c.clear();
     }
 
     {
+        // Get the LastResult property.
         auto _ = co_await c.lastResult();
         std::cout << "Should be 0: " << _ << std::endl;
     }
 
     {
+        // Set the LastResult property.
         co_await c.lastResult(1234);
+        // Get the LastResult property.
         auto _ = co_await c.lastResult();
         std::cout << "Should be 1234: " << _ << std::endl;
     }

@@ -41,15 +41,14 @@ ${m.render(loader, "method.client.hpp.mako", method=m, interface=interface)}
 
     // To be replaced by generators...
     template <typename T>
-    auto get_property(sdbusplus::async::context& ctx, auto& property) const
+    auto get_property(auto& property) const
     {
         return proxy.template get_property<T>(ctx, property);
     }
 
     // To be replaced by generators...
     template <typename T>
-    auto set_property(sdbusplus::async::context& ctx, auto& property,
-                      T&& value) const
+    auto set_property(auto& property, T&& value) const
     {
         return proxy.template set_property<T>(ctx, property,
                                               std::forward<T>(value));
@@ -57,9 +56,10 @@ ${m.render(loader, "method.client.hpp.mako", method=m, interface=interface)}
 
   private:
     // Conversion constructor from proxy used by client_t.
-    constexpr explicit ${interface.classname}(Proxy p) :
-        proxy(p.interface(interface)) {}
+    constexpr ${interface.classname}(sdbusplus::async::context& ctx, Proxy p) :
+        ctx(ctx), proxy(p.interface(interface)) {}
 
+    sdbusplus::async::context& ctx{};
     decltype(std::declval<Proxy>().interface(interface)) proxy = {};
 };
 

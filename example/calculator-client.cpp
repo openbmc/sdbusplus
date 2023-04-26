@@ -21,7 +21,7 @@ auto startup(sdbusplus::async::context& ctx) -> sdbusplus::async::task<>
     }
 
     {
-        auto _ = co_await c.get_property<int64_t>("LastResult");
+        auto _ = co_await c.lastResult();
         std::cout << "Should be 42: " << _ << std::endl;
     }
 
@@ -30,13 +30,13 @@ auto startup(sdbusplus::async::context& ctx) -> sdbusplus::async::task<>
     }
 
     {
-        auto _ = co_await c.get_property<int64_t>("LastResult");
+        auto _ = co_await c.lastResult();
         std::cout << "Should be 0: " << _ << std::endl;
     }
 
     {
-        co_await c.set_property<int64_t>("LastResult", 1234);
-        auto _ = co_await c.get_property<int64_t>("LastResult");
+        co_await c.lastResult(1234);
+        auto _ = co_await c.lastResult();
         std::cout << "Should be 1234: " << _ << std::endl;
     }
 

@@ -14,21 +14,20 @@
         % endfor
     % endif
      */
-    auto ${method.camelCase}(
-            sdbusplus::async::context& ctx\
+    auto ${method.camelCase}(\
     % if len(method.parameters) != 0:
-,
-    % else:
 
+            ${method.get_parameters_str(interface)}\
+    % else:
     % endif
-            ${method.get_parameters_str(interface)})
+)
     {
         return proxy.template call<${method.returns_as_list(interface)}>(
             ctx, "${method.name}"\
     % if len(method.parameters) != 0:
 ,
+            ${method.parameters_as_list()}\
     % else:
-
     % endif
-            ${method.parameters_as_list()});
+);
     }

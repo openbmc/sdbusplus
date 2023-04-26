@@ -8,35 +8,35 @@ auto startup(sdbusplus::async::context& ctx) -> sdbusplus::async::task<>
     constexpr auto service = "net.poettering.Calculator";
     constexpr auto path = "/net/poettering/calculator";
 
-    auto c =
-        sdbusplus::client::net::poettering::Calculator().service(service).path(
-            path);
+    auto c = sdbusplus::client::net::poettering::Calculator(ctx)
+                 .service(service)
+                 .path(path);
 
     // Alternatively, sdbusplus::async::client_t<Calculator, ...>() could have
     // been used to combine multiple interfaces into a single client-proxy.
 
     {
-        auto _ = co_await c.multiply(ctx, 7, 6);
+        auto _ = co_await c.multiply(7, 6);
         std::cout << "Should be 42: " << _ << std::endl;
     }
 
     {
-        auto _ = co_await c.get_property<int64_t>(ctx, "LastResult");
+        auto _ = co_await c.get_property<int64_t>("LastResult");
         std::cout << "Should be 42: " << _ << std::endl;
     }
 
     {
-        co_await c.clear(ctx);
+        co_await c.clear();
     }
 
     {
-        auto _ = co_await c.get_property<int64_t>(ctx, "LastResult");
+        auto _ = co_await c.get_property<int64_t>("LastResult");
         std::cout << "Should be 0: " << _ << std::endl;
     }
 
     {
-        co_await c.set_property<int64_t>(ctx, "LastResult", 1234);
-        auto _ = co_await c.get_property<int64_t>(ctx, "LastResult");
+        co_await c.set_property<int64_t>("LastResult", 1234);
+        auto _ = co_await c.get_property<int64_t>("LastResult");
         std::cout << "Should be 1234: " << _ << std::endl;
     }
 

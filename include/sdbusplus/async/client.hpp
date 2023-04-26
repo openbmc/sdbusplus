@@ -21,38 +21,41 @@ class client :
     public Types<sdbusplus::async::proxy_ns::proxy<S, P, false, Preserved>>...
 {
   private:
+    sdbusplus::async::context& ctx{};
     sdbusplus::async::proxy_ns::proxy<S, P, false, Preserved> proxy{};
 
   public:
+    constexpr client() = delete;
     /* Delete default constructor if Service or Path have been provided. */
-    constexpr client()
+    explicit client(sdbusplus::async::context& ctx)
         requires(S || P)
     = delete;
     /* Default (empty) constructor only when Service and Path are missing. */
-    constexpr client()
+    explicit client(sdbusplus::async::context& ctx)
         requires(!S && !P)
-        : Types<decltype(proxy)>(proxy)...
+        : Types<decltype(proxy)>(ctx, proxy)..., ctx(ctx)
     {}
 
     /* Conversion constructor for a non-empty (Service and/or Path) proxy. */
-    constexpr explicit client(
+    explicit client(
+        sdbusplus::async::context& ctx,
         sdbusplus::async::proxy_ns::proxy<S, P, false, Preserved> p)
         requires(S || P)
-        : Types<decltype(proxy)>(p)..., proxy(p)
+        : Types<decltype(proxy)>(ctx, p)..., ctx(ctx), proxy(p)
     {}
 
     /* Convert a non-Service instance to a Service instance. */
-    constexpr auto service(auto& s) const noexcept
+    auto service(auto& s) const noexcept
         requires(!S)
     {
-        return client<true, P, Preserved, Types...>(proxy.service(s));
+        return client<true, P, Preserved, Types...>(ctx, proxy.service(s));
     }
 
     /* Convert a non-Path instance to a Path instance. */
-    constexpr auto path(auto& p) const noexcept
+    auto path(auto& p) const noexcept
         requires(!P)
     {
-        return client<S, true, Preserved, Types...>(proxy.path(p));
+        return client<S, true, Preserved, Types...>(ctx, proxy.path(p));
     }
 };
 

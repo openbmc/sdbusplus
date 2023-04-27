@@ -261,6 +261,19 @@ int server()
 
     iface->initialize();
 
+    boost::asio::post(io, [&]() {
+        std::cout << "Setting `lessThan50` to 42" << std::endl;
+        iface->set_property("lessThan50", 42);
+
+        // It's possible to get the property directly
+        auto r = iface->get_property<int>("lessThan50");
+        if (!r)
+        {
+            std::cerr << "Failed to get property" << std::endl;
+        }
+        std::cout << "Get `lessThan50`: " << *r << std::endl;
+    });
+
     io.run();
 
     return 0;

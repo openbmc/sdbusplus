@@ -39,19 +39,22 @@ class property_callback
   public:
     property_callback(
         dbus_interface& parent, const std::string& name,
-        std::function<int(message_t&)>&& on_get,
+        std::function<int(message_t&)>&& on_get_message,
+        std::function<std::any()>&& on_get_value,
         std::function<SetPropertyReturnValue(message_t&)>&& on_set_message,
         std::function<SetPropertyReturnValue(const std::any&)>&& on_set_value,
         const char* signature, decltype(vtable_t::flags) flags) :
         interface_(parent),
-        name_(name), on_get_(std::move(on_get)),
+        name_(name), on_get_message_(std::move(on_get_message)),
+        on_get_value_(std::move(on_get_value)),
         on_set_message_(std::move(on_set_message)),
         on_set_value_(std::move(on_set_value)), signature_(signature),
         flags_(flags)
     {}
     dbus_interface& interface_;
     std::string name_;
-    std::function<int(message_t&)> on_get_;
+    std::function<int(message_t&)> on_get_message_;
+    std::function<std::any()> on_get_value_;
     std::function<SetPropertyReturnValue(message_t&)> on_set_message_;
     std::function<SetPropertyReturnValue(const std::any&)> on_set_value_;
     const char* signature_;
@@ -290,11 +293,11 @@ class coroutine_method_instance
 };
 
 template <typename PropertyType, typename CallbackType>
-class callback_get_instance
+class callback_get_message_instance
 {
   public:
-    callback_get_instance(const std::shared_ptr<PropertyType>& value,
-                          CallbackType&& func) :
+    callback_get_message_instance(const std::shared_ptr<PropertyType>& value,
+                                  CallbackType&& func) :
         value_(value),
         func_(std::forward<CallbackType>(func))
     {}
@@ -303,6 +306,25 @@ class callback_get_instance
         *value_ = func_(*value_);
         m.append(*value_);
         return 1;
+    }
+
+  private:
+    std::shared_ptr<PropertyType> value_;
+    CallbackType func_;
+};
+
+template <typename PropertyType, typename CallbackType>
+class callback_get_value_instance
+{
+  public:
+    callback_get_value_instance(const std::shared_ptr<PropertyType>& value,
+                                CallbackType&& func) :
+        value_(value),
+        func_(std::forward<CallbackType>(func))
+    {}
+    std::any operator()()
+    {
+        return func_(*value_);
     }
 
   private:
@@ -420,7 +442,9 @@ class dbus_interface
 
         property_callbacks_.emplace_back(
             *this, name,
-            callback_get_instance<PropertyType, CallbackTypeGet>(
+            callback_get_message_instance<PropertyType, CallbackTypeGet>(
+                propertyPtr, CallbackTypeGet(getFunction)),
+            callback_get_value_instance<PropertyType, CallbackTypeGet>(
                 propertyPtr, std::move(getFunction)),
             nullptr,
             callback_set_value_instance<PropertyType>(
@@ -463,7 +487,9 @@ class dbus_interface
 
         property_callbacks_.emplace_back(
             *this, name,
-            callback_get_instance<PropertyType, CallbackTypeGet>(
+            callback_get_message_instance<PropertyType, CallbackTypeGet>(
+                propertyPtr, CallbackTypeGet(getFunction)),
+            callback_get_value_instance<PropertyType, CallbackTypeGet>(
                 propertyPtr, std::move(getFunction)),
             callback_set_message_instance<PropertyType>(
                 propertyPtr, CallbackTypeSet(setFunction)),
@@ -565,6 +591,34 @@ class dbus_interface
         return false;
     }
 
+    template <typename PropertyType>
+    std::optional<PropertyType> get_property(const std::string& name)
+    {
+        if (!is_initialized())
+        {
+            return std::nullopt;
+        }
+        auto func = std::find_if(
+            property_callbacks_.begin(), property_callbacks_.end(),
+            [&name](const auto& element) { return element.name_ == name; });
+        if (func != property_callbacks_.end())
+        {
+#ifdef __EXCEPTIONS
+            try
+            {
+#endif
+                return std::any_cast<PropertyType>(func->on_get_value_());
+#ifdef __EXCEPTIONS
+            }
+            catch (...)
+            {
+                // don't do anything
+            }
+#endif
+        }
+        return std::nullopt;
+    }
+
     template <typename... SignalSignature>
     bool register_signal(const std::string& name)
     {
@@ -631,7 +685,7 @@ class dbus_interface
         try
         {
 #endif
-            return func->on_get_(mesg);
+            return func->on_get_message_(mesg);
 #ifdef __EXCEPTIONS
         }
 

@@ -18,6 +18,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "353ef148_b004fe4d",
+        "filename": "tools/sdbusplus/templates/method.client.hpp.mako",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-04-27T17:42:39Z",
+      "side": 1,
+      "message": "This ends up getting cleaned up in the next commit but it is at the beginning of the line because of the backslash on line 18.",
+      "parentUuid": "1051e99c_6dc6ae80",
+      "revId": "0241d9066e7855b9b0dadb1156566498cbc798f0",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "acc582ad_a7920a5b",
@@ -31,6 +49,24 @@
       "writtenOn": "2023-04-27T17:38:23Z",
       "side": 1,
       "message": "Does this , alignment looks wrong with respect to comment above?",
+      "revId": "0241d9066e7855b9b0dadb1156566498cbc798f0",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d9f77f1d_d1e2a637",
+        "filename": "tools/sdbusplus/templates/method.client.hpp.mako",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-04-27T17:42:39Z",
+      "side": 1,
+      "message": "See above.",
+      "parentUuid": "acc582ad_a7920a5b",
       "revId": "0241d9066e7855b9b0dadb1156566498cbc798f0",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }

@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1051e99c_6dc6ae80",
+        "filename": "tools/sdbusplus/templates/method.client.hpp.mako",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1001758
+      },
+      "writtenOn": "2023-04-27T17:38:23Z",
+      "side": 1,
+      "message": "Does this , alignment looks wrong with respect to comment above?",
+      "revId": "0241d9066e7855b9b0dadb1156566498cbc798f0",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "acc582ad_a7920a5b",
+        "filename": "tools/sdbusplus/templates/method.client.hpp.mako",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1001758
+      },
+      "writtenOn": "2023-04-27T17:38:23Z",
+      "side": 1,
+      "message": "Does this , alignment looks wrong with respect to comment above?",
+      "revId": "0241d9066e7855b9b0dadb1156566498cbc798f0",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

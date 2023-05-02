@@ -34,6 +34,24 @@
       "parentUuid": "1419e809_14cd59f2",
       "revId": "80ee79896463fa899e3874167980892b75464dd0",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9278a22d_d63596d5",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1001745
+      },
+      "writtenOn": "2023-05-02T05:15:25Z",
+      "side": 1,
+      "message": "Is the CLA ok?\n\nPlease let us know if we need to take any further action related to the CLA.",
+      "parentUuid": "07f45e33_d0c8e7e7",
+      "revId": "80ee79896463fa899e3874167980892b75464dd0",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

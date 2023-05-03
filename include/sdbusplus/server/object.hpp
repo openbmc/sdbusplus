@@ -195,12 +195,12 @@ struct compose : compose_inherit_t<Args>...
     void try_emit()
     {
         // If T is a normal class with emit_added, call it.
-        if constexpr (requires(T t) { t.emit_added(); })
+        if constexpr (requires(T& t) { t.emit_added(); })
         {
             this->T::emit_added();
         }
         // If T is a recursive object_t, call its maybe_emit_iface_added.
-        if constexpr (requires(T t) { t.maybe_emit_iface_added(); })
+        if constexpr (requires(T& t) { t.maybe_emit_iface_added(); })
         {
             this->T::maybe_emit_iface_added();
         }

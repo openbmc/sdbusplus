@@ -52,6 +52,24 @@
       "parentUuid": "07f45e33_d0c8e7e7",
       "revId": "80ee79896463fa899e3874167980892b75464dd0",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "187145ff_be983b52",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-05-04T16:30:07Z",
+      "side": 1,
+      "message": "Hi Hannu,\n\nThe \u0027manager@lfprojects.org\u0027 is a common email address for all LF projects and sometimes it takes a while for us to get CLAs from there.  It has been resolved now.\n\nI\u0027ve added a group on Gerrit for your company and added support in Jenkins for that.  Once the commit merges we can rebase your commits here and then CI will be triggered on them.\n\nremote:   https://gerrit.openbmc.org/c/openbmc/openbmc-build-scripts/+/63101 jenkins: add vaisala/ci-authorized [NEW]\n\nThanks again for your contribution.",
+      "parentUuid": "9278a22d_d63596d5",
+      "revId": "80ee79896463fa899e3874167980892b75464dd0",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

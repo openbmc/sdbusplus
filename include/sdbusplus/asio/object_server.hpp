@@ -32,19 +32,24 @@ enum class SetPropertyReturnValue
     sameValueUpdated,
 };
 
+class dbus_interface;
+
 class property_callback
 {
   public:
     property_callback(
-        const std::string& name, std::function<int(message_t&)>&& on_get,
+        dbus_interface& parent, const std::string& name,
+        std::function<int(message_t&)>&& on_get,
         std::function<SetPropertyReturnValue(message_t&)>&& on_set_message,
         std::function<SetPropertyReturnValue(const std::any&)>&& on_set_value,
         const char* signature, decltype(vtable_t::flags) flags) :
-        name_(name),
-        on_get_(std::move(on_get)), on_set_message_(std::move(on_set_message)),
+        interface_(parent),
+        name_(name), on_get_(std::move(on_get)),
+        on_set_message_(std::move(on_set_message)),
         on_set_value_(std::move(on_set_value)), signature_(signature),
         flags_(flags)
     {}
+    dbus_interface& interface_;
     std::string name_;
     std::function<int(message_t&)> on_get_;
     std::function<SetPropertyReturnValue(message_t&)> on_set_message_;
@@ -414,7 +419,7 @@ class dbus_interface
         auto propertyPtr = std::make_shared<PropertyType>(property);
 
         property_callbacks_.emplace_back(
-            name,
+            *this, name,
             callback_get_instance<PropertyType, CallbackTypeGet>(
                 propertyPtr, std::move(getFunction)),
             nullptr,
@@ -457,7 +462,7 @@ class dbus_interface
         auto propertyPtr = std::make_shared<PropertyType>(property);
 
         property_callbacks_.emplace_back(
-            name,
+            *this, name,
             callback_get_instance<PropertyType, CallbackTypeGet>(
                 propertyPtr, std::move(getFunction)),
             callback_set_message_instance<PropertyType>(
@@ -661,7 +666,7 @@ class dbus_interface
             {
                 if (status != SetPropertyReturnValue::sameValueUpdated)
                 {
-                    // data->signal_property(property);
+                    func->interface_.signal_property(func->name_);
                 }
                 // There shouldn't be any other callbacks that want to
                 // handle the message so just return a positive integer.

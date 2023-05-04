@@ -37,6 +37,23 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "b6a4336a_755fca45",
+        "filename": "include/sdbusplus/bus.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 216,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-05-04T16:37:10Z",
+      "side": 1,
+      "message": "In both of these code paths we need to remove the exception from the interface, otherwise we can still only handle a single exception in a daemon.",
+      "revId": "c9c03ad2f607024743c1e11c109a908d5e4b54fd",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "b363f737_be7f468e",
         "filename": "include/sdbusplus/sdbus.hpp",
         "patchSetId": 2
@@ -54,6 +71,47 @@
         "endLine": 176,
         "endChar": 11
       },
+      "revId": "c9c03ad2f607024743c1e11c109a908d5e4b54fd",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c1808b52_b2efe338",
+        "filename": "include/sdbusplus/sdbus.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-05-04T16:37:10Z",
+      "side": 1,
+      "message": "I would suggest we put it in the bus rather than in the interface.  The interface only exists for mocking purposes and tries to be a 1:1 mapping to underlying sd-bus interfaces (and doesn\u0027t use exceptions).",
+      "parentUuid": "b363f737_be7f468e",
+      "range": {
+        "startLine": 176,
+        "startChar": 4,
+        "endLine": 176,
+        "endChar": 11
+      },
+      "revId": "c9c03ad2f607024743c1e11c109a908d5e4b54fd",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "25cbd1f7_b9e21797",
+        "filename": "include/sdbusplus/sdbus.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 569,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-05-04T16:37:10Z",
+      "side": 1,
+      "message": "I\u0027d suggest `std::exchange(current_exception, nullptr)` and then where this is used you can do:\n\n```\nif (auto ex \u003d get_current_exception())\n{\n    rethrow(ex);\n}\n```\n\nThat makes it so you don\u0027t reuse the exception and I think it is fairly straight-forward.",
       "revId": "c9c03ad2f607024743c1e11c109a908d5e4b54fd",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },

@@ -14,6 +14,11 @@ auto startup(sdbusplus::async::context& ctx) -> sdbusplus::async::task<>
 
     // Alternatively, sdbusplus::async::client_t<Calculator, ...>() could have
     // been used to combine multiple interfaces into a single client-proxy.
+    auto alternative_c [[maybe_unused]] =
+        sdbusplus::async::client_t<
+            sdbusplus::client::net::poettering::Calculator>(ctx)
+            .service(service)
+            .path(path);
 
     {
         // Call the Multiply method.

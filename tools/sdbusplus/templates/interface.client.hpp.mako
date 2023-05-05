@@ -41,11 +41,12 @@ ${m.render(loader, "method.client.hpp.mako", method=m, interface=interface)}
     % for p in interface.properties:
 ${p.render(loader, "property.client.hpp.mako", property=p, interface=interface)}
     % endfor
-  private:
+  protected:
     // Conversion constructor from proxy used by client_t.
     constexpr ${interface.classname}(sdbusplus::async::context& ctx, Proxy p) :
         ctx(ctx), proxy(p.interface(interface)) {}
 
+  private:
     sdbusplus::async::context& ctx{};
     decltype(std::declval<Proxy>().interface(interface)) proxy = {};
 };

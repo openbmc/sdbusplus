@@ -57,6 +57,22 @@ TEST_F(Context, SpawnThrowingTask)
     ctx->run();
 }
 
+TEST_F(Context, SpawnThrowingCoroutine)
+{
+    struct _
+    {
+        static auto one() -> sdbusplus::async::task<>
+        {
+            throw std::logic_error("Oops");
+            co_return;
+        }
+    };
+
+    ctx->spawn(_::one());
+    EXPECT_THROW(runToStop(), std::logic_error);
+    ctx->run();
+};
+
 TEST_F(Context, SpawnManyThrowingTasks)
 {
     static constexpr size_t count = 100;

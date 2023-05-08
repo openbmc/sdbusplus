@@ -138,12 +138,14 @@ void scope_receiver<Sender>::complete(std::exception_ptr&& e) noexcept
 
     // Save the scope (since we're going to delete `this`).
     auto owning_scope = s;
+    // We also need to save the exception, which is likely owned by `this`.
+    std::exception_ptr ex{std::move(e)};
 
     // Delete the operational state, which triggers deleting this.
     delete static_cast<scope_ns::scope_operation_state<Sender>*>(op_state);
 
     // Inform the scope that a task has completed.
-    owning_scope->ended_task(std::move(e));
+    owning_scope->ended_task(std::move(ex));
 }
 
 // Virtual class to handle the scope completions.

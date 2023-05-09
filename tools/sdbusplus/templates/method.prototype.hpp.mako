@@ -77,7 +77,7 @@ int ${interface.classname}::_callback_${ method.CamelCase }(
 <true>\
     % endif
 (
-                msg, o->_intf, error,
+                msg, o->get_bus().getInterface(), error,
                 std::function(
                     [=](${method.parameters_as_arg_list(interface)})
                     {
@@ -89,7 +89,7 @@ int ${interface.classname}::_callback_${ method.CamelCase }(
     % for e in method.errors:
     catch(const sdbusplus::${error_namespace(e)}::${error_name(e)}& e)
     {
-        return o->_intf->sd_bus_error_set(error, e.name(), e.description());
+        return o->get_bus().getInterface()->sd_bus_error_set(error, e.name(), e.description());
     }
     % endfor
 }

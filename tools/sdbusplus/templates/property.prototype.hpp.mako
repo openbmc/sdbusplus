@@ -33,7 +33,7 @@ int ${interface.classname}::_callback_get_${property.name}(
     % endif
     {
         return sdbusplus::sdbuspp::property_callback(
-                reply, o->_intf, error,
+                reply, o->get_bus().getInterface(), error,
                 std::function(
                     [=]()
                     {
@@ -44,7 +44,7 @@ int ${interface.classname}::_callback_get_${property.name}(
     % for e in property.errors:
     catch(const sdbusplus::${error_namespace(e)}::${error_name(e)}& e)
     {
-        return o->_intf->sd_bus_error_set(error, e.name(), e.description());
+        return o->get_bus().getInterface()->sd_bus_error_set(error, e.name(), e.description());
     }
     % endfor
 }
@@ -84,7 +84,7 @@ int ${interface.classname}::_callback_set_${property.name}(
     % endif
     {
         return sdbusplus::sdbuspp::property_callback(
-                value, o->_intf, error,
+                value, o->get_bus().getInterface(), error,
                 std::function(
                     [=](${property.cppTypeParam(interface.name)}&& arg)
                     {
@@ -95,7 +95,7 @@ int ${interface.classname}::_callback_set_${property.name}(
     % for e in property.errors:
     catch(const sdbusplus::${error_namespace(e)}::${error_name(e)}& e)
     {
-        return o->_intf->sd_bus_error_set(error, e.name(), e.description());
+        return o->get_bus().getInterface()->sd_bus_error_set(error, e.name(), e.description());
     }
     % endfor
 }

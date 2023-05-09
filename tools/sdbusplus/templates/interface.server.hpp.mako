@@ -47,7 +47,7 @@ class ${interface.classname} :
         ${interface.classname}(bus_t& bus, const char* path) :
             _${interface.joinedName("_", "interface")}(
                 bus, path, interface, _vtable, this),
-            _intf(bus.getInterface()) {}
+            _sdbusplus_bus(bus) {}
 
     % if interface.properties:
         using PropertiesVariant = sdbusplus::utility::dedup_variant_t<
@@ -121,6 +121,12 @@ ${p.camelCase}(${p.cppTypeParam(interface.name)} value);
             _${interface.joinedName("_", "interface")}.emit_removed();
         }
 
+        /** @return the bus instance */
+        bus_t& get_bus()
+        {
+            return  _sdbusplus_bus;
+        }
+
     private:
     % for m in interface.methods:
 ${ m.cpp_prototype(loader, interface=interface, ptype='callback-header') }
@@ -142,7 +148,7 @@ ${ m.cpp_prototype(loader, interface=interface, ptype='callback-header') }
         static const vtable_t _vtable[];
         sdbusplus::server::interface_t
                 _${interface.joinedName("_", "interface")};
-        sdbusplus::SdBusInterface* _intf;
+        bus_t&  _sdbusplus_bus;
     % for p in interface.properties:
         % if p.defaultValue is not None:
         ${p.cppTypeParam(interface.name)} _${p.camelCase} = \

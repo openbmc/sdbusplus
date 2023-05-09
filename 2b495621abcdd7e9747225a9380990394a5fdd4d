@@ -16,6 +16,24 @@
       "message": "Seems clang-format failed in the previous CI run. At least the first issue should be fixed now.\n\nDidn\u0027t see a Jenkinsfile in the repo, so I looked briefly into openbmc-build-scripts to see what the CI pipeline looks like and expects so that I could take the checks into account and maybe even pre-run some of the steps locally, but didn\u0027t yet locate the pipeline other than maybe run-unit-test-docker.sh.",
       "revId": "2b495621abcdd7e9747225a9380990394a5fdd4d",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "158a0093_3d562696",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-05-09T18:10:20Z",
+      "side": 1,
+      "message": "Yes, `run-unit-test-docker.sh` is what Jenkins runs.  We have a common test harness for all repositories except for openbmc/openbmc.  I don\u0027t think it is set up with a Jenkinsfile.",
+      "parentUuid": "17877545_e7fa9ed2",
+      "revId": "2b495621abcdd7e9747225a9380990394a5fdd4d",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

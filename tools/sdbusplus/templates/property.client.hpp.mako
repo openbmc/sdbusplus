@@ -7,6 +7,7 @@
 ${property.cppTypeParam(interface.name)}>(ctx, "${property.name}");
     }
 
+% if 'const' not in property.flags and 'readonly' not in property.flags:
     /** Set value of ${property.name}
      *  ${property.description.strip()}
      */
@@ -16,3 +17,4 @@ ${property.cppTypeParam(interface.name)}>(ctx, "${property.name}");
 ${property.cppTypeParam(interface.name)}>(
             ctx, "${property.name}", std::forward<decltype(value)>(value));
     }
+% endif

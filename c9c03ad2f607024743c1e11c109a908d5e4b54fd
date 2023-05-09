@@ -52,6 +52,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "fa4301e1_cb3b37ec",
+        "filename": "include/sdbusplus/bus.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 216,
+      "author": {
+        "id": 1001745
+      },
+      "writtenOn": "2023-05-09T11:26:39Z",
+      "side": 1,
+      "message": "Thanks, fixed.",
+      "parentUuid": "b6a4336a_755fca45",
+      "revId": "c9c03ad2f607024743c1e11c109a908d5e4b54fd",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "b363f737_be7f468e",
@@ -99,6 +117,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "dafd6ae4_5831805a",
+        "filename": "include/sdbusplus/sdbus.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 1001745
+      },
+      "writtenOn": "2023-05-09T11:26:39Z",
+      "side": 1,
+      "message": "Thanks, moved to the bus class.",
+      "parentUuid": "c1808b52_b2efe338",
+      "range": {
+        "startLine": 176,
+        "startChar": 4,
+        "endLine": 176,
+        "endChar": 11
+      },
+      "revId": "c9c03ad2f607024743c1e11c109a908d5e4b54fd",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "25cbd1f7_b9e21797",
@@ -112,6 +154,24 @@
       "writtenOn": "2023-05-04T16:37:10Z",
       "side": 1,
       "message": "I\u0027d suggest `std::exchange(current_exception, nullptr)` and then where this is used you can do:\n\n```\nif (auto ex \u003d get_current_exception())\n{\n    rethrow(ex);\n}\n```\n\nThat makes it so you don\u0027t reuse the exception and I think it is fairly straight-forward.",
+      "revId": "c9c03ad2f607024743c1e11c109a908d5e4b54fd",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "32671a7c_6176a073",
+        "filename": "include/sdbusplus/sdbus.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 569,
+      "author": {
+        "id": 1001745
+      },
+      "writtenOn": "2023-05-09T11:26:39Z",
+      "side": 1,
+      "message": "Thanks, using std::exchange now but dropped get_current_exception() and using the member directly.",
+      "parentUuid": "25cbd1f7_b9e21797",
       "revId": "c9c03ad2f607024743c1e11c109a908d5e4b54fd",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },

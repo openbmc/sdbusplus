@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "878b908c_5d843994",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1001745
+      },
+      "writtenOn": "2023-05-09T11:26:39Z",
+      "side": 1,
+      "message": "The commit message became rather long due to moving the relevant parts of the original RFC cover letter to it and adding the testing description. I can trim it down if it\u0027s too verbose.\n\nI extended the implementation to cover reading and writing properties in addition to method implementations and added a couple of simple unit tests to verify that bus::process*() rethrow the current exception.",
+      "revId": "4bc605bfbe49ad2fda5007d3a0bb07a7dff1863d",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "17877545_e7fa9ed2",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1001745
+      },
+      "writtenOn": "2023-05-09T13:02:46Z",
+      "side": 1,
+      "message": "Seems clang-format failed in the previous CI run. At least the first issue should be fixed now.\n\nDidn\u0027t see a Jenkinsfile in the repo, so I looked briefly into openbmc-build-scripts to see what the CI pipeline looks like and expects so that I could take the checks into account and maybe even pre-run some of the steps locally, but didn\u0027t yet locate the pipeline other than maybe run-unit-test-docker.sh.",
+      "revId": "2b495621abcdd7e9747225a9380990394a5fdd4d",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

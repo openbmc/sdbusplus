@@ -35,6 +35,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "d34b04f6_e8d8a3c0",
+        "filename": "include/sdbusplus/bus.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-05-09T18:56:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c430b418_ba167a40",
+      "revId": "c9c03ad2f607024743c1e11c109a908d5e4b54fd",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "b6a4336a_755fca45",
@@ -189,6 +207,24 @@
       "writtenOn": "2023-04-17T06:11:44Z",
       "side": 1,
       "message": "The implementation at this point is only a proof-of-concept or demonstration, and if the concept looks good in general, we should extend the implementation to properties and potentially other necessary places.",
+      "revId": "c9c03ad2f607024743c1e11c109a908d5e4b54fd",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b870da7c_30a678ed",
+        "filename": "tools/sdbusplus/templates/method.prototype.hpp.mako",
+        "patchSetId": 2
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-05-09T18:56:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "52fb10c5_cc76cec2",
       "revId": "c9c03ad2f607024743c1e11c109a908d5e4b54fd",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }

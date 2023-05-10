@@ -30,7 +30,7 @@ struct inline_scheduler
     struct __op
     {
         using R = stdexec::__t<R_>;
-        [[no_unique_address]] R rec_;
+        STDEXEC_NO_UNIQUE_ADDRESS R rec_;
 
         friend void tag_invoke(stdexec::start_t, __op& op) noexcept
         {
@@ -70,8 +70,9 @@ struct inline_scheduler
         }
     };
 
-    friend __sender tag_invoke(stdexec::schedule_t,
-                               const inline_scheduler&) noexcept
+    STDEXEC_DETAIL_CUDACC_HOST_DEVICE //
+        friend __sender
+        tag_invoke(stdexec::schedule_t, const inline_scheduler&) noexcept
     {
         return {};
     }

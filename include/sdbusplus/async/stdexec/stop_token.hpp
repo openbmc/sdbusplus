@@ -261,7 +261,7 @@ class in_place_stop_callback : __stok::__in_place_stop_callback_base
         std::move(static_cast<in_place_stop_callback*>(cb)->__fun_)();
     }
 
-    [[no_unique_address]] _Fun __fun_;
+    STDEXEC_NO_UNIQUE_ADDRESS _Fun __fun_;
 };
 
 namespace __stok

@@ -526,7 +526,7 @@ class __storage<_Vtable, _Allocator, _Copyable, _Alignment, _InlineSize>::__t :
     const __vtable_t* __vtable_{__default_storage_vtable((__vtable_t*)nullptr)};
     void* __object_pointer_{nullptr};
     alignas(__alignment) std::byte __buffer_[__buffer_size]{};
-    [[no_unique_address]] _Allocator __allocator_{};
+    STDEXEC_NO_UNIQUE_ADDRESS _Allocator __allocator_{};
 };
 
 template <class _VTable, class _Allocator = std::allocator<std::byte>>
@@ -615,6 +615,8 @@ struct __ref<completion_signatures<_Sigs...>, _Queries...>
     } __env_;
 
   public:
+    using is_receiver = void;
+
     template <__none_of<__ref, const __ref, __env_t, const __env_t> _Rcvr>
         requires receiver_of<_Rcvr, completion_signatures<_Sigs...>> &&
                  (__callable<__query_vfun_fn<_Rcvr>, _Queries> && ...)
@@ -623,8 +625,7 @@ struct __ref<completion_signatures<_Sigs...>, _Queries...>
                &__rcvr}
     {}
 
-    template <__one_of<set_value_t, set_error_t, set_stopped_t> _Tag,
-              __decays_to<__ref> _Self, class... _As>
+    template <__completion_tag _Tag, __decays_to<__ref> _Self, class... _As>
         requires __one_of<_Tag(_As...), _Sigs...>
     friend void tag_invoke(_Tag, _Self&& __self, _As&&... __as) noexcept
     {
@@ -671,7 +672,7 @@ using __receiver_ref =
 template <class _Receiver, class _Sigs, class _Queries>
 struct __operation_base
 {
-    [[no_unique_address]] _Receiver __receiver_;
+    STDEXEC_NO_UNIQUE_ADDRESS _Receiver __receiver_;
 };
 
 template <class _Sender, class _Receiver, class _Queries>
@@ -682,10 +683,11 @@ struct __operation
 
     struct __rec
     {
+        using is_receiver = void;
         __operation_base<_Receiver, _Sigs, _Queries>* __op_;
 
-        template <__one_of<set_value_t, set_error_t, set_stopped_t> _CPO,
-                  __decays_to<__rec> _Self, class... _Args>
+        template <__completion_tag _CPO, __decays_to<__rec> _Self,
+                  class... _Args>
             requires __callable<_CPO, _Receiver&&, _Args...>
         friend void tag_invoke(_CPO, _Self&& __self, _Args&&... __args) noexcept
         {
@@ -727,8 +729,8 @@ struct __operation
 template <class _Queries>
 class __query_vtable;
 
-template <template <class...> class _L, typename... _Queries>
-class __query_vtable<_L<_Queries...>> : public __query_vfun<_Queries>...
+template <template <class...> class _List, typename... _Queries>
+class __query_vtable<_List<_Queries...>> : public __query_vfun<_Queries>...
 {
   public:
     using __query_vfun<_Queries>::operator()...;
@@ -987,6 +989,8 @@ class any_receiver_ref
 
   public:
     using is_receiver = void;
+    using __t = any_receiver_ref;
+    using __id = any_receiver_ref;
 
     template <stdexec::__none_of<any_receiver_ref, const any_receiver_ref,
                                  __env_t, const __env_t>
@@ -1070,6 +1074,9 @@ class any_receiver_ref
             __scheduler_base __scheduler_;
 
           public:
+            using __t = any_scheduler;
+            using __id = any_scheduler;
+
             template <class _Scheduler>
                 requires(!stdexec::__decays_to<_Scheduler, any_scheduler> &&
                          stdexec::scheduler<_Scheduler>)

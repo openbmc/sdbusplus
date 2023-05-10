@@ -34,23 +34,11 @@
 #include <type_traits>
 #endif
 
+#include "__detail/__concepts.hpp"
 #include "__detail/__meta.hpp"
 
 namespace stdexec::__std_concepts
 {
-#if defined(__clang__)
-template <class _Ap, class _Bp>
-concept __same_as = __is_same(_Ap, _Bp);
-#elif defined(__GNUC__)
-template <class _Ap, class _Bp>
-concept __same_as = __is_same_as(_Ap, _Bp);
-#else
-template <class _Ap, class _Bp>
-inline constexpr bool __same_as = false;
-template <class _Ap>
-inline constexpr bool __same_as<_Ap, _Ap> = true;
-#endif
-
 // Make sure we're using a same_as concept that doesn't instantiate std::is_same
 template <class _Ap, class _Bp>
 concept same_as = __same_as<_Ap, _Bp> && __same_as<_Bp, _Ap>;
@@ -93,130 +81,6 @@ concept equality_comparable = //
 namespace stdexec
 {
 using namespace __std_concepts;
-
-#if __has_builtin(__decay)
-template <class _Ty>
-using __decay_t = __decay(_Ty);
-#elif STDEXEC_NVHPC()
-template <class _Ty>
-using __decay_t = std::decay_t<_Ty>;
-#else
-namespace __tt
-{
-struct __decay_object
-{
-    template <class _Ty>
-    static _Ty __g(const _Ty&);
-    template <class _Ty>
-    using __f = decltype(__g(__declval<_Ty>()));
-};
-
-struct __decay_default
-{
-    template <class _Ty>
-    static _Ty __g(_Ty);
-    template <class _Ty>
-    using __f = decltype(__g(__declval<_Ty>()));
-};
-
-struct __decay_abominable
-{
-    template <class _Ty>
-    using __f = _Ty;
-};
-
-struct __decay_void
-{
-    template <class _Ty>
-    using __f = void;
-};
-
-template <class _Ty>
-extern __decay_object __mdecay;
-
-template <class _Ty, class... Us>
-extern __decay_default __mdecay<_Ty(Us...)>;
-
-template <class _Ty, class... Us>
-extern __decay_default __mdecay<_Ty(Us...) noexcept>;
-
-template <class _Ty, class... Us>
-extern __decay_default __mdecay<_Ty (&)(Us...)>;
-
-template <class _Ty, class... Us>
-extern __decay_default __mdecay<_Ty (&)(Us...) noexcept>;
-
-template <class _Ty, class... Us>
-extern __decay_abominable __mdecay<_Ty(Us...) const>;
-
-template <class _Ty, class... Us>
-extern __decay_abominable __mdecay<_Ty(Us...) const noexcept>;
-
-template <class _Ty, class... Us>
-extern __decay_abominable __mdecay<_Ty(Us...) const&>;
-
-template <class _Ty, class... Us>
-extern __decay_abominable __mdecay<_Ty(Us...) const & noexcept>;
-
-template <class _Ty, class... Us>
-extern __decay_abominable __mdecay<_Ty(Us...) const&&>;
-
-template <class _Ty, class... Us>
-extern __decay_abominable __mdecay<_Ty(Us...) const && noexcept>;
-
-template <class _Ty>
-extern __decay_default __mdecay<_Ty[]>;
-
-template <class _Ty, std::size_t N>
-extern __decay_default __mdecay<_Ty[N]>;
-
-template <class _Ty, std::size_t N>
-extern __decay_default __mdecay<_Ty (&)[N]>;
-
-template <>
-inline __decay_void __mdecay<void>;
-
-template <>
-inline __decay_void __mdecay<const void>;
-} // namespace __tt
-
-template <class _Ty>
-using __decay_t = typename decltype(__tt::__mdecay<_Ty>)::template __f<_Ty>;
-#endif
-
-// C++20 concepts
-template <class _Ty, class _Up>
-concept __decays_to = __same_as<__decay_t<_Ty>, _Up>;
-
-template <class _Ty, class _Up>
-concept __not_decays_to = !__decays_to<_Ty, _Up>;
-
-template <bool _TrueOrFalse>
-concept __satisfies = _TrueOrFalse;
-
-template <class...>
-concept __true = true;
-
-template <class _Cp>
-concept __class = __true<int _Cp::*> && (!__same_as<const _Cp, _Cp>);
-
-template <class _Ty, class... _As>
-concept __one_of = (__same_as<_Ty, _As> || ...);
-
-template <class _Ty, class... _Us>
-concept __all_of = (__same_as<_Ty, _Us> && ...);
-
-template <class _Ty, class... _Us>
-concept __none_of = ((!__same_as<_Ty, _Us>)&&...);
-
-// Not exactly right, but close.
-template <class _Ty>
-concept __boolean_testable_ = convertible_to<_Ty, bool>;
-
-template <class _Ty>
-inline constexpr bool __is_lvalue_reference_ = false;
-template <class _Ty>
-inline constexpr bool __is_lvalue_reference_<_Ty&> = true;
 
 // Avoid using libstdc++'s object concepts because they instantiate a
 // lot of templates.
@@ -265,8 +129,8 @@ concept copy_constructible = //
     && constructible_from<_Ty, const _Ty&>;
 
 template <class _LHS, class _RHS>
-concept assignable_from =           //
-    __is_lvalue_reference_<_LHS> && //
+concept assignable_from =   //
+    same_as<_LHS, _LHS&> && //
     // std::common_reference_with<
     //   const std::remove_reference_t<_LHS>&,
     //   const std::remove_reference_t<_RHS>&> &&
@@ -281,8 +145,10 @@ namespace __swap
 using std::swap;
 
 template <class _Ty, class _Uy>
-concept swappable_with = //
-    requires(_Ty&& __t, _Uy&& __u) { swap((_Ty&&)__t, (_Uy&&)__u); };
+concept swappable_with =             //
+    requires(_Ty&& __t, _Uy&& __u) { //
+        swap((_Ty&&)__t, (_Uy&&)__u);
+    };
 
 inline constexpr const auto __fn = //
     []<class _Ty, swappable_with<_Ty> _Uy>(_Ty&& __t, _Uy&& __u) noexcept(
@@ -323,6 +189,10 @@ concept regular =       //
     semiregular<_Ty> && //
     equality_comparable<_Ty>;
 
+// Not exactly right, but close.
+template <class _Ty>
+concept __boolean_testable_ = convertible_to<_Ty, bool>;
+
 template <class T, class U>
 concept __partially_ordered_with = //
     requires(__cref_t<T> t, __cref_t<U> u) {
@@ -362,20 +232,6 @@ concept __movable_value =                 //
     move_constructible<__decay_t<_Ty>> && //
     constructible_from<__decay_t<_Ty>, _Ty>;
 
-template <class _Trait>
-concept __is_true = _Trait::value;
-
-template <class, template <class...> class>
-constexpr bool __is_instance_of_ = false;
-template <class... _As, template <class...> class _Ty>
-constexpr bool __is_instance_of_<_Ty<_As...>, _Ty> = true;
-
-template <class _Ay, template <class...> class _Ty>
-concept __is_instance_of = __is_instance_of_<_Ay, _Ty>;
-
-template <class _Ay, template <class...> class _Ty>
-concept __is_not_instance_of = !__is_instance_of<_Ay, _Ty>;
-
 #if __has_builtin(__is_nothrow_constructible)
 template <class _Ty, class... _As>
 concept __nothrow_constructible_from = constructible_from<_Ty, _As...> &&
@@ -393,11 +249,14 @@ concept __decay_copyable = constructible_from<__decay_t<_Ty>, _Ty>;
 template <class _Ty>
 concept __nothrow_decay_copyable =
     __nothrow_constructible_from<__decay_t<_Ty>, _Ty>;
+
+template <class _Range>
+using range_value_t = decltype(*begin(::std::declval<_Range>()));
+
 } // namespace stdexec
 
-#if !STDEXEC_HAS_STD_CONCEPTS_HEADER()
-namespace std
-{
-using namespace stdexec::__std_concepts;
-}
-#endif
+// #if !STDEXEC_HAS_STD_CONCEPTS_HEADER()
+// namespace std {
+//   using namespace stdexec::__std_concepts;
+// }
+// #endif

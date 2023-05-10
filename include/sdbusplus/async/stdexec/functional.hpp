@@ -53,6 +53,15 @@ concept __nothrow_invocable =  //
         } noexcept;
     };
 
+struct __first
+{
+    template <class _First, class _Second>
+    constexpr _First&& operator()(_First&& __first, _Second&&) const noexcept
+    {
+        return (_First&&)__first;
+    }
+};
+
 template <auto _Fun>
 struct __fun_c_t
 {
@@ -122,9 +131,7 @@ struct tag_invoke_t
 {
     template <class _Tag, class... _Args>
         requires tag_invocable<_Tag, _Args...>
-    STDEXEC_DETAIL_CUDACC_HOST_DEVICE //
-        constexpr auto
-        operator()(_Tag __tag, _Args&&... __args) const
+    constexpr auto operator()(_Tag __tag, _Args&&... __args) const
         noexcept(nothrow_tag_invocable<_Tag, _Args...>)
             -> tag_invoke_result_t<_Tag, _Args...>
     {

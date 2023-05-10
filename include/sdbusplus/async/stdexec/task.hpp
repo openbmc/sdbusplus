@@ -43,6 +43,7 @@ using __any_scheduler =                        //
         completion_signatures<set_error_t(std::exception_ptr),
                               set_stopped_t()> //
         >::any_sender<>::any_scheduler<>;
+static_assert(scheduler<__any_scheduler>);
 
 template <class _Ty>
 concept __stop_token_provider = //
@@ -106,8 +107,9 @@ class __default_task_context_impl
     static constexpr bool __with_scheduler = _SchedulerAffinity ==
                                              __scheduler_affinity::__sticky;
 
-    [[no_unique_address]] __if_c<__with_scheduler, __any_scheduler, __ignore> //
-        __scheduler_{exec::inline_scheduler{}};
+    STDEXEC_NO_UNIQUE_ADDRESS
+        __if_c<__with_scheduler, __any_scheduler, __ignore> //
+            __scheduler_{exec::inline_scheduler{}};
     in_place_stop_token __stop_token_;
 
     friend const __any_scheduler&

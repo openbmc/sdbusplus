@@ -33,7 +33,7 @@ struct __scope_guard<_Fn>
     ~__scope_guard()
     {
         if (!__dismissed_)
-            ((_Fn &&) __fn_)();
+            ((_Fn&&)__fn_)();
     }
 
     void __dismiss() noexcept
@@ -59,7 +59,7 @@ struct __scope_guard<_Fn, _T0>
     ~__scope_guard()
     {
         if (!__dismissed_)
-            ((_Fn &&) __fn_)((_T0 &&) __t0_);
+            ((_Fn&&)__fn_)((_T0&&)__t0_);
     }
 };
 
@@ -81,7 +81,7 @@ struct __scope_guard<_Fn, _T0, _T1>
     ~__scope_guard()
     {
         if (!__dismissed_)
-            ((_Fn &&) __fn_)((_T0 &&) __t0_, (_T1 &&) __t1_);
+            ((_Fn&&)__fn_)((_T0&&)__t0_, (_T1&&)__t1_);
     }
 };
 
@@ -104,7 +104,7 @@ struct __scope_guard<_Fn, _T0, _T1, _T2>
     ~__scope_guard()
     {
         if (!__dismissed_)
-            ((_Fn &&) __fn_)((_T0 &&) __t0_, (_T1 &&) __t1_, (_T2 &&) __t2_);
+            ((_Fn&&)__fn_)((_T0&&)__t0_, (_T1&&)__t1_, (_T2&&)__t2_);
     }
 };
 

@@ -31,8 +31,8 @@ namespace __at_coro_exit
 {
 using namespace stdexec;
 
-using __any_scheduler = //
-    any_receiver_ref<   //
+using __any_scheduler =                         //
+    any_receiver_ref<                           //
         completion_signatures<set_error_t(std::exception_ptr),
                               set_stopped_t()>> //
     ::any_sender<>::any_scheduler<>;
@@ -52,8 +52,7 @@ struct __die_on_stop_t
             friend void tag_invoke(set_value_t, _Self&& __self,
                                    _Args&&... __args) noexcept
             {
-                set_value((_Receiver &&) __self.__receiver_,
-                          (_Args &&) __args...);
+                set_value((_Receiver&&)__self.__receiver_, (_Args&&)__args...);
             }
 
             template <__decays_to<__t> _Self, class _Error>
@@ -61,8 +60,7 @@ struct __die_on_stop_t
             friend void tag_invoke(set_error_t, _Self&& __self,
                                    _Error&& __error) noexcept
             {
-                set_error((_Receiver &&) __self.__receiver_,
-                          (_Error &&) __error);
+                set_error((_Receiver&&)__self.__receiver_, (_Error&&)__error);
             }
 
             [[noreturn]] friend void tag_invoke(set_stopped_t, __t&&) noexcept
@@ -100,8 +98,8 @@ struct __die_on_stop_t
             friend connect_result_t<_Sender, __receiver<_Receiver>>
                 tag_invoke(connect_t, __t&& __self, _Receiver&& __rcvr) noexcept
             {
-                return connect((_Sender &&) __self.__sender_,
-                               __receiver<_Receiver>{(_Receiver &&) __rcvr});
+                return connect((_Sender&&)__self.__sender_,
+                               __receiver<_Receiver>{(_Receiver&&)__rcvr});
             }
 
             template <__decays_to<__t> _Self, class _Env>
@@ -126,13 +124,13 @@ struct __die_on_stop_t
     __sender<_Sender> operator()(_Sender&& __sndr) const
         noexcept(__nothrow_decay_copyable<_Sender>)
     {
-        return __sender<_Sender>{(_Sender &&) __sndr};
+        return __sender<_Sender>{(_Sender&&)__sndr};
     }
 
     template <class _Value>
     _Value&& operator()(_Value&& __value) const noexcept
     {
-        return (_Value &&) __value;
+        return (_Value&&)__value;
     }
 };
 
@@ -143,7 +141,7 @@ concept __has_continuation = //
     requires(_Promise& __promise, __continuation_handle<> __c) {
         {
             __promise.continuation()
-            } -> convertible_to<__continuation_handle<>>;
+        } -> convertible_to<__continuation_handle<>>;
         {
             __promise.set_continuation(__c)
         };
@@ -256,7 +254,7 @@ class [[nodiscard]] __task
         template <class _Awaitable>
         decltype(auto) await_transform(_Awaitable&& __awaitable) noexcept
         {
-            return as_awaitable(__die_on_stop((_Awaitable &&) __awaitable),
+            return as_awaitable(__die_on_stop((_Awaitable&&)__awaitable),
                                 *this);
         }
 
@@ -279,7 +277,7 @@ struct __at_coro_exit_t
     template <class _Action, class... _Ts>
     static __task<_Ts...> __impl(_Action __action, _Ts... __ts)
     {
-        co_await ((_Action &&) __action)((_Ts &&) __ts...);
+        co_await ((_Action&&)__action)((_Ts&&)__ts...);
     }
 
   public:
@@ -287,7 +285,7 @@ struct __at_coro_exit_t
         requires __callable<__decay_t<_Action>, __decay_t<_Ts>...>
     __task<_Ts...> operator()(_Action&& __action, _Ts&&... __ts) const
     {
-        return __impl((_Action &&) __action, (_Ts &&) __ts...);
+        return __impl((_Action&&)__action, (_Ts&&)__ts...);
     }
 };
 } // namespace __at_coro_exit

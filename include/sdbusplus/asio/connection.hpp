@@ -130,9 +130,9 @@ class connection : public sdbusplus::bus_t
         }();
         using UnpackType = utility::strip_first_n_args_t<returnWithMsg ? 2 : 1,
                                                          FunctionTupleType>;
-        auto applyHandler = [handler = std::forward<MessageHandler>(handler)](
-                                boost::system::error_code ec,
-                                message_t& r) mutable {
+        auto applyHandler =
+            [handler = std::forward<MessageHandler>(handler)](
+                boost::system::error_code ec, message_t& r) mutable {
             UnpackType responseData;
             if (!ec)
             {
@@ -317,18 +317,18 @@ class connection : public sdbusplus::bus_t
         socket.async_read_some(
             boost::asio::null_buffers(),
             [&](const boost::system::error_code& ec, std::size_t) {
-                if (ec)
-                {
-                    return;
-                }
-                if (process_discard())
-                {
-                    read_immediate();
-                }
-                else
-                {
-                    read_wait();
-                }
+            if (ec)
+            {
+                return;
+            }
+            if (process_discard())
+            {
+                read_immediate();
+            }
+            else
+            {
+                read_wait();
+            }
             });
     }
     void read_immediate()

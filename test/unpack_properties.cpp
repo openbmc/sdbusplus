@@ -34,7 +34,7 @@ struct NonThrowingUnpack
         unpackPropertiesNoThrow(
             [&error](sdbusplus::UnpackErrorReason reason,
                      const std::string& property) {
-                error.emplace(reason, property);
+            error.emplace(reason, property);
             },
             std::forward<Args>(args)...);
         return error;

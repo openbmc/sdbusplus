@@ -32,29 +32,26 @@ auto startup(sdbusplus::async::context& ctx) -> sdbusplus::async::task<>
     for (auto& [property, value] :
          co_await systemd.get_all_properties<variant_type>(ctx))
     {
-        std::cout
-            << property << " is "
-            << std::visit(
-                   // Convert the variant member to a string for printing.
-                   [](auto v) {
-                       if constexpr (std::is_same_v<
-                                         std::remove_cvref_t<decltype(v)>,
+        std::cout << property << " is "
+                  << std::visit(
+                         // Convert the variant member to a string for printing.
+                         [](auto v) {
+            if constexpr (std::is_same_v<std::remove_cvref_t<decltype(v)>,
                                          std::vector<std::string>>)
-                       {
-                           return std::string{"Array"};
-                       }
-                       else if constexpr (std::is_same_v<
-                                              std::remove_cvref_t<decltype(v)>,
+            {
+                return std::string{"Array"};
+            }
+            else if constexpr (std::is_same_v<std::remove_cvref_t<decltype(v)>,
                                               std::string>)
-                       {
-                           return v;
-                       }
-                       else
-                       {
-                           return std::to_string(v);
-                       }
-                   },
-                   value)
+            {
+                return v;
+            }
+            else
+            {
+                return std::to_string(v);
+            }
+                         },
+                         value)
             << std::endl;
     }
 

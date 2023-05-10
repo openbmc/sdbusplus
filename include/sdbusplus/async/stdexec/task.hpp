@@ -38,8 +38,8 @@ namespace __task
 {
 using namespace stdexec;
 
-using __any_scheduler = //
-    any_receiver_ref<   //
+using __any_scheduler =                        //
+    any_receiver_ref<                          //
         completion_signatures<set_error_t(std::exception_ptr),
                               set_stopped_t()> //
         >::any_sender<>::any_scheduler<>;
@@ -55,7 +55,7 @@ concept __indirect_stop_token_provider = //
     requires(const _Ty& t) {
         {
             get_env(t)
-            } -> __stop_token_provider;
+        } -> __stop_token_provider;
     };
 
 template <class _Ty>
@@ -63,7 +63,7 @@ concept __indirect_scheduler_provider = //
     requires(const _Ty& t) {
         {
             get_env(t)
-            } -> __scheduler_provider;
+        } -> __scheduler_provider;
     };
 
 template <class _ParentPromise>
@@ -130,7 +130,7 @@ class __default_task_context_impl
 
     template <scheduler _Scheduler>
     explicit __default_task_context_impl(_Scheduler&& __scheduler) :
-        __scheduler_{(_Scheduler &&) __scheduler}
+        __scheduler_{(_Scheduler&&)__scheduler}
     {}
 
     bool stop_requested() const noexcept
@@ -142,7 +142,7 @@ class __default_task_context_impl
     void set_scheduler(_Scheduler&& __sched)
         requires(__with_scheduler)
     {
-        __scheduler_ = (_Scheduler &&) __sched;
+        __scheduler_ = (_Scheduler&&)__sched;
     }
 
     template <class _ThisPromise>
@@ -358,7 +358,7 @@ struct __reschedule_coroutine_on
     template <scheduler _Scheduler>
     __wrap<_Scheduler> operator()(_Scheduler __sched) const noexcept
     {
-        return {(_Scheduler &&) __sched};
+        return {(_Scheduler&&)__sched};
     }
 };
 
@@ -430,19 +430,19 @@ class basic_task
         }
 
         template <sender _Awaitable>
-            requires __scheduler_provider<_Context> decltype(auto)
-        await_transform(_Awaitable&& __awaitable) noexcept
+            requires __scheduler_provider<_Context>
+        decltype(auto) await_transform(_Awaitable&& __awaitable) noexcept
         {
             // TODO: If we have a complete-where-it-starts query then we can
             // optimize this to avoid the reschedule
-            return as_awaitable(transfer((_Awaitable &&) __awaitable,
-                                         get_scheduler(__context_)),
-                                *this);
+            return as_awaitable(
+                transfer((_Awaitable&&)__awaitable, get_scheduler(__context_)),
+                *this);
         }
 
         template <class _Scheduler>
-            requires __scheduler_provider<_Context> decltype(auto)
-        await_transform(
+            requires __scheduler_provider<_Context>
+        decltype(auto) await_transform(
             __reschedule_coroutine_on::__wrap<_Scheduler> __box) noexcept
         {
             if (!std::exchange(__rescheduled_, true))
@@ -468,7 +468,7 @@ class basic_task
         decltype(auto) await_transform(_Awaitable&& __awaitable) noexcept
         {
             return with_awaitable_senders<__promise>::await_transform(
-                (_Awaitable &&) __awaitable);
+                (_Awaitable&&)__awaitable);
         }
 
         using __context_t =

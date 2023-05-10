@@ -282,7 +282,7 @@ struct __mconcat_<_Continuation, _Ap<_As...>>
 template <               //
     class _Continuation, //
     template <class...> class _Ap,
-    class... _As, //
+    class... _As,        //
     template <class...> class _Bp, class... _Bs>
     requires __minvocable<_Continuation, _As..., _Bs...>
 struct __mconcat_<_Continuation, _Ap<_As...>, _Bp<_Bs...>>
@@ -293,9 +293,9 @@ struct __mconcat_<_Continuation, _Ap<_As...>, _Bp<_Bs...>>
 template <               //
     class _Continuation, //
     template <class...> class _Ap,
-    class... _As, //
+    class... _As,        //
     template <class...> class _Bp,
-    class... _Bs, //
+    class... _Bs,        //
     template <class...> class _Cp, class... _Cs>
     requires __minvocable<_Continuation, _As..., _Bs..., _Cs...>
 struct __mconcat_<_Continuation, _Ap<_As...>, _Bp<_Bs...>, _Cp<_Cs...>>
@@ -306,13 +306,13 @@ struct __mconcat_<_Continuation, _Ap<_As...>, _Bp<_Bs...>, _Cp<_Cs...>>
 template <               //
     class _Continuation, //
     template <class...> class _Ap,
-    class... _As, //
+    class... _As,        //
     template <class...> class _Bp,
-    class... _Bs, //
+    class... _Bs,        //
     template <class...> class _Cp,
-    class... _Cs, //
+    class... _Cs,        //
     template <class...> class _Dp,
-    class... _Ds, //
+    class... _Ds,        //
     class... _Tail>
 struct __mconcat_<_Continuation, _Ap<_As...>, _Bp<_Bs...>, _Cp<_Cs...>,
                   _Dp<_Ds...>, _Tail...> :
@@ -589,16 +589,16 @@ template <class _From, class _To>
 using __cvref_id = __copy_cvref_t<_From, __id<_To>>;
 
 template <class _Fun, class... _As>
-concept __callable =                         //
-    requires(_Fun&& __fun, _As&&... __as) {  //
-        ((_Fun &&) __fun)((_As &&) __as...); //
+concept __callable =                        //
+    requires(_Fun&& __fun, _As&&... __as) { //
+        ((_Fun&&)__fun)((_As&&)__as...);    //
     };
 template <class _Fun, class... _As>
 concept __nothrow_callable =    //
     __callable<_Fun, _As...> && //
     requires(_Fun&& __fun, _As&&... __as) {
         {
-            ((_Fun &&) __fun)((_As &&) __as...)
+            ((_Fun&&)__fun)((_As&&)__as...)
         } noexcept;
     };
 
@@ -636,12 +636,12 @@ struct __conv
 
     operator __t() && noexcept(__nothrow_callable<_Fn>)
     {
-        return ((_Fn &&) __fn_)();
+        return ((_Fn&&)__fn_)();
     }
 
     __t operator()() && noexcept(__nothrow_callable<_Fn>)
     {
-        return ((_Fn &&) __fn_)();
+        return ((_Fn&&)__fn_)();
     }
 };
 template <class _Fn>
@@ -664,7 +664,7 @@ template <               //
     class _Fn,           //
     class _Continuation, //
     template <class...> class _Cp,
-    class... _Cs, //
+    class... _Cs,        //
     template <class...> class _Dp, class... _Ds>
     requires requires {
                  typename __minvoke<_Continuation, __minvoke<_Fn, _Cs, _Ds>...>;
@@ -806,10 +806,10 @@ struct __mconstruct
 {
     template <class... _As>
     auto operator()(_As&&... __as) const
-        noexcept(__v<_Noexcept>&& noexcept(_Ty((_As &&) __as...)))
-            -> decltype(_Ty((_As &&) __as...))
+        noexcept(__v<_Noexcept>&& noexcept(_Ty((_As&&)__as...)))
+            -> decltype(_Ty((_As&&)__as...))
     {
-        return _Ty((_As &&) __as...);
+        return _Ty((_As&&)__as...);
     }
 };
 
@@ -822,18 +822,16 @@ using __ignore_t = __ignore;
 template <std::size_t... _Is, class _Ty, class... _Us>
 _Ty&& __nth_pack_element_(__ignore_t<_Is>..., _Ty&& __t, _Us&&...) noexcept
 {
-    return (_Ty &&) __t;
+    return (_Ty&&)__t;
 }
 
 template <std::size_t _Np, class... _Ts>
 constexpr decltype(auto) __nth_pack_element(_Ts&&... __ts) noexcept
 {
-    return [&]<std::size_t... _Is>(std::index_sequence<_Is...>*) noexcept
-        -> decltype(auto)
-    {
-        return stdexec::__nth_pack_element_<_Is...>((_Ts &&) __ts...);
-    }
-    ((std::make_index_sequence<_Np>*)nullptr);
+    return [&]<std::size_t... _Is>(
+               std::index_sequence<_Is...>*) noexcept -> decltype(auto) {
+        return stdexec::__nth_pack_element_<_Is...>((_Ts&&)__ts...);
+    }((std::make_index_sequence<_Np>*)nullptr);
 }
 
 template <class _Ty>
@@ -852,7 +850,7 @@ struct __mdispatch_<__placeholder<_Np>>
     template <class... _Ts>
     decltype(auto) operator()(_Ts&&... __ts) const noexcept
     {
-        return stdexec::__nth_pack_element<_Np>((_Ts &&) __ts...);
+        return stdexec::__nth_pack_element<_Np>((_Ts&&)__ts...);
     }
 };
 
@@ -893,13 +891,13 @@ struct __mdispatch_<_Ret (*)(_Args...)>
         requires(__callable<__mdispatch_<_Args>, _Ts...> && ...) &&
                 __callable<_Ret,
                            __call_result_t<__mdispatch_<_Args>, _Ts...>...>
-                auto operator()(_Ts&&... __ts) const
-                noexcept(__nothrow_callable<
-                         _Ret, __call_result_t<__mdispatch_<_Args>, _Ts...>...>)
-                    -> __call_result_t<
-                        _Ret, __call_result_t<__mdispatch_<_Args>, _Ts...>...>
+    auto operator()(_Ts&&... __ts) const
+        noexcept(__nothrow_callable<
+                 _Ret, __call_result_t<__mdispatch_<_Args>, _Ts...>...>)
+            -> __call_result_t<_Ret,
+                               __call_result_t<__mdispatch_<_Args>, _Ts...>...>
     {
-        return _Ret{}(__mdispatch_<_Args>{}((_Ts &&) __ts...)...);
+        return _Ret{}(__mdispatch_<_Args>{}((_Ts&&)__ts...)...);
     }
 };
 
@@ -914,13 +912,13 @@ struct __mdispatch<_Ret(_Args...)>
         requires(__callable<__mdispatch_<_Args>, _Ts...> && ...) &&
                 __callable<_Ret,
                            __call_result_t<__mdispatch_<_Args>, _Ts...>...>
-                auto operator()(_Ts&&... __ts) const
-                noexcept(__nothrow_callable<
-                         _Ret, __call_result_t<__mdispatch_<_Args>, _Ts...>...>)
-                    -> __call_result_t<
-                        _Ret, __call_result_t<__mdispatch_<_Args>, _Ts...>...>
+    auto operator()(_Ts&&... __ts) const
+        noexcept(__nothrow_callable<
+                 _Ret, __call_result_t<__mdispatch_<_Args>, _Ts...>...>)
+            -> __call_result_t<_Ret,
+                               __call_result_t<__mdispatch_<_Args>, _Ts...>...>
     {
-        return _Ret{}(__mdispatch_<_Args>{}((_Ts &&) __ts...)...);
+        return _Ret{}(__mdispatch_<_Args>{}((_Ts&&)__ts...)...);
     }
 };
 template <class _Ty, class... _Ts>

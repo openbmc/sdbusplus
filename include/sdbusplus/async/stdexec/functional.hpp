@@ -32,7 +32,7 @@ using std::invocable;
 template <class _Fun, class... _As>
 concept invocable = //
     requires(_Fun&& __f, _As&&... __as) {
-        std::invoke((_Fun &&) __f, (_As &&) __as...);
+        std::invoke((_Fun&&)__f, (_As&&)__as...);
     };
 #endif
 } // namespace stdexec::__std_concepts
@@ -49,7 +49,7 @@ concept __nothrow_invocable =  //
     invocable<_Fun, _As...> && //
     requires(_Fun&& __f, _As&&... __as) {
         {
-            std::invoke((_Fun &&) __f, (_As &&) __as...)
+            std::invoke((_Fun&&)__f, (_As&&)__as...)
         } noexcept;
     };
 
@@ -61,10 +61,10 @@ struct __fun_c_t
     template <class... _Args>
         requires __callable<_FunT, _Args...>
     auto operator()(_Args&&... __args) const
-        noexcept(noexcept(_Fun((_Args &&) __args...)))
+        noexcept(noexcept(_Fun((_Args&&)__args...)))
             -> __call_result_t<_FunT, _Args...>
     {
-        return _Fun((_Args &&) __args...);
+        return _Fun((_Args&&)__args...);
     }
 };
 
@@ -82,14 +82,14 @@ void tag_invoke();
 template <class _Tag, class... _Args>
 concept tag_invocable = //
     requires(_Tag __tag, _Args&&... __args) {
-        tag_invoke((_Tag &&) __tag, (_Args &&) __args...);
+        tag_invoke((_Tag&&)__tag, (_Args&&)__args...);
     };
 
 template <class _Ret, class _Tag, class... _Args>
 concept __tag_invocable_r = //
     requires(_Tag __tag, _Args&&... __args) {
         {
-            static_cast<_Ret>(tag_invoke((_Tag &&) __tag, (_Args &&) __args...))
+            static_cast<_Ret>(tag_invoke((_Tag&&)__tag, (_Args&&)__args...))
         };
     };
 
@@ -99,7 +99,7 @@ concept nothrow_tag_invocable =
     tag_invocable<_Tag, _Args...> && //
     requires(_Tag __tag, _Args&&... __args) {
         {
-            tag_invoke((_Tag &&) __tag, (_Args &&) __args...)
+            tag_invoke((_Tag&&)__tag, (_Args&&)__args...)
         } noexcept;
     };
 
@@ -128,7 +128,7 @@ struct tag_invoke_t
         noexcept(nothrow_tag_invocable<_Tag, _Args...>)
             -> tag_invoke_result_t<_Tag, _Args...>
     {
-        return tag_invoke((_Tag &&) __tag, (_Args &&) __args...);
+        return tag_invoke((_Tag&&)__tag, (_Args&&)__args...);
     }
 };
 } // namespace __tag_invoke

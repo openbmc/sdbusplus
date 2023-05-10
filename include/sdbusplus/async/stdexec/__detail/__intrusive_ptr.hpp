@@ -46,7 +46,7 @@ struct __control_block
         // Construct the value *after* the initialization of the
         // atomic in case the constructor of _Ty calls
         // __intrusive_from_this() (which increments the atomic):
-        ::new ((void*)__value_) _Ty{(_Us &&) __us...};
+        ::new ((void*)__value_) _Ty{(_Us&&)__us...};
     }
 
     ~__control_block()
@@ -195,7 +195,7 @@ struct __make_intrusive_t
     {
         using _UncvTy = std::remove_cv_t<_Ty>;
         return __intrusive_ptr<_Ty>{
-            ::new __control_block<_UncvTy>{(_Us &&) __us...}};
+            ::new __control_block<_UncvTy>{(_Us&&)__us...}};
     }
 };
 } // namespace __ptr

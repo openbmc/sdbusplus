@@ -33,8 +33,8 @@ class Application
         demo_->register_property_rw<std::string>(
             propertyGoodbyesName, sdbusplus::vtable::property_::emits_change,
             [this](const auto& newPropertyValue, const auto&) {
-                goodbyes_ = newPropertyValue;
-                return true;
+            goodbyes_ = newPropertyValue;
+            return true;
             },
             [this](const auto&) { return goodbyes_; });
 
@@ -95,7 +95,7 @@ class Application
                     const bool success = sdbusplus::unpackPropertiesNoThrow(
                         [this](const sdbusplus::UnpackErrorReason reason,
                                const std::string& property) {
-                            logUnpackError(reason, property);
+                    logUnpackError(reason, property);
                         },
                         properties, propertyGrettingName, greetings,
                         propertyGoodbyesName, goodbyes);

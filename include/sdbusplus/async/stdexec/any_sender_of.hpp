@@ -50,7 +50,7 @@ struct __query_vfun<_Tag (*const)(_Ret (*)(_As...))>
 
     _Ret operator()(_Tag, void* __rcvr, _As&&... __as) const
     {
-        return __fn_(__rcvr, (_As &&) __as...);
+        return __fn_(__rcvr, (_As&&)__as...);
     }
 };
 
@@ -61,7 +61,7 @@ struct __query_vfun<_Tag (*)(_Ret (*)(_As...))>
 
     _Ret operator()(_Tag, void* __rcvr, _As&&... __as) const
     {
-        return __fn_(__rcvr, (_As &&) __as...);
+        return __fn_(__rcvr, (_As&&)__as...);
     }
 };
 
@@ -72,7 +72,7 @@ struct __query_vfun<_Tag (*const)(_Ret (*)(_As...) noexcept)>
 
     _Ret operator()(_Tag, void* __rcvr, _As&&... __as) const noexcept
     {
-        return __fn_(__rcvr, (_As &&) __as...);
+        return __fn_(__rcvr, (_As&&)__as...);
     }
 };
 
@@ -83,7 +83,7 @@ struct __query_vfun<_Tag (*)(_Ret (*)(_As...) noexcept)>
 
     _Ret operator()(_Tag, void* __rcvr, _As&&... __as) const noexcept
     {
-        return __fn_(__rcvr, (_As &&) __as...);
+        return __fn_(__rcvr, (_As&&)__as...);
     }
 };
 
@@ -101,7 +101,7 @@ struct __query_vfun_fn<_EnvProvider>
     {
         return +[](void* __env_provider, _As... __as) -> _Ret {
             return _Tag{}(get_env(*(const _EnvProvider*)__env_provider),
-                          (_As &&) __as...);
+                          (_As&&)__as...);
         };
     }
 
@@ -115,7 +115,7 @@ struct __query_vfun_fn<_EnvProvider>
                 __nothrow_callable<_Tag, const env_of_t<_EnvProvider>&,
                                    _As...>);
             return _Tag{}(get_env(*(const _EnvProvider*)__env_provider),
-                          (_As &&) __as...);
+                          (_As&&)__as...);
         };
     }
 };
@@ -130,7 +130,7 @@ struct __query_vfun_fn<_Queryable>
                         const noexcept)(void*, _As...)
     {
         return +[](void* __queryable, _As... __as) -> _Ret {
-            return _Tag{}(*(const _Queryable*)__queryable, (_As &&) __as...);
+            return _Tag{}(*(const _Queryable*)__queryable, (_As&&)__as...);
         };
     }
 
@@ -141,7 +141,7 @@ struct __query_vfun_fn<_Queryable>
     {
         return +[](void* __env_provider, _As... __as) noexcept -> _Ret {
             static_assert(__nothrow_callable<_Tag, const _Queryable&, _As...>);
-            return _Tag{}(*(const _Queryable*)__env_provider, (_As &&) __as...);
+            return _Tag{}(*(const _Queryable*)__env_provider, (_As&&)__as...);
         };
     }
 };
@@ -156,7 +156,7 @@ struct __storage_vfun<_Tag(void (*)(_As...))>
 
     void operator()(_Tag, void* __storage, _As&&... __as) const
     {
-        return __fn_(__storage, (_As &&) __as...);
+        return __fn_(__storage, (_As&&)__as...);
     }
 };
 
@@ -167,7 +167,7 @@ struct __storage_vfun<_Tag(void (*)(_As...) noexcept)>
 
     void operator()(_Tag, void* __storage, _As&&... __as) const noexcept
     {
-        return __fn_(__storage, (_As &&) __as...);
+        return __fn_(__storage, (_As&&)__as...);
     }
 };
 
@@ -181,7 +181,7 @@ struct __storage_vfun_fn
     {
         return +[](void* __storage, _As... __as) -> void {
             return _Tag{}(__mtype<_Tp>{}, *(_Storage*)__storage,
-                          (_As &&) __as...);
+                          (_As&&)__as...);
         };
     }
 
@@ -194,7 +194,7 @@ struct __storage_vfun_fn
             static_assert(
                 __nothrow_callable<_Tag, __mtype<_Tp>, _Storage&, _As...>);
             return _Tag{}(__mtype<_Tp>{}, *(_Storage*)__storage,
-                          (_As &&) __as...);
+                          (_As&&)__as...);
         };
     }
 };
@@ -242,7 +242,7 @@ struct __move_construct_t
         static_assert(nothrow_tag_invocable<__move_construct_t, __mtype<_Tp>,
                                             _Storage&, _Storage&&>);
         tag_invoke(__move_construct_t{}, __mtype<_Tp>{}, __self,
-                   (_Storage &&) __from);
+                   (_Storage&&)__from);
     }
 };
 
@@ -350,11 +350,11 @@ class __storage<_Vtable, _Allocator, _Copyable, _Alignment, _InlineSize>::__t :
         using _Dp = __decay_t<_Tp>;
         if constexpr (__is_small<_Dp>)
         {
-            __construct_small<_Dp>((_Tp &&) __object);
+            __construct_small<_Dp>((_Tp&&)__object);
         }
         else
         {
-            __construct_large<_Dp>((_Tp &&) __object);
+            __construct_large<_Dp>((_Tp&&)__object);
         }
     }
 
@@ -365,11 +365,11 @@ class __storage<_Vtable, _Allocator, _Copyable, _Alignment, _InlineSize>::__t :
     {
         if constexpr (__is_small<_Tp>)
         {
-            __construct_small<_Tp>((_Args &&) __args...);
+            __construct_small<_Tp>((_Args&&)__args...);
         }
         else
         {
-            __construct_large<_Tp>((_Args &&) __args...);
+            __construct_large<_Tp>((_Args&&)__args...);
         }
     }
 
@@ -388,13 +388,13 @@ class __storage<_Vtable, _Allocator, _Copyable, _Alignment, _InlineSize>::__t :
 
     __t(__t&& __other) noexcept
     {
-        (*__other.__vtable_)(__move_construct, this, (__t &&) __other);
+        (*__other.__vtable_)(__move_construct, this, (__t&&)__other);
     }
 
     __t& operator=(__t&& __other) noexcept
     {
         __reset();
-        (*__other.__vtable_)(__move_construct, this, (__t &&) __other);
+        (*__other.__vtable_)(__move_construct, this, (__t&&)__other);
         return *this;
     }
 
@@ -431,7 +431,7 @@ class __storage<_Vtable, _Allocator, _Copyable, _Alignment, _InlineSize>::__t :
             _Allocator>::template rebind_alloc<_Tp>;
         _Alloc __alloc{__allocator_};
         std::allocator_traits<_Alloc>::construct(__alloc, __pointer,
-                                                 (_As &&) __args...);
+                                                 (_As&&)__args...);
         __object_pointer_ = __pointer;
     }
 
@@ -445,7 +445,7 @@ class __storage<_Vtable, _Allocator, _Copyable, _Alignment, _InlineSize>::__t :
         try
         {
             std::allocator_traits<_Alloc>::construct(__alloc, __pointer,
-                                                     (_As &&) __args...);
+                                                     (_As&&)__args...);
         }
         catch (...)
         {
@@ -487,7 +487,7 @@ class __storage<_Vtable, _Allocator, _Copyable, _Alignment, _InlineSize>::__t :
         if constexpr (__is_small<_Tp>)
         {
             _Tp& __other_object = *__pointer;
-            __self.template __construct_small<_Tp>((_Tp &&) __other_object);
+            __self.template __construct_small<_Tp>((_Tp&&)__other_object);
             using _Alloc = typename std::allocator_traits<
                 _Allocator>::template rebind_alloc<_Tp>;
             _Alloc __alloc{__self.__allocator_};
@@ -563,7 +563,7 @@ struct __rcvr_vfun_fn
                         const noexcept)(void*, _As...) noexcept
     {
         return +[](void* __rcvr, _As... __as) noexcept -> void {
-            _Tag{}((_Rcvr &&) * (_Rcvr*)__rcvr, (_As &&) __as...);
+            _Tag{}((_Rcvr&&)*(_Rcvr*)__rcvr, (_As&&)__as...);
         };
     }
 };
@@ -610,8 +610,7 @@ struct __ref<completion_signatures<_Sigs...>, _Queries...>
                 __nothrow_callable<const __vtable_t&, _Tag, void*, _As...>)
                 -> __call_result_t<const __vtable_t&, _Tag, void*, _As...>
         {
-            return (*__self.__vtable_)(_Tag{}, __self.__rcvr_,
-                                       (_As &&) __as...);
+            return (*__self.__vtable_)(_Tag{}, __self.__rcvr_, (_As&&)__as...);
         }
     } __env_;
 
@@ -630,7 +629,7 @@ struct __ref<completion_signatures<_Sigs...>, _Queries...>
     friend void tag_invoke(_Tag, _Self&& __self, _As&&... __as) noexcept
     {
         (*static_cast<const __rcvr_vfun<_Tag(_As...)>*>(__self.__env_.__vtable_)
-              ->__fn_)(((_Self &&) __self).__env_.__rcvr_, (_As &&) __as...);
+              ->__fn_)(((_Self&&)__self).__env_.__rcvr_, (_As&&)__as...);
     }
 
     template <std::same_as<__ref> Self>
@@ -690,8 +689,7 @@ struct __operation
             requires __callable<_CPO, _Receiver&&, _Args...>
         friend void tag_invoke(_CPO, _Self&& __self, _Args&&... __args) noexcept
         {
-            _CPO{}((_Receiver &&) __self.__op_->__receiver_,
-                   (_Args &&) __args...);
+            _CPO{}((_Receiver&&)__self.__op_->__receiver_, (_Args&&)__args...);
         }
 
         friend env_of_t<_Receiver> tag_invoke(get_env_t,
@@ -707,8 +705,8 @@ struct __operation
         using __id = __operation;
 
         __t(_Sender&& __sender, _Receiver&& __receiver) :
-            __operation_base<_Receiver, _Sigs, _Queries>{(_Receiver &&)
-                                                             __receiver},
+            __operation_base<_Receiver, _Sigs, _Queries>{
+                (_Receiver&&)__receiver},
             __storage_{__sender.__connect(__receiver_ref_t{__rec_})}
         {}
 
@@ -782,8 +780,8 @@ struct __sender
                         connect_result_t<_Sender, __receiver_ref_t>;
                     return __unique_operation_storage{
                         std::in_place_type<__op_state_t>, __conv{[&] {
-                            return connect((_Sender &&) __sender,
-                                           (__receiver_ref_t &&) __receiver);
+                            return connect((_Sender&&)__sender,
+                                           (__receiver_ref_t&&)__receiver);
                         }}};
                 }};
             return &__vtable_;
@@ -812,7 +810,7 @@ struct __sender
                                    void*, _As...>
         {
             return __self.__vtable_->__queries()(_Tag{}, __self.__sender_,
-                                                 (_As &&) __as...);
+                                                 (_As&&)__as...);
         }
     };
 
@@ -831,14 +829,14 @@ struct __sender
 
         template <__not_decays_to<__t> _Sender>
             requires sender_to<_Sender, __receiver_ref<_Sigs, _ReceiverQueries>>
-        __t(_Sender&& __sndr) : __storage_{(_Sender &&) __sndr}
+        __t(_Sender&& __sndr) : __storage_{(_Sender&&)__sndr}
         {}
 
         __unique_operation_storage __connect(__receiver_ref_t __receiver)
         {
             return __storage_.__get_vtable()->__connect_(
                 __storage_.__get_object_pointer(),
-                (__receiver_ref_t &&) __receiver);
+                (__receiver_ref_t&&)__receiver);
         }
 
         explicit operator bool() const noexcept
@@ -854,7 +852,7 @@ struct __sender
             __operation<__t, __decay_t<_Rcvr>, _ReceiverQueries>>
             tag_invoke(connect_t, __t&& __self, _Rcvr&& __rcvr)
         {
-            return {(__t &&) __self, (_Rcvr &&) __rcvr};
+            return {(__t&&)__self, (_Rcvr&&)__rcvr};
         }
 
         friend __env_t tag_invoke(get_env_t, const __t& __self) noexcept
@@ -872,7 +870,7 @@ class __scheduler
     template <class _Scheduler>
         requires(!__decays_to<_Scheduler, __scheduler>) && scheduler<_Scheduler>
     __scheduler(_Scheduler&& __scheduler) :
-        __storage_{(_Scheduler &&) __scheduler}
+        __storage_{(_Scheduler&&)__scheduler}
     {}
 
     using __sender_t = _ScheduleSender;
@@ -934,7 +932,7 @@ class __scheduler
                            void*, _As...>
     {
         return __self.__storage_.__get_vtable()->__queries()(
-            _Tag{}, __self.__storage_.__get_object_pointer(), (_As &&) __as...);
+            _Tag{}, __self.__storage_.__get_object_pointer(), (_As&&)__as...);
     }
 
     friend bool operator==(const __scheduler& __self,
@@ -984,8 +982,7 @@ class any_receiver_ref
         std::is_nothrow_invocable_v<
             _Tag, stdexec::__copy_cvref_t<Self, __receiver_base>, _As...>)
     {
-        return tag_invoke(_Tag{}, ((Self &&) __self).__receiver_,
-                          (_As &&) __as...);
+        return tag_invoke(_Tag{}, ((Self&&)__self).__receiver_, (_As&&)__as...);
     }
 
   public:
@@ -1016,8 +1013,8 @@ class any_receiver_ref
             std::is_nothrow_invocable_v<
                 _Tag, stdexec::__copy_cvref_t<Self, __sender_base>, _As...>)
         {
-            return tag_invoke(_Tag{}, ((Self &&) __self).__sender_,
-                              (_As &&) __as...);
+            return tag_invoke(_Tag{}, ((Self&&)__self).__sender_,
+                              (_As&&)__as...);
         }
 
       public:
@@ -1030,7 +1027,7 @@ class any_receiver_ref
                     stdexec::sender<_Sender>
         any_sender(_Sender&& __sender) noexcept(
             stdexec::__nothrow_constructible_from<__sender_base, _Sender>) :
-            __sender_((_Sender &&) __sender)
+            __sender_((_Sender&&)__sender)
         {}
 
         template <auto... _SchedulerQueries>
@@ -1077,7 +1074,7 @@ class any_receiver_ref
                 requires(!stdexec::__decays_to<_Scheduler, any_scheduler> &&
                          stdexec::scheduler<_Scheduler>)
             any_scheduler(_Scheduler&& __scheduler) :
-                __scheduler_{(_Scheduler &&) __scheduler}
+                __scheduler_{(_Scheduler&&)__scheduler}
             {}
 
           private:
@@ -1091,8 +1088,8 @@ class any_receiver_ref
                     _Tag, stdexec::__copy_cvref_t<Self, __scheduler_base>,
                     _As...>)
             {
-                return tag_invoke(_Tag{}, ((Self &&) __self).__scheduler_,
-                                  (_As &&) __as...);
+                return tag_invoke(_Tag{}, ((Self&&)__self).__scheduler_,
+                                  (_As&&)__as...);
             }
 
             friend bool

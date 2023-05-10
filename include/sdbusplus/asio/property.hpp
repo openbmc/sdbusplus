@@ -52,21 +52,21 @@ inline void getProperty(
         [handler = std::move(handler)](
             boost::system::error_code ec,
             std::variant<std::monostate, PropertyType>& ret) mutable {
-            if (ec)
-            {
-                handler(ec, {});
-                return;
-            }
+        if (ec)
+        {
+            handler(ec, {});
+            return;
+        }
 
-            if (PropertyType* value = std::get_if<PropertyType>(&ret))
-            {
-                handler(ec, std::move(*value));
-                return;
-            }
+        if (PropertyType* value = std::get_if<PropertyType>(&ret))
+        {
+            handler(ec, std::move(*value));
+            return;
+        }
 
-            handler(boost::system::errc::make_error_code(
-                        boost::system::errc::invalid_argument),
-                    {});
+        handler(boost::system::errc::make_error_code(
+                    boost::system::errc::invalid_argument),
+                {});
         },
         service, path, "org.freedesktop.DBus.Properties", "Get", interface,
         propertyName);
@@ -86,20 +86,20 @@ template <typename T, typename OnError, typename OnSuccess>
         [onError = std::move(onError), onSuccess = std::move(onSuccess)](
             boost::system::error_code ec,
             std::variant<std::monostate, T>& ret) {
-            if (ec)
-            {
-                onError(ec);
-                return;
-            }
+        if (ec)
+        {
+            onError(ec);
+            return;
+        }
 
-            if (T* value = std::get_if<T>(&ret))
-            {
-                onSuccess(*value);
-                return;
-            }
+        if (T* value = std::get_if<T>(&ret))
+        {
+            onSuccess(*value);
+            return;
+        }
 
-            onError(boost::system::errc::make_error_code(
-                boost::system::errc::invalid_argument));
+        onError(boost::system::errc::make_error_code(
+            boost::system::errc::invalid_argument));
         },
         service, path, "org.freedesktop.DBus.Properties", "Get", interface,
         propertyName);

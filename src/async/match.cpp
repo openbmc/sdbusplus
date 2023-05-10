@@ -6,8 +6,8 @@ namespace sdbusplus::async
 match::match(context& ctx, const std::string_view& pattern)
 {
     // C-style callback to redirect into this::handle_match.
-    static auto match_cb = [](message::msgp_t msg, void* ctx,
-                              sd_bus_error*) noexcept {
+    static auto match_cb =
+        [](message::msgp_t msg, void* ctx, sd_bus_error*) noexcept {
         static_cast<match*>(ctx)->handle_match(message_t{msg});
         return 0;
     };

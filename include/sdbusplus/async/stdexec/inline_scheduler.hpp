@@ -34,7 +34,7 @@ struct inline_scheduler
 
         friend void tag_invoke(stdexec::start_t, __op& op) noexcept
         {
-            stdexec::set_value((R &&) op.rec_);
+            stdexec::set_value((R&&)op.rec_);
         }
     };
 
@@ -50,7 +50,7 @@ struct inline_scheduler
                 stdexec::__nothrow_constructible_from<stdexec::__decay_t<R>, R>)
                 -> __op<stdexec::__x<stdexec::__decay_t<R>>>
         {
-            return {(R &&) rec};
+            return {(R&&)rec};
         }
 
         struct __env

@@ -227,7 +227,7 @@ struct in_place_construct
 
     operator result_t()
     {
-        return ((Fn &&) fn)();
+        return ((Fn&&)fn)();
     }
 };
 

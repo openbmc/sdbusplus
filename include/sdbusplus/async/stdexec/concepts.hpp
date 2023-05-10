@@ -82,10 +82,10 @@ concept equality_comparable = //
     requires(__cref_t<_Ty> __t) {
         {
             __t == __t
-            } -> convertible_to<bool>;
+        } -> convertible_to<bool>;
         {
             __t != __t
-            } -> convertible_to<bool>;
+        } -> convertible_to<bool>;
     };
 #endif
 } // namespace stdexec::__std_concepts
@@ -189,8 +189,7 @@ template <class _Ty, class _Up>
 concept __decays_to = __same_as<__decay_t<_Ty>, _Up>;
 
 template <class _Ty, class _Up>
-concept __not_decays_to = !
-__decays_to<_Ty, _Up>;
+concept __not_decays_to = !__decays_to<_Ty, _Up>;
 
 template <bool _TrueOrFalse>
 concept __satisfies = _TrueOrFalse;
@@ -208,7 +207,7 @@ template <class _Ty, class... _Us>
 concept __all_of = (__same_as<_Ty, _Us> && ...);
 
 template <class _Ty, class... _Us>
-concept __none_of = ((!__same_as<_Ty, _Us>) && ...);
+concept __none_of = ((!__same_as<_Ty, _Us>)&&...);
 
 // Not exactly right, but close.
 template <class _Ty>
@@ -273,8 +272,8 @@ concept assignable_from =           //
     //   const std::remove_reference_t<_RHS>&> &&
     requires(_LHS __lhs, _RHS&& __rhs) {
         {
-            __lhs = ((_RHS &&) __rhs)
-            } -> same_as<_LHS>;
+            __lhs = ((_RHS&&)__rhs)
+        } -> same_as<_LHS>;
     };
 
 namespace __swap
@@ -283,13 +282,13 @@ using std::swap;
 
 template <class _Ty, class _Uy>
 concept swappable_with = //
-    requires(_Ty&& __t, _Uy&& __u) { swap((_Ty &&) __t, (_Uy &&) __u); };
+    requires(_Ty&& __t, _Uy&& __u) { swap((_Ty&&)__t, (_Uy&&)__u); };
 
 inline constexpr const auto __fn = //
     []<class _Ty, swappable_with<_Ty> _Uy>(_Ty&& __t, _Uy&& __u) noexcept(
-        noexcept(swap((_Ty &&) __t, (_Uy &&) __u))) {
-        swap((_Ty &&) __t, (_Uy &&) __u);
-    };
+        noexcept(swap((_Ty&&)__t, (_Uy&&)__u))) {
+    swap((_Ty&&)__t, (_Uy&&)__u);
+};
 } // namespace __swap
 
 using __swap::swappable_with;
@@ -329,28 +328,28 @@ concept __partially_ordered_with = //
     requires(__cref_t<T> t, __cref_t<U> u) {
         {
             t < u
-            } -> __boolean_testable_;
+        } -> __boolean_testable_;
         {
             t > u
-            } -> __boolean_testable_;
+        } -> __boolean_testable_;
         {
             t <= u
-            } -> __boolean_testable_;
+        } -> __boolean_testable_;
         {
             t >= u
-            } -> __boolean_testable_;
+        } -> __boolean_testable_;
         {
             u < t
-            } -> __boolean_testable_;
+        } -> __boolean_testable_;
         {
             u > t
-            } -> __boolean_testable_;
+        } -> __boolean_testable_;
         {
             u <= t
-            } -> __boolean_testable_;
+        } -> __boolean_testable_;
         {
             u >= t
-            } -> __boolean_testable_;
+        } -> __boolean_testable_;
     };
 
 template <class _Ty>
@@ -375,8 +374,7 @@ template <class _Ay, template <class...> class _Ty>
 concept __is_instance_of = __is_instance_of_<_Ay, _Ty>;
 
 template <class _Ay, template <class...> class _Ty>
-concept __is_not_instance_of = !
-__is_instance_of<_Ay, _Ty>;
+concept __is_not_instance_of = !__is_instance_of<_Ay, _Ty>;
 
 #if __has_builtin(__is_nothrow_constructible)
 template <class _Ty, class... _As>

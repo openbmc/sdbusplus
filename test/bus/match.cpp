@@ -29,8 +29,8 @@ class Match : public ::testing::Test
 TEST_F(Match, FunctorIs_sd_bus_message_handler_t)
 {
     bool triggered = false;
-    auto trigger = [](sd_bus_message* /*m*/, void* context,
-                      sd_bus_error* /*e*/) {
+    auto trigger =
+        [](sd_bus_message* /*m*/, void* context, sd_bus_error* /*e*/) {
         *static_cast<bool*>(context) = true;
         return 0;
     };

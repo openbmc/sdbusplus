@@ -217,26 +217,26 @@ int server()
     iface->register_property("lessThan50", 23,
                              // custom set
                              [](const int& req, int& propertyValue) {
-                                 if (req >= 50)
-                                 {
-                                     return false;
-                                 }
-                                 propertyValue = req;
-                                 return true;
-                             });
+        if (req >= 50)
+        {
+            return false;
+        }
+        propertyValue = req;
+        return true;
+    });
     iface->register_property(
         "TrailTime", std::string("foo"),
         // custom set
         [](const std::string& req, std::string& propertyValue) {
-            propertyValue = req;
-            return true;
+        propertyValue = req;
+        return true;
         },
         // custom get
         [](const std::string& property) {
-            auto now = std::chrono::system_clock::now();
-            auto timePoint = std::chrono::system_clock::to_time_t(now);
-            return property + std::ctime(&timePoint);
-        });
+        auto now = std::chrono::system_clock::now();
+        auto timePoint = std::chrono::system_clock::to_time_t(now);
+        return property + std::ctime(&timePoint);
+    });
 
     // test method creation
     iface->register_method("TestMethod", [](const int32_t& callCount) {
@@ -250,8 +250,8 @@ int server()
     // so will be executed in coroutine context if called
     iface->register_method("TestYieldFunction",
                            [conn](boost::asio::yield_context yield, int val) {
-                               return fooYield(yield, conn, val);
-                           });
+        return fooYield(yield, conn, val);
+    });
 
     iface->register_method("TestMethodWithMessage", methodWithMessage);
 
@@ -324,16 +324,16 @@ int client()
 
     conn->async_method_call(
         [](boost::system::error_code ec, GetSubTreeType& subtree) {
-            std::cout << "async_method_call callback\n";
-            if (ec)
-            {
-                std::cerr << "error with async_method_call\n";
-                return;
-            }
-            for (auto& item : subtree)
-            {
-                std::cout << item.first << "\n";
-            }
+        std::cout << "async_method_call callback\n";
+        if (ec)
+        {
+            std::cerr << "error with async_method_call\n";
+            return;
+        }
+        for (auto& item : subtree)
+        {
+            std::cout << item.first << "\n";
+        }
         },
         "xyz.openbmc_project.ObjectMapper",
         "/xyz/openbmc_project/object_mapper",
@@ -345,17 +345,16 @@ int client()
         [nonConstCapture = std::move(nonConstCapture)](
             boost::system::error_code ec,
             const std::vector<std::string>& /*things*/) mutable {
-            std::cout << "async_method_call callback\n";
-            nonConstCapture += " stuff";
-            if (ec)
-            {
-                std::cerr << "async_method_call expected failure: " << ec
-                          << "\n";
-            }
-            else
-            {
-                std::cerr << "async_method_call should have failed!\n";
-            }
+        std::cout << "async_method_call callback\n";
+        nonConstCapture += " stuff";
+        if (ec)
+        {
+            std::cerr << "async_method_call expected failure: " << ec << "\n";
+        }
+        else
+        {
+            std::cerr << "async_method_call should have failed!\n";
+        }
         },
         "xyz.openbmc_project.ObjectMapper",
         "/xyz/openbmc_project/object_mapper",
@@ -384,14 +383,14 @@ int client()
 
     conn->async_method_call(
         [](boost::system::error_code ec, int32_t testValue) {
-            if (ec)
-            {
-                std::cerr << "TestYieldFunction returned error with "
-                             "async_method_call (ec = "
-                          << ec << ")\n";
-                return;
-            }
-            std::cout << "TestYieldFunction return " << testValue << "\n";
+        if (ec)
+        {
+            std::cerr << "TestYieldFunction returned error with "
+                         "async_method_call (ec = "
+                      << ec << ")\n";
+            return;
+        }
+        std::cout << "TestYieldFunction return " << testValue << "\n";
         },
         "xyz.openbmc_project.asio-test", "/xyz/openbmc_project/test",
         "xyz.openbmc_project.test", "TestYieldFunction", int32_t(41));

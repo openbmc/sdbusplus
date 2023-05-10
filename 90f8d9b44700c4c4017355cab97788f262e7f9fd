@@ -1,4 +1,22 @@
 {
-  "comments": [],
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2c267932_11784fd6",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1001745
+      },
+      "writtenOn": "2023-05-10T06:04:04Z",
+      "side": 1,
+      "message": "Patrick, thanks for fixing the last CI failure and merging the changes!",
+      "revId": "90f8d9b44700c4c4017355cab97788f262e7f9fd",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ],
   "submitRequirementResults": []
 }

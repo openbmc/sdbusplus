@@ -294,16 +294,6 @@ class Property(NamedElement, Renderer):
             loader, "property.md.mako", property=self, post=str.strip
         )
 
-    def cpp_prototype(self, loader, interface, ptype):
-        return self.render(
-            loader,
-            "property.prototype.hpp.mako",
-            property=self,
-            interface=interface,
-            ptype=ptype,
-            post=str.rstrip,
-        )
-
     def cpp_includes(self, interface):
         return interface.error_includes(self.errors) + interface.enum_includes(
             [self]

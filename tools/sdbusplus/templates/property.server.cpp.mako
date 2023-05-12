@@ -1,4 +1,3 @@
-% if ptype == 'callback-cpp':
 auto ${interface.classname}::${property.camelCase}() const ->
         ${property.cppTypeParam(interface.name)}
 {
@@ -100,4 +99,3 @@ static const auto _property_${property.name} =
             ${property.cppTypeParam(interface.name, full=True)}>());
 }
 }
-% endif

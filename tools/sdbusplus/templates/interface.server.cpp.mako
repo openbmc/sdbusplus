@@ -20,7 +20,7 @@ ${ s.cpp_prototype(loader, interface=interface, ptype='callback-cpp') }
     % endfor
 
     % for p in interface.properties:
-${ p.cpp_prototype(loader, interface=interface, ptype='callback-cpp') }
+${ p.render(loader, "property.server.cpp.mako", property=p, interface=interface) }
     % endfor
 
     % if interface.properties:

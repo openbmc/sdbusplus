@@ -40,13 +40,6 @@
         void ${ signal.camelCase }(
             ${ parameters(True) });
 ###
-### Emit 'vtable'
-###
-    % elif ptype == 'vtable':
-    vtable::signal("${signal.name}",
-                   details::${interface.classname}::_signal_${signal.CamelCase }
-                        .data()),
-###
 ### Emit 'callback-cpp'
 ###
     % elif ptype == 'callback-cpp':

@@ -21,11 +21,14 @@ sdbusplusplus_depfiles = files(
   'sdbusplus/templates/method.md.mako',
   'sdbusplus/templates/method.client.hpp.mako',
   'sdbusplus/templates/method.prototype.hpp.mako',
+  'sdbusplus/templates/method.server.vtable.cpp.mako',
   'sdbusplus/templates/property.md.mako',
   'sdbusplus/templates/property.client.hpp.mako',
   'sdbusplus/templates/property.server.cpp.mako',
+  'sdbusplus/templates/property.server.vtable.cpp.mako',
   'sdbusplus/templates/signal.md.mako',
   'sdbusplus/templates/signal.prototype.hpp.mako',
+  'sdbusplus/templates/signal.server.vtable.cpp.mako',
 )
 meson.override_find_program('sdbus++', files('sdbus++'))
 sdbusplusplus_prog = find_program('sdbus++', native: true)

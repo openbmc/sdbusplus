@@ -57,25 +57,15 @@ auto ${interface.classname}::getPropertyByName(const std::string& _name) ->
 
 const vtable_t ${interface.classname}::_vtable[] = {
     vtable::start(),
+
     % for m in interface.methods:
-${ m.cpp_prototype(loader, interface=interface, ptype='vtable') }
+${ m.render(loader, "method.server.vtable.cpp.mako", method=m, interface=interface) }
     % endfor
     % for s in interface.signals:
-${ s.cpp_prototype(loader, interface=interface, ptype='vtable') }
+${ s.render(loader, "signal.server.vtable.cpp.mako", signal=s, interface=interface) }
     % endfor
     % for p in interface.properties:
-    vtable::property("${p.name}",
-                     details::${interface.classname}::_property_${p.name}
-                        .data(),
-                     _callback_get_${p.name},
-        % if 'const' not in p.flags and 'readonly' not in p.flags:
-                     _callback_set_${p.name},
-        % endif
-        % if not p.cpp_flags:
-                     vtable::property_::emits_change),
-        % else:
-                     ${p.cpp_flags}),
-        % endif
+${ p.render(loader, "property.server.vtable.cpp.mako", property=p, interface=interface) }
     % endfor
     vtable::end()
 };

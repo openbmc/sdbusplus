@@ -1,14 +1,3 @@
-<%
-    def error_namespace(e):
-        n = e.split('.');
-        n.pop(); # Remove error name.
-
-        n = map((lambda x: interface.name if x == "self" else x), n);
-        return '::'.join('.'.join(n).split('.'));
-
-    def error_name(e):
-        return e.split('.').pop();
-%>
 % if ptype == 'callback-cpp':
 auto ${interface.classname}::${property.camelCase}() const ->
         ${property.cppTypeParam(interface.name)}
@@ -35,7 +24,7 @@ int ${interface.classname}::_callback_get_${property.name}(
                 ));
     }
     % for e in property.errors:
-    catch(const sdbusplus::${error_namespace(e)}::${error_name(e)}& e)
+    catch(const ${interface.errorNamespacedClass(e)}& e)
     {
         return o->get_bus().getInterface()->sd_bus_error_set(error, e.name(), e.description());
     }
@@ -89,7 +78,7 @@ int ${interface.classname}::_callback_set_${property.name}(
                 ));
     }
     % for e in property.errors:
-    catch(const sdbusplus::${error_namespace(e)}::${error_name(e)}& e)
+    catch(const ${interface.errorNamespacedClass(e)}& e)
     {
         return o->get_bus().getInterface()->sd_bus_error_set(error, e.name(), e.description());
     }

@@ -44,6 +44,10 @@ class Interface(NamedElement, Renderer):
             includes.append(f"{n}/error.hpp")
         return sorted(set(includes))
 
+    def errorNamespacedClass(self, error):
+        error = error.replace("self.", self.name + ".")
+        return "sdbusplus::" + "::".join(error.split("."))
+
     def enum_includes(self, inc_list):
         includes = []
         for e in inc_list:

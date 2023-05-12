@@ -7,9 +7,7 @@
 #include <tuple>
 
 #include <${interface.headerFile("server")}>
-% for m in interface.methods + interface.properties + interface.signals:
-${ m.cpp_prototype(loader, interface=interface, ptype='callback-cpp-includes') }
-% endfor
+
 namespace sdbusplus::server::${interface.cppNamespace()}
 {
 

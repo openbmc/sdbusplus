@@ -8,11 +8,6 @@
 
     def error_name(e):
         return e.split('.').pop();
-
-    def error_include(e):
-        l = error_namespace(e).split('::')
-        l.pop() # Remove "Error"
-        return '/'.join(l) + '/error.hpp';
 %>
 ###
 ### Emit 'header'
@@ -117,8 +112,4 @@ static const auto _return_${ method.CamelCase } =
     % endif
 }
 }
-    % elif ptype == 'callback-cpp-includes':
-        % for e in method.errors:
-#include <${error_include(e)}>
-        % endfor
     % endif

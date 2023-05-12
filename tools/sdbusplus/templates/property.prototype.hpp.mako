@@ -8,11 +8,6 @@
 
     def error_name(e):
         return e.split('.').pop();
-
-    def error_include(e):
-        l = error_namespace(e).split('::')
-        l.pop() # Remove "Error"
-        return '/'.join(l) + '/error.hpp';
 %>
 % if ptype == 'callback-cpp':
 auto ${interface.classname}::${property.camelCase}() const ->
@@ -116,8 +111,4 @@ static const auto _property_${property.name} =
             ${property.cppTypeParam(interface.name, full=True)}>());
 }
 }
-% elif ptype == 'callback-cpp-includes':
-        % for e in property.errors:
-#include <${error_include(e)}>
-        % endfor
 % endif

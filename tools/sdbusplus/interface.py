@@ -34,6 +34,16 @@ class Interface(NamedElement, Renderer):
     def joinedName(self, join_str, append):
         return join_str.join(self.namespaces + [self.classname, append])
 
+    def error_includes(self, inc_list):
+        includes = []
+        for e in inc_list:
+            e = e.replace("self.", self.name + ".")
+            n = "/".join(
+                e.split(".")[:-2],  # ignore the Error.Name
+            )
+            includes.append(f"{n}/error.hpp")
+        return sorted(set(includes))
+
     def enum_includes(self, inc_list):
         includes = []
         for e in inc_list:
@@ -60,10 +70,12 @@ class Interface(NamedElement, Renderer):
         return self.render(loader, "interface.common.hpp.mako", interface=self)
 
     def cpp_includes(self):
-        return set.union(
-            set(),
-            *[
-                set(m.cpp_includes(self))
-                for m in self.methods + self.properties + self.signals
-            ]
+        return sorted(
+            set.union(
+                set(),
+                *[
+                    set(m.cpp_includes(self))
+                    for m in self.methods + self.properties + self.signals
+                ],
+            )
         )

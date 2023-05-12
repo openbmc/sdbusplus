@@ -305,7 +305,9 @@ class Property(NamedElement, Renderer):
         )
 
     def cpp_includes(self, interface):
-        return interface.enum_includes([self])
+        return interface.error_includes(self.errors) + interface.enum_includes(
+            [self]
+        )
 
     def or_cpp_flags(self, flags):
         """Return the corresponding ORed cpp flags."""

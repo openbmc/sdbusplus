@@ -116,8 +116,4 @@ static const auto _property_${property.name} =
             ${property.cppTypeParam(interface.name, full=True)}>());
 }
 }
-% elif ptype == 'callback-cpp-includes':
-        % for e in property.errors:
-#include <${error_include(e)}>
-        % endfor
 % endif

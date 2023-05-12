@@ -27,7 +27,9 @@ class Method(NamedElement, Renderer):
         )
 
     def cpp_includes(self, interface):
-        return interface.enum_includes(self.returns + self.parameters)
+        return interface.error_includes(self.errors) + interface.enum_includes(
+            self.returns + self.parameters
+        )
 
     def returns_as_list(self, interface, full=False):
         return ", ".join(

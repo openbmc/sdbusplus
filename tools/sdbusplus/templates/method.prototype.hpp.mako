@@ -117,8 +117,4 @@ static const auto _return_${ method.CamelCase } =
     % endif
 }
 }
-    % elif ptype == 'callback-cpp-includes':
-        % for e in method.errors:
-#include <${error_include(e)}>
-        % endfor
     % endif

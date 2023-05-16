@@ -83,10 +83,14 @@ class connection : public sdbusplus::bus_t
     inline auto async_send(message_t& m, CompletionToken&& token,
                            uint64_t timeout = 0)
     {
+#ifdef SDBUSPLUS_DISABLE_BOOST_COROUTINES
+      constexpr bool is_yield = false;
+#else
         constexpr bool is_yield =
             std::is_same_v<CompletionToken, boost::asio::yield_context>;
+#endif
         using return_t = std::conditional_t<is_yield, message_t, message_t&>;
-        using callback_t = void(boost::system::error_code, return_t);
+        using callback_t = void(const boost::system::error_code&, message_t&);
         return boost::asio::async_initiate<CompletionToken, callback_t>(
             detail::async_send_handler(get(), m, timeout), token);
     }
@@ -122,7 +126,7 @@ class connection : public sdbusplus::bus_t
             if constexpr ((std::tuple_size_v<FunctionTupleType>) > 1)
             {
                 return std::is_same_v<
-                    std::tuple_element_t<1, FunctionTupleType>,
+                    std::decay_t<std::tuple_element_t<1, FunctionTupleType>>,
                     sdbusplus::message_t>;
             }
             return false;

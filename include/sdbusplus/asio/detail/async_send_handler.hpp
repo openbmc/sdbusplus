@@ -15,6 +15,7 @@
 */
 #pragma once
 
+#include <functional>
 #include <systemd/sd-bus.h>
 
 #include <boost/system/error_code.hpp>
@@ -31,10 +32,10 @@ namespace detail
 /* Class meant for converting a static callback, and void* userdata from sd-bus
  * back into a structured class to be returned to the user.
  */
-template <typename CompletionToken>
 struct unpack_userdata
 {
-    CompletionToken handler_;
+    using callback_type = std::function<void(const boost::system::error_code&, message_t&)>;
+    callback_type handler_;
 
     static int do_unpack(sd_bus_message* mesg, void* userdata,
                          sd_bus_error* /*error*/)
@@ -45,8 +46,7 @@ struct unpack_userdata
         }
 
         // Take RAII ownership of the pointer again
-        using self_t = unpack_userdata<CompletionToken>;
-        std::unique_ptr<self_t> context(static_cast<self_t*>(userdata));
+        std::unique_ptr<unpack_userdata> context(static_cast<unpack_userdata*>(userdata));
 
         if (mesg == nullptr)
         {
@@ -59,8 +59,8 @@ struct unpack_userdata
         return 0;
     }
 
-    explicit unpack_userdata(CompletionToken&& handler) :
-        handler_(std::forward<CompletionToken>(handler))
+    explicit unpack_userdata(callback_type&& handler) :
+        handler_(std::move(handler))
     {}
 };
 
@@ -69,15 +69,14 @@ class async_send_handler
     sd_bus* bus;
     message_t& mesg;
     uint64_t timeout;
+    using callback_type = std::function<void(const boost::system::error_code&, message_t&)>;
 
   public:
-    template <typename CompletionToken>
-    void operator()(CompletionToken&& token)
+    void operator()(callback_type&& token)
     {
-        using unpack_t = unpack_userdata<CompletionToken>;
-        auto context = std::make_unique<unpack_t>(std::move(token));
+        auto context = std::make_unique<unpack_userdata>(std::move(token));
         int ec = sd_bus_call_async(bus, nullptr, mesg.get(),
-                                   &unpack_t::do_unpack, context.get(),
+                                   &unpack_userdata::do_unpack, context.get(),
                                    timeout);
         if (ec < 0)
         {

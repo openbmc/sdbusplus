@@ -58,7 +58,7 @@ class ${interface.classname} : public sdbusplus::common::${interface.cppNamespac
     template <bool, bool, bool, template <typename> typename...>
     friend class sdbusplus::async::client::client;
     template <typename>
-    friend class sdbusplus::client::${interface.cppNamespacedClass()};
+    friend struct sdbusplus::client::${interface.cppNamespacedClass()};
 
     // Delete default constructor as these should only be constructed
     // indirectly through sdbusplus::async::client_t.

@@ -244,6 +244,13 @@ concept __nothrow_constructible_from =
 #endif
 
 template <class _Ty>
+concept __nothrow_move_constructible = __nothrow_constructible_from<_Ty, _Ty>;
+
+template <class _Ty>
+concept __nothrow_copy_constructible =
+    __nothrow_constructible_from<_Ty, const _Ty&>;
+
+template <class _Ty>
 concept __decay_copyable = constructible_from<__decay_t<_Ty>, _Ty>;
 
 template <class _Ty>

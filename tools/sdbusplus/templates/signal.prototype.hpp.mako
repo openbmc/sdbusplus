@@ -9,9 +9,8 @@
             r += default_value(p)
         return r
 
-    def parameters_as_list(pre="", post=""):
-        return ", ".join([ "%s%s%s" % (pre, p.camelCase, post)
-                for p in signal.properties ])
+    def parameters_as_list():
+        return ", ".join([ p.camelCase for p in signal.properties ])
 
     def parameters_types_as_list():
         return ", ".join([ p.cppTypeParam(interface.name, full=True)

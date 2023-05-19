@@ -10,6 +10,11 @@
 
 #include <gtest/gtest.h>
 
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wc99-extensions"
+#endif
+
 // Needed for constructor error testing
 extern sdbusplus::SdBusImpl sdbus_impl;
 
@@ -173,3 +178,7 @@ TEST(SdBusError, CatchBaseClassExceptions)
 }
 
 } // namespace
+
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif

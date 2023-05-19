@@ -229,6 +229,8 @@ struct in_place_construct
     {
         return ((Fn&&)fn)();
     }
+
+    explicit in_place_construct(Fn&& fn) : fn(std::move(fn)){};
 };
 
 } // namespace scope_ns

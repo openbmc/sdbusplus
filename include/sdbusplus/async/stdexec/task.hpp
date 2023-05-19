@@ -108,8 +108,8 @@ class __default_task_context_impl
                                              __scheduler_affinity::__sticky;
 
     STDEXEC_NO_UNIQUE_ADDRESS
-    __if_c<__with_scheduler, __any_scheduler, __ignore> //
-        __scheduler_{exec::inline_scheduler{}};
+        __if_c<__with_scheduler, __any_scheduler, __ignore> //
+            __scheduler_{exec::inline_scheduler{}};
     in_place_stop_token __stop_token_;
 
     friend const __any_scheduler&

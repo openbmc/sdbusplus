@@ -4,7 +4,9 @@
 // as needed.
 
 #pragma GCC diagnostic push
+#ifndef __clang__
 #pragma GCC diagnostic ignored "-Wnon-template-friend"
+#endif
 #pragma GCC diagnostic ignored "-Wmissing-field-initializers"
 #include <sdbusplus/async/stdexec/coroutine.hpp>
 #include <sdbusplus/async/stdexec/execution.hpp>

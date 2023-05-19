@@ -21,7 +21,7 @@ class client :
     public Types<sdbusplus::async::proxy_ns::proxy<S, P, false, Preserved>>...
 {
   private:
-    sdbusplus::async::context& ctx{};
+    sdbusplus::async::context& ctx;
     sdbusplus::async::proxy_ns::proxy<S, P, false, Preserved> proxy{};
 
   public:

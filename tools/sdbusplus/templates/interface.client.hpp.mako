@@ -76,7 +76,7 @@ ${p.render(loader, "property.client.hpp.mako", property=p, interface=interface)}
         ctx(ctx), proxy(p.interface(interface))
     {}
 
-    sdbusplus::async::context& ctx{};
+    sdbusplus::async::context& ctx;
     decltype(std::declval<Proxy>().interface(interface)) proxy = {};
 };
 

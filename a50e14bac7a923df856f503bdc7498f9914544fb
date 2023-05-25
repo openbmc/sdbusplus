@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5c075274_51ed3d9b",
+        "filename": "include/sdbusplus/async/client.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2023-05-25T19:07:23Z",
+      "side": 1,
+      "message": "I stared at this for a long time and didn\u0027t see this fix......  oh well. 😊",
+      "range": {
+        "startLine": 36,
+        "startChar": 53,
+        "endLine": 36,
+        "endChar": 55
+      },
+      "revId": "a50e14bac7a923df856f503bdc7498f9914544fb",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

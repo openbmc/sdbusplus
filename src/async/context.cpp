@@ -39,7 +39,10 @@ struct wait_process_completion : bus::details::bus_friend
     context& ctx;
     event_t::time_resolution timeout{};
 
-    static task<> loop(context& ctx);
+    // TODO: It seems like we should be able to do a normal `task<>` here
+    //       but spawn on it compile fails.
+    static exec::basic_task<void, exec::__task::__raw_task_context<void>>
+        loop(context& ctx);
     static void wait_once(context& ctx);
 };
 
@@ -99,7 +102,8 @@ struct wait_process_sender
     context& ctx;
 };
 
-task<> wait_process_completion::loop(context& ctx)
+exec::basic_task<void, exec::__task::__raw_task_context<void>>
+    wait_process_completion::loop(context& ctx)
 {
     while (!ctx.final_stop.stop_requested())
     {
@@ -142,10 +146,7 @@ void context::run()
     wait_for_wait_process_stopped();
 
     // Wait for all the internal tasks to complete.
-    stdexec::sync_wait(internal_tasks.empty() |
-                       execution::upon_error([&](auto&& e) {
-                           pending_exceptions.emplace_back(std::move(e));
-                       }));
+    stdexec::sync_wait(internal_tasks.on_empty());
 
     // Finish up the loop and join the thread.
     // (There shouldn't be anything going on by this point anyhow.)
@@ -162,8 +163,7 @@ void context::run()
 void context::worker_run()
 {
     // Start the sdbus 'wait/process' loop; treat it as an internal task.
-    internal_tasks.spawn(details::wait_process_completion::loop(*this) |
-                         execution::upon_stopped([]() {}));
+    internal_tasks.spawn(details::wait_process_completion::loop(*this));
 
     // Run the execution::run_loop to handle all the tasks.
     loop.run();
@@ -212,11 +212,8 @@ void context::spawn_watcher()
     }
 
     // Spawn the watch for completion / exceptions.
-    internal_tasks.spawn(pending_tasks.empty() |
-                         execution::then([this]() { spawn_complete(); }) |
-                         execution::upon_error([this](auto&& e) {
-                             spawn_complete(std::move(e));
-                         }));
+    internal_tasks.spawn(pending_tasks.on_empty() |
+                         execution::then([this]() { spawn_complete(); }));
 }
 
 void context::caller_run()

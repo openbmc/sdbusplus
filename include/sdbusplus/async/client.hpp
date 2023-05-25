@@ -33,7 +33,7 @@ class client :
     /* Default (empty) constructor only when Service and Path are missing. */
     explicit client(sdbusplus::async::context& ctx)
         requires(!S && !P)
-        : Types<decltype(proxy)>(ctx, proxy)..., ctx(ctx)
+        : Types<decltype(proxy)>(ctx, decltype(proxy){})..., ctx(ctx)
     {}
 
     /* Conversion constructor for a non-empty (Service and/or Path) proxy. */

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "823e5129_ed1f1bdf",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-05-25T18:55:03Z",
+      "side": 1,
+      "message": "This will no longer be necessary once https://gerrit.openbmc.org/c/openbmc/sdbusplus/+/63748 is merged.",
+      "revId": "a2271d6b918b018c70428b3ed2de196e6aaa9fc2",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

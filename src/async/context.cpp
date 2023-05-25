@@ -137,10 +137,7 @@ void context::run()
     // Run the primary portion of the run-loop.
     caller_run();
 
-    // Rethrow the pending exception (if it exists).
-    rethrow_pending_exception();
-
-    // Otherwise this should be final_stop...
+    // This should be final_stop...
 
     // We need to wait for the pending wait process and stop it.
     wait_for_wait_process_stopped();
@@ -155,9 +152,6 @@ void context::run()
     {
         worker_thread.join();
     }
-
-    // Check for one last exception.
-    rethrow_pending_exception();
 }
 
 void context::worker_run()
@@ -169,16 +163,11 @@ void context::worker_run()
     loop.run();
 }
 
-void context::spawn_complete(std::exception_ptr&& e)
+void context::spawn_complete()
 {
     {
         std::lock_guard l{lock};
         spawn_watcher_running = false;
-
-        if (e)
-        {
-            pending_exceptions.emplace_back(std::move(e));
-        }
     }
 
     if (stop_requested())
@@ -222,7 +211,7 @@ void context::caller_run()
     // we get an exception.
     auto keep_running = [this]() {
         std::lock_guard l{lock};
-        return !final_stop.stop_requested() && pending_exceptions.empty();
+        return !final_stop.stop_requested();
     };
 
     // If we are suppose to keep running, start the run loop.
@@ -235,8 +224,8 @@ void context::caller_run()
         }
         else
         {
-            // We've already been running and there might an exception or
-            // completion pending.  Spawn a new watcher that checks for these.
+            // We've already been running and there might a completion pending.
+            // Spawn a new watcher that checks for these.
             spawn_watcher();
         }
 
@@ -248,7 +237,8 @@ void context::caller_run()
     }
     else
     {
-        // There might be pending exceptions still, so spawn a watcher for them.
+        // There might be pending completions still, so spawn a watcher for
+        // them.
         spawn_watcher();
     }
 }
@@ -274,19 +264,6 @@ void context::wait_for_wait_process_stopped()
     {
         worker->stop();
         wait_process_stopped = true;
-    }
-}
-
-void context::rethrow_pending_exception()
-{
-    {
-        std::lock_guard l{lock};
-        if (!pending_exceptions.empty())
-        {
-            auto e = pending_exceptions.front();
-            pending_exceptions.pop_front();
-            std::rethrow_exception(std::move(e));
-        }
     }
 }
 
@@ -336,8 +313,7 @@ void details::wait_process_completion::wait_once(context& ctx)
         // don't have the required parameters).
         ctx.caller_wait.wait(lock, [&] {
             return (ctx.pending != nullptr) || (ctx.staged != nullptr) ||
-                   ctx.final_stop.stop_requested() ||
-                   !ctx.pending_exceptions.empty();
+                   ctx.final_stop.stop_requested();
         });
 
         // Save the waiter as pending.

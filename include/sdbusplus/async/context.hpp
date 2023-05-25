@@ -6,7 +6,6 @@
 #include <sdbusplus/event.hpp>
 
 #include <condition_variable>
-#include <deque>
 #include <mutex>
 #include <stop_token>
 #include <thread>
@@ -108,7 +107,6 @@ class context : public bus::details::bus_friend
     std::mutex lock{};
     std::condition_variable caller_wait{};
 
-    std::deque<std::exception_ptr> pending_exceptions = {};
     bool spawn_watcher_running = false;
 
     /** Completion object to signal the worker that 'sd_bus_wait' is done. */
@@ -117,12 +115,11 @@ class context : public bus::details::bus_friend
     bool wait_process_stopped = false;
 
     void worker_run();
-    void spawn_complete(std::exception_ptr&& = {});
+    void spawn_complete();
     void check_stop_requested();
     void spawn_watcher();
 
     void caller_run();
-    void rethrow_pending_exception();
     void wait_for_wait_process_stopped();
 
     static int dbus_event_handle(sd_event_source*, int, uint32_t, void*);

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <sdbusplus/async/execution.hpp>
-#include <sdbusplus/async/scope.hpp>
 #include <sdbusplus/async/task.hpp>
 #include <sdbusplus/bus.hpp>
 #include <sdbusplus/event.hpp>
@@ -98,11 +97,11 @@ class context : public bus::details::bus_friend
     /** Stop source */
     std::stop_source initial_stop{};
 
-    scope pending_tasks{loop};
+    async_scope pending_tasks{};
     // In order to coordinate final completion of work, we keep some tasks
     // on a separate scope (the ones which maintain the sd-event/dbus state
     // and keep a final stop-source for them.
-    scope internal_tasks{loop};
+    async_scope internal_tasks{};
     std::stop_source final_stop{};
 
     // Lock and condition variable to signal `caller`.

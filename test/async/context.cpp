@@ -48,48 +48,6 @@ TEST_F(Context, ReentrantRun)
     }
 }
 
-TEST_F(Context, SpawnThrowingTask)
-{
-    ctx->spawn(stdexec::just() |
-               stdexec::then([]() { throw std::logic_error("Oops"); }));
-
-    EXPECT_THROW(runToStop(), std::logic_error);
-    ctx->run();
-}
-
-TEST_F(Context, SpawnThrowingCoroutine)
-{
-    struct _
-    {
-        static auto one() -> sdbusplus::async::task<>
-        {
-            throw std::logic_error("Oops");
-            co_return;
-        }
-    };
-
-    ctx->spawn(_::one());
-    EXPECT_THROW(runToStop(), std::logic_error);
-    ctx->run();
-};
-
-TEST_F(Context, SpawnManyThrowingTasks)
-{
-    static constexpr size_t count = 100;
-    for (size_t i = 0; i < count; ++i)
-    {
-        ctx->spawn(stdexec::just() |
-                   stdexec::then([]() { throw std::logic_error("Oops"); }));
-    }
-    spawnStop();
-
-    for (size_t i = 0; i < count; ++i)
-    {
-        EXPECT_THROW(ctx->run(), std::logic_error);
-    }
-    ctx->run();
-}
-
 TEST_F(Context, SpawnDelayedTask)
 {
     using namespace std::literals;
@@ -153,8 +111,7 @@ TEST_F(Context, DestructMatcherWithPendingAwait)
     ctx->spawn(sdbusplus::async::sleep_for(*ctx, 1ms) |
                stdexec::then([&m](...) { m.reset(); }));
 
-    EXPECT_THROW(runToStop(), sdbusplus::exception::UnhandledStop);
-    EXPECT_NO_THROW(ctx->run());
+    runToStop();
     EXPECT_FALSE(ran);
 }
 
@@ -182,7 +139,6 @@ TEST_F(Context, DestructMatcherWithPendingAwaitAsTask)
     ctx->spawn(sdbusplus::async::sleep_for(*ctx, 1ms) |
                stdexec::then([&]() { m.reset(); }));
 
-    EXPECT_THROW(runToStop(), sdbusplus::exception::UnhandledStop);
-    EXPECT_NO_THROW(ctx->run());
+    runToStop();
     EXPECT_FALSE(ran);
 }

@@ -44,6 +44,7 @@ struct __die_on_stop_t
     {
         struct __t
         {
+            using is_receiver = void;
             using __id = __receiver_id;
             _Receiver __receiver_;
 
@@ -92,8 +93,9 @@ struct __die_on_stop_t
             friend connect_result_t<_Sender, __receiver<_Receiver>>
                 tag_invoke(connect_t, __t&& __self, _Receiver&& __rcvr) noexcept
             {
-                return connect((_Sender&&)__self.__sender_,
-                               __receiver<_Receiver>{(_Receiver&&)__rcvr});
+                return stdexec::connect(
+                    (_Sender&&)__self.__sender_,
+                    __receiver<_Receiver>{(_Receiver&&)__rcvr});
             }
 
             template <__decays_to<__t> _Self, class _Env>

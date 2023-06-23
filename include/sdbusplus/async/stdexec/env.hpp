@@ -187,7 +187,7 @@ struct __operation : __operation_base<_ReceiverId, _Env>
 
     __operation(_Sender&& __sndr, auto&& __rcvr, auto&& __env) :
         __base_t{(decltype(__rcvr))__rcvr, (decltype(__env))__env},
-        __state_{connect((_Sender&&)__sndr, __receiver_t{{}, this})}
+        __state_{stdexec::connect((_Sender&&)__sndr, __receiver_t{{}, this})}
     {}
 
     friend void tag_invoke(start_t, __operation& __self) noexcept
@@ -200,7 +200,6 @@ template <class _SenderId, class _Env>
 struct __sender
 {
     using _Sender = stdexec::__t<_SenderId>;
-    using is_sender = void;
 
     template <class _Receiver>
     using __receiver_t = stdexec::__t<__receiver<__id<_Receiver>, _Env>>;
@@ -210,6 +209,7 @@ struct __sender
 
     struct __t
     {
+        using is_sender = void;
         using __id = __sender;
         _Sender __sndr_;
         _Env __env_;

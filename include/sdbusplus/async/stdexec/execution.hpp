@@ -44,20 +44,39 @@
 #pragma diag_suppress type_qualifiers_ignored_on_reference
 #endif
 
-#ifdef STDEXEC_ENABLE_R5_DEPRECATIONS
-#define STDEXEC_R5_SENDER_DEPR_WARNING                                                    \
-    [[deprecated(                                                                         \
-        "Deprecated sender type detected. Please update the type to satisfy the boolean " \
-        "stdexec::enable_sender<S> trait. "                                               \
-        "Defining a member type alias named 'is_sender' is one way to do this.")]]
-#define STDEXEC_R5_RECEIVER_DEPR_WARNING                                                              \
-    [[deprecated(                                                                                     \
-        "Deprecated receiver type detected. Please update the type for to satisfy the boolean "       \
-        "stdexec::enable_receiver<R> trait. Defining a member type alias named 'is_receiver' is one " \
-        "way to do this.")]]
+#ifndef STDEXEC_DISABLE_R5_DEPRECATION_WARNINGS
+#define STDEXEC_R5_SENDER_DEPRECATION_WARNING                                  \
+    [[deprecated(                                                              \
+        "Deprecated sender type detected. "                                    \
+        "Please give the type a nested `is_sender` type alias, or "            \
+        "specialize stdexec::enable_sender<your-sender-type> to be `true`. "   \
+        "To suppress this deprecation warning, define `STDEXEC_DISABLE_R5_DEPRECATIONS`.")]]
+#define STDEXEC_R5_RECEIVER_DEPRECATION_WARNING                                 \
+    [[deprecated(                                                               \
+        "Deprecated receiver type detected. "                                   \
+        "Please give the type a nested `is_receiver` type alias, or "           \
+        "specialize stdexec::enable_receiver<your-receiver-type> to be `true`." \
+        "To suppress this deprecation warning, define `STDEXEC_DISABLE_R5_DEPRECATIONS`.")]]
+#define STDEXEC_R5_DEPENDENT_COMPLETION_SIGNATURES_DEPRECATION_WARNING                 \
+    [[deprecated(                                                                      \
+        "The `dependent_completion_signatures<>` type is deprecated. There is "        \
+        "no need to define a customization of `get_completion_signatures` for "        \
+        "sender types whose completions are dependent on the receiver's environment. " \
+        "Give your sender type a nested `is_sender` type alias instead, "              \
+        "specialize stdexec::enable_sender<your-sender-type> to be `true`. "           \
+        "To suppress this deprecation warning, define `STDEXEC_DISABLE_R5_DEPRECATIONS`.")]]
+#define STDEXEC_R5_NO_ENV_DEPRECATION_WARNING                                          \
+    [[deprecated(                                                                      \
+        "The `no_env` type is deprecated. The stdexec library no longer needs to use " \
+        "it to probe a type for satisfaction of the `sender` concept. "                \
+        "Give your sender type a nested `is_sender` type alias instead, or "           \
+        "specialize stdexec::enable_sender<your-sender-type> to be `true`. "           \
+        "To suppress this deprecation warning, define `STDEXEC_DISABLE_R5_DEPRECATIONS`.")]]
 #else
-#define STDEXEC_R5_SENDER_DEPR_WARNING
-#define STDEXEC_R5_RECEIVER_DEPR_WARNING
+#define STDEXEC_R5_SENDER_DEPRECATION_WARNING
+#define STDEXEC_R5_RECEIVER_DEPRECATION_WARNING
+#define STDEXEC_R5_DEPENDENT_COMPLETION_SIGNATURES_DEPRECATION_WARNING
+#define STDEXEC_R5_NO_ENV_DEPRECATION_WARNING
 #endif
 
 #define STDEXEC_LEGACY_R5_CONCEPTS() 1
@@ -297,8 +316,20 @@ inline constexpr get_scheduler_t get_scheduler{};
 inline constexpr get_delegatee_scheduler_t get_delegatee_scheduler{};
 inline constexpr get_allocator_t get_allocator{};
 inline constexpr get_stop_token_t get_stop_token{};
+#if !STDEXEC_GCC() || defined(__OPTIMIZE__)
 template <__completion_tag _CPO>
 inline constexpr get_completion_scheduler_t<_CPO> get_completion_scheduler{};
+#else
+template <>
+inline constexpr get_completion_scheduler_t<set_value_t>
+    get_completion_scheduler<set_value_t>{};
+template <>
+inline constexpr get_completion_scheduler_t<set_error_t>
+    get_completion_scheduler<set_error_t>{};
+template <>
+inline constexpr get_completion_scheduler_t<set_stopped_t>
+    get_completion_scheduler<set_stopped_t>{};
+#endif
 
 template <class _Tag>
 concept __forwarding_query = forwarding_query(_Tag{});
@@ -353,10 +384,10 @@ struct __env_fwd
     STDEXEC_NO_UNIQUE_ADDRESS _Env __env_;
 
     template <__forwarding_query _Tag>
-        requires __callable<_Tag, const _Env&>
+        requires tag_invocable<_Tag, const _Env&>
     friend auto tag_invoke(_Tag, const __env_fwd& __self) //
-        noexcept(__nothrow_callable<_Tag, const _Env&>)
-            -> __call_result_t<_Tag, const _Env&>
+        noexcept(nothrow_tag_invocable<_Tag, const _Env&>)
+            -> tag_invoke_result_t<_Tag, const _Env&>
     {
         return _Tag()(__self.__env_);
     }
@@ -376,10 +407,10 @@ struct __env_join : __env_fwd<_Base>
     }
 
     template <class _Tag>
-        requires __callable<_Tag, const _Env&>
+        requires tag_invocable<_Tag, const _Env&>
     friend auto tag_invoke(_Tag, const __env_join& __self) //
-        noexcept(__nothrow_callable<_Tag, const _Env&>)
-            -> __call_result_t<_Tag, const _Env&>
+        noexcept(nothrow_tag_invocable<_Tag, const _Env&>)
+            -> tag_invoke_result_t<_Tag, const _Env&>
     {
         return _Tag()(__self.__env_);
     }
@@ -841,9 +872,17 @@ auto __try_completions(completion_signatures<_Sigs...>*)
 
 /////////////////////////////////////////////////////////////////////////////
 // [execution.receivers]
+struct __receiver_base
+{};
+
 template <class _Receiver>
-inline constexpr bool enable_receiver = //
-    requires { typename _Receiver::is_receiver; };
+concept __enable_receiver = //
+    requires { typename _Receiver::is_receiver; } ||
+    STDEXEC_IS_BASE_OF(__receiver_base, _Receiver);
+
+template <class _Receiver>
+inline constexpr bool enable_receiver =
+    __enable_receiver<_Receiver>; // NOT TO SPEC
 
 //   NOT TO SPEC:
 //   As we upgrade the receiver related entities from R5 to R7,
@@ -1904,15 +1943,15 @@ namespace __connect
 struct connect_t;
 
 template <class _Tp>
-STDEXEC_R5_SENDER_DEPR_WARNING //
+STDEXEC_R5_SENDER_DEPRECATION_WARNING //
     void
-    __update_sender_type_to_p2300r7_by_adding_enable_sender_trait()
+    _PLEASE_UPDATE_YOUR_SENDER_TYPE()
 {}
 
 template <class _Tp>
-STDEXEC_R5_RECEIVER_DEPR_WARNING //
+STDEXEC_R5_RECEIVER_DEPRECATION_WARNING //
     void
-    __update_receiver_type_to_p2300r7_by_adding_enable_receiver_trait()
+    _PLEASE_UPDATE_YOUR_RECEIVER_TYPE()
 {}
 
 template <class _Sender, class _Receiver>
@@ -1929,12 +1968,10 @@ struct connect_t
     {
         // Report that 2300R5-style senders and receivers are deprecated:
         if constexpr (!enable_sender<__decay_t<_Sender>>)
-            __update_sender_type_to_p2300r7_by_adding_enable_sender_trait<
-                __decay_t<_Sender>>();
+            _PLEASE_UPDATE_YOUR_SENDER_TYPE<__decay_t<_Sender>>();
 
         if constexpr (!enable_receiver<__decay_t<_Receiver>>)
-            __update_receiver_type_to_p2300r7_by_adding_enable_receiver_trait<
-                __decay_t<_Receiver>>();
+            _PLEASE_UPDATE_YOUR_RECEIVER_TYPE<__decay_t<_Receiver>>();
 
         if constexpr (__connectable_with_tag_invoke<_Sender, _Receiver>)
         {
@@ -2049,6 +2086,8 @@ using __expected_t =
 template <class _Value>
 struct __receiver_base
 {
+    using is_receiver = void;
+
     template <same_as<set_value_t> _Tag, class... _Us>
         requires constructible_from<__value_or_void_t<_Value>, _Us...>
     friend void tag_invoke(_Tag, __receiver_base&& __self,
@@ -2411,11 +2450,11 @@ struct __operation_base
 template <class _ReceiverId>
 struct __receiver
 {
-    using is_receiver = void;
     using _Receiver = stdexec::__t<_ReceiverId>;
 
     struct __t
     {
+        using is_receiver = void;
         using __id = __receiver;
         __operation_base<_ReceiverId>* __op_state_;
 
@@ -2539,6 +2578,7 @@ struct __detached_receiver
 
     struct __t
     {
+        using is_receiver = void;
         using __id = __detached_receiver;
         STDEXEC_NO_UNIQUE_ADDRESS _Env __env_;
 
@@ -2759,6 +2799,7 @@ namespace __execute_
 template <class _Fun>
 struct __as_receiver
 {
+    using is_receiver = void;
     _Fun __fun_;
 
     template <same_as<set_value_t> _Tag>
@@ -2931,7 +2972,7 @@ STDEXEC_DETAIL_CUDACC_HOST_DEVICE //
     requires __decays_to<_Tp, _Tp>
 {
     static_assert(std::is_reference_v<__copy_cvref_t<_Up&&, _Tp>>);
-    static_assert(std::is_base_of_v<_Tp, __decay_t<_Up>>);
+    static_assert(STDEXEC_IS_BASE_OF(_Tp, __decay_t<_Up>));
     return (__copy_cvref_t<_Up&&, _Tp>)(_Up&&)u;
 }
 
@@ -3032,7 +3073,7 @@ using __adaptor_base = typename __adaptor<_Base>::__t;
 template <__class _Derived, class _Base>
 struct receiver_adaptor
 {
-    class __t : __adaptor_base<_Base>
+    class __t : __adaptor_base<_Base>, __receiver_base
     {
         friend _Derived;
         _DEFINE_MEMBER(set_value);
@@ -3269,6 +3310,7 @@ struct __receiver
 
     struct __t
     {
+        using is_receiver = void;
         using __id = __receiver;
         __data* __op_;
 
@@ -3451,6 +3493,7 @@ struct __receiver
 
     struct __t
     {
+        using is_receiver = void;
         using __id = __receiver;
 
         _Receiver __rcvr_;
@@ -3607,6 +3650,7 @@ struct __receiver
 
     struct __t
     {
+        using is_receiver = void;
         using __id = __receiver;
         _Receiver __rcvr_;
         STDEXEC_NO_UNIQUE_ADDRESS _Fun __fun_;
@@ -3955,6 +3999,7 @@ struct __receiver
         stdexec::__t<__sh_state<_CvrefSenderId, _EnvId>>& __sh_state_;
 
       public:
+        using is_receiver = void;
         using __id = __receiver;
 
         template <__completion_tag _Tag, class... _As>
@@ -4311,6 +4356,7 @@ struct __receiver
             __shared_state_;
 
       public:
+        using is_receiver = void;
         using __id = __receiver;
 
         explicit __t(stdexec::__t<__sh_state<_CvrefSenderId, _EnvId>>&
@@ -4769,6 +4815,7 @@ struct __receiver_
 
     struct __t
     {
+        using is_receiver = void;
         using __id = __receiver_;
 
         template <__one_of<_Set> _Tag, class... _As>
@@ -5465,6 +5512,7 @@ struct __receiver2
 
     struct __t
     {
+        using is_receiver = void;
         using __id = __receiver2;
         stdexec::__t<__operation1<_SchedulerId, _CvrefSenderId, _ReceiverId>>*
             __op_state_;
@@ -5510,6 +5558,7 @@ struct __receiver1
 
     struct __t
     {
+        using is_receiver = void;
         stdexec::__t<__operation1<_SchedulerId, _CvrefSenderId, _ReceiverId>>*
             __op_state_;
 
@@ -6059,6 +6108,7 @@ struct __receiver
 
     struct __t
     {
+        using is_receiver = void;
         using __id = __receiver;
         using _Receiver = stdexec::__t<_ReceiverId>;
         _Receiver __rcvr_;
@@ -6378,6 +6428,7 @@ struct __receiver
 
     struct __t
     {
+        using is_receiver = void;
         using __id = __receiver;
 
         template <class _Error>
@@ -6975,6 +7026,7 @@ struct __receiver
 {
     struct __t
     {
+        using is_receiver = void;
         using __id = __receiver;
         __state<_Values...>* __state_;
         run_loop* __loop_;

@@ -27,7 +27,7 @@ _Tp&& __declval() noexcept;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 // __decay_t: An efficient implementation for std::decay
-#if __has_builtin(__decay)
+#if STDEXEC_HAS_BUILTIN(__decay)
 
 template <class _Ty>
 using __decay_t = __decay(_Ty);

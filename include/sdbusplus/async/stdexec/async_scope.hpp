@@ -74,7 +74,7 @@ struct __when_empty_op : __task
     explicit __when_empty_op(const __impl* __scope, _Constrained&& __sndr,
                              _Receiver __rcvr) :
         __task{{}, __scope, __notify_waiter},
-        __op_(connect((_Constrained&&)__sndr, (_Receiver&&)__rcvr))
+        __op_(stdexec::connect((_Constrained&&)__sndr, (_Receiver&&)__rcvr))
     {}
 
   private:
@@ -103,7 +103,8 @@ struct __when_empty_op : __task
     }
 
     STDEXEC_IMMOVABLE_NO_UNIQUE_ADDRESS
-    connect_result_t<_Constrained, _Receiver> __op_;
+        connect_result_t<_Constrained, _Receiver>
+            __op_;
 };
 
 template <class _ConstrainedId>
@@ -156,6 +157,7 @@ struct __nest_op_base : __immovable
 template <class _ReceiverId>
 struct __nest_rcvr
 {
+    using is_receiver = void;
     using _Receiver = __t<_ReceiverId>;
     __nest_op_base<_ReceiverId>* __op_;
 
@@ -205,12 +207,13 @@ struct __nest_op : __nest_op_base<_ReceiverId>
     using _Constrained = __t<_ConstrainedId>;
     using _Receiver = __t<_ReceiverId>;
     STDEXEC_IMMOVABLE_NO_UNIQUE_ADDRESS
-    connect_result_t<_Constrained, __nest_rcvr<_ReceiverId>> __op_;
+        connect_result_t<_Constrained, __nest_rcvr<_ReceiverId>>
+            __op_;
 
     template <__decays_to<_Constrained> _Sender, __decays_to<_Receiver> _Rcvr>
     explicit __nest_op(const __impl* __scope, _Sender&& __c, _Rcvr&& __rcvr) :
         __nest_op_base<_ReceiverId>{{}, __scope, (_Rcvr&&)__rcvr},
-        __op_(connect((_Sender&&)__c, __nest_rcvr<_ReceiverId>{this}))
+        __op_(stdexec::connect((_Sender&&)__c, __nest_rcvr<_ReceiverId>{this}))
     {}
 
   private:
@@ -549,6 +552,7 @@ struct __future_state_base
 template <class _CompletionsId, class _EnvId>
 struct __future_rcvr
 {
+    using is_receiver = void;
     using _Completions = __t<_CompletionsId>;
     using _Env = __t<_EnvId>;
     __future_state_base<_Completions, _Env>* __state_;
@@ -617,8 +621,9 @@ struct __future_state :
 
     __future_state(_Sender __sndr, _Env __env, const __impl* __scope) :
         __future_state_base<_Completions, _Env>((_Env&&)__env, __scope),
-        __op_(connect((_Sender&&)__sndr,
-                      __future_receiver_t<_Sender, _Env>{this, __scope}))
+        __op_(
+            stdexec::connect((_Sender&&)__sndr,
+                             __future_receiver_t<_Sender, _Env>{this, __scope}))
     {}
 
     connect_result_t<_Sender, __future_receiver_t<_Sender, _Env>> __op_;
@@ -707,6 +712,7 @@ struct __spawn_op_base
 template <class _EnvId>
 struct __spawn_rcvr
 {
+    using is_receiver = void;
     using _Env = __t<_EnvId>;
     __spawn_op_base<_EnvId>* __op_;
     const __impl* __scope_;
@@ -749,7 +755,8 @@ struct __spawn_op : __spawn_op_base<_EnvId>
             [](__spawn_op_base<_EnvId>* __op) {
         delete static_cast<__spawn_op*>(__op);
             }},
-    __op_(connect((_Sndr&&)__sndr, __spawn_receiver_t<_Env>{this, __scope}))
+    __op_(stdexec::connect((_Sndr&&)__sndr,
+                           __spawn_receiver_t<_Env>{this, __scope}))
     {}
 
     void __start_() noexcept

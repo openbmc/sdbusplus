@@ -84,6 +84,8 @@ struct wait_process_operation : public wait_process_completion
 /* The sender for the wait/process event. */
 struct wait_process_sender
 {
+    using is_sender = void;
+
     explicit wait_process_sender(context& ctx) : ctx(ctx) {}
 
     friend auto tag_invoke(execution::get_completion_signatures_t,

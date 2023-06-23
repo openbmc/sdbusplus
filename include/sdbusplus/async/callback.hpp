@@ -132,6 +132,8 @@ struct callback_operation
 template <takes_msg_handler Init>
 struct callback_sender
 {
+    using is_sender = void;
+
     explicit callback_sender(Init init) : init(std::move(init)){};
 
     // This Sender yields a message_t.

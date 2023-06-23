@@ -78,6 +78,8 @@ struct sleep_operation : public details::context_friend
  */
 struct sleep_sender : public details::context_friend
 {
+    using is_sender = void;
+
     sleep_sender() = delete;
 
     sleep_sender(context& ctx, event_t::time_resolution time) noexcept :

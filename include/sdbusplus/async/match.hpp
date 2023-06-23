@@ -122,6 +122,8 @@ struct match_operation : match_completion
 // match Sender implementation.
 struct match_sender
 {
+    using is_sender = void;
+
     match_sender() = delete;
     explicit match_sender(match& m) noexcept : m(m){};
 

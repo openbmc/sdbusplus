@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1cd09189_6ae02706",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-07-05T16:02:37Z",
+      "side": 1,
+      "message": "What is the utility of this?  Why would you need to get the value of a local property from within the same server?",
+      "range": {
+        "startLine": 8,
+        "startChar": 0,
+        "endLine": 11,
+        "endChar": 29
+      },
+      "revId": "d7d27a74c3157913684f962fdefe3a5d693a6750",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "479784b3_c402e8b3",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-07-05T16:02:37Z",
+      "side": 1,
+      "message": "@Vernon / @Ed - please weigh in.  I don\u0027t have a lot of opinion on the ASIO code.",
+      "revId": "d7d27a74c3157913684f962fdefe3a5d693a6750",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

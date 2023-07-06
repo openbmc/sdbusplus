@@ -26,6 +26,30 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "d53b4da1_6c15d4f3",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2023-07-06T05:08:40Z",
+      "side": 1,
+      "message": "The \"asio\" code in sdbusplus hide the property value in internal callbable object, and thus the property can not be directly accessed like how \"non-asio\" code does.\nSo it has `setter` function but does not have a `getter` function.\n\nFor an asio service, it could easily set a property, but could not get it back.\nAdding the `getter` function helps in such case.",
+      "parentUuid": "1cd09189_6ae02706",
+      "range": {
+        "startLine": 8,
+        "startChar": 0,
+        "endLine": 11,
+        "endChar": 29
+      },
+      "revId": "d7d27a74c3157913684f962fdefe3a5d693a6750",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "479784b3_c402e8b3",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 1

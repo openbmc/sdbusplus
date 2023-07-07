@@ -74,6 +74,30 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "a3a065ac_a144115e",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2023-07-07T05:27:44Z",
+      "side": 1,
+      "message": "\u003e What is the use case where registering your own getter/setter callback attached to an internal parameter doesn’t solve the problem?\n\nFor a client that makes dbus calls, that\u0027s OK, it always needs to make a DBus call to get and set a property.\n\nFor a service that implements an interface, there is no such `getter` function at all.\nE.g. check below code in a service:\n\n // In some function it sets a value\n iface-\u003eset_property(propertyName, xxx);\n ...\n // In other functions it tries to get the value\n // But there is no such getter function!\n auto value \u003d ifase-\u003eget_property(propertyName);\n \nThis patch adds such `getter`. Otherwise, the code where needs to get a property will have to \"save\" the value in other data structure.",
+      "parentUuid": "73a6d4c2_1d05fcc5",
+      "range": {
+        "startLine": 8,
+        "startChar": 0,
+        "endLine": 11,
+        "endChar": 29
+      },
+      "revId": "d7d27a74c3157913684f962fdefe3a5d693a6750",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "479784b3_c402e8b3",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 1

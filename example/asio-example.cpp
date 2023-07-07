@@ -204,8 +204,10 @@ int server()
         server.add_interface("/xyz/openbmc_project/test",
                              "xyz.openbmc_project.test");
     // test generic properties
-    iface->register_property("int", 33,
-                             sdbusplus::asio::PropertyPermission::readWrite);
+    auto prop = iface->register_property(
+        "int", 33, sdbusplus::asio::PropertyPermission::readWrite);
+    prop->set(42);
+
     std::vector<std::string> myStringVec = {"some", "test", "data"};
     std::vector<std::string> myStringVec2 = {"more", "test", "data"};
 

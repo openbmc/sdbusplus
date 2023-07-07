@@ -45,6 +45,7 @@ libsdbusplus = library(
 )
 
 boost_compile_args = [
+    '-DSDBUSPLUS_NEW_SET_PROPERTY',
     '-DBOOST_ASIO_DISABLE_THREADS',
     '-DBOOST_ALL_NO_LIB',
     '-DBOOST_SYSTEM_NO_DEPRECATED',

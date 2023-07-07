@@ -41,19 +41,25 @@ class property_callback
         dbus_interface& parent, const std::string& name,
         std::function<int(message_t&)>&& on_get,
         std::function<SetPropertyReturnValue(message_t&)>&& on_set_message,
+#ifndef SDBUSPLUS_NEW_SET_PROPERTY
         std::function<SetPropertyReturnValue(const std::any&)>&& on_set_value,
+#endif
         const char* signature, decltype(vtable_t::flags) flags) :
         interface_(parent),
         name_(name), on_get_(std::move(on_get)),
         on_set_message_(std::move(on_set_message)),
-        on_set_value_(std::move(on_set_value)), signature_(signature),
-        flags_(flags)
+#ifndef SDBUSPLUS_NEW_SET_PROPERTY
+        on_set_value_(std::move(on_set_value)),
+#endif
+        signature_(signature), flags_(flags)
     {}
     dbus_interface& interface_;
     std::string name_;
     std::function<int(message_t&)> on_get_;
     std::function<SetPropertyReturnValue(message_t&)> on_set_message_;
+#ifndef SDBUSPLUS_NEW_SET_PROPERTY
     std::function<SetPropertyReturnValue(const std::any&)> on_set_value_;
+#endif
     const char* signature_;
     decltype(vtable_t::flags) flags_;
 };
@@ -341,6 +347,7 @@ class callback_set_message_instance
     std::function<bool(const PropertyType&, PropertyType&)> func_;
 };
 
+#ifndef SDBUSPLUS_NEW_SET_PROPERTY
 template <typename PropertyType>
 class callback_set_value_instance
 {
@@ -370,6 +377,44 @@ class callback_set_value_instance
     std::shared_ptr<PropertyType> value_;
     std::function<bool(const PropertyType&, PropertyType&)> func_;
 };
+#else
+template <typename PropertyType>
+class PropertyTag
+{
+  public:
+    PropertyTag(
+        std::function<void()>&& signal_property_in,
+        std::shared_ptr<PropertyType> value_in,
+        std::function<bool(const PropertyType&, PropertyType&)>&& func_in) :
+        signal_property(std::move(signal_property_in)),
+        value_(value_in), func_(std::move(func_in))
+    {}
+    bool set(const PropertyType& newValue, bool changesOnly = false)
+    {
+        PropertyType oldValue = *value_;
+        if (func_(newValue, *value_) == false)
+        {
+            return false;
+        }
+        else if (oldValue == *value_)
+        {
+            if (!changesOnly)
+            {
+                signal_property();
+            }
+            return true;
+        }
+        signal_property();
+        return true;
+    }
+
+  private:
+    std::function<void()> signal_property;
+    std::shared_ptr<PropertyType> value_;
+    std::function<bool(const PropertyType&, PropertyType&)> func_;
+};
+
+#endif
 
 enum class PropertyPermission
 {
@@ -397,7 +442,7 @@ class dbus_interface
         conn_->emit_interfaces_removed(path_.c_str(),
                                        std::vector<std::string>{name_});
     }
-
+#ifndef SDBUSPLUS_NEW_SET_PROPERTY
     template <typename PropertyType, typename CallbackTypeGet>
     bool register_property_r(const std::string& name,
                              const PropertyType& property,
@@ -429,9 +474,41 @@ class dbus_interface
 
         return true;
     }
+#else
+    template <typename PropertyType, typename CallbackTypeGet>
+    std::optional<PropertyTag<PropertyType>> register_property_r(
+        const std::string& name, const PropertyType& property,
+        decltype(vtable_t::flags) flags, CallbackTypeGet&& getFunction)
+    {
+        // can only register once
+        if (is_initialized())
+        {
+            return std::nullopt;
+        }
+        if (sd_bus_member_name_is_valid(name.c_str()) != 1)
+        {
+            return std::nullopt;
+        }
+        static const auto type =
+            utility::tuple_to_array(message::types::type_id<PropertyType>());
+
+        auto propertyPtr = std::make_shared<PropertyType>(property);
+
+        property_callbacks_.emplace_back(
+            *this, name,
+            callback_get_instance<PropertyType, CallbackTypeGet>(
+                propertyPtr, std::move(getFunction)),
+            nullptr, type.data(), flags);
+
+        return PropertyTag<PropertyType>(
+            std::bind_front(&dbus_interface::signal_property, this,
+                            property_callbacks_.back().name_),
+            propertyPtr, details::nop_set_value<PropertyType>);
+    }
+#endif
 
     template <typename PropertyType, typename CallbackTypeGet>
-    bool register_property_r(const std::string& name,
+    auto register_property_r(const std::string& name,
                              decltype(vtable_t::flags) flags,
                              CallbackTypeGet&& getFunction)
     {
@@ -439,6 +516,7 @@ class dbus_interface
                                    std::forward<CallbackTypeGet>(getFunction));
     }
 
+#ifndef SDBUSPLUS_NEW_SET_PROPERTY
     template <typename PropertyType, typename CallbackTypeSet,
               typename CallbackTypeGet>
     bool register_property_rw(const std::string& name,
@@ -467,17 +545,51 @@ class dbus_interface
                 propertyPtr, std::move(getFunction)),
             callback_set_message_instance<PropertyType>(
                 propertyPtr, CallbackTypeSet(setFunction)),
-            callback_set_value_instance<PropertyType>(propertyPtr,
-                                                      std::move(setFunction)),
-
             type.data(), flags);
 
         return true;
     }
+#else
+    template <typename PropertyType, typename CallbackTypeSet,
+              typename CallbackTypeGet>
+    std::optional<PropertyTag<PropertyType>> register_property_rw(
+        const std::string& name, const PropertyType& property,
+        decltype(vtable_t::flags) flags, CallbackTypeSet&& setFunction,
+        CallbackTypeGet&& getFunction)
+    {
+        // can only register once
+        if (is_initialized())
+        {
+            return std::nullopt;
+        }
+        if (sd_bus_member_name_is_valid(name.c_str()) != 1)
+        {
+            return std::nullopt;
+        }
+        static const auto type =
+            utility::tuple_to_array(message::types::type_id<PropertyType>());
+
+        auto propertyPtr = std::make_shared<PropertyType>(property);
+
+        property_callbacks_.emplace_back(
+            *this, name,
+            callback_get_instance<PropertyType, CallbackTypeGet>(
+                propertyPtr, std::move(getFunction)),
+            callback_set_message_instance<PropertyType>(
+                propertyPtr, CallbackTypeSet(setFunction)),
+            type.data(), flags);
+
+        return PropertyTag<PropertyType>(
+            std::bind_front(&dbus_interface::signal_property, this,
+                            property_callbacks_.back().name_),
+            propertyPtr, std::move(setFunction));
+    }
+
+#endif
 
     template <typename PropertyType, typename CallbackTypeSet,
               typename CallbackTypeGet>
-    bool register_property_rw(const std::string& name,
+    auto register_property_rw(const std::string& name,
                               decltype(vtable_t::flags) flags,
                               CallbackTypeSet&& setFunction,
                               CallbackTypeGet&& getFunction)
@@ -489,7 +601,7 @@ class dbus_interface
 
     // default getter and setter
     template <typename PropertyType>
-    bool register_property(
+    auto register_property(
         const std::string& name, const PropertyType& property,
         PropertyPermission access = PropertyPermission::readOnly)
     {
@@ -510,7 +622,7 @@ class dbus_interface
 
     // custom setter, sets take an input property and respond with an int status
     template <typename PropertyType, typename CallbackTypeSet>
-    bool register_property(const std::string& name,
+    auto register_property(const std::string& name,
                            const PropertyType& property,
                            CallbackTypeSet&& setFunction)
     {
@@ -524,7 +636,7 @@ class dbus_interface
     // property. property is only passed for type deduction
     template <typename PropertyType, typename CallbackTypeSet,
               typename CallbackTypeGet>
-    bool register_property(const std::string& name,
+    auto register_property(const std::string& name,
                            const PropertyType& property,
                            CallbackTypeSet&& setFunction,
                            CallbackTypeGet&& getFunction)
@@ -535,6 +647,7 @@ class dbus_interface
                                     std::forward<CallbackTypeGet>(getFunction));
     }
 
+#ifndef SDBUSPLUS_NEW_SET_PROPERTY
     template <typename PropertyType, bool changesOnly = false>
     bool set_property(const std::string& name, const PropertyType& value)
     {
@@ -564,6 +677,8 @@ class dbus_interface
         }
         return false;
     }
+
+#endif
 
     template <typename... SignalSignature>
     bool register_signal(const std::string& name)

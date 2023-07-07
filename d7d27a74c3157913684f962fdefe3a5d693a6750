@@ -48,6 +48,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "73a6d4c2_1d05fcc5",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2023-07-07T03:22:22Z",
+      "side": 1,
+      "message": "you haven’t really explained WHY a getter helps.  what is the use case where registering your own getter/setter callback attached to an internal parameter doesn’t solve the problem?\n\nalso, you can “get it back” if you’re writing your own callback functions that point to internal state parameters, which I’d expect the app to be doing in this case.",
+      "parentUuid": "d53b4da1_6c15d4f3",
+      "range": {
+        "startLine": 8,
+        "startChar": 0,
+        "endLine": 11,
+        "endChar": 29
+      },
+      "revId": "d7d27a74c3157913684f962fdefe3a5d693a6750",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "479784b3_c402e8b3",

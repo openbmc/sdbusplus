@@ -96,6 +96,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "58ca25b1_aa3a0fa8",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2023-07-07T20:13:36Z",
+      "side": 1,
+      "message": "\u003e For a service that implements an interface, there is no such getter function at all.\n\n\nRight, the application provides its own getter, with register_property_r(), and have the callback point to your local copy of the variable.\n\nI\u0027m assuming in your application you\u0027re using the register_property_r overload that takes PropertyType as an argument, not the overload that takes CallbackTypeGet as an argument.  The former is really only intended for parameter that won\u0027t change after the interface is instantiated.\n\nOverload that\u0027s being used right now:\nhttps://github.com/openbmc/sdbusplus/blob/fa663aec1ec21036f972318cb9cd59b3623f7afd/include/sdbusplus/asio/object_server.hpp#L402\n\nOverload that should be used to attach a reference to your parameter either through a lambda object, or std::bind_front():\nhttps://github.com/openbmc/sdbusplus/blob/fa663aec1ec21036f972318cb9cd59b3623f7afd/include/sdbusplus/asio/object_server.hpp#L434\n\n\n\u003e // In other functions it tries to get the value\n\nThis would imply that you\u0027re trying to use the dbus interface as an abstraction for two modules to share state, which is a generalized anti-pattern.  One object should own the dbus interface state, and any communication with other modules should happen in application code without any mention of dbus.  This prevents a lot of abstraction issues.\n\nAgain, please provide the code that is using this, so we can give more concrete direction, but overall, I do not believe this getter function is worthwhile, and it prevents us from making the set_property() abstraction more efficient in the future (which was my intent).",
+      "parentUuid": "a3a065ac_a144115e",
+      "range": {
+        "startLine": 8,
+        "startChar": 0,
+        "endLine": 11,
+        "endChar": 29
+      },
+      "revId": "d7d27a74c3157913684f962fdefe3a5d693a6750",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "479784b3_c402e8b3",

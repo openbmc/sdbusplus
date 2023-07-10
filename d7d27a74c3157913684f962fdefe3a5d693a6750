@@ -120,6 +120,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "5c494f30_2f2b123c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2023-07-10T05:19:59Z",
+      "side": 1,
+      "message": "\u003e Right, the application provides its own getter, with register_property_r(), and have the callback point to your local copy of the variable.\n\nThis assumes and forces the service/application to have a **local copy** of the variable.\nThe purpose for this patch is to provide the capability for a service to not save the **local copy**.\nCompare to the non-asio sdbusplus service:\n* A service that implements a generated \"server.hpp\" get the property in its base class, and thus it does not need to save a local copy at all. It could use the variable defined in server.hpp directly, and there is **only one instance** for the property.\n* Current asio service does not have such capability, a service will have to save a local copy of a property, and make sure it is synced in the getter and setter\u0027s callbacks.\n\n\u003e This would imply that you\u0027re trying to use the dbus interface as an abstraction for two modules to share state, which is a generalized anti-pattern.\n\nNope, my case is as simple as above, that one service implements a interface and holds a property, it is better to have both setter and getter, instead of only a setter.\n\n\u003e Again, please provide the code that is using this, so we can give more concrete direction.\n\nThe code is already shows in the above demo, it\u0027s pretty simple.\n\n\u003e I do not believe this getter function is worthwhile, and it prevents us from making the set_property() abstraction more efficient in the future (which was my intent).\n\nCould you elaborate how to improve the set_property() to a more efficient way? And then we could discuss how to get a more efficient get_property() as well.",
+      "parentUuid": "58ca25b1_aa3a0fa8",
+      "range": {
+        "startLine": 8,
+        "startChar": 0,
+        "endLine": 11,
+        "endChar": 29
+      },
+      "revId": "d7d27a74c3157913684f962fdefe3a5d693a6750",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "479784b3_c402e8b3",

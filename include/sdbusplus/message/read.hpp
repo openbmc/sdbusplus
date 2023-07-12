@@ -8,6 +8,7 @@
 #include <sdbusplus/utility/type_traits.hpp>
 
 #include <string>
+#include <string_view>
 #include <tuple>
 #include <type_traits>
 #include <utility>
@@ -77,7 +78,8 @@ struct read_single
         // basic types are used.
         static_assert(std::is_fundamental_v<Td<T>> ||
                           std::is_convertible_v<Td<T>, const char*> ||
-                          std::is_convertible_v<Td<T>, details::unix_fd_type>,
+                          std::is_convertible_v<Td<T>, details::unix_fd_type> ||
+                          std::is_same_v<Td<T>, std::string_view>,
                       "Non-basic types are not allowed.");
 
         constexpr auto dbusType = std::get<0>(types::type_id<T>());
@@ -129,6 +131,26 @@ struct read_single<S>
             throw exception::SdBusError(-r, "sd_bus_message_read_basic string");
         }
         t = S(str);
+    }
+};
+
+/** @brief Specialization of read_single for std::string_view.
+ */
+template <typename T>
+    requires(std::is_same_v<T, std::string_view>)
+struct read_single<T>
+{
+    template <typename S>
+    static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, S&& s)
+    {
+        constexpr auto dbusType = std::get<0>(types::type_id<S>());
+        const char* str = nullptr;
+        int r = intf->sd_bus_message_read_basic(m, dbusType, &str);
+        if (r < 0)
+        {
+            throw exception::SdBusError(-r, "sd_bus_message_read_basic string");
+        }
+        s = str;
     }
 };
 

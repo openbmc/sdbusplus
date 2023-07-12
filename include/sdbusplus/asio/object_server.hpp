@@ -149,10 +149,10 @@ PropertyType nop_get_value(const PropertyType& value)
 }
 
 template <typename PropertyType>
-int nop_set_value(const PropertyType& req, PropertyType& old)
+bool nop_set_value(const PropertyType& req, PropertyType& old)
 {
     old = req;
-    return 1;
+    return true;
 }
 
 } // namespace details

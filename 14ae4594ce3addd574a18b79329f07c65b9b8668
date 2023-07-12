@@ -34,6 +34,24 @@
       "parentUuid": "2dee3a28_cba64673",
       "revId": "14ae4594ce3addd574a18b79329f07c65b9b8668",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "bf1749fe_6d307fb5",
+        "filename": "src/bus/match.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-07-12T21:44:38Z",
+      "side": 1,
+      "message": "When a function marked `noexcept` throws, it should result in std::terminate being called.  It does have some difference.  If we didn\u0027t set it as `noexcept` the exception would pop out somewhere past the sd-bus stuff and leave some of their structures in a half-baked state.",
+      "parentUuid": "77384a55_219fbac5",
+      "revId": "14ae4594ce3addd574a18b79329f07c65b9b8668",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

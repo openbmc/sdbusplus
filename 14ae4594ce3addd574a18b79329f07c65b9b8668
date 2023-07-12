@@ -16,6 +16,24 @@
       "message": "We still need the nothrow on this, right?  You\u0027ve deleted the comments as to why it needs to be nothrow in the header.",
       "revId": "14ae4594ce3addd574a18b79329f07c65b9b8668",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "77384a55_219fbac5",
+        "filename": "src/bus/match.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1000188
+      },
+      "writtenOn": "2023-07-12T21:37:56Z",
+      "side": 1,
+      "message": "True, it wouldn\u0027t make a difference either way so we may as well just specify it to save some runtime space.",
+      "parentUuid": "2dee3a28_cba64673",
+      "revId": "14ae4594ce3addd574a18b79329f07c65b9b8668",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

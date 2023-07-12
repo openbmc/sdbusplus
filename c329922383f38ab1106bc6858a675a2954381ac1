@@ -1,6 +1,23 @@
 {
   "comments": [
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "23e20c57_2c0be7ae",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-07-12T21:47:17Z",
+      "side": 1,
+      "message": "Please test at least EM, bmcweb and dbus-sensors on these.  I think it is fine if it doesn\u0027t regress the compile on those.",
+      "revId": "c329922383f38ab1106bc6858a675a2954381ac1",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "4b305efb_f1e3fc96",
@@ -38,6 +55,30 @@
       "side": 1,
       "message": "The other ones do string conversion that isn\u0027t constexpr. This change makes it possible to use all of them in a constexpr context https://gerrit.openbmc.org/c/openbmc/sdbusplus/+/59566/3",
       "parentUuid": "4b305efb_f1e3fc96",
+      "range": {
+        "startLine": 204,
+        "startChar": 0,
+        "endLine": 204,
+        "endChar": 9
+      },
+      "revId": "c329922383f38ab1106bc6858a675a2954381ac1",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2da24e84_be1edbe5",
+        "filename": "include/sdbusplus/bus/match.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 204,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-07-12T21:47:17Z",
+      "side": 1,
+      "message": "Got it.  Any place we use `to_string` we can\u0027t currently mark as constexpr.",
+      "parentUuid": "1177ab73_e0443e49",
       "range": {
         "startLine": 204,
         "startChar": 0,

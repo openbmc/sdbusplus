@@ -46,6 +46,30 @@
       },
       "revId": "fa663aec1ec21036f972318cb9cd59b3623f7afd",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8b2979a0_9a383a15",
+        "filename": "include/sdbusplus/bus/match.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-07-12T21:48:59Z",
+      "side": 0,
+      "message": "But... do we really want to handle the exceptions for memory allocation failures in std::string?  I\u0027d rather `std::terminate`.",
+      "parentUuid": "f98b56b7_fa3c0d2a",
+      "range": {
+        "startLine": 107,
+        "startChar": 31,
+        "endLine": 107,
+        "endChar": 39
+      },
+      "revId": "fa663aec1ec21036f972318cb9cd59b3623f7afd",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

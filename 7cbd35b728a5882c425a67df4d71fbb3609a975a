@@ -18,6 +18,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "c7761927_cb3ffac1",
+        "filename": "include/sdbusplus/message/read.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 201,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2023-07-12T18:58:41Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "39257e56_064cc152",
+      "revId": "7cbd35b728a5882c425a67df4d71fbb3609a975a",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a1353588_21dcf168",
@@ -31,6 +49,24 @@
       "writtenOn": "2023-07-12T18:56:49Z",
       "side": 1,
       "message": "One subtlety that I\u0027m not sure we want to take on is that the lifetime of the string_view becomes the same as the lifetime of the message.  Is there potential for someone to mess this up and hold the string_view too long?",
+      "revId": "7cbd35b728a5882c425a67df4d71fbb3609a975a",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4d788a72_25216502",
+        "filename": "include/sdbusplus/message/read.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 232,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2023-07-12T18:58:41Z",
+      "side": 1,
+      "message": "There is that possibility, but that\u0027s roughly the same possibility as any use of string_view.\n\nIn practice, where I\u0027d like to use this is in async_method_call and friends, where message_t is declared on stack, and therefore it\u0027s impossible to use it incorrectly in the API.  It might be possible to hit this when using the read() api directly, but that\u0027s not that common.",
+      "parentUuid": "a1353588_21dcf168",
       "revId": "7cbd35b728a5882c425a67df4d71fbb3609a975a",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }

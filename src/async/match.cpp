@@ -3,7 +3,7 @@
 namespace sdbusplus::async
 {
 
-match::match(context& ctx, const std::string_view& pattern)
+slot_t match::makeMatch(context& ctx, const std::string_view& pattern)
 {
     // C-style callback to redirect into this::handle_match.
     static auto match_cb =
@@ -12,7 +12,7 @@ match::match(context& ctx, const std::string_view& pattern)
         return 0;
     };
 
-    sd_bus_slot* s = nullptr;
+    sd_bus_slot* s;
     auto r = sd_bus_add_match(get_busp(ctx.get_bus()), &s, pattern.data(),
                               match_cb, this);
     if (r < 0)
@@ -20,8 +20,12 @@ match::match(context& ctx, const std::string_view& pattern)
         throw exception::SdBusError(-r, "sd_bus_add_match (async::match)");
     }
 
-    slot = std::move(s);
+    return slot_t{s, &sdbus_impl};
 }
+
+match::match(context& ctx, const std::string_view& pattern) :
+    slot(makeMatch(ctx, pattern))
+{}
 
 match::~match()
 {

@@ -451,7 +451,7 @@ class message : private sdbusplus::slot::details::slot_friend
         {
             throw exception::SdBusError(-r, "sd_bus_call_async");
         }
-        slot_t ret(std::move(slot));
+        slot_t ret(slot, _intf);
 
         if constexpr (std::is_pointer_v<CbT>)
         {

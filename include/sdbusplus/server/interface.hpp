@@ -110,9 +110,8 @@ struct interface final : private sdbusplus::bus::details::bus_friend
     bus_t _bus;
     std::string _path;
     std::string _interf;
-    slot_t _slot{};
-    SdBusInterface* _intf;
     bool _interface_added;
+    slot_t _slot;
 };
 
 } // namespace interface

@@ -20,6 +20,11 @@ class SdBusMock : public SdBusInterface
                 (sd_bus*, sd_bus_slot**, const char*, const char*,
                  const sd_bus_vtable*, void*),
                 (override));
+
+    MOCK_METHOD(int, sd_bus_add_match,
+                (sd_bus*, sd_bus_slot**, const char*, sd_bus_message_handler_t,
+                 void*),
+                (override));
     MOCK_METHOD(int, sd_bus_attach_event, (sd_bus*, sd_event*, int),
                 (override));
     MOCK_METHOD(int, sd_bus_call,
@@ -151,11 +156,24 @@ class SdBusMock : public SdBusInterface
     MOCK_METHOD(int, sd_bus_send, (sd_bus*, sd_bus_message*, uint64_t*),
                 (override));
     MOCK_METHOD(sd_bus*, sd_bus_unref, (sd_bus*), (override));
+    MOCK_METHOD(sd_bus_slot*, sd_bus_slot_unref, (sd_bus_slot*), (override));
     MOCK_METHOD(sd_bus*, sd_bus_flush_close_unref, (sd_bus*), (override));
     MOCK_METHOD(int, sd_bus_flush, (sd_bus*), (override));
     MOCK_METHOD(void, sd_bus_close, (sd_bus*), (override));
     MOCK_METHOD(int, sd_bus_is_open, (sd_bus*), (override));
     MOCK_METHOD(int, sd_bus_wait, (sd_bus*, uint64_t), (override));
+
+    SdBusMock()
+    {
+        auto slotcb = [](sd_bus*, sd_bus_slot** slot, auto&&...) {
+            *slot = reinterpret_cast<sd_bus_slot*>(0xdefa);
+            return 0;
+        };
+        ON_CALL(*this, sd_bus_add_object_manager).WillByDefault(slotcb);
+        ON_CALL(*this, sd_bus_add_object_vtable).WillByDefault(slotcb);
+        ON_CALL(*this, sd_bus_add_match).WillByDefault(slotcb);
+        ON_CALL(*this, sd_bus_call_async).WillByDefault(slotcb);
+    }
 };
 
 inline bus_t get_mocked_new(SdBusMock* sdbus)

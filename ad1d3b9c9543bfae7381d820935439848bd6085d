@@ -16,6 +16,24 @@
       "message": "I\u0027d prefer to leave anything from async out of this commit.  I\u0027ve purposefully not used the mock stuff in async and none of it is \"mock-safe\".  As we move to the async bindings, I think there are better ways to handle testing that doesn\u0027t require mocking out at the sd-bus level.",
       "revId": "ad1d3b9c9543bfae7381d820935439848bd6085d",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "90105685_3d6311d7",
+        "filename": "include/sdbusplus/async/match.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 1000188
+      },
+      "writtenOn": "2023-07-13T23:23:25Z",
+      "side": 1,
+      "message": "I don\u0027t really have a choice, you used a primitive from the old library that requires the mock interface as an input. I just re-organized this to initialize it once using the non-mock interface.",
+      "parentUuid": "bd29edeb_a8ee557b",
+      "revId": "ad1d3b9c9543bfae7381d820935439848bd6085d",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

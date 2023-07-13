@@ -41,6 +41,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "4b27e6ae_16327fa7",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 408,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2023-07-13T00:30:07Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "ae348d0c_1e5561b2",
+      "range": {
+        "startLine": 399,
+        "startChar": 0,
+        "endLine": 408,
+        "endChar": 20
+      },
+      "revId": "2d201e5c9c3aeb36d6b3542920b989a6bcb05680",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "27d3f1d4_c4fe489c",
@@ -54,6 +78,30 @@
       "writtenOn": "2023-07-12T22:16:10Z",
       "side": 1,
       "message": "This isn\u0027t safe since `this` can outlive the `dbus_interface` it points to.",
+      "range": {
+        "startLine": 504,
+        "startChar": 11,
+        "endLine": 505,
+        "endChar": 62
+      },
+      "revId": "2d201e5c9c3aeb36d6b3542920b989a6bcb05680",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c6f1b546_c4a5ddf1",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 505,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2023-07-13T00:30:07Z",
+      "side": 1,
+      "message": "true, but I\u0027m not sure how to fix it without changing the API of dbus_interface (which would be a lot harder).  any suggestions?",
+      "parentUuid": "27d3f1d4_c4fe489c",
       "range": {
         "startLine": 504,
         "startChar": 11,

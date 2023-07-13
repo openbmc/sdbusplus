@@ -21,38 +21,26 @@ namespace manager
  */
 struct manager : private sdbusplus::bus::details::bus_friend
 {
-    /* Define all of the basic class operations:
-     *     Not allowed:
-     *         - Default constructor to avoid nullptrs.
-     *         - Copy operations due to internal unique_ptr.
-     *     Allowed:
-     *         - Move operations.
-     *         - Destructor.
-     */
-    manager() = delete;
-    manager(const manager&) = delete;
-    manager& operator=(const manager&) = delete;
-    manager(manager&&) = default;
-    manager& operator=(manager&&) = default;
-    ~manager() = default;
+  private:
+    slot_t _slot;
 
+    static slot_t makeManager(SdBusInterface* intf, sd_bus* bus,
+                              const char* path)
+    {
+        sd_bus_slot* slot = nullptr;
+        intf->sd_bus_add_object_manager(bus, &slot, path);
+        return slot_t{slot, intf};
+    }
+
+  public:
     /** @brief Register an object manager at a path.
      *
      *  @param[in] bus - The bus to register on.
      *  @param[in] path - The path to register.
      */
-    manager(sdbusplus::bus_t& bus, const char* path)
-    {
-        sd_bus_slot* slot = nullptr;
-        sdbusplus::SdBusInterface* intf = bus.getInterface();
-
-        intf->sd_bus_add_object_manager(get_busp(bus), &slot, path);
-
-        _slot = std::move(slot);
-    }
-
-  private:
-    slot_t _slot{};
+    manager(sdbusplus::bus_t& bus, const char* path) :
+        _slot(makeManager(bus.getInterface(), get_busp(bus), path))
+    {}
 };
 
 } // namespace manager

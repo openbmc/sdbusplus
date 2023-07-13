@@ -9,23 +9,28 @@ namespace server
 namespace interface
 {
 
-interface::interface(sdbusplus::bus_t& bus, const char* path,
-                     const char* interf, const sdbusplus::vtable_t* vtable,
-                     void* context) :
-    _bus(get_busp(bus), bus.getInterface()),
-    _path(path), _interf(interf), _intf(bus.getInterface()),
-    _interface_added(false)
+static slot_t makeObjVtable(SdBusInterface* intf, sd_bus* bus, const char* path,
+                            const char* interf,
+                            const sdbusplus::vtable_t* vtable, void* context)
 {
-    sd_bus_slot* slot = nullptr;
-    int r = _intf->sd_bus_add_object_vtable(
-        get_busp(_bus), &slot, _path.c_str(), _interf.c_str(), vtable, context);
+    sd_bus_slot* slot;
+    int r = intf->sd_bus_add_object_vtable(bus, &slot, path, interf, vtable,
+                                           context);
     if (r < 0)
     {
         throw exception::SdBusError(-r, "sd_bus_add_object_vtable");
     }
-
-    _slot = std::move(slot);
+    return slot_t{slot, intf};
 }
+
+interface::interface(sdbusplus::bus_t& bus, const char* path,
+                     const char* interf, const sdbusplus::vtable_t* vtable,
+                     void* context) :
+    _bus(get_busp(bus), bus.getInterface()),
+    _path(path), _interf(interf), _interface_added(false),
+    _slot(makeObjVtable(_bus.getInterface(), get_busp(_bus), _path.c_str(),
+                        _interf.c_str(), vtable, context))
+{}
 
 interface::~interface()
 {
@@ -38,8 +43,8 @@ void interface::property_changed(const char* property)
 
     // Note: Converting to use _strv version, could also mock two pointer
     // use-case explicitly.
-    _intf->sd_bus_emit_properties_changed_strv(get_busp(_bus), _path.c_str(),
-                                               _interf.c_str(), values.data());
+    _bus.getInterface()->sd_bus_emit_properties_changed_strv(
+        get_busp(_bus), _path.c_str(), _interf.c_str(), values.data());
 }
 
 } // namespace interface

@@ -28,6 +28,11 @@ class SdBusInterface
                                          const sd_bus_vtable* vtable,
                                          void* userdata) = 0;
 
+    virtual int sd_bus_add_match(sd_bus* bus, sd_bus_slot** slot,
+                                 const char* path,
+                                 sd_bus_message_handler_t callback,
+                                 void* userdata) = 0;
+
     virtual int sd_bus_attach_event(sd_bus* bus, sd_event* e, int priority) = 0;
 
     virtual int sd_bus_call(sd_bus* bus, sd_bus_message* m, uint64_t usec,
@@ -164,6 +169,7 @@ class SdBusInterface
                             uint64_t* cookie) = 0;
 
     virtual sd_bus* sd_bus_unref(sd_bus* bus) = 0;
+    virtual sd_bus_slot* sd_bus_slot_unref(sd_bus_slot* slot) = 0;
     virtual sd_bus* sd_bus_flush_close_unref(sd_bus* bus) = 0;
 
     virtual int sd_bus_flush(sd_bus* bus) = 0;
@@ -196,6 +202,13 @@ class SdBusImpl : public SdBusInterface
     {
         return ::sd_bus_add_object_vtable(bus, slot, path, interface, vtable,
                                           userdata);
+    }
+
+    int sd_bus_add_match(sd_bus* bus, sd_bus_slot** slot, const char* path,
+                         sd_bus_message_handler_t callback,
+                         void* userdata) override
+    {
+        return ::sd_bus_add_match(bus, slot, path, callback, userdata);
     }
 
     int sd_bus_attach_event(sd_bus* bus, sd_event* e, int priority) override
@@ -527,6 +540,11 @@ class SdBusImpl : public SdBusInterface
     sd_bus* sd_bus_unref(sd_bus* bus) override
     {
         return ::sd_bus_unref(bus);
+    }
+
+    sd_bus_slot* sd_bus_slot_unref(sd_bus_slot* slot) override
+    {
+        return ::sd_bus_slot_unref(slot);
     }
 
     sd_bus* sd_bus_flush_close_unref(sd_bus* bus) override

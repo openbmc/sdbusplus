@@ -40,6 +40,9 @@ struct slot_friend;
  */
 struct slot
 {
+    /** @brief Empty (unused) slot */
+    slot() : _slot(nullptr, &sdbus_impl) {}
+
     /** @brief Conversion constructor for 'slotp_t'.
      *
      *  Takes ownership of the slot-pointer and releases it when done.

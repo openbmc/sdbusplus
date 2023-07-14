@@ -1,0 +1,8 @@
+Code-Review+1: Josh Lehan <krellan@google.com>
+Code-Review+2: Patrick Williams <patrick@stwcx.xyz>
+Verified+1: OpenBMC CI <openbmcbump-ci@yahoo.com>
+Submitted-by: Patrick Williams <patrick@stwcx.xyz>
+Submitted-at: Fri, 14 Jul 2023 00:38:44 +0000
+Reviewed-on: https://gerrit.openbmc.org/c/openbmc/sdbusplus/+/64966
+Project: openbmc/sdbusplus
+Branch: refs/heads/master

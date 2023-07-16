@@ -35,7 +35,7 @@ static int matchCallback(sd_bus_message* m, void* context,
     return 0;
 }
 
-match::match(sdbusplus::bus_t& bus, const char* _match, callback_t callback) :
+match::match(sdbusplus::bus_t& bus, const char* _match, callback_t&& callback) :
     _callback(std::make_unique<callback_t>(std::move(callback))),
     _slot(makeMatch(bus.getInterface(), get_busp(bus), _match, matchCallback,
                     _callback.get()))

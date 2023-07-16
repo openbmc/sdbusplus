@@ -38,10 +38,10 @@ struct match : private sdbusplus::bus::details::bus_friend
      *  @param[in] match - The match to register.
      *  @param[in] callback - The callback for matches.
      */
-    using callback_t = std::function<void(sdbusplus::message_t&)>;
-    match(sdbusplus::bus_t& bus, const char* _match, callback_t callback);
+    using callback_t = std::move_only_function<void(sdbusplus::message_t&)>;
+    match(sdbusplus::bus_t& bus, const char* _match, callback_t&& callback);
     inline match(sdbusplus::bus_t& bus, const std::string& _match,
-                 callback_t callback) :
+                 callback_t&& callback) :
         match(bus, _match.c_str(), std::move(callback))
     {}
 

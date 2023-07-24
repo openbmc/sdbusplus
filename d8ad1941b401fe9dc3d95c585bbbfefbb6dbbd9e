@@ -16,6 +16,24 @@
       "message": "FYI, I\u0027ve also pushed my WIP for having a \"Dbus property\" object that could accept sets, and is the reason I\u0027m asking hard questions on this patchset.  It removes the need for std::any.  If we wanted to add get() to that it would be trivial, but I\u0027d still like to see a use case where it makes the code clearer compared to just specifying a setter and a getter.\n\nhttps://gerrit.openbmc.org/c/openbmc/sdbusplus/+/64732",
       "revId": "d8ad1941b401fe9dc3d95c585bbbfefbb6dbbd9e",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bf0ea5e2_2d091c10",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2023-07-24T07:32:12Z",
+      "side": 1,
+      "message": "\u003e https://gerrit.openbmc.org/c/openbmc/sdbusplus/+/64732\n\nIt does look trivial to add `getter` in the PropertyTag, I will probably raise proposals to add such getter if it\u0027s merged.\n\n\u003e  I\u0027d still like to see a use case where it makes the code clearer compared to just specifying a setter and a getter.\n\nLet\u0027s take below code snippet as an example, assuming we have an interface `com.example.my_name`, with a string property `MyName`.\n\n### Non-ASIO\nWith non-asio, the yaml generated code, we could use the properties simply by calling the getter, without any extra variables.\n```cpp\nclass MyNameManager : public MyNameInherit\n{\n  public:\n    MyNameManager(sdbusplus::bus::bus\u0026 bus, const char* objPath) :\n        MyNameInherit(bus, objPath), bus(bus)\n    {}\n    sdbusplus::bus::bus\u0026 bus;\n\n    // setter\n    std::string myName(std::string value) override\n    {\n        info(\"myName setter: {NAME}\", \"NAME\",\n             convertBMCStateToString(value));\n        return MyNameInherit::myName(value);\n    }\n\n    void foo()\n    {\n        // Need to get the property value, call the getter\n        auto name \u003d MyNameInherit::myName();\n        info(\"My Name is {NAME}\", \"NAME\", name);\n    }\n\t// No extra variable required to hold the MyName property\n};\n\n```\n\n### ASIO without getter\nWith asio, we can not simply do that unless it uses an extra variable to save the value on set.\n```cpp\nclass MyNameManager\n{\n  public:\n    MyNameManager(sdbusplus::asio::object_server\u0026 objectServer)\n    {\n        myInterface \u003d objectServer.add_interface(\n            \"/com/example/my_name_path\", \"com.example.my_name_manager\");\n\n        myInterface-\u003eregister_property(\n            \"MyName\", std::string(\"foo\"),\n            // setter\n            [\u0026](const std::string\u0026 req, std::string\u0026 propertyValue) {\n                info(\"MyName setter: req: {REQ}\", \"REQ\", req);\n                propertyValue \u003d req;\n                name \u003d req;  // Save the property to the extra variable\n                return 1;\n                });\n        myInterface-\u003einitialize();\n    }\n    void foo()\n    {\n        // Now we need to get the property\n        // It has to use the extra `name` variable\n        info(\"My Name is {NAME}\", \"NAME\", name);\n    }\n  private:\n    std::shared_ptr\u003csdbusplus::asio::dbus_interface\u003e myInterface;\n    std::string name;  // We have to save the extra variable.\n};\n```\n\n### ASIO with getter\nWith asio and with this patch, we can write code similar to non-asio:\n```cpp\nclass MyNameManager\n{\n  public:\n    MyNameManager(sdbusplus::asio::object_server\u0026 objectServer)\n    {\n        myInterface \u003d objectServer.add_interface(\n            \"/com/example/my_name_path\", \"com.example.my_name_manager\");\n\n        myInterface-\u003eregister_property(\n            \"MyName\", std::string(\"foo\"),\n            // setter\n            [\u0026](const std::string\u0026 req, std::string\u0026 propertyValue) {\n                info(\"MyName setter: req: {REQ}\", \"REQ\", req);\n                propertyValue \u003d req;\n                return 1;\n                });\n        myInterface-\u003einitialize();\n    }\n    void foo()\n    {\n        // Now we need to get the property, call getter\n        auto name \u003d myInterface-\u003eget_property(\"MyName\");\n        if (name)\n        {\n            info(\"My Name is {NAME}\", \"NAME\", *name);\n        }\n    }\n  private:\n    std::shared_ptr\u003csdbusplus::asio::dbus_interface\u003e myInterface;\n    // No extra variable needed\n};\n\n```\n\n\nWe can see that `ASIO with getter` could get the equivalent code as yaml-generated code, without extra variable.\n\nThis makes the sdbusplus asio lib complete. Otherwise it\u0027s like half implemented.",
+      "parentUuid": "bdbab87c_29dd3e41",
+      "revId": "d8ad1941b401fe9dc3d95c585bbbfefbb6dbbd9e",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

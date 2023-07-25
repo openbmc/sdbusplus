@@ -34,6 +34,24 @@
       "parentUuid": "bdbab87c_29dd3e41",
       "revId": "d8ad1941b401fe9dc3d95c585bbbfefbb6dbbd9e",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fe2e235f_6bbb7a8f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2023-07-25T16:40:58Z",
+      "side": 1,
+      "message": "IMO, your \"ASIO without getter\" function is more clear, and makes the variable available in the scope, and completely avoids the complexity of set_property taking a std::any.  Also,given that get_property returns a templated type, your positive example can\u0027t compile, because:\n\nauto name \u003d myInterface-\u003eget_property(\"MyName\");\n\nWon\u0027t compile, given there\u0027s no definition of what type it is.  As an example of how this interface can be misused.\n\n\noptional\u003cint32_t\u003e name \u003d myInterface-\u003eget_property\u003cint32_t\u003e(\"MyName\");\n\nWould compile just fine, but would be an error, because this interface is missing all type safety.\n\nOverall, the rest of the system prefers your second example, and I think it\u0027s more clear what\u0027s going on, simpler, and has more type safety, but ultimately I\u0027m not an sdbusplus maintainer.",
+      "parentUuid": "bf0ea5e2_2d091c10",
+      "revId": "d8ad1941b401fe9dc3d95c585bbbfefbb6dbbd9e",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

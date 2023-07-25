@@ -159,6 +159,15 @@ TEST_F(ReadTest, Signature)
     EXPECT_EQ(s, ret.str);
 }
 
+TEST_F(ReadTest, UnixFd)
+{
+    const int fd = 42;
+    expect_basic<int>(SD_BUS_TYPE_UNIX_FD, fd);
+    sdbusplus::message::unix_fd ret;
+    new_message().read(ret);
+    EXPECT_EQ(fd, ret);
+}
+
 TEST_F(ReadTest, CombinedBasic)
 {
     const double a = 2.2;

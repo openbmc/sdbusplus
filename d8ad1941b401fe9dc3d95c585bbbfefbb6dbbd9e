@@ -88,6 +88,24 @@
       "parentUuid": "d198dfd1_df3ef25a",
       "revId": "d8ad1941b401fe9dc3d95c585bbbfefbb6dbbd9e",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "90ba324c_51918398",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2023-07-26T23:59:40Z",
+      "side": 1,
+      "message": "\u003e \u003e Also, please link the ACTUAL gerrit change to an openbmc daemon that uses this, rather than posting hypothetical example. If there\u0027s no users of this in the project, it just ends up being dead code.\n\u003e \n\u003e sdbusplus is maintained in openbmc org but it could be used outside, it\u0027s really a c++ lib for sdbus, not only for OpenBMC.\n\nFeel free to link a PR to another project.  I\u0027d like to see how this actually makes a real example better, and so I can assess the impact.\n\n\u003e \n\u003e \n\u003e \u003e auto name \u003d myInterface-\u003eget_property(\"MyName\");\n\u003e \u003e Won\u0027t compile, given there\u0027s no definition of what type it is. As an example of how this interface can be misused.\n\u003e \u003e optional\u003cint32_t\u003e name \u003d myInterface-\u003eget_property\u003cint32_t\u003e(\"MyName\");\n\u003e \u003e Would compile just fine, but would be an error, because this interface is missing all type safety.\n\u003e \n\u003e It\u0027s true, the real usage does require the caller to specify the type when calling `get_property\u003c\u003e()`. If the type is unexpected it returns a `nullopt`.\n\u003e \n\u003e \u003e your \"ASIO without getter\" function is more clea\n\u003e \n\u003e The point is that it **forces** the user of sdbusplus to hold **an extra copy** of every property if it wants to get it somewhere else.\n\nNot if you declare a getter and a setter.  That\u0027s the intended way to do what you\u0027re trying to do here, to declare both a getter and a setter, similar to the asio example.  In that, you don\u0027t have an \"extra\" copy of the variable at all.\n\nhttps://github.com/openbmc/sdbusplus/blob/master/example/asio-example.cpp#L227\n\n\u003e If a service implement many interface and have many properties, it will have to store **many copies** of the values.\n\u003e Why would a library **force** the user to do that? Why not simply provide a getter (we could eliminate the `std::any` thing with your proposed https://gerrit.openbmc.org/c/openbmc/sdbusplus/+/64732) so that the user of the library have a choice to use getter rather than making a copy?\n\nSee above.  There is a simpler, and more type safe way to accomplish what you\u0027re trying to do already.\n\n\nOverall, it\u0027s been my believe for a while that sdbusplus has supported too-many ways to do something in an identical way, and that leads to problems in maintenance where less-used codepaths can break.",
+      "parentUuid": "06607fea_84f9e10f",
+      "revId": "d8ad1941b401fe9dc3d95c585bbbfefbb6dbbd9e",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

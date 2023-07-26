@@ -52,6 +52,8 @@ class SdBusError final : public internal_exception
     /** Errno must be positive */
     SdBusError(int error, const char* prefix,
                SdBusInterface* intf = &sdbus_impl);
+    SdBusError(int error, std::string&& prefix,
+               SdBusInterface* intf = &sdbus_impl);
     /** Becomes the owner of the error */
     SdBusError(sd_bus_error* error, const char* prefix,
                SdBusInterface* intf = &sdbus_impl);
@@ -75,7 +77,7 @@ class SdBusError final : public internal_exception
 
     /** Populates the full_message from the stored
      *  error and the passed in prefix. */
-    void populateMessage(const char* prefix);
+    void populateMessage(std::string&& prefix);
 
     /** Helper to reduce duplicate move logic */
     void move(SdBusError&& other);

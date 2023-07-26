@@ -23,6 +23,11 @@ int generated_exception::get_errno() const noexcept
 
 SdBusError::SdBusError(int error_in, const char* prefix,
                        SdBusInterface* intf_in) :
+    SdBusError(error_in, std::string(prefix), intf_in)
+{}
+
+SdBusError::SdBusError(int error_in, std::string&& prefix,
+                       SdBusInterface* intf_in) :
     error(SD_BUS_ERROR_NULL),
     intf(intf_in)
 {
@@ -36,7 +41,7 @@ SdBusError::SdBusError(int error_in, const char* prefix,
         throw std::runtime_error("Failed to create SdBusError");
     }
 
-    populateMessage(prefix);
+    populateMessage(std::move(prefix));
 }
 
 SdBusError::SdBusError(sd_bus_error* error_in, const char* prefix,
@@ -47,7 +52,7 @@ SdBusError::SdBusError(sd_bus_error* error_in, const char* prefix,
     // We own the error so remove the caller's reference
     *error_in = SD_BUS_ERROR_NULL;
 
-    populateMessage(prefix);
+    populateMessage(std::string(prefix));
 }
 
 SdBusError::SdBusError(SdBusError&& other) : error(SD_BUS_ERROR_NULL)
@@ -94,9 +99,9 @@ const sd_bus_error* SdBusError::get_error() const noexcept
     return &error;
 }
 
-void SdBusError::populateMessage(const char* prefix)
+void SdBusError::populateMessage(std::string&& prefix)
 {
-    full_message = prefix;
+    full_message = std::move(prefix);
     if (error.name)
     {
         full_message += ": ";

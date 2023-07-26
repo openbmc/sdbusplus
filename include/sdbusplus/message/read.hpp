@@ -136,7 +136,8 @@ struct read_single
         // For this default implementation, we need to ensure that only
         // basic types are used.
         static_assert(std::is_fundamental_v<Td<T>> ||
-                          std::is_convertible_v<Td<T>, const char*>,
+                          std::is_convertible_v<Td<T>, const char*> ||
+                          std::is_convertible_v<Td<T>, details::unix_fd_type>,
                       "Non-basic types are not allowed.");
 
         constexpr auto dbusType = std::get<0>(types::type_id<T>());
@@ -166,23 +167,6 @@ struct read_single
 
 template <typename T>
 using read_single_t = read_single<types::details::type_id_downcast_t<T>>;
-
-/** @brief Specialization of read_single for details::unix_fd. */
-template <>
-struct read_single<details::unix_fd_type>
-{
-    template <typename T>
-    static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, T&& s)
-    {
-        constexpr auto dbusType = std::get<0>(types::type_id<T>());
-        int r = intf->sd_bus_message_read_basic(m, dbusType, &s.fd);
-        if (r < 0)
-        {
-            throw exception::SdBusError(-r,
-                                        "sd_bus_message_read_basic unix_fd");
-        }
-    }
-};
 
 /** @brief Specialization of read_single for various string class types.
  *

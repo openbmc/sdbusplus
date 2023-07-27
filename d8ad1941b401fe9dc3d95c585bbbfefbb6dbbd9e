@@ -106,6 +106,24 @@
       "parentUuid": "06607fea_84f9e10f",
       "revId": "d8ad1941b401fe9dc3d95c585bbbfefbb6dbbd9e",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "da2cbf8c_8332ca1e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2023-07-27T02:59:58Z",
+      "side": 1,
+      "message": "\u003e See above. There is a simpler, and more type safe way to accomplish what you\u0027re trying to do already.\n\nIt defines a `getter` lambda but it could not be called directly within the service (from my understanding). Could you elaborate how the `getter` lambda could be called to get the property in my example?\n\n\u003e Overall, it\u0027s been my believe for a while that sdbusplus has supported too-many ways to do something in an identical way\n\nThere is **no** way for a service to call the `getter` to get a property from asio interface, this patch set adds this function.",
+      "parentUuid": "90ba324c_51918398",
+      "revId": "d8ad1941b401fe9dc3d95c585bbbfefbb6dbbd9e",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

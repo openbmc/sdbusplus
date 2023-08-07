@@ -41,7 +41,6 @@ reviewers:
 - anoo@us.ibm.com
 - bradleyb@fuzziesquirrel.com
 - deepak.kodihalli.83@gmail.com
-- richard.marian.thomaiyar@linux.intel.com
 
 matchers:
 
@@ -61,9 +60,6 @@ openbmc:
 - name: Patrick Williams
   email: patrick@stwcx.xyz
   discord: stwcx
-- name: Richard Thomaiyar
-  email: richard.marian.thomaiyar@linux.intel.com
-  discord: rthomaiy
 - name: Vernon Mauery
   email: vernon.mauery@linux.intel.com
   discord: vmauery

@@ -286,6 +286,13 @@ constexpr auto type_id_multiple()
     return std::tuple_cat(type_id_single<T>(), type_id_single<Args>()...);
 }
 
+template <typename T, std::size_t... I>
+constexpr auto type_id_tuple(std::index_sequence<I...>)
+{
+    return type_id_multiple<
+        type_id_downcast_t<std::tuple_element_t<I, T>>...>();
+}
+
 } // namespace details
 
 template <typename... Args>
@@ -300,6 +307,16 @@ template <typename... Args>
 constexpr auto type_id_nonull()
 {
     return details::type_id_multiple<details::type_id_downcast_t<Args>...>();
+}
+
+template <typename T>
+constexpr auto type_id_tuple()
+{
+    return std::tuple_cat(
+        details::type_id_tuple<T>(
+            std::make_index_sequence<
+                std::tuple_size_v<details::type_id_downcast_t<T>>>()),
+        std::make_tuple('\0'));
 }
 
 } // namespace types

@@ -109,7 +109,7 @@ inline constexpr bool can_read_multiple_v = can_read_multiple<Args...>::value;
  *
  *  @tparam S - Type of element to read.
  */
-template <typename S, typename Enable = void>
+template <typename S>
 struct read_single
 {
     // Downcast
@@ -130,8 +130,8 @@ struct read_single
      *  @param[out] t - The reference to read item into.
      */
     template <typename T>
-    static std::enable_if_t<std::is_same_v<S, Td<T>> && !std::is_enum_v<Td<T>>>
-        op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, T&& t)
+    static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, T&& t)
+        requires(!std::is_enum_v<Td<T>>)
     {
         // For this default implementation, we need to ensure that only
         // basic types are used.
@@ -150,8 +150,8 @@ struct read_single
     }
 
     template <typename T>
-    static std::enable_if_t<std::is_same_v<S, Td<T>> && std::is_enum_v<Td<T>>>
-        op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, T&& t)
+    static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, T&& t)
+        requires(std::is_enum_v<Td<T>>)
     {
         std::string value{};
         sdbusplus::message::read(intf, m, value);
@@ -173,32 +173,33 @@ using read_single_t = read_single<types::details::type_id_downcast_t<T>>;
  *  Supports std::strings, details::string_wrapper and
  *  details::string_path_wrapper.
  */
-template <typename T>
-struct read_single<
-    T, std::enable_if_t<std::is_same_v<T, std::string> ||
-                        std::is_same_v<T, details::string_wrapper> ||
-                        std::is_same_v<T, details::string_path_wrapper>>>
+template <typename S>
+    requires(std::is_same_v<S, std::string> ||
+             std::is_same_v<S, details::string_wrapper> ||
+             std::is_same_v<S, details::string_path_wrapper>)
+struct read_single<S>
 {
-    template <typename S>
-    static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, S&& s)
+    template <typename T>
+    static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, T&& t)
     {
-        constexpr auto dbusType = std::get<0>(types::type_id<S>());
+        constexpr auto dbusType = std::get<0>(types::type_id<T>());
         const char* str = nullptr;
         int r = intf->sd_bus_message_read_basic(m, dbusType, &str);
         if (r < 0)
         {
             throw exception::SdBusError(-r, "sd_bus_message_read_basic string");
         }
-        s = T(str);
+        t = S(str);
     }
 };
 
 /** @brief Specialization of read_single for bools. */
-template <>
-struct read_single<bool>
+template <typename S>
+    requires(std::is_same_v<S, bool>)
+struct read_single<S>
 {
     template <typename T>
-    static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, T&& b)
+    static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, T&& t)
     {
         constexpr auto dbusType = std::get<0>(types::type_id<T>());
         int i = 0;
@@ -207,18 +208,19 @@ struct read_single<bool>
         {
             throw exception::SdBusError(-r, "sd_bus_message_read_basic bool");
         }
-        b = (i != 0);
+        t = (i != 0);
     }
 };
 
 /** @brief Specialization of read_single for std::vectors. */
-template <typename T>
-struct read_single<T, std::enable_if_t<utility::has_emplace_back_method_v<T>>>
+template <typename S>
+    requires(utility::has_emplace_back_method_v<S>)
+struct read_single<S>
 {
-    template <typename S>
-    static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, S&& s)
+    template <typename T>
+    static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, T&& t)
     {
-        constexpr auto dbusType = utility::tuple_to_array(types::type_id<T>());
+        constexpr auto dbusType = utility::tuple_to_array(types::type_id<S>());
         int r = intf->sd_bus_message_enter_container(m, SD_BUS_TYPE_ARRAY,
                                                      dbusType.data() + 1);
         if (r < 0)
@@ -229,9 +231,9 @@ struct read_single<T, std::enable_if_t<utility::has_emplace_back_method_v<T>>>
 
         while (!(r = intf->sd_bus_message_at_end(m, false)))
         {
-            types::details::type_id_downcast_t<typename T::value_type> t;
-            sdbusplus::message::read(intf, m, t);
-            s.emplace_back(std::move(t));
+            types::details::type_id_downcast_t<typename S::value_type> s;
+            sdbusplus::message::read(intf, m, s);
+            t.emplace_back(std::move(s));
         }
         if (r < 0)
         {
@@ -249,13 +251,14 @@ struct read_single<T, std::enable_if_t<utility::has_emplace_back_method_v<T>>>
 };
 
 /** @brief Specialization of read_single for std::map. */
-template <typename T>
-struct read_single<T, std::enable_if_t<utility::has_emplace_method_v<T>>>
+template <typename S>
+    requires(utility::has_emplace_method_v<S>)
+struct read_single<S>
 {
-    template <typename S>
-    static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, S&& s)
+    template <typename T>
+    static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, T&& t)
     {
-        constexpr auto dbusType = utility::tuple_to_array(types::type_id<T>());
+        constexpr auto dbusType = utility::tuple_to_array(types::type_id<S>());
         int r = intf->sd_bus_message_enter_container(m, SD_BUS_TYPE_ARRAY,
                                                      dbusType.data() + 1);
         if (r < 0)
@@ -266,9 +269,9 @@ struct read_single<T, std::enable_if_t<utility::has_emplace_method_v<T>>>
 
         while (!(r = intf->sd_bus_message_at_end(m, false)))
         {
-            types::details::type_id_downcast_t<typename T::value_type> t;
-            sdbusplus::message::read(intf, m, t);
-            s.emplace(std::move(t));
+            types::details::type_id_downcast_t<typename S::value_type> s;
+            sdbusplus::message::read(intf, m, s);
+            t.emplace(std::move(s));
         }
         if (r < 0)
         {
@@ -285,54 +288,28 @@ struct read_single<T, std::enable_if_t<utility::has_emplace_method_v<T>>>
     }
 };
 
-/** @brief Specialization of read_single for std::pairs. */
-template <typename T1, typename T2>
-struct read_single<std::pair<T1, T2>>
+/** @brief Specialization of read_single for std::tuples and std::pairs. */
+template <typename S>
+    requires requires(S& s) { std::get<0>(s); }
+struct read_single<S>
 {
-    template <typename S>
-    static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, S&& s)
+    template <typename T>
+    static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, T&& t)
     {
-        constexpr auto dbusType = utility::tuple_to_array(
-            std::tuple_cat(types::type_id_nonull<T1>(), types::type_id<T2>()));
+        constexpr auto dbusType =
+            utility::tuple_to_array(types::type_id_tuple<S>());
 
-        int r = intf->sd_bus_message_enter_container(m, SD_BUS_TYPE_DICT_ENTRY,
-                                                     dbusType.data());
-        if (r < 0)
-        {
-            throw exception::SdBusError(-r,
-                                        "sd_bus_message_enter_container pair");
-        }
+        // Tuples use TYPE_STRUCT, pair uses TYPE_DICT_ENTRY.
+        // Use the presence of `t.first` to determine if it is a pair.
+        constexpr auto tupleType = [&]() {
+            if constexpr (requires { t.first; })
+            {
+                return SD_BUS_TYPE_DICT_ENTRY;
+            }
+            return SD_BUS_TYPE_STRUCT;
+        }();
 
-        sdbusplus::message::read(intf, m, s.first, s.second);
-
-        r = intf->sd_bus_message_exit_container(m);
-        if (r < 0)
-        {
-            throw exception::SdBusError(-r,
-                                        "sd_bus_message_exit_container pair");
-        }
-    }
-};
-
-/** @brief Specialization of read_single for std::tuples. */
-template <typename... Args>
-struct read_single<std::tuple<Args...>>
-{
-    template <typename S, std::size_t... I>
-    static void _op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, S&& s,
-                    std::integer_sequence<std::size_t, I...>)
-    {
-        sdbusplus::message::read(intf, m, std::get<I>(s)...);
-    }
-
-    template <typename S>
-    static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, S&& s)
-    {
-        constexpr auto dbusType = utility::tuple_to_array(std::tuple_cat(
-            types::type_id_nonull<Args...>(),
-            std::make_tuple('\0') /* null terminator for C-string */));
-
-        int r = intf->sd_bus_message_enter_container(m, SD_BUS_TYPE_STRUCT,
+        int r = intf->sd_bus_message_enter_container(m, tupleType,
                                                      dbusType.data());
         if (r < 0)
         {
@@ -340,8 +317,9 @@ struct read_single<std::tuple<Args...>>
                                         "sd_bus_message_enter_container tuple");
         }
 
-        _op(intf, m, std::forward<S>(s),
-            std::make_index_sequence<sizeof...(Args)>());
+        std::apply(
+            [&](auto&... args) { sdbusplus::message::read(intf, m, args...); },
+            t);
 
         r = intf->sd_bus_message_exit_container(m);
         if (r < 0)
@@ -360,10 +338,10 @@ struct read_single<std::variant<Args...>>
     template <typename T>
     using Td = types::details::type_id_downcast_t<T>;
 
-    template <typename S, typename S1, typename... Args1>
-    static void read(sdbusplus::SdBusInterface* intf, sd_bus_message* m, S&& s)
+    template <typename T, typename T1, typename... Args1>
+    static void read(sdbusplus::SdBusInterface* intf, sd_bus_message* m, T&& t)
     {
-        constexpr auto dbusType = utility::tuple_to_array(types::type_id<S1>());
+        constexpr auto dbusType = utility::tuple_to_array(types::type_id<T1>());
 
         int r = intf->sd_bus_message_verify_type(m, SD_BUS_TYPE_VARIANT,
                                                  dbusType.data());
@@ -374,7 +352,20 @@ struct read_single<std::variant<Args...>>
         }
         if (!r)
         {
-            read<S, Args1...>(intf, m, s);
+            if constexpr (sizeof...(Args1) == 0)
+            {
+                r = intf->sd_bus_message_skip(m, "v");
+                if (r < 0)
+                {
+                    throw exception::SdBusError(-r,
+                                                "sd_bus_message_skip variant");
+                }
+                t = std::remove_reference_t<T>{};
+            }
+            else
+            {
+                read<T, Args1...>(intf, m, t);
+            }
             return;
         }
 
@@ -389,8 +380,8 @@ struct read_single<std::variant<Args...>>
         // If this type is an enum or string, we don't know which is the
         // valid parsing.  Delegate to 'convert_from_string' so we do the
         // correct conversion.
-        if constexpr (std::is_enum_v<Td<S1>> ||
-                      std::is_same_v<std::string, Td<S1>>)
+        if constexpr (std::is_enum_v<Td<T1>> ||
+                      std::is_same_v<std::string, Td<T1>>)
         {
             std::string str{};
             sdbusplus::message::read(intf, m, str);
@@ -403,13 +394,13 @@ struct read_single<std::variant<Args...>>
                 throw sdbusplus::exception::InvalidEnumString();
             }
 
-            s = std::move(*ret);
+            t = std::move(*ret);
         }
         else // otherise, read it out directly.
         {
-            std::remove_reference_t<S1> s1;
-            sdbusplus::message::read(intf, m, s1);
-            s = std::move(s1);
+            std::remove_reference_t<T1> t1;
+            sdbusplus::message::read(intf, m, t1);
+            t = std::move(t1);
         }
 
         r = intf->sd_bus_message_exit_container(m);
@@ -420,30 +411,20 @@ struct read_single<std::variant<Args...>>
         }
     }
 
-    template <typename S>
-    static void read(sdbusplus::SdBusInterface* intf, sd_bus_message* m, S&& s)
+    template <typename T>
+    static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, T&& t)
     {
-        int r = intf->sd_bus_message_skip(m, "v");
-        if (r < 0)
-        {
-            throw exception::SdBusError(-r, "sd_bus_message_skip variant");
-        }
-        s = std::remove_reference_t<S>{};
-    }
-
-    template <typename S, typename = std::enable_if_t<0 < sizeof...(Args)>>
-    static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, S&& s)
-    {
-        read<S, Args...>(intf, m, s);
+        read<T, Args...>(intf, m, t);
     }
 };
 
 /** @brief Specialization of read_single for std::monostate. */
-template <>
-struct read_single<std::monostate>
+template <typename S>
+    requires(std::is_same_v<S, std::monostate>)
+struct read_single<S>
 {
-    template <typename S>
-    static void op(sdbusplus::SdBusInterface*, sd_bus_message*, S&&)
+    template <typename T>
+    static void op(sdbusplus::SdBusInterface*, sd_bus_message*, T&&)
     {}
 };
 
@@ -462,65 +443,42 @@ struct ReadHelper
     {
         auto& field = std::get<Index - 1>(field_tuple);
 
-        ReadHelper<Index - 1>::op(intf, m, std::move(field_tuple));
+        if constexpr (Index > 1)
+        {
+            ReadHelper<Index - 1>::op(intf, m, std::move(field_tuple));
+        }
 
         tuple_item_read(intf, m, field);
     }
 };
 
-template <>
-struct ReadHelper<1>
-{
-    template <typename... Fields>
-    static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m,
-                   std::tuple<Fields...> field_tuple)
-    {
-        tuple_item_read(intf, m, std::get<0>(field_tuple));
-    }
-};
-
-/** @brief Read a tuple of 2 or more entries from the sd_bus_message.
+/** @brief Read a tuple from the sd_bus_message.
  *
  *  @tparam Tuple - The tuple type to read.
  *  @param[out] t - The tuple to read into.
  *
  *  A tuple of 2 or more entries can be read as a set with
  *  sd_bus_message_read.
- */
-template <typename Tuple>
-std::enable_if_t<2 <= std::tuple_size_v<Tuple>>
-    read_tuple(sdbusplus::SdBusInterface* intf, sd_bus_message* m, Tuple&& t)
-{
-    ReadHelper<std::tuple_size_v<Tuple>>::op(intf, m, std::move(t));
-}
-
-/** @brief Read a tuple of exactly 1 entry from the sd_bus_message.
- *
- *  @tparam Tuple - The tuple type to read.
- *  @param[out] t - The tuple to read into.
  *
  *  A tuple of 1 entry can be read with sd_bus_message_read_basic.
  *
- *  Note: Some 1-entry tuples may need special handling due to
- *  can_read_multiple_v == false.
- */
-template <typename Tuple>
-std::enable_if_t<1 == std::tuple_size_v<Tuple>>
-    read_tuple(sdbusplus::SdBusInterface* intf, sd_bus_message* m, Tuple&& t)
-{
-    using itemType = decltype(std::get<0>(t));
-    read_single_t<itemType>::op(intf, m,
-                                std::forward<itemType>(std::get<0>(t)));
-}
-
-/** @brief Read a tuple of 0 entries - no-op.
+ *  A tuple of 0 entries is a no-op.
  *
- *  This a no-op function that is useful due to variadic templates.
  */
 template <typename Tuple>
-std::enable_if_t<0 == std::tuple_size_v<Tuple>> inline read_tuple(
-    sdbusplus::SdBusInterface* /*intf*/, sd_bus_message* /*m*/, Tuple&& /*t*/)
-{}
+void read_tuple(sdbusplus::SdBusInterface* intf, sd_bus_message* m, Tuple&& t)
+{
+    if constexpr (std::tuple_size_v<Tuple> >= 2)
+    {
+        ReadHelper<std::tuple_size_v<Tuple>>::op(intf, m, std::move(t));
+    }
+    else if constexpr (std::tuple_size_v<Tuple> == 1)
+    {
+        using itemType = decltype(std::get<0>(t));
+        read_single_t<itemType>::op(intf, m,
+                                    std::forward<itemType>(std::get<0>(t)));
+    }
+}
 
 /** @brief Group a sequence of C++ types for reading from an sd_bus_message.
  *  @tparam Tuple - A tuple of previously analyzed types.

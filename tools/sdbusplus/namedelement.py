@@ -45,7 +45,7 @@ class NamedElement(object):
     def old_cppNamespacedClass(self, typename="server"):
         return self.old_cppNamespace(typename) + "::" + self.old_classname
 
-    def headerFile(self, typename):
+    def headerFile(self, typename="common"):
         return self.name.replace(".", "/") + f"/{typename}.hpp"
 
     def cppNamespace(self):

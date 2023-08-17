@@ -83,7 +83,7 @@ class Property(NamedElement, Renderer):
         Currently only 'enum' requires conversion.
     """
 
-    def cppTypeParam(self, interface, full=False, typename="server"):
+    def cppTypeParam(self, interface, full=False, typename="common"):
         return self.__cppTypeParam(interface, self.cppTypeName, full, typename)
 
     def default_value(self):
@@ -93,7 +93,7 @@ class Property(NamedElement, Renderer):
             return ""
 
     def __cppTypeParam(
-        self, interface, cppTypeName, full=False, typename="server"
+        self, interface, cppTypeName, full=False, typename="common"
     ):
         iface = NamedElement(name=interface).cppNamespacedClass()
         r = cppTypeName
@@ -112,11 +112,11 @@ class Property(NamedElement, Renderer):
     """ Determine the C++ header of an enumeration-type property.
     """
 
-    def enum_headers(self, interface, typename="server"):
+    def enum_headers(self, interface):
         typeTuple = self.__type_tuple()
-        return self.__enum_headers(interface, typeTuple, typename)
+        return self.__enum_headers(interface, typeTuple)
 
-    def __enum_headers(self, interface, typeTuple, typename):
+    def __enum_headers(self, interface, typeTuple):
         # Enums can be processed directly.
         if "enum" == typeTuple[0]:
             # Get enum type from typeTuple.
@@ -127,7 +127,7 @@ class Property(NamedElement, Renderer):
                 return []
 
             enumType = ".".join(enumType.split(".")[0:-1])
-            return [NamedElement(name=enumType).headerFile(typename)]
+            return [NamedElement(name=enumType).headerFile()]
 
         # If the details part of the tuple has zero entries, no enums are
         # present
@@ -138,7 +138,7 @@ class Property(NamedElement, Renderer):
         # them recursively.
         r = []
         for t in typeTuple[1]:
-            r.extend(self.__enum_headers(interface, t, typename))
+            r.extend(self.__enum_headers(interface, t))
         return r
 
     """ Convert the property type into a C++ type.
@@ -267,7 +267,7 @@ class Property(NamedElement, Renderer):
             if result.startswith("self."):
                 return result.replace("self.", self.LOCAL_ENUM_MAGIC + "::")
 
-            # Insert place-holder for header-type namespace (ex. "server")
+            # Insert place-holder for header-type namespace (ex. "common")
             result = result.split(".")
             result = "::".join(
                 [

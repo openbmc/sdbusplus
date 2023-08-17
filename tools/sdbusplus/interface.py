@@ -51,26 +51,22 @@ class Interface(NamedElement, Renderer):
     def enum_includes(self, inc_list):
         includes = []
         for e in inc_list:
-            includes.extend(e.enum_headers(self.name, self.typename))
+            includes.extend(e.enum_headers(self.name))
         return sorted(set(includes))
 
     def markdown(self, loader):
         return self.render(loader, "interface.md.mako", interface=self)
 
     def server_header(self, loader):
-        self.typename = "server"
         return self.render(loader, "interface.server.hpp.mako", interface=self)
 
     def server_cpp(self, loader):
-        self.typename = "server"
         return self.render(loader, "interface.server.cpp.mako", interface=self)
 
     def client_header(self, loader):
-        self.typename = "client"
         return self.render(loader, "interface.client.hpp.mako", interface=self)
 
     def common_header(self, loader):
-        self.typename = "common"
         return self.render(loader, "interface.common.hpp.mako", interface=self)
 
     def cpp_includes(self):

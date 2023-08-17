@@ -5,7 +5,7 @@
 % for h in interface.cpp_includes():
 #include <${h}>
 % endfor
-#include <${interface.headerFile("common")}>
+#include <${interface.headerFile()}>
 
 #ifndef SDBUSPP_REMOVE_DEPRECATED_NAMESPACE
 namespace sdbusplus::${interface.old_cppNamespacedClass("client")}

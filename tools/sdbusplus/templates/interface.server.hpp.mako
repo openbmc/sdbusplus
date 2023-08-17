@@ -10,7 +10,7 @@
 % for h in interface.cpp_includes():
 #include <${h}>
 % endfor
-#include <${interface.headerFile("common")}> \
+#include <${interface.headerFile()}> \
 <%
     def setOfPropertyTypes():
         return set(p.cppTypeParam(interface.name) for p in

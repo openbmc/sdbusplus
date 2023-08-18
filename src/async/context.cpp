@@ -22,9 +22,9 @@ namespace details
  *  task `co_await`ing Senders over and over.  This class is the completion
  *  handling for the Sender (to get it back to the Receiver, ie. the worker).
  */
-struct wait_process_completion : bus::details::bus_friend
+struct wait_process_completion : context_ref, bus::details::bus_friend
 {
-    explicit wait_process_completion(context& ctx) : ctx(ctx) {}
+    explicit wait_process_completion(context& ctx) : context_ref(ctx) {}
     virtual ~wait_process_completion() = default;
 
     // Called by the `caller` to indicate the Sender is completed.
@@ -36,7 +36,6 @@ struct wait_process_completion : bus::details::bus_friend
     void arm() noexcept;
 
     // Data to share with the worker.
-    context& ctx;
     event_t::time_resolution timeout{};
 
     // TODO: It seems like we should be able to do a normal `task<>` here
@@ -82,11 +81,11 @@ struct wait_process_operation : public wait_process_completion
 };
 
 /* The sender for the wait/process event. */
-struct wait_process_sender
+struct wait_process_sender : public context_ref
 {
     using is_sender = void;
 
-    explicit wait_process_sender(context& ctx) : ctx(ctx) {}
+    explicit wait_process_sender(context& ctx) : context_ref(ctx) {}
 
     friend auto tag_invoke(execution::get_completion_signatures_t,
                            const wait_process_sender&, auto)
@@ -99,9 +98,6 @@ struct wait_process_sender
         // Create the completion for the wait.
         return {self.ctx, std::move(r)};
     }
-
-  private:
-    context& ctx;
 };
 
 exec::basic_task<void, exec::__task::__raw_task_context<void>>

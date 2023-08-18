@@ -18,10 +18,10 @@ namespace client
  */
 template <bool S, bool P, bool Preserved, template <typename> typename... Types>
 class client :
+    public context_ref,
     public Types<sdbusplus::async::proxy_ns::proxy<S, P, false, Preserved>>...
 {
   private:
-    sdbusplus::async::context& ctx;
     sdbusplus::async::proxy_ns::proxy<S, P, false, Preserved> proxy{};
 
   public:
@@ -33,14 +33,14 @@ class client :
     /* Default (empty) constructor only when Service and Path are missing. */
     explicit client(sdbusplus::async::context& ctx)
         requires(!S && !P)
-        : Types<decltype(proxy)>(ctx, decltype(proxy){})..., ctx(ctx)
+        : context_ref(ctx), Types<decltype(proxy)>(ctx, decltype(proxy){})...
     {}
 
     /* Conversion constructor for a non-empty (Service and/or Path) proxy. */
     explicit client(sdbusplus::async::context& ctx,
                     sdbusplus::async::proxy_ns::proxy<S, P, false, Preserved> p)
         requires(S || P)
-        : Types<decltype(proxy)>(ctx, p)..., ctx(ctx), proxy(p)
+        : context_ref(ctx), Types<decltype(proxy)>(ctx, p)..., proxy(p)
     {}
 
     /* Convert a non-Service instance to a Service instance. */

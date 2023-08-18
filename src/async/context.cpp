@@ -281,7 +281,7 @@ void details::wait_process_completion::arm() noexcept
 
     // Get the bus' timeout.
     uint64_t to_usec = 0;
-    sd_bus_get_timeout(get_busp(ctx.get_bus()), &to_usec);
+    sd_bus_get_timeout(get_busp(ctx), &to_usec);
 
     if (to_usec == UINT64_MAX)
     {

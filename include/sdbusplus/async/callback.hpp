@@ -35,7 +35,7 @@ struct callback_sender;
  *  For example, `sd_bus_call_async` could be turned into a Sender with a
  *  call to this and a small lambda such as:
  *  ```
- *      callback([bus = get_busp(ctx.get_bus()),
+ *      callback([bus = get_busp(ctx),
  *                msg = std::move(msg)](auto cb, auto data) {
  *          return sd_bus_call_async(bus, nullptr, msg.get(), cb, data, 0);
  *      })

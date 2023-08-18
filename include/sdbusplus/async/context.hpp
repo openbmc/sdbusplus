@@ -71,6 +71,10 @@ class context : public bus::details::bus_friend
     {
         return bus;
     }
+    operator bus_t&() noexcept
+    {
+        return bus;
+    }
 
     bool request_stop() noexcept
     {

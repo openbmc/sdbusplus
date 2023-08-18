@@ -11,6 +11,7 @@ def main():
 
     valid_types = {"interface": sdbusplus.Interface, "error": sdbusplus.Error}
     valid_processes = {
+        "aserver-header": "async_server_header",
         "client-header": "client_header",
         "common-header": "common_header",
         "exception-cpp": "exception_cpp",

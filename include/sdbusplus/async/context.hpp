@@ -125,6 +125,25 @@ class context : public bus::details::bus_friend
     static int dbus_event_handle(sd_event_source*, int, uint32_t, void*);
 };
 
+/** @brief Simple holder of a context&
+ *
+ *  A common pattern is for classes to hold a reference to a
+ *  context.  Add a class that can be inherited instead of
+ *  having as a class member.  This allows the context-ref constructor to be
+ * placed earliest in the ctor initializer list, so that the reference can be
+ * available from inherited classes (ex. for CRTP patterns).
+ *
+ */
+class context_ref
+{
+  public:
+    context_ref() = delete;
+    explicit context_ref(context& ctx) : ctx(ctx) {}
+
+  protected:
+    context& ctx;
+};
+
 namespace details
 {
 struct context_friend

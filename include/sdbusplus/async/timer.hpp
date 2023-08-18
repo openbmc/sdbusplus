@@ -29,13 +29,13 @@ namespace timer_ns
  * On callback, completes the Receiver.
  */
 template <execution::receiver R>
-struct sleep_operation : public details::context_friend
+struct sleep_operation : public context_ref, details::context_friend
 {
     sleep_operation() = delete;
     sleep_operation(sleep_operation&&) = delete;
 
     sleep_operation(context& ctx, event_t::time_resolution time, R&& r) :
-        ctx(ctx), time(time), receiver(std::move(r))
+        context_ref(ctx), time(time), receiver(std::move(r))
     {}
 
     static int handler(sd_event_source*, uint64_t, void* data) noexcept
@@ -66,7 +66,6 @@ struct sleep_operation : public details::context_friend
         return get_event_loop(ctx);
     }
 
-    context& ctx;
     event_t::time_resolution time;
     event_source_t source;
     R receiver;
@@ -76,14 +75,14 @@ struct sleep_operation : public details::context_friend
  *
  *  On connect, instantiates the completion event.
  */
-struct sleep_sender : public details::context_friend
+struct sleep_sender : public context_ref, details::context_friend
 {
     using is_sender = void;
 
     sleep_sender() = delete;
 
     sleep_sender(context& ctx, event_t::time_resolution time) noexcept :
-        ctx(ctx), time(time)
+        context_ref(ctx), time(time)
     {}
 
     friend auto tag_invoke(execution::get_completion_signatures_t,
@@ -110,7 +109,6 @@ struct sleep_sender : public details::context_friend
     }
 
   private:
-    context& ctx;
     event_t::time_resolution time;
 };
 

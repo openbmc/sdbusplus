@@ -4,7 +4,7 @@
     auto ${property.camelCase}()
     {
         return proxy.template get_property<\
-${property.cppTypeParam(interface.name)}>(ctx, "${property.name}");
+${property.cppTypeParam(interface.name)}>(context(), "${property.name}");
     }
 
 % if 'const' not in property.flags and 'readonly' not in property.flags:
@@ -15,6 +15,6 @@ ${property.cppTypeParam(interface.name)}>(ctx, "${property.name}");
     {
         return proxy.template set_property<\
 ${property.cppTypeParam(interface.name)}>(
-            ctx, "${property.name}", std::forward<decltype(value)>(value));
+            context(), "${property.name}", std::forward<decltype(value)>(value));
     }
 % endif

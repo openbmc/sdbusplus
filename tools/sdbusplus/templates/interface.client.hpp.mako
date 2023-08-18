@@ -13,7 +13,7 @@ namespace sdbusplus::client::${interface.cppNamespace()}
 namespace details
 {
 // forward declaration
-template <typename Proxy>
+template <typename Client, typename Proxy>
 class ${interface.classname};
 } // namespace details
 
@@ -23,17 +23,17 @@ class ${interface.classname};
  *  sdbusplus::async::client_t<${interface.classname}>() or
  *  ${interface.classname}() both construct an equivalent instance.
  */
-template <typename Proxy = void>
+template <typename Client = void, typename Proxy = void>
 struct ${interface.classname} :
-    public std::conditional_t<std::is_void_v<Proxy>,
+    public std::conditional_t<std::is_void_v<Client>,
                               sdbusplus::async::client_t<details::${interface.classname}>,
-                              details::${interface.classname}<Proxy>>
+                              details::${interface.classname}<Client, Proxy>>
 {
     template <typename... Args>
     ${interface.classname}(Args&&... args) :
-        std::conditional_t<std::is_void_v<Proxy>,
+        std::conditional_t<std::is_void_v<Client>,
                            sdbusplus::async::client_t<details::${interface.classname}>,
-                           details::${interface.classname}<Proxy>>(
+                           details::${interface.classname}<Client, Proxy>>(
             std::forward<Args>(args)...)
     {}
 };
@@ -41,12 +41,13 @@ struct ${interface.classname} :
 namespace details
 {
 
-template <typename Proxy>
-class ${interface.classname} : public sdbusplus::common::${interface.cppNamespacedClass()}
+template <typename Client, typename Proxy>
+class ${interface.classname} :
+    public sdbusplus::common::${interface.cppNamespacedClass()},
+    public sdbusplus::async::client::details::client_context_friend
 {
   public:
-    template <bool, bool, bool, template <typename> typename...>
-    friend class sdbusplus::async::client::client;
+    friend Client;
     template <typename>
     friend struct sdbusplus::client::${interface.cppNamespacedClass()};
 
@@ -62,11 +63,16 @@ ${p.render(loader, "property.client.hpp.mako", property=p, interface=interface)}
     % endfor
   private:
     // Conversion constructor from proxy used by client_t.
-    constexpr ${interface.classname}(sdbusplus::async::context& ctx, Proxy p) :
-        ctx(ctx), proxy(p.interface(interface))
+    explicit constexpr ${interface.classname}(Proxy p) :
+        proxy(p.interface(interface))
     {}
 
-    sdbusplus::async::context& ctx;
+    sdbusplus::async::context& context()
+    {
+        return sdbusplus::async::client::details::client_context_friend::
+            context<Client>();
+    }
+
     decltype(std::declval<Proxy>().interface(interface)) proxy = {};
 };
 

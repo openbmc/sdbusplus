@@ -8,6 +8,11 @@ namespace sdbusplus::async
 namespace client
 {
 
+namespace details
+{
+struct client_context_friend;
+}
+
 /** An aggregation class of sdbusplus::async::proxy-based client types.
  *
  *  The resulting class acts as a union of all Types from the template
@@ -16,13 +21,20 @@ namespace client
  *  Like a `proxy`, the class only becomes functional once the service and
  *  path are populated.
  */
-template <bool S, bool P, bool Preserved, template <typename> typename... Types>
+template <bool S, bool P, bool Preserved,
+          template <typename, typename> typename... Types>
 class client :
     public context_ref,
-    public Types<sdbusplus::async::proxy_ns::proxy<S, P, false, Preserved>>...
+    public Types<client<S, P, Preserved, Types...>,
+                 sdbusplus::async::proxy_ns::proxy<S, P, false, Preserved>>...
 {
+  public:
+    using Self = client<S, P, Preserved, Types...>;
+    using Proxy = sdbusplus::async::proxy_ns::proxy<S, P, false, Preserved>;
+    friend details::client_context_friend;
+
   private:
-    sdbusplus::async::proxy_ns::proxy<S, P, false, Preserved> proxy{};
+    Proxy proxy{};
 
   public:
     constexpr client() = delete;
@@ -33,14 +45,13 @@ class client :
     /* Default (empty) constructor only when Service and Path are missing. */
     explicit client(sdbusplus::async::context& ctx)
         requires(!S && !P)
-        : context_ref(ctx), Types<decltype(proxy)>(ctx, decltype(proxy){})...
+        : context_ref(ctx), Types<Self, Proxy>(Proxy{})...
     {}
 
     /* Conversion constructor for a non-empty (Service and/or Path) proxy. */
-    explicit client(sdbusplus::async::context& ctx,
-                    sdbusplus::async::proxy_ns::proxy<S, P, false, Preserved> p)
+    explicit client(sdbusplus::async::context& ctx, Proxy p)
         requires(S || P)
-        : context_ref(ctx), Types<decltype(proxy)>(ctx, p)..., proxy(p)
+        : context_ref(ctx), Types<Self, Proxy>(p)..., proxy(p)
     {}
 
     /* Convert a non-Service instance to a Service instance. */
@@ -65,14 +76,31 @@ class client :
  *  This holds Service/Path in string-views, which must exist longer than
  *  the lifetime of this client_t.
  */
-template <template <typename> typename... Types>
+template <template <typename, typename> typename... Types>
 using client_t = client::client<false, false, false, Types...>;
 /** A Preserved client alias.
  *
  *  This holds Service/Path in strings, which thus have lifetimes that are
  *  the same as the client itself.
  */
-template <template <typename> typename... Types>
+template <template <typename, typename> typename... Types>
 using client_preserved_t = client::client<false, false, false, Types...>;
+
+namespace client::details
+{
+/* Indirect so that the generated Types can access the client_t's context.
+ *
+ * If P2893 gets into C++26 we could eliminate this because we can set all
+ * the Types as friends directly.
+ */
+struct client_context_friend
+{
+    template <typename T>
+    sdbusplus::async::context& context()
+    {
+        return static_cast<T*>(this)->ctx;
+    }
+};
+} // namespace client::details
 
 } // namespace sdbusplus::async

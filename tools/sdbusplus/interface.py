@@ -57,6 +57,11 @@ class Interface(NamedElement, Renderer):
     def markdown(self, loader):
         return self.render(loader, "interface.md.mako", interface=self)
 
+    def async_server_header(self, loader):
+        return self.render(
+            loader, "interface.aserver.hpp.mako", interface=self
+        )
+
     def server_header(self, loader):
         return self.render(loader, "interface.server.hpp.mako", interface=self)
 

@@ -13,7 +13,7 @@ slot_t match::makeMatch(context& ctx, const std::string_view& pattern)
     };
 
     sd_bus_slot* s;
-    auto r = sd_bus_add_match(get_busp(ctx.get_bus()), &s, pattern.data(),
+    auto r = sd_bus_add_match(get_busp(ctx), &s, pattern.data(),
                               match_cb, this);
     if (r < 0)
     {

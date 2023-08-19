@@ -65,6 +65,15 @@ executable(
 )
 
 executable(
+    'calculator-aserver',
+    'calculator-aserver.cpp',
+    generated_sources,
+    implicit_include_directories: false,
+    include_directories: include_directories('gen'),
+    dependencies: sdbusplus_dep,
+)
+
+executable(
     'calculator-client',
     'calculator-client.cpp',
     generated_sources,

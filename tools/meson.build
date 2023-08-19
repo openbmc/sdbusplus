@@ -28,6 +28,9 @@ sdbusplusplus_depfiles = files(
   'sdbusplus/templates/property.server.cpp.mako',
   'sdbusplus/templates/property.server.vtable.cpp.mako',
   'sdbusplus/templates/signal.md.mako',
+  'sdbusplus/templates/signal.aserver.emit.hpp.mako',
+  'sdbusplus/templates/signal.aserver.typeid.hpp.mako',
+  'sdbusplus/templates/signal.aserver.vtable.hpp.mako',
   'sdbusplus/templates/signal.prototype.hpp.mako',
   'sdbusplus/templates/signal.server.vtable.cpp.mako',
 )

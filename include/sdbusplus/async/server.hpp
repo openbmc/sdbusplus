@@ -50,6 +50,32 @@ struct server_context_friend
         return static_cast<T*>(this)->ctx;
     }
 };
+
+/* Determine if a type has a get_property call. */
+template <typename Tag, typename Instance>
+concept has_get_property_nomsg =
+    requires(const Instance& i) { i.get_property(Tag{}); };
+
+/* Determine if a type has a get property call that requries a msg. */
+template <typename Tag, typename Instance>
+concept has_get_property_msg = requires(
+    const Instance& i, sdbusplus::message_t& m) { i.get_property(Tag{}, m); };
+
+/* Determine if a type has any get_property call. */
+template <typename Tag, typename Instance>
+concept has_get_property = has_get_property_nomsg<Tag, Instance> ||
+                           has_get_property_msg<Tag, Instance>;
+
+/* Determine if a type is missing the 'const' on get-property calls. */
+template <typename Tag, typename Instance>
+concept has_get_property_missing_const =
+    !has_get_property<Tag, Instance> &&
+    (
+        requires(Instance& i) { i.get_property(Tag{}); } ||
+        requires(Instance& i, sdbusplus::message_t& m) {
+            i.get_property(Tag{}, m);
+        });
+
 } // namespace server::details
 
 } // namespace sdbusplus::async

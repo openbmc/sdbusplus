@@ -13,6 +13,16 @@ class Calculator :
         ctx.spawn(startup());
     }
 
+    auto get_property(owner_t) const
+    {
+        return "asdf";
+    }
+
+    auto get_property(last_result_t) const
+    {
+        return 42;
+    }
+
   private:
     auto startup() -> sdbusplus::async::task<>
     {

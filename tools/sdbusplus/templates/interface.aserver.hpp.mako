@@ -80,6 +80,11 @@ ${p.render(loader, "property.aserver.get.hpp.mako", property=p, interface=interf
 ${p.render(loader, "property.aserver.set.hpp.mako", property=p, interface=interface)}
 % endfor
 
+  protected:
+% for p in interface.properties:
+${p.render(loader, "property.aserver.value.hpp.mako", property=p, interface=interface)}\
+% endfor
+
   private:
     /** @return the async context */
     sdbusplus::async::context& _context()
@@ -89,10 +94,6 @@ ${p.render(loader, "property.aserver.set.hpp.mako", property=p, interface=interf
 
     sdbusplus::server::interface_t
         _${interface.joinedName("_", "interface")};
-
-% for p in interface.properties:
-${p.render(loader, "property.aserver.value.hpp.mako", property=p, interface=interface)}\
-% endfor
 
 % for p in interface.properties:
 ${p.render(loader, "property.aserver.typeid.hpp.mako", property=p, interface=interface)}\

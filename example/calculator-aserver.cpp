@@ -13,20 +13,22 @@ class Calculator :
         ctx.spawn(startup());
     }
 
-    auto get_property(owner_t) const
-    {
-        return "asdf";
-    }
-
     auto get_property(last_result_t) const
     {
         return 42;
+    }
+
+    bool set_property(last_result_t, auto) const
+    {
+        return false;
     }
 
   private:
     auto startup() -> sdbusplus::async::task<>
     {
         ctx.get_bus().request_name("net.poettering.Calculator");
+
+        status(State::Error);
 
         while (1)
         {

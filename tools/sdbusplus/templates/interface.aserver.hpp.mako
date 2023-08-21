@@ -76,6 +76,9 @@ ${p.render(loader, "property.aserver.tag.hpp.mako", property=p, interface=interf
 % for p in interface.properties:
 ${p.render(loader, "property.aserver.get.hpp.mako", property=p, interface=interface)}
 % endfor
+% for p in interface.properties:
+${p.render(loader, "property.aserver.set.hpp.mako", property=p, interface=interface)}
+% endfor
 
   private:
     /** @return the async context */

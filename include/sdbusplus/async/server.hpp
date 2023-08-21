@@ -76,6 +76,23 @@ concept has_get_property_missing_const =
             i.get_property(Tag{}, m);
         });
 
+/* Determine if a type has a set_property call. */
+template <typename Tag, typename Instance, typename Arg>
+concept has_set_property_nomsg = requires(
+    Instance& i, Arg&& a) { i.set_property(Tag{}, std::forward<Arg>(a)); };
+
+/* Determine if a type has a set property call that requries a msg. */
+template <typename Tag, typename Instance, typename Arg>
+concept has_set_property_msg =
+    requires(Instance& i, sdbusplus::message_t& m, Arg&& a) {
+        i.set_property(Tag{}, m, std::forward<Arg>(a));
+    };
+
+/* Determine if a type has any set_property call. */
+template <typename Tag, typename Instance, typename Arg>
+concept has_set_property = has_set_property_nomsg<Tag, Instance, Arg> ||
+                           has_set_property_msg<Tag, Instance, Arg>;
+
 } // namespace server::details
 
 } // namespace sdbusplus::async

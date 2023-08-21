@@ -57,6 +57,41 @@ i_name = interface.classname
         sd_bus_message* value[[maybe_unused]], void* context [[maybe_unused]],
         sd_bus_error* error [[maybe_unused]])
     {
-        return -EINVAL;
+        auto self = static_cast<${i_name}*>(context);
+
+        try
+        {
+            auto m = sdbusplus::message_t{value};
+
+            // Set up the transaction.
+            server::transaction::set_id(m);
+
+            auto new_value = m.unpack<${p_type}>();
+
+            // Get property value and add to message.
+            if constexpr (server_details::has_set_property_msg<
+                              ${p_tag}, Instance, ${p_type}>)
+            {
+                self->${p_name}(m, std::move(new_value));
+            }
+            else
+            {
+                self->${p_name}(std::move(new_value));
+            }
+        }
+        % for e in property.errors:
+        catch (const ${interface.errorNamespacedClass(e)}& e)
+        {
+            return sd_bus_error_set(error, e.name(), e.description());
+        }
+        % endfor
+        catch (const std::exception&)
+        {
+            self->_context().get_bus().set_current_exception(
+                std::current_exception());
+            return -EINVAL;
+        }
+
+        return 1;
     }
 % endif

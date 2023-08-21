@@ -1,6 +1,7 @@
 #pragma once
 #include <sdbusplus/async/server.hpp>
 #include <sdbusplus/server/interface.hpp>
+#include <sdbusplus/server/transaction.hpp>
 
 #include <type_traits>
 
@@ -38,10 +39,12 @@ struct ${interface.classname} :
 namespace details
 {
 
+namespace server_details = sdbusplus::async::server::details;
+
 template <typename Instance, typename Server>
 class ${interface.classname} :
     public sdbusplus::common::${interface.cppNamespacedClass()},
-    protected sdbusplus::async::server::details::server_context_friend
+    protected server_details::server_context_friend
 {
   public:
     explicit ${interface.classname}(const char* path) :
@@ -65,24 +68,46 @@ ${s.render(loader, "signal.aserver.emit.hpp.mako", signal=s, interface=interface
         _${interface.joinedName("_", "interface")}.emit_removed();
     }
 
+    /* Property access tags. */
+% for p in interface.properties:
+${p.render(loader, "property.aserver.tag.hpp.mako", property=p, interface=interface)}\
+% endfor
+
+% for p in interface.properties:
+${p.render(loader, "property.aserver.get.hpp.mako", property=p, interface=interface)}
+% endfor
+
   private:
     /** @return the async context */
     sdbusplus::async::context& _context()
     {
-        return sdbusplus::async::server::details::server_context_friend::
-            context<Server>();
+        return server_details::server_context_friend::context<Server>();
     }
 
     sdbusplus::server::interface_t
         _${interface.joinedName("_", "interface")};
 
+% for p in interface.properties:
+${p.render(loader, "property.aserver.value.hpp.mako", property=p, interface=interface)}\
+% endfor
+
+% for p in interface.properties:
+${p.render(loader, "property.aserver.typeid.hpp.mako", property=p, interface=interface)}\
+% endfor
 % for s in interface.signals:
 ${s.render(loader, "signal.aserver.typeid.hpp.mako", signal=s, interface=interface)}\
+% endfor
+
+% for p in interface.properties:
+${p.render(loader, "property.aserver.callback.hpp.mako", property=p, interface=interface)}
 % endfor
 
     static constexpr sdbusplus::vtable_t _vtable[] = {
         vtable::start(),
 
+% for p in interface.properties:
+${p.render(loader, "property.aserver.vtable.hpp.mako", property=p, interface=interface)}\
+% endfor
 % for s in interface.signals:
 ${s.render(loader, "signal.aserver.vtable.hpp.mako", signal=s, interface=interface)}\
 % endfor

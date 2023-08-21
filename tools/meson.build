@@ -26,6 +26,7 @@ sdbusplusplus_depfiles = files(
   'sdbusplus/templates/property.md.mako',
   'sdbusplus/templates/property.aserver.callback.hpp.mako',
   'sdbusplus/templates/property.aserver.get.hpp.mako',
+  'sdbusplus/templates/property.aserver.set.hpp.mako',
   'sdbusplus/templates/property.aserver.tag.hpp.mako',
   'sdbusplus/templates/property.aserver.typeid.hpp.mako',
   'sdbusplus/templates/property.aserver.value.hpp.mako',

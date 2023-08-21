@@ -15,17 +15,23 @@ class Calculator :
 
     auto get_property(last_result_t) const
     {
-        return 42;
+        return _last_result;
     }
 
-    bool set_property(last_result_t, auto)
+    bool set_property(last_result_t, int64_t v)
     {
+        if (v % 2 == 0)
+        {
+            std::swap(_last_result, v);
+            return v != _last_result;
+        }
         return false;
     }
 
   private:
     auto startup() -> sdbusplus::async::task<>
     {
+        last_result(123);
         ctx.get_bus().request_name("net.poettering.Calculator");
 
         status(State::Error);

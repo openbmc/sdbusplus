@@ -13,21 +13,6 @@ class Calculator :
         ctx.spawn(startup());
     }
 
-    auto get_property(last_result_t) const
-    {
-        return _last_result;
-    }
-
-    bool set_property(last_result_t, int64_t v)
-    {
-        if (v % 2 == 0)
-        {
-            std::swap(_last_result, v);
-            return v != _last_result;
-        }
-        return false;
-    }
-
     auto method_call(multiply_t, auto x, auto y)
     {
         auto r = x * y;
@@ -38,6 +23,13 @@ class Calculator :
     auto method_call(divide_t, auto x, auto y)
         -> sdbusplus::async::task<divide_t::return_type>
     {
+        using sdbusplus::net::poettering::Calculator::Error::DivisionByZero;
+        if (y == 0)
+        {
+            status(State::Error);
+            throw DivisionByZero();
+        }
+
         auto r = x / y;
         last_result(r);
         co_return r;
@@ -45,7 +37,9 @@ class Calculator :
 
     auto method_call(clear_t) -> sdbusplus::async::task<>
     {
+        auto v = last_result();
         last_result(0);
+        cleared(v);
         co_return;
     }
 
@@ -55,15 +49,6 @@ class Calculator :
         last_result(123);
         ctx.get_bus().request_name("net.poettering.Calculator");
 
-        status(State::Error);
-
-        while (!ctx.stop_requested())
-        {
-            using namespace std::literals;
-            co_await sdbusplus::async::sleep_for(ctx, 10s);
-
-            cleared(42);
-        }
         co_return;
     }
 

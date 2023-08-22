@@ -28,6 +28,27 @@ class Calculator :
         return false;
     }
 
+    auto method_call(multiply_t, auto x, auto y)
+    {
+        auto r = x * y;
+        last_result(r);
+        return r;
+    }
+
+    auto method_call(divide_t, auto x, auto y)
+        -> sdbusplus::async::task<divide_t::return_type>
+    {
+        auto r = x / y;
+        last_result(r);
+        co_return r;
+    }
+
+    auto method_call(clear_t) -> sdbusplus::async::task<>
+    {
+        last_result(0);
+        co_return;
+    }
+
   private:
     auto startup() -> sdbusplus::async::task<>
     {
@@ -36,7 +57,7 @@ class Calculator :
 
         status(State::Error);
 
-        while (1)
+        while (!ctx.stop_requested())
         {
             using namespace std::literals;
             co_await sdbusplus::async::sleep_for(ctx, 10s);

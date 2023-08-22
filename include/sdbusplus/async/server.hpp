@@ -93,6 +93,24 @@ template <typename Tag, typename Instance, typename Arg>
 concept has_set_property = has_set_property_nomsg<Tag, Instance, Arg> ||
                            has_set_property_msg<Tag, Instance, Arg>;
 
+/* Determine if a type has a method call. */
+template <typename Tag, typename Instance, typename... Args>
+concept has_method_nomsg = requires(Instance& i, Args&&... a) {
+                               i.method_call(Tag{}, std::forward<Args>(a)...);
+                           };
+
+/* Determine if a type has a method call that requires a msg. */
+template <typename Tag, typename Instance, typename... Args>
+concept has_method_msg =
+    requires(Instance& i, sdbusplus::message_t& m, Args&&... a) {
+        i.method_call(Tag{}, m, std::forward<Args>(a)...);
+    };
+
+/* Determine if a type has any method call. */
+template <typename Tag, typename Instance, typename... Args>
+concept has_method = has_method_nomsg<Tag, Instance, Args...> ||
+                     has_method_msg<Tag, Instance, Args...>;
+
 } // namespace server::details
 
 } // namespace sdbusplus::async

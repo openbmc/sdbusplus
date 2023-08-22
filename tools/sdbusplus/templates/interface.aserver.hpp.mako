@@ -73,6 +73,11 @@ ${s.render(loader, "signal.aserver.emit.hpp.mako", signal=s, interface=interface
 ${p.render(loader, "property.aserver.tag.hpp.mako", property=p, interface=interface)}\
 % endfor
 
+    /* Method tags. */
+% for m in interface.methods:
+${m.render(loader, "method.aserver.tag.hpp.mako", method=m, interface=interface)}\
+% endfor
+
 % for p in interface.properties:
 ${p.render(loader, "property.aserver.get.hpp.mako", property=p, interface=interface)}
 % endfor
@@ -98,6 +103,9 @@ ${p.render(loader, "property.aserver.value.hpp.mako", property=p, interface=inte
 % for p in interface.properties:
 ${p.render(loader, "property.aserver.typeid.hpp.mako", property=p, interface=interface)}\
 % endfor
+% for m in interface.methods:
+${m.render(loader, "method.aserver.typeid.hpp.mako", method=m, interface=interface)}\
+% endfor
 % for s in interface.signals:
 ${s.render(loader, "signal.aserver.typeid.hpp.mako", signal=s, interface=interface)}\
 % endfor
@@ -106,11 +114,18 @@ ${s.render(loader, "signal.aserver.typeid.hpp.mako", signal=s, interface=interfa
 ${p.render(loader, "property.aserver.callback.hpp.mako", property=p, interface=interface)}
 % endfor
 
+% for m in interface.methods:
+${m.render(loader, "method.aserver.callback.hpp.mako", method=m, interface=interface)}\
+% endfor
+
     static constexpr sdbusplus::vtable_t _vtable[] = {
         vtable::start(),
 
 % for p in interface.properties:
 ${p.render(loader, "property.aserver.vtable.hpp.mako", property=p, interface=interface)}\
+% endfor
+% for m in interface.methods:
+${m.render(loader, "method.aserver.vtable.hpp.mako", method=m, interface=interface)}\
 % endfor
 % for s in interface.signals:
 ${s.render(loader, "signal.aserver.vtable.hpp.mako", signal=s, interface=interface)}\

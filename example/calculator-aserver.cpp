@@ -5,28 +5,9 @@ class Calculator :
     public sdbusplus::aserver::net::poettering::Calculator<Calculator>
 {
   public:
-    explicit Calculator(sdbusplus::async::context& ctx) :
-        sdbusplus::aserver::net::poettering::Calculator<Calculator>(
-            ctx, "/net/poettering/calculator"),
-        manager(ctx, "/")
-    {
-        ctx.spawn(startup());
-    }
-
-    auto get_property(last_result_t) const
-    {
-        return _last_result;
-    }
-
-    bool set_property(last_result_t, int64_t v)
-    {
-        if (v % 2 == 0)
-        {
-            std::swap(_last_result, v);
-            return v != _last_result;
-        }
-        return false;
-    }
+    explicit Calculator(sdbusplus::async::context& ctx, auto path) :
+        sdbusplus::aserver::net::poettering::Calculator<Calculator>(ctx, path)
+    {}
 
     auto method_call(multiply_t, auto x, auto y)
     {
@@ -38,6 +19,13 @@ class Calculator :
     auto method_call(divide_t, auto x, auto y)
         -> sdbusplus::async::task<divide_t::return_type>
     {
+        using sdbusplus::net::poettering::Calculator::Error::DivisionByZero;
+        if (y == 0)
+        {
+            status(State::Error);
+            throw DivisionByZero();
+        }
+
         auto r = x / y;
         last_result(r);
         co_return r;
@@ -45,35 +33,26 @@ class Calculator :
 
     auto method_call(clear_t) -> sdbusplus::async::task<>
     {
+        auto v = last_result();
         last_result(0);
+        cleared(v);
         co_return;
     }
-
-  private:
-    auto startup() -> sdbusplus::async::task<>
-    {
-        last_result(123);
-        ctx.get_bus().request_name("net.poettering.Calculator");
-
-        status(State::Error);
-
-        while (!ctx.stop_requested())
-        {
-            using namespace std::literals;
-            co_await sdbusplus::async::sleep_for(ctx, 10s);
-
-            cleared(42);
-        }
-        co_return;
-    }
-
-    sdbusplus::server::manager_t manager;
 };
 
 int main()
 {
+    constexpr auto path = "/net/poettering/calculator";
+
     sdbusplus::async::context ctx;
-    [[maybe_unused]] Calculator c(ctx);
+    sdbusplus::server::manager_t manager{ctx, path};
+
+    Calculator c{ctx, path};
+
+    ctx.spawn([](sdbusplus::async::context& ctx) -> sdbusplus::async::task<> {
+        ctx.get_bus().request_name("net.poettering.Calculator");
+        co_return;
+    }(ctx));
 
     ctx.run();
 

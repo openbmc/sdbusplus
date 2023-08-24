@@ -14,7 +14,7 @@
         % endfor
     % endif
      */
-    auto ${method.camelCase}(\
+    auto ${method.snake_case}(\
     % if len(method.parameters) != 0:
 ${method.get_parameters_str(interface, join_str=", ")}\
     % else:

@@ -1,7 +1,7 @@
     /** Get value of ${property.name}
      *  ${property.description.strip()}
      */
-    auto ${property.camelCase}()
+    auto ${property.snake_case}()
     {
         return proxy.template get_property<\
 ${property.cppTypeParam(interface.name)}>(context(), "${property.name}");
@@ -11,7 +11,7 @@ ${property.cppTypeParam(interface.name)}>(context(), "${property.name}");
     /** Set value of ${property.name}
      *  ${property.description.strip()}
      */
-    auto ${property.camelCase}(auto value)
+    auto ${property.snake_case}(auto value)
     {
         return proxy.template set_property<\
 ${property.cppTypeParam(interface.name)}>(

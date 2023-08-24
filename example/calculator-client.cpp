@@ -28,7 +28,7 @@ auto startup(sdbusplus::async::context& ctx) -> sdbusplus::async::task<>
 
     {
         // Get the LastResult property.
-        auto _ = co_await c.lastResult();
+        auto _ = co_await c.last_result();
         std::cout << "Should be 42: " << _ << std::endl;
     }
 
@@ -39,15 +39,15 @@ auto startup(sdbusplus::async::context& ctx) -> sdbusplus::async::task<>
 
     {
         // Get the LastResult property.
-        auto _ = co_await c.lastResult();
+        auto _ = co_await c.last_result();
         std::cout << "Should be 0: " << _ << std::endl;
     }
 
     {
         // Set the LastResult property.
-        co_await c.lastResult(1234);
+        co_await c.last_result(1234);
         // Get the LastResult property.
-        auto _ = co_await c.lastResult();
+        auto _ = co_await c.last_result();
         std::cout << "Should be 1234: " << _ << std::endl;
     }
 

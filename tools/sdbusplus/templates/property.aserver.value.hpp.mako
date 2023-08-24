@@ -14,4 +14,4 @@ def p_value():
     return f" = {enum_prefix}{value}"
 
 %>\
-    ${p_type} _${p_name}${p_value()};
+    ${p_type} ${p_name}_${p_value()};

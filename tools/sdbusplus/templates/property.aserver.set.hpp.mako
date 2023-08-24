@@ -41,8 +41,8 @@ i_name = interface.joinedName("_", "interface")
             !server_details::has_get_property<${p_tag}, Instance>,
             "Cannot create default set-property for '${p_tag}' with get-property overload.");
 
-        bool changed = (new_value != _${p_name});
-        _${p_name} = std::forward<Arg>(new_value);
+        bool changed = (new_value != ${p_name}_);
+        ${p_name}_ = std::forward<Arg>(new_value);
 
         if (changed && EmitSignal)
         {

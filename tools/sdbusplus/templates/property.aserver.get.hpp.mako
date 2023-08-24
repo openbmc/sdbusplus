@@ -19,5 +19,5 @@ p_tag = property.snake_case + "_t"
             !server_details::has_get_property_missing_const<${p_tag},
                                                             Instance>,
             "Missing const on get_property(${p_tag})?");
-        return _${p_name};
+        return ${p_name}_;
     }

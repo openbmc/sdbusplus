@@ -20,11 +20,23 @@ struct ${e.name} final : public sdbusplus::exception::generated_exception
     static constexpr auto errErrno = ${e.errno};
     % endif
 
-    const char* name() const noexcept override;
-    const char* description() const noexcept override;
-    const char* what() const noexcept override;
+    const char* name() const noexcept override
+    {
+        return errName;
+    }
+    const char* description() const noexcept override
+    {
+        return errDesc;
+    }
+    const char* what() const noexcept override
+    {
+        return errWhat;
+    }
     % if e.errno:
-    int get_errno() const noexcept override;
+    int get_errno() const noexcept override
+    {
+        return errErrno;
+    }
     % endif
 };
     % endfor

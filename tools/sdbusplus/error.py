@@ -30,6 +30,15 @@ class Error(NamedElement, Renderer):
 
         super(Error, self).__init__(**kwargs)
 
+        self.old_namespaces = self.name.split(".")
+        self.namespaces = [
+            NamedElement(name=x).snake_case for x in self.old_namespaces
+        ]
+        self.old_namespaces = "::".join(
+            ["sdbusplus"] + self.old_namespaces + ["Error"]
+        )
+        self.namespaces = "::".join(["sdbusplus", "error"] + self.namespaces)
+
     def markdown(self, loader):
         return self.render(loader, "error.md.mako", error=self)
 

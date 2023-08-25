@@ -1,26 +1,21 @@
+<% namespaces = error.name.split('.') %>\
 #pragma once
 
-#include <cerrno>
 #include <sdbusplus/exception.hpp>
-<% namespaces = error.name.split('.') %>
-namespace sdbusplus
-{
-    % for s in namespaces:
-namespace ${s}
-{
-    % endfor
-namespace Error
-{
 
-    % for e in error.errors:
-struct ${e.name} final :
-        public sdbusplus::exception::generated_exception
+#include <cerrno>
+
+namespace sdbusplus::${"::".join(namespaces)}::Error
 {
-    static constexpr auto errName = "${error.name}.Error.${e.name}";
+    % for e in error.errors:
+struct ${e.name} final : public sdbusplus::exception::generated_exception
+{
+    static constexpr auto errName =
+        "${error.name}.Error.${e.name}";
     static constexpr auto errDesc =
-            "${e.description.strip()}";
+        "${e.description.strip()}";
     static constexpr auto errWhat =
-            "${error.name}.Error.${e.name}: ${e.description.strip()}";
+        "${error.name}.Error.${e.name}: ${e.description.strip()}";
     % if e.errno:
     static constexpr auto errErrno = ${e.errno};
     % endif
@@ -32,10 +27,6 @@ struct ${e.name} final :
     int get_errno() const noexcept override;
     % endif
 };
+    % endfor
 
-    % endfor
-} // namespace Error
-    % for s in reversed(namespaces):
-} // namespace ${s}
-    % endfor
-} // namespace sdbusplus
+} // namespace sdbusplus::${"::".join(namespaces)}::Error\

@@ -29,11 +29,11 @@ struct Calculator : Calculator_inherit
      */
     int64_t divide(int64_t x, int64_t y) override
     {
-        using sdbusplus::net::poettering::Calculator::Error::DivisionByZero;
+        using sdbusplus::error::net::poettering::calculator::division_by_zero;
         if (y == 0)
         {
             status(State::Error);
-            throw DivisionByZero();
+            throw division_by_zero();
         }
 
         return lastResult(x / y);

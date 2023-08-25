@@ -1,14 +1,13 @@
-<% namespaces = error.name.split('.') %>\
 #pragma once
 
 #include <sdbusplus/exception.hpp>
 
 #include <cerrno>
 
-namespace sdbusplus::${"::".join(namespaces)}::Error
+namespace ${error.namespaces}
 {
     % for e in error.errors:
-struct ${e.name} final : public sdbusplus::exception::generated_exception
+struct ${e.snake_case} final : public sdbusplus::exception::generated_exception
 {
     static constexpr auto errName =
         "${error.name}.Error.${e.name}";
@@ -40,5 +39,13 @@ struct ${e.name} final : public sdbusplus::exception::generated_exception
     % endif
 };
     % endfor
+} // namespace ${error.namespaces}
 
-} // namespace sdbusplus::${"::".join(namespaces)}::Error\
+#ifndef SDBUSPP_REMOVE_DEPRECATED_NAMESPACE
+namespace ${error.old_namespaces}
+{
+    % for e in error.errors:
+    using ${e.name} = ${error.namespaces}::${e.snake_case};
+    % endfor
+} // namespace ${error.old_namespaces}
+#endif\

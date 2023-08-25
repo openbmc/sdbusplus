@@ -114,7 +114,7 @@ void do_start_async_ipmi_call(std::shared_ptr<sdbusplus::asio::connection> conn,
     {
         reply.read(tupleOut);
     }
-    catch (const sdbusplus::exception::SdBusError& e)
+    catch (const sdbusplus::exception::exception& e)
     {
         std::cerr << "failed to unpack; sig is " << reply.get_signature()
                   << "\n";
@@ -288,7 +288,7 @@ int client()
             message intMsg = conn->call(readyMsg);
             intMsg.read(ready);
         }
-        catch (const sdbusplus::exception::SdBusError& e)
+        catch (const sdbusplus::exception::exception& e)
         {
             ready = 0;
             // pause to give the server a chance to start up

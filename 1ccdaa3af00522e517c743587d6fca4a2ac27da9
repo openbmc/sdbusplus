@@ -3,6 +3,23 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "97694a51_1f2d06df",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-08-30T16:36:24Z",
+      "side": 1,
+      "message": "lowercase for titles.\n\nThe title is a bit deceptive because you\u0027re not actually adding this support.  Suggest starting with \u0027docs:\u0027.  You\u0027re documenting a proposed format for the dbus-paths and service name.",
+      "revId": "1ccdaa3af00522e517c743587d6fca4a2ac27da9",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "bad67a17_a9f3f5b2",
         "filename": "/COMMIT_MSG",
         "patchSetId": 1
@@ -14,6 +31,58 @@
       "writtenOn": "2023-08-30T13:05:39Z",
       "side": 1,
       "message": "why?",
+      "revId": "1ccdaa3af00522e517c743587d6fca4a2ac27da9",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d056e85d_961dbb58",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-08-30T16:36:24Z",
+      "side": 1,
+      "message": "👍 .  Need some description of what is being accomplished.",
+      "parentUuid": "bad67a17_a9f3f5b2",
+      "revId": "1ccdaa3af00522e517c743587d6fca4a2ac27da9",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "49d7259c_d2f72ec0",
+        "filename": "docs/yaml/interface.md",
+        "patchSetId": 1
+      },
+      "lineNbr": 254,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-08-30T16:36:24Z",
+      "side": 1,
+      "message": "I think that we have full paths and path segments.\n\nFor example in your metric design you have:\n\n```\nMetricNamespace \u003d \"/xyz/openbmc_project/metric\" (full-path)\nResetCount \u003d \"reset_count\" (path-segment)\nMemoryAvailable \u003d \"memory/available\" (path-segment)\n```\n\n(I don\u0027t know what, if anything you do about the `bmc-X` in your proposal, but maybe nothing.)\n\nWe should handle both of these *and* have something in the YAML that identifies which is which, so that we can ensure that the format is correct for both.",
+      "revId": "1ccdaa3af00522e517c743587d6fca4a2ac27da9",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "78949ac0_29d03e74",
+        "filename": "docs/yaml/interface.md",
+        "patchSetId": 1
+      },
+      "lineNbr": 269,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-08-30T16:36:24Z",
+      "side": 1,
+      "message": "Generally, I\u0027m not sure we need N service_names, but I\u0027m fine with having this ability.  Anytime there is more than one service_name, I would expect that Mapper is used.  That doesn\u0027t mean that the YAML can\u0027t allow it though.\n\nI think the more typical case is that we have a `default: \u003cvalue\u003e` for interfaces which are expected to be singletons (like mapper itself).  I\u0027d like a simple way to identify default service names, like this.",
       "revId": "1ccdaa3af00522e517c743587d6fca4a2ac27da9",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }

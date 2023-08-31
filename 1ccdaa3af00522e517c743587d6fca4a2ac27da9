@@ -18,6 +18,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "55550297_af0f2bf9",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1001758
+      },
+      "writtenOn": "2023-08-31T05:01:02Z",
+      "side": 1,
+      "message": "Done, fixed the title and added more details.",
+      "parentUuid": "97694a51_1f2d06df",
+      "revId": "1ccdaa3af00522e517c743587d6fca4a2ac27da9",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "bad67a17_a9f3f5b2",
@@ -53,6 +71,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "26d8d84b_7016bcc4",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1001758
+      },
+      "writtenOn": "2023-08-31T05:01:02Z",
+      "side": 1,
+      "message": "Done, added more details.",
+      "parentUuid": "d056e85d_961dbb58",
+      "revId": "1ccdaa3af00522e517c743587d6fca4a2ac27da9",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "49d7259c_d2f72ec0",
@@ -70,6 +106,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "a2826a15_e2967220",
+        "filename": "docs/yaml/interface.md",
+        "patchSetId": 1
+      },
+      "lineNbr": 254,
+      "author": {
+        "id": 1001758
+      },
+      "writtenOn": "2023-08-31T05:01:02Z",
+      "side": 1,
+      "message": "Sure, updated the proposal based on namespace and segment.\n\nAbout adding support format for bmc-X will be something needed for multi host design and i don\u0027t think it will be straightforward as we would need some platform info in code generator. Let\u0027s say if platformX has 3 BMCs, then bmc-{BMCNum} in yaml path specification can be replaced with those numbers from platform config. But i think that will require generating platform specific code in different directories too. My suggestion is to skip this for later for multi host convergence.",
+      "parentUuid": "49d7259c_d2f72ec0",
+      "revId": "1ccdaa3af00522e517c743587d6fca4a2ac27da9",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "78949ac0_29d03e74",
@@ -83,6 +137,24 @@
       "writtenOn": "2023-08-30T16:36:24Z",
       "side": 1,
       "message": "Generally, I\u0027m not sure we need N service_names, but I\u0027m fine with having this ability.  Anytime there is more than one service_name, I would expect that Mapper is used.  That doesn\u0027t mean that the YAML can\u0027t allow it though.\n\nI think the more typical case is that we have a `default: \u003cvalue\u003e` for interfaces which are expected to be singletons (like mapper itself).  I\u0027d like a simple way to identify default service names, like this.",
+      "revId": "1ccdaa3af00522e517c743587d6fca4a2ac27da9",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d4922322_bec4e236",
+        "filename": "docs/yaml/interface.md",
+        "patchSetId": 1
+      },
+      "lineNbr": 269,
+      "author": {
+        "id": 1001758
+      },
+      "writtenOn": "2023-08-31T05:01:02Z",
+      "side": 1,
+      "message": "I have made the change to keep default option only.",
+      "parentUuid": "78949ac0_29d03e74",
       "revId": "1ccdaa3af00522e517c743587d6fca4a2ac27da9",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }

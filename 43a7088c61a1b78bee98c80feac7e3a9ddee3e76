@@ -1,6 +1,29 @@
 {
   "comments": [
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "5705e58a_a7fb88fe",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-08-31T15:22:24Z",
+      "side": 1,
+      "message": "nit: spelling and line-wrap.",
+      "range": {
+        "startLine": 13,
+        "startChar": 62,
+        "endLine": 13,
+        "endChar": 72
+      },
+      "revId": "43a7088c61a1b78bee98c80feac7e3a9ddee3e76",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "8a8a1f3b_e9753059",
@@ -14,6 +37,86 @@
       "writtenOn": "2023-08-31T05:01:02Z",
       "side": 1,
       "message": "Addressed your comments. Thanks",
+      "revId": "43a7088c61a1b78bee98c80feac7e3a9ddee3e76",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ac64125f_ca027039",
+        "filename": "docs/yaml/interface.md",
+        "patchSetId": 2
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-08-31T15:22:24Z",
+      "side": 1,
+      "message": "nit: service_names?",
+      "revId": "43a7088c61a1b78bee98c80feac7e3a9ddee3e76",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "223a3465_a8942975",
+        "filename": "docs/yaml/interface.md",
+        "patchSetId": 2
+      },
+      "lineNbr": 246,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-08-31T15:22:24Z",
+      "side": 1,
+      "message": "👍 .  Not what I would have come up with, but seems reasonable and it works.",
+      "revId": "43a7088c61a1b78bee98c80feac7e3a9ddee3e76",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f757ebec_defed454",
+        "filename": "docs/yaml/interface.md",
+        "patchSetId": 2
+      },
+      "lineNbr": 281,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-08-31T15:22:24Z",
+      "side": 1,
+      "message": "nit: xyz",
+      "range": {
+        "startLine": 281,
+        "startChar": 13,
+        "endLine": 281,
+        "endChar": 16
+      },
+      "revId": "43a7088c61a1b78bee98c80feac7e3a9ddee3e76",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "921f03df_96e7fb00",
+        "filename": "docs/yaml/interface.md",
+        "patchSetId": 2
+      },
+      "lineNbr": 282,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-08-31T15:22:24Z",
+      "side": 1,
+      "message": "I think we had a slight misunderstanding.  To me there are two different service-names.\n\n1) A service name which represents the singleton host for an interface.  I would suggest doing this as:\n\n```\nservice_names:\n    - default: xyz.openbmc_project.Deck\n```\n\n2) A service name with an additional purpose:\n\n```\nservice_names:\n    - name: BlackJack\n    - value: xyz.openbmc_project.BlackJack\n```\n\nThe first would generate something like:\n\n```\n    static constexpr auto default_service_name \u003d \"xyz.openbmc_project.Deck\";\n```\n \nThe second would generate something like:\n\n```\n   static constexpr auto black_jack_service_name \u003d \"xyz.openbmc_project.BlackJack\";\n```",
+      "range": {
+        "startLine": 276,
+        "startChar": 0,
+        "endLine": 282,
+        "endChar": 3
+      },
       "revId": "43a7088c61a1b78bee98c80feac7e3a9ddee3e76",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }

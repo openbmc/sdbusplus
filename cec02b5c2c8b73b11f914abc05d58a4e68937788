@@ -51,6 +51,24 @@
       "parentUuid": "f6788d54_20c5452c",
       "revId": "cec02b5c2c8b73b11f914abc05d58a4e68937788",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "58606a8a_7fa22b6a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-08-31T19:26:27Z",
+      "side": 1,
+      "message": "Ideally we start adding them, where appropriate, to existing interfaces, yes.  Any time there is a description that says something about object_paths we probably should document it this way instead.  (We still need to write the code after this that adds it to the common.hpp as constants but that is pretty trivial).\n\nhttps://gerrit.openbmc.org/c/openbmc/docs/+/64917/3/designs/bmc-health-monitor-updates.md#68 is the design doc that instigated this.",
+      "parentUuid": "9930994e_f9b0590a",
+      "revId": "cec02b5c2c8b73b11f914abc05d58a4e68937788",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

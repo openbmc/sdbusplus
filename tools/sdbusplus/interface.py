@@ -8,6 +8,7 @@ from .namedelement import NamedElement
 from .path import Path
 from .property import Property
 from .renderer import Renderer
+from .servicename import ServiceName
 from .signal import Signal
 
 
@@ -30,6 +31,9 @@ class Interface(NamedElement, Renderer):
         self.signals = [Signal(**s) for s in kwargs.pop("signals", [])]
         self.enums = [Enum(**e) for e in kwargs.pop("enumerations", [])]
         self.paths = [Path(**p) for p in kwargs.pop("paths", [])]
+        self.service_names = [
+            ServiceName(**s) for s in kwargs.pop("service_names", [])
+        ]
 
         super(Interface, self).__init__(**kwargs)
 

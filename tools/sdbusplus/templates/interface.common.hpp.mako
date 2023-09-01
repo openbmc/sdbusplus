@@ -44,6 +44,12 @@ struct ${interface.classname}
     };
         % endif
     % endfor
+    % for s in interface.service_names:
+        % if s.description:
+    /** ${s.description.strip()} */
+        % endif
+    static constexpr auto ${s.snake_case} = "${s.value}";
+    % endfor
 
     % for e in interface.enums:
     /** @brief Convert a string to an appropriate enum value.

@@ -51,24 +51,16 @@ struct Calculator : Calculator_inherit
 
 int main()
 {
-    // Define a dbus path location to place the object.
-    constexpr auto path = "/net/poettering/calculator";
-
-    static_assert(
-        std::string_view(
-            sdbusplus::common::net::poettering::Calculator::interface) ==
-        std::string_view(Calculator::interface));
-
     // Create a new bus and affix an object manager for the subtree path we
     // intend to place objects at..
     auto b = sdbusplus::bus::new_default();
-    sdbusplus::server::manager_t m{b, path};
+    sdbusplus::server::manager_t m{b, Calculator::instance_path};
 
     // Reserve the dbus service name : net.poettering.Calculator
-    b.request_name("net.poettering.Calculator");
+    b.request_name(Calculator::default_service);
 
     // Create a calculator object at /net/poettering/calculator
-    Calculator c1{b, path};
+    Calculator c1{b, Calculator::instance_path};
 
     // Handle dbus processing forever.
     b.process_loop();

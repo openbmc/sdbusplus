@@ -5,20 +5,19 @@
 
 auto startup(sdbusplus::async::context& ctx) -> sdbusplus::async::task<>
 {
-    constexpr auto service = "net.poettering.Calculator";
-    constexpr auto path = "/net/poettering/calculator";
+    using Calculator = sdbusplus::client::net::poettering::Calculator<>;
 
-    auto c = sdbusplus::client::net::poettering::Calculator(ctx)
-                 .service(service)
-                 .path(path);
+    auto c = Calculator(ctx)
+                 .service(Calculator::default_service)
+                 .path(Calculator::instance_path);
 
     // Alternatively, sdbusplus::async::client_t<Calculator, ...>() could have
     // been used to combine multiple interfaces into a single client-proxy.
     auto alternative_c [[maybe_unused]] =
         sdbusplus::async::client_t<
             sdbusplus::client::net::poettering::Calculator>(ctx)
-            .service(service)
-            .path(path);
+            .service(Calculator::default_service)
+            .path(Calculator::instance_path);
 
     {
         // Call the Multiply method.

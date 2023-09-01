@@ -42,7 +42,7 @@ class Calculator :
 
 int main()
 {
-    constexpr auto path = "/net/poettering/calculator";
+    constexpr auto path = Calculator::instance_path;
 
     sdbusplus::async::context ctx;
     sdbusplus::server::manager_t manager{ctx, path};
@@ -50,7 +50,7 @@ int main()
     Calculator c{ctx, path};
 
     ctx.spawn([](sdbusplus::async::context& ctx) -> sdbusplus::async::task<> {
-        ctx.get_bus().request_name("net.poettering.Calculator");
+        ctx.get_bus().request_name(Calculator::default_service);
         co_return;
     }(ctx));
 

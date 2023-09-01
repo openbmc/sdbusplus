@@ -86,3 +86,11 @@ enumerations:
           - name: Error
             description: >
                 The service has encountered an error.
+
+paths:
+    - instance: /net/poettering/calculator
+      description: Expected path of the instance.
+
+service_names:
+    - default: net.poettering.Calculator
+      description: Expected service name for the instance.

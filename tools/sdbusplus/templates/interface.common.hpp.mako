@@ -25,6 +25,26 @@ struct ${interface.classname}
     };
     % endfor
 
+    % for p in interface.paths:
+        % if p.description:
+    /** ${p.description.strip()} */
+        % endif
+        % if len(p.segments) == 0:
+    static constexpr auto ${p.snake_case} = "${p.value}";
+        % else:
+    struct ${p.snake_case}
+    {
+        static constexpr auto value = "${p.value}";
+            % for s in p.segments:
+                % if s.description:
+        /** ${s.description.strip()} */
+                % endif
+        static constexpr auto ${s.snake_case} = "${s.value}";
+            % endfor
+    };
+        % endif
+    % endfor
+
     % for e in interface.enums:
     /** @brief Convert a string to an appropriate enum value.
      *  @param[in] s - The string to convert in the form of

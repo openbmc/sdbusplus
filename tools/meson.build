@@ -7,6 +7,7 @@ sdbusplusplus_depfiles = files(
   'sdbusplus/main.py',
   'sdbusplus/method.py',
   'sdbusplus/namedelement.py',
+  'sdbusplus/path.py',
   'sdbusplus/property.py',
   'sdbusplus/renderer.py',
   'sdbusplus/signal.py',

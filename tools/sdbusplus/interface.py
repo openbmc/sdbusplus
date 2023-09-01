@@ -5,6 +5,7 @@ import yaml
 from .enum import Enum
 from .method import Method
 from .namedelement import NamedElement
+from .path import Path
 from .property import Property
 from .renderer import Renderer
 from .signal import Signal
@@ -28,6 +29,7 @@ class Interface(NamedElement, Renderer):
         self.methods = [Method(**m) for m in kwargs.pop("methods", [])]
         self.signals = [Signal(**s) for s in kwargs.pop("signals", [])]
         self.enums = [Enum(**e) for e in kwargs.pop("enumerations", [])]
+        self.paths = [Path(**p) for p in kwargs.pop("paths", [])]
 
         super(Interface, self).__init__(**kwargs)
 

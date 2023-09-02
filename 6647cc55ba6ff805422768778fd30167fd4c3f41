@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "86419655_a77bf277",
+        "filename": "example/yaml/net/poettering/Calculator.interface.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2023-09-02T06:06:38Z",
+      "side": 1,
+      "message": "As an example, probably demonstrate single and multiple paths here to show the full usage of the paths.",
+      "revId": "6647cc55ba6ff805422768778fd30167fd4c3f41",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "db93ade9_7f79189b",
+        "filename": "example/yaml/net/poettering/Calculator.interface.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2023-09-02T06:06:38Z",
+      "side": 1,
+      "message": "The same for service_names, show the usage of single and multiple services names.",
+      "revId": "6647cc55ba6ff805422768778fd30167fd4c3f41",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

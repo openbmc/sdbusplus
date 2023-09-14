@@ -15,11 +15,14 @@ class Path(NamedElement):
             kwargs["name"] = "InstancePath"
             self.value = kwargs.pop("instance")
         else:
-            self.value = kwargs.pop("value", False)
+            self.value = kwargs.pop("value", "")
 
         # Validate path/segment format.
         if len(self.value) == 0:
-            raise ValueError("Invalid empty path.")
+            if segment:
+                self.value = NamedElement(name=kwargs["name"]).snake_case
+            else:
+                raise ValueError("Invalid empty path.")
         if not segment and self.value[0] != "/":
             raise ValueError(f"Paths must start with /: {self.value}")
         if segment and self.value[0] == "/":

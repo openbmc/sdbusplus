@@ -25,7 +25,9 @@ m_return_count = len(method.returns)
         try
         {
             auto m = sdbusplus::message_t{msg};
-% if m_param_count:
+% if m_param_count == 1:
+            auto ${m_param} = m.unpack<${m_ptypes}>();
+% elif m_param_count:
             auto [${m_param}] = m.unpack<${m_ptypes}>();
 % endif
 

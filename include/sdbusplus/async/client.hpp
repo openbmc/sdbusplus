@@ -84,7 +84,7 @@ using client_t = client::client<false, false, false, Types...>;
  *  the same as the client itself.
  */
 template <template <typename, typename> typename... Types>
-using client_preserved_t = client::client<false, false, false, Types...>;
+using client_preserved_t = client::client<false, false, true, Types...>;
 
 namespace client::details
 {

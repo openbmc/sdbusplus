@@ -67,7 +67,7 @@ inline void getProperty(
         handler(boost::system::errc::make_error_code(
                     boost::system::errc::invalid_argument),
                 {});
-        },
+    },
         service, path, "org.freedesktop.DBus.Properties", "Get", interface,
         propertyName);
 }
@@ -100,7 +100,7 @@ template <typename T, typename OnError, typename OnSuccess>
 
         onError(boost::system::errc::make_error_code(
             boost::system::errc::invalid_argument));
-        },
+    },
         service, path, "org.freedesktop.DBus.Properties", "Get", interface,
         propertyName);
 }

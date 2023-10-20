@@ -133,9 +133,8 @@ struct proxy : private sdbusplus::bus::details::bus_friend
 
         // Use 'callback' to perform the operation and "then" "unpack" the
         // contents.
-        return callback(
-                   [bus = get_busp(ctx),
-                    msg = std::move(msg)](auto cb, auto data) mutable {
+        return callback([bus = get_busp(ctx),
+                         msg = std::move(msg)](auto cb, auto data) mutable {
             return sd_bus_call_async(bus, nullptr, msg.get(), cb, data, 0);
         }) | execution::then([](message_t&& m) { return m.unpack<Rs...>(); });
     }

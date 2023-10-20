@@ -23,10 +23,9 @@ inline auto findProperty(
     const std::vector<std::pair<std::string, VariantType>>& container,
     const std::string& key) noexcept
 {
-    return std::find_if(container.begin(), container.end(),
-                        [&key](const auto& keyValue) {
-        return keyValue.first == key;
-    });
+    return std::find_if(
+        container.begin(), container.end(),
+        [&key](const auto& keyValue) { return keyValue.first == key; });
 }
 
 template <typename OnErrorCallback, typename VariantType, typename ValueType>
@@ -147,7 +146,7 @@ inline void unpackProperties(
     details::unpackPropertiesCommon(
         [](const UnpackErrorReason reason, const std::string& property) {
         throw exception::UnpackPropertyError(property, reason);
-        },
+    },
         input, std::forward<Args>(args)...);
 }
 

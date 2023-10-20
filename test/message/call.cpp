@@ -94,7 +94,7 @@ TEST(CallAsync, ExceptionCaught)
             [&](message&&) { throw std::runtime_error("testerror"); });
         b.wait(1s);
         b.process_discard();
-        }(),
+    }(),
         "testerror");
 }
 

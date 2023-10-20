@@ -230,7 +230,7 @@ int server()
         [](const std::string& req, std::string& propertyValue) {
         propertyValue = req;
         return true;
-        },
+    },
         // custom get
         [](const std::string& property) {
         auto now = std::chrono::system_clock::now();
@@ -334,7 +334,7 @@ int client()
         {
             std::cout << item.first << "\n";
         }
-        },
+    },
         "xyz.openbmc_project.ObjectMapper",
         "/xyz/openbmc_project/object_mapper",
         "xyz.openbmc_project.ObjectMapper", "GetSubTree",
@@ -355,7 +355,7 @@ int client()
         {
             std::cerr << "async_method_call should have failed!\n";
         }
-        },
+    },
         "xyz.openbmc_project.ObjectMapper",
         "/xyz/openbmc_project/object_mapper",
         "xyz.openbmc_project.ObjectMapper", "GetSubTree",
@@ -391,7 +391,7 @@ int client()
             return;
         }
         std::cout << "TestYieldFunction return " << testValue << "\n";
-        },
+    },
         "xyz.openbmc_project.asio-test", "/xyz/openbmc_project/test",
         "xyz.openbmc_project.test", "TestYieldFunction", int32_t(41));
     io.run();

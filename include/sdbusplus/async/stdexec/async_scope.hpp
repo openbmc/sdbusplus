@@ -356,10 +356,10 @@ class __future_op : __subscription
                             __guard.unlock();
                             tag((_Receiver&&)__rcvr_, (_As&&)__as...);
                             __guard.lock();
-                            },
+                        },
                             __tup);
                     }
-                    },
+                },
                     __state->__data_);
             }
         }
@@ -422,8 +422,8 @@ class __future_op : __subscription
         std::unique_ptr<__future_state<_Sender, _Env>> __state) :
         __subscription{{},
                        [](__subscription* __self) noexcept -> void {
-                           static_cast<__future_op*>(__self)->__complete_();
-                       }},
+        static_cast<__future_op*>(__self)->__complete_();
+    }},
         __rcvr_((_Receiver2&&)__rcvr), __state_(std::move(__state)),
         __forward_consumer_(get_stop_token(get_env(__rcvr_)),
                             __forward_stopped{&__state_->__stop_source_})
@@ -752,9 +752,9 @@ struct __spawn_op : __spawn_op_base<_EnvId>
                      with(get_stop_token, __scope->__stop_source_.get_token())),
             [](__spawn_op_base<_EnvId>* __op) {
         delete static_cast<__spawn_op*>(__op);
-            }},
-    __op_(stdexec::connect((_Sndr&&)__sndr,
-                           __spawn_receiver_t<_Env>{this, __scope}))
+    }},
+        __op_(stdexec::connect((_Sndr&&)__sndr,
+                               __spawn_receiver_t<_Env>{this, __scope}))
     {}
 
     void __start_() noexcept

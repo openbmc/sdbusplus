@@ -34,9 +34,9 @@ class Application
                 [this](const auto& newPropertyValue, const auto&) {
                 goodbyes_ = newPropertyValue;
                 return true;
-                },
+            },
                 [this](const auto&) { return goodbyes_; });
-            });
+        });
     }
 
     uint32_t fatalErrors() const
@@ -69,7 +69,7 @@ class Application
             std::cerr << "Error: it was expected to fail getProperty due "
                          "to wrong type\n";
             ++fatalErrors_;
-            });
+        });
     }
 
     void asyncReadProperties()
@@ -84,7 +84,7 @@ class Application
                 return;
             }
             std::cout << "Greetings value is: " << value << "\n";
-            });
+        });
 
         sdbusplus::asio::getProperty<std::string>(
             bus_, demoServiceName, demoObjectPath, demoInterfaceName,
@@ -96,7 +96,7 @@ class Application
                 return;
             }
             std::cout << "Goodbyes value is: " << value << "\n";
-            });
+        });
     }
 
     void asyncChangeProperty()
@@ -114,7 +114,7 @@ class Application
 
             std::cout << "Error: it was expected to fail to change greetings\n";
             ++fatalErrors_;
-            });
+        });
 
         sdbusplus::asio::setProperty(
             bus_, demoServiceName, demoObjectPath, demoInterfaceName,
@@ -130,7 +130,7 @@ class Application
             }
             std::cout << "Changed goodbyes property as expected\n";
             boost::asio::post(ioc_, [this] { asyncReadProperties(); });
-            });
+        });
     }
 
     void syncChangeGoodbyes(std::string_view value)

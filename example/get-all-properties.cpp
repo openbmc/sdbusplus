@@ -35,7 +35,7 @@ class Application
             [this](const auto& newPropertyValue, const auto&) {
             goodbyes_ = newPropertyValue;
             return true;
-            },
+        },
             [this](const auto&) { return goodbyes_; });
 
         demo_->register_property_r<uint32_t>(
@@ -84,49 +84,48 @@ class Application
                    const std::vector<std::pair<
                        std::string, std::variant<std::monostate, std::string>>>&
                        properties) -> void {
-                if (ec)
-                {
-                    logSystemErrorCode(ec);
-                    return;
-                }
-                {
-                    const std::string* greetings = nullptr;
-                    const std::string* goodbyes = nullptr;
-                    const bool success = sdbusplus::unpackPropertiesNoThrow(
-                        [this](const sdbusplus::UnpackErrorReason reason,
-                               const std::string& property) {
+            if (ec)
+            {
+                logSystemErrorCode(ec);
+                return;
+            }
+            {
+                const std::string* greetings = nullptr;
+                const std::string* goodbyes = nullptr;
+                const bool success = sdbusplus::unpackPropertiesNoThrow(
+                    [this](const sdbusplus::UnpackErrorReason reason,
+                           const std::string& property) {
                     logUnpackError(reason, property);
-                        },
-                        properties, propertyGrettingName, greetings,
-                        propertyGoodbyesName, goodbyes);
+                },
+                    properties, propertyGrettingName, greetings,
+                    propertyGoodbyesName, goodbyes);
 
-                    if (success)
-                    {
-                        std::cout << "value of greetings: " << *greetings
-                                  << "\n";
-                        std::cout << "value of goodbyes: " << *goodbyes << "\n";
-                    }
-                    else
-                    {
-                        ++fatalErrors_;
-                    }
-                }
-
-                try
+                if (success)
                 {
-                    std::string value;
-                    sdbusplus::unpackProperties(properties, propertyValueName,
-                                                value);
-
-                    std::cerr << "Error: it should fail because of "
-                                 "not matched type\n";
+                    std::cout << "value of greetings: " << *greetings << "\n";
+                    std::cout << "value of goodbyes: " << *goodbyes << "\n";
+                }
+                else
+                {
                     ++fatalErrors_;
                 }
-                catch (const sdbusplus::exception::UnpackPropertyError& error)
-                {
-                    logExpectedException(error);
-                }
-            });
+            }
+
+            try
+            {
+                std::string value;
+                sdbusplus::unpackProperties(properties, propertyValueName,
+                                            value);
+
+                std::cerr << "Error: it should fail because of "
+                             "not matched type\n";
+                ++fatalErrors_;
+            }
+            catch (const sdbusplus::exception::UnpackPropertyError& error)
+            {
+                logExpectedException(error);
+            }
+        });
     }
 
     void asyncGetAllProperties()
@@ -138,60 +137,59 @@ class Application
                        std::string,
                        std::variant<std::monostate, std::string, uint32_t>>>&
                        properties) -> void {
-                if (ec)
-                {
-                    logSystemErrorCode(ec);
-                    return;
-                }
-                try
-                {
-                    std::string greetings;
-                    std::string goodbyes;
-                    uint32_t value = 0u;
-                    sdbusplus::unpackProperties(properties,
-                                                propertyGrettingName, greetings,
-                                                propertyGoodbyesName, goodbyes,
-                                                propertyValueName, value);
+            if (ec)
+            {
+                logSystemErrorCode(ec);
+                return;
+            }
+            try
+            {
+                std::string greetings;
+                std::string goodbyes;
+                uint32_t value = 0u;
+                sdbusplus::unpackProperties(properties, propertyGrettingName,
+                                            greetings, propertyGoodbyesName,
+                                            goodbyes, propertyValueName, value);
 
-                    std::cout << "value of greetings: " << greetings << "\n";
-                    std::cout << "value of goodbyes: " << goodbyes << "\n";
-                    std::cout << "value of value: " << value << "\n";
-                }
-                catch (const sdbusplus::exception::UnpackPropertyError& error)
-                {
-                    logException(error);
-                }
+                std::cout << "value of greetings: " << greetings << "\n";
+                std::cout << "value of goodbyes: " << goodbyes << "\n";
+                std::cout << "value of value: " << value << "\n";
+            }
+            catch (const sdbusplus::exception::UnpackPropertyError& error)
+            {
+                logException(error);
+            }
 
-                try
-                {
-                    std::string unknownProperty;
-                    sdbusplus::unpackProperties(
-                        properties, "UnknownPropertyName", unknownProperty);
+            try
+            {
+                std::string unknownProperty;
+                sdbusplus::unpackProperties(properties, "UnknownPropertyName",
+                                            unknownProperty);
 
-                    std::cerr << "Error: it should fail because of "
-                                 "missing property\n";
-                    ++fatalErrors_;
-                }
-                catch (const sdbusplus::exception::UnpackPropertyError& error)
-                {
-                    logExpectedException(error);
-                }
+                std::cerr << "Error: it should fail because of "
+                             "missing property\n";
+                ++fatalErrors_;
+            }
+            catch (const sdbusplus::exception::UnpackPropertyError& error)
+            {
+                logExpectedException(error);
+            }
 
-                try
-                {
-                    uint32_t notMatchingType;
-                    sdbusplus::unpackProperties(
-                        properties, propertyGrettingName, notMatchingType);
+            try
+            {
+                uint32_t notMatchingType;
+                sdbusplus::unpackProperties(properties, propertyGrettingName,
+                                            notMatchingType);
 
-                    std::cerr << "Error: it should fail because of "
-                                 "not matched type\n";
-                    ++fatalErrors_;
-                }
-                catch (const sdbusplus::exception::UnpackPropertyError& error)
-                {
-                    logExpectedException(error);
-                }
-            });
+                std::cerr << "Error: it should fail because of "
+                             "not matched type\n";
+                ++fatalErrors_;
+            }
+            catch (const sdbusplus::exception::UnpackPropertyError& error)
+            {
+                logExpectedException(error);
+            }
+        });
     }
 
   private:

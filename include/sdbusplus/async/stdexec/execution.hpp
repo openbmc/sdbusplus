@@ -559,7 +559,7 @@ struct get_env_t
     // P2300R7.
     template <class _EnvProvider>
     constexpr decltype(auto)
-        operator()(const _EnvProvider& __with_env) const noexcept
+        operator()(const _EnvProvider & __with_env) const noexcept
     {
         if constexpr (!enable_sender<_EnvProvider>)
         {
@@ -1659,7 +1659,9 @@ template <class _Tag, const auto& _Predicate>
 concept tag_category = //
     requires {
         typename __mbool<bool{_Predicate(_Tag{})}>;
-        requires bool{_Predicate(_Tag{})};
+        requires bool {
+            _Predicate(_Tag{})
+        };
     };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -2497,8 +2499,8 @@ struct __operation : __operation_base<_ReceiverId>
             (_CvrefReceiver&&)__rcvr,
             [](__operation_base<_ReceiverId>* __self) noexcept {
         delete static_cast<__operation*>(__self);
-            }},
-    __op_state_(connect((_Sender&&)__sndr, __receiver_t<_ReceiverId>{this}))
+    }},
+        __op_state_(connect((_Sender&&)__sndr, __receiver_t<_ReceiverId>{this}))
     {}
 };
 
@@ -2679,7 +2681,7 @@ struct __operation
             std::apply(
                 [&__op_state](_Ts&... __ts) {
                 _Tag{}((_Receiver&&)__op_state.__rcvr_, (_Ts&&)__ts...);
-                },
+            },
                 __op_state.__vals_);
         }
     };
@@ -2939,7 +2941,7 @@ struct __binder_back : sender_adaptor_closure<__binder_back<_Fun, _As...>>
         return std::apply(
             [&__sndr, this](_As&... __as) {
             return ((_Fun&&)__fun_)((_Sender&&)__sndr, (_As&&)__as...);
-            },
+        },
             __as_);
     }
 
@@ -2953,7 +2955,7 @@ struct __binder_back : sender_adaptor_closure<__binder_back<_Fun, _As...>>
         return std::apply(
             [&__sndr, this](const _As&... __as) {
             return __fun_((_Sender&&)__sndr, __as...);
-            },
+        },
             __as_);
     }
 };
@@ -3124,9 +3126,10 @@ struct receiver_adaptor
 
         template <same_as<set_value_t> _SetValue, class _Dp = _Derived,
                   class... _As>
-            requires _MISSING_MEMBER(_Dp, set_value) &&
-                     tag_invocable<_SetValue, __base_t<_Dp>, _As...>
-        STDEXEC_DETAIL_CUDACC_HOST_DEVICE //
+            requires _MISSING_MEMBER
+        (_Dp, set_value) &&
+            tag_invocable<_SetValue, __base_t<_Dp>,
+                          _As...> STDEXEC_DETAIL_CUDACC_HOST_DEVICE //
             friend void tag_invoke(_SetValue, _Derived&& __self,
                                    _As&&... __as) noexcept
         {
@@ -3149,9 +3152,10 @@ struct receiver_adaptor
 
         template <same_as<set_error_t> _SetError, class _Error,
                   class _Dp = _Derived>
-            requires _MISSING_MEMBER(_Dp, set_error) &&
-                     tag_invocable<_SetError, __base_t<_Dp>, _Error>
-        STDEXEC_DETAIL_CUDACC_HOST_DEVICE //
+            requires _MISSING_MEMBER
+        (_Dp, set_error) &&
+            tag_invocable<_SetError, __base_t<_Dp>,
+                          _Error> STDEXEC_DETAIL_CUDACC_HOST_DEVICE //
             friend void tag_invoke(_SetError, _Derived&& __self,
                                    _Error&& __err) noexcept
         {
@@ -3172,9 +3176,10 @@ struct receiver_adaptor
         }
 
         template <same_as<set_stopped_t> _SetStopped, class _Dp = _Derived>
-            requires _MISSING_MEMBER(_Dp, set_stopped) &&
-                     tag_invocable<_SetStopped, __base_t<_Dp>>
-        STDEXEC_DETAIL_CUDACC_HOST_DEVICE //
+            requires _MISSING_MEMBER
+        (_Dp, set_stopped) &&
+            tag_invocable<_SetStopped,
+                          __base_t<_Dp>> STDEXEC_DETAIL_CUDACC_HOST_DEVICE //
             friend void tag_invoke(_SetStopped, _Derived&& __self) noexcept
         {
             stdexec::set_stopped(__get_base((_Derived&&)__self));
@@ -3192,8 +3197,8 @@ struct receiver_adaptor
         }
 
         template <same_as<get_env_t> _GetEnv, class _Dp = _Derived>
-            requires _MISSING_MEMBER(_Dp, get_env)
-        STDEXEC_DETAIL_CUDACC_HOST_DEVICE //
+            requires _MISSING_MEMBER
+        (_Dp, get_env) STDEXEC_DETAIL_CUDACC_HOST_DEVICE //
             friend auto tag_invoke(_GetEnv, const _Derived& __self) noexcept
             -> env_of_t<__base_t<const _Dp&>>
         {
@@ -3356,8 +3361,8 @@ struct __operation
 
         __t(_Sender&& __sndr, _Receiver __rcvr, _Fun __fun) //
             noexcept(__nothrow_decay_copyable<_Receiver>    //
-                         && __nothrow_decay_copyable<_Fun>  //
-                             && __nothrow_connectable<_Sender, __receiver_t>) :
+                     && __nothrow_decay_copyable<_Fun>      //
+                     && __nothrow_connectable<_Sender, __receiver_t>) :
             __data_{(_Receiver&&)__rcvr, (_Fun&&)__fun},
             __op_(connect((_Sender&&)__sndr, __receiver_t{&__data_}))
         {}
@@ -4158,13 +4163,12 @@ struct __operation
 
             std::visit(
                 [&](const auto& __tupl) noexcept -> void {
-                    std::apply(
-                        [&](auto __tag,
-                            const auto&... __args) noexcept -> void {
-                            __tag((_Receiver&&)__op->__rcvr_, __args...);
-                        },
-                        __tupl);
+                std::apply(
+                    [&](auto __tag, const auto&... __args) noexcept -> void {
+                    __tag((_Receiver&&)__op->__rcvr_, __args...);
                 },
+                    __tupl);
+            },
                 __op->__shared_state_->__data_);
         }
 
@@ -4529,13 +4533,12 @@ struct __operation
 
             std::visit(
                 [&](auto& __tupl) noexcept -> void {
-                    std::apply(
-                        [&](auto __tag, auto&... __args) noexcept -> void {
-                            __tag((_Receiver&&)__op->__rcvr_,
-                                  std::move(__args)...);
-                        },
-                        __tupl);
+                std::apply(
+                    [&](auto __tag, auto&... __args) noexcept -> void {
+                    __tag((_Receiver&&)__op->__rcvr_, std::move(__args)...);
                 },
+                    __tupl);
+            },
                 __op->__shared_state_->__data_);
         }
 
@@ -4835,13 +4838,12 @@ struct __receiver_
                     __self.__op_state_->__args_.template emplace<__tuple_t>(
                         (_As&&)__as...);
                 auto& __op = __self.__op_state_->__op_state3_
-                                 .template emplace<__op_state_t>(__conv{
-                                     [&] {
+                                 .template emplace<__op_state_t>(__conv{[&] {
                     return connect(
                         std::apply(std::move(__self.__op_state_->__fun_),
                                    __args),
                         std::move(__self.__op_state_->__rcvr_));
-                                 }});
+                }});
                 start(__op);
             }
             catch (...)
@@ -5198,7 +5200,7 @@ struct stopped_as_error_t
                    [__err2 = (_Error&&)__err]() mutable //
                    noexcept(std::is_nothrow_move_constructible_v<_Error>) {
             return just_error((_Error&&)__err2);
-               });
+        });
     }
 
     template <__movable_value _Error>
@@ -5639,21 +5641,21 @@ struct __operation1
             STDEXEC_ASSERT(!__data_.valueless_by_exception());
             std::visit(
                 [&]<class _Tup>(_Tup& __tupl) -> void {
-                    if constexpr (same_as<_Tup, std::monostate>)
-                    {
-                        std::terminate(); // reaching this indicates a bug in
-                                          // schedule_from
-                    }
-                    else
-                    {
-                        std::apply(
-                            [&]<class... _Args>(auto __tag,
-                                                _Args&... __args) -> void {
-                                __tag((_Receiver&&)__rcvr_, (_Args&&)__args...);
-                            },
-                            __tupl);
-                    }
-                },
+                if constexpr (same_as<_Tup, std::monostate>)
+                {
+                    std::terminate(); // reaching this indicates a bug in
+                                      // schedule_from
+                }
+                else
+                {
+                    std::apply(
+                        [&]<class... _Args>(auto __tag,
+                                            _Args&... __args) -> void {
+                        __tag((_Receiver&&)__rcvr_, (_Args&&)__args...);
+                    },
+                        __tupl);
+                }
+            },
                 __data_);
         }
     };
@@ -5916,9 +5918,9 @@ struct __receiver
                 // This line will invalidate *this:
                 start(__op_state->__data_.template emplace<1>(
                     __conv{[__op_state] {
-                        return connect((_Sender&&)__op_state->__sndr_,
-                                       __receiver_ref_t{{}, __op_state});
-                    }}));
+                    return connect((_Sender&&)__op_state->__sndr_,
+                                   __receiver_ref_t{{}, __op_state});
+                }}));
             }
             catch (...)
             {
@@ -5953,10 +5955,9 @@ struct __operation
         __t(_Scheduler __sched, _Sender2&& __sndr, _Receiver2&& __rcvr) :
             __scheduler_((_Scheduler&&)__sched), __sndr_((_Sender2&&)__sndr),
             __rcvr_((_Receiver2&&)__rcvr),
-            __data_{std::in_place_index<0>, __conv{
-                                                [this] {
+            __data_{std::in_place_index<0>, __conv{[this] {
             return connect(schedule(__scheduler_), __receiver_t{{}, this});
-                    }}}
+        }}}
         {}
 
         STDEXEC_IMMOVABLE(__t);
@@ -6256,8 +6257,8 @@ template <class _Env>
 auto __make_env(_Env&& __env, in_place_stop_source& __stop_source) noexcept
 {
     return __env::__join_env(__env::__env_fn{[&](get_stop_token_t) noexcept {
-                                 return __stop_source.get_token();
-                             }},
+        return __stop_source.get_token();
+    }},
                              (_Env&&)__env);
 }
 
@@ -6355,9 +6356,9 @@ void __set_values(_Receiver& __rcvr, _ValuesTuple& __values) noexcept
 {
     std::apply(
         [&](auto&... __opt_vals) noexcept -> void {
-            std::apply(__complete_fn{set_value, __rcvr},
-                       std::tuple_cat(std::apply(__tie_fn{}, *__opt_vals)...));
-        },
+        std::apply(__complete_fn{set_value, __rcvr},
+                   std::tuple_cat(std::apply(__tie_fn{}, *__opt_vals)...));
+    },
         __values);
 }
 
@@ -6632,9 +6633,9 @@ struct __operation
             std::index_sequence<_Is...>) :
             __operation_base_t{{}, (_Receiver&&)__rcvr, {sizeof...(_Is)}},
             __op_states_{__conv{[&__sndrs, this]() {
-                return stdexec::connect(std::get<_Is>((_SendersTuple&&)__sndrs),
-                                        __receiver_t<_Is>{this});
-            }}...}
+            return stdexec::connect(std::get<_Is>((_SendersTuple&&)__sndrs),
+                                    __receiver_t<_Is>{this});
+        }}...}
         {}
 
         template <class _SendersTuple>
@@ -6658,8 +6659,8 @@ struct __operation
             {
                 std::apply(
                     [](auto&... __child_ops) noexcept -> void {
-                        (stdexec::start(__child_ops), ...);
-                    },
+                    (stdexec::start(__child_ops), ...);
+                },
                     __self.__op_states_);
                 if constexpr (sizeof...(_SenderIds) == 0)
                 {

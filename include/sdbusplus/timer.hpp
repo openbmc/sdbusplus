@@ -180,7 +180,7 @@ class Timer
                void* userData) {
             auto timer = static_cast<Timer*>(userData);
             return timer->timeoutHandler();
-            },     // Callback handler on timeout
+        },         // Callback handler on timeout
             this); // User data
         if (r < 0)
         {

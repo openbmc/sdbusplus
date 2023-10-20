@@ -916,11 +916,11 @@ class __operation_vtable
     {
         static __operation_vtable __vtable{
             [](void* __object_pointer) noexcept -> void {
-                STDEXEC_ASSERT(__object_pointer);
-                _Op& __op = *static_cast<_Op*>(__object_pointer);
-                static_assert(operation_state<_Op>);
-                start(__op);
-            }};
+            STDEXEC_ASSERT(__object_pointer);
+            _Op& __op = *static_cast<_Op*>(__object_pointer);
+            static_assert(operation_state<_Op>);
+            start(__op);
+        }};
         return &__vtable;
     }
 };
@@ -1123,17 +1123,15 @@ struct __sender
                                   __mtype<_Sender>{})},
                 [](void* __object_pointer, __receiver_ref_t __receiver)
                     -> __immovable_operation_storage {
-                    _Sender& __sender =
-                        *static_cast<_Sender*>(__object_pointer);
-                    using __op_state_t =
-                        connect_result_t<_Sender, __receiver_ref_t>;
-                    return __immovable_operation_storage{
-                        std::in_place_type<__op_state_t>, __conv{[&] {
-                            return stdexec::connect(
-                                (_Sender&&)__sender,
-                                (__receiver_ref_t&&)__receiver);
-                        }}};
-                }};
+                _Sender& __sender = *static_cast<_Sender*>(__object_pointer);
+                using __op_state_t =
+                    connect_result_t<_Sender, __receiver_ref_t>;
+                return __immovable_operation_storage{
+                    std::in_place_type<__op_state_t>, __conv{[&] {
+                    return stdexec::connect((_Sender&&)__sender,
+                                            (__receiver_ref_t&&)__receiver);
+                }}};
+            }};
             return &__vtable_;
         }
     };
@@ -1246,20 +1244,20 @@ class __scheduler
                 {*__create_vtable(__mtype<__query_vtable<_SchedulerQueries>>{},
                                   __mtype<_Scheduler>{})},
                 [](void* __object_pointer) noexcept -> __sender_t {
-                    const _Scheduler& __scheduler =
-                        *static_cast<const _Scheduler*>(__object_pointer);
-                    return __sender_t{schedule(__scheduler)};
-                },
+                const _Scheduler& __scheduler =
+                    *static_cast<const _Scheduler*>(__object_pointer);
+                return __sender_t{schedule(__scheduler)};
+            },
                 [](const void* __self, const void* __other) noexcept -> bool {
-                    static_assert(noexcept(__declval<const _Scheduler&>() ==
-                                           __declval<const _Scheduler&>()));
-                    STDEXEC_ASSERT(__self && __other);
-                    const _Scheduler& __self_scheduler =
-                        *static_cast<const _Scheduler*>(__self);
-                    const _Scheduler& __other_scheduler =
-                        *static_cast<const _Scheduler*>(__other);
-                    return __self_scheduler == __other_scheduler;
-                }};
+                static_assert(noexcept(__declval<const _Scheduler&>() ==
+                                       __declval<const _Scheduler&>()));
+                STDEXEC_ASSERT(__self && __other);
+                const _Scheduler& __self_scheduler =
+                    *static_cast<const _Scheduler*>(__self);
+                const _Scheduler& __other_scheduler =
+                    *static_cast<const _Scheduler*>(__other);
+                return __self_scheduler == __other_scheduler;
+            }};
             return &__vtable_;
         }
     };

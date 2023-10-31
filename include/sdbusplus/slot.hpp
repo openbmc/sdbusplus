@@ -2,6 +2,8 @@
 
 #include <systemd/sd-bus.h>
 
+#include <sdbusplus/sdbus.hpp>
+
 #include <memory>
 
 namespace sdbusplus

@@ -1,0 +1,19 @@
+description: An example interface
+
+properties:
+    - name: ExampleInt
+      type: int64
+      default: 0
+    - name: ExampleString
+      type: string
+      default: "string val"
+    - name: ExampleVariant
+      type: variant[size, string]
+
+paths:
+    - instance: /xyz/openbmc_project/example
+      description: Expected path of the instance.
+
+service_names:
+    - default: xyz.openbmc_project.Example
+      description: Expected service name for the instance.

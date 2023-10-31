@@ -54,6 +54,7 @@ generated_sources = []
 generated_others = []
 subdir('gen')
 subdir('gen/net')
+subdir('gen/xyz')
 
 executable(
     'calculator-server',
@@ -81,3 +82,12 @@ executable(
     include_directories: include_directories('gen'),
     dependencies: sdbusplus_dep,
 )
+
+executable(
+  'prop-match',
+  'prop_match.cpp',
+  generated_sources,
+  implicit_include_directories: false,
+  include_directories: include_directories('gen'),
+  dependencies: sdbusplus_dep
+  )

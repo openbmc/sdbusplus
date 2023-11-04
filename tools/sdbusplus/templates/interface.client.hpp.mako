@@ -44,7 +44,7 @@ namespace details
 template <typename Client, typename Proxy>
 class ${interface.classname} :
     public sdbusplus::common::${interface.cppNamespacedClass()},
-    public sdbusplus::async::client::details::client_context_friend
+    private sdbusplus::async::client::details::client_context_friend
 {
   public:
     friend Client;
@@ -70,7 +70,7 @@ ${p.render(loader, "property.client.hpp.mako", property=p, interface=interface)}
     sdbusplus::async::context& context()
     {
         return sdbusplus::async::client::details::client_context_friend::
-            context<Client>();
+            context<Client, ${interface.classname}>(this);
     }
 
     decltype(std::declval<Proxy>().interface(interface)) proxy = {};

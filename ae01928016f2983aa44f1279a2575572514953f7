@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d4c40921_bf24b28e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2023-11-06T06:09:35Z",
+      "side": 1,
+      "message": "Verified the issue is fixed.\n\nWith this merged, I would like to add some extra example code to demo the usage of client_t with multiple interfaces, and then make sure the CI could catch such issue.",
+      "revId": "ae01928016f2983aa44f1279a2575572514953f7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

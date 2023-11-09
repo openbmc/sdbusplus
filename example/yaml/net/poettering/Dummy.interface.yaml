@@ -1,0 +1,9 @@
+description: >
+    A dummy interface in example to demo the multiple interfaces usage in
+    server/client code.
+properties:
+    - name: Foo
+      type: string
+      default: "bar"
+      description: >
+          A dummy string property

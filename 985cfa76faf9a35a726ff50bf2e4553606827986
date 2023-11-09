@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ecf8dad5_8e742fe3",
+        "filename": "example/calculator-aserver.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2023-11-09T09:47:39Z",
+      "side": 1,
+      "message": "@Patrick Does current sdbusplus provides something like `sdbusplus::async::server_t\u003cA, B\u003e` now? If yes, what\u0027s the usage and how it works with CRTP?",
+      "revId": "985cfa76faf9a35a726ff50bf2e4553606827986",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

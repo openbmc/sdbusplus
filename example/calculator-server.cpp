@@ -1,13 +1,15 @@
 #include <net/poettering/Calculator/client.hpp>
 #include <net/poettering/Calculator/error.hpp>
 #include <net/poettering/Calculator/server.hpp>
+#include <net/poettering/Dummy/server.hpp>
 #include <sdbusplus/server.hpp>
 
 #include <iostream>
 #include <string_view>
 
 using Calculator_inherit =
-    sdbusplus::server::object_t<sdbusplus::server::net::poettering::Calculator>;
+    sdbusplus::server::object_t<sdbusplus::server::net::poettering::Calculator,
+                                sdbusplus::server::net::poettering::Dummy>;
 
 /** Example implementation of net.poettering.Calculator */
 struct Calculator : Calculator_inherit

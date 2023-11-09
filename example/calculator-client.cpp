@@ -1,4 +1,5 @@
 #include <net/poettering/Calculator/client.hpp>
+#include <net/poettering/Dummy/client.hpp>
 #include <sdbusplus/async.hpp>
 
 #include <iostream>
@@ -13,11 +14,12 @@ auto startup(sdbusplus::async::context& ctx) -> sdbusplus::async::task<>
 
     // Alternatively, sdbusplus::async::client_t<Calculator, ...>() could have
     // been used to combine multiple interfaces into a single client-proxy.
-    auto alternative_c [[maybe_unused]] =
-        sdbusplus::async::client_t<
-            sdbusplus::client::net::poettering::Calculator>(ctx)
-            .service(Calculator::default_service)
-            .path(Calculator::instance_path);
+    auto alternative_c
+        [[maybe_unused]] = sdbusplus::async::client_t<
+                               sdbusplus::client::net::poettering::Calculator,
+                               sdbusplus::client::net::poettering::Dummy>(ctx)
+                               .service(Calculator::default_service)
+                               .path(Calculator::instance_path);
 
     {
         // Call the Multiply method.
@@ -48,6 +50,12 @@ auto startup(sdbusplus::async::context& ctx) -> sdbusplus::async::task<>
         // Get the LastResult property.
         auto _ = co_await c.last_result();
         std::cout << "Should be 1234: " << _ << std::endl;
+    }
+
+    {
+        // Get the dummy interface's Foo property.
+        auto _ = co_await alternative_c.foo();
+        std::cout << "Should be bar: " << _ << std::endl;
     }
 
     co_return;

@@ -38,10 +38,7 @@ struct wait_process_completion : context_ref, bus::details::bus_friend
     // Data to share with the worker.
     event_t::time_resolution timeout{};
 
-    // TODO: It seems like we should be able to do a normal `task<>` here
-    //       but spawn on it compile fails.
-    static exec::basic_task<void, exec::__task::__raw_task_context<void>>
-        loop(context& ctx);
+    static auto loop(context& ctx) -> task<>;
     static void wait_once(context& ctx);
 };
 
@@ -100,8 +97,7 @@ struct wait_process_sender : public context_ref
     }
 };
 
-exec::basic_task<void, exec::__task::__raw_task_context<void>>
-    wait_process_completion::loop(context& ctx)
+auto wait_process_completion::loop(context& ctx) -> task<>
 {
     while (!ctx.final_stop.stop_requested())
     {

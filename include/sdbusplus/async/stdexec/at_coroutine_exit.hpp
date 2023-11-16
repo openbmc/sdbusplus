@@ -100,11 +100,10 @@ struct __die_on_stop_t
 
             template <__decays_to<__t> _Self, class _Env>
             friend auto tag_invoke(get_completion_signatures_t, _Self&&, _Env&&)
-                -> dependent_completion_signatures<_Env>;
-            template <__decays_to<__t> _Self, class _Env>
-            friend auto tag_invoke(get_completion_signatures_t, _Self&&, _Env&&)
                 -> __completion_signatures<_Env>
-                requires true;
+            {
+                return {};
+            }
 
             friend env_of_t<_Sender> tag_invoke(get_env_t,
                                                 const __t& __self) noexcept
@@ -194,8 +193,7 @@ class [[nodiscard]] __task
             auto __coro = __p.__is_unhandled_stopped_
                               ? __p.continuation().unhandled_stopped()
                               : __p.continuation().handle();
-            __h.destroy();
-            return __coro;
+            return STDEXEC_DESTROY_AND_CONTINUE(__h, __coro);
         }
 
         void await_resume() const noexcept {}

@@ -21,6 +21,10 @@
 
 namespace stdexec
 {
+struct __none_such;
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+struct default_domain;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 namespace __receivers
@@ -48,8 +52,10 @@ extern const bool enable_receiver;
 namespace __env
 {
 struct get_env_t;
-}
+struct empty_env;
+} // namespace __env
 
+using __env::empty_env;
 using __env::get_env_t;
 extern const get_env_t get_env;
 
@@ -119,10 +125,6 @@ struct get_completion_signatures_t;
 using __get_completion_signatures::get_completion_signatures_t;
 extern const get_completion_signatures_t get_completion_signatures;
 
-template <class _Sender, class _Env>
-using __completion_signatures_of_t =
-    __call_result_t<get_completion_signatures_t, _Sender, _Env>;
-
 //////////////////////////////////////////////////////////////////////////////////////////////////
 namespace __connect
 {
@@ -169,4 +171,41 @@ struct as_awaitable_t;
 using __as_awaitable::as_awaitable_t;
 extern const as_awaitable_t as_awaitable;
 
+//////////////////////////////////////////////////////////////////////////////////////////////////
+namespace __transfer
+{
+struct transfer_t;
+}
+
+using __transfer::transfer_t;
+extern const transfer_t transfer;
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+namespace __transfer_just
+{
+struct transfer_just_t;
+}
+
+using __transfer_just::transfer_just_t;
+extern const transfer_just_t transfer_just;
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+namespace __bulk
+{
+struct bulk_t;
+}
+
+using __bulk::bulk_t;
+extern const bulk_t bulk;
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+namespace __on_v2
+{
+struct on_t;
+}
+
+namespace v2
+{
+using __on_v2::on_t;
+}
 } // namespace stdexec

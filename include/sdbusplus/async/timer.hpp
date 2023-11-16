@@ -99,13 +99,12 @@ struct sleep_sender : public context_ref, details::context_friend
         return {self.ctx, self.time, std::move(r)};
     }
 
-    static task<> sleep_for(context& ctx, event_t::time_resolution time)
+    static auto sleep_for(context& ctx, event_t::time_resolution time)
     {
         // Run the delay sender and then switch back to the worker thread.
         // The delay completion happens from the sd-event handler, which is
         // ran on the 'caller' thread.
-        co_await sleep_sender(ctx, time);
-        co_await execution::schedule(get_scheduler(ctx));
+        return execution::transfer(sleep_sender(ctx, time), get_scheduler(ctx));
     }
 
   private:

@@ -15,7 +15,9 @@
  */
 #pragma once
 
-#include <sdbusplus/async/stdexec/execution.hpp>
+#include "../stdexec/execution.hpp"
+
+#include <sdbusplus/async/stdexec/sequence_senders.hpp>
 
 #include <cstddef>
 
@@ -33,8 +35,8 @@ struct __create_vtable_t
     constexpr const _VTable* operator()(__mtype<_VTable>,
                                         __mtype<_Tp>) const noexcept
     {
-        return tag_invoke(__create_vtable_t{}, __mtype<_VTable>{},
-                          __mtype<_Tp>{});
+        return stdexec::tag_invoke(__create_vtable_t{}, __mtype<_VTable>{},
+                                   __mtype<_Tp>{});
     }
 };
 
@@ -207,7 +209,7 @@ struct __delete_t
     {
         static_assert(
             nothrow_tag_invocable<__delete_t, __mtype<_Tp>, _Storage&>);
-        tag_invoke(__delete_t{}, __mtype<_Tp>{}, __storage);
+        stdexec::tag_invoke(__delete_t{}, __mtype<_Tp>{}, __storage);
     }
 };
 
@@ -225,7 +227,8 @@ struct __copy_construct_t
                                                    __mtype<_Tp>, _Storage&,
                                                    const _Storage&>)
     {
-        tag_invoke(__copy_construct_t{}, __mtype<_Tp>{}, __self, __from);
+        stdexec::tag_invoke(__copy_construct_t{}, __mtype<_Tp>{}, __self,
+                            __from);
     }
 };
 
@@ -241,8 +244,8 @@ struct __move_construct_t
     {
         static_assert(nothrow_tag_invocable<__move_construct_t, __mtype<_Tp>,
                                             _Storage&, _Storage&&>);
-        tag_invoke(__move_construct_t{}, __mtype<_Tp>{}, __self,
-                   (_Storage&&)__from);
+        stdexec::tag_invoke(__move_construct_t{}, __mtype<_Tp>{}, __self,
+                            (_Storage&&)__from);
     }
 };
 
@@ -441,7 +444,7 @@ struct __immovable_storage
             __default_storage_vtable((__vtable_t*)nullptr)};
         void* __object_pointer_{nullptr};
         alignas(__alignment) std::byte __buffer_[__buffer_size]{};
-        STDEXEC_NO_UNIQUE_ADDRESS _Allocator __allocator_{};
+        STDEXEC_ATTRIBUTE((no_unique_address)) _Allocator __allocator_{};
     };
 };
 
@@ -675,7 +678,7 @@ class __storage<_Vtable, _Allocator, _Copyable, _Alignment, _InlineSize>::__t :
     const __vtable_t* __vtable_{__default_storage_vtable((__vtable_t*)nullptr)};
     void* __object_pointer_{nullptr};
     alignas(__alignment) std::byte __buffer_[__buffer_size]{};
-    STDEXEC_NO_UNIQUE_ADDRESS _Allocator __allocator_{};
+    STDEXEC_ATTRIBUTE((no_unique_address)) _Allocator __allocator_{};
 };
 
 struct __empty_vtable
@@ -779,7 +782,12 @@ template <class... _Sigs, class... _Queries>
     requires(__is_not_stop_token_query<_Queries> && ...)
 struct __ref<completion_signatures<_Sigs...>, _Queries...>
 {
+#if !STDEXEC_MSVC()
+    // MSVCBUG
+    // https://developercommunity.visualstudio.com/t/Private-member-inaccessible-when-used-in/10448363
+
   private:
+#endif
     using __vtable_t =
         stdexec::__t<__vtable<completion_signatures<_Sigs...>, _Queries...>>;
 
@@ -851,7 +859,12 @@ template <class... _Sigs, class... _Queries>
     requires(__is_stop_token_query<_Queries> || ...)
 struct __ref<completion_signatures<_Sigs...>, _Queries...>
 {
+#if !STDEXEC_MSVC()
+    // MSVCBUG
+    // https://developercommunity.visualstudio.com/t/Private-member-inaccessible-when-used-in/10448363
+
   private:
+#endif
     using _FilteredQueries =
         __minvoke<__remove_if<__q<__is_never_stop_token_query>>, _Queries...>;
     using __vtable_t = stdexec::__t<
@@ -944,7 +957,7 @@ struct __on_stop_t
 template <class _Receiver>
 struct __operation_base
 {
-    STDEXEC_NO_UNIQUE_ADDRESS _Receiver __rcvr_;
+    STDEXEC_ATTRIBUTE((no_unique_address)) _Receiver __rcvr_;
     stdexec::in_place_stop_source __stop_source_{};
     using __stop_callback = typename stdexec::stop_token_of_t<
         stdexec::env_of_t<_Receiver>>::template callback_type<__on_stop_t>;
@@ -962,7 +975,16 @@ struct __stoppable_receiver
 
     struct __t
     {
+        using is_receiver = void;
         __operation_base<_Receiver>* __op_;
+
+        template <same_as<set_next_t> _SetNext, same_as<__t> _Self, class _Item>
+            requires __callable<_SetNext, _Receiver&, _Item>
+        friend auto tag_invoke(_SetNext, _Self& __self, _Item&& __item)
+        {
+            return _SetNext{}(__self.__op_->__rcvr_,
+                              static_cast<_Item&&>(__item));
+        }
 
         template <same_as<set_value_t> _SetValue, same_as<__t> _Self,
                   class... _Args>
@@ -998,10 +1020,9 @@ struct __stoppable_receiver
         friend __env_t<env_of_t<_Receiver>>
             tag_invoke(_GetEnv, const _Self& __self) noexcept
         {
-            return __make_env(
-                get_env(__self.__op_->__rcvr_),
-                __with_(get_stop_token,
-                        __self.__op_->__stop_source_.get_token()));
+            return __make_env(get_env(__self.__op_->__rcvr_),
+                              __mkprop(__self.__op_->__stop_source_.get_token(),
+                                       get_stop_token));
         }
     };
 };
@@ -1058,7 +1079,7 @@ struct __operation<_ReceiverId, false>
         {}
 
       private:
-        STDEXEC_NO_UNIQUE_ADDRESS _Receiver __rec_;
+        STDEXEC_ATTRIBUTE((no_unique_address)) _Receiver __rec_;
         __immovable_operation_storage __storage_{};
 
         friend void tag_invoke(start_t, __t& __self) noexcept
@@ -1330,7 +1351,8 @@ class any_receiver_ref
         std::is_nothrow_invocable_v<
             _Tag, stdexec::__copy_cvref_t<Self, __receiver_base>, _As...>)
     {
-        return tag_invoke(_Tag{}, ((Self&&)__self).__receiver_, (_As&&)__as...);
+        return stdexec::tag_invoke(_Tag{}, ((Self&&)__self).__receiver_,
+                                   (_As&&)__as...);
     }
 
   public:
@@ -1363,8 +1385,8 @@ class any_receiver_ref
             std::is_nothrow_invocable_v<
                 _Tag, stdexec::__copy_cvref_t<Self, __sender_base>, _As...>)
         {
-            return tag_invoke(_Tag{}, ((Self&&)__self).__sender_,
-                              (_As&&)__as...);
+            return stdexec::tag_invoke(_Tag{}, ((Self&&)__self).__sender_,
+                                       (_As&&)__as...);
         }
 
       public:
@@ -1405,9 +1427,21 @@ class any_receiver_ref
                     stdexec::get_completion_scheduler_t<stdexec::set_value_t>>>,
                 decltype(_SenderQueries)...>;
 
+#if STDEXEC_MSVC()
+            // MSVCBUG
+            // https://developercommunity.visualstudio.com/t/ICE-and-non-ICE-bug-in-NTTP-argument-w/10361081
+
+            static constexpr auto __any_scheduler_noexcept_signature =
+                stdexec::get_completion_scheduler<stdexec::set_value_t>.signature<any_scheduler() noexcept>;
+            template <class... _Queries>
+            using __schedule_sender_fn =
+                typename __schedule_receiver::template any_sender<
+                    __any_scheduler_noexcept_signature>;
+#else
             template <class... _Queries>
             using __schedule_sender_fn = typename __schedule_receiver::template any_sender<
                 stdexec::get_completion_scheduler<stdexec::set_value_t>.template signature<any_scheduler() noexcept>>;
+#endif
             using __schedule_sender =
                 stdexec::__mapply<stdexec::__q<__schedule_sender_fn>,
                                   schedule_sender_queries>;
@@ -1440,8 +1474,8 @@ class any_receiver_ref
                     _Tag, stdexec::__copy_cvref_t<Self, __scheduler_base>,
                     _As...>)
             {
-                return tag_invoke(_Tag{}, ((Self&&)__self).__scheduler_,
-                                  (_As&&)__as...);
+                return stdexec::tag_invoke(
+                    _Tag{}, ((Self&&)__self).__scheduler_, (_As&&)__as...);
             }
 
             friend bool

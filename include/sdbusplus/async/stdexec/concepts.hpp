@@ -101,7 +101,7 @@ inline constexpr bool __destructible_<_Ty[_Np]> = __destructible_<_Ty>;
 template <class T>
 concept destructible = __destructible_<T>;
 
-#if __has_builtin(__is_constructible)
+#if STDEXEC_HAS_BUILTIN(__is_constructible)
 template <class _Ty, class... _As>
 concept constructible_from = //
     destructible<_Ty> &&     //
@@ -110,7 +110,7 @@ concept constructible_from = //
 template <class _Ty, class... _As>
 concept constructible_from = //
     destructible<_Ty> &&     //
-    is_constructible_v<_Ty, _As...>;
+    std::is_constructible_v<_Ty, _As...>;
 #endif
 
 template <class _Ty>
@@ -232,7 +232,16 @@ concept __movable_value =                 //
     move_constructible<__decay_t<_Ty>> && //
     constructible_from<__decay_t<_Ty>, _Ty>;
 
-#if __has_builtin(__is_nothrow_constructible)
+template <class _Ty>
+concept __nothrow_movable_value = //
+    __movable_value<_Ty> &&       //
+    requires(_Ty&& __t) {
+        {
+            __decay_t<_Ty>{__decay_t<_Ty>{(_Ty&&)__t}}
+        } noexcept;
+    };
+
+#if STDEXEC_HAS_BUILTIN(__is_nothrow_constructible)
 template <class _Ty, class... _As>
 concept __nothrow_constructible_from = constructible_from<_Ty, _As...> &&
                                        __is_nothrow_constructible(_Ty, _As...);
@@ -257,8 +266,8 @@ template <class _Ty>
 concept __nothrow_decay_copyable =
     __nothrow_constructible_from<__decay_t<_Ty>, _Ty>;
 
-template <class _Range>
-using range_value_t = decltype(*begin(::std::declval<_Range>()));
+template <class _Ty, class _Up>
+concept __decays_to_derived_from = derived_from<__decay_t<_Ty>, _Up>;
 
 } // namespace stdexec
 

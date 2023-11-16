@@ -30,7 +30,8 @@
 #include <variant>
 
 STDEXEC_PRAGMA_PUSH()
-STDEXEC_PRAGMA_IGNORE("-Wundefined-inline")
+STDEXEC_PRAGMA_IGNORE_GNU("-Wpragmas")
+STDEXEC_PRAGMA_IGNORE_GNU("-Wundefined-inline")
 
 namespace exec
 {
@@ -107,7 +108,7 @@ class __default_task_context_impl
     static constexpr bool __with_scheduler = _SchedulerAffinity ==
                                              __scheduler_affinity::__sticky;
 
-    STDEXEC_NO_UNIQUE_ADDRESS
+    STDEXEC_ATTRIBUTE((no_unique_address))
     __if_c<__with_scheduler, __any_scheduler, __ignore> //
         __scheduler_{exec::inline_scheduler{}};
     in_place_stop_token __stop_token_;
@@ -389,9 +390,9 @@ class basic_task
   private:
     struct __final_awaitable
     {
-        static std::false_type await_ready() noexcept
+        static constexpr bool await_ready() noexcept
         {
-            return {};
+            return false;
         }
 
         static __coro::coroutine_handle<>
@@ -499,9 +500,9 @@ class basic_task
                 __coro_.destroy();
         }
 
-        static std::false_type await_ready() noexcept
+        static constexpr bool await_ready() noexcept
         {
-            return {};
+            return false;
         }
 
         template <class _ParentPromise2>
@@ -550,7 +551,7 @@ class basic_task
 
     // Make this task generally awaitable:
     friend __task_awaitable<> operator co_await(basic_task && __self) noexcept
-        requires __valid<awaiter_context_t, __promise>
+        requires __mvalid<awaiter_context_t, __promise>
     {
         return __task_awaitable<>{std::exchange(__self.__coro_, {})};
     }
@@ -569,7 +570,10 @@ class basic_task
                               set_error_t(std::exception_ptr), set_stopped_t()>;
 
     friend auto tag_invoke(get_completion_signatures_t, const basic_task&, auto)
-        -> __task_traits_t;
+        -> __task_traits_t
+    {
+        return {};
+    }
 
     explicit basic_task(__coro::coroutine_handle<promise_type> __coro) noexcept
         :

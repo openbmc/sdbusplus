@@ -214,7 +214,10 @@ struct read_single<S>
 
 /** @brief Specialization of read_single for std::vectors. */
 template <typename S>
-    requires(utility::has_emplace_back_method_v<S>)
+    requires(
+        utility::has_emplace_back_method_v<S> &&
+        !std::conjunction<std::is_trivially_copyable<typename S::value_type>,
+                          std::is_integral<typename S::value_type>>::value)
 struct read_single<S>
 {
     template <typename T>
@@ -246,6 +249,39 @@ struct read_single<S>
         {
             throw exception::SdBusError(
                 -r, "sd_bus_message_exit_container emplace_back_container");
+        }
+    }
+};
+
+/** @brief Specialization of read_single for std::vectors, with is_integral
+ * requires. */
+template <typename S>
+    requires(
+        std::conjunction_v<utility::has_emplace_back_method<S>,
+                           std::is_trivially_copyable<typename S::value_type>,
+                           std::is_integral<typename S::value_type>>)
+struct read_single<S>
+{
+    template <typename T>
+    static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, T&& t)
+    {
+        size_t sz;
+        const void* p;
+        constexpr auto dbusType = utility::tuple_to_array(types::type_id<S>());
+        int r = intf->sd_bus_message_read_array(m, dbusType[1], &p, &sz);
+        if (r < 0)
+        {
+            throw exception::SdBusError(-r, "sd_bus_message_read_array");
+        }
+
+        size_t elementSize = bus_type_get_size(dbusType[1]);
+        size_t numElements = sz / elementSize;
+        for (size_t i = 0; i < numElements; ++i)
+        {
+            types::details::type_id_downcast_t<typename S::value_type> s;
+            memcpy(&s, static_cast<const char*>(p) + i * elementSize,
+                   elementSize);
+            t.emplace_back(s);
         }
     }
 };

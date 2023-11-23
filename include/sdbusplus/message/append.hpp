@@ -264,9 +264,36 @@ struct append_single<bool>
     }
 };
 
-/** @brief Specialization of append_single for containers (ie vector, array,
- * set, map, etc) */
+/** @brief Helper templates to tell if T is a vector or array
+ */
 template <typename T>
+struct is_vector : std::false_type
+{};
+template <typename... Args>
+struct is_vector<std::vector<Args...>> : std::true_type
+{};
+template <typename T>
+struct is_array : std::false_type
+{};
+template <typename T, std::size_t N>
+struct is_array<std::array<T, N>> : std::true_type
+{};
+template <typename T>
+inline constexpr bool is_vector_v = is_vector<T>::value;
+template <typename T>
+inline constexpr bool is_array_v = is_array<T>::value;
+template <typename T>
+struct is_vector_or_array : std::bool_constant<is_vector_v<T> || is_array_v<T>>
+{};
+
+/** @brief Specialization of append_single for containers (ie vector, array,
+ * set, map, etc), for T is not vector or array, or its elements is not
+ * trivially copyable, or is not an integral type*/
+template <typename T>
+    requires(
+        !std::conjunction<is_vector_or_array<T>,
+                          std::is_trivially_copyable<typename T::value_type>,
+                          std::is_integral<typename T::value_type>>::value)
 struct append_single<T, std::enable_if_t<utility::has_const_iterator_v<T>>>
 {
     template <typename S>
@@ -281,6 +308,31 @@ struct append_single<T, std::enable_if_t<utility::has_const_iterator_v<T>>>
             sdbusplus::message::append(intf, m, i);
         }
         intf->sd_bus_message_close_container(m);
+    }
+};
+
+/** @brief Specialization of append_single for vector and array T,
+ * with its elements is trivially copyable, and is an integral type*/
+template <typename T>
+    requires(
+        std::conjunction<is_vector_or_array<T>,
+                         std::is_trivially_copyable<typename T::value_type>,
+                         std::is_integral<typename T::value_type>>::value)
+struct append_single<T, std::enable_if_t<utility::has_const_iterator_v<T>>>
+{
+    template <typename S>
+    static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, S&& s)
+    {
+        constexpr auto dbusType = utility::tuple_to_array(types::type_id<T>());
+
+        uint8_t* p;
+        size_t elementSize = bus_type_get_size(dbusType[1]);
+        size_t sz = s.size() * elementSize;
+        intf->sd_bus_message_append_array_space(m, dbusType[1], sz, (void**)&p);
+        for (size_t i = 0; i < s.size(); i++)
+        {
+            memcpy(p + i * elementSize, &s[i], elementSize);
+        }
     }
 };
 

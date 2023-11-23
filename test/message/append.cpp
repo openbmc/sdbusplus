@@ -37,6 +37,7 @@ class AppendTest : public testing::Test
 {
   protected:
     testing::StrictMock<sdbusplus::SdBusMock> mock;
+    void* allocatedMemory = nullptr;
 
     void SetUp() override
     {
@@ -89,6 +90,26 @@ class AppendTest : public testing::Test
     {
         EXPECT_CALL(mock, sd_bus_message_close_container(nullptr))
             .WillOnce(Return(0));
+    }
+
+    void expect_append_array_space(char type, size_t sz)
+    {
+        EXPECT_CALL(mock, sd_bus_message_append_array_space(nullptr, type, sz,
+                                                            testing::_))
+            .WillOnce(testing::Invoke(
+                [sz, this](sd_bus_message*, char, size_t, void** p) -> int {
+            *p = malloc(sz);
+            allocatedMemory = *p;
+            return 0;
+        }));
+    }
+
+    void TearDown() override
+    {
+        if (allocatedMemory)
+        {
+            free(allocatedMemory);
+        }
     }
 };
 
@@ -285,17 +306,24 @@ TEST_F(AppendTest, Span)
 
 TEST_F(AppendTest, Vector)
 {
-    const std::vector<int> v{1, 2, 3, 4};
+    const std::vector<std::string> v{"1", "2", "3", "4"};
 
     {
         testing::InSequence seq;
-        expect_open_container(SD_BUS_TYPE_ARRAY, "i");
+        expect_open_container(SD_BUS_TYPE_ARRAY, "s");
         for (const auto& i : v)
         {
-            expect_basic<int>(SD_BUS_TYPE_INT32, i);
+            expect_basic_string(SD_BUS_TYPE_STRING, i.c_str());
         }
         expect_close_container();
     }
+    new_message().append(v);
+}
+
+TEST_F(AppendTest, VectorIntegral)
+{
+    const std::vector<int> v{1, 2, 3, 4};
+    expect_append_array_space(SD_BUS_TYPE_INT32, v.size() * sizeof(int));
     new_message().append(v);
 }
 

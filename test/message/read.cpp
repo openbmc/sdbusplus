@@ -30,10 +30,44 @@ ACTION_TEMPLATE(AssignReadVal, HAS_1_TEMPLATE_PARAMS(typename, T),
     *static_cast<T*>(arg2) = val;
 }
 
+template <typename T>
+class AssignReadArrayVal
+{
+  public:
+    explicit AssignReadArrayVal(const T& val, void** memPtr,
+                                std::function<void()>& deleter) :
+        val_(val),
+        memPtr_(memPtr), deleter_(deleter)
+    {}
+
+    void operator()(sd_bus_message*, char, const void** p, size_t* sz) const
+    {
+        size_t elementSize = sizeof(typename T::value_type);
+        *sz = val_.size() * elementSize;
+        *memPtr_ = new typename T::value_type[val_.size()];
+
+        std::copy(val_.begin(), val_.end(),
+                  static_cast<typename T::value_type*>(*memPtr_));
+
+        *p = *memPtr_;
+
+        deleter_ = [this] {
+            delete[] static_cast<typename T::value_type*>(*memPtr_);
+        };
+    }
+
+  private:
+    T val_;
+    void** memPtr_;
+    std::function<void()>& deleter_;
+};
+
 class ReadTest : public testing::Test
 {
   protected:
     testing::StrictMock<sdbusplus::SdBusMock> mock;
+    void* allocatedMemory = nullptr;
+    std::function<void()> memoryDeleter;
 
     void SetUp() override
     {
@@ -41,6 +75,14 @@ class ReadTest : public testing::Test
                                                          nullptr, nullptr,
                                                          nullptr, nullptr))
             .WillRepeatedly(Return(0));
+    }
+
+    void TearDown() override
+    {
+        if (memoryDeleter)
+        {
+            memoryDeleter();
+        }
     }
 
     sdbusplus::message_t new_message()
@@ -60,6 +102,16 @@ class ReadTest : public testing::Test
     {
         EXPECT_CALL(mock, sd_bus_message_read_basic(nullptr, type, testing::_))
             .WillOnce(DoAll(AssignReadVal<T>(val), Return(0)));
+    }
+
+    template <typename T>
+    void expect_read_array(char type, T val)
+    {
+        EXPECT_CALL(mock, sd_bus_message_read_array(nullptr, type, testing::_,
+                                                    testing::_))
+            .WillOnce(DoAll(testing::Invoke(AssignReadArrayVal<T>(
+                                val, &allocatedMemory, memoryDeleter)),
+                            Return(0)));
     }
 
     void expect_verify_type(char type, const char* contents, int ret)
@@ -224,20 +276,30 @@ TEST_F(ReadTest, BasicBoolError)
 
 TEST_F(ReadTest, Vector)
 {
-    const std::vector<int> vi{1, 2, 3, 4};
+    const std::vector<std::string> vs{"1", "2", "3", "4"};
 
     {
         testing::InSequence seq;
-        expect_enter_container(SD_BUS_TYPE_ARRAY, "i");
-        for (const auto& i : vi)
+        expect_enter_container(SD_BUS_TYPE_ARRAY, "s");
+        for (const auto& s : vs)
         {
             expect_at_end(false, 0);
-            expect_basic<int>(SD_BUS_TYPE_INT32, i);
+            expect_basic<const char*>(SD_BUS_TYPE_STRING, s.c_str());
         }
         expect_at_end(false, 1);
         expect_exit_container();
     }
 
+    std::vector<std::string> ret_vs;
+    new_message().read(ret_vs);
+    EXPECT_EQ(vs, ret_vs);
+}
+
+TEST_F(ReadTest, VectorIntegral)
+{
+    const std::vector<int> vi{1, 2, 3, 4};
+
+    expect_read_array<std::vector<int>>(SD_BUS_TYPE_INT32, vi);
     std::vector<int> ret_vi;
     new_message().read(ret_vi);
     EXPECT_EQ(vi, ret_vi);
@@ -247,10 +309,10 @@ TEST_F(ReadTest, VectorEnterError)
 {
     {
         testing::InSequence seq;
-        expect_enter_container(SD_BUS_TYPE_ARRAY, "i", -EINVAL);
+        expect_enter_container(SD_BUS_TYPE_ARRAY, "s", -EINVAL);
     }
 
-    std::vector<int> ret;
+    std::vector<std::string> ret;
     EXPECT_THROW(new_message().read(ret), sdbusplus::exception::SdBusError);
 }
 
@@ -258,13 +320,13 @@ TEST_F(ReadTest, VectorIterError)
 {
     {
         testing::InSequence seq;
-        expect_enter_container(SD_BUS_TYPE_ARRAY, "i");
+        expect_enter_container(SD_BUS_TYPE_ARRAY, "s");
         expect_at_end(false, 0);
-        expect_basic<int>(SD_BUS_TYPE_INT32, 1);
+        expect_basic<const char*>(SD_BUS_TYPE_STRING, "1");
         expect_at_end(false, -EINVAL);
     }
 
-    std::vector<int> ret;
+    std::vector<std::string> ret;
     EXPECT_THROW(new_message().read(ret), sdbusplus::exception::SdBusError);
 }
 
@@ -272,16 +334,16 @@ TEST_F(ReadTest, VectorExitError)
 {
     {
         testing::InSequence seq;
-        expect_enter_container(SD_BUS_TYPE_ARRAY, "i");
+        expect_enter_container(SD_BUS_TYPE_ARRAY, "s");
         expect_at_end(false, 0);
-        expect_basic<int>(SD_BUS_TYPE_INT32, 1);
+        expect_basic<const char*>(SD_BUS_TYPE_STRING, "1");
         expect_at_end(false, 0);
-        expect_basic<int>(SD_BUS_TYPE_INT32, 2);
+        expect_basic<const char*>(SD_BUS_TYPE_STRING, "2");
         expect_at_end(false, 1);
         expect_exit_container(-EINVAL);
     }
 
-    std::vector<int> ret;
+    std::vector<std::string> ret;
     EXPECT_THROW(new_message().read(ret), sdbusplus::exception::SdBusError);
 }
 
@@ -664,22 +726,22 @@ TEST_F(ReadTest, LargeCombo)
 
 TEST_F(ReadTest, UnpackSingleVector)
 {
-    const std::vector<int> vi{1, 2, 3, 4};
+    const std::vector<std::string> vs{"1", "2", "3", "4"};
 
     {
         testing::InSequence seq;
-        expect_enter_container(SD_BUS_TYPE_ARRAY, "i");
-        for (const auto& i : vi)
+        expect_enter_container(SD_BUS_TYPE_ARRAY, "s");
+        for (const auto& i : vs)
         {
             expect_at_end(false, 0);
-            expect_basic<int>(SD_BUS_TYPE_INT32, i);
+            expect_basic<const char*>(SD_BUS_TYPE_STRING, i.c_str());
         }
         expect_at_end(false, 1);
         expect_exit_container();
     }
 
-    auto ret_vi = new_message().unpack<std::vector<int>>();
-    EXPECT_EQ(vi, ret_vi);
+    auto ret_vs = new_message().unpack<std::vector<std::string>>();
+    EXPECT_EQ(vs, ret_vs);
 }
 
 TEST_F(ReadTest, UnpackMultiple)

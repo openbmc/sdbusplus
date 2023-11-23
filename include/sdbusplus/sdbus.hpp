@@ -12,6 +12,33 @@ namespace sdbusplus
 using SdBusDuration =
     std::chrono::duration<uint64_t, std::chrono::microseconds::period>;
 
+// This is a copy from sd-bus.h
+static inline int bus_type_get_size(char c)
+{
+    switch (c)
+    {
+        case SD_BUS_TYPE_BYTE:
+            return 1;
+
+        case SD_BUS_TYPE_INT16:
+        case SD_BUS_TYPE_UINT16:
+            return 2;
+
+        case SD_BUS_TYPE_BOOLEAN:
+        case SD_BUS_TYPE_INT32:
+        case SD_BUS_TYPE_UINT32:
+        case SD_BUS_TYPE_UNIX_FD:
+            return 4;
+
+        case SD_BUS_TYPE_INT64:
+        case SD_BUS_TYPE_UINT64:
+        case SD_BUS_TYPE_DOUBLE:
+            return 8;
+    }
+
+    return -EINVAL;
+}
+
 // A wrapper for interfacing or testing sd-bus.  This will hold methods for
 // buses, messages, etc.
 class SdBusInterface
@@ -177,6 +204,11 @@ class SdBusInterface
     virtual int sd_bus_is_open(sd_bus* bus) = 0;
 
     virtual int sd_bus_wait(sd_bus* bus, uint64_t timeout_usec) = 0;
+
+    virtual int sd_bus_message_append_array_space(sd_bus_message* m, char type,
+                                                  size_t size, void** ptr) = 0;
+    virtual int sd_bus_message_read_array(sd_bus_message* m, char type,
+                                          const void** ptr, size_t* size) = 0;
 };
 
 class SdBusImpl : public SdBusInterface
@@ -570,6 +602,18 @@ class SdBusImpl : public SdBusInterface
     int sd_bus_wait(sd_bus* bus, uint64_t timeout_usec) override
     {
         return ::sd_bus_wait(bus, timeout_usec);
+    }
+
+    int sd_bus_message_append_array_space(sd_bus_message* m, char type,
+                                          size_t size, void** ptr) override
+    {
+        return ::sd_bus_message_append_array_space(m, type, size, ptr);
+    }
+
+    int sd_bus_message_read_array(sd_bus_message* m, char type,
+                                  const void** ptr, size_t* size) override
+    {
+        return ::sd_bus_message_read_array(m, type, ptr, size);
     }
 };
 

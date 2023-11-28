@@ -8,6 +8,12 @@
 
 #include <sdbusplus/exception.hpp>
 #include <sdbusplus/message.hpp>
+#include <sdbusplus/utility/dedup_variant.hpp>
+<%
+    def setOfPropertyTypes():
+        return set(p.cppTypeParam(interface.name) for p in
+                   interface.properties);
+%>\
 
 namespace sdbusplus::common::${interface.cppNamespace()}
 {
@@ -24,6 +30,11 @@ struct ${interface.classname}
         % endfor
     };
     % endfor
+
+    % if interface.properties:
+    using PropertiesVariant = sdbusplus::utility::dedup_variant_t<
+        ${",\n        ".join(sorted(setOfPropertyTypes()))}>;
+    % endif \
 
     % for p in interface.paths:
         % if p.description:

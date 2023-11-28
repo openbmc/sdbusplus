@@ -3,19 +3,13 @@
 #include <map>
 #include <sdbusplus/sdbus.hpp>
 #include <sdbusplus/server.hpp>
-#include <sdbusplus/utility/dedup_variant.hpp>
 #include <string>
 #include <systemd/sd-bus.h>
 
 % for h in interface.cpp_includes():
 #include <${h}>
 % endfor
-#include <${interface.headerFile()}> \
-<%
-    def setOfPropertyTypes():
-        return set(p.cppTypeParam(interface.name) for p in
-                   interface.properties);
-%>
+#include <${interface.headerFile()}>
 
 namespace sdbusplus::server::${interface.cppNamespace()}
 {
@@ -50,8 +44,6 @@ class ${interface.classname} :
             _sdbusplus_bus(bus) {}
 
     % if interface.properties:
-        using PropertiesVariant = sdbusplus::utility::dedup_variant_t<
-                ${",\n                ".join(sorted(setOfPropertyTypes()))}>;
         /** @brief Constructor to initialize the object from a map of
          *         properties.
          *

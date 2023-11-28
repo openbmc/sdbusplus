@@ -44,10 +44,10 @@ namespace server::details
  */
 struct server_context_friend
 {
-    template <typename T>
-    sdbusplus::async::context& context()
+    template <typename Client, typename Self>
+    static sdbusplus::async::context& context(Self* self)
     {
-        return static_cast<T*>(this)->ctx;
+        return static_cast<Client*>(self)->ctx;
     }
 };
 

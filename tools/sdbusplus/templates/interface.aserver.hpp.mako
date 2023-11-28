@@ -94,7 +94,8 @@ ${p.render(loader, "property.aserver.value.hpp.mako", property=p, interface=inte
     /** @return the async context */
     sdbusplus::async::context& _context()
     {
-        return server_details::server_context_friend::context<Server>();
+        return server_details::server_context_friend::
+            context<Server, ${interface.classname}>(this);
     }
 
     sdbusplus::server::interface_t

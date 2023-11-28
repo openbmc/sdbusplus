@@ -51,6 +51,24 @@
       "parentUuid": "ecf8dad5_8e742fe3",
       "revId": "985cfa76faf9a35a726ff50bf2e4553606827986",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cf20eff4_89de45e0",
+        "filename": "example/calculator-aserver.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-11-28T17:44:28Z",
+      "side": 1,
+      "message": "The code intended to be able to support this but I had to make one fix.\n\nhttps://gerrit.openbmc.org/c/openbmc/sdbusplus/+/67845\n\nWith this change, modify your code like this and it works:\n\n```\nclass Calculator :\n    public sdbusplus::async::server_t\u003c\n        Calculator, sdbusplus::aserver::net::poettering::Calculator,\n        sdbusplus::aserver::net::poettering::Dummy\u003e\n{\n  public:\n    explicit Calculator(sdbusplus::async::context\u0026 ctx, auto path) :\n        sdbusplus::async::server_t\u003c\n            Calculator, sdbusplus::aserver::net::poettering::Calculator,\n            sdbusplus::aserver::net::poettering::Dummy\u003e(ctx, path)\n    {}\n```",
+      "parentUuid": "d3d23dbf_b581fd75",
+      "revId": "985cfa76faf9a35a726ff50bf2e4553606827986",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

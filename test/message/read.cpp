@@ -698,4 +698,21 @@ TEST_F(ReadTest, UnpackMultiple)
     EXPECT_EQ(tisb, ret_tisb);
 }
 
+TEST_F(ReadTest, UnpackStructuredBinding)
+{
+    const std::tuple<int, std::string, bool> tisb{3, "hi", false};
+
+    {
+        testing::InSequence seq;
+        expect_basic<int>(SD_BUS_TYPE_INT32, std::get<0>(tisb));
+        expect_basic<const char*>(SD_BUS_TYPE_STRING,
+                                  std::get<1>(tisb).c_str());
+        expect_basic<int>(SD_BUS_TYPE_BOOLEAN, std::get<2>(tisb));
+    }
+
+    auto [ret_ti, ret_ts,
+          ret_tb] = new_message().unpack<int, std::string, bool>();
+    EXPECT_EQ(tisb, std::make_tuple(ret_ti, ret_ts, ret_tb));
+}
+
 } // namespace

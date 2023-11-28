@@ -3,6 +3,23 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "c50bd45c_9d96276e",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-11-28T17:24:05Z",
+      "side": 1,
+      "message": "I\u0027m fine adding an example implementation of using multiple interfaces, but I don\u0027t think we should pollute the calculator example with it.  The intention there is for it to be a very simple implementation that mostly matches the original blog post from Lennart.  The more we add to it, the less it achieves that goal.",
+      "revId": "985cfa76faf9a35a726ff50bf2e4553606827986",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "ecf8dad5_8e742fe3",
         "filename": "example/calculator-aserver.cpp",
         "patchSetId": 1
@@ -14,6 +31,24 @@
       "writtenOn": "2023-11-09T09:47:39Z",
       "side": 1,
       "message": "@Patrick Does current sdbusplus provides something like `sdbusplus::async::server_t\u003cA, B\u003e` now? If yes, what\u0027s the usage and how it works with CRTP?",
+      "revId": "985cfa76faf9a35a726ff50bf2e4553606827986",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d3d23dbf_b581fd75",
+        "filename": "example/calculator-aserver.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-11-28T17:24:05Z",
+      "side": 1,
+      "message": "Let me look into that.  I don\u0027t think there is an existing implementation available.",
+      "parentUuid": "ecf8dad5_8e742fe3",
       "revId": "985cfa76faf9a35a726ff50bf2e4553606827986",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }

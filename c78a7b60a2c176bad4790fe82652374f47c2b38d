@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "df8af70f_e00fb3ce",
+        "filename": "example/yaml/net/poettering/Dummy.interface.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-11-28T17:22:04Z",
+      "side": 1,
+      "message": "I don\u0027t think we should add this in net.poettering since that isn\u0027t our name to use.  The original calculator example came from Lennart\u0027s blog post.",
+      "revId": "c78a7b60a2c176bad4790fe82652374f47c2b38d",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "90a4506f_377298e9",
+        "filename": "example/yaml/net/poettering/Dummy.interface.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-11-28T17:22:04Z",
+      "side": 1,
+      "message": "I\u0027d suggest avoiding the phrase \"dummy\".  While it isn\u0027t officially listed in the OCP guidelines on inclusive language, it generally isn\u0027t a positively accepted term anymore.  Other than the Linux kernel itself we don\u0027t have any examples of it in our code base.",
+      "range": {
+        "startLine": 9,
+        "startChar": 12,
+        "endLine": 9,
+        "endChar": 17
+      },
+      "revId": "c78a7b60a2c176bad4790fe82652374f47c2b38d",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

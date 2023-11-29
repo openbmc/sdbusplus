@@ -14,7 +14,7 @@ if not has_asio
 endif
 
 assert(
-    not get_option('examples').enabled() or has_asio,
+    not get_option('examples').allowed() or has_asio,
     'Boost is required when examples are enabled'
 )
 

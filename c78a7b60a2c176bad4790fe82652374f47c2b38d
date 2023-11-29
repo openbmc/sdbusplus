@@ -20,6 +20,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "41e06828_75f01721",
+        "filename": "example/yaml/net/poettering/Dummy.interface.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2023-11-29T05:43:34Z",
+      "side": 1,
+      "message": "Got it.\nSo I will move it into something like com/example/Example.interface.yaml",
+      "parentUuid": "df8af70f_e00fb3ce",
+      "revId": "c78a7b60a2c176bad4790fe82652374f47c2b38d",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "90a4506f_377298e9",
         "filename": "example/yaml/net/poettering/Dummy.interface.yaml",
         "patchSetId": 1
@@ -31,6 +49,30 @@
       "writtenOn": "2023-11-28T17:22:04Z",
       "side": 1,
       "message": "I\u0027d suggest avoiding the phrase \"dummy\".  While it isn\u0027t officially listed in the OCP guidelines on inclusive language, it generally isn\u0027t a positively accepted term anymore.  Other than the Linux kernel itself we don\u0027t have any examples of it in our code base.",
+      "range": {
+        "startLine": 9,
+        "startChar": 12,
+        "endLine": 9,
+        "endChar": 17
+      },
+      "revId": "c78a7b60a2c176bad4790fe82652374f47c2b38d",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7b3a279a_5f873bf6",
+        "filename": "example/yaml/net/poettering/Dummy.interface.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2023-11-29T05:43:34Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "90a4506f_377298e9",
       "range": {
         "startLine": 9,
         "startChar": 12,

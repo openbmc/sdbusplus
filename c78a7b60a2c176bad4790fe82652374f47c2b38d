@@ -18,6 +18,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "090dcc32_7272dcac",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2023-11-30T06:25:43Z",
+      "side": 1,
+      "message": "Please go ahead to pick/modify this together with your changes.\nThe goal of this commit is to make sure the example contains the usage of multiple interfaces for server/client binding, and make sure it builds OK.",
+      "parentUuid": "6d028388_b23cbdaf",
+      "revId": "c78a7b60a2c176bad4790fe82652374f47c2b38d",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "df8af70f_e00fb3ce",

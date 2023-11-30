@@ -1,6 +1,23 @@
 {
   "comments": [
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "6d028388_b23cbdaf",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000900
+      },
+      "writtenOn": "2023-11-30T02:20:59Z",
+      "side": 1,
+      "message": "I also would like to have a simple example interface, and added one as part of another commit (https://gerrit.openbmc.org/c/openbmc/sdbusplus/+/67475). Please take my example interface if you like it, otherwise I\u0027ll be happy to use and build upon whatever gets added here.",
+      "revId": "c78a7b60a2c176bad4790fe82652374f47c2b38d",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "df8af70f_e00fb3ce",

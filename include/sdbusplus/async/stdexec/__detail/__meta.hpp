@@ -87,6 +87,12 @@ using __midentity = _Tp;
 template <std::size_t _Np>
 using __msize_t = char[_Np + 1];
 
+template <auto _Np>
+struct __mconstant_;
+
+template <auto _Np>
+using __mconstant = __mconstant_<_Np>*;
+
 template <class _Tp, class _Up>
 using __mfirst = _Tp;
 
@@ -108,6 +114,9 @@ inline constexpr bool __v<std::is_same<_Tp, _Tp>> = true;
 
 template <class _Tp, _Tp _Ip>
 inline constexpr _Tp __v<std::integral_constant<_Tp, _Ip>> = _Ip;
+
+template <auto _Np>
+inline constexpr __mtypeof<_Np> __v<__mconstant<_Np>> = _Np;
 
 template <std::size_t _Ip>
 inline constexpr std::size_t __v<char[_Ip]> = _Ip - 1;
@@ -975,7 +984,13 @@ struct __many_of
 
 #if STDEXEC_HAS_BUILTIN(__type_pack_element)
 template <std::size_t _Np, class... _Ts>
-using __m_at_c = __type_pack_element<_Np, _Ts...>;
+struct __m_at_
+{
+    using __t = __type_pack_element<_Np, _Ts...>;
+};
+
+template <std::size_t _Np, class... _Ts>
+using __m_at_c = __t<__m_at_<_Np, _Ts...>>;
 #else
 template <std::size_t>
 using __void_ptr = void*;

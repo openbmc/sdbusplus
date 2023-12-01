@@ -815,7 +815,7 @@ struct __ref<completion_signatures<_Sigs...>, _Queries...>
     } __env_;
 
   public:
-    using is_receiver = void;
+    using receiver_concept = stdexec::receiver_t;
     using __id = __ref;
     using __t = __ref;
 
@@ -888,7 +888,7 @@ struct __ref<completion_signatures<_Sigs...>, _Queries...>
     } __env_;
 
   public:
-    using is_receiver = void;
+    using receiver_concept = stdexec::receiver_t;
     using __id = __ref;
     using __t = __ref;
 
@@ -975,7 +975,7 @@ struct __stoppable_receiver
 
     struct __t
     {
-        using is_receiver = void;
+        using receiver_concept = stdexec::receiver_t;
         __operation_base<_Receiver>* __op_;
 
         template <same_as<set_next_t> _SetNext, same_as<__t> _Self, class _Item>
@@ -1188,7 +1188,7 @@ struct __sender
       public:
         using __id = __sender;
         using completion_signatures = _Sigs;
-        using is_sender = void;
+        using sender_concept = stdexec::sender_t;
 
         __t(const __t&) = delete;
         __t& operator=(const __t&) = delete;
@@ -1356,7 +1356,7 @@ class any_receiver_ref
     }
 
   public:
-    using is_receiver = void;
+    using receiver_concept = stdexec::receiver_t;
     using __t = any_receiver_ref;
     using __id = any_receiver_ref;
 
@@ -1390,7 +1390,7 @@ class any_receiver_ref
         }
 
       public:
-        using is_sender = void;
+        using sender_concept = stdexec::sender_t;
         using completion_signatures =
             typename __sender_base::completion_signatures;
 

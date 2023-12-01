@@ -110,7 +110,7 @@ template <class _ConstrainedId>
 struct __when_empty_sender
 {
     using _Constrained = __t<_ConstrainedId>;
-    using is_sender = void;
+    using sender_concept = stdexec::sender_t;
 
     template <class _Self, class _Receiver>
     using __when_empty_op_t =
@@ -159,7 +159,7 @@ struct __nest_op_base : __immovable
 template <class _ReceiverId>
 struct __nest_rcvr
 {
-    using is_receiver = void;
+    using receiver_concept = stdexec::receiver_t;
     using _Receiver = __t<_ReceiverId>;
     __nest_op_base<_ReceiverId>* __op_;
 
@@ -238,7 +238,7 @@ template <class _ConstrainedId>
 struct __nest_sender
 {
     using _Constrained = __t<_ConstrainedId>;
-    using is_sender = void;
+    using sender_concept = stdexec::sender_t;
 
     const __impl* __scope_;
     STDEXEC_ATTRIBUTE((no_unique_address)) _Constrained __c_;
@@ -558,7 +558,7 @@ struct __future_state_base
 template <class _CompletionsId, class _EnvId>
 struct __future_rcvr
 {
-    using is_receiver = void;
+    using receiver_concept = stdexec::receiver_t;
     using _Completions = __t<_CompletionsId>;
     using _Env = __t<_EnvId>;
     __future_state_base<_Completions, _Env>* __state_;
@@ -643,7 +643,7 @@ class __future
     friend struct async_scope;
 
   public:
-    using is_sender = void;
+    using sender_concept = stdexec::sender_t;
 
     __future(__future&&) = default;
     __future& operator=(__future&&) = default;
@@ -727,7 +727,7 @@ struct __spawn_op_base
 template <class _EnvId>
 struct __spawn_rcvr
 {
-    using is_receiver = void;
+    using receiver_concept = stdexec::receiver_t;
     using _Env = __t<_EnvId>;
     __spawn_op_base<_EnvId>* __op_;
     const __impl* __scope_;

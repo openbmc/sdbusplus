@@ -70,6 +70,24 @@
       "parentUuid": "35129e68_125ad7cb",
       "revId": "34d5d69b787e469d6a18300e64c5db804ff65d30",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d7f509a1_5a9749d7",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000002
+      },
+      "writtenOn": "2023-12-05T20:31:50Z",
+      "side": 1,
+      "message": "\u003e Maybe I\u0027m missing something?\n\nI\u0027m not sure if you are or not.  There is direct access to the struct that was registered in the first place (instance of MyIface(u32)) from the outside code, irrespective of what callbacks you register with the bindings.\n\nFor the record, I don\u0027t have any strong opinions here.",
+      "parentUuid": "1940d711_379661a8",
+      "revId": "34d5d69b787e469d6a18300e64c5db804ff65d30",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

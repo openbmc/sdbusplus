@@ -16,6 +16,24 @@
       "message": "Is anyone on the review list interested in maintaining the ASIO code?  I\u0027ve rarely touched it, never use it, and not really that interested in maintaining it.  If no one gives critical feedback we might as well just merge this.",
       "revId": "34d5d69b787e469d6a18300e64c5db804ff65d30",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f8cd62c2_231a8bc2",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2023-12-05T18:00:13Z",
+      "side": 1,
+      "message": "I\u0027d still like to see an example of something real actually made better by this compared to just declaring a setter/getter.  As an interface, this patchset isn\u0027t type safe, so I really don\u0027t think we should merge it as is, and having it exist on master prevents cleaning up the other non typesafe interface (set_property).  If it were made typesafe, I could see it being ok as an extension, but IMO the existing patterns IMO are better.\n\nIf there really isn\u0027t anyone that wants to maintain this, I guess I can throw my name in the ring (although I don\u0027t particularly want to maintain more thing).  It\u0027s not that much code in addition to what I already maintain.",
+      "parentUuid": "afec56af_4b74a109",
+      "revId": "34d5d69b787e469d6a18300e64c5db804ff65d30",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

@@ -220,6 +220,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "de40e97d_7a5041ea",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2023-12-05T11:47:27Z",
+      "side": 1,
+      "message": "The \"sync\" API and the new \"async\" API with c++ co-routine both have the equivalent set/get property APIs.\nI do not see a reason why it\u0027s not accepted for the \"asio\" APIs.",
+      "parentUuid": "60f32c8b_c46d7d35",
+      "revId": "d7d27a74c3157913684f962fdefe3a5d693a6750",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e964ce99_72a20a18",
@@ -233,6 +251,30 @@
       "writtenOn": "2023-07-06T16:35:50Z",
       "side": 1,
       "message": "Accepting by std::any is a mediocre api, because it doesn\u0027t handle errors well.  Coding errors become runtime errors instead of compile time.  We do it for get_property because of history, and because accepting by std::any is better than the template parameter that preceeded it, but still leaves a lot to be desired.\n\nIf we MUST have this feature (which I\u0027m not sure we do) I\u0027d much rather that the register_property interface returned an object that could be then used to interact with the property itself, and that object could be template typed the same as the property itself, rather than having to accept std::any.",
+      "range": {
+        "startLine": 43,
+        "startChar": 22,
+        "endLine": 43,
+        "endChar": 32
+      },
+      "revId": "d7d27a74c3157913684f962fdefe3a5d693a6750",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7bc67f24_b5bba625",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2023-12-05T11:47:27Z",
+      "side": 1,
+      "message": "The \"set_property\" API uses std::any as well, this is how current set/get property APIs implemented.",
+      "parentUuid": "e964ce99_72a20a18",
       "range": {
         "startLine": 43,
         "startChar": 22,

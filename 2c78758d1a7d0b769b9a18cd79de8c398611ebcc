@@ -1,0 +1,232 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "83b940c2_120512f6",
+        "filename": "example/prop_match.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-12-05T18:04:00Z",
+      "side": 1,
+      "message": "Please don\u0027t use printf in C++ code.",
+      "revId": "2c78758d1a7d0b769b9a18cd79de8c398611ebcc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "436c7625_5791911a",
+        "filename": "example/prop_match.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-12-05T18:04:00Z",
+      "side": 1,
+      "message": "Do we need to show an example with raw sd_event_loop calls?\n\nI\u0027d prefer if we can eliminate all this sd-event stuff from line 37-59.  It seems like noise in the scope of an example.",
+      "revId": "2c78758d1a7d0b769b9a18cd79de8c398611ebcc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5239c962_67357e50",
+        "filename": "include/sdbusplus/property.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-12-05T18:04:00Z",
+      "side": 1,
+      "message": "Why are we adding this when we already have support in both asio and async for getting a property?  I don\u0027t trust non-async code to call this function as it is because people are probably not thinking about the lifetimes correctly.",
+      "revId": "2c78758d1a7d0b769b9a18cd79de8c398611ebcc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b10ade7d_d1361734",
+        "filename": "include/sdbusplus/property.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-12-05T18:04:00Z",
+      "side": 1,
+      "message": "This potentially fails if the property itself is a variant and/or enum.",
+      "revId": "2c78758d1a7d0b769b9a18cd79de8c398611ebcc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b3ca7792_af6a9fc4",
+        "filename": "include/sdbusplus/property.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-12-05T18:04:00Z",
+      "side": 1,
+      "message": "Please use `unpack`.",
+      "revId": "2c78758d1a7d0b769b9a18cd79de8c398611ebcc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7cdd9dd6_8b81bf2f",
+        "filename": "include/sdbusplus/property.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-12-05T18:04:00Z",
+      "side": 1,
+      "message": "I really don\u0027t want another weird \"make your own error code\" path.  If you don\u0027t want exceptions, use ASIO with the magic compile flags to avoid exceptions.  Otherwise, use exceptions.",
+      "range": {
+        "startLine": 61,
+        "startChar": 0,
+        "endLine": 70,
+        "endChar": 9
+      },
+      "revId": "2c78758d1a7d0b769b9a18cd79de8c398611ebcc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fccd87aa_ac9093d4",
+        "filename": "include/sdbusplus/property.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-12-05T18:04:00Z",
+      "side": 1,
+      "message": "Why not a named struct or tuple?  Is there an advantage of array here?\n\nIf we use tuple can these be move constructed instead of unique_ptr held?",
+      "revId": "2c78758d1a7d0b769b9a18cd79de8c398611ebcc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2eb1ed5c_34c42676",
+        "filename": "include/sdbusplus/property.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-12-05T18:04:00Z",
+      "side": 1,
+      "message": "Please don\u0027t use custom error types outside of ASIO.",
+      "range": {
+        "startLine": 111,
+        "startChar": 0,
+        "endLine": 121,
+        "endChar": 13
+      },
+      "revId": "2c78758d1a7d0b769b9a18cd79de8c398611ebcc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "60ecb95d_7220704e",
+        "filename": "include/sdbusplus/property.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-12-05T18:04:00Z",
+      "side": 1,
+      "message": "You\u0027re not covering the service owner name change signal.",
+      "revId": "2c78758d1a7d0b769b9a18cd79de8c398611ebcc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0c0176e4_44d4e1bd",
+        "filename": "include/sdbusplus/property.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 133,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-12-05T18:04:00Z",
+      "side": 1,
+      "message": "Prefer to use `unpack`.",
+      "revId": "2c78758d1a7d0b769b9a18cd79de8c398611ebcc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b1ed4dd2_3feb525a",
+        "filename": "include/sdbusplus/property.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-12-05T18:04:00Z",
+      "side": 1,
+      "message": "Something is very funny here.  In the lambda constructor on line 102 you did a `std::move(handler)`.  Then on line 130 you did a by-value copy?  But then here you\u0027re doing a move copy?  The lifetimes are not obviously correct.",
+      "range": {
+        "startLine": 139,
+        "startChar": 28,
+        "endLine": 139,
+        "endChar": 76
+      },
+      "revId": "2c78758d1a7d0b769b9a18cd79de8c398611ebcc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c511c6bb_28a890ac",
+        "filename": "include/sdbusplus/property.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-12-05T18:04:00Z",
+      "side": 1,
+      "message": "Use `unpack`.",
+      "range": {
+        "startLine": 141,
+        "startChar": 0,
+        "endLine": 142,
+        "endChar": 32
+      },
+      "revId": "2c78758d1a7d0b769b9a18cd79de8c398611ebcc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

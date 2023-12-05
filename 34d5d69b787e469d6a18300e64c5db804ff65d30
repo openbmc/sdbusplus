@@ -52,6 +52,24 @@
       "parentUuid": "f8cd62c2_231a8bc2",
       "revId": "34d5d69b787e469d6a18300e64c5db804ff65d30",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1940d711_379661a8",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2023-12-05T19:47:39Z",
+      "side": 1,
+      "message": "I don\u0027t see a way in that example to get the current value, only the equivalent of set_property.  I see a registered callback on count(), then I see\n\niface.0 \u003d 42;\n\nWhich I think is setting the count parameter from outside, so this would be the equivalent of set_property()\n\nThen I see registering a callback for getting notified of changes.\niface.count_changed(iface_ref.signal_context()).await?;\n\nI don\u0027t see a direct \"get the current value of this property\" method, only a registered callback.  Maybe I\u0027m missing something?",
+      "parentUuid": "35129e68_125ad7cb",
+      "revId": "34d5d69b787e469d6a18300e64c5db804ff65d30",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

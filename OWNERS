@@ -32,28 +32,16 @@
 # data within them will be kept sorted.
 
 owners:
-- mine260309@gmail.com
 - patrick@stwcx.xyz
-- vernon.mauery@linux.intel.com
 - wak@google.com
 
 reviewers:
-- anoo@us.ibm.com
-- bradleyb@fuzziesquirrel.com
-- deepak.kodihalli.83@gmail.com
+- vernon.mauery@linux.intel.com
+- mine260309@gmail.com
 
 matchers:
 
 openbmc:
-- name: Adriana Kobylak
-  email: anoo@us.ibm.com
-  discord: anoo
-- name: Brad Bishop
-  email: bradleyb@fuzziesquirrel.com
-  discord: radsquirrel
-- name: Deepak Kodihalli
-  email: deepak.kodihalli.83@gmail.com
-  discord: dkodihal
 - name: Lei Yu
   email: mine260309@gmail.com
   discord: LeiYU

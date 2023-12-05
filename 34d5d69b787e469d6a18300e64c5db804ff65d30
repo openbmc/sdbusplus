@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "afec56af_4b74a109",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-12-05T17:35:39Z",
+      "side": 1,
+      "message": "Is anyone on the review list interested in maintaining the ASIO code?  I\u0027ve rarely touched it, never use it, and not really that interested in maintaining it.  If no one gives critical feedback we might as well just merge this.",
+      "revId": "34d5d69b787e469d6a18300e64c5db804ff65d30",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

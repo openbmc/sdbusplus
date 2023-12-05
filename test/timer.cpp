@@ -5,7 +5,7 @@
 
 #include <gtest/gtest.h>
 
-using namespace phosphor;
+using sdbusplus::Timer;
 
 class TimerTest : public ::testing::Test
 {

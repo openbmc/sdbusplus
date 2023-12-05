@@ -362,9 +362,9 @@ int client()
         "/xyz/openbmc_project/sensors", depth, interfaces);
 
     // sd_events work too using the default event loop
-    phosphor::Timer t1([]() { std::cerr << "*** tock ***\n"; });
+    sdbusplus::Timer t1([]() { std::cerr << "*** tock ***\n"; });
     t1.start(std::chrono::microseconds(1000000));
-    phosphor::Timer t2([]() { std::cerr << "*** tick ***\n"; });
+    sdbusplus::Timer t2([]() { std::cerr << "*** tick ***\n"; });
     t2.start(std::chrono::microseconds(500000), true);
     // add the sd_event wrapper to the io object
     sdbusplus::asio::sd_event_wrapper sdEvents(io);

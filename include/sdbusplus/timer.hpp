@@ -6,7 +6,7 @@
 #include <functional>
 #include <stdexcept>
 
-namespace phosphor
+namespace sdbusplus
 {
 
 /** @class Timer
@@ -246,4 +246,10 @@ class Timer
     }
 };
 
+} // namespace sdbusplus
+
+namespace phosphor
+{
+// Deprecated name alias.
+using sdbusplus::Timer;
 } // namespace phosphor

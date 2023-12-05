@@ -34,6 +34,24 @@
       "parentUuid": "afec56af_4b74a109",
       "revId": "34d5d69b787e469d6a18300e64c5db804ff65d30",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "35129e68_125ad7cb",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000002
+      },
+      "writtenOn": "2023-12-05T19:38:07Z",
+      "side": 1,
+      "message": "FWIW this sort of thing does seem to exist in other ObjectServers:\n\nhttps://docs.rs/zbus/latest/zbus/struct.ObjectServer.html#method.interface",
+      "parentUuid": "f8cd62c2_231a8bc2",
+      "revId": "34d5d69b787e469d6a18300e64c5db804ff65d30",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

@@ -29,12 +29,40 @@ namespace bus
 using busp_t = sd_bus*;
 struct bus;
 
-/** @brief Get an instance of the 'default' bus. */
+/* Methods for getting a new bus connection.
+ *
+ * There are two different bus types:
+ *      - system
+ *      - session ("user")
+ *
+ * If you call either `new_default` or `new_bus` you end up with a connection
+ * to the default bus based on the current user; system if root, session
+ * otherwise.
+ *
+ * sd-bus uses the word "default" to refer to a shared bus connection that it
+ * saves in thread-local-storage.  The `new_default*` functions give a
+ * connection to this thread-local-storage bus connection and not neceesarily a
+ * new, unique bus connection.  This can be a very important distinction,
+ * such as when writing test-cases that might require having both a server
+ * and client connection.
+ *
+ * If you only expect to have a single bus connection in your process with a
+ * single thread interacting with that connection, `new_default` is a fine
+ * option.  Otherwise, you likely want `new_bus`.
+ */
+
+/** @brief Get the shared instance of the 'default' bus. */
 bus new_default();
-/** @brief Get an instance of the 'user' session bus. */
+/** @brief Get a new instance of a bus. */
+bus new_bus();
+/** @brief Get a new instance of the 'user' session bus. */
 bus new_user();
-/** @brief Get an instance of the 'system' bus. */
+/** @brief Get a new instance of the 'system' bus. */
 bus new_system();
+/** @brief Get the shared instance of the 'user' session bus. */
+bus new_default_user();
+/** @brief Get the shared instance of the 'system' bus. */
+bus new_default_system();
 
 namespace details
 {
@@ -550,7 +578,7 @@ inline bus::bus(busp_t b, std::false_type) :
     }
 }
 
-/* Create a new default connection: system bus if root, session bus if user */
+/* Create a new default connection: system bus if root, session bus if user. */
 inline bus new_default()
 {
     sd_bus* b = nullptr;
@@ -558,7 +586,7 @@ inline bus new_default()
     return bus(b, std::false_type());
 }
 
-/* Create a new default connection to the session bus */
+/* Create a new default connection to the session bus. */
 inline bus new_default_user()
 {
     sd_bus* b = nullptr;
@@ -566,7 +594,7 @@ inline bus new_default_user()
     return bus(b, std::false_type());
 }
 
-/* Create a new default connection to the system bus */
+/* Create a new default connection to the system bus. */
 inline bus new_default_system()
 {
     sd_bus* b = nullptr;
@@ -574,7 +602,7 @@ inline bus new_default_system()
     return bus(b, std::false_type());
 }
 
-/* WARNING: THESE ARE NOT THE FUNCTIONS YOU ARE LOOKING FOR! */
+/* Create a new connection: system bus if root, session bus if user. */
 inline bus new_bus()
 {
     sd_bus* b = nullptr;
@@ -584,6 +612,7 @@ inline bus new_bus()
     return bus;
 }
 
+/* Create a new connection to the session bus. */
 inline bus new_user()
 {
     sd_bus* b = nullptr;
@@ -593,6 +622,7 @@ inline bus new_user()
     return bus;
 }
 
+/* Create a new connection to the system bus. */
 inline bus new_system()
 {
     sd_bus* b = nullptr;

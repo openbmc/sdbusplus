@@ -18,6 +18,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "8cc858fd_5035378e",
+        "filename": "example/prop_match.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1000900
+      },
+      "writtenOn": "2023-12-16T04:39:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "83b940c2_120512f6",
+      "revId": "2c78758d1a7d0b769b9a18cd79de8c398611ebcc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "2b7de32f_5f47e5df",
@@ -31,6 +49,30 @@
       "writtenOn": "2023-12-05T18:27:21Z",
       "side": 1,
       "message": "I\u0027m putting up a commit to move this to the sdbusplus namespace.  I don\u0027t know why we ended up with a \"phosphor\" namespace in this repository years ago.",
+      "range": {
+        "startLine": 46,
+        "startChar": 4,
+        "endLine": 46,
+        "endChar": 19
+      },
+      "revId": "2c78758d1a7d0b769b9a18cd79de8c398611ebcc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4654931f_f987fc83",
+        "filename": "example/prop_match.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1000900
+      },
+      "writtenOn": "2023-12-16T04:39:54Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "2b7de32f_5f47e5df",
       "range": {
         "startLine": 46,
         "startChar": 4,
@@ -58,6 +100,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "9b7b91e2_7161e30a",
+        "filename": "example/prop_match.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 1000900
+      },
+      "writtenOn": "2023-12-16T04:39:54Z",
+      "side": 1,
+      "message": "AFAICT, there\u0027s no way to use `Timer` without this kind of code. But I agree it was noisy and I replaced it with a std::thread to get equivalent behavior that\u0027s a bit more clear.",
+      "parentUuid": "436c7625_5791911a",
+      "revId": "2c78758d1a7d0b769b9a18cd79de8c398611ebcc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "5239c962_67357e50",
@@ -71,6 +131,24 @@
       "writtenOn": "2023-12-05T18:04:00Z",
       "side": 1,
       "message": "Why are we adding this when we already have support in both asio and async for getting a property?  I don\u0027t trust non-async code to call this function as it is because people are probably not thinking about the lifetimes correctly.",
+      "revId": "2c78758d1a7d0b769b9a18cd79de8c398611ebcc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "adfc39c4_b764acac",
+        "filename": "include/sdbusplus/property.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1000900
+      },
+      "writtenOn": "2023-12-16T04:39:54Z",
+      "side": 1,
+      "message": "This particular `getProperty()` function I agree probably doesn\u0027t add much utility, but it\u0027s used by `subscribeToProperty()`. I could put it in a details namespace so no one uses it directly.\n\n`subscribeToProperty()` is in the asio callback style of programming, but I chose to write it without any asio dependency to be more generic. This way it\u0027s usable by any asio apps and apps that just use synchronous calls. I figured there might be appetite for this style after seeing `message::call_async()`. But if you think this should be kept in the asio box I can make that change. I can see how it might be perceived as muddying the waters and providing too many options for users.",
+      "parentUuid": "5239c962_67357e50",
       "revId": "2c78758d1a7d0b769b9a18cd79de8c398611ebcc",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
@@ -111,6 +189,42 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "67d96d16_42c6cd15",
+        "filename": "include/sdbusplus/property.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 1000900
+      },
+      "writtenOn": "2023-12-16T04:39:54Z",
+      "side": 1,
+      "message": "Can you clarify what might fail? I added a variant type to the example and it still seems to work fine.",
+      "parentUuid": "b10ade7d_d1361734",
+      "revId": "2c78758d1a7d0b769b9a18cd79de8c398611ebcc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3d6875fb_8525145e",
+        "filename": "include/sdbusplus/property.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 1000900
+      },
+      "writtenOn": "2023-12-16T04:39:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b3ca7792_af6a9fc4",
+      "revId": "2c78758d1a7d0b769b9a18cd79de8c398611ebcc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "7cdd9dd6_8b81bf2f",
         "filename": "include/sdbusplus/property.hpp",
         "patchSetId": 2
@@ -122,6 +236,30 @@
       "writtenOn": "2023-12-05T18:04:00Z",
       "side": 1,
       "message": "I really don\u0027t want another weird \"make your own error code\" path.  If you don\u0027t want exceptions, use ASIO with the magic compile flags to avoid exceptions.  Otherwise, use exceptions.",
+      "range": {
+        "startLine": 61,
+        "startChar": 0,
+        "endLine": 70,
+        "endChar": 9
+      },
+      "revId": "2c78758d1a7d0b769b9a18cd79de8c398611ebcc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "44d051c9_5f0aac1b",
+        "filename": "include/sdbusplus/property.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 1000900
+      },
+      "writtenOn": "2023-12-16T04:39:54Z",
+      "side": 1,
+      "message": "Exceptions would be fine, but how can I do that with a callback style of programming? The signal comes in asynchronously and any error would have to be communicated to the callback.",
+      "parentUuid": "7cdd9dd6_8b81bf2f",
       "range": {
         "startLine": 61,
         "startChar": 0,
@@ -149,6 +287,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "74f3f055_bd94fab2",
+        "filename": "include/sdbusplus/property.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 1000900
+      },
+      "writtenOn": "2023-12-16T04:39:54Z",
+      "side": 1,
+      "message": "Changed to named struct with `optional` wrapper. There was no compelling reason to use a unique_ptr here.",
+      "parentUuid": "fccd87aa_ac9093d4",
+      "revId": "2c78758d1a7d0b769b9a18cd79de8c398611ebcc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "2eb1ed5c_34c42676",
@@ -162,6 +318,30 @@
       "writtenOn": "2023-12-05T18:04:00Z",
       "side": 1,
       "message": "Please don\u0027t use custom error types outside of ASIO.",
+      "range": {
+        "startLine": 111,
+        "startChar": 0,
+        "endLine": 121,
+        "endChar": 13
+      },
+      "revId": "2c78758d1a7d0b769b9a18cd79de8c398611ebcc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f148f4e2_a557a766",
+        "filename": "include/sdbusplus/property.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 1000900
+      },
+      "writtenOn": "2023-12-16T04:39:54Z",
+      "side": 1,
+      "message": "Will continue discussion of error handling in other thread.",
+      "parentUuid": "2eb1ed5c_34c42676",
       "range": {
         "startLine": 111,
         "startChar": 0,
@@ -191,6 +371,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "9fbbdcc0_ce83f02e",
+        "filename": "include/sdbusplus/property.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 1000900
+      },
+      "writtenOn": "2023-12-16T04:39:54Z",
+      "side": 1,
+      "message": "It\u0027s not clear to me why that would be needed - can you clarify?",
+      "parentUuid": "60ecb95d_7220704e",
+      "revId": "2c78758d1a7d0b769b9a18cd79de8c398611ebcc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "0c0176e4_44d4e1bd",
         "filename": "include/sdbusplus/property.hpp",
         "patchSetId": 2
@@ -202,6 +400,24 @@
       "writtenOn": "2023-12-05T18:04:00Z",
       "side": 1,
       "message": "Prefer to use `unpack`.",
+      "revId": "2c78758d1a7d0b769b9a18cd79de8c398611ebcc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "bf7fc36c_bab0ac40",
+        "filename": "include/sdbusplus/property.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 133,
+      "author": {
+        "id": 1000900
+      },
+      "writtenOn": "2023-12-16T04:39:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0c0176e4_44d4e1bd",
       "revId": "2c78758d1a7d0b769b9a18cd79de8c398611ebcc",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
@@ -229,6 +445,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "3a4f3d6f_588a640e",
+        "filename": "include/sdbusplus/property.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 1000900
+      },
+      "writtenOn": "2023-12-16T04:39:54Z",
+      "side": 1,
+      "message": "Agreed, it was funny. Changed to putting the common logic into a struct/functor managed via shared_ptr. It\u0027s still an unusual pattern but at least the lifetimes are more clear.",
+      "parentUuid": "b1ed4dd2_3feb525a",
+      "range": {
+        "startLine": 139,
+        "startChar": 28,
+        "endLine": 139,
+        "endChar": 76
+      },
+      "revId": "2c78758d1a7d0b769b9a18cd79de8c398611ebcc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c511c6bb_28a890ac",
@@ -242,6 +482,30 @@
       "writtenOn": "2023-12-05T18:04:00Z",
       "side": 1,
       "message": "Use `unpack`.",
+      "range": {
+        "startLine": 141,
+        "startChar": 0,
+        "endLine": 142,
+        "endChar": 32
+      },
+      "revId": "2c78758d1a7d0b769b9a18cd79de8c398611ebcc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ae3be627_0e98e5f5",
+        "filename": "include/sdbusplus/property.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 1000900
+      },
+      "writtenOn": "2023-12-16T04:39:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c511c6bb_28a890ac",
       "range": {
         "startLine": 141,
         "startChar": 0,

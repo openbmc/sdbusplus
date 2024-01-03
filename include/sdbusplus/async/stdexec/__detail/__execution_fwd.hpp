@@ -208,6 +208,26 @@ using __bulk::bulk_t;
 extern const bulk_t bulk;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
+namespace __split
+{
+struct split_t;
+struct __split_t;
+} // namespace __split
+
+using __split::split_t;
+extern const split_t split;
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+namespace __ensure_started
+{
+struct ensure_started_t;
+struct __ensure_started_t;
+} // namespace __ensure_started
+
+using __ensure_started::ensure_started_t;
+extern const ensure_started_t ensure_started;
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
 namespace __on_v2
 {
 struct on_t;

@@ -44,7 +44,7 @@ struct __legacy_customization
 {
     template <class _Tag, class _Data, class... _Children>
         requires __has_legacy_c11n<_Tag, _Data, _Children...>
-    decltype(auto) operator()(_Tag, _Data && __data,
+    decltype(auto) operator()(_Tag, _Data&& __data,
                               _Children&&... __children) const
     {
         return __legacy_c11n_fn<_Tag, _Data, _Children...>()(

@@ -1137,7 +1137,7 @@ struct __nth_member
 {
     template <class _Ty>
     STDEXEC_ATTRIBUTE((always_inline)) //
-    constexpr decltype(auto) operator()(_Ty && __ty) const noexcept
+    constexpr decltype(auto) operator()(_Ty&& __ty) const noexcept
     {
         return ((_Ty&&)__ty).*(__ty.__mbrs_.template __nth<_Np>());
     }

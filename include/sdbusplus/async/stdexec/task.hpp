@@ -30,7 +30,6 @@
 #include <variant>
 
 STDEXEC_PRAGMA_PUSH()
-STDEXEC_PRAGMA_IGNORE_GNU("-Wpragmas")
 STDEXEC_PRAGMA_IGNORE_GNU("-Wundefined-inline")
 
 namespace exec

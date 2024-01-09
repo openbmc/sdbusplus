@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "db12e533_b123708a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 9
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000682
+      },
+      "writtenOn": "2024-01-09T01:16:12Z",
+      "side": 1,
+      "message": "Sounds like a reasonable improvement to me",
+      "revId": "d722aacc4babcf5bb903b5e32ddbf1097eb31458",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7898f3ae_843b4ac7",
+        "filename": "include/sdbusplus/message/append.hpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 328,
+      "author": {
+        "id": 1000682
+      },
+      "writtenOn": "2024-01-09T01:16:12Z",
+      "side": 1,
+      "message": "nit: move this near to where it is firstly used.",
+      "range": {
+        "startLine": 328,
+        "startChar": 18,
+        "endLine": 328,
+        "endChar": 19
+      },
+      "revId": "d722aacc4babcf5bb903b5e32ddbf1097eb31458",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "37a318c0_485e43c3",
+        "filename": "include/sdbusplus/message/append.hpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 330,
+      "author": {
+        "id": 1000682
+      },
+      "writtenOn": "2024-01-09T01:16:12Z",
+      "side": 1,
+      "message": "nit: avoid magic abbreviation.",
+      "range": {
+        "startLine": 330,
+        "startChar": 15,
+        "endLine": 330,
+        "endChar": 17
+      },
+      "revId": "d722aacc4babcf5bb903b5e32ddbf1097eb31458",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

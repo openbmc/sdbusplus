@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5d30d11c_1373b2ab",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 11
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2024-01-10T22:45:02Z",
+      "side": 1,
+      "message": "That\u0027s bad and optimising sdbusplus is a good outcome, but I do wonder whether the design is wrong. A philosophy that\u0027s been bandied about is if the data you\u0027re exchanging on D-Bus isn\u0027t human-consumable in a `busctl introspect` or `busctl monitor` then there are probably better approaches. For instance, in this case an alternative is to use D-Bus\u0027 [file descriptor type (`h`)](https://dbus.freedesktop.org/doc/dbus-specification.html#basic-types) along with [memfd_create(2)](https://man7.org/linux/man-pages/man2/memfd_create.2.html) to pass a descriptor for a memory region between processes. This would avoid the problem altogether.",
+      "range": {
+        "startLine": 14,
+        "startChar": 9,
+        "endLine": 18,
+        "endChar": 27
+      },
+      "revId": "5ec887b44f0f675ff328b52d7194cdb3525b1630",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

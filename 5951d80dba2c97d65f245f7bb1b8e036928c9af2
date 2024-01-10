@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "63097399_aa4e59e6",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-01-10T17:32:27Z",
+      "side": 1,
+      "message": "Ignoring CI results so we can get the corresponding docker commit merged.",
+      "revId": "5951d80dba2c97d65f245f7bb1b8e036928c9af2",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

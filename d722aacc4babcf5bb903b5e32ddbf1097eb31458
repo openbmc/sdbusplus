@@ -41,6 +41,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "a4e9828a_05de5773",
+        "filename": "include/sdbusplus/message/append.hpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 328,
+      "author": {
+        "id": 1001902
+      },
+      "writtenOn": "2024-01-10T04:35:10Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "7898f3ae_843b4ac7",
+      "range": {
+        "startLine": 328,
+        "startChar": 18,
+        "endLine": 328,
+        "endChar": 19
+      },
+      "revId": "d722aacc4babcf5bb903b5e32ddbf1097eb31458",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "37a318c0_485e43c3",
@@ -64,6 +88,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "83e5379b_8ba09541",
+        "filename": "include/sdbusplus/message/append.hpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 330,
+      "author": {
+        "id": 1001902
+      },
+      "writtenOn": "2024-01-10T04:35:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "37a318c0_485e43c3",
+      "range": {
+        "startLine": 330,
+        "startChar": 15,
+        "endLine": 330,
+        "endChar": 17
+      },
+      "revId": "d722aacc4babcf5bb903b5e32ddbf1097eb31458",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "13524d02_a42860c3",
@@ -77,6 +125,24 @@
       "writtenOn": "2024-01-10T03:23:14Z",
       "side": 1,
       "message": "Could you add some new cases of nested types, e.g. append std::vector\u003cstd::array\u003cint\u003e\u003e?",
+      "revId": "d722aacc4babcf5bb903b5e32ddbf1097eb31458",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "41f3f465_332fef3a",
+        "filename": "test/message/append.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 323,
+      "author": {
+        "id": 1001902
+      },
+      "writtenOn": "2024-01-10T04:35:10Z",
+      "side": 1,
+      "message": "I tried to add below test case:\n```\ndiff --git a/test/message/append.cpp b/test/message/append.cpp\nindex 132bcb1..412dcf0 100644\n--- a/test/message/append.cpp\n+++ b/test/message/append.cpp\n@@ -325,6 +325,24 @@ TEST_F(AppendTest, VectorIntegral)\n     new_message().append(v);\n }\n\n+TEST_F(AppendTest, VectorNestIntegral)\n+{\n+    const std::vector\u003cstd::array\u003cint, 3\u003e\u003e v{{1, 2, 3},\n+        {3, 4, 5},\n+        {6, 7, 8}};\n+\n+    {\n+        testing::InSequence seq;\n+        expect_open_container(SD_BUS_TYPE_ARRAY, \"ai\");\n+        for (long unsigned int i \u003d 0; i \u003c  v.size(); i++)\n+        {\n+            expect_append_array_space(SD_BUS_TYPE_INT32, v[i].size() * sizeof(int));\n+        }\n+        expect_close_container();\n+    }\n+    new_message().append(v);\n+}\n+\n TEST_F(AppendTest, Set)\n {\n     const std::set\u003cstd::string\u003e s{\"one\", \"two\", \"eight\"};\n```\n\nAs you can see, it does not change too much compared to \"TEST_F(AppendTest, LargeCombo)\", only the most inner call will be un-templated to the new change.\n\nThe problem is, this unit test mocked the libsystemd sd_bus_* interface, so each expect_append_array_space need to allocate memory to provide the memory for conducting the test (in real sd_bus_message_append_array_space call, the memory is allocated by libsystemd), to handle these repeated malloc in the mock, to pass asan check, will make these whole unit test unnecessarily complicated.",
+      "parentUuid": "13524d02_a42860c3",
       "revId": "d722aacc4babcf5bb903b5e32ddbf1097eb31458",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }

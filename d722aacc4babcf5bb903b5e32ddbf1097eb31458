@@ -62,6 +62,23 @@
       },
       "revId": "d722aacc4babcf5bb903b5e32ddbf1097eb31458",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "13524d02_a42860c3",
+        "filename": "test/message/append.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 323,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2024-01-10T03:23:14Z",
+      "side": 1,
+      "message": "Could you add some new cases of nested types, e.g. append std::vector\u003cstd::array\u003cint\u003e\u003e?",
+      "revId": "d722aacc4babcf5bb903b5e32ddbf1097eb31458",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

@@ -653,8 +653,8 @@ struct __transform_env
 {
     template <class _Domain, class _Sender, class _Env>
     STDEXEC_ATTRIBUTE((always_inline))
-    /*constexpr*/ decltype(auto) operator()(_Domain __dom, _Sender && __sndr,
-                                            _Env && __env) const noexcept
+    /*constexpr*/ decltype(auto) operator()(_Domain __dom, _Sender&& __sndr,
+                                            _Env&& __env) const noexcept
     {
         if constexpr (__domain::__has_transform_env<_Domain, _Sender, _Env>)
         {
@@ -672,7 +672,7 @@ struct __transform_sender_1
 {
     template <class _Domain, class _Sender, class... _Env>
     STDEXEC_ATTRIBUTE((always_inline))
-    /*constexpr*/ decltype(auto) operator()(_Domain __dom, _Sender && __sndr,
+    /*constexpr*/ decltype(auto) operator()(_Domain __dom, _Sender&& __sndr,
                                             const _Env&... __env) const
     {
         if constexpr (__domain::__has_transform_sender<_Domain, _Sender,
@@ -696,7 +696,7 @@ struct __transform_sender
     template <class _Self = __transform_sender, class _Domain, class _Sender,
               class... _Env>
     STDEXEC_ATTRIBUTE((always_inline))
-    /*constexpr*/ decltype(auto) operator()(_Domain __dom, _Sender && __sndr,
+    /*constexpr*/ decltype(auto) operator()(_Domain __dom, _Sender&& __sndr,
                                             const _Env&... __env) const
     {
         using _Sender2 = __call_result_t<__transform_sender_1, _Domain, _Sender,
@@ -727,8 +727,8 @@ struct __transform_dependent_sender
     // requested domain.
     template <class _Domain, sender_expr _Sender, class _Env>
         requires same_as<__early_domain_of_t<_Sender>, dependent_domain>
-    /*constexpr*/ decltype(auto) operator()(_Domain __dom, _Sender && __sndr,
-                                            const _Env & __env) const
+    /*constexpr*/ decltype(auto) operator()(_Domain __dom, _Sender&& __sndr,
+                                            const _Env& __env) const
     {
         static_assert(__none_of<_Domain, dependent_domain>);
         return __transform_sender()(
@@ -820,7 +820,7 @@ inline constexpr struct apply_sender_t
         requires __has_implementation_for<_Tag, _Domain, _Sender, _Args...>
     STDEXEC_ATTRIBUTE((always_inline))
         /*constexpr*/ decltype(auto)
-            operator()(_Domain __dom, _Tag, _Sender && __sndr,
+            operator()(_Domain __dom, _Tag, _Sender&& __sndr,
                        _Args&&... __args) const
     {
         if constexpr (__domain::__has_apply_sender<_Domain, _Tag, _Sender,

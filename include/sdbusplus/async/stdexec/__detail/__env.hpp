@@ -457,7 +457,7 @@ struct __join_env_t
     }
 
     template <class _Env, class _Base>
-    decltype(auto) operator()(_Env && __env, _Base && __base) const noexcept
+    decltype(auto) operator()(_Env&& __env, _Base&& __base) const noexcept
     {
         using __env_t = __decay_t<_Env>;
         using __base_t = __decay_t<_Base>;
@@ -476,7 +476,7 @@ struct __join_env_t
     }
 
     template <class _Env0, class _Env1, class _Env2, class... _Envs>
-    decltype(auto) operator()(_Env0 && __env0, _Env1 && __env1, _Env2 && __env2,
+    decltype(auto) operator()(_Env0&& __env0, _Env1&& __env1, _Env2&& __env2,
                               _Envs&&... __envs) const noexcept
     {
         const auto& __join_env = *this;

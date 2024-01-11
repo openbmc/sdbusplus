@@ -46,6 +46,30 @@
       },
       "revId": "5ec887b44f0f675ff328b52d7194cdb3525b1630",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ca917622_f47f342b",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 11
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2024-01-11T00:39:54Z",
+      "side": 1,
+      "message": "Right, I\u0027m not suggesting your patch shouldn\u0027t be merged. We should absolutely optimise sdbusplus where we can.\n\nI recognise that the application design at this point might be hard to change, and you need to make the best of what you have, and that we\u0027d need concrete performance numbers on each approach to evaluate them properly. But with that in mind, it\u0027s generally recommended that large chunks of data be passed over D-Bus by file descriptor to avoid these kinds of performance problems.\n\nIt also seems you have an MCTP integration that is very much not something we\u0027re doing upstream, and you\u0027d also not have the problem upstream if you used `AF_MCTP` sockets for PLDM instead :) But again I expect you\u0027re in position where you have to make the best of what you have.",
+      "parentUuid": "82e187c5_860fa74b",
+      "range": {
+        "startLine": 14,
+        "startChar": 9,
+        "endLine": 18,
+        "endChar": 27
+      },
+      "revId": "5ec887b44f0f675ff328b52d7194cdb3525b1630",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

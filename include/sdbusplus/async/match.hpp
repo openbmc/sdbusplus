@@ -147,7 +147,7 @@ struct match_sender
 
 }; // namespace match_ns
 
-auto match::next() noexcept
+inline auto match::next() noexcept
 {
     return match_ns::match_sender(*this);
 }

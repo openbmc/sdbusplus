@@ -19,10 +19,30 @@ static slot_t makeMatch(SdBusInterface* intf, sd_bus* bus, const char* _match,
     return slot_t{slot, intf};
 }
 
+static slot_t makeMatch(sdbusplus::asio::connection& conn, sd_bus* bus,
+                        const char* _match, sd_bus_message_handler_t handler,
+                        void* context)
+{
+    sd_bus_slot* slot;
+    auto intf = conn.getInterface();
+    int r = intf->sd_bus_add_match_async(bus, &slot, _match, handler, nullptr,
+                                         context);
+    if (r < 0)
+    {
+        throw exception::SdBusError(-r, "sd_bus_match");
+    }
+    return slot_t{slot, intf};
+}
+
 match::match(sdbusplus::bus_t& bus, const char* _match,
              sd_bus_message_handler_t handler, void* context) :
     _slot(
         makeMatch(bus.getInterface(), get_busp(bus), _match, handler, context))
+{}
+
+match::match(sdbusplus::asio::connection& conn, const char* _match,
+             sd_bus_message_handler_t handler, void* context) :
+    _slot(makeMatch(conn, get_busp(conn), _match, handler, context))
 {}
 
 // The callback is 'noexcept' because it is called from C code (sd-bus).
@@ -41,4 +61,10 @@ match::match(sdbusplus::bus_t& bus, const char* _match, callback_t callback) :
                     _callback.get()))
 {}
 
+match::match(sdbusplus::asio::connection& conn, const char* _match,
+             callback_t callback) :
+    _callback(std::make_unique<callback_t>(std::move(callback))),
+    _slot(
+        makeMatch(conn, get_busp(conn), _match, matchCallback, _callback.get()))
+{}
 } // namespace sdbusplus::bus::match

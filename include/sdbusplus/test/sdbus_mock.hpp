@@ -25,6 +25,10 @@ class SdBusMock : public SdBusInterface
                 (sd_bus*, sd_bus_slot**, const char*, sd_bus_message_handler_t,
                  void*),
                 (override));
+    MOCK_METHOD(int, sd_bus_add_match_async,
+                (sd_bus*, sd_bus_slot**, const char*, sd_bus_message_handler_t,
+                 sd_bus_message_handler_t, void*),
+                (override));
     MOCK_METHOD(int, sd_bus_attach_event, (sd_bus*, sd_event*, int),
                 (override));
     MOCK_METHOD(int, sd_bus_call,
@@ -172,6 +176,7 @@ class SdBusMock : public SdBusInterface
         ON_CALL(*this, sd_bus_add_object_manager).WillByDefault(slotcb);
         ON_CALL(*this, sd_bus_add_object_vtable).WillByDefault(slotcb);
         ON_CALL(*this, sd_bus_add_match).WillByDefault(slotcb);
+        ON_CALL(*this, sd_bus_add_match_async).WillByDefault(slotcb);
         ON_CALL(*this, sd_bus_call_async).WillByDefault(slotcb);
     }
 };

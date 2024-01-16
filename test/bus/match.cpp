@@ -1,3 +1,4 @@
+#include <boost/asio/io_context.hpp>
 #include <sdbusplus/bus.hpp>
 #include <sdbusplus/bus/match.hpp>
 
@@ -7,6 +8,7 @@ class Match : public ::testing::Test
 {
   protected:
     sdbusplus::bus_t bus = sdbusplus::bus::new_bus();
+    boost::asio::io_context io;
 
     static constexpr auto busName = "xyz.openbmc_project.sdbusplus.test.Match";
 
@@ -24,7 +26,36 @@ class Match : public ::testing::Test
             bus.process_discard();
         }
     }
+    void waitWithAsio(bool& triggered)
+    {
+        for (size_t i = 0; (i < 16) && !triggered; ++i)
+        {
+            io.run_one();
+        }
+    }
 };
+
+TEST_F(Match, CreateWithAsio)
+{
+    auto conn = std::make_shared<sdbusplus::asio::connection>(io);
+    bool triggered = false;
+    auto trigger = [](sd_bus_message* /*m*/, void* context,
+                      sd_bus_error* /*e*/) {
+        *static_cast<bool*>(context) = true;
+        return 0;
+    };
+
+    sdbusplus::bus::match_t m{*conn, matchRule(), trigger, &triggered};
+    auto m2 = std::move(m); // ensure match is move-safe.
+
+    waitForIt(triggered);
+    ASSERT_FALSE(triggered);
+
+    conn->request_name(busName);
+
+    waitWithAsio(triggered);
+    ASSERT_TRUE(triggered);
+}
 
 TEST_F(Match, FunctorIs_sd_bus_message_handler_t)
 {

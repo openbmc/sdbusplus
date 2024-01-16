@@ -81,3 +81,5 @@ executable(
     include_directories: include_directories('gen'),
     dependencies: sdbusplus_dep,
 )
+
+subdir('match-test')

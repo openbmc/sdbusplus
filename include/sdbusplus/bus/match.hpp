@@ -2,6 +2,7 @@
 
 #include <systemd/sd-bus.h>
 
+#include <sdbusplus/asio/connection.hpp>
 #include <sdbusplus/bus.hpp>
 #include <sdbusplus/message.hpp>
 #include <sdbusplus/slot.hpp>
@@ -27,9 +28,17 @@ struct match : private sdbusplus::bus::details::bus_friend
      */
     match(sdbusplus::bus_t& bus, const char* _match,
           sd_bus_message_handler_t handler, void* context = nullptr);
+    match(sdbusplus::asio::connection& conn, const char* _match,
+          sd_bus_message_handler_t handler, void* context = nullptr);
+
     inline match(sdbusplus::bus_t& bus, const std::string& _match,
                  sd_bus_message_handler_t handler, void* context = nullptr) :
         match(bus, _match.c_str(), handler, context)
+    {}
+
+    inline match(sdbusplus::asio::connection& conn, const std::string& _match,
+                 sd_bus_message_handler_t handler, void* context = nullptr) :
+        match(conn, _match.c_str(), handler, context)
     {}
 
     /** @brief Register a signal match.
@@ -40,9 +49,17 @@ struct match : private sdbusplus::bus::details::bus_friend
      */
     using callback_t = std::function<void(sdbusplus::message_t&)>;
     match(sdbusplus::bus_t& bus, const char* _match, callback_t callback);
+    match(sdbusplus::asio::connection& conn, const char* _match,
+          callback_t callback);
+
     inline match(sdbusplus::bus_t& bus, const std::string& _match,
                  callback_t callback) :
         match(bus, _match.c_str(), std::move(callback))
+    {}
+
+    inline match(sdbusplus::asio::connection& conn, const std::string& _match,
+                 callback_t callback) :
+        match(conn, _match.c_str(), std::move(callback))
     {}
 
   private:

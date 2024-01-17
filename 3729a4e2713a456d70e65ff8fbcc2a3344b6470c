@@ -1,0 +1,107 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c0a811eb_e9cc0121",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-01-17T13:09:20Z",
+      "side": 1,
+      "message": "If this is a \"test\" why not make it a test instead of an example?\n\nThere is no reason why you can\u0027t make two bus connections in a single process, each managed by their own thread.",
+      "range": {
+        "startLine": 12,
+        "startChar": 0,
+        "endLine": 14,
+        "endChar": 19
+      },
+      "revId": "3729a4e2713a456d70e65ff8fbcc2a3344b6470c",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1e522487_9005a6fc",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-01-17T13:09:20Z",
+      "side": 1,
+      "message": "How often does this occur?  Is there anything we can do to especially aggravate it?  It is difficult to know correctness if we have a test-case that doesn\u0027t fail 100% of the time (when the code is wrong).",
+      "range": {
+        "startLine": 16,
+        "startChar": 0,
+        "endLine": 17,
+        "endChar": 45
+      },
+      "revId": "3729a4e2713a456d70e65ff8fbcc2a3344b6470c",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "01446ca4_1fff09ef",
+        "filename": "example/match-test/match-client.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-01-17T13:09:20Z",
+      "side": 1,
+      "message": "Please don\u0027t use printf in C++ code.",
+      "revId": "3729a4e2713a456d70e65ff8fbcc2a3344b6470c",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9bfac296_0cfaec9f",
+        "filename": "example/match-test/match-client.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-01-17T13:09:20Z",
+      "side": 1,
+      "message": "`int main()` is good enough when you don\u0027t need the arguments.",
+      "range": {
+        "startLine": 55,
+        "startChar": 9,
+        "endLine": 55,
+        "endChar": 39
+      },
+      "revId": "3729a4e2713a456d70e65ff8fbcc2a3344b6470c",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "965e0240_8516921c",
+        "filename": "example/match-test/match-server.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-01-17T13:09:20Z",
+      "side": 1,
+      "message": "Is there something we can do here to make this more test-case friendly?  As is, \"com.foo\" isn\u0027t owned by us and has the potential to collide.  If everyone were to use \"com.foo\" in test cases it would make it so that our test cases would fail due to conflicts with each other (when ran in parallel, or potentially across jobs on the same CI server).",
+      "revId": "3729a4e2713a456d70e65ff8fbcc2a3344b6470c",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

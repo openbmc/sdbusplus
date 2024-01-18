@@ -48,6 +48,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b665cc97_ce618b58",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2024-01-18T15:56:14Z",
+      "side": 1,
+      "message": "How about adding a new functor for this new async match API, so the caller could pass a callback that does the init of the property.\n\nIn previous practice, we usually do:\n* Add a match\n* Initially get the property\nThen the property is guaranteed to be updated.\n\nWith asio API, we could do:\n* Add a match with a callback\n* Initially get the property in the callback\n\nThen we could trust the property as long as the initial callback is called.",
+      "parentUuid": "134b75f6_bcbf92b4",
+      "range": {
+        "startLine": 11,
+        "startChar": 0,
+        "endLine": 12,
+        "endChar": 49
+      },
+      "revId": "7439a1b24397a31499c033bdb01f8a59fb0f8e3f",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "67dda363_dabf7981",

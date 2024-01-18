@@ -26,6 +26,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "f18b3b68_deb7aa42",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2024-01-18T03:44:36Z",
+      "side": 1,
+      "message": "The naming of the files are misleading.\nThis is actually a demo code to show the issue of using match with asio.",
+      "parentUuid": "c0a811eb_e9cc0121",
+      "range": {
+        "startLine": 12,
+        "startChar": 0,
+        "endLine": 14,
+        "endChar": 19
+      },
+      "revId": "3729a4e2713a456d70e65ff8fbcc2a3344b6470c",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "1e522487_9005a6fc",
         "filename": "/COMMIT_MSG",
         "patchSetId": 2
@@ -37,6 +61,30 @@
       "writtenOn": "2024-01-17T13:09:20Z",
       "side": 1,
       "message": "How often does this occur?  Is there anything we can do to especially aggravate it?  It is difficult to know correctness if we have a test-case that doesn\u0027t fail 100% of the time (when the code is wrong).",
+      "range": {
+        "startLine": 16,
+        "startChar": 0,
+        "endLine": 17,
+        "endChar": 45
+      },
+      "revId": "3729a4e2713a456d70e65ff8fbcc2a3344b6470c",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2cc9e662_b45dbe43",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2024-01-18T03:44:36Z",
+      "side": 1,
+      "message": "In a few seconds, you will see the client is blocked.\n\nIt\u0027s hard to simulate 100% reproducible case, because it depends on the timing.\nAs long as the client makes a dbus call when the server\u0027s match is doing \"ppoll\", the issue will occur.",
+      "parentUuid": "1e522487_9005a6fc",
       "range": {
         "startLine": 16,
         "startChar": 0,
@@ -66,6 +114,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "3ac5c4c5_fa007f30",
+        "filename": "example/match-test/match-client.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2024-01-18T03:44:36Z",
+      "side": 1,
+      "message": "Will fix.",
+      "parentUuid": "01446ca4_1fff09ef",
+      "revId": "3729a4e2713a456d70e65ff8fbcc2a3344b6470c",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "9bfac296_0cfaec9f",
         "filename": "example/match-test/match-client.cpp",
         "patchSetId": 2
@@ -89,6 +155,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "5e2f5e94_28215e13",
+        "filename": "example/match-test/match-client.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2024-01-18T03:44:36Z",
+      "side": 1,
+      "message": "Will fix",
+      "parentUuid": "9bfac296_0cfaec9f",
+      "range": {
+        "startLine": 55,
+        "startChar": 9,
+        "endLine": 55,
+        "endChar": 39
+      },
+      "revId": "3729a4e2713a456d70e65ff8fbcc2a3344b6470c",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "965e0240_8516921c",
         "filename": "example/match-test/match-server.cpp",
         "patchSetId": 2
@@ -100,6 +190,24 @@
       "writtenOn": "2024-01-17T13:09:20Z",
       "side": 1,
       "message": "Is there something we can do here to make this more test-case friendly?  As is, \"com.foo\" isn\u0027t owned by us and has the potential to collide.  If everyone were to use \"com.foo\" in test cases it would make it so that our test cases would fail due to conflicts with each other (when ran in parallel, or potentially across jobs on the same CI server).",
+      "revId": "3729a4e2713a456d70e65ff8fbcc2a3344b6470c",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "447c6906_998a20d3",
+        "filename": "example/match-test/match-server.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2024-01-18T03:44:36Z",
+      "side": 1,
+      "message": "This is really for demo purpose, we could change the service name.\n\nI will see if this could be simulated in a really test case though.",
+      "parentUuid": "965e0240_8516921c",
       "revId": "3729a4e2713a456d70e65ff8fbcc2a3344b6470c",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }

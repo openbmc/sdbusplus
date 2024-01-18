@@ -657,7 +657,7 @@ using bus_t = bus::bus;
  *
  *  @return The dbus bus.
  */
-inline auto message_t::get_bus() const
+inline bus_t message_t::get_bus() const
 {
     sd_bus* b = nullptr;
     b = _intf->sd_bus_message_get_bus(_msg.get());

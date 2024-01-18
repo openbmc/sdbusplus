@@ -185,7 +185,7 @@ class message : private sdbusplus::slot::details::slot_friend
 
     /** @brief Get the dbus bus from the message. */
     // Forward declare.
-    auto get_bus() const;
+    bus::bus get_bus() const;
 
     /** @brief Get the signature of a message.
      *

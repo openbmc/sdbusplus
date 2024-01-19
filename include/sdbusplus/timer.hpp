@@ -247,9 +247,3 @@ class Timer
 };
 
 } // namespace sdbusplus
-
-namespace phosphor
-{
-// Deprecated name alias.
-using sdbusplus::Timer;
-} // namespace phosphor

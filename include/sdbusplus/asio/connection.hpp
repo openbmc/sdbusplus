@@ -47,12 +47,17 @@ namespace sdbusplus
 namespace asio
 {
 
+// Forward declare match so connection can friend it
+class match;
+
 /// Root D-Bus IO object
 /**
  * A connection to a bus, through which messages may be sent or received.
  */
 class connection : public sdbusplus::bus_t
 {
+    friend match;
+
   public:
     // default to system bus
     connection(boost::asio::io_context& io) :

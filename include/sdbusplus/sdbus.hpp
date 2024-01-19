@@ -30,6 +30,11 @@ class SdBusInterface
         sd_bus* bus, sd_bus_slot** slot, const char* path,
         sd_bus_message_handler_t callback, void* userdata) = 0;
 
+    virtual int sd_bus_add_match_async(
+        sd_bus* bus, sd_bus_slot** slot, const char* path,
+        sd_bus_message_handler_t callback,
+        sd_bus_message_handler_t install_callback, void* userdata) = 0;
+
     virtual int sd_bus_attach_event(sd_bus* bus, sd_event* e, int priority) = 0;
 
     virtual int sd_bus_call(sd_bus* bus, sd_bus_message* m, uint64_t usec,
@@ -197,6 +202,16 @@ class SdBusImpl : public SdBusInterface
                          void* userdata) override
     {
         return ::sd_bus_add_match(bus, slot, path, callback, userdata);
+    }
+
+    int sd_bus_add_match_async(sd_bus* bus, sd_bus_slot** slot,
+                               const char* path,
+                               sd_bus_message_handler_t callback,
+                               sd_bus_message_handler_t install_callback,
+                               void* userdata) override
+    {
+        return ::sd_bus_add_match_async(bus, slot, path, callback,
+                                        install_callback, userdata);
     }
 
     int sd_bus_attach_event(sd_bus* bus, sd_event* e, int priority) override

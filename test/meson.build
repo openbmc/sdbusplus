@@ -27,6 +27,7 @@ tests = [
     'bus/exception',
     'bus/list_names',
     'bus/match',
+    'bus/match_async',
     'event/event',
     'exception/sdbus_error',
     'message/append',

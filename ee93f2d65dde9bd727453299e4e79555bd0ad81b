@@ -20,6 +20,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "fdb83083_1bdafb9a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-01-20T02:43:30Z",
+      "side": 1,
+      "message": "\u003e We\u0027ve known about this \"bug\" for a while, but given that the dbus daemon responds pretty quickly, it wasn\u0027t a huge issue in practice.\n\nI feel like I\u0027m still getting conflicting information here.  The commit message says \"delay\" but elsewhere LeiYU claimed there was a hang.  If this is about fixing a delay in the time it takes for the dbus-broker to respond, this seems like excessive work and excessive complexity for almost no benefit.  If we start making the match registration async, I\u0027m certain people will start having incorrect code because they don\u0027t understand that there is this delay and further dbus queries they do have an implicit ordering incorrectness.\n\nIf there is a hang, we need to fix the hang; it is a bug in the asio code.\nIf there is a delay, I think we need a real use-case where these few ms cause a problem.",
+      "parentUuid": "2de432bd_fb01a88d",
+      "revId": "ee93f2d65dde9bd727453299e4e79555bd0ad81b",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "a0a0540b_720bf9e1",
         "filename": "include/sdbusplus/bus/match.hpp",
         "patchSetId": 4

@@ -56,6 +56,30 @@
       },
       "revId": "ee93f2d65dde9bd727453299e4e79555bd0ad81b",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "785ca993_9daed006",
+        "filename": "src/bus/match.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2024-01-20T01:11:30Z",
+      "side": 1,
+      "message": "From the sdbusplus docs:\n\n\u003e If this function is specified as NULL a default implementation is used that terminates the bus connection should installing the match fail.\n\nI\u0027m guessing that\u0027s really not the behavior we want.",
+      "parentUuid": "5db91473_5d55427a",
+      "range": {
+        "startLine": 29,
+        "startChar": 61,
+        "endLine": 29,
+        "endChar": 68
+      },
+      "revId": "ee93f2d65dde9bd727453299e4e79555bd0ad81b",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

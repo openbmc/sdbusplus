@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2de432bd_fb01a88d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2024-01-20T01:07:51Z",
+      "side": 1,
+      "message": "FWIW, the async version of add match didn\u0027t exist in sd-bus when we did the asio extensions initially.  We\u0027ve known about this \"bug\" for a while, but given that the dbus daemon responds pretty quickly, it wasn\u0027t a huge issue in practice.\n\nI agree, it\u0027s probably time to fix it.\n\nWe probably need an async capable match_t in the asio namespace, that accepts a callback like the asio extensions would expect.  We should look at signals_set https://live.boost.org/doc/libs/1_84_0/doc/html/boost_asio/reference/signal_set.html\n\nAs a reference for how to do these callbacks and propagate errors on asio callbacks, including the queue.\n\nI\u0027ve mocked up what that could look like here:\nhttps://gerrit.openbmc.org/c/openbmc/sdbusplus/+/68959\n\nFeel free to incorporate it into your patch, or take over mine.",
+      "revId": "ee93f2d65dde9bd727453299e4e79555bd0ad81b",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a0a0540b_720bf9e1",
+        "filename": "include/sdbusplus/bus/match.hpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2024-01-20T01:07:51Z",
+      "side": 1,
+      "message": "We should not be adding an asio dependency to non-asio objects.",
+      "revId": "ee93f2d65dde9bd727453299e4e79555bd0ad81b",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5db91473_5d55427a",
+        "filename": "src/bus/match.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2024-01-20T01:07:51Z",
+      "side": 1,
+      "message": "Why is install_callback nullptr?  Surely we need to notify the caller that the installation succeeded, or pass the error back?",
+      "range": {
+        "startLine": 29,
+        "startChar": 61,
+        "endLine": 29,
+        "endChar": 68
+      },
+      "revId": "ee93f2d65dde9bd727453299e4e79555bd0ad81b",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

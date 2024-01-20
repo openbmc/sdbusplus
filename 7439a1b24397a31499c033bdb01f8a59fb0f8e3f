@@ -144,6 +144,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "f2604be9_2876ef93",
+        "filename": "include/sdbusplus/bus/match.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2024-01-20T01:07:51Z",
+      "side": 1,
+      "message": "\u003e \u003e I think this implementation has the behavior of implicitly changing behavior for existing code. \n\u003e \n\u003e Indeed, and this is intended.\n\u003e The issue is found in our WebUI\u0027s stress test, \n\nI\u0027m very surprised that a UI stress test is creating match expressions.  Can you give a link which match expression in the bmcweb code is causing the blocking behavior?\n\n\u003e that bmcweb does not handle any request anymore (due to the events are already queued so epoll will not return), until we send a new request to bmcweb.\n\u003e By changing the current code\u0027s behavior to use async match for asio, it effectively resolve the above issue, making sure all events are handled as expected.\n\nPlease don\u0027t do that, as it will break existing code.  An example of something broken is this here:\n\nhttps://github.com/openbmc/bmcweb/blob/18f8f608b966c802b3e2a389e3c1ec5a1fd9407b/include/image_upload.hpp#L21\n\nThe code expects that the match is in place BEFORE it goes to the next line.  Now that it\u0027s async, there\u0027s a race condition if the match fails to create, or if the match isn\u0027t created by the time the message to the update daemon goes out.  If we had an asio matcher that supported async_wait() on construct, we could make that code better, but we really shouldn\u0027t be changing behavior for existing objects.\n\nThere needs to be SOME change made in code, and some judgement applied to determine if an async wait on a return is a problem.\n\n\u003e \n\u003e \u003e We need to at least make this code explicitly opt-in rather than implicitly changing the behavior of existing code.\n\n+1000\n\n\u003e \n\u003e As the previous commit\u0027s example code shows, the current code using asio with match is wrong and has problem, so I would like to fix it.\n\u003e Otherwise we will have to change all the asio code using match to use the new async match API\n\nAs much as it would be great to fix this here, we\u0027ll need to audit each usage for whether or not the blocking behavior was required.  A quick grep shows there are 19 match_t objects in bmcweb.  it should be pretty doable to move them over to a new object and solve your problem without effecting the rest of the code.  We can\u0027t just blanket change the behavior without breaking user-facing beahvior.",
+      "parentUuid": "b672ae8b_6027d25c",
+      "revId": "7439a1b24397a31499c033bdb01f8a59fb0f8e3f",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "245a3bdf_b1c795c5",
         "filename": "include/sdbusplus/bus/match.hpp",
         "patchSetId": 2

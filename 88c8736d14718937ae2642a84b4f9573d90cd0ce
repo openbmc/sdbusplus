@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8280bed4_226d6396",
+        "filename": "include/sdbusplus/asio/match.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-01-20T02:33:57Z",
+      "side": 1,
+      "message": "I\u0027m not sure how it is useful to use the same callback for install as event.\n\nTypically you want to:\n1. install a match\n2. check for the presence / absence of an object and do something about it\n\nYou really can\u0027t do #2 until you know #1 is done, otherwise you\u0027re likely to miss the event you really wanted to see.  If I can\u0027t explicitly stop #2, then I might be late at installing the match and early at observing the state (or vice versa) and assume the wrong state forever.\n\nThis is the same problem I was trying to convey to LeiYU in his attempt at this.",
+      "revId": "88c8736d14718937ae2642a84b4f9573d90cd0ce",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fc3861dd_767fdb8f",
+        "filename": "include/sdbusplus/asio/match.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-01-20T02:33:57Z",
+      "side": 1,
+      "message": "Is there a real rationale on why we need to install the match async?  It seems like both of you are working around a real bug elsewhere.  There is no reason that sd-bus, the library, can\u0027t have both sync and async calls in the same thread.",
+      "revId": "88c8736d14718937ae2642a84b4f9573d90cd0ce",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

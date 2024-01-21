@@ -74,6 +74,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "fce184b0_b81231b8",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2024-01-21T20:48:37Z",
+      "side": 1,
+      "message": "\u003e The commit message says \"delay\" but elsewhere LeiYU claimed there was a hang.\n\nIn my experience, assuming both dbus and non-dbus code are correctly written, it causes a delay, not a permanent deadlock.  I\u0027ve seen deadlocks before on code that I would say is incorrect as written and had internal timing races that something like this exposed, but that\u0027s not sdbuspluses fault.\n\n\n\u003e You\u0027re implying that any code using the asio server MUST use all async calls\n\n\"When using blocking calls, you will block all other async actions until this transaction completes\" I think is the correct statement.\n\nYes, the dbus transactions go through just fine, sd-bus.c epolls internally for some time, but things like sockets or timers that sd-bus doesn\u0027t know about don\u0027t get serviced.\n\nI updated the commit message on my other patch to be more specific about what the problem is.\n\n\u003e (rather than made aware by compile issues).\n\nMy long term (6 monthish?) intent for me was to get the new match object in, get old code ported over to it, then make the asio bus_t inheritance [1] private, which would make these kinds of problems compile time failures if you bypassed the asio connection object (there\u0027d be no API that let you do that anymore), and runtime failures if you tried to do a blocking call from within an async callback (by checking io_context::stopped() before doing a blocking call).  FWIW, writing up that complexity is why I\u0027ve had the majority of the other patch content sitting in my TODO list for 12+ months.  I wanted to write up a \"fix it completely and forever\" plan, but if Lei is seeing the same issues I figured that patch might be a better starting point, even without the full plan written down.\n\n[1] https://github.com/openbmc/sdbusplus/blob/5828bccf3e0e50c15ce0ddd29d55551f08d55f2f/include/sdbusplus/asio/connection.hpp#L51C20-L51C27",
+      "parentUuid": "fdb83083_1bdafb9a",
+      "revId": "ee93f2d65dde9bd727453299e4e79555bd0ad81b",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "a0a0540b_720bf9e1",
         "filename": "include/sdbusplus/bus/match.hpp",
         "patchSetId": 4
@@ -150,6 +168,30 @@
       "side": 1,
       "message": "Right, it\u0027s going to be replaced by a user-provided callback with the new asio async match API.",
       "parentUuid": "785ca993_9daed006",
+      "range": {
+        "startLine": 29,
+        "startChar": 61,
+        "endLine": 29,
+        "endChar": 68
+      },
+      "revId": "ee93f2d65dde9bd727453299e4e79555bd0ad81b",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5925bd25_aca75b5e",
+        "filename": "src/bus/match.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2024-01-21T20:48:37Z",
+      "side": 1,
+      "message": "I don\u0027t understand.  There\u0027s no way to set a a user-provided handler if it\u0027s set to nullptr here.  it sounds like you\u0027re going to move to the asio match object, so this might not matter anymore (as that installs both handlers), but something to consider if this patch goes forward.",
+      "parentUuid": "b0f4ab09_b0812f3e",
       "range": {
         "startLine": 29,
         "startChar": 61,

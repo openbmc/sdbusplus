@@ -20,6 +20,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "323c974d_35482f68",
+        "filename": "include/sdbusplus/asio/match.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2024-01-21T20:35:39Z",
+      "side": 1,
+      "message": "\u003e I\u0027m not sure how it is useful to use the same callback for install as event.\n\nIt\u0027s an asio convention to return a single callback for a single \"async\" request.  Admittedly, I haven\u0027t done that properly here, so I\u0027m not surprised that it looks confusing.\n\nThe main intent was twofold.  First, to prevent installing a \"do nothing\" callback on the install handler.  If you have a single callback, you MUST handle the failure case.  With dual callbacks, it\u0027s easy enough to throw install failures to a lambda of ```[](){};``` and do nothing about them.\nSecond, having a single callback invoked as part of the constructor makes the diff from the match_t object API smaller, and able to be an automated regex-like change to clients.\n\nI\u0027m not convinced either of these are good enough reasons to have a mediocre API, but that\u0027s also why I had this patch in reserve for the last year and hadn\u0027t published it patch until Lei brought up the issue.\n\nMy intent was to make this look more like the signal_set API, queuing responses, and returning operation_aborted on destruction of the main object, like all the other ASIO APIs do.\nhttps://www.boost.org/doc/libs/1_84_0/doc/html/boost_asio/reference/signal_set.html\n\nI\u0027m not sure if that\u0027s a good idea either because queuing internally in the object is a pain and adds complexity.\n\nTL; DR, I need to play around with things more, and I haven\u0027t had the time.\n\n\u003e  \u003e Typically you want to:\n\u003e 1. install a match\n\u003e 2. check for the presence / absence of an object and do something about it\n\u003e \n\u003e You really can\u0027t do #2 until you know #1 is done, otherwise you\u0027re likely to miss the event you really wanted to see.  If I can\u0027t explicitly stop #2, then I might be late at installing the match and early at observing the state (or vice versa) and assume the wrong state forever.\n\u003e \n\u003e This is the same problem I was trying to convey to LeiYU in his attempt at this.\n\nI\u0027m not sure I understand what \"explicitly stop #2\" means?  I\u0027ve seen two flows for match expressions.\n1. Order doesn\u0027t matter (or the author didn\u0027t care about possible races), we just want to be informed if X thing changes.  On install failure, we want to crash or log an error.\n\n2. Set up a match, verify it\u0027s installed, then query the value of a property.  You now have a cache of that property\u0027s current value, and will be informed on changes.  On install failure, generally you want to destroy the match object, and return a value to the user that their operation failed.",
+      "parentUuid": "8280bed4_226d6396",
+      "revId": "88c8736d14718937ae2642a84b4f9573d90cd0ce",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "fc3861dd_767fdb8f",
         "filename": "include/sdbusplus/asio/match.hpp",
         "patchSetId": 2
@@ -31,6 +49,24 @@
       "writtenOn": "2024-01-20T02:33:57Z",
       "side": 1,
       "message": "Is there a real rationale on why we need to install the match async?  It seems like both of you are working around a real bug elsewhere.  There is no reason that sd-bus, the library, can\u0027t have both sync and async calls in the same thread.",
+      "revId": "88c8736d14718937ae2642a84b4f9573d90cd0ce",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d4a06b00_072ef093",
+        "filename": "include/sdbusplus/asio/match.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2024-01-21T20:35:39Z",
+      "side": 1,
+      "message": "You are absolutely right, sd-bus can have blocking and async calls on the same thread (and that works today).  The problem is what happens to everything else that\u0027s on the same reactor.\n\n(I initially typed a reply here, then just added it to the commit message, read the new commit message first before continuing).\n\nThe same thing would happen in reverse if we called a blocking HTTP operation (read_some instead of async_read_some), all DBus operations would get blocked, until the HTTP operation in asio completed.\n\nShort of putting each connection type (DBus, http, timers) on its own thread, I can\u0027t think of a way to fix this aside from making sure that calls done from async callbacks are also async (and I\u0027m assuming that\u0027s why sd-bus added the method).  Ideally if we get rid of the public sdbusplus::bus_t inheritance in the future, prior to doing blocking calls on an asio connection, we could check for io_context::stopped(), to ensure that the blocking call isn\u0027t being done from within an async callback that would block the reactor.  That would result in a runtime error instead of a compile time error, but at least both paths would be supported, and if you blocked all events, at least you would get an error, instead of YOUR code working fine, while breaking other things.  This patch, or something resembling it would still be the first step to that.\n\nI\u0027ve rambled enough.  Hopefully it makes sense.",
+      "parentUuid": "fc3861dd_767fdb8f",
       "revId": "88c8736d14718937ae2642a84b4f9573d90cd0ce",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }

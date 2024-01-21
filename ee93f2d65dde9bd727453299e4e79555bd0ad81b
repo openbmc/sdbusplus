@@ -38,6 +38,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "9b6e9009_bcbfebd7",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2024-01-21T15:16:06Z",
+      "side": 1,
+      "message": "It\u0027s not really delay nor hang, the events are queued and not handled until a new event is polled by `read_wait()`.\n\nWe need to fix it. And a proper fix is to add the new API for asio async match, and change the existing asio code to use the new API.\n\nI will integrate Ed\u0027s patch, test it and submit a new PS",
+      "parentUuid": "fdb83083_1bdafb9a",
+      "revId": "ee93f2d65dde9bd727453299e4e79555bd0ad81b",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "a0a0540b_720bf9e1",
         "filename": "include/sdbusplus/bus/match.hpp",
         "patchSetId": 4
@@ -90,6 +108,30 @@
       "side": 1,
       "message": "From the sdbusplus docs:\n\n\u003e If this function is specified as NULL a default implementation is used that terminates the bus connection should installing the match fail.\n\nI\u0027m guessing that\u0027s really not the behavior we want.",
       "parentUuid": "5db91473_5d55427a",
+      "range": {
+        "startLine": 29,
+        "startChar": 61,
+        "endLine": 29,
+        "endChar": 68
+      },
+      "revId": "ee93f2d65dde9bd727453299e4e79555bd0ad81b",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b0f4ab09_b0812f3e",
+        "filename": "src/bus/match.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2024-01-21T15:16:06Z",
+      "side": 1,
+      "message": "Right, it\u0027s going to be replaced by a user-provided callback with the new asio async match API.",
+      "parentUuid": "785ca993_9daed006",
       "range": {
         "startLine": 29,
         "startChar": 61,

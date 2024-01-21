@@ -162,6 +162,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "936f0f3b_4ad06191",
+        "filename": "include/sdbusplus/bus/match.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2024-01-21T15:16:06Z",
+      "side": 1,
+      "message": "\u003e I\u0027m very surprised that a UI stress test is creating match expressions. Can you give a link which match expression in the bmcweb code is causing the blocking behavior?\n\nWe did not trace into which match causes the issue, most likely it\u0027s related to firmware update or task.\n\n\u003e As much as it would be great to fix this here, we\u0027ll need to audit each usage for whether or not the blocking behavior was required. A quick grep shows there are 19 match_t objects in bmcweb. it should be pretty doable to move them over to a new object and solve your problem without effecting the rest of the code. We can\u0027t just blanket change the behavior without breaking user-facing beahvior.\n\nOK. Let\u0027s add a new API for asio async match, and fix all the usages in bmcweb.",
+      "parentUuid": "f2604be9_2876ef93",
+      "revId": "7439a1b24397a31499c033bdb01f8a59fb0f8e3f",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "245a3bdf_b1c795c5",
         "filename": "include/sdbusplus/bus/match.hpp",
         "patchSetId": 2

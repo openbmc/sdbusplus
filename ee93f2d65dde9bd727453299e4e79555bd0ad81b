@@ -200,6 +200,30 @@
       },
       "revId": "ee93f2d65dde9bd727453299e4e79555bd0ad81b",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1099ff41_8c72df3a",
+        "filename": "src/bus/match.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2024-01-22T05:49:09Z",
+      "side": 1,
+      "message": "Yes, as discussed here, we all agree that we will introduce a new asio::match, and in that API it will have a user-provided callback.\nThe code here will be replaced by the new asio::match API.",
+      "parentUuid": "5925bd25_aca75b5e",
+      "range": {
+        "startLine": 29,
+        "startChar": 61,
+        "endLine": 29,
+        "endChar": 68
+      },
+      "revId": "ee93f2d65dde9bd727453299e4e79555bd0ad81b",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

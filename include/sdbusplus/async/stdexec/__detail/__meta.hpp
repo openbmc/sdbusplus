@@ -170,28 +170,57 @@ class __mstring
     const char __what_[_Len];
 };
 
+STDEXEC_PRAGMA_PUSH()
+STDEXEC_PRAGMA_IGNORE_GNU("-Wuser-defined-literals")
+
 #if STDEXEC_NVHPC() && (__EDG_VERSION__ < 604)
 // Use a non-standard extension for older nvc++ releases
 template <__mchar _Char, _Char... _Str>
-constexpr __mstring<sizeof...(_Str)> operator""__csz() noexcept
+[[deprecated("Use _mstr instead")]] constexpr __mstring<sizeof...(_Str)>
+    operator""__csz() noexcept
+{
+    return {_Str...};
+}
+
+// Use a non-standard extension for older nvc++ releases
+template <__mchar _Char, _Char... _Str>
+constexpr __mstring<sizeof...(_Str)> operator""_mstr() noexcept
 {
     return {_Str...};
 }
 #elif STDEXEC_NVHPC() && (__EDG_VERSION__ < 605)
 // This is to work around an unfiled (by me) EDG bug that fixed in build 605
 template <__mstring _Str>
-constexpr const __mtypeof<_Str> operator""__csz() noexcept
+[[deprecated("Use _mstr instead")]] constexpr const __mtypeof<_Str>
+    operator""__csz() noexcept
+{
+    return _Str;
+}
+
+// This is to work around an unfiled (by me) EDG bug that fixed in build 605
+template <__mstring _Str>
+constexpr const __mtypeof<_Str> operator""_mstr() noexcept
 {
     return _Str;
 }
 #else
 // Use a standard user-defined string literal template
 template <__mstring _Str>
-constexpr __mtypeof<_Str> operator""__csz() noexcept
+[[deprecated("Use _mstr instead")]] constexpr __mtypeof<_Str>
+    operator""__csz() noexcept
+{
+    return _Str;
+}
+
+// Use a standard user-defined string literal template
+template <__mstring _Str>
+constexpr __mtypeof<_Str> operator""_mstr() noexcept
 {
     return _Str;
 }
 #endif
+
+STDEXEC_PRAGMA_POP()
 
 using __msuccess = int;
 
@@ -415,7 +444,7 @@ struct __mconst
 };
 
 inline constexpr __mstring __mbad_substitution =
-    "The specified meta-function could not be evaluated with the types provided."__csz;
+    "The specified meta-function could not be evaluated with the types provided."_mstr;
 
 template <__mstring _Diagnostic = __mbad_substitution>
 struct _BAD_SUBSTITUTION_
@@ -797,20 +826,6 @@ using __call_result_t = decltype(__declval<_Fun>()(__declval<_As>()...));
 
 template <const auto& _Fun, class... _As>
 using __result_of = __call_result_t<decltype(_Fun), _As...>;
-
-#if STDEXEC_CLANG() && (__clang_major__ < 13)
-template <class _Ty>
-constexpr auto __hide_ = [] { return (__mtype<_Ty>(*)())0; };
-#else
-template <class _Ty>
-extern decltype([] { return (__mtype<_Ty>(*)())0; }) __hide_;
-#endif
-
-template <class _Ty>
-using __hide = decltype(__hide_<_Ty>);
-
-template <class _Id>
-using __unhide = __t<__call_result_t<__call_result_t<_Id>>>;
 
 // For working around clang's lack of support for CWG#2369:
 // http://www.open-std.org/jtc1/sc22/wg21/docs/cwg_defects.html#2369

@@ -228,7 +228,7 @@ struct get_item_types_t
         }
     }
 
-    template <class _Sender, class _Env = __default_env>
+    template <class _Sender, class _Env = empty_env>
     constexpr auto operator()(_Sender&&, const _Env&) const noexcept
         -> decltype(__impl<_Sender, _Env>()())
     {

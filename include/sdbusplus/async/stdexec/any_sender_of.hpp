@@ -966,7 +966,7 @@ struct __operation_base
 
 template <class _Env>
 using __env_t =
-    __make_env_t<_Env, __with<get_stop_token_t, in_place_stop_token>>;
+    __env::__join_t<__env::__with<in_place_stop_token, get_stop_token_t>, _Env>;
 
 template <class _ReceiverId>
 struct __stoppable_receiver
@@ -1020,9 +1020,10 @@ struct __stoppable_receiver
         friend __env_t<env_of_t<_Receiver>>
             tag_invoke(_GetEnv, const _Self& __self) noexcept
         {
-            return __make_env(get_env(__self.__op_->__rcvr_),
-                              __mkprop(__self.__op_->__stop_source_.get_token(),
-                                       get_stop_token));
+            return __env::__join(
+                __env::__with(__self.__op_->__stop_source_.get_token(),
+                              get_stop_token),
+                get_env(__self.__op_->__rcvr_));
         }
     };
 };

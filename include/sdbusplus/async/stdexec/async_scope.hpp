@@ -254,6 +254,7 @@ template <class _ConstrainedId>
 struct __nest_sender
 {
     using _Constrained = stdexec::__t<_ConstrainedId>;
+
     struct __t
     {
         using __id = __nest_sender;
@@ -751,9 +752,8 @@ using __future_t = stdexec::__t<
 // async_scope::spawn implementation
 template <class _Env>
 using __spawn_env_t =
-    __result_of<__join_env, _Env,
-                __env::__prop<in_place_stop_token(get_stop_token_t)>,
-                __env::__prop<__inln::__scheduler(get_scheduler_t)>>;
+    __env::__join_t<_Env, __env::__with<in_place_stop_token, get_stop_token_t>,
+                    __env::__with<__inln::__scheduler, get_scheduler_t>>;
 
 template <class _EnvId>
 struct __spawn_op_base
@@ -783,9 +783,9 @@ struct __spawn_rcvr
         // BUGBUG NOT TO SPEC spawn shouldn't accept senders that can fail.
         template <same_as<set_error_t> _Tag>
         [[noreturn]] friend void tag_invoke(_Tag, __t&&,
-                                            const std::exception_ptr&) noexcept
+                                            std::exception_ptr __eptr) noexcept
         {
-            std::terminate();
+            std::rethrow_exception(std::move(__eptr));
         }
 
         friend const __spawn_env_t<_Env>& tag_invoke(get_env_t,
@@ -810,10 +810,11 @@ struct __spawn_op
         template <__decays_to<_Sender> _Sndr>
         __t(_Sndr&& __sndr, _Env __env, const __impl* __scope) :
             __spawn_op_base<_EnvId>{
-                __join_env((_Env&&)__env,
-                           __mkprop(__scope->__stop_source_.get_token(),
-                                    get_stop_token),
-                           __mkprop(__inln::__scheduler{}, get_scheduler)),
+                __env::__join(
+                    (_Env&&)__env,
+                    __env::__with(__scope->__stop_source_.get_token(),
+                                  get_stop_token),
+                    __env::__with(__inln::__scheduler{}, get_scheduler)),
                 [](__spawn_op_base<_EnvId>* __op) {
             delete static_cast<__t*>(__op);
         }},

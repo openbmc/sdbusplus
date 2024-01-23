@@ -367,7 +367,7 @@ struct __reschedule_coroutine_on
 ////////////////////////////////////////////////////////////////////////////////
 // basic_task
 template <class _Ty, class _Context = default_task_context<_Ty>>
-class basic_task
+class [[nodiscard]] basic_task
 {
     struct __promise;
 

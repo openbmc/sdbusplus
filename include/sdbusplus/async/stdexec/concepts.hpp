@@ -84,6 +84,10 @@ using namespace __std_concepts;
 
 // Avoid using libstdc++'s object concepts because they instantiate a
 // lot of templates.
+#if STDEXEC_HAS_BUILTIN(__is_nothrow_destructible)
+template <class _Ty>
+concept destructible = __is_nothrow_destructible(_Ty);
+#else
 template <class _Ty>
 inline constexpr bool __destructible_ = //
     requires {
@@ -100,6 +104,7 @@ inline constexpr bool __destructible_<_Ty[_Np]> = __destructible_<_Ty>;
 
 template <class T>
 concept destructible = __destructible_<T>;
+#endif
 
 #if STDEXEC_HAS_BUILTIN(__is_constructible)
 template <class _Ty, class... _As>

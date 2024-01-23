@@ -2,10 +2,11 @@
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/steady_timer.hpp>
 #include <sdbusplus/asio/connection.hpp>
+#include <sdbusplus/asio/match.hpp>
 #include <sdbusplus/asio/object_server.hpp>
-#include <sdbusplus/bus/match.hpp>
 
 #include <chrono>
+#include <memory>
 
 constexpr auto fooProperty = "foo";
 constexpr auto service = "xyz.openbmc_project.MatchIssueDemo";
@@ -15,18 +16,18 @@ constexpr auto interface = service;
 boost::asio::io_context io;
 auto conn = std::make_shared<sdbusplus::asio::connection>(io);
 
-std::optional<sdbusplus::bus::match_t> match;
+std::unique_ptr<sdbusplus::asio::match> asioMatch;
 
 void registerMatch()
 {
-    match = sdbusplus::bus::match_t(
+    asioMatch = std::make_unique<sdbusplus::asio::match>(
         *conn, sdbusplus::bus::match::rules::propertiesChanged(path, interface),
         [](sdbusplus::message_t&) {});
 }
 
 void timerHandler()
 {
-    // Create match_t frequently to demo the issue
+    // Create match frequently to demo the issue
     static boost::asio::steady_timer timer(io);
     timer.expires_after(std::chrono::milliseconds(10));
     timer.async_wait([](const boost::system::error_code& ec) {

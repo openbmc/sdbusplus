@@ -67,6 +67,13 @@ class client :
     {
         return client<S, true, Preserved, Types...>(ctx, proxy.path(p));
     }
+
+    /* Convert client into a Preserved Proxy. */
+    auto preserve() const noexcept
+        requires(!Preserved)
+    {
+        return client<S, P, true, Types...>(ctx, proxy.preserve());
+    }
 };
 
 } // namespace client

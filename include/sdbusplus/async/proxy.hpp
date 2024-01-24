@@ -104,8 +104,10 @@ struct proxy : private sdbusplus::bus::details::bus_friend
     auto preserve() const noexcept
         requires(!Preserved)
     {
-        return proxy<S, P, I, true>{std::string{this->s}, std::string{this->p},
-                                    std::string{this->i}};
+        using result_t = proxy<S, P, I, true>;
+        return result_t(typename result_t::value_t<S>(this->s),
+                        typename result_t::value_t<P>(this->p),
+                        typename result_t::value_t<I>(this->i));
     }
 
     /** Perform a method call.

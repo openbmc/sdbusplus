@@ -139,12 +139,12 @@ constexpr auto interfacesRemoved() noexcept
 
 constexpr auto interfacesAdded(std::string_view p) noexcept
 {
-    return interfacesAdded().append(path(p));
+    return interfacesAdded().append(argNpath(0, p));
 }
 
 constexpr auto interfacesRemoved(std::string_view p) noexcept
 {
-    return interfacesRemoved().append(path(p));
+    return interfacesRemoved().append(argNpath(0, p));
 }
 
 inline auto propertiesChanged(std::string_view p, std::string_view i) noexcept

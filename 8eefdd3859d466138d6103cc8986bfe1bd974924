@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "373e5413_dde8feac",
+        "filename": "include/sdbusplus/bus/match.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2024-01-31T03:55:19Z",
+      "side": 1,
+      "message": "This changes the API\u0027s behavior, and there are several users of this API, e.g.\n\nhttps://github.com/openbmc/phosphor-user-manager/blob/90b84ad9d6cfe44daae2d9cfbbdb9bd616e4c814/phosphor-ldap-config/ldap_config.cpp#L66\nhttps://github.com/openbmc/pldm/blob/58cbcaf2103f9a6d8f218121c38d1f82133c2e25/requester/mctp_endpoint_discovery.cpp#L19\n\nProbably you need to make sure the behavior is not impacted.",
+      "revId": "8eefdd3859d466138d6103cc8986bfe1bd974924",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

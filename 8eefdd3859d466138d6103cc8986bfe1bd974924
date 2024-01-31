@@ -86,6 +86,24 @@
       "parentUuid": "1f1af4b5_afd8641d",
       "revId": "8eefdd3859d466138d6103cc8986bfe1bd974924",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4ca19f1f_069e8a97",
+        "filename": "include/sdbusplus/bus/match.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-01-31T18:33:16Z",
+      "side": 1,
+      "message": "I looked through all the instances of `interfacesAdded` I could find (not `interfacesRemoved`).  There are at least 8 cpp parts that are calling this function.  I suspect many of these aren\u0027t working as the author intended, but we can\u0027t just blindly change the implementation of this function.\n\nThere are 13 files already doing `interfaceAdded() + argNpath(...)` on their own.\n\nThere are 5 files already doing `interfaceAdded() + path(...)` on their own and these are likely also not correct.\n\nIn light of this my suggestion would be that we:\n\n1. Add interfacesAddedAtPath() with this argNpath behavior.\n2. Remove interfaceAdded(p) and fix all the resulting compile failures to use `interfaceAdded() + path(...)` (as a separate commit from #1).\n3. Revisit all instances of `interfacesAdded` and fix anyone using `+ path(...)` to use a valid version of `interfacesAddedAtPath`.\n4. In a few months consider renaming interfacesAddedAtPath back to interfacesAdded (probably with a using-alias so we can keep AtPath for a period of time to fix them all up).",
+      "parentUuid": "db49104c_3de89fd8",
+      "revId": "8eefdd3859d466138d6103cc8986bfe1bd974924",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

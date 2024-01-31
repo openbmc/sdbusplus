@@ -1,6 +1,23 @@
 {
   "comments": [
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b9d14a90_5f5b5a92",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-01-31T04:39:42Z",
+      "side": 1,
+      "message": "Not going to +2 until I get a chance to reason about the existing uses in more detail.",
+      "revId": "8eefdd3859d466138d6103cc8986bfe1bd974924",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "373e5413_dde8feac",
@@ -32,6 +49,24 @@
       "side": 1,
       "message": "I\u0027d like to ask the reverse question: Were those code-paths properly exercised in testing?",
       "parentUuid": "373e5413_dde8feac",
+      "revId": "8eefdd3859d466138d6103cc8986bfe1bd974924",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "db49104c_3de89fd8",
+        "filename": "include/sdbusplus/bus/match.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-01-31T04:39:42Z",
+      "side": 1,
+      "message": "Looking again at it, it looks like the ObjectManager is who emits the signal, so a path match would be on the ObjectManager path. Since OMs are rarely at a specific required position in the tree, I suspect most of these current matches are \"wrong\" from a \"right way to do dbus\" perspective but might actually have worked due to tight coupling with a particular implementation. \n\nWe will need to audit all uses before I merge this, even though I suspect that this change is probably the more useful implementation.",
+      "parentUuid": "1f1af4b5_afd8641d",
       "revId": "8eefdd3859d466138d6103cc8986bfe1bd974924",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }

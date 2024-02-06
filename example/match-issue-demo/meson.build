@@ -11,3 +11,11 @@ executable(
   dependencies: [
     sdbusplus_dep,
   ])
+
+  executable(
+  'match_aserver',
+  'match-aserver.cpp',
+  dependencies: [
+    sdbusplus_dep,
+  ])
+

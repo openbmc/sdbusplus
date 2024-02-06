@@ -50,7 +50,7 @@ int main()
     Calculator c{ctx, path};
 
     ctx.spawn([](sdbusplus::async::context& ctx) -> sdbusplus::async::task<> {
-        ctx.get_bus().request_name(Calculator::default_service);
+        ctx.request_name(Calculator::default_service);
         co_return;
     }(ctx));
 

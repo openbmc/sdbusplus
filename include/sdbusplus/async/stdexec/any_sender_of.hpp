@@ -15,11 +15,14 @@
  */
 #pragma once
 
+#include "../stdexec/concepts.hpp"
 #include "../stdexec/execution.hpp"
+#include "../stdexec/functional.hpp"
 
 #include <sdbusplus/async/stdexec/sequence_senders.hpp>
 
 #include <cstddef>
+#include <utility>
 
 namespace exec
 {

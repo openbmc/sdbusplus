@@ -22,12 +22,10 @@ STDEXEC_PRAGMA_IGNORE_EDG(1302)
 
 namespace exec
 {
-template <class _Tag, class _Value = void>
-using with_t = stdexec::__if_c<stdexec::same_as<_Value, void>,
-                               stdexec::__env::__without<_Tag>,
-                               stdexec::__env::__with<_Value, _Tag>>;
+template <class _Tag, class _Value>
+using with_t = stdexec::__env::__with<_Value, _Tag>;
 
-namespace __detail
+namespace __envs
 {
 struct __with_t
 {
@@ -36,20 +34,14 @@ struct __with_t
     {
         return stdexec::__env::__with((_Value&&)__val, _Tag());
     }
-
-    template <class _Tag>
-    [[deprecated("use exec::without(Tag) instead")]] auto operator()(_Tag) const
-    {
-        return stdexec::__env::__without(_Tag());
-    }
 };
 
 struct __without_t
 {
-    template <class _Tag>
-    auto operator()(_Tag) const
+    template <class _Env, class _Tag>
+    decltype(auto) operator()(_Env&& __env, _Tag) const
     {
-        return stdexec::__env::__without(_Tag());
+        return stdexec::__env::__without((_Env&&)__env, _Tag());
     }
 };
 
@@ -71,12 +63,11 @@ struct __make_env_t
         return (_Env&&)__env;
     }
 };
-} // namespace __detail
+} // namespace __envs
 
-inline constexpr __detail::__with_t with{};
-inline constexpr __detail::__without_t without{};
-
-inline constexpr __detail::__make_env_t make_env{};
+inline constexpr __envs::__with_t with{};
+inline constexpr __envs::__without_t without{};
+inline constexpr __envs::__make_env_t make_env{};
 
 template <class... _Ts>
 using make_env_t = stdexec::__result_of<make_env, _Ts...>;

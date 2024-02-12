@@ -17,7 +17,10 @@
 
 #include "../stdexec/__detail/__intrusive_queue.hpp"
 #include "../stdexec/execution.hpp"
+#include "../stdexec/stop_token.hpp"
 #include "env.hpp"
+
+#include <mutex>
 
 namespace exec
 {

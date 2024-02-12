@@ -16,7 +16,11 @@
  */
 #pragma once
 
+#include "__detail/__config.hpp"
+#include "concepts.hpp"
+
 #include <atomic>
+#include <concepts>
 #include <cstdint>
 #include <thread>
 #include <type_traits>
@@ -26,9 +30,6 @@
 #if __has_include(<stop_token>) && __cpp_lib_jthread >= 201911
 #include <stop_token>
 #endif
-
-#include "__detail/__config.hpp"
-#include "concepts.hpp"
 
 namespace stdexec
 {

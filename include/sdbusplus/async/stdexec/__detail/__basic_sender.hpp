@@ -16,12 +16,16 @@
 #pragma once
 
 #include "../concepts.hpp"
+#include "__concepts.hpp"
+#include "__config.hpp"
 #include "__env.hpp"
 #include "__execution_fwd.hpp"
 #include "__meta.hpp"
 #include "__tuple.hpp"
 #include "__type_traits.hpp"
 
+#include <cstddef>
+#include <type_traits>
 #include <utility> // for tuple_size/tuple_element
 
 namespace stdexec
@@ -761,13 +765,6 @@ extern __basic_sender_name __name_of_v<__sexpr<_Impl>>;
 template <__has_id _Sender>
     requires(!same_as<__id<_Sender>, _Sender>)
 extern __id_name __name_of_v<_Sender>;
-
-template <class _Ty>
-_Ty __remove_rvalue_reference_fn(_Ty&&);
-
-template <class _Ty>
-using __remove_rvalue_reference_t =
-    decltype(__detail::__remove_rvalue_reference_fn(__declval<_Ty>()));
 } // namespace __detail
 } // namespace stdexec
 
@@ -782,8 +779,7 @@ struct tuple_size<stdexec::__sexpr<_Impl>> :
 template <size_t _Idx, class _Impl>
 struct tuple_element<_Idx, stdexec::__sexpr<_Impl>>
 {
-    using type =
-        stdexec::__detail::__remove_rvalue_reference_t<stdexec::__call_result_t<
-            _Impl, stdexec::__cp, stdexec::__nth_pack_element_t<_Idx>>>;
+    using type = stdexec::__remove_rvalue_reference_t<stdexec::__call_result_t<
+        _Impl, stdexec::__cp, stdexec::__nth_pack_element_t<_Idx>>>;
 };
 } // namespace std

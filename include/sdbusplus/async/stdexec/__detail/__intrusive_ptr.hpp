@@ -16,11 +16,14 @@
 #pragma once
 
 #include "../concepts.hpp"
+#include "__config.hpp"
 #include "__meta.hpp"
 
 #include <atomic>
+#include <cstddef>
 #include <memory>
 #include <new>
+#include <type_traits>
 
 #if STDEXEC_TSAN()
 #include <sanitizer/tsan_interface.h>

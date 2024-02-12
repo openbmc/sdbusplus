@@ -19,8 +19,10 @@
 #include "__detail/__meta.hpp"
 #include "concepts.hpp"
 
+#include <cstddef>
 #include <functional>
 #include <tuple>
+#include <type_traits>
 
 namespace stdexec::__std_concepts
 {

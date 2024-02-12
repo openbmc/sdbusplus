@@ -15,8 +15,12 @@
  */
 #pragma once
 
+#include "__concepts.hpp"
 #include "__config.hpp"
 #include "__meta.hpp"
+#include "__type_traits.hpp"
+
+#include <cstddef>
 
 namespace stdexec
 {

@@ -16,12 +16,15 @@
 #pragma once
 
 #include "__detail/__basic_sender.hpp"
+#include "__detail/__config.hpp"
+#include "__detail/__cpo.hpp"
 #include "__detail/__domain.hpp"
 #include "__detail/__env.hpp"
 #include "__detail/__execution_fwd.hpp"
 #include "__detail/__intrusive_ptr.hpp"
 #include "__detail/__meta.hpp"
 #include "__detail/__scope.hpp"
+#include "__detail/__type_traits.hpp"
 #include "__detail/__utility.hpp"
 #include "concepts.hpp"
 #include "coroutine.hpp"
@@ -32,6 +35,8 @@
 #include <cassert>
 #include <concepts>
 #include <condition_variable>
+#include <cstddef>
+#include <exception>
 #include <memory>
 #include <mutex>
 #include <optional>
@@ -39,6 +44,7 @@
 #include <system_error>
 #include <tuple>
 #include <type_traits>
+#include <utility>
 #include <variant>
 
 STDEXEC_PRAGMA_PUSH()
@@ -1842,10 +1848,26 @@ struct __receiver
     };
 };
 
+// BUGBUG NOT TO SPEC: make senders of more-than-one-value awaitable
+// by packaging the values into a tuple.
+// See: https://github.com/cplusplus/sender-receiver/issues/182
+template <std::size_t _Count>
+extern const __q<std::tuple> __as_single;
+
+template <>
+inline const __q<__midentity> __as_single<1>;
+
+template <>
+inline const __mconst<void> __as_single<0>;
+
+template <class... _Values>
+using __single_value =
+    __minvoke<decltype(__as_single<sizeof...(_Values)>), _Values...>;
+
 template <class _Sender, class _Promise>
 using __value_t =
     __decay_t<__value_types_of_t<_Sender, env_of_t<_Promise&>,
-                                 __msingle_or<void>, __msingle_or<void>>>;
+                                 __q<__single_value>, __msingle_or<void>>>;
 
 template <class _Sender, class _Promise>
 using __receiver_t =
@@ -3832,7 +3854,7 @@ struct ensure_started_t
 {
     template <sender _Sender, class _Env = empty_env>
         requires sender_in<_Sender, _Env> && __decay_copyable<env_of_t<_Sender>>
-    auto operator()(_Sender&& __sndr, _Env&& __env = {}) const
+    [[nodiscard]] auto operator()(_Sender&& __sndr, _Env&& __env = {}) const
     {
         if constexpr (sender_expr_for<_Sender, __ensure_started_t>)
         {
@@ -3975,9 +3997,9 @@ struct __receiver_with_sched
     template <same_as<get_env_t> _Tag>
     friend auto tag_invoke(_Tag, const __receiver_with_sched& __self) noexcept
     {
-        return __env::__join(__env::__with(__self.__sched_, get_scheduler),
-                             __env::__without(get_domain),
-                             get_env(__self.__rcvr_));
+        return __env::__join(
+            __env::__with(__self.__sched_, get_scheduler),
+            __env::__without(get_env(__self.__rcvr_), get_domain));
     }
 };
 
@@ -3991,7 +4013,7 @@ template <class _Env, class _Scheduler>
 using __result_env_t =
     __if_c<__unknown_context<_Scheduler>, _Env,
            __env::__join_t<__env::__with<_Scheduler, get_scheduler_t>,
-                           __env::__without<get_domain_t>, _Env>>;
+                           __env::__without_t<_Env, get_domain_t>>>;
 
 template <class _Tp>
 using __decay_ref = __decay_t<_Tp>&;
@@ -4024,7 +4046,7 @@ using __bad_result_sender = __mexception<
 template <class _Sender, class _Env, class _Set>
 using __ensure_sender = //
     __minvoke_if_c<sender_in<_Sender, _Env>, __q<__midentity>,
-                   __mbind_back_q<__bad_result_sender, _Set, _Env>, _Sender>;
+                   __mbind_back_q<__bad_result_sender, _Env, _Set>, _Sender>;
 
 // A metafunction that computes the result sender type for a given set of
 // argument types
@@ -4138,7 +4160,7 @@ auto __mk_transform_env_fn(const _Env& __env) noexcept
                     __env::__with(get_completion_scheduler<_Set>(
                                       stdexec::get_env(__child)),
                                   get_scheduler),
-                    __env::__without(get_domain), __env);
+                    __env::__without(__env, get_domain));
             }
         }
         STDEXEC_UNREACHABLE();
@@ -4767,12 +4789,17 @@ using __completions_t = //
 template <class _SchedulerId>
 struct __environ
 {
+    using _Scheduler = stdexec::__t<_SchedulerId>;
     struct __t :
         __env::__with<stdexec::__t<_SchedulerId>,
                       get_completion_scheduler_t<set_value_t>,
                       get_completion_scheduler_t<set_stopped_t>>
     {
         using __id = __environ;
+
+        explicit __t(_Scheduler __sched) noexcept :
+            __t::__with{std::move(__sched)}
+        {}
 
         template <same_as<get_domain_t> _Key>
         friend auto tag_invoke(_Key, const __t& __self) noexcept
@@ -5163,17 +5190,18 @@ struct __sexpr_impl<__write_t> : __write_::__write_impl
 
 namespace __detail
 {
-template <class _Scheduler>
+template <class _Env, class _Scheduler>
 STDEXEC_ATTRIBUTE((always_inline))
-auto __mkenv_sched(_Scheduler __sched)
+auto __mkenv_sched(_Env&& __env, _Scheduler __sched)
 {
-    auto __env = __env::__join(__env::__with(__sched, get_scheduler),
-                               __env::__without(get_domain));
+    auto __env2 = __env::__join(__env::__with(__sched, get_scheduler),
+                                __env::__without((_Env&&)__env, get_domain));
+    using _Env2 = decltype(__env2);
 
-    struct __env_t : decltype(__env)
+    struct __env_t : _Env2
     {};
 
-    return __env_t{__env};
+    return __env_t{(_Env2&&)__env2};
 }
 
 template <class _Ty, class = __name_of<__decay_t<_Ty>>>
@@ -5216,8 +5244,7 @@ struct on_t
     static auto __transform_env_fn(_Env&& __env) noexcept
     {
         return [&](__ignore, auto __sched, __ignore) noexcept {
-            return __env::__join(__detail::__mkenv_sched(__sched),
-                                 (_Env&&)__env);
+            return __detail::__mkenv_sched((_Env&&)__env, __sched);
         };
     }
 
@@ -5273,7 +5300,8 @@ struct into_variant_t
     {
         auto __domain = __get_early_domain(__sndr);
         return stdexec::transform_sender(
-            __domain, __make_sexpr<into_variant_t>(__(), std::move(__sndr)));
+            __domain,
+            __make_sexpr<into_variant_t>(__(), std::forward<_Sender>(__sndr)));
     }
 
     STDEXEC_ATTRIBUTE((always_inline)) //
@@ -5803,9 +5831,8 @@ struct transfer_when_all_t
             __t<__schedule_from::__environ<__id<__decay_t<_Scheduler>>>>;
         auto __domain = query_or(get_domain, __sched, default_domain());
         return stdexec::transform_sender(
-            __domain,
-            __make_sexpr<transfer_when_all_t>(_Env{{(_Scheduler&&)__sched}},
-                                              (_Senders&&)__sndrs...));
+            __domain, __make_sexpr<transfer_when_all_t>(
+                          _Env{(_Scheduler&&)__sched}, (_Senders&&)__sndrs...));
     }
 
     template <class _Sender, class _Env>
@@ -6144,8 +6171,7 @@ struct on_t : __no_scheduler_in_environment
     static auto __transform_env_fn(_Env&& __env) noexcept
     {
         return [&](__ignore, auto __sched, __ignore) noexcept {
-            return __env::__join(__detail::__mkenv_sched(__sched),
-                                 (_Env&&)__env);
+            return __detail::__mkenv_sched((_Env&&)__env, __sched);
         };
     }
 
@@ -6183,6 +6209,26 @@ template <class _Scheduler, class _Closure>
 __continue_on_data(_Scheduler, _Closure)
     -> __continue_on_data<_Scheduler, _Closure>;
 
+template <class _Scheduler>
+struct __with_sched
+{
+    _Scheduler __sched_;
+
+    friend _Scheduler tag_invoke(get_scheduler_t,
+                                 const __with_sched& __self) noexcept
+    {
+        return __self.__sched_;
+    }
+
+    friend auto tag_invoke(get_domain_t, const __with_sched& __self) noexcept
+    {
+        return query_or(get_domain, __self.__sched_, default_domain());
+    }
+};
+
+template <class _Scheduler>
+__with_sched(_Scheduler) -> __with_sched<_Scheduler>;
+
 struct continue_on_t : __no_scheduler_in_environment
 {
     template <sender _Sender, scheduler _Scheduler,
@@ -6219,12 +6265,12 @@ struct continue_on_t : __no_scheduler_in_environment
                                  __ignore, _Data&& __data, _Child&& __child) {
             auto&& [__sched, __clsur] = (_Data&&)__data;
             using _Closure = decltype(__clsur);
-            return __write(transfer(((_Closure&&)__clsur)(transfer(
-                                        __write((_Child&&)__child,
-                                                __detail::__mkenv_sched(__old)),
-                                        __sched)),
-                                    __old),
-                           __detail::__mkenv_sched(__sched));
+            return __write(
+                transfer(((_Closure&&)__clsur)(transfer(
+                             __write((_Child&&)__child, __with_sched{__old}),
+                             __sched)),
+                         __old),
+                __with_sched{__sched});
         });
     }
 };

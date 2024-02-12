@@ -19,7 +19,7 @@
 #include "__config.hpp"
 
 #include <cassert>
-#include <tuple>
+#include <cstddef>
 #include <utility>
 
 namespace stdexec

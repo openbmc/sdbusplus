@@ -15,6 +15,8 @@
  */
 #pragma once
 
+#include "__detail/__concepts.hpp"
+#include "__detail/__config.hpp"
 #include "concepts.hpp"
 
 #include <version>

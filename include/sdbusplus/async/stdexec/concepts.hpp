@@ -19,6 +19,11 @@
 #error This library requires support for C++20 concepts
 #endif
 
+#include "__detail/__concepts.hpp"
+#include "__detail/__config.hpp"
+#include "__detail/__meta.hpp"
+#include "__detail/__type_traits.hpp"
+
 #include <version>
 
 // Perhaps the stdlib lacks support for concepts though:
@@ -33,9 +38,6 @@
 #else
 #include <type_traits>
 #endif
-
-#include "__detail/__concepts.hpp"
-#include "__detail/__meta.hpp"
 
 namespace stdexec::__std_concepts
 {

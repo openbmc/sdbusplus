@@ -18,6 +18,7 @@
 #include "__concepts.hpp"
 #include "__config.hpp"
 #include "__meta.hpp"
+#include "__type_traits.hpp"
 
 namespace stdexec
 {

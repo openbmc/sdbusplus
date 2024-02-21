@@ -145,6 +145,24 @@
       "parentUuid": "13524d02_a42860c3",
       "revId": "d722aacc4babcf5bb903b5e32ddbf1097eb31458",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "757dacb6_de4ee89f",
+        "filename": "test/message/append.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 323,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2024-02-21T06:24:20Z",
+      "side": 1,
+      "message": "\u003e only the most inner call will be un-templated to the new change.\n\nRight, but the unit test is to make sure the code works expectedly and prevent future changes from breaking it. So I still suggest adding such a test.\n\n\u003e handle these repeated malloc in the mock, to pass asan check, will make these whole unit test unnecessarily complicated.\n\nIt\u0027s really a limitation of the current test, that it uses only **one** allocatedMemory variable, so that each case will have to allocate memory once.\nThis is not convenient.\nLet\u0027s impove it a bit, to make it possible to handle multiple memory allocations , e.g. use a std::vector\u003cvoid*\u003e and call free on all the items in the vector in tearDown().",
+      "parentUuid": "41f3f465_332fef3a",
+      "revId": "d722aacc4babcf5bb903b5e32ddbf1097eb31458",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

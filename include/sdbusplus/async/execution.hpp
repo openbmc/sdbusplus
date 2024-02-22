@@ -4,7 +4,10 @@
 // as needed.
 
 #pragma GCC diagnostic push
-#ifndef __clang__
+#ifdef __clang__
+#pragma clang diagnostic ignored "-Wunused-parameter"
+#pragma clang diagnostic ignored "-Wnon-pod-varargs"
+#else
 #pragma GCC diagnostic ignored "-Wnon-template-friend"
 #endif
 #pragma GCC diagnostic ignored "-Wmissing-field-initializers"

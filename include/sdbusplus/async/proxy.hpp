@@ -105,9 +105,9 @@ struct proxy : private sdbusplus::bus::details::bus_friend
         requires(!Preserved)
     {
         using result_t = proxy<S, P, I, true>;
-        return result_t(typename result_t::value_t<S>(this->s),
-                        typename result_t::value_t<P>(this->p),
-                        typename result_t::value_t<I>(this->i));
+        return result_t(typename result_t:: template value_t<S>(this->s),
+                        typename result_t:: template value_t<P>(this->p),
+                        typename result_t:: template value_t<I>(this->i));
     }
 
     /** Perform a method call.

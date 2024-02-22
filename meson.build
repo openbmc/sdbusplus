@@ -36,6 +36,17 @@ libsdbusplus_src = files(
     'src/server/transaction.cpp',
 )
 
+cxx = meson.get_compiler('cpp')
+
+if (cxx.get_id() == 'clang')
+   add_project_arguments([
+       # stdexec has these warnings when compiled with clang
+       '-Wno-unused-parameter',
+       '-Wno-non-pod-varargs',
+     ]
+     , language: 'cpp')
+endif
+
 libsdbusplus = library(
     'sdbusplus',
     libsdbusplus_src,

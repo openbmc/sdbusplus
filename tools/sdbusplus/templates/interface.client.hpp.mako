@@ -48,7 +48,7 @@ class ${interface.classname} :
 {
   public:
     friend Client;
-    template <typename>
+    template <typename, typename>
     friend struct sdbusplus::client::${interface.cppNamespacedClass()};
 
     // Delete default constructor as these should only be constructed

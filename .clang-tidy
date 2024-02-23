@@ -1,0 +1,6 @@
+Checks: '
+  -*,
+  readability-const-return-type
+'
+WarningsAsErrors: '*'
+HeaderFilterRegex: '.*'

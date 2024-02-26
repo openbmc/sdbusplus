@@ -22,6 +22,30 @@
       },
       "revId": "82eba1635ce32604dbff965eda89d45f0355d9e2",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2ab2dd92_8e650a9a",
+        "filename": "meson.build",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2024-02-26T20:38:42Z",
+      "side": 1,
+      "message": "It looked like I\u0027d need to fix more than just that one location.  There were quite a few places with unused variables, but if that\u0027s the change you\u0027d rather see, happy to make it happen.",
+      "parentUuid": "e018f267_277cc1a2",
+      "range": {
+        "startLine": 44,
+        "startChar": 0,
+        "endLine": 45,
+        "endChar": 30
+      },
+      "revId": "82eba1635ce32604dbff965eda89d45f0355d9e2",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

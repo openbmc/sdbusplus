@@ -398,6 +398,12 @@ class dbus_interface
                                        std::vector<std::string>{name_});
     }
 
+    auto connection() const noexcept
+        -> std::shared_ptr<sdbusplus::asio::connection>
+    {
+        return conn_;
+    }
+
     template <typename PropertyType, typename CallbackTypeGet>
     bool register_property_r(const std::string& name,
                              const PropertyType& property,

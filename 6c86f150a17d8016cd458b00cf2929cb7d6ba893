@@ -16,6 +16,24 @@
       "message": "Could you elaborate on the purpose of this change?\nAlso probably you could add an example usage in the example code.",
       "revId": "6c86f150a17d8016cd458b00cf2929cb7d6ba893",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "383d640f_e93e4070",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2024-02-28T20:53:28Z",
+      "side": 1,
+      "message": "+1.  This seems like an odd abstraction to add, given that the object_server is hosting a set of dbus objects, and the underlying connection was used to construct it.  You\u0027d think you could just pass in the same connection into whatever other code needs it.",
+      "parentUuid": "acd85494_e12c9930",
+      "revId": "6c86f150a17d8016cd458b00cf2929cb7d6ba893",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

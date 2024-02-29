@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0c479612_807b41eb",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-02-29T12:21:57Z",
+      "side": 1,
+      "message": "According to this, Clang has supported it since clang-17 and GCC since GCC-10.  https://en.cppreference.com/w/cpp/compiler_support\n\nIs there a specific version we\u0027re trying to include support for that is older?  This isn\u0027t a Mac problem, since sd-bus doesn\u0027t exist on the Mac...",
+      "revId": "759909e234bdcc8857b79251aba7c2d34768ba0d",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

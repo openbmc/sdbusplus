@@ -34,6 +34,24 @@
       "parentUuid": "acd85494_e12c9930",
       "revId": "6c86f150a17d8016cd458b00cf2929cb7d6ba893",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5ee59324_67730a72",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1002018
+      },
+      "writtenOn": "2024-02-29T09:59:42Z",
+      "side": 1,
+      "message": "I have updated the commit message to better describe intent. Basically this is a nicety when passing around dbus_interface for each class to register some functionality onto. Sometimes you need access to the connection and other times you just need the execution context underlying the connection class. This change reduces the required parameter count for the classes registering their interfaces. I don\u0027t need to pass around a ctx reference or a connection shared_ptr in addition to the dbus_interface.\n\nIf you still want an example I can create one.",
+      "parentUuid": "acd85494_e12c9930",
+      "revId": "6c86f150a17d8016cd458b00cf2929cb7d6ba893",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

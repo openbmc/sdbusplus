@@ -1,3 +1,8 @@
+#if __has_include(<stop_token>)
+#include <stop_token>
+// Libstdc++ has stop_token, but not stop_source. Allow the library to be used with asio under libc++
+#ifdef __cpp_lib_jthread
+#if __cpp_lib_jthread >= 201911L
 #include <systemd/sd-bus.h>
 
 #include <sdbusplus/async/context.hpp>
@@ -337,3 +342,6 @@ int context::dbus_event_handle(sd_event_source*, int, uint32_t, void* data)
 }
 
 } // namespace sdbusplus::async
+#endif
+#endif
+#endif

@@ -1,5 +1,9 @@
+#if __has_include(<stop_token>)
+#include <stop_token>
+// Libstdc++ has stop_token, but not stop_source. Allow the library to be used with asio under libc++
+#ifdef __cpp_lib_jthread
+#if __cpp_lib_jthread >= 201911L
 #include <sdbusplus/async/match.hpp>
-
 namespace sdbusplus::async
 {
 
@@ -103,3 +107,6 @@ void match::handle_completion(std::unique_lock<std::mutex>&& l) noexcept
 }
 
 } // namespace sdbusplus::async
+#endif
+#endif
+#endif

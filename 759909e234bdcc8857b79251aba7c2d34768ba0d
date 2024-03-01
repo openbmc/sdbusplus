@@ -20,6 +20,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "45957843_e831e407",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1002018
+      },
+      "writtenOn": "2024-03-01T08:40:59Z",
+      "side": 1,
+      "message": "The compile failure is from stop_source, https://en.cppreference.com/w/cpp/thread/stop_source Here is a link https://pastebin.com/UCeNS5Tf with the precise failure, note I am utilizing vcpkg to control the toolchain. Which is my target with this PR I am trying to add sdbusplus into vcpkg. \n\nThis is also not targeted to mac, we try to build our projects across gcc and clang with their respective standard library.",
+      "parentUuid": "0c479612_807b41eb",
+      "revId": "759909e234bdcc8857b79251aba7c2d34768ba0d",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "3a63681c_56d4422e",
         "filename": "/COMMIT_MSG",
         "patchSetId": 2
@@ -31,6 +49,30 @@
       "writtenOn": "2024-02-29T19:53:29Z",
       "side": 1,
       "message": "This says libc++ twice.  Did you intend libstdc++ for one of them?",
+      "range": {
+        "startLine": 14,
+        "startChar": 0,
+        "endLine": 17,
+        "endChar": 1
+      },
+      "revId": "759909e234bdcc8857b79251aba7c2d34768ba0d",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0fbba218_5a71ae6b",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1002018
+      },
+      "writtenOn": "2024-03-01T08:40:59Z",
+      "side": 1,
+      "message": "No this change is removing the contents of two compilation units so they compile under libc++. The point was just that libc++ users still cant use the async portion, this does not \"fix\" anything just allows them to use the asio version. I have modified the commit message to be more clear.",
+      "parentUuid": "3a63681c_56d4422e",
       "range": {
         "startLine": 14,
         "startChar": 0,

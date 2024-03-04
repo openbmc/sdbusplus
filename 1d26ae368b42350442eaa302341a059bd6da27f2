@@ -1,6 +1,29 @@
 {
   "comments": [
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "cda48ec8_df4d980d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2024-03-04T18:04:06Z",
+      "side": 1,
+      "message": "Can we rephrase this a bit.  Arguably, if we found an issue in the current model, we should just fix the bug.\n\nWhat this class is doing is adding a method for calling a match expression asynchronously, which is useful outside of the bug, because it allows not blocking the io reactor for other uses.",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 19,
+        "endChar": 0
+      },
+      "revId": "1d26ae368b42350442eaa302341a059bd6da27f2",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "066ed254_be27c5f7",
@@ -50,6 +73,23 @@
       "side": 1,
       "message": "The new PS added asio::match it should have addressed all the comments.",
       "parentUuid": "37e8d10d_89cfc12c",
+      "revId": "1d26ae368b42350442eaa302341a059bd6da27f2",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6da75e69_3cd31eca",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2024-03-04T18:04:06Z",
+      "side": 1,
+      "message": "I appreciate that you\u0027ve taken a similar approach to https://gerrit.openbmc.org/c/openbmc/sdbusplus/+/68959\n\nCan you please help to review that design.  I don\u0027t really care which patch merges, but there\u0027s a question of how we register and return callbacks that I think we need to come to a conclusion on before we start talking patchesets.  Namely, that there are 3 callback events, when the match is installed, when the match fails to install, and when an event is returned.  Do those go in one callback, 2 callbacks, or 3?  What is the expectation of users if an error is returned?",
       "revId": "1d26ae368b42350442eaa302341a059bd6da27f2",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }

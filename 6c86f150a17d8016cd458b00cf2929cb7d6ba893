@@ -52,6 +52,24 @@
       "parentUuid": "acd85494_e12c9930",
       "revId": "6c86f150a17d8016cd458b00cf2929cb7d6ba893",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fd2ca790_afcc3d85",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2024-03-04T17:55:24Z",
+      "side": 1,
+      "message": "\u003e I have updated the commit message to better describe intent. Basically this is a nicety when passing around dbus_interface for each class to register some functionality onto. Sometimes you need access to the connection and other times you just need the execution context underlying the connection class. \n\nThe first is IMO an anti-pattern.  Ideally an individual piece of code shouldn\u0027t go from a more targeted class back up, and the second, even though we do it in other places, is also an anti pattern.  Just last week I started patches to try to remove that \"get io context\" pattern from bmcweb to allow for multi-threading and stdexec, which is also what the boost/beast/asio maintainers seem to recommend for how to contstuct and pass a context, given that the executor is a template on most asio classes, and depending on the mode you might want to construct from various different types of executors.\n\nIf you have one io_context, just declare it as a variable in a method.\n\n```\nauto\u0026 getIoContext(){\n   static boost::asio::io_context io;\n   return io;\n}\n```\n\n\u003e This change reduces the required parameter count for the classes registering their interfaces. I don\u0027t need to pass around a ctx reference or a connection shared_ptr in addition to the dbus_interface.\n\u003e \n\u003e If you still want an example I can create one.\n\nIMO, I think this is the kind of abstraction we want to avoid, especially walking back up the complexity tree from dbus_interface -\u003e object_server -\u003e connection.  This pattern showing up in code can also imply that there\u0027s some late-binding connection decision making that should be moved up into init, or some ownership modeling that might need adjustment.  If there are too many constructor params, put the parameters themselves in a struct that can be passed as a single variable.\n\nGiven that we have lots of code using these bindings, if we want to go forward with this, I think having at least one example of this making code better is reasonable.",
+      "parentUuid": "5ee59324_67730a72",
+      "revId": "6c86f150a17d8016cd458b00cf2929cb7d6ba893",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

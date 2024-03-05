@@ -224,33 +224,33 @@ TEST_F(ReadTest, BasicBoolError)
 
 TEST_F(ReadTest, Vector)
 {
-    const std::vector<int> vi{1, 2, 3, 4};
+    const std::vector<std::string> vs{"1", "2", "3", "4"};
 
     {
         testing::InSequence seq;
-        expect_enter_container(SD_BUS_TYPE_ARRAY, "i");
-        for (const auto& i : vi)
+        expect_enter_container(SD_BUS_TYPE_ARRAY, "s");
+        for (const auto& i : vs)
         {
             expect_at_end(false, 0);
-            expect_basic<int>(SD_BUS_TYPE_INT32, i);
+            expect_basic<const char*>(SD_BUS_TYPE_STRING, i.c_str());
         }
         expect_at_end(false, 1);
         expect_exit_container();
     }
 
-    std::vector<int> ret_vi;
-    new_message().read(ret_vi);
-    EXPECT_EQ(vi, ret_vi);
+    std::vector<std::string> ret_vs;
+    new_message().read(ret_vs);
+    EXPECT_EQ(vs, ret_vs);
 }
 
 TEST_F(ReadTest, VectorEnterError)
 {
     {
         testing::InSequence seq;
-        expect_enter_container(SD_BUS_TYPE_ARRAY, "i", -EINVAL);
+        expect_enter_container(SD_BUS_TYPE_ARRAY, "s", -EINVAL);
     }
 
-    std::vector<int> ret;
+    std::vector<std::string> ret;
     EXPECT_THROW(new_message().read(ret), sdbusplus::exception::SdBusError);
 }
 
@@ -258,13 +258,13 @@ TEST_F(ReadTest, VectorIterError)
 {
     {
         testing::InSequence seq;
-        expect_enter_container(SD_BUS_TYPE_ARRAY, "i");
+        expect_enter_container(SD_BUS_TYPE_ARRAY, "s");
         expect_at_end(false, 0);
-        expect_basic<int>(SD_BUS_TYPE_INT32, 1);
+        expect_basic<const char*>(SD_BUS_TYPE_STRING, "1");
         expect_at_end(false, -EINVAL);
     }
 
-    std::vector<int> ret;
+    std::vector<std::string> ret;
     EXPECT_THROW(new_message().read(ret), sdbusplus::exception::SdBusError);
 }
 
@@ -272,16 +272,16 @@ TEST_F(ReadTest, VectorExitError)
 {
     {
         testing::InSequence seq;
-        expect_enter_container(SD_BUS_TYPE_ARRAY, "i");
+        expect_enter_container(SD_BUS_TYPE_ARRAY, "s");
         expect_at_end(false, 0);
-        expect_basic<int>(SD_BUS_TYPE_INT32, 1);
+        expect_basic<const char*>(SD_BUS_TYPE_STRING, "1");
         expect_at_end(false, 0);
-        expect_basic<int>(SD_BUS_TYPE_INT32, 2);
+        expect_basic<const char*>(SD_BUS_TYPE_STRING, "2");
         expect_at_end(false, 1);
         expect_exit_container(-EINVAL);
     }
 
-    std::vector<int> ret;
+    std::vector<std::string> ret;
     EXPECT_THROW(new_message().read(ret), sdbusplus::exception::SdBusError);
 }
 
@@ -664,22 +664,22 @@ TEST_F(ReadTest, LargeCombo)
 
 TEST_F(ReadTest, UnpackSingleVector)
 {
-    const std::vector<int> vi{1, 2, 3, 4};
+    const std::vector<std::string> vs{"a", "b", "c", "d"};
 
     {
         testing::InSequence seq;
-        expect_enter_container(SD_BUS_TYPE_ARRAY, "i");
-        for (const auto& i : vi)
+        expect_enter_container(SD_BUS_TYPE_ARRAY, "s");
+        for (const auto& i : vs)
         {
             expect_at_end(false, 0);
-            expect_basic<int>(SD_BUS_TYPE_INT32, i);
+            expect_basic<const char*>(SD_BUS_TYPE_STRING, i.c_str());
         }
         expect_at_end(false, 1);
         expect_exit_container();
     }
 
-    auto ret_vi = new_message().unpack<std::vector<int>>();
-    EXPECT_EQ(vi, ret_vi);
+    auto ret_vs = new_message().unpack<std::vector<std::string>>();
+    EXPECT_EQ(vs, ret_vs);
 }
 
 TEST_F(ReadTest, UnpackMultiple)

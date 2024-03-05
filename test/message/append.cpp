@@ -285,14 +285,14 @@ TEST_F(AppendTest, Span)
 
 TEST_F(AppendTest, Vector)
 {
-    const std::vector<int> v{1, 2, 3, 4};
+    const std::vector<std::string> v{"a", "b", "c", "d"};
 
     {
         testing::InSequence seq;
-        expect_open_container(SD_BUS_TYPE_ARRAY, "i");
+        expect_open_container(SD_BUS_TYPE_ARRAY, "s");
         for (const auto& i : v)
         {
-            expect_basic<int>(SD_BUS_TYPE_INT32, i);
+            expect_basic_string(SD_BUS_TYPE_STRING, i.c_str());
         }
         expect_close_container();
     }

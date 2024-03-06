@@ -26,6 +26,30 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "662bac81_06dbca5d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2024-03-06T07:15:00Z",
+      "side": 1,
+      "message": "Done.\nAdded some description of how to use asio::match to avoid the problem situation.",
+      "parentUuid": "cda48ec8_df4d980d",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 19,
+        "endChar": 0
+      },
+      "revId": "1d26ae368b42350442eaa302341a059bd6da27f2",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "066ed254_be27c5f7",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 5
@@ -90,6 +114,24 @@
       "writtenOn": "2024-03-04T18:04:06Z",
       "side": 1,
       "message": "I appreciate that you\u0027ve taken a similar approach to https://gerrit.openbmc.org/c/openbmc/sdbusplus/+/68959\n\nCan you please help to review that design.  I don\u0027t really care which patch merges, but there\u0027s a question of how we register and return callbacks that I think we need to come to a conclusion on before we start talking patchesets.  Namely, that there are 3 callback events, when the match is installed, when the match fails to install, and when an event is returned.  Do those go in one callback, 2 callbacks, or 3?  What is the expectation of users if an error is returned?",
+      "revId": "1d26ae368b42350442eaa302341a059bd6da27f2",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fd8c8dd7_e542fde6",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2024-03-06T07:15:00Z",
+      "side": 1,
+      "message": "\u003e but there\u0027s a question of how we register and return callbacks that I think we need to come to a conclusion on before we start talking patchesets. Namely, that there are 3 callback events, when the match is installed, when the match fails to install, and when an event is returned. Do those go in one callback, 2 callbacks, or 3? What is the expectation of users if an error is returned?\n\nIn my implementation, there are 2 callbacks, one for install, the other for match event callback.\n\nFor install, there are two cases:\n1. If the match install fails directly (sd_bus_add_match_async returns failure directly), SdBusError is thrown, and the asio::match object constructor throws.\n2. If sd_bus_add_match_async() succeeds, whenever the install is successful or not, caller could get the callback containing the message, and the caller could check the message to determine if it\u0027s successful or not.",
+      "parentUuid": "6da75e69_3cd31eca",
       "revId": "1d26ae368b42350442eaa302341a059bd6da27f2",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }

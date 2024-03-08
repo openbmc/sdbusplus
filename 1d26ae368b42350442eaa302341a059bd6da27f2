@@ -134,6 +134,24 @@
       "parentUuid": "6da75e69_3cd31eca",
       "revId": "1d26ae368b42350442eaa302341a059bd6da27f2",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "467cb572_25bdea6f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2024-03-08T20:42:56Z",
+      "side": 1,
+      "message": "yep, so why would we go with that design over something that returns a single callback, like basically the rest of asio does?\n\nWe\u0027ve had other things that DIDN\u0027T have a single callback, and in practice, required capturing by copy in a lot of cases that otherwise wouldn\u0027t be required, just to duplicate objects between the two callbacks.\n\nI\u0027m not saying it\u0027s wrong, but it goes against asio conventions, so we should be careful doing it.  Ideally we\u0027d have examples of using this new interface somewhere that we could look at and make sure that we don\u0027t cause lifetime problems.",
+      "parentUuid": "fd8c8dd7_e542fde6",
+      "revId": "1d26ae368b42350442eaa302341a059bd6da27f2",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

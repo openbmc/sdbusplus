@@ -128,6 +128,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "1f98f6f0_27c025e4",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1002018
+      },
+      "writtenOn": "2024-03-15T10:10:17Z",
+      "side": 1,
+      "message": "Can this thread be resolved?",
+      "parentUuid": "09efbee1_f3437372",
+      "revId": "759909e234bdcc8857b79251aba7c2d34768ba0d",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "3a63681c_56d4422e",
         "filename": "/COMMIT_MSG",
         "patchSetId": 2
@@ -163,6 +181,30 @@
       "side": 1,
       "message": "No this change is removing the contents of two compilation units so they compile under libc++. The point was just that libc++ users still cant use the async portion, this does not \"fix\" anything just allows them to use the asio version. I have modified the commit message to be more clear.",
       "parentUuid": "3a63681c_56d4422e",
+      "range": {
+        "startLine": 14,
+        "startChar": 0,
+        "endLine": 17,
+        "endChar": 1
+      },
+      "revId": "759909e234bdcc8857b79251aba7c2d34768ba0d",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "29f6f6ad_6cd54782",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1002018
+      },
+      "writtenOn": "2024-03-15T10:10:17Z",
+      "side": 1,
+      "message": "Can this thread be resolved?",
+      "parentUuid": "0fbba218_5a71ae6b",
       "range": {
         "startLine": 14,
         "startChar": 0,

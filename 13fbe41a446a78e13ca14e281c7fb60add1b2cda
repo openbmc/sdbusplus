@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5618f43f_ebbe7a4a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2024-03-15T17:37:33Z",
+      "side": 1,
+      "message": "nit: I think this means \"so that\" ?  can we explicitly put the words instead of abbreviating so the sentence reads like a normal sentence?",
+      "range": {
+        "startLine": 14,
+        "startChar": 34,
+        "endLine": 14,
+        "endChar": 38
+      },
+      "revId": "13fbe41a446a78e13ca14e281c7fb60add1b2cda",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

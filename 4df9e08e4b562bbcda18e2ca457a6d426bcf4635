@@ -50,6 +50,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "5dfccfbf_104d4ab1",
+        "filename": "src/async/context.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2024-03-15T17:37:33Z",
+      "side": 1,
+      "message": "Would like to see my first question answered.",
+      "parentUuid": "c7d34dca_f5c1cd17",
+      "range": {
+        "startLine": 3,
+        "startChar": 0,
+        "endLine": 4,
+        "endChar": 32
+      },
+      "revId": "4df9e08e4b562bbcda18e2ca457a6d426bcf4635",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "e6dc8c13_59021816",
         "filename": "src/async/match.cpp",
         "patchSetId": 3
@@ -85,6 +109,30 @@
       "side": 1,
       "message": "__cpp_lib_jthread is defined in stop_token. I just thought it was good to check for the existance of stop_token include. Can remove if you want.",
       "parentUuid": "e6dc8c13_59021816",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 31
+      },
+      "revId": "4df9e08e4b562bbcda18e2ca457a6d426bcf4635",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d8dcaa7b_6a1c394b",
+        "filename": "src/async/match.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2024-03-15T17:37:33Z",
+      "side": 1,
+      "message": "What I would like to see (which should be taken with a grain of salt, because Patrick is the maintainer here ideally we should do whatever he wants to see) is clear paths for libstdc++, and libc++.  What I see here is 4 paths, \nConditional #include \u003cstop_token\u003e\nAnd conditional check __cpp_lib_jthread\n\nThis makes this code hard to read, especially given that I would expect that #if __has_include(\u003cstop_token\u003e) will never fail on any of the compilers we intend to support here, and if it did a compiler error about a missing include would be more informative than undefined reference to sdbusplus::async objects.",
+      "parentUuid": "66ee08d7_df6bb8ef",
       "range": {
         "startLine": 1,
         "startChar": 0,

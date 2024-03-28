@@ -90,6 +90,18 @@ class AppendTest : public testing::Test
         EXPECT_CALL(mock, sd_bus_message_close_container(nullptr))
             .WillOnce(Return(0));
     }
+
+    static int on_array_append(sd_bus_message*, char, const void*, size_t)
+    {
+        return 0;
+    }
+
+    void expect_append_array(char type, size_t sz)
+    {
+        EXPECT_CALL(mock,
+                    sd_bus_message_append_array(nullptr, type, testing::_, sz))
+            .WillOnce(testing::Invoke(on_array_append));
+    }
 };
 
 TEST_F(AppendTest, RValueInt)
@@ -253,13 +265,7 @@ TEST_F(AppendTest, Array)
         !sdbusplus::message::details::can_append_multiple_v<decltype(a)>);
 
     {
-        testing::InSequence seq;
-        expect_open_container(SD_BUS_TYPE_ARRAY, "d");
-        for (const auto& i : a)
-        {
-            expect_basic<double>(SD_BUS_TYPE_DOUBLE, i);
-        }
-        expect_close_container();
+        expect_append_array(SD_BUS_TYPE_DOUBLE, a.size() * sizeof(double));
     }
     new_message().append(a);
 }
@@ -272,13 +278,7 @@ TEST_F(AppendTest, Span)
         !sdbusplus::message::details::can_append_multiple_v<decltype(s)>);
 
     {
-        testing::InSequence seq;
-        expect_open_container(SD_BUS_TYPE_ARRAY, "d");
-        for (const auto& i : s)
-        {
-            expect_basic<double>(SD_BUS_TYPE_DOUBLE, i);
-        }
-        expect_close_container();
+        expect_append_array(SD_BUS_TYPE_DOUBLE, a.size() * sizeof(double));
     }
     new_message().append(s);
 }
@@ -293,6 +293,31 @@ TEST_F(AppendTest, Vector)
         for (const auto& i : v)
         {
             expect_basic_string(SD_BUS_TYPE_STRING, i.c_str());
+        }
+        expect_close_container();
+    }
+    new_message().append(v);
+}
+
+TEST_F(AppendTest, VectorIntegral)
+{
+    const std::vector<int32_t> v{1, 2, 3, 4};
+    expect_append_array(SD_BUS_TYPE_INT32, v.size() * sizeof(int32_t));
+    new_message().append(v);
+}
+
+TEST_F(AppendTest, VectorNestIntegral)
+{
+    const std::vector<std::array<int32_t, 3>> v{
+        {1, 2, 3}, {3, 4, 5}, {6, 7, 8}};
+
+    {
+        testing::InSequence seq;
+        expect_open_container(SD_BUS_TYPE_ARRAY, "ai");
+        for (long unsigned int i = 0; i < v.size(); i++)
+        {
+            expect_append_array(SD_BUS_TYPE_INT32,
+                                v[i].size() * sizeof(int32_t));
         }
         expect_close_container();
     }

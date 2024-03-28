@@ -34,6 +34,24 @@
       "parentUuid": "a15a83be_e0e9fad9",
       "revId": "57be4a0698cde72b5909eb0b9990d9ebbe567fed",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fa10dccf_e5aa9d65",
+        "filename": "meson.build",
+        "patchSetId": 4
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-03-28T18:38:19Z",
+      "side": 1,
+      "message": "You linked to the one I suggested needed to be changed.\n\nThis one should not be changed though:\nhttps://github.com/openbmc/sdbusplus/blob/e12a23cc2e28b49234d042ac60eafec4ce4e3a3b/test/meson.build#L16",
+      "parentUuid": "9c4e6c04_6a7d938e",
+      "revId": "57be4a0698cde72b5909eb0b9990d9ebbe567fed",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

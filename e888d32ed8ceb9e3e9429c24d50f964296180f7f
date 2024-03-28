@@ -34,6 +34,24 @@
       "parentUuid": "507c7f2b_465fa2cc",
       "revId": "e888d32ed8ceb9e3e9429c24d50f964296180f7f",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b357f26e_b6fa12f5",
+        "filename": "test/meson.build",
+        "patchSetId": 1
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 1000926
+      },
+      "writtenOn": "2024-03-28T13:29:59Z",
+      "side": 1,
+      "message": "Can this be a aolution?\n\n```\ndiff --git a/meson.build b/meson.build\nindex 52e330a..4f4c23d 100644\n--- a/meson.build\n+++ b/meson.build\n@@ -4,8 +4,8 @@ project(\u0027sdbusplus\u0027, \u0027cpp\u0027, \u0027c\u0027,\n       \u0027cpp_std\u003dc++23\u0027,\n       \u0027warning_level\u003d3\u0027,\n       \u0027werror\u003dtrue\u0027,\n-      \u0027tests\u003d\u0027 + (meson.is_subproject() ? \u0027disabled\u0027 : \u0027auto\u0027),\n-      \u0027examples\u003d\u0027 + (meson.is_subproject() ? \u0027disabled\u0027 : \u0027auto\u0027),\n+      \u0027tests\u003d\u0027 + (meson.is_subproject() ? \u0027disabled\u0027 : \u0027enabled\u0027),\n+      \u0027examples\u003d\u0027 + (meson.is_subproject() ? \u0027disabled\u0027 : \u0027enabled\u0027),\n     ],\n     version: \u00271.0.0\u0027,\n     meson_version: \u0027\u003e\u003d1.1.1\u0027,\n     ```",
+      "parentUuid": "a8425403_f409904c",
+      "revId": "e888d32ed8ceb9e3e9429c24d50f964296180f7f",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

@@ -21,6 +21,8 @@ namespace
 {
 
 using testing::DoAll;
+using testing::ElementsAre;
+using testing::Invoke;
 using testing::Return;
 using testing::StrEq;
 
@@ -60,6 +62,26 @@ class ReadTest : public testing::Test
     {
         EXPECT_CALL(mock, sd_bus_message_read_basic(nullptr, type, testing::_))
             .WillOnce(DoAll(AssignReadVal<T>(val), Return(0)));
+    }
+
+    template <typename T>
+    static void read_array_callback(sd_bus_message*, char, const void** p,
+                                    size_t* sz)
+    {
+        static const std::array<T, 3> arr{std::numeric_limits<T>::min(), 0,
+                                          std::numeric_limits<T>::max()};
+
+        *p = arr.data();
+        *sz = arr.size() * sizeof(T);
+    }
+
+    template <typename T>
+    void expect_read_array(char type)
+    {
+        EXPECT_CALL(mock, sd_bus_message_read_array(nullptr, type, testing::_,
+                                                    testing::_))
+            .WillOnce(
+                DoAll(testing::Invoke(read_array_callback<T>), Return(0)));
     }
 
     void expect_verify_type(char type, const char* contents, int ret)
@@ -241,6 +263,56 @@ TEST_F(ReadTest, Vector)
     std::vector<std::string> ret_vs;
     new_message().read(ret_vs);
     EXPECT_EQ(vs, ret_vs);
+}
+
+TEST_F(ReadTest, VectorUnsignedIntegral8)
+{
+    expect_read_array<uint8_t>(SD_BUS_TYPE_BYTE);
+    std::vector<uint8_t> ret_vi;
+    new_message().read(ret_vi);
+    EXPECT_THAT(ret_vi, ElementsAre(0, 0, 255));
+}
+
+TEST_F(ReadTest, VectorIntegral32)
+{
+    expect_read_array<int32_t>(SD_BUS_TYPE_INT32);
+    std::vector<int32_t> ret_vi;
+    new_message().read(ret_vi);
+    EXPECT_THAT(ret_vi, ElementsAre(-2147483648, 0, 2147483647));
+}
+
+TEST_F(ReadTest, VectorIntegral64)
+{
+    expect_read_array<int64_t>(SD_BUS_TYPE_INT64);
+    std::vector<int64_t> ret_vi;
+    new_message().read(ret_vi);
+    EXPECT_THAT(ret_vi, ElementsAre(-9223372036854775807LL - 1, 0,
+                                    9223372036854775807LL));
+}
+
+TEST_F(ReadTest, VectorUnsignedIntegral32)
+{
+    expect_read_array<uint32_t>(SD_BUS_TYPE_UINT32);
+    std::vector<uint32_t> ret_vi;
+    new_message().read(ret_vi);
+    EXPECT_THAT(ret_vi, ElementsAre(0, 0, 4294967295));
+}
+
+TEST_F(ReadTest, VectorUnsignedIntegral64)
+{
+    expect_read_array<uint64_t>(SD_BUS_TYPE_UINT64);
+    std::vector<uint64_t> ret_vi;
+    new_message().read(ret_vi);
+    EXPECT_THAT(ret_vi, ElementsAre(0, 0, 18446744073709551615ULL));
+}
+
+TEST_F(ReadTest, VectorDouble)
+{
+    expect_read_array<double>(SD_BUS_TYPE_DOUBLE);
+    std::vector<double> ret_vi;
+    new_message().read(ret_vi);
+    EXPECT_THAT(ret_vi, ElementsAre(2.2250738585072014e-308, 0,
+                                    1.7976931348623157e+308));
 }
 
 TEST_F(ReadTest, VectorEnterError)

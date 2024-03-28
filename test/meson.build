@@ -55,7 +55,7 @@ foreach t : tests
 endforeach
 
 assert(
-    not get_option('tests').enabled() or boost_dep.found(),
+    get_option('tests').enabled() and not boost_dep.found(),
     'Boost is required when tests are enabled'
 )
 

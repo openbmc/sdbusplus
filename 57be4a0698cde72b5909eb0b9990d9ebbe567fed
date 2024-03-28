@@ -16,6 +16,24 @@
       "message": "The necessary change is not this, but I think, to change line 58 of test/meson.build from `get_option(\u0027tests\u0027).enabled()` to `get_option(\u0027tests\u0027).allowed()`.",
       "revId": "57be4a0698cde72b5909eb0b9990d9ebbe567fed",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9c4e6c04_6a7d938e",
+        "filename": "meson.build",
+        "patchSetId": 4
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1000926
+      },
+      "writtenOn": "2024-03-28T18:35:11Z",
+      "side": 1,
+      "message": "Should we change all .enabled() to .allowed() then?\n\nFor example https://github.com/openbmc/sdbusplus/blob/e12a23cc2e28b49234d042ac60eafec4ce4e3a3b/test/meson.build#L58",
+      "parentUuid": "a15a83be_e0e9fad9",
+      "revId": "57be4a0698cde72b5909eb0b9990d9ebbe567fed",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

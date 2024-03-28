@@ -16,6 +16,24 @@
       "message": "I don\u0027t understand this change. \n\n* Asserts fire when false.\n* If boost is found we don\u0027t want the assert. \n* If tests are not enabled we don\u0027t want the assert to fire. \n\n\nWasn\u0027t the old code doing exactly that?\n\nYou\u0027ve now made it such that finding boost and not enabling tests is the only way the assert fires.\n\nAre we just missing some parens around the \"not\" in front of the test enable check?",
       "revId": "e888d32ed8ceb9e3e9429c24d50f964296180f7f",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a8425403_f409904c",
+        "filename": "test/meson.build",
+        "patchSetId": 1
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 1000926
+      },
+      "writtenOn": "2024-03-28T13:21:27Z",
+      "side": 1,
+      "message": "Oops, sorry.\nApparently the problem is that tests are still build even if `get_option(\u0027tests\u0027).enabled() \u003d\u003d false`",
+      "parentUuid": "507c7f2b_465fa2cc",
+      "revId": "e888d32ed8ceb9e3e9429c24d50f964296180f7f",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

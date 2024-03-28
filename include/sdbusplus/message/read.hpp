@@ -78,11 +78,12 @@ struct can_read_multiple<bool> : std::false_type
 {};
 
 // std::vector/map/unordered_vector/set need loops
-template <typename T>
-struct can_read_multiple<
-    T, typename std::enable_if_t<utility::has_emplace_method_v<T> ||
-                                 utility::has_emplace_back_method_v<T>>> :
-    std::false_type
+template <HasEmplace T>
+struct can_read_multiple<T> : std::false_type
+{};
+
+template <HasEmplaceBack T>
+struct can_read_multiple<T> : std::false_type
 {};
 
 // std::pair needs to be broken down into components.
@@ -212,9 +213,13 @@ struct read_single<S>
     }
 };
 
-/** @brief Specialization of read_single for std::vectors. */
-template <typename S>
-    requires(utility::has_emplace_back_method_v<S>)
+template <typename T>
+concept CanReadArrayIteration = HasEmplaceBack<T> && !CanAppendArrayValue<T>;
+
+/** @brief Specialization of read_single for std::vectors, with elements that
+ * are not an integral type.
+ */
+template <CanReadArrayIteration S>
 struct read_single<S>
 {
     template <typename T>
@@ -250,9 +255,37 @@ struct read_single<S>
     }
 };
 
+// Determines if fallback to normal iteration and append is required (can't use
+// sd_bus_message_append_array)
+template <typename T>
+concept CanReadArrayOneShot = HasEmplaceBack<T> && CanAppendArrayValue<T>;
+
+/** @brief Specialization of read_single for std::vectors, when elements are
+ * an integral type
+ */
+template <CanReadArrayOneShot S>
+struct read_single<S>
+{
+    template <typename T>
+    static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, T&& t)
+    {
+        size_t sizeInBytes = 0;
+        const void* p = nullptr;
+        constexpr auto dbusType = utility::tuple_to_array(types::type_id<S>());
+        int r = intf->sd_bus_message_read_array(m, dbusType[1], &p,
+                                                &sizeInBytes);
+        if (r < 0)
+        {
+            throw exception::SdBusError(-r, "sd_bus_message_read_array");
+        }
+        using ContainedType = typename S::value_type;
+        const ContainedType* begin = static_cast<const ContainedType*>(p);
+        t.insert(t.end(), begin, begin + (sizeInBytes / sizeof(ContainedType)));
+    }
+};
+
 /** @brief Specialization of read_single for std::map. */
-template <typename S>
-    requires(utility::has_emplace_method_v<S>)
+template <HasEmplace S>
 struct read_single<S>
 {
     template <typename T>

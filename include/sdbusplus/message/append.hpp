@@ -9,6 +9,7 @@
 #include <sdbusplus/utility/type_traits.hpp>
 
 #include <bit>
+#include <iterator>
 #include <string_view>
 #include <tuple>
 #include <type_traits>
@@ -78,10 +79,8 @@ template <>
 struct can_append_multiple<bool> : std::false_type
 {};
 // std::vector/map/unordered_map/set need loops
-template <typename T>
-struct can_append_multiple<
-    T, typename std::enable_if_t<utility::has_const_iterator_v<T>>> :
-    std::false_type
+template <utility::is_dbus_array T>
+struct can_append_multiple<T> : std::false_type
 {};
 // std::pair needs to be broken down into components.
 template <typename T1, typename T2>
@@ -264,10 +263,18 @@ struct append_single<bool>
     }
 };
 
-/** @brief Specialization of append_single for containers (ie vector, array,
- * set, map, etc) */
+// Determines if fallback to normal iteration and append is required (can't use
+// sd_bus_message_append_array)
 template <typename T>
-struct append_single<T, std::enable_if_t<utility::has_const_iterator_v<T>>>
+concept can_append_array_non_contigious =
+    utility::is_dbus_array<T> && !utility::can_append_array_value<T>;
+
+/** @brief Specialization of append_single for containers
+ * (ie vector, array, etc), where the contiguous elements can be loaded in a
+ * single operation
+ */
+template <can_append_array_non_contigious T>
+struct append_single<T>
 {
     template <typename S>
     static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, S&& s)
@@ -281,6 +288,28 @@ struct append_single<T, std::enable_if_t<utility::has_const_iterator_v<T>>>
             sdbusplus::message::append(intf, m, i);
         }
         intf->sd_bus_message_close_container(m);
+    }
+};
+
+// Determines if the iterable type (vector, array) meets the requirements for
+// using sd_bus_message_append_array
+template <typename T>
+concept can_append_array_contigious =
+    utility::is_dbus_array<T> && utility::can_append_array_value<T>;
+
+/** @brief Specialization of append_single for vector and array T,
+ * with its elements is trivially copyable, and is an integral type,
+ * Bool is explicitly disallowed by sd-bus, so avoid it here */
+template <can_append_array_contigious T>
+struct append_single<T>
+{
+    template <typename S>
+    static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, S&& s)
+    {
+        constexpr auto dbusType = utility::tuple_to_array(types::type_id<T>());
+        intf->sd_bus_message_append_array(
+            m, dbusType[1], s.data(),
+            s.size() * sizeof(typename T::value_type));
     }
 };
 

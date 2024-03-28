@@ -229,9 +229,8 @@ template <>
 struct type_id<signature> : tuple_type_id<SD_BUS_TYPE_SIGNATURE>
 {};
 
-template <typename T>
-struct type_id<T, std::enable_if_t<utility::has_const_iterator_v<T>>> :
-    std::false_type
+template <utility::is_dbus_array T>
+struct type_id<T> : std::false_type
 {
     static constexpr auto value =
         std::tuple_cat(tuple_type_id_v<SD_BUS_TYPE_ARRAY>,

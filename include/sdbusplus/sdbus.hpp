@@ -165,6 +165,11 @@ class SdBusInterface
     virtual int sd_bus_is_open(sd_bus* bus) = 0;
 
     virtual int sd_bus_wait(sd_bus* bus, uint64_t timeout_usec) = 0;
+
+    virtual int sd_bus_message_append_array(sd_bus_message* m, char type,
+                                            const void* ptr, size_t size) = 0;
+    virtual int sd_bus_message_read_array(sd_bus_message* m, char type,
+                                          const void** ptr, size_t* size) = 0;
 };
 
 class SdBusImpl : public SdBusInterface
@@ -564,6 +569,18 @@ class SdBusImpl : public SdBusInterface
     int sd_bus_wait(sd_bus* bus, uint64_t timeout_usec) override
     {
         return ::sd_bus_wait(bus, timeout_usec);
+    }
+
+    int sd_bus_message_append_array(sd_bus_message* m, char type,
+                                    const void* ptr, size_t size) override
+    {
+        return ::sd_bus_message_append_array(m, type, ptr, size);
+    }
+
+    int sd_bus_message_read_array(sd_bus_message* m, char type,
+                                  const void** ptr, size_t* size) override
+    {
+        return ::sd_bus_message_read_array(m, type, ptr, size);
     }
 };
 

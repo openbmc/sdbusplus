@@ -34,6 +34,24 @@
       "parentUuid": "354b8931_9099784f",
       "revId": "a4df19a74a398f3fb806a9c245f6bda42cfff117",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9a8797ab_cd1db90f",
+        "filename": "test/meson.build",
+        "patchSetId": 6
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 1000926
+      },
+      "writtenOn": "2024-04-03T19:48:34Z",
+      "side": 1,
+      "message": "In that case maybe we should do something like this instead?\n```\ndiff --git a/meson.build b/meson.build\nindex 52e330a..6b4101e 100644\n--- a/meson.build\n+++ b/meson.build\n@@ -65,10 +65,10 @@ sdbusplus_dep \u003d declare_dependency(\n\n subdir(\u0027tools\u0027)\n\n-if not get_option(\u0027examples\u0027).disabled()\n+if get_option(\u0027examples\u0027).enabled() or (get_option(\u0027examples\u0027).auto() and boost_dep.found())\n   subdir(\u0027example\u0027)\n endif\n-if not get_option(\u0027tests\u0027).disabled()\n+if get_option(\u0027tests\u0027).enabled() or (get_option(\u0027tests\u0027).auto() and boost_dep.found())\n   subdir(\u0027test\u0027)\n endif\n ```",
+      "parentUuid": "b46fc65e_d693e34c",
+      "revId": "a4df19a74a398f3fb806a9c245f6bda42cfff117",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

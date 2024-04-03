@@ -52,6 +52,24 @@
       "parentUuid": "b46fc65e_d693e34c",
       "revId": "a4df19a74a398f3fb806a9c245f6bda42cfff117",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a6c990be_8752f731",
+        "filename": "test/meson.build",
+        "patchSetId": 6
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-04-03T19:53:03Z",
+      "side": 1,
+      "message": "I don\u0027t think so.  Really we should have specific tests triggered off the `boost_dep.found()`.",
+      "parentUuid": "9a8797ab_cd1db90f",
+      "revId": "a4df19a74a398f3fb806a9c245f6bda42cfff117",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

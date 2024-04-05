@@ -112,9 +112,9 @@ class __default_task_context_impl
         __scheduler_{exec::inline_scheduler{}};
     in_place_stop_token __stop_token_;
 
-    friend const __any_scheduler&
-        tag_invoke(get_scheduler_t,
-                   const __default_task_context_impl& __self) noexcept
+    friend auto tag_invoke(get_scheduler_t,
+                           const __default_task_context_impl& __self) noexcept
+        -> const __any_scheduler&
         requires(__with_scheduler)
     {
         return __self.__scheduler_;
@@ -132,10 +132,10 @@ class __default_task_context_impl
 
     template <scheduler _Scheduler>
     explicit __default_task_context_impl(_Scheduler&& __scheduler) :
-        __scheduler_{(_Scheduler&&)__scheduler}
+        __scheduler_{static_cast<_Scheduler&&>(__scheduler)}
     {}
 
-    bool stop_requested() const noexcept
+    [[nodiscard]] auto stop_requested() const noexcept -> bool
     {
         return __stop_token_.stop_requested();
     }
@@ -144,7 +144,7 @@ class __default_task_context_impl
     void set_scheduler(_Scheduler&& __sched)
         requires(__with_scheduler)
     {
-        __scheduler_ = (_Scheduler&&)__sched;
+        __scheduler_ = static_cast<_Scheduler&&>(__sched);
     }
 
     template <class _ThisPromise>
@@ -320,7 +320,7 @@ using awaiter_context_t =                  //
 template <class _Ty>
 struct __promise_base
 {
-    void return_value(_Ty value) noexcept
+    void return_value(_Ty value)
     {
         __data_.template emplace<1>(std::move(value));
     }
@@ -334,7 +334,7 @@ struct __promise_base<void>
     struct __void
     {};
 
-    void return_void() noexcept
+    void return_void()
     {
         __data_.template emplace<1>(__void{});
     }
@@ -358,9 +358,9 @@ struct __reschedule_coroutine_on
     };
 
     template <scheduler _Scheduler>
-    __wrap<_Scheduler> operator()(_Scheduler __sched) const noexcept
+    auto operator()(_Scheduler __sched) const noexcept -> __wrap<_Scheduler>
     {
-        return {(_Scheduler&&)__sched};
+        return {static_cast<_Scheduler&&>(__sched)};
     }
 };
 
@@ -389,13 +389,14 @@ class [[nodiscard]] basic_task
   private:
     struct __final_awaitable
     {
-        static constexpr bool await_ready() noexcept
+        static constexpr auto await_ready() noexcept -> bool
         {
             return false;
         }
 
-        static __coro::coroutine_handle<>
+        static auto
             await_suspend(__coro::coroutine_handle<__promise> __h) noexcept
+            -> __coro::coroutine_handle<>
         {
             return __h.promise().continuation().handle();
         }
@@ -405,23 +406,23 @@ class [[nodiscard]] basic_task
 
     struct __promise : __promise_base<_Ty>, with_awaitable_senders<__promise>
     {
-        basic_task get_return_object() noexcept
+        auto get_return_object() noexcept -> basic_task
         {
             return basic_task(
                 __coro::coroutine_handle<__promise>::from_promise(*this));
         }
 
-        __coro::suspend_always initial_suspend() noexcept
+        auto initial_suspend() noexcept -> __coro::suspend_always
         {
             return {};
         }
 
-        __final_awaitable final_suspend() noexcept
+        auto final_suspend() noexcept -> __final_awaitable
         {
             return {};
         }
 
-        __task::disposition disposition() const noexcept
+        [[nodiscard]] auto disposition() const noexcept -> __task::disposition
         {
             return static_cast<__task::disposition>(this->__data_.index());
         }
@@ -433,19 +434,21 @@ class [[nodiscard]] basic_task
 
         template <sender _Awaitable>
             requires __scheduler_provider<_Context>
-        decltype(auto) await_transform(_Awaitable&& __awaitable) noexcept
+        auto await_transform(_Awaitable&& __awaitable) noexcept
+            -> decltype(auto)
         {
             // TODO: If we have a complete-where-it-starts query then we can
             // optimize this to avoid the reschedule
-            return as_awaitable(
-                transfer((_Awaitable&&)__awaitable, get_scheduler(__context_)),
-                *this);
+            return as_awaitable(transfer(static_cast<_Awaitable&&>(__awaitable),
+                                         get_scheduler(__context_)),
+                                *this);
         }
 
         template <class _Scheduler>
             requires __scheduler_provider<_Context>
-        decltype(auto) await_transform(
+        auto await_transform(
             __reschedule_coroutine_on::__wrap<_Scheduler> __box) noexcept
+            -> decltype(auto)
         {
             if (!std::exchange(__rescheduled_, true))
             {
@@ -467,17 +470,18 @@ class [[nodiscard]] basic_task
         }
 
         template <class _Awaitable>
-        decltype(auto) await_transform(_Awaitable&& __awaitable) noexcept
+        auto await_transform(_Awaitable&& __awaitable) noexcept
+            -> decltype(auto)
         {
             return with_awaitable_senders<__promise>::await_transform(
-                (_Awaitable&&)__awaitable);
+                static_cast<_Awaitable&&>(__awaitable));
         }
 
         using __context_t =
             typename _Context::template promise_context_t<__promise>;
 
-        friend const __context_t& tag_invoke(get_env_t,
-                                             const __promise& __self) noexcept
+        friend auto tag_invoke(get_env_t, const __promise& __self) noexcept
+            -> const __context_t&
         {
             return __self.__context_;
         }
@@ -499,14 +503,15 @@ class [[nodiscard]] basic_task
                 __coro_.destroy();
         }
 
-        static constexpr bool await_ready() noexcept
+        static constexpr auto await_ready() noexcept -> bool
         {
             return false;
         }
 
         template <class _ParentPromise2>
-        __coro::coroutine_handle<> await_suspend(
+        auto await_suspend(
             __coro::coroutine_handle<_ParentPromise2> __parent) noexcept
+            -> __coro::coroutine_handle<>
         {
             static_assert(__one_of<_ParentPromise, _ParentPromise2, void>);
             __context_.emplace(__coro_.promise().__context_,
@@ -522,7 +527,7 @@ class [[nodiscard]] basic_task
             return __coro_;
         }
 
-        _Ty await_resume()
+        auto await_resume() -> _Ty
         {
             __context_.reset();
             scope_guard __on_exit{
@@ -540,16 +545,17 @@ class [[nodiscard]] basic_task
         requires constructible_from<
             awaiter_context_t<__promise, _ParentPromise>, __promise&,
             _ParentPromise&>
-    friend __task_awaitable<_ParentPromise> tag_invoke(as_awaitable_t,
-                                                       basic_task&& __self,
-                                                       _ParentPromise&) noexcept
+    friend auto tag_invoke(as_awaitable_t, basic_task&& __self,
+                           _ParentPromise&) noexcept
+        -> __task_awaitable<_ParentPromise>
     {
         return __task_awaitable<_ParentPromise>{
             std::exchange(__self.__coro_, {})};
     }
 
     // Make this task generally awaitable:
-    friend __task_awaitable<> operator co_await(basic_task && __self) noexcept
+    friend auto operator co_await(basic_task&& __self) noexcept
+        -> __task_awaitable<>
         requires __mvalid<awaiter_context_t, __promise>
     {
         return __task_awaitable<>{std::exchange(__self.__coro_, {})};

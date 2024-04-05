@@ -50,11 +50,11 @@ namespace __queries
 struct forwarding_query_t
 {
     template <class _Query>
-    constexpr bool operator()(_Query __query) const noexcept
+    constexpr auto operator()(_Query __query) const noexcept -> bool
     {
         if constexpr (tag_invocable<forwarding_query_t, _Query>)
         {
-            return tag_invoke(*this, (_Query&&)__query);
+            return tag_invoke(*this, static_cast<_Query&&>(__query));
         }
         else if constexpr (std::derived_from<_Query, forwarding_query_t>)
         {
@@ -73,7 +73,7 @@ struct query_or_t
     constexpr auto operator()(_Query, _Queryable&&, _Default&& __default) const
         noexcept(__nothrow_constructible_from<_Default, _Default&&>) -> _Default
     {
-        return (_Default&&)__default;
+        return static_cast<_Default&&>(__default);
     }
 
     template <class _Query, class _Queryable, class _Default>
@@ -83,7 +83,8 @@ struct query_or_t
         noexcept(__nothrow_callable<_Query, _Queryable>)
             -> __call_result_t<_Query, _Queryable>
     {
-        return ((_Query&&)__query)((_Queryable&&)__queryable);
+        return static_cast<_Query&&>(__query)(
+            static_cast<_Queryable&&>(__queryable));
     }
 };
 
@@ -91,7 +92,7 @@ struct execute_may_block_caller_t : __query<execute_may_block_caller_t>
 {
     template <class _Tp>
         requires tag_invocable<execute_may_block_caller_t, __cref_t<_Tp>>
-    constexpr bool operator()(_Tp&& __t) const noexcept
+    constexpr auto operator()(_Tp&& __t) const noexcept -> bool
     {
         static_assert(
             same_as<bool, tag_invoke_result_t<execute_may_block_caller_t,
@@ -101,7 +102,7 @@ struct execute_may_block_caller_t : __query<execute_may_block_caller_t>
         return tag_invoke(execute_may_block_caller_t{}, std::as_const(__t));
     }
 
-    constexpr bool operator()(auto&&) const noexcept
+    constexpr auto operator()(auto&&) const noexcept -> bool
     {
         return true;
     }
@@ -120,8 +121,8 @@ struct get_forward_progress_guarantee_t :
                           std::as_const(__t));
     }
 
-    constexpr stdexec::forward_progress_guarantee
-        operator()(auto&&) const noexcept
+    constexpr auto operator()(auto&&) const noexcept
+        -> stdexec::forward_progress_guarantee
     {
         return stdexec::forward_progress_guarantee::weakly_parallel;
     }
@@ -136,18 +137,18 @@ struct __has_algorithm_customizations_t :
 
     template <class _Tp>
         requires tag_invocable<__has_algorithm_customizations_t, __cref_t<_Tp>>
-    constexpr __result_t<_Tp> operator()(_Tp&&) const
-        noexcept(noexcept(__result_t<_Tp>{}))
+    constexpr auto operator()(_Tp&&) const noexcept(noexcept(__result_t<_Tp>{}))
+        -> __result_t<_Tp>
     {
         using _Boolean = tag_invoke_result_t<__has_algorithm_customizations_t,
                                              __cref_t<_Tp>>;
         static_assert(_Boolean{}
                           ? true
-                          : true); // must be contextually convertible to bool
+                          : false); // must be contextually convertible to bool
         return _Boolean{};
     }
 
-    constexpr std::false_type operator()(auto&&) const noexcept
+    constexpr auto operator()(auto&&) const noexcept -> std::false_type
     {
         return {};
     }
@@ -159,8 +160,8 @@ concept __allocator_c = true;
 
 struct get_scheduler_t : __query<get_scheduler_t>
 {
-    friend constexpr bool tag_invoke(forwarding_query_t,
-                                     const get_scheduler_t&) noexcept
+    friend constexpr auto tag_invoke(forwarding_query_t,
+                                     const get_scheduler_t&) noexcept -> bool
     {
         return true;
     }
@@ -170,13 +171,15 @@ struct get_scheduler_t : __query<get_scheduler_t>
     auto operator()(const _Env& __env) const noexcept
         -> tag_invoke_result_t<get_scheduler_t, const _Env&>;
 
+    template <class _Tag = get_scheduler_t>
     auto operator()() const noexcept;
 };
 
 struct get_delegatee_scheduler_t : __query<get_delegatee_scheduler_t>
 {
-    friend constexpr bool tag_invoke(forwarding_query_t,
+    friend constexpr auto tag_invoke(forwarding_query_t,
                                      const get_delegatee_scheduler_t&) noexcept
+        -> bool
     {
         return true;
     }
@@ -186,13 +189,14 @@ struct get_delegatee_scheduler_t : __query<get_delegatee_scheduler_t>
     auto operator()(const _Env& __t) const noexcept
         -> tag_invoke_result_t<get_delegatee_scheduler_t, const _Env&>;
 
+    template <class _Tag = get_delegatee_scheduler_t>
     auto operator()() const noexcept;
 };
 
 struct get_allocator_t : __query<get_allocator_t>
 {
-    friend constexpr bool tag_invoke(forwarding_query_t,
-                                     const get_allocator_t&) noexcept
+    friend constexpr auto tag_invoke(forwarding_query_t,
+                                     const get_allocator_t&) noexcept -> bool
     {
         return true;
     }
@@ -208,19 +212,20 @@ struct get_allocator_t : __query<get_allocator_t>
         return tag_invoke(get_allocator_t{}, __env);
     }
 
+    template <class _Tag = get_allocator_t>
     auto operator()() const noexcept;
 };
 
 struct get_stop_token_t : __query<get_stop_token_t>
 {
-    friend constexpr bool tag_invoke(forwarding_query_t,
-                                     const get_stop_token_t&) noexcept
+    friend constexpr auto tag_invoke(forwarding_query_t,
+                                     const get_stop_token_t&) noexcept -> bool
     {
         return true;
     }
 
     template <class _Env>
-    never_stop_token operator()(const _Env&) const noexcept
+    auto operator()(const _Env&) const noexcept -> never_stop_token
     {
         return {};
     }
@@ -236,6 +241,7 @@ struct get_stop_token_t : __query<get_stop_token_t>
         return tag_invoke(get_stop_token_t{}, __env);
     }
 
+    template <class _Tag = get_stop_token_t>
     auto operator()() const noexcept;
 };
 
@@ -247,9 +253,9 @@ concept __has_completion_scheduler_for =
 template <__completion_tag _CPO>
 struct get_completion_scheduler_t : __query<get_completion_scheduler_t<_CPO>>
 {
-    friend constexpr bool
+    friend constexpr auto
         tag_invoke(forwarding_query_t,
-                   const get_completion_scheduler_t<_CPO>&) noexcept
+                   const get_completion_scheduler_t<_CPO>&) noexcept -> bool
     {
         return true;
     }
@@ -274,7 +280,8 @@ struct get_domain_t
         return tag_invoke(get_domain_t{}, __ty);
     }
 
-    friend constexpr bool tag_invoke(forwarding_query_t, get_domain_t) noexcept
+    friend constexpr auto tag_invoke(forwarding_query_t, get_domain_t) noexcept
+        -> bool
     {
         return true;
     }
@@ -337,8 +344,7 @@ struct get_env_t
 {
     template <class _EnvProvider>
         requires tag_invocable<get_env_t, const _EnvProvider&>
-    STDEXEC_ATTRIBUTE((always_inline)) //
-        constexpr auto
+    STDEXEC_ATTRIBUTE((always_inline)) constexpr auto
         operator()(const _EnvProvider& __env_provider) const noexcept
         -> tag_invoke_result_t<get_env_t, const _EnvProvider&>
     {
@@ -349,7 +355,7 @@ struct get_env_t
     }
 
     template <class _EnvProvider>
-    constexpr empty_env operator()(const _EnvProvider&) const noexcept
+    constexpr auto operator()(const _EnvProvider&) const noexcept -> empty_env
     {
         return {};
     }
@@ -360,9 +366,9 @@ template <class _Env>
 struct __promise
 {
     template <class _Ty>
-    _Ty&& await_transform(_Ty&& __value) noexcept
+    auto await_transform(_Ty&& __value) noexcept -> _Ty&&
     {
-        return (_Ty&&)__value;
+        return static_cast<_Ty&&>(__value);
     }
 
     template <class _Ty>
@@ -371,7 +377,7 @@ struct __promise
         noexcept(nothrow_tag_invocable<as_awaitable_t, _Ty, __promise&>)
             -> tag_invoke_result_t<as_awaitable_t, _Ty, __promise&>
     {
-        return tag_invoke(as_awaitable, (_Ty&&)__value, *this);
+        return tag_invoke(as_awaitable, static_cast<_Ty&&>(__value), *this);
     }
 
     template <same_as<get_env_t> _Tag>
@@ -386,18 +392,19 @@ struct __with
 {
     using __t = __with;
     using __id = __with;
-    STDEXEC_ATTRIBUTE((no_unique_address)) _Value __value_;
+    STDEXEC_ATTRIBUTE((no_unique_address))
+    _Value __value_;
 
     __with() = default;
 
     constexpr explicit __with(_Value __value) noexcept(
         __nothrow_decay_copyable<_Value>) :
-        __value_((_Value&&)__value)
+        __value_(static_cast<_Value&&>(__value))
     {}
 
     constexpr explicit __with(_Value __value, _Tag, _Tags...) noexcept(
         __nothrow_decay_copyable<_Value>) :
-        __value_((_Value&&)__value)
+        __value_(static_cast<_Value&&>(__value))
     {}
 
     template <__one_of<_Tag, _Tags...> _Key>
@@ -417,7 +424,8 @@ struct __fwd
     static_assert(__nothrow_move_constructible<_Env>);
     using __t = __fwd;
     using __id = __fwd;
-    STDEXEC_ATTRIBUTE((no_unique_address)) _Env __env_;
+    STDEXEC_ATTRIBUTE((no_unique_address))
+    _Env __env_;
 
     template <__forwarding_query _Tag>
         requires tag_invocable<_Tag, const _Env&>
@@ -459,11 +467,11 @@ struct __ref_fn
     {
         if constexpr (same_as<_Env, _Env&>)
         {
-            return __ref{(_Env&&)__env};
+            return __ref{static_cast<_Env&&>(__env)};
         }
         else
         {
-            return (_Env&&)__env;
+            return static_cast<_Env&&>(__env);
         }
     }
 };
@@ -476,7 +484,7 @@ struct __without_ : _Env
     using __id = __without_;
 
     constexpr explicit __without_(_Env&& __env, _Tag, _Tags...) noexcept :
-        _Env((_Env&&)__env)
+        _Env(static_cast<_Env&&>(__env))
     {}
 
     template <__one_of<_Tag, _Tags...> _Key, class _Self>
@@ -487,17 +495,18 @@ struct __without_ : _Env
 struct __without_fn
 {
     template <class _Env, class _Tag, class... _Tags>
-    constexpr decltype(auto) operator()(_Env&& __env, _Tag,
-                                        _Tags...) const noexcept
+    constexpr auto operator()(_Env&& __env, _Tag, _Tags...) const noexcept
+        -> decltype(auto)
     {
         if constexpr (tag_invocable<_Tag, _Env> ||
                       (tag_invocable<_Tags, _Env> || ...))
         {
-            return __without_{__ref_fn()((_Env&&)__env), _Tag(), _Tags()...};
+            return __without_{__ref_fn()(static_cast<_Env&&>(__env)), _Tag(),
+                              _Tags()...};
         }
         else
         {
-            return static_cast<_Env>((_Env&&)__env);
+            return static_cast<_Env>(static_cast<_Env&&>(__env));
         }
     }
 };
@@ -515,7 +524,8 @@ struct __joined : _Second
     using __t = __joined;
     using __id = __joined;
 
-    STDEXEC_ATTRIBUTE((no_unique_address)) _First __env_;
+    STDEXEC_ATTRIBUTE((no_unique_address))
+    _First __env_;
 
     template <class _Tag>
         requires tag_invocable<_Tag, const _First&>
@@ -535,7 +545,8 @@ struct __from
 {
     using __t = __from;
     using __id = __from;
-    STDEXEC_ATTRIBUTE((no_unique_address)) _Fun __fun_;
+    STDEXEC_ATTRIBUTE((no_unique_address))
+    _Fun __fun_;
 
     template <class _Tag>
         requires __callable<const _Fun&, _Tag>
@@ -555,10 +566,10 @@ struct __fwd_fn
     template <class Env>
     auto operator()(Env&& env) const
     {
-        return __fwd{(Env&&)env};
+        return __fwd{static_cast<Env&&>(env)};
     }
 
-    empty_env operator()(empty_env) const
+    auto operator()(empty_env) const -> empty_env
     {
         return {};
     }
@@ -566,44 +577,44 @@ struct __fwd_fn
 
 struct __join_fn
 {
-    empty_env operator()() const
+    auto operator()() const -> empty_env
     {
         return {};
     }
 
     template <class _Env>
-    _Env operator()(_Env&& __env) const
+    auto operator()(_Env&& __env) const -> _Env
     {
-        return (_Env&&)__env;
+        return static_cast<_Env&&>(__env);
     }
 
-    empty_env operator()(empty_env) const
+    auto operator()(empty_env) const -> empty_env
     {
         return {};
     }
 
     template <class _Env>
-    _Env operator()(_Env&& __env, empty_env) const
+    auto operator()(_Env&& __env, empty_env) const -> _Env
     {
-        return (_Env&&)__env;
+        return static_cast<_Env&&>(__env);
     }
 
-    empty_env operator()(empty_env, empty_env) const
+    auto operator()(empty_env, empty_env) const -> empty_env
     {
         return {};
     }
 
     template <class... Rest>
-    decltype(auto) operator()(empty_env, Rest&&... rest) const
+    auto operator()(empty_env, Rest&&... rest) const -> decltype(auto)
     {
-        return __fwd_fn()(__join_fn()((Rest&&)rest...));
+        return __fwd_fn()(__join_fn()(static_cast<Rest&&>(rest)...));
     }
 
     template <class First, class... Rest>
-    decltype(auto) operator()(First&& first, Rest&&... rest) const
+    auto operator()(First&& first, Rest&&... rest) const -> decltype(auto)
     {
-        return __joined{__fwd_fn()(__join_fn()((Rest&&)rest...)),
-                        (First&&)first};
+        return __joined{__fwd_fn()(__join_fn()(static_cast<Rest&&>(rest)...)),
+                        static_cast<First&&>(first)};
     }
 };
 

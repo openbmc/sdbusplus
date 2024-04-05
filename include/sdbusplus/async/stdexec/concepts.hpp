@@ -94,7 +94,7 @@ template <class _Ty>
 inline constexpr bool __destructible_ = //
     requires {
         {
-            ((_Ty && (*)() noexcept) nullptr)().~_Ty()
+            (static_cast < _Ty && (*)() noexcept > (nullptr))().~_Ty()
         } noexcept;
     };
 template <class _Ty>
@@ -143,7 +143,7 @@ concept assignable_from =   //
     //   const std::remove_reference_t<_RHS>&> &&
     requires(_LHS __lhs, _RHS&& __rhs) {
         {
-            __lhs = ((_RHS&&)__rhs)
+            __lhs = static_cast<_RHS&&>(__rhs)
         } -> same_as<_LHS>;
     };
 
@@ -154,13 +154,13 @@ using std::swap;
 template <class _Ty, class _Uy>
 concept swappable_with =             //
     requires(_Ty&& __t, _Uy&& __u) { //
-        swap((_Ty&&)__t, (_Uy&&)__u);
+        swap(static_cast<_Ty&&>(__t), static_cast<_Uy&&>(__u));
     };
 
 inline constexpr const auto __fn = //
     []<class _Ty, swappable_with<_Ty> _Uy>(_Ty&& __t, _Uy&& __u) noexcept(
-        noexcept(swap((_Ty&&)__t, (_Uy&&)__u))) {
-    swap((_Ty&&)__t, (_Uy&&)__u);
+        noexcept(swap(static_cast<_Ty&&>(__t), static_cast<_Uy&&>(__u)))) {
+    swap(static_cast<_Ty&&>(__t), static_cast<_Uy&&>(__u));
 };
 } // namespace __swap
 
@@ -244,7 +244,7 @@ concept __nothrow_movable_value = //
     __movable_value<_Ty> &&       //
     requires(_Ty&& __t) {
         {
-            __decay_t<_Ty>{__decay_t<_Ty>{(_Ty&&)__t}}
+            __decay_t<_Ty>{__decay_t<_Ty>{static_cast<_Ty&&>(__t)}}
         } noexcept;
     };
 

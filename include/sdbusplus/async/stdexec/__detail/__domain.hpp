@@ -46,8 +46,8 @@ struct __legacy_customization
 {
     template <class _Tag, class _Data, class... _Children>
         requires __has_legacy_c11n<_Tag, _Data, _Children...>
-    decltype(auto) operator()(_Tag, _Data&& __data,
-                              _Children&&... __children) const
+    auto operator()(_Tag, _Data&& __data, _Children&&... __children) const
+        -> decltype(auto)
     {
         return __legacy_c11n_fn<_Tag, _Data, _Children...>()(
             static_cast<_Data&&>(__data),
@@ -58,7 +58,7 @@ struct __legacy_customization
 template <class _DomainOrTag, class _Sender, class... _Env>
 concept __has_transform_sender =
     requires(_DomainOrTag __tag, _Sender&& __sender, const _Env&... __env) {
-        __tag.transform_sender((_Sender&&)__sender, __env...);
+        __tag.transform_sender(static_cast<_Sender&&>(__sender), __env...);
     };
 
 template <class _Sender, class... _Env>
@@ -69,7 +69,8 @@ concept __has_default_transform_sender = //
 template <class _Type, class _Sender, class _Env>
 concept __has_transform_env =
     requires(_Type __obj, _Sender&& __sender, _Env&& __env) {
-        __obj.transform_env((_Sender&&)__sender, (_Env&&)__env);
+        __obj.transform_env(static_cast<_Sender&&>(__sender),
+                            static_cast<_Env&&>(__env));
     };
 
 template <class _Sender, class _Env>
@@ -78,9 +79,10 @@ concept __has_default_transform_env = //
     && __has_transform_env<tag_of_t<_Sender>, _Sender, _Env>;
 
 template <class _DomainOrTag, class... _Args>
-concept __has_apply_sender = requires(_DomainOrTag __tag, _Args&&... __args) {
-                                 __tag.apply_sender((_Args&&)__args...);
-                             };
+concept __has_apply_sender =
+    requires(_DomainOrTag __tag, _Args&&... __args) {
+        __tag.apply_sender(static_cast<_Args&&>(__args)...);
+    };
 } // namespace __domain
 
 struct default_domain
@@ -97,18 +99,18 @@ struct default_domain
         if constexpr (__callable<__sexpr_apply_t, _Sender,
                                  __domain::__legacy_customization>)
         {
-            return stdexec::__sexpr_apply((_Sender&&)__sndr,
+            return stdexec::__sexpr_apply(static_cast<_Sender&&>(__sndr),
                                           __domain::__legacy_customization());
         }
         else if constexpr (__domain::__has_default_transform_sender<_Sender>)
         {
-            return tag_of_t<_Sender>().transform_sender((_Sender&&)__sndr);
+            return tag_of_t<_Sender>().transform_sender(
+                static_cast<_Sender&&>(__sndr));
         }
         else
         {
-            return static_cast<_Sender>((_Sender&&)__sndr);
+            return static_cast<_Sender>(static_cast<_Sender&&>(__sndr));
         }
-        STDEXEC_UNREACHABLE();
     }
 
     // Called with an environment during lazy customization
@@ -118,14 +120,13 @@ struct default_domain
     {
         if constexpr (__domain::__has_default_transform_sender<_Sender, _Env>)
         {
-            return tag_of_t<_Sender>().transform_sender((_Sender&&)__sndr,
-                                                        __env);
+            return tag_of_t<_Sender>().transform_sender(
+                static_cast<_Sender&&>(__sndr), __env);
         }
         else
         {
-            return static_cast<_Sender>((_Sender&&)__sndr);
+            return static_cast<_Sender>(static_cast<_Sender&&>(__sndr));
         }
-        STDEXEC_UNREACHABLE();
     }
 
     template <class _Tag, class _Sender, class... _Args>
@@ -144,22 +145,23 @@ struct default_domain
         }
         else
         {
-            return _Tag().apply_sender((_Sender&&)__sndr, (_Args&&)__args...);
+            return _Tag().apply_sender(static_cast<_Sender&&>(__sndr),
+                                       static_cast<_Args&&>(__args)...);
         }
-        STDEXEC_UNREACHABLE();
     }
 
     template <class _Sender, class _Env>
-    decltype(auto) transform_env(_Sender&& __sndr, _Env&& __env) const noexcept
+    auto transform_env(_Sender&& __sndr, _Env&& __env) const noexcept
+        -> decltype(auto)
     {
         if constexpr (__domain::__has_default_transform_env<_Sender, _Env>)
         {
-            return tag_of_t<_Sender>().transform_env((_Sender&&)__sndr,
-                                                     (_Env&&)__env);
+            return tag_of_t<_Sender>().transform_env(
+                static_cast<_Sender&&>(__sndr), static_cast<_Env&&>(__env));
         }
         else
         {
-            return static_cast<_Env>((_Env&&)__env);
+            return static_cast<_Env>(static_cast<_Env&&>(__env));
         }
     }
 };
@@ -223,7 +225,6 @@ inline constexpr struct __get_early_domain_t
         {
             return __def;
         }
-        STDEXEC_UNREACHABLE();
     }
 } __get_early_domain{};
 
@@ -259,7 +260,6 @@ inline constexpr struct __get_late_domain_t
         {
             return default_domain();
         }
-        STDEXEC_UNREACHABLE();
     }
 
     // The transfer algorithm is the exception to the rule. It ignores the
@@ -283,16 +283,17 @@ namespace __domain
 {
 struct __common_domain_fn
 {
-    static default_domain __common_domain() noexcept
+    static auto __common_domain() noexcept -> default_domain
     {
         return {};
     }
 
     template <class _Domain, class... _OtherDomains>
         requires __all_of<_Domain, _OtherDomains...>
-    static _Domain __common_domain(_Domain __domain, _OtherDomains...) noexcept
+    static auto __common_domain(_Domain __domain, _OtherDomains...) noexcept
+        -> _Domain
     {
-        return (_Domain&&)__domain;
+        return static_cast<_Domain&&>(__domain);
     }
 
     template <class... _Domains>

@@ -128,7 +128,7 @@ using __completion_scheduler_for =
 namespace __get_completion_signatures
 {
 struct get_completion_signatures_t;
-}
+} // namespace __get_completion_signatures
 
 using __get_completion_signatures::get_completion_signatures_t;
 extern const get_completion_signatures_t get_completion_signatures;
@@ -137,7 +137,7 @@ extern const get_completion_signatures_t get_completion_signatures;
 namespace __connect
 {
 struct connect_t;
-}
+} // namespace __connect
 
 using __connect::connect_t;
 extern const connect_t connect;
@@ -158,7 +158,7 @@ extern const bool enable_sender;
 namespace __start
 {
 struct start_t;
-}
+} // namespace __start
 
 using __start::start_t;
 extern const start_t start;
@@ -167,7 +167,7 @@ extern const start_t start;
 namespace __schedule
 {
 struct schedule_t;
-}
+} // namespace __schedule
 
 using __schedule::schedule_t;
 extern const schedule_t schedule;
@@ -176,7 +176,7 @@ extern const schedule_t schedule;
 namespace __as_awaitable
 {
 struct as_awaitable_t;
-}
+} // namespace __as_awaitable
 
 using __as_awaitable::as_awaitable_t;
 extern const as_awaitable_t as_awaitable;
@@ -185,7 +185,7 @@ extern const as_awaitable_t as_awaitable;
 namespace __transfer
 {
 struct transfer_t;
-}
+} // namespace __transfer
 
 using __transfer::transfer_t;
 extern const transfer_t transfer;
@@ -194,7 +194,7 @@ extern const transfer_t transfer;
 namespace __transfer_just
 {
 struct transfer_just_t;
-}
+} // namespace __transfer_just
 
 using __transfer_just::transfer_just_t;
 extern const transfer_just_t transfer_just;
@@ -203,7 +203,7 @@ extern const transfer_just_t transfer_just;
 namespace __bulk
 {
 struct bulk_t;
-}
+} // namespace __bulk
 
 using __bulk::bulk_t;
 extern const bulk_t bulk;
@@ -232,17 +232,17 @@ extern const ensure_started_t ensure_started;
 namespace __on_v2
 {
 struct on_t;
-}
+} // namespace __on_v2
 
 namespace v2
 {
 using __on_v2::on_t;
-}
+} // namespace v2
 
 namespace __detail
 {
 struct __sexpr_apply_t;
-}
+} // namespace __detail
 
 using __detail::__sexpr_apply_t;
 extern const __sexpr_apply_t __sexpr_apply;

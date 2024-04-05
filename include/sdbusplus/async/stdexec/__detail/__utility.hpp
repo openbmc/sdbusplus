@@ -30,7 +30,7 @@ inline constexpr auto __forward_like =
     return static_cast<
         typename _Cpcvref::template __f<std::remove_reference_t<_Uy>>>(__uy);
 };
-}
+} // namespace __detail
 
 template <class _Ty>
 inline constexpr const auto& __forward_like =

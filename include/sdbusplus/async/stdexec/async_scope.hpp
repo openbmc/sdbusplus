@@ -74,7 +74,8 @@ struct __when_empty_op
         explicit __t(const __impl* __scope, _Constrained&& __sndr,
                      _Receiver __rcvr) :
             __task{{}, __scope, __notify_waiter},
-            __op_(stdexec::connect((_Constrained&&)__sndr, (_Receiver&&)__rcvr))
+            __op_(stdexec::connect(static_cast<_Constrained&&>(__sndr),
+                                   static_cast<_Receiver&&>(__rcvr)))
         {}
 
       private:
@@ -124,11 +125,13 @@ struct __when_empty_sender
 
         template <__decays_to<__t> _Self, receiver _Receiver>
             requires sender_to<__copy_cvref_t<_Self, _Constrained>, _Receiver>
-        [[nodiscard]] friend __when_empty_op_t<_Self, _Receiver>
-            tag_invoke(connect_t, _Self&& __self, _Receiver __rcvr)
+        [[nodiscard]] friend auto tag_invoke(connect_t, _Self&& __self,
+                                             _Receiver __rcvr)
+            -> __when_empty_op_t<_Self, _Receiver>
         {
             return __when_empty_op_t<_Self, _Receiver>{
-                __self.__scope_, ((_Self&&)__self).__c_, (_Receiver&&)__rcvr};
+                __self.__scope_, static_cast<_Self&&>(__self).__c_,
+                static_cast<_Receiver&&>(__rcvr)};
         }
 
         template <__decays_to<__t> _Self, class _Env>
@@ -139,13 +142,14 @@ struct __when_empty_sender
             return {};
         }
 
-        friend empty_env tag_invoke(get_env_t, const __t&) noexcept
+        friend auto tag_invoke(get_env_t, const __t&) noexcept -> empty_env
         {
             return {};
         }
 
         const __impl* __scope_;
-        STDEXEC_ATTRIBUTE((no_unique_address)) _Constrained __c_;
+        STDEXEC_ATTRIBUTE((no_unique_address))
+        _Constrained __c_;
     };
 };
 
@@ -160,7 +164,8 @@ struct __nest_op_base : __immovable
 {
     using _Receiver = stdexec::__t<_ReceiverId>;
     const __impl* __scope_;
-    STDEXEC_ATTRIBUTE((no_unique_address)) _Receiver __rcvr_;
+    STDEXEC_ATTRIBUTE((no_unique_address))
+    _Receiver __rcvr_;
 };
 
 template <class _ReceiverId>
@@ -198,14 +203,15 @@ struct __nest_rcvr
         friend void tag_invoke(_Tag, __t&& __self, _As&&... __as) noexcept
         {
             auto __scope = __self.__op_->__scope_;
-            _Tag{}(std::move(__self.__op_->__rcvr_), (_As&&)__as...);
+            _Tag{}(std::move(__self.__op_->__rcvr_),
+                   static_cast<_As&&>(__as)...);
             // do not access __op_
             // do not access this
             __complete(__scope);
         }
 
-        friend __env_t<env_of_t<_Receiver>>
-            tag_invoke(get_env_t, const __t& __self) noexcept
+        friend auto tag_invoke(get_env_t, const __t& __self) noexcept
+            -> __env_t<env_of_t<_Receiver>>
         {
             return make_env(
                 get_env(__self.__op_->__rcvr_),
@@ -231,8 +237,10 @@ struct __nest_op
         template <__decays_to<_Constrained> _Sender,
                   __decays_to<_Receiver> _Rcvr>
         explicit __t(const __impl* __scope, _Sender&& __c, _Rcvr&& __rcvr) :
-            __nest_op_base<_ReceiverId>{{}, __scope, (_Rcvr&&)__rcvr},
-            __op_(stdexec::connect((_Sender&&)__c, __nest_rcvr_t{this}))
+            __nest_op_base<_ReceiverId>{
+                {}, __scope, static_cast<_Rcvr&&>(__rcvr)},
+            __op_(stdexec::connect(static_cast<_Sender&&>(__c),
+                                   __nest_rcvr_t{this}))
         {}
 
       private:
@@ -264,7 +272,8 @@ struct __nest_sender
         using sender_concept = stdexec::sender_t;
 
         const __impl* __scope_;
-        STDEXEC_ATTRIBUTE((no_unique_address)) _Constrained __c_;
+        STDEXEC_ATTRIBUTE((no_unique_address))
+        _Constrained __c_;
 
         template <class _Receiver>
         using __nest_operation_t =
@@ -276,11 +285,13 @@ struct __nest_sender
         template <__decays_to<__t> _Self, receiver _Receiver>
             requires sender_to<__copy_cvref_t<_Self, _Constrained>,
                                __nest_receiver_t<_Receiver>>
-        [[nodiscard]] friend __nest_operation_t<_Receiver>
-            tag_invoke(connect_t, _Self&& __self, _Receiver __rcvr)
+        [[nodiscard]] friend auto tag_invoke(connect_t, _Self&& __self,
+                                             _Receiver __rcvr)
+            -> __nest_operation_t<_Receiver>
         {
             return __nest_operation_t<_Receiver>{
-                __self.__scope_, ((_Self&&)__self).__c_, (_Receiver&&)__rcvr};
+                __self.__scope_, static_cast<_Self&&>(__self).__c_,
+                static_cast<_Receiver&&>(__rcvr)};
         }
 
         template <__decays_to<__t> _Self, class _Env>
@@ -291,7 +302,7 @@ struct __nest_sender
             return {};
         }
 
-        friend empty_env tag_invoke(get_env_t, const __t&) noexcept
+        friend auto tag_invoke(get_env_t, const __t&) noexcept -> empty_env
         {
             return {};
         }
@@ -373,7 +384,7 @@ struct __future_op
                 else if (get_stop_token(get_env(__rcvr_)).stop_requested())
                 {
                     __guard.unlock();
-                    set_stopped((_Receiver&&)__rcvr_);
+                    set_stopped(static_cast<_Receiver&&>(__rcvr_));
                     __guard.lock();
                 }
                 else
@@ -390,7 +401,8 @@ struct __future_op
                                 [this, &__guard]<class... _As>(auto tag,
                                                                _As&... __as) {
                                 __guard.unlock();
-                                tag((_Receiver&&)__rcvr_, (_As&&)__as...);
+                                tag(static_cast<_Receiver&&>(__rcvr_),
+                                    static_cast<_As&&>(__as)...);
                                 __guard.lock();
                             },
                                 __tup);
@@ -401,7 +413,8 @@ struct __future_op
             }
             catch (...)
             {
-                set_error((_Receiver&&)__rcvr_, std::current_exception());
+                set_error(static_cast<_Receiver&&>(__rcvr_),
+                          std::current_exception());
             }
         }
 
@@ -425,11 +438,13 @@ struct __future_op
             }
             catch (...)
             {
-                set_error((_Receiver&&)__rcvr_, std::current_exception());
+                set_error(static_cast<_Receiver&&>(__rcvr_),
+                          std::current_exception());
             }
         }
 
-        STDEXEC_ATTRIBUTE((no_unique_address)) _Receiver __rcvr_;
+        STDEXEC_ATTRIBUTE((no_unique_address))
+        _Receiver __rcvr_;
         std::unique_ptr<__future_state<_Sender, _Env>> __state_;
         STDEXEC_ATTRIBUTE((no_unique_address))
         __forward_consumer __forward_consumer_;
@@ -462,7 +477,8 @@ struct __future_op
                            [](__subscription* __self) noexcept -> void {
             static_cast<__t*>(__self)->__complete_();
         }},
-            __rcvr_((_Receiver2&&)__rcvr), __state_(std::move(__state)),
+            __rcvr_(static_cast<_Receiver2&&>(__rcvr)),
+            __state_(std::move(__state)),
             __forward_consumer_(get_stop_token(get_env(__rcvr_)),
                                 __forward_stopped{&__state_->__stop_source_})
         {}
@@ -484,10 +500,10 @@ using __completion_as_tuple_t = stdexec::__t<__completion_as_tuple2_<_Fn>>;
 #else
 
 template <class _Tag, class... _Ts>
-std::tuple<_Tag, _Ts...> __completion_as_tuple_(_Tag (*)(_Ts&&...));
+auto __completion_as_tuple_(_Tag (*)(_Ts&&...)) -> std::tuple<_Tag, _Ts...>;
 template <class _Fn>
 using __completion_as_tuple_t =
-    decltype(__scope::__completion_as_tuple_((_Fn*)nullptr));
+    decltype(__scope::__completion_as_tuple_(static_cast<_Fn*>(nullptr)));
 #endif
 
 template <class... _Ts>
@@ -524,7 +540,7 @@ struct __dynamic_delete
 
     template <class _Uy>
         requires convertible_to<_Uy*, _Ty*>
-    __dynamic_delete& operator=(std::default_delete<_Uy> __d)
+    auto operator=(std::default_delete<_Uy> __d) -> __dynamic_delete&
     {
         __delete_ = __dynamic_delete{__d}.__delete_;
         return *this;
@@ -545,7 +561,7 @@ struct __future_state_base
         __forward_scope_{std::in_place, __scope->__stop_source_.get_token(),
                          __forward_stopped{&__stop_source_}},
         __env_(
-            make_env((_Env&&)__env,
+            make_env(static_cast<_Env&&>(__env),
                      with(get_stop_token, __scope->__stop_source_.get_token())))
     {}
 
@@ -630,8 +646,8 @@ struct __future_rcvr
             {
                 std::unique_lock __guard{__state.__mutex_};
                 using _Tuple = __decayed_tuple<_Tag, _As...>;
-                __state.__data_.template emplace<_Tuple>(_Tag{},
-                                                         (_As&&)__as...);
+                __state.__data_.template emplace<_Tuple>(
+                    _Tag{}, static_cast<_As&&>(__as)...);
                 __guard.unlock();
                 __self.__dispatch_result_();
             }
@@ -643,8 +659,8 @@ struct __future_rcvr
             }
         }
 
-        friend const __env_t<_Env>& tag_invoke(get_env_t,
-                                               const __t& __self) noexcept
+        friend auto tag_invoke(get_env_t, const __t& __self) noexcept
+            -> const __env_t<_Env>&
         {
             return __self.__state_->__env_;
         }
@@ -662,9 +678,10 @@ struct __future_state :
     using _Completions = __future_completions_t<_Sender, _Env>;
 
     __future_state(_Sender __sndr, _Env __env, const __impl* __scope) :
-        __future_state_base<_Completions, _Env>((_Env&&)__env, __scope),
+        __future_state_base<_Completions, _Env>(static_cast<_Env&&>(__env),
+                                                __scope),
         __op_(
-            stdexec::connect((_Sender&&)__sndr,
+            stdexec::connect(static_cast<_Sender&&>(__sndr),
                              __future_receiver_t<_Sender, _Env>{this, __scope}))
     {}
 
@@ -683,7 +700,7 @@ struct __future
         using sender_concept = stdexec::sender_t;
 
         __t(__t&&) = default;
-        __t& operator=(__t&&) = default;
+        auto operator=(__t&&) -> __t& = default;
 
         ~__t() noexcept
         {
@@ -724,10 +741,10 @@ struct __future
 
         template <__decays_to<__t> _Self, receiver _Receiver>
             requires receiver_of<_Receiver, __completions_t<_Self>>
-        friend __future_op_t<_Receiver> tag_invoke(connect_t, _Self&& __self,
-                                                   _Receiver __rcvr)
+        friend auto tag_invoke(connect_t, _Self&& __self, _Receiver __rcvr)
+            -> __future_op_t<_Receiver>
         {
-            return __future_op_t<_Receiver>{(_Receiver&&)__rcvr,
+            return __future_op_t<_Receiver>{static_cast<_Receiver&&>(__rcvr),
                                             std::move(__self.__state_)};
         }
 
@@ -738,7 +755,7 @@ struct __future
             return {};
         }
 
-        friend empty_env tag_invoke(get_env_t, const __t&) noexcept
+        friend auto tag_invoke(get_env_t, const __t&) noexcept -> empty_env
         {
             return {};
         }
@@ -791,8 +808,8 @@ struct __spawn_rcvr
             std::rethrow_exception(std::move(__eptr));
         }
 
-        friend const __spawn_env_t<_Env>& tag_invoke(get_env_t,
-                                                     const __t& __self) noexcept
+        friend auto tag_invoke(get_env_t, const __t& __self) noexcept
+            -> const __spawn_env_t<_Env>&
         {
             return __self.__op_->__env_;
         }
@@ -814,14 +831,14 @@ struct __spawn_op
         __t(_Sndr&& __sndr, _Env __env, const __impl* __scope) :
             __spawn_op_base<_EnvId>{
                 __env::__join(
-                    (_Env&&)__env,
+                    static_cast<_Env&&>(__env),
                     __env::__with(__scope->__stop_source_.get_token(),
                                   get_stop_token),
                     __env::__with(__inln::__scheduler{}, get_scheduler)),
                 [](__spawn_op_base<_EnvId>* __op) {
             delete static_cast<__t*>(__op);
         }},
-            __op_(stdexec::connect((_Sndr&&)__sndr,
+            __op_(stdexec::connect(static_cast<_Sndr&&>(__sndr),
                                    __spawn_receiver_t<_Env>{this}))
         {}
 
@@ -849,11 +866,11 @@ struct async_scope : __immovable
     async_scope() = default;
 
     template <sender _Constrained>
-    [[nodiscard]] __when_empty_sender_t<_Constrained>
-        when_empty(_Constrained&& __c) const
+    [[nodiscard]] auto when_empty(_Constrained&& __c) const
+        -> __when_empty_sender_t<_Constrained>
     {
-        return __when_empty_sender_t<_Constrained>{&__impl_,
-                                                   (_Constrained&&)__c};
+        return __when_empty_sender_t<_Constrained>{
+            &__impl_, static_cast<_Constrained&&>(__c)};
     }
 
     [[nodiscard]] auto on_empty() const
@@ -865,9 +882,10 @@ struct async_scope : __immovable
     using nest_result_t = __nest_sender_t<_Constrained>;
 
     template <sender _Constrained>
-    [[nodiscard]] nest_result_t<_Constrained> nest(_Constrained&& __c)
+    [[nodiscard]] auto nest(_Constrained&& __c) -> nest_result_t<_Constrained>
     {
-        return nest_result_t<_Constrained>{&__impl_, (_Constrained&&)__c};
+        return nest_result_t<_Constrained>{&__impl_,
+                                           static_cast<_Constrained&&>(__c)};
     }
 
     template <__movable_value _Env = empty_env,
@@ -879,32 +897,34 @@ struct async_scope : __immovable
         // start is noexcept so we can assume that the operation will complete
         // after this, which means we can rely on its self-ownership to ensure
         // that it is eventually deleted
-        stdexec::start(
-            *new __op_t{nest((_Sender&&)__sndr), (_Env&&)__env, &__impl_});
+        stdexec::start(*new __op_t{nest(static_cast<_Sender&&>(__sndr)),
+                                   static_cast<_Env&&>(__env), &__impl_});
     }
 
     template <__movable_value _Env = empty_env,
               sender_in<__env_t<_Env>> _Sender>
-    __future_t<_Sender, _Env> spawn_future(_Sender&& __sndr, _Env __env = {})
+    auto spawn_future(_Sender&& __sndr, _Env __env = {})
+        -> __future_t<_Sender, _Env>
     {
         using __state_t = __future_state<nest_result_t<_Sender>, _Env>;
-        auto __state = std::make_unique<__state_t>(nest((_Sender&&)__sndr),
-                                                   (_Env&&)__env, &__impl_);
+        auto __state =
+            std::make_unique<__state_t>(nest(static_cast<_Sender&&>(__sndr)),
+                                        static_cast<_Env&&>(__env), &__impl_);
         stdexec::start(__state->__op_);
         return __future_t<_Sender, _Env>{std::move(__state)};
     }
 
-    in_place_stop_source& get_stop_source() noexcept
+    auto get_stop_source() noexcept -> in_place_stop_source&
     {
         return __impl_.__stop_source_;
     }
 
-    in_place_stop_token get_stop_token() const noexcept
+    auto get_stop_token() const noexcept -> in_place_stop_token
     {
         return __impl_.__stop_source_.get_token();
     }
 
-    bool request_stop() noexcept
+    auto request_stop() noexcept -> bool
     {
         return __impl_.__stop_source_.request_stop();
     }

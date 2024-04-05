@@ -45,37 +45,41 @@ void begin();
 void end();
 
 template <class _Ty>
-concept __has_member_begin = requires(_Ty&& __v) { ((_Ty&&)__v).begin(); };
+concept __has_member_begin =
+    requires(_Ty&& __v) { static_cast<_Ty&&>(__v).begin(); };
 
 template <class _Ty>
-concept __has_free_begin = __has_member_begin<_Ty> ||
-                           requires(_Ty&& __v) { begin(((_Ty&&)__v)); };
+concept __has_free_begin =
+    __has_member_begin<_Ty> ||
+    requires(_Ty&& __v) { begin((static_cast<_Ty&&>(__v))); };
 
 template <class _Ty>
-concept __has_member_end = requires(_Ty&& __v) { ((_Ty&&)__v).end(); };
+concept __has_member_end =
+    requires(_Ty&& __v) { static_cast<_Ty&&>(__v).end(); };
 
 template <class _Ty>
-concept __has_free_end = __has_member_end<_Ty> ||
-                         requires(_Ty&& __v) { end(((_Ty&&)__v)); };
+concept __has_free_end =
+    __has_member_end<_Ty> ||
+    requires(_Ty&& __v) { end((static_cast<_Ty&&>(__v))); };
 
 struct __begin_t
 {
     template <class _Range>
         requires __has_member_begin<_Range>
     auto operator()(_Range&& __rng) const
-        noexcept(noexcept(((_Range&&)__rng).begin()))
-            -> decltype(((_Range&&)__rng).begin())
+        noexcept(noexcept((static_cast<_Range&&>(__rng)).begin()))
+            -> decltype((static_cast<_Range&&>(__rng)).begin())
     {
-        return ((_Range&&)__rng).begin();
+        return static_cast<_Range&&>(__rng).begin();
     }
 
     template <class _Range>
         requires __has_free_begin<_Range>
     auto operator()(_Range&& __rng) const
-        noexcept(noexcept(begin(((_Range&&)__rng))))
-            -> decltype(begin(((_Range&&)__rng)))
+        noexcept(noexcept(begin((static_cast<_Range&&>(__rng)))))
+            -> decltype(begin((static_cast<_Range&&>(__rng))))
     {
-        return begin(((_Range&&)__rng));
+        return begin((static_cast<_Range&&>(__rng)));
     }
 };
 
@@ -84,19 +88,19 @@ struct __end_t
     template <class _Range>
         requires __has_member_end<_Range>
     auto operator()(_Range&& __rng) const
-        noexcept(noexcept(((_Range&&)__rng).end()))
-            -> decltype(((_Range&&)__rng).end())
+        noexcept(noexcept((static_cast<_Range&&>(__rng)).end()))
+            -> decltype((static_cast<_Range&&>(__rng)).end())
     {
-        return ((_Range&&)__rng).end();
+        return static_cast<_Range&&>(__rng).end();
     }
 
     template <class _Range>
         requires __has_free_end<_Range>
     auto operator()(_Range&& __rng) const
-        noexcept(noexcept(end(((_Range&&)__rng))))
-            -> decltype(end(((_Range&&)__rng)))
+        noexcept(noexcept(end((static_cast<_Range&&>(__rng)))))
+            -> decltype(end((static_cast<_Range&&>(__rng))))
     {
-        return end(((_Range&&)__rng));
+        return end((static_cast<_Range&&>(__rng)));
     }
 };
 } // namespace __detail

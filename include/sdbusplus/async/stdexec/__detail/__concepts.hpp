@@ -23,16 +23,16 @@ namespace stdexec
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 template <class _Fun, class... _As>
-concept __callable =                        //
-    requires(_Fun&& __fun, _As&&... __as) { //
-        ((_Fun&&)__fun)((_As&&)__as...);    //
+concept __callable =                                             //
+    requires(_Fun&& __fun, _As&&... __as) {                      //
+        static_cast<_Fun&&>(__fun)(static_cast<_As&&>(__as)...); //
     };
 template <class _Fun, class... _As>
 concept __nothrow_callable =    //
     __callable<_Fun, _As...> && //
     requires(_Fun&& __fun, _As&&... __as) {
         {
-            ((_Fun&&)__fun)((_As&&)__as...)
+            static_cast<_Fun&&>(__fun)(static_cast<_As&&>(__as)...)
         } noexcept;
     };
 

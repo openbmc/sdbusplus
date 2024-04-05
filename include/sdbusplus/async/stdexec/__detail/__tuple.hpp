@@ -60,7 +60,7 @@ template <std::size_t _Idx, class _Ty>
 STDEXEC_ATTRIBUTE((always_inline))
 constexpr _Ty&& __get(__box<_Ty, _Idx>&& __self) noexcept
 {
-    return (_Ty&&)__self.__value;
+    return static_cast<_Ty&&>(__self.__value);
 }
 
 template <std::size_t _Idx, class _Ty>
@@ -95,7 +95,7 @@ struct __apply_
                                                                        _Ts>...>)
         -> __call_result_t<_Fun, __copy_cvref_t<_Tuple, _Ts>...>
     {
-        return ((_Fun&&)__fun)(
+        return static_cast<_Fun&&>(__fun)(
             static_cast<__copy_cvref_t<_Tuple, __box<_Ts, _Idx>>&&>(__tup)
                 .__value...);
     }
@@ -104,10 +104,13 @@ struct __apply_
 template <class _Fun, __tuple_like _Tuple>
 STDEXEC_ATTRIBUTE((always_inline))
 constexpr auto __apply(_Fun&& __fun, _Tuple&& __tup) noexcept(
-    noexcept(__apply_()((_Fun&&)__fun, (_Tuple&&)__tup, &__tup)))
-    -> decltype(__apply_()((_Fun&&)__fun, (_Tuple&&)__tup, &__tup))
+    noexcept(__apply_()(static_cast<_Fun&&>(__fun),
+                        static_cast<_Tuple&&>(__tup), &__tup)))
+    -> decltype(__apply_()(static_cast<_Fun&&>(__fun),
+                           static_cast<_Tuple&&>(__tup), &__tup))
 {
-    return __apply_()((_Fun&&)__fun, (_Tuple&&)__tup, &__tup);
+    return __apply_()(static_cast<_Fun&&>(__fun), static_cast<_Tuple&&>(__tup),
+                      &__tup);
 }
 } // namespace __tup
 

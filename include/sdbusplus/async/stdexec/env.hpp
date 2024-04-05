@@ -32,16 +32,16 @@ struct __with_t
     template <class _Tag, class _Value>
     auto operator()(_Tag, _Value&& __val) const
     {
-        return stdexec::__env::__with((_Value&&)__val, _Tag());
+        return stdexec::__env::__with(static_cast<_Value&&>(__val), _Tag());
     }
 };
 
 struct __without_t
 {
     template <class _Env, class _Tag>
-    decltype(auto) operator()(_Env&& __env, _Tag) const
+    auto operator()(_Env&& __env, _Tag) const -> decltype(auto)
     {
-        return stdexec::__env::__without((_Env&&)__env, _Tag());
+        return stdexec::__env::__without(static_cast<_Env&&>(__env), _Tag());
     }
 };
 
@@ -54,13 +54,14 @@ struct __make_env_t
     auto operator()(_Base&& __base, _Env&& __env) const noexcept
         -> stdexec::__env::__join_t<_Env, _Base>
     {
-        return stdexec::__env::__join((_Env&&)__env, (_Base&&)__base);
+        return stdexec::__env::__join(static_cast<_Env&&>(__env),
+                                      static_cast<_Base&&>(__base));
     }
 
     template <stdexec::__nothrow_move_constructible _Env>
-    _Env operator()(_Env&& __env) const noexcept
+    auto operator()(_Env&& __env) const noexcept -> _Env
     {
-        return (_Env&&)__env;
+        return static_cast<_Env&&>(__env);
     }
 };
 } // namespace __envs
@@ -88,7 +89,8 @@ struct __operation
     {
         using __id = __operation;
 
-        STDEXEC_ATTRIBUTE((no_unique_address)) _Default __default_;
+        STDEXEC_ATTRIBUTE((no_unique_address))
+        _Default __default_;
         _Receiver __rcvr_;
 
         friend void tag_invoke(start_t, __t& __self) noexcept
@@ -123,7 +125,8 @@ struct __sender
     using __id = __sender;
     using __t = __sender;
     using sender_concept = stdexec::sender_t;
-    STDEXEC_ATTRIBUTE((no_unique_address)) _Default __default_;
+    STDEXEC_ATTRIBUTE((no_unique_address))
+    _Default __default_;
 
     template <class _Env>
     using __value_t = __minvoke<
@@ -141,7 +144,9 @@ struct __sender
         noexcept(std::is_nothrow_move_constructible_v<_Receiver>)
             -> __operation_t<_Tag, __default_t<env_of_t<_Receiver>>, _Receiver>
     {
-        return {{}, ((_Self&&)__self).__default_, (_Receiver&&)__rcvr};
+        return {{},
+                static_cast<_Self&&>(__self).__default_,
+                static_cast<_Receiver&&>(__rcvr)};
     }
 
     template <class _Env>
@@ -158,7 +163,7 @@ struct __read_with_default_t
     constexpr auto operator()(_Tag, _Default&& __default) const
         -> __sender<_Tag, __decay_t<_Default>>
     {
-        return {(_Default&&)__default};
+        return {static_cast<_Default&&>(__default)};
     }
 };
 } // namespace __read_with_default

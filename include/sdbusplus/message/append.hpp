@@ -276,7 +276,7 @@ struct append_single<T, std::enable_if_t<utility::has_const_iterator_v<T>>>
 
         intf->sd_bus_message_open_container(m, SD_BUS_TYPE_ARRAY,
                                             dbusType.data() + 1);
-        for (auto& i : s)
+        for (auto&& i : s)
         {
             sdbusplus::message::append(intf, m, i);
         }

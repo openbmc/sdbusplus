@@ -43,9 +43,7 @@ template <class _Awaiter, class _Promise>
 concept __with_await_suspend =
     same_as<_Promise, void> || //
     requires(_Awaiter& __awaiter, __coro::coroutine_handle<_Promise> __h) {
-        {
-            __awaiter.await_suspend(__h)
-        } -> __await_suspend_result;
+        { __awaiter.await_suspend(__h) } -> __await_suspend_result;
     };
 
 template <class _Awaiter, class _Promise = void>
@@ -72,8 +70,7 @@ auto __get_awaiter(_Awaitable&& __awaitable, void*) -> decltype(auto)
 {
     if constexpr (requires {
                       static_cast<_Awaitable&&>(__awaitable)
-                          .
-                          operator co_await();
+                          .operator co_await();
                   })
     {
         return static_cast<_Awaitable&&>(__awaitable).operator co_await();
@@ -97,8 +94,8 @@ auto __get_awaiter(_Awaitable&& __awaitable, void*) -> decltype(auto)
 }
 
 template <class _Awaitable, class _Promise>
-auto __get_awaiter(_Awaitable&& __awaitable, _Promise* __promise)
-    -> decltype(auto)
+auto __get_awaiter(_Awaitable&& __awaitable,
+                   _Promise* __promise) -> decltype(auto)
     requires requires {
                  __promise->await_transform(
                      static_cast<_Awaitable&&>(__awaitable));
@@ -108,14 +105,12 @@ auto __get_awaiter(_Awaitable&& __awaitable, _Promise* __promise)
                       __promise
                           ->await_transform(
                               static_cast<_Awaitable&&>(__awaitable))
-                          .
-                          operator co_await();
+                          .operator co_await();
                   })
     {
         return __promise
             ->await_transform(static_cast<_Awaitable&&>(__awaitable))
-            .
-            operator co_await();
+            .operator co_await();
     }
     else if constexpr (requires {
 #if STDEXEC_MSVC()

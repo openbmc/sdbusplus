@@ -31,9 +31,7 @@ template <class _Fun, class... _As>
 concept __nothrow_callable =    //
     __callable<_Fun, _As...> && //
     requires(_Fun&& __fun, _As&&... __as) {
-        {
-            static_cast<_Fun&&>(__fun)(static_cast<_As&&>(__as)...)
-        } noexcept;
+        { static_cast<_Fun&&>(__fun)(static_cast<_As&&>(__as)...) } noexcept;
     };
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -90,7 +88,7 @@ template <class _Ty, class... _Us>
 concept __all_of = (__same_as<_Ty, _Us> && ...);
 
 template <class _Ty, class... _Us>
-concept __none_of = ((!__same_as<_Ty, _Us>)&&...);
+concept __none_of = ((!__same_as<_Ty, _Us>) && ...);
 
 template <class, template <class...> class>
 constexpr bool __is_instance_of_ = false;

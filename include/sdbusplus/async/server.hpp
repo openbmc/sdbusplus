@@ -70,11 +70,10 @@ concept has_get_property = has_get_property_nomsg<Tag, Instance> ||
 template <typename Tag, typename Instance>
 concept has_get_property_missing_const =
     !has_get_property<Tag, Instance> &&
-    (
-        requires(Instance& i) { i.get_property(Tag{}); } ||
-        requires(Instance& i, sdbusplus::message_t& m) {
-            i.get_property(Tag{}, m);
-        });
+    (requires(Instance& i) { i.get_property(Tag{}); } ||
+     requires(Instance& i, sdbusplus::message_t& m) {
+         i.get_property(Tag{}, m);
+     });
 
 /* Determine if a type has a set_property call. */
 template <typename Tag, typename Instance, typename Arg>

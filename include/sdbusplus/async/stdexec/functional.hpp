@@ -51,7 +51,8 @@ struct __function_constant
 
     template <class... _Args>
         requires __callable<_FunT, _Args...>
-    STDEXEC_ATTRIBUTE((always_inline)) auto operator()(_Args&&... __args) const
+    STDEXEC_ATTRIBUTE((always_inline))
+    auto operator()(_Args&&... __args) const
         noexcept(noexcept(_Fun(static_cast<_Args&&>(__args)...)))
             -> decltype(_Fun(static_cast<_Args&&>(__args)...))
     {
@@ -66,8 +67,8 @@ struct __function_constant<_MemPtr>
 
     template <class _Arg>
         requires requires(_Arg&& __arg) { static_cast<_Arg&&>(__arg).*_MemPtr; }
-    STDEXEC_ATTRIBUTE((always_inline)) constexpr auto
-        operator()(_Arg&& __arg) const noexcept
+    STDEXEC_ATTRIBUTE((always_inline))
+    constexpr auto operator()(_Arg&& __arg) const noexcept
         -> decltype(((static_cast<_Arg&&>(__arg)).*_MemPtr))
     {
         return static_cast<_Arg&&>(__arg).*_MemPtr;
@@ -89,7 +90,7 @@ struct __composed
         requires __callable<_Fun1, _Ts...> &&
                  __callable<_Fun0, __call_result_t<_Fun1, _Ts...>>
     STDEXEC_ATTRIBUTE((always_inline))
-        __call_result_t<_Fun0, __call_result_t<_Fun1, _Ts...>>
+    __call_result_t<_Fun0, __call_result_t<_Fun1, _Ts...>>
         operator()(_Ts&&... __ts) &&
     {
         return static_cast<_Fun0&&>(__t0_)(
@@ -100,7 +101,7 @@ struct __composed
         requires __callable<const _Fun1&, _Ts...> &&
                  __callable<const _Fun0&, __call_result_t<const _Fun1&, _Ts...>>
     STDEXEC_ATTRIBUTE((always_inline))
-        __call_result_t<_Fun0, __call_result_t<_Fun1, _Ts...>>
+    __call_result_t<_Fun0, __call_result_t<_Fun1, _Ts...>>
         operator()(_Ts&&... __ts) const&
     {
         return __t0_(__t1_(static_cast<_Ts&&>(__ts)...));
@@ -188,9 +189,8 @@ struct __memobj
 {
     template <class _Mbr, class _Class, class _Ty>
     STDEXEC_ATTRIBUTE((always_inline))
-    constexpr auto operator()(_Mbr _Class::*__mem_ptr,
-                              _Ty&& __ty) const noexcept
-        -> decltype(((static_cast<_Ty&&>(__ty)).*__mem_ptr))
+    constexpr auto operator()(_Mbr _Class::*__mem_ptr, _Ty&& __ty)
+        const noexcept -> decltype(((static_cast<_Ty&&>(__ty)).*__mem_ptr))
     {
         return ((static_cast<_Ty&&>(__ty)).*__mem_ptr);
     }
@@ -211,9 +211,8 @@ struct __memobj_smartptr
 {
     template <class _Mbr, class _Class, class _Ty>
     STDEXEC_ATTRIBUTE((always_inline))
-    constexpr auto operator()(_Mbr _Class::*__mem_ptr,
-                              _Ty&& __ty) const noexcept
-        -> decltype(((*static_cast<_Ty&&>(__ty)).*__mem_ptr))
+    constexpr auto operator()(_Mbr _Class::*__mem_ptr, _Ty&& __ty)
+        const noexcept -> decltype(((*static_cast<_Ty&&>(__ty)).*__mem_ptr))
     {
         return ((*static_cast<_Ty&&>(__ty)).*__mem_ptr);
     }
@@ -336,7 +335,8 @@ template <class _Fn, class _Tup>
 concept __applicable = __mvalid<__apply_::__result_t, _Fn, _Tup>;
 
 template <class _Fn, class _Tup>
-concept __nothrow_applicable = __applicable<_Fn, _Tup> //
+concept __nothrow_applicable =
+    __applicable<_Fn, _Tup> //
     && noexcept(__apply_::__impl(__apply_::__tuple_indices<_Tup>(),
                                  __declval<_Fn>(), __declval<_Tup>()));
 
@@ -348,8 +348,8 @@ struct __apply_t
 {
     template <class _Fn, class _Tup>
         requires __applicable<_Fn, _Tup>
-    STDEXEC_ATTRIBUTE((always_inline)) constexpr auto
-        operator()(_Fn&& __fn, _Tup&& __tup) const
+    STDEXEC_ATTRIBUTE((always_inline))
+    constexpr auto operator()(_Fn&& __fn, _Tup&& __tup) const
         noexcept(__nothrow_applicable<_Fn, _Tup>) -> __apply_result_t<_Fn, _Tup>
     {
         return __apply_::__impl(__apply_::__tuple_indices<_Tup>(),
@@ -440,8 +440,8 @@ struct tag_invoke_t
 {
     template <class _Tag, class... _Args>
         requires tag_invocable<_Tag, _Args...>
-    STDEXEC_ATTRIBUTE((always_inline)) constexpr auto
-        operator()(_Tag __tag, _Args&&... __args) const
+    STDEXEC_ATTRIBUTE((always_inline))
+    constexpr auto operator()(_Tag __tag, _Args&&... __args) const
         noexcept(nothrow_tag_invocable<_Tag, _Args...>)
             -> tag_invoke_result_t<_Tag, _Args...>
     {

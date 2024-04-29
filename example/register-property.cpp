@@ -18,8 +18,7 @@ class Application
   public:
     Application(boost::asio::io_context& ioc, sdbusplus::asio::connection& bus,
                 sdbusplus::asio::object_server& objServer) :
-        ioc_(ioc),
-        bus_(bus), objServer_(objServer)
+        ioc_(ioc), bus_(bus), objServer_(objServer)
     {
         demo_ = objServer_.add_unique_interface(
             demoObjectPath, demoInterfaceName,
@@ -34,8 +33,7 @@ class Application
                 [this](const auto& newPropertyValue, const auto&) {
                 goodbyes_ = newPropertyValue;
                 return true;
-            },
-                [this](const auto&) { return goodbyes_; });
+            }, [this](const auto&) { return goodbyes_; });
         });
     }
 

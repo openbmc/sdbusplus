@@ -54,17 +54,13 @@ concept __stop_token_provider = //
 template <class _Ty>
 concept __indirect_stop_token_provider = //
     requires(const _Ty& t) {
-        {
-            get_env(t)
-        } -> __stop_token_provider;
+        { get_env(t) } -> __stop_token_provider;
     };
 
 template <class _Ty>
 concept __indirect_scheduler_provider = //
     requires(const _Ty& t) {
-        {
-            get_env(t)
-        } -> __scheduler_provider;
+        { get_env(t) } -> __scheduler_provider;
     };
 
 template <class _ParentPromise>
@@ -434,8 +430,8 @@ class [[nodiscard]] basic_task
 
         template <sender _Awaitable>
             requires __scheduler_provider<_Context>
-        auto await_transform(_Awaitable&& __awaitable) noexcept
-            -> decltype(auto)
+        auto
+            await_transform(_Awaitable&& __awaitable) noexcept -> decltype(auto)
         {
             // TODO: If we have a complete-where-it-starts query then we can
             // optimize this to avoid the reschedule
@@ -446,9 +442,8 @@ class [[nodiscard]] basic_task
 
         template <class _Scheduler>
             requires __scheduler_provider<_Context>
-        auto await_transform(
-            __reschedule_coroutine_on::__wrap<_Scheduler> __box) noexcept
-            -> decltype(auto)
+        auto await_transform(__reschedule_coroutine_on::__wrap<_Scheduler>
+                                 __box) noexcept -> decltype(auto)
         {
             if (!std::exchange(__rescheduled_, true))
             {
@@ -470,8 +465,8 @@ class [[nodiscard]] basic_task
         }
 
         template <class _Awaitable>
-        auto await_transform(_Awaitable&& __awaitable) noexcept
-            -> decltype(auto)
+        auto
+            await_transform(_Awaitable&& __awaitable) noexcept -> decltype(auto)
         {
             return with_awaitable_senders<__promise>::await_transform(
                 static_cast<_Awaitable&&>(__awaitable));
@@ -509,9 +504,8 @@ class [[nodiscard]] basic_task
         }
 
         template <class _ParentPromise2>
-        auto await_suspend(
-            __coro::coroutine_handle<_ParentPromise2> __parent) noexcept
-            -> __coro::coroutine_handle<>
+        auto await_suspend(__coro::coroutine_handle<_ParentPromise2>
+                               __parent) noexcept -> __coro::coroutine_handle<>
         {
             static_assert(__one_of<_ParentPromise, _ParentPromise2, void>);
             __context_.emplace(__coro_.promise().__context_,
@@ -543,19 +537,19 @@ class [[nodiscard]] basic_task
     // Make this task awaitable within a particular context:
     template <class _ParentPromise>
         requires constructible_from<
-            awaiter_context_t<__promise, _ParentPromise>, __promise&,
-            _ParentPromise&>
-    friend auto tag_invoke(as_awaitable_t, basic_task&& __self,
-                           _ParentPromise&) noexcept
-        -> __task_awaitable<_ParentPromise>
+                     awaiter_context_t<__promise, _ParentPromise>, __promise&,
+                     _ParentPromise&>
+    friend auto
+        tag_invoke(as_awaitable_t, basic_task&& __self,
+                   _ParentPromise&) noexcept -> __task_awaitable<_ParentPromise>
     {
         return __task_awaitable<_ParentPromise>{
             std::exchange(__self.__coro_, {})};
     }
 
     // Make this task generally awaitable:
-    friend auto operator co_await(basic_task&& __self) noexcept
-        -> __task_awaitable<>
+    friend auto
+        operator co_await(basic_task&& __self) noexcept -> __task_awaitable<>
         requires __mvalid<awaiter_context_t, __promise>
     {
         return __task_awaitable<>{std::exchange(__self.__coro_, {})};
@@ -574,15 +568,14 @@ class [[nodiscard]] basic_task
         completion_signatures<__set_value_sig_t,
                               set_error_t(std::exception_ptr), set_stopped_t()>;
 
-    friend auto tag_invoke(get_completion_signatures_t, const basic_task&, auto)
-        -> __task_traits_t
+    friend auto tag_invoke(get_completion_signatures_t, const basic_task&,
+                           auto) -> __task_traits_t
     {
         return {};
     }
 
     explicit basic_task(__coro::coroutine_handle<promise_type> __coro) noexcept
-        :
-        __coro_(__coro)
+        : __coro_(__coro)
     {}
 
     __coro::coroutine_handle<promise_type> __coro_;

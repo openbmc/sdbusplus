@@ -171,17 +171,16 @@ class Timer
         }
 
         // Add infinite expiration time
-        auto r = sd_event_add_time(
-            event, &eventSource,
-            CLOCK_MONOTONIC, // Time base
-            UINT64_MAX,      // Expire time - way long time
-            0,               // Use default event accuracy
-            [](sd_event_source* /*eventSource*/, uint64_t /*usec*/,
-               void* userData) {
+        auto r = sd_event_add_time(event, &eventSource,
+                                   CLOCK_MONOTONIC, // Time base
+                                   UINT64_MAX, // Expire time - way long time
+                                   0,          // Use default event accuracy
+                                   [](sd_event_source* /*eventSource*/,
+                                      uint64_t /*usec*/, void* userData) {
             auto timer = static_cast<Timer*>(userData);
             return timer->timeoutHandler();
-        },         // Callback handler on timeout
-            this); // User data
+        },                                // Callback handler on timeout
+                                   this); // User data
         if (r < 0)
         {
             throw std::runtime_error("Timer initialization failed");

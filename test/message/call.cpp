@@ -85,8 +85,7 @@ TEST(CallAsync, SlotDrop)
 
 TEST(CallAsync, ExceptionCaught)
 {
-    EXPECT_DEATH(
-        [] {
+    EXPECT_DEATH([] {
         auto b = bus::new_bus();
         while (b.process_discard())
             ;
@@ -94,8 +93,7 @@ TEST(CallAsync, ExceptionCaught)
             [&](message&&) { throw std::runtime_error("testerror"); });
         b.wait(1s);
         b.process_discard();
-    }(),
-        "testerror");
+    }(), "testerror");
 }
 
 } // namespace message

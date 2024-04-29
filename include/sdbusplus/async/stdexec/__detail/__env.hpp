@@ -121,8 +121,8 @@ struct get_forward_progress_guarantee_t :
                           std::as_const(__t));
     }
 
-    constexpr auto operator()(auto&&) const noexcept
-        -> stdexec::forward_progress_guarantee
+    constexpr auto
+        operator()(auto&&) const noexcept -> stdexec::forward_progress_guarantee
     {
         return stdexec::forward_progress_guarantee::weakly_parallel;
     }
@@ -137,8 +137,8 @@ struct __has_algorithm_customizations_t :
 
     template <class _Tp>
         requires tag_invocable<__has_algorithm_customizations_t, __cref_t<_Tp>>
-    constexpr auto operator()(_Tp&&) const noexcept(noexcept(__result_t<_Tp>{}))
-        -> __result_t<_Tp>
+    constexpr auto operator()(_Tp&&) const
+        noexcept(noexcept(__result_t<_Tp>{})) -> __result_t<_Tp>
     {
         using _Boolean = tag_invoke_result_t<__has_algorithm_customizations_t,
                                              __cref_t<_Tp>>;
@@ -177,9 +177,9 @@ struct get_scheduler_t : __query<get_scheduler_t>
 
 struct get_delegatee_scheduler_t : __query<get_delegatee_scheduler_t>
 {
-    friend constexpr auto tag_invoke(forwarding_query_t,
-                                     const get_delegatee_scheduler_t&) noexcept
-        -> bool
+    friend constexpr auto
+        tag_invoke(forwarding_query_t,
+                   const get_delegatee_scheduler_t&) noexcept -> bool
     {
         return true;
     }
@@ -280,8 +280,8 @@ struct get_domain_t
         return tag_invoke(get_domain_t{}, __ty);
     }
 
-    friend constexpr auto tag_invoke(forwarding_query_t, get_domain_t) noexcept
-        -> bool
+    friend constexpr auto tag_invoke(forwarding_query_t,
+                                     get_domain_t) noexcept -> bool
     {
         return true;
     }
@@ -344,8 +344,8 @@ struct get_env_t
 {
     template <class _EnvProvider>
         requires tag_invocable<get_env_t, const _EnvProvider&>
-    STDEXEC_ATTRIBUTE((always_inline)) constexpr auto
-        operator()(const _EnvProvider& __env_provider) const noexcept
+    STDEXEC_ATTRIBUTE((always_inline))
+    constexpr auto operator()(const _EnvProvider& __env_provider) const noexcept
         -> tag_invoke_result_t<get_env_t, const _EnvProvider&>
     {
         static_assert(
@@ -495,8 +495,8 @@ struct __without_ : _Env
 struct __without_fn
 {
     template <class _Env, class _Tag, class... _Tags>
-    constexpr auto operator()(_Env&& __env, _Tag, _Tags...) const noexcept
-        -> decltype(auto)
+    constexpr auto operator()(_Env&& __env, _Tag,
+                              _Tags...) const noexcept -> decltype(auto)
     {
         if constexpr (tag_invocable<_Tag, _Env> ||
                       (tag_invocable<_Tags, _Env> || ...))
@@ -631,9 +631,7 @@ inline constexpr get_env_t get_env{};
 template <class _EnvProvider>
 concept environment_provider = //
     requires(_EnvProvider& __ep) {
-        {
-            get_env(std::as_const(__ep))
-        } -> queryable;
+        { get_env(std::as_const(__ep)) } -> queryable;
     };
 } // namespace stdexec
 

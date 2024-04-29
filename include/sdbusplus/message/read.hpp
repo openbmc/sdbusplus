@@ -317,9 +317,9 @@ struct read_single<S>
                                         "sd_bus_message_enter_container tuple");
         }
 
-        std::apply(
-            [&](auto&... args) { sdbusplus::message::read(intf, m, args...); },
-            t);
+        std::apply([&](auto&... args) {
+            sdbusplus::message::read(intf, m, args...);
+        }, t);
 
         r = intf->sd_bus_message_exit_container(m);
         if (r < 0)

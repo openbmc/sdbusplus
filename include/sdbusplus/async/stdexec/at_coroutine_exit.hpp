@@ -101,8 +101,8 @@ struct __die_on_stop_t
             }
 
             template <__decays_to<__t> _Self, class _Env>
-            friend auto tag_invoke(get_completion_signatures_t, _Self&&, _Env&&)
-                -> __completion_signatures<_Env>
+            friend auto tag_invoke(get_completion_signatures_t, _Self&&,
+                                   _Env&&) -> __completion_signatures<_Env>
             {
                 return {};
             }
@@ -136,12 +136,8 @@ inline constexpr __die_on_stop_t __die_on_stop;
 template <class _Promise>
 concept __has_continuation = //
     requires(_Promise& __promise, __continuation_handle<> __c) {
-        {
-            __promise.continuation()
-        } -> convertible_to<__continuation_handle<>>;
-        {
-            __promise.set_continuation(__c)
-        };
+        { __promise.continuation() } -> convertible_to<__continuation_handle<>>;
+        { __promise.set_continuation(__c) };
     };
 
 template <class... _Ts>
@@ -207,8 +203,8 @@ class [[nodiscard]] __task
     {
         const __promise& __promise_;
 
-        friend auto tag_invoke(get_scheduler_t, __env __self) noexcept
-            -> __any_scheduler
+        friend auto tag_invoke(get_scheduler_t,
+                               __env __self) noexcept -> __any_scheduler
         {
             return __self.__promise_.__scheduler_;
         }
@@ -250,15 +246,15 @@ class [[nodiscard]] __task
         }
 
         template <class _Awaitable>
-        auto await_transform(_Awaitable&& __awaitable) noexcept
-            -> decltype(auto)
+        auto
+            await_transform(_Awaitable&& __awaitable) noexcept -> decltype(auto)
         {
             return as_awaitable(
                 __die_on_stop(static_cast<_Awaitable&&>(__awaitable)), *this);
         }
 
-        friend auto tag_invoke(get_env_t, const __promise& __self) noexcept
-            -> __env
+        friend auto tag_invoke(get_env_t,
+                               const __promise& __self) noexcept -> __env
         {
             return {__self};
         }

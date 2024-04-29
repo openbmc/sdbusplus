@@ -214,8 +214,7 @@ inline constexpr auto __connect = //
 
 inline constexpr auto __start = //
     []<class _StartTag = start_t, class... _ChildOps>(
-        __ignore, __ignore, _ChildOps&... __ops) noexcept
-{
+        __ignore, __ignore, _ChildOps&... __ops) noexcept {
     (_StartTag()(__ops), ...);
 };
 
@@ -420,11 +419,9 @@ struct __op_state : __op_base<_Sexpr, _Receiver>
     {
         using __tag_t = typename __op_state::__tag_t;
         auto&& __rcvr = __self.__rcvr();
-        __tup::__apply(
-            [&](auto&... __ops) noexcept {
+        __tup::__apply([&](auto&... __ops) noexcept {
             __sexpr_impl<__tag_t>::start(__self.__state_, __rcvr, __ops...);
-        },
-            __self.__inner_ops_);
+        }, __self.__inner_ops_);
     }
 
     template <class _Index, class _Tag2, class... _Args>
@@ -657,8 +654,8 @@ inline constexpr auto __descriptor_fn()
 
 template <class _Tag, class _Data, class... _Child>
 STDEXEC_ATTRIBUTE((host, device))
-__sexpr(_Tag, _Data, _Child...)
-    -> __sexpr<STDEXEC_SEXPR_DESCRIPTOR(_Tag, _Data, _Child...)>;
+__sexpr(_Tag, _Data,
+        _Child...) -> __sexpr<STDEXEC_SEXPR_DESCRIPTOR(_Tag, _Data, _Child...)>;
 
 template <class _Tag, class _Data, class... _Child>
 using __sexpr_t = __sexpr<STDEXEC_SEXPR_DESCRIPTOR(_Tag, _Data, _Child...)>;

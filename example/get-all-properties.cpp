@@ -20,8 +20,7 @@ class Application
   public:
     Application(sdbusplus::asio::connection& bus,
                 sdbusplus::asio::object_server& objServer) :
-        bus_(bus),
-        objServer_(objServer)
+        bus_(bus), objServer_(objServer)
     {
         demo_ = objServer_.add_unique_interface(demoObjectPath,
                                                 demoInterfaceName);
@@ -35,8 +34,7 @@ class Application
             [this](const auto& newPropertyValue, const auto&) {
             goodbyes_ = newPropertyValue;
             return true;
-        },
-            [this](const auto&) { return goodbyes_; });
+        }, [this](const auto&) { return goodbyes_; });
 
         demo_->register_property_r<uint32_t>(
             propertyValueName, sdbusplus::vtable::property_::const_,

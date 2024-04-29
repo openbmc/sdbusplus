@@ -125,9 +125,9 @@ struct __when_empty_sender
 
         template <__decays_to<__t> _Self, receiver _Receiver>
             requires sender_to<__copy_cvref_t<_Self, _Constrained>, _Receiver>
-        [[nodiscard]] friend auto tag_invoke(connect_t, _Self&& __self,
-                                             _Receiver __rcvr)
-            -> __when_empty_op_t<_Self, _Receiver>
+        [[nodiscard]] friend auto
+            tag_invoke(connect_t, _Self&& __self,
+                       _Receiver __rcvr) -> __when_empty_op_t<_Self, _Receiver>
         {
             return __when_empty_op_t<_Self, _Receiver>{
                 __self.__scope_, static_cast<_Self&&>(__self).__c_,
@@ -285,9 +285,9 @@ struct __nest_sender
         template <__decays_to<__t> _Self, receiver _Receiver>
             requires sender_to<__copy_cvref_t<_Self, _Constrained>,
                                __nest_receiver_t<_Receiver>>
-        [[nodiscard]] friend auto tag_invoke(connect_t, _Self&& __self,
-                                             _Receiver __rcvr)
-            -> __nest_operation_t<_Receiver>
+        [[nodiscard]] friend auto
+            tag_invoke(connect_t, _Self&& __self,
+                       _Receiver __rcvr) -> __nest_operation_t<_Receiver>
         {
             return __nest_operation_t<_Receiver>{
                 __self.__scope_, static_cast<_Self&&>(__self).__c_,
@@ -389,8 +389,7 @@ struct __future_op
                 }
                 else
                 {
-                    std::visit(
-                        [this, &__guard]<class _Tup>(_Tup& __tup) {
+                    std::visit([this, &__guard]<class _Tup>(_Tup& __tup) {
                         if constexpr (same_as<_Tup, std::monostate>)
                         {
                             std::terminate();
@@ -407,8 +406,7 @@ struct __future_op
                             },
                                 __tup);
                         }
-                    },
-                        __state->__data_);
+                    }, __state->__data_);
                 }
             }
             catch (...)
@@ -475,8 +473,8 @@ struct __future_op
                      std::unique_ptr<__future_state<_Sender, _Env>> __state) :
             __subscription{{},
                            [](__subscription* __self) noexcept -> void {
-            static_cast<__t*>(__self)->__complete_();
-        }},
+                               static_cast<__t*>(__self)->__complete_();
+                           }},
             __rcvr_(static_cast<_Receiver2&&>(__rcvr)),
             __state_(std::move(__state)),
             __forward_consumer_(get_stop_token(get_env(__rcvr_)),
@@ -741,8 +739,8 @@ struct __future
 
         template <__decays_to<__t> _Self, receiver _Receiver>
             requires receiver_of<_Receiver, __completions_t<_Self>>
-        friend auto tag_invoke(connect_t, _Self&& __self, _Receiver __rcvr)
-            -> __future_op_t<_Receiver>
+        friend auto tag_invoke(connect_t, _Self&& __self,
+                               _Receiver __rcvr) -> __future_op_t<_Receiver>
         {
             return __future_op_t<_Receiver>{static_cast<_Receiver&&>(__rcvr),
                                             std::move(__self.__state_)};
@@ -836,8 +834,8 @@ struct __spawn_op
                                   get_stop_token),
                     __env::__with(__inln::__scheduler{}, get_scheduler)),
                 [](__spawn_op_base<_EnvId>* __op) {
-            delete static_cast<__t*>(__op);
-        }},
+                    delete static_cast<__t*>(__op);
+                }},
             __op_(stdexec::connect(static_cast<_Sndr&&>(__sndr),
                                    __spawn_receiver_t<_Env>{this}))
         {}
@@ -903,8 +901,8 @@ struct async_scope : __immovable
 
     template <__movable_value _Env = empty_env,
               sender_in<__env_t<_Env>> _Sender>
-    auto spawn_future(_Sender&& __sndr, _Env __env = {})
-        -> __future_t<_Sender, _Env>
+    auto spawn_future(_Sender&& __sndr,
+                      _Env __env = {}) -> __future_t<_Sender, _Env>
     {
         using __state_t = __future_state<nest_result_t<_Sender>, _Env>;
         auto __state =

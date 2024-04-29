@@ -146,8 +146,7 @@ inline void unpackProperties(
     details::unpackPropertiesCommon(
         [](const UnpackErrorReason reason, const std::string& property) {
         throw exception::UnpackPropertyError(property, reason);
-    },
-        input, std::forward<Args>(args)...);
+    }, input, std::forward<Args>(args)...);
 }
 
 template <typename OnErrorCallback, typename VariantType, typename... Args>

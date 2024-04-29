@@ -334,9 +334,7 @@ int client()
         {
             std::cout << item.first << "\n";
         }
-    },
-        "xyz.openbmc_project.ObjectMapper",
-        "/xyz/openbmc_project/object_mapper",
+    }, "xyz.openbmc_project.ObjectMapper", "/xyz/openbmc_project/object_mapper",
         "xyz.openbmc_project.ObjectMapper", "GetSubTree",
         "/org/openbmc/control", 2, std::vector<std::string>());
 
@@ -391,8 +389,7 @@ int client()
             return;
         }
         std::cout << "TestYieldFunction return " << testValue << "\n";
-    },
-        "xyz.openbmc_project.asio-test", "/xyz/openbmc_project/test",
+    }, "xyz.openbmc_project.asio-test", "/xyz/openbmc_project/test",
         "xyz.openbmc_project.test", "TestYieldFunction", int32_t(41));
     io.run();
 

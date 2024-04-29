@@ -143,8 +143,8 @@ struct callback_sender
                                             execution::set_stopped_t()>;
 
     template <execution::receiver R>
-    friend auto tag_invoke(execution::connect_t, callback_sender&& self, R r)
-        -> callback_operation<Init, R>
+    friend auto tag_invoke(execution::connect_t, callback_sender&& self,
+                           R r) -> callback_operation<Init, R>
     {
         return {std::move(self.init), std::move(r)};
     }

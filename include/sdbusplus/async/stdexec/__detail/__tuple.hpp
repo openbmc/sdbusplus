@@ -103,11 +103,11 @@ struct __apply_
 
 template <class _Fun, __tuple_like _Tuple>
 STDEXEC_ATTRIBUTE((always_inline))
-constexpr auto __apply(_Fun&& __fun, _Tuple&& __tup) noexcept(
-    noexcept(__apply_()(static_cast<_Fun&&>(__fun),
-                        static_cast<_Tuple&&>(__tup), &__tup)))
-    -> decltype(__apply_()(static_cast<_Fun&&>(__fun),
-                           static_cast<_Tuple&&>(__tup), &__tup))
+constexpr auto __apply(_Fun&& __fun, _Tuple&& __tup) noexcept(noexcept(
+    __apply_()(static_cast<_Fun&&>(__fun), static_cast<_Tuple&&>(__tup),
+               &__tup))) -> decltype(__apply_()(static_cast<_Fun&&>(__fun),
+                                                static_cast<_Tuple&&>(__tup),
+                                                &__tup))
 {
     return __apply_()(static_cast<_Fun&&>(__fun), static_cast<_Tuple&&>(__tup),
                       &__tup);

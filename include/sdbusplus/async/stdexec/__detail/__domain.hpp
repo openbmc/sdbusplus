@@ -46,8 +46,8 @@ struct __legacy_customization
 {
     template <class _Tag, class _Data, class... _Children>
         requires __has_legacy_c11n<_Tag, _Data, _Children...>
-    auto operator()(_Tag, _Data&& __data, _Children&&... __children) const
-        -> decltype(auto)
+    auto operator()(_Tag, _Data&& __data,
+                    _Children&&... __children) const -> decltype(auto)
     {
         return __legacy_c11n_fn<_Tag, _Data, _Children...>()(
             static_cast<_Data&&>(__data),
@@ -132,8 +132,8 @@ struct default_domain
     template <class _Tag, class _Sender, class... _Args>
         requires __domain::__has_legacy_c11n<_Tag, _Sender, _Args...> ||
                  __domain::__has_apply_sender<_Tag, _Sender, _Args...>
-    STDEXEC_ATTRIBUTE((always_inline)) decltype(auto)
-        apply_sender(_Tag, _Sender&& __sndr, _Args&&... __args) const
+    STDEXEC_ATTRIBUTE((always_inline))
+    decltype(auto) apply_sender(_Tag, _Sender&& __sndr, _Args&&... __args) const
     {
         // Look for a legacy customization for the given tag, and if found,
         // apply it.
@@ -151,8 +151,8 @@ struct default_domain
     }
 
     template <class _Sender, class _Env>
-    auto transform_env(_Sender&& __sndr, _Env&& __env) const noexcept
-        -> decltype(auto)
+    auto transform_env(_Sender&& __sndr,
+                       _Env&& __env) const noexcept -> decltype(auto)
     {
         if constexpr (__domain::__has_default_transform_env<_Sender, _Env>)
         {
@@ -290,8 +290,8 @@ struct __common_domain_fn
 
     template <class _Domain, class... _OtherDomains>
         requires __all_of<_Domain, _OtherDomains...>
-    static auto __common_domain(_Domain __domain, _OtherDomains...) noexcept
-        -> _Domain
+    static auto __common_domain(_Domain __domain,
+                                _OtherDomains...) noexcept -> _Domain
     {
         return static_cast<_Domain&&>(__domain);
     }

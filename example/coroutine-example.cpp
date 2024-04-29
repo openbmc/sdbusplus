@@ -50,9 +50,7 @@ auto startup(sdbusplus::async::context& ctx) -> sdbusplus::async::task<>
             {
                 return std::to_string(v);
             }
-        },
-                         value)
-                  << std::endl;
+        }, value) << std::endl;
     }
 
     // Try to set the Architecture property (which won't work).

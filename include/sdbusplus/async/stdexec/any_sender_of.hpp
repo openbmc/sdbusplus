@@ -35,8 +35,8 @@ struct __create_vtable_t
     template <class _VTable, class _Tp>
         requires __tag_invocable_r<const _VTable*, __create_vtable_t,
                                    __mtype<_VTable>, __mtype<_Tp>>
-    constexpr auto operator()(__mtype<_VTable>, __mtype<_Tp>) const noexcept
-        -> const _VTable*
+    constexpr auto operator()(__mtype<_VTable>,
+                              __mtype<_Tp>) const noexcept -> const _VTable*
     {
         return stdexec::tag_invoke(__create_vtable_t{}, __mtype<_VTable>{},
                                    __mtype<_Tp>{});
@@ -325,8 +325,8 @@ struct __immovable_storage
                                            alignof(_Tp) <= __alignment;
 
         template <class _Tp>
-        static constexpr auto __get_vtable_of_type() noexcept
-            -> const __vtable_t*
+        static constexpr auto
+            __get_vtable_of_type() noexcept -> const __vtable_t*
         {
             return &__storage_vtbl<__t, __decay_t<_Tp>, _Vtable, __with_delete>;
         }
@@ -787,7 +787,7 @@ struct __vtable<completion_signatures<_Sigs...>, _Queries...>
       private:
         template <class _Rcvr>
             requires receiver_of<_Rcvr, completion_signatures<_Sigs...>> &&
-                     (__callable<__query_vfun_fn<_Rcvr>, _Queries> && ...)
+                         (__callable<__query_vfun_fn<_Rcvr>, _Queries> && ...)
         friend auto tag_invoke(__create_vtable_t, __mtype<__t>,
                                __mtype<_Rcvr>) noexcept -> const __t*
         {
@@ -859,8 +859,8 @@ struct __ref<completion_signatures<_Sigs...>, _Queries...>
     }
 
     template <std::same_as<__ref> Self>
-    friend auto tag_invoke(get_env_t, const Self& __self) noexcept
-        -> const __env_t&
+    friend auto tag_invoke(get_env_t,
+                           const Self& __self) noexcept -> const __env_t&
     {
         return __self.__env_;
     }
@@ -936,8 +936,8 @@ struct __ref<completion_signatures<_Sigs...>, _Queries...>
     }
 
     template <std::same_as<__ref> Self>
-    friend auto tag_invoke(get_env_t, const Self& __self) noexcept
-        -> const __env_t&
+    friend auto tag_invoke(get_env_t,
+                           const Self& __self) noexcept -> const __env_t&
     {
         return __self.__env_;
     }
@@ -1133,9 +1133,9 @@ class __query_vtable<_List<_Queries...>> : public __query_vfun<_Queries>...
   private:
     template <class _EnvProvider>
         requires(__callable<__query_vfun_fn<_EnvProvider>, _Queries> && ...)
-    friend auto tag_invoke(__create_vtable_t, __mtype<__query_vtable>,
-                           __mtype<_EnvProvider>) noexcept
-        -> const __query_vtable*
+    friend auto
+        tag_invoke(__create_vtable_t, __mtype<__query_vtable>,
+                   __mtype<_EnvProvider>) noexcept -> const __query_vtable*
     {
         static const __query_vtable __vtable{{__query_vfun_fn<_EnvProvider>{}(
             static_cast<_Queries>(nullptr))}...};
@@ -1317,8 +1317,8 @@ class __scheduler
     };
 
     template <same_as<__scheduler> _Self>
-    friend auto tag_invoke(schedule_t, const _Self& __self) noexcept
-        -> __sender_t
+    friend auto tag_invoke(schedule_t,
+                           const _Self& __self) noexcept -> __sender_t
     {
         STDEXEC_ASSERT(__self.__storage_.__get_vtable()->__schedule_);
         return __self.__storage_.__get_vtable()->__schedule_(

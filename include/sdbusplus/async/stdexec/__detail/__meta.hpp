@@ -164,8 +164,8 @@ class __mstring
     }
 
     template <std::size_t... _Is>
-    constexpr auto __equal(__mstring __other, __indices<_Is...>) const noexcept
-        -> bool
+    constexpr auto __equal(__mstring __other,
+                           __indices<_Is...>) const noexcept -> bool
     {
         return ((__what_[_Is] == __other.__what_[_Is]) && ...);
     }
@@ -217,8 +217,8 @@ constexpr const __mtypeof<_Str> operator""_mstr() noexcept
 #else
 // Use a standard user-defined string literal template
 template <__mstring _Str>
-[[deprecated("Use _mstr instead")]] constexpr auto operator""__csz() noexcept
-    -> __mtypeof<_Str>
+[[deprecated("Use _mstr instead")]] constexpr auto
+    operator""__csz() noexcept -> __mtypeof<_Str>
 {
     return _Str;
 }
@@ -1059,8 +1059,8 @@ struct __placeholder
 
     constexpr __placeholder(void*) noexcept {}
 
-    friend constexpr auto __get_placeholder_offset(__placeholder) noexcept
-        -> std::size_t
+    friend constexpr auto
+        __get_placeholder_offset(__placeholder) noexcept -> std::size_t
     {
         return _Np;
     }
@@ -1199,8 +1199,9 @@ struct __mdispatch_<_Ret (*)(_Args...), _Offset>
 {
     template <class... _Ts>
         requires(__callable<__mdispatch_<_Args, _Offset>, _Ts...> && ...) &&
-                __callable<_Ret, __call_result_t<__mdispatch_<_Args, _Offset>,
-                                                 _Ts...>...>
+                    __callable<_Ret,
+                               __call_result_t<__mdispatch_<_Args, _Offset>,
+                                               _Ts...>...>
     auto operator()(_Ts&&... __ts) const noexcept(
         __nothrow_callable<
             _Ret, __call_result_t<__mdispatch_<_Args, _Offset>, _Ts...>...>)
@@ -1224,12 +1225,13 @@ struct __mdispatch_<_Ret (*)(_Args..., ...), _Offset>
     {
         template <std::size_t... _Idx, class... _Ts>
             requires(__callable<__mdispatch_<_Args>, _Ts...> && ...) &&
-                    (__callable<__mdispatch_<_Pattern, _Idx + 1>, _Ts...> &&
-                     ...) &&
-                    __callable< //
-                        _Ret, __call_result_t<__mdispatch_<_Args>, _Ts...>...,
-                        __call_result_t<__mdispatch_<_Pattern, _Idx + 1>,
-                                        _Ts...>...>
+                        (__callable<__mdispatch_<_Pattern, _Idx + 1>, _Ts...> &&
+                         ...) &&
+                        __callable< //
+                            _Ret,
+                            __call_result_t<__mdispatch_<_Args>, _Ts...>...,
+                            __call_result_t<__mdispatch_<_Pattern, _Idx + 1>,
+                                            _Ts...>...>
         auto operator()(__indices<_Idx...>, _Ts&&... __ts) const noexcept(
             __nothrow_callable<                                  //
                 _Ret,                                            //
@@ -1248,9 +1250,9 @@ struct __mdispatch_<_Ret (*)(_Args..., ...), _Offset>
 
     template <class... _Ts>
         requires(__offset < sizeof...(_Ts)) &&
-                __callable<__impl,
-                           __make_indices<sizeof...(_Ts) - __offset - 1>,
-                           _Ts...>
+                    __callable<__impl,
+                               __make_indices<sizeof...(_Ts) - __offset - 1>,
+                               _Ts...>
     auto operator()(_Ts&&... __ts) const noexcept(
         __nothrow_callable<
             __impl, __make_indices<sizeof...(_Ts) - __offset - 1>, _Ts...>)
@@ -1265,9 +1267,9 @@ struct __mdispatch_<_Ret (*)(_Args..., ...), _Offset>
 
     template <class... _Ts>
         requires(sizeof...(_Ts) == __offset) &&
-                __callable<
-                    __mdispatch_<__minvoke<__mpop_back<__qf<_Ret>>, _Args...>*>,
-                    _Ts...>
+                    __callable<__mdispatch_<__minvoke<__mpop_back<__qf<_Ret>>,
+                                                      _Args...>*>,
+                               _Ts...>
     auto operator()(_Ts&&... __ts) const
         noexcept(__nothrow_callable<
                  __mdispatch_<__minvoke<__mpop_back<__qf<_Ret>>, _Args...>*>,

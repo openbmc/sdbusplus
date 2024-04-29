@@ -62,8 +62,7 @@ struct __control_block
 
     template <class... _Us>
     explicit __control_block(_Us&&... __us) noexcept(noexcept(_Ty{
-        __declval<_Us>()...})) :
-        __refcount_(1u)
+        __declval<_Us>()...})) : __refcount_(1u)
     {
         // Construct the value *after* the initialization of the
         // atomic in case the constructor of _Ty calls

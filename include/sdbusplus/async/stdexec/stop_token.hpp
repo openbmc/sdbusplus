@@ -58,8 +58,7 @@ struct __in_place_stop_callback_base
     explicit __in_place_stop_callback_base(   //
         const in_place_stop_source* __source, //
         __execute_fn_t* __execute) noexcept :
-        __source_(__source),
-        __execute_(__execute)
+        __source_(__source), __execute_(__execute)
     {}
 
     void __register_callback_() noexcept;
@@ -213,8 +212,8 @@ class in_place_stop_token
         std::swap(__source_, __other.__source_);
     }
 
-    auto operator==(const in_place_stop_token&) const noexcept
-        -> bool = default;
+    auto
+        operator==(const in_place_stop_token&) const noexcept -> bool = default;
 
   private:
     friend in_place_stop_source;
@@ -222,15 +221,14 @@ class in_place_stop_token
     friend class in_place_stop_callback;
 
     explicit in_place_stop_token(const in_place_stop_source* __source) noexcept
-        :
-        __source_(__source)
+        : __source_(__source)
     {}
 
     const in_place_stop_source* __source_;
 };
 
-inline auto in_place_stop_source::get_token() const noexcept
-    -> in_place_stop_token
+inline auto
+    in_place_stop_source::get_token() const noexcept -> in_place_stop_token
 {
     return in_place_stop_token{this};
 }
@@ -493,9 +491,7 @@ template <class _Token>
 concept unstoppable_token =    //
     stoppable_token<_Token> && //
     requires {
-        {
-            _Token::stop_possible()
-        } -> __boolean_testable_;
+        { _Token::stop_possible() } -> __boolean_testable_;
     } && //
     (!_Token::stop_possible());
 } // namespace stdexec

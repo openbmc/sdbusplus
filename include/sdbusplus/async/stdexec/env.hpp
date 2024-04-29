@@ -150,8 +150,8 @@ struct __sender
     }
 
     template <class _Env>
-    friend auto tag_invoke(get_completion_signatures_t, __sender, _Env&&)
-        -> __completions_t<_Env>
+    friend auto tag_invoke(get_completion_signatures_t, __sender,
+                           _Env&&) -> __completions_t<_Env>
     {
         return {};
     }

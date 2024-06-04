@@ -5,7 +5,10 @@
 // but by defining it here, warnings won't cause problems with a compile
 #define BOOST_COROUTINES_NO_DEPRECATION_WARNING
 #endif
+
+#ifndef SDBUSPLUS_DISABLE_BOOST_COROUTINES
 #include <boost/asio/spawn.hpp>
+#endif
 #include <sdbusplus/asio/connection.hpp>
 #include <sdbusplus/exception.hpp>
 #include <sdbusplus/message/read.hpp>
@@ -87,11 +90,17 @@ class signal
     const char* signature_;
 };
 
+#ifndef SDBUSPLUS_DISABLE_BOOST_COROUTINES
 template <typename T>
 inline const bool FirstArgIsYield_v =
     std::is_same_v<utility::get_first_arg_t<utility::decay_tuple_t<
                        boost::callable_traits::args_t<T>>>,
                    boost::asio::yield_context>;
+
+#else
+template <typename T>
+inline const bool FirstArgIsYield_v = false;
+#endif
 
 template <typename T>
 inline const bool FirstArgIsMessage_v =
@@ -130,12 +139,14 @@ struct NonDbusArgsCount<std::tuple<FirstArg, OtherArgs...>>
 {
     constexpr static std::size_t size()
     {
+#ifndef SDBUSPLUS_DISABLE_BOOST_COROUTINES
         if constexpr (std::is_same_v<FirstArg, message_t> ||
                       std::is_same_v<FirstArg, boost::asio::yield_context>)
         {
             return 1 + NonDbusArgsCount<std::tuple<OtherArgs...>>::size();
         }
         else
+#endif
         {
             return NonDbusArgsCount<std::tuple<OtherArgs...>>::size();
         }
@@ -210,6 +221,7 @@ class callback_method_instance
     }
 };
 
+#ifndef SDBUSPLUS_DISABLE_BOOST_COROUTINES
 template <typename CallbackType>
 class coroutine_method_instance
 {
@@ -288,6 +300,7 @@ class coroutine_method_instance
         }
     }
 };
+#endif
 
 template <typename PropertyType, typename CallbackType>
 class callback_get_instance

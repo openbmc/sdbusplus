@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "961da082_3143ed13",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2024-06-07T06:53:33Z",
+      "side": 1,
+      "message": "A quick question: where is this `SDBUSPLUS_DISABLE_BOOST_COROUTINES` defined?\nIt\u0027s not in sdbusplus repo, but I find it in bmcweb.\n\nWhat will happen if sdbusplus does not define the macro, and a user like bmcweb defines the macro?",
+      "revId": "75aa316d2542b06d6050cf64813d4e80786bba67",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

@@ -16,6 +16,24 @@
       "message": "A quick question: where is this `SDBUSPLUS_DISABLE_BOOST_COROUTINES` defined?\nIt\u0027s not in sdbusplus repo, but I find it in bmcweb.\n\nWhat will happen if sdbusplus does not define the macro, and a user like bmcweb defines the macro?",
       "revId": "75aa316d2542b06d6050cf64813d4e80786bba67",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "79ee5142_e38815ab",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2024-06-08T20:23:12Z",
+      "side": 1,
+      "message": "\u003e A quick question: where is this `SDBUSPLUS_DISABLE_BOOST_COROUTINES` defined?\n\nIn any repo that wants to avoid the cotourine dependency.\n\n\u003e It\u0027s not in sdbusplus repo, but I find it in bmcweb.\n\u003e \n\u003e What will happen if sdbusplus does not define the macro, and a user like bmcweb defines the macro?\n\nThen the feature will be disabled, coroutine support will not be available.",
+      "parentUuid": "961da082_3143ed13",
+      "revId": "75aa316d2542b06d6050cf64813d4e80786bba67",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

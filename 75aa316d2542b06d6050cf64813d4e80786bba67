@@ -52,6 +52,24 @@
       "parentUuid": "79ee5142_e38815ab",
       "revId": "75aa316d2542b06d6050cf64813d4e80786bba67",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c42aa0a2_8002080e",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2024-06-11T04:01:51Z",
+      "side": 1,
+      "message": "\u003e nitpick: Usually I prefer the \"positive\" macro names instead of \"negative\" ones.\n\u003e So suggest\n\u003e 1. Defining `SDBUSPLUS_ENABLE_BOOST_COROUTINES` and enable it by default;\n\u003e 2. Document it;\n\u003e 3. Users of sdbusplus could un-define it if it does not want it.\n\u003e \n\u003e \n\u003e `#ifdef SDBUSPLUS_ENABLE_BOOST_COROUTINES` reads more straightforward than `#ifndef SDBUSPLUS_DISABLE_BOOST_COROUTINES`.\n\nThat\u0027s a fair comment about Enable being easier to read;  Unfortunately SDBUSPLUS_DISABLE_BOOST_COROUTINES already exists in the codebase.  It would be a refactor to all coroutine daemons to go add an enable flag, which we could do, I just don\u0027t think it\u0027s worth the effort.\n\nWhat do you think?\n\nWhat kind of documentation were you looking for?  I was trying to avoid writing:\n\nSDBUSPLUS_DISABLE_BOOST_COROUTINES: Disables support for boost coroutines.\n\nbecause that seemed redundant.",
+      "parentUuid": "9ef7d04a_0c94e9c8",
+      "revId": "75aa316d2542b06d6050cf64813d4e80786bba67",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

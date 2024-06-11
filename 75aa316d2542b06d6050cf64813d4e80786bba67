@@ -34,6 +34,24 @@
       "parentUuid": "961da082_3143ed13",
       "revId": "75aa316d2542b06d6050cf64813d4e80786bba67",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9ef7d04a_0c94e9c8",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2024-06-11T03:54:12Z",
+      "side": 1,
+      "message": "nitpick: Usually I prefer the \"positive\" macro names instead of \"negative\" ones.\nSo suggest\n1. Defining `SDBUSPLUS_ENABLE_BOOST_COROUTINES` and enable it by default;\n2. Document it;\n3. Users of sdbusplus could un-define it if it does not want it.\n\n\n`#ifdef SDBUSPLUS_ENABLE_BOOST_COROUTINES` reads more straightforward than `#ifndef SDBUSPLUS_DISABLE_BOOST_COROUTINES`.",
+      "parentUuid": "79ee5142_e38815ab",
+      "revId": "75aa316d2542b06d6050cf64813d4e80786bba67",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

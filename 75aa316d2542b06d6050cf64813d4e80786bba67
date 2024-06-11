@@ -70,6 +70,24 @@
       "parentUuid": "9ef7d04a_0c94e9c8",
       "revId": "75aa316d2542b06d6050cf64813d4e80786bba67",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4698ba7c_688cdcb3",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2024-06-11T06:55:45Z",
+      "side": 1,
+      "message": "\u003e  It would be a refactor to all coroutine daemons to go add an enable flag, which we could do, I just don\u0027t think it\u0027s worth the effort.\n\nIf the only user for now is `bmcweb` (which is what I see), I think it\u0027s easy to update both bmcweb and sdbusplus.\nIf there are other users, then I guess we have to keep the current code to keep compatibility.",
+      "parentUuid": "c42aa0a2_8002080e",
+      "revId": "75aa316d2542b06d6050cf64813d4e80786bba67",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

@@ -64,7 +64,7 @@ std::string string_path_wrapper::filename() const
 
     // If we don't see that this was encoded by sdbusplus, return the naive
     // version of the filename path.
-    if (filename[0] != '_')
+    if (filename.empty() || filename[0] != '_')
     {
         return std::string(filename);
     }

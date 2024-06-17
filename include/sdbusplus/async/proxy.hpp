@@ -41,7 +41,7 @@ namespace proxy_ns
  *  ```
  *
  *  The proxy object can be filled as information is available and attempts
- *  to be as effecient as possible (supporting constexpr construction and
+ *  to be as efficient as possible (supporting constexpr construction and
  *  using std::string_view mostly).  In some cases it is necessary for the
  *  proxy to leave a scope where it would be no longer safe to use the
  *  previously-supplied string_views.  The `preserve` operation can be used
@@ -72,7 +72,7 @@ struct proxy : private sdbusplus::bus::details::bus_friend
         requires(S || P || I)
     = delete;
 
-    // Construtor allowing all 3 to be passed in.
+    // Constructor allowing all 3 to be passed in.
     constexpr proxy(value_ref<S> s, value_ref<P> p, value_ref<I> i) :
         s(s), p(p), i(i){};
 

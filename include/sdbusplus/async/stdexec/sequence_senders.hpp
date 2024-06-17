@@ -57,7 +57,7 @@ concept next_sender =        //
 // sender and it returns a next-sender. `set_next` is usually called in a
 // context where a sender will be connected to a receiver. Since calling
 // `set_next` usually involves constructing senders it is allowed to throw an
-// excpetion, which needs to be handled by a calling sequence-operation. The
+// exception, which needs to be handled by a calling sequence-operation. The
 // returned object is a sender that can complete with `set_value_t()` or
 // `set_stopped_t()`.
 struct set_next_t

@@ -51,10 +51,10 @@ struct dedup_variant<std::variant<Done...>, First, Rest...> :
 
 } // namespace details
 
-/** This type is useful for generated code which may inadvertantly contain
+/** This type is useful for generated code which may inadvertently contain
  *  duplicate types if specified simply as `std::variant<A, B, C>`.  Some
  *  types, such as `uint32_t` and `size_t` are the same on some architectures
- *  and different on others.  `dedup_variant_t<uint32_t, size_t>` will evalute
+ *  and different on others.  `dedup_variant_t<uint32_t, size_t>` will evaluate
  *  to `std::variant<uint32_t>` on architectures where there is a collision.
  */
 template <typename T, typename... Types>

@@ -26,7 +26,7 @@ class Path(NamedElement):
         if not segment and self.value[0] != "/":
             raise ValueError(f"Paths must start with /: {self.value}")
         if segment and self.value[0] == "/":
-            raise ValueError(f"Segments canot start with /: {self.value}")
+            raise ValueError(f"Segments cannot start with /: {self.value}")
         segments = self.value.split("/")
         if not segment:
             segments = segments[1:]

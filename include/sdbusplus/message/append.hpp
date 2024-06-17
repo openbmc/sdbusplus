@@ -143,7 +143,7 @@ struct append_single
      *  @tparam T - Type of element to append.
      *
      *  Template parameters T (function) and S (class) are different
-     *  to allow the function to be utilized for many varients of S:
+     *  to allow the function to be utilized for many variants of S:
      *  S&, S&&, const S&, volatile S&, etc. The type_id_downcast is used
      *  to ensure T and S are equivalent.  For 'char*', this also allows
      *  use for 'char[N]' types.

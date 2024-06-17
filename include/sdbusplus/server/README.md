@@ -5,7 +5,7 @@ Handles the generation and maintenance of the _transaction id_.
 **What is _transaction id_** - A unique identifier created by hashing the bus
 name and message cookie from a dbus call. The bus name (unique to each
 application) and message cookie (unique within each bus peer) allows each dbus
-message to be uniquely identifed.
+message to be uniquely identified.
 
 **When is _transaction id_ generated** - When an error response message is
 created, and whenever the id is requested and has not been initialized yet.

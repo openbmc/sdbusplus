@@ -2185,7 +2185,7 @@ struct __receiver
         }
     }
 
-    // Forward all receiever queries.
+    // Forward all receiver queries.
     friend auto tag_invoke(get_env_t, const __receiver& __self) noexcept
         -> env_of_t<_Receiver&>
     {

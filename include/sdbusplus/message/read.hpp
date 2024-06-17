@@ -121,7 +121,7 @@ struct read_single
      *  @tparam T - Type of element to read.
      *
      *  Template parameters T (function) and S (class) are different
-     *  to allow the function to be utilized for many varients of S:
+     *  to allow the function to be utilized for many variants of S:
      *  S&, S&&, const S&, volatile S&, etc. The type_id_downcast is used
      *  to ensure T and S are equivalent.  For 'char*', this also allows
      *  use for 'char[N]' types.
@@ -396,7 +396,7 @@ struct read_single<std::variant<Args...>>
 
             t = std::move(*ret);
         }
-        else // otherise, read it out directly.
+        else // otherwise, read it out directly.
         {
             std::remove_reference_t<T1> t1;
             sdbusplus::message::read(intf, m, t1);

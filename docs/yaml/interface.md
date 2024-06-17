@@ -104,7 +104,7 @@ For floating-point types it is possible to express one of the special values:
 
 For integer types it is possible to express one of the special values:
 
-- `minint` - The mininum value the integer type can hold.
+- `minint` - The minimum value the integer type can hold.
 - `maxint` - The maximum value the integer type can hold.
 
 ### Container Types

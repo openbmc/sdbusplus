@@ -142,6 +142,24 @@
       "parentUuid": "65c3a0b8_1372c804",
       "revId": "75aa316d2542b06d6050cf64813d4e80786bba67",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "cc182bd9_727ee86c",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2024-06-18T23:27:33Z",
+      "side": 1,
+      "message": "If we did that, bmcweb wouldn\u0027t be involved, but a number of other repos would be involved.  i will keep that in mind.\n\nThank you for the review.",
+      "parentUuid": "c5fb94b4_82d2e6e7",
+      "revId": "75aa316d2542b06d6050cf64813d4e80786bba67",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

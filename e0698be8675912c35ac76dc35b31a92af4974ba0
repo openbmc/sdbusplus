@@ -16,6 +16,24 @@
       "message": "This code is imported from stdexec upstream. if you don\u0027t commit a fix there it is likely to be reverted next time I import.",
       "revId": "e0698be8675912c35ac76dc35b31a92af4974ba0",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c8fd2eb3_e514da77",
+        "filename": "include/sdbusplus/async/stdexec/execution.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 2188,
+      "author": {
+        "id": 1000206
+      },
+      "writtenOn": "2024-06-18T06:29:11Z",
+      "side": 0,
+      "message": "Sure, i will try to put a fix upstream as well for this.",
+      "parentUuid": "05d2e422_32b7ac55",
+      "revId": "e0698be8675912c35ac76dc35b31a92af4974ba0",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

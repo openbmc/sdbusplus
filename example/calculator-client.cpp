@@ -50,6 +50,15 @@ auto startup(sdbusplus::async::context& ctx) -> sdbusplus::async::task<>
         std::cout << "Should be 1234: " << _ << std::endl;
     }
 
+    {
+        co_await c.owner("client");
+    }
+
+    {
+        auto _ = co_await c.owner();
+        std::cout << "Should be 'client': " << _ << std::endl;
+    }
+
     co_return;
 }
 

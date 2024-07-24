@@ -1,0 +1,10 @@
+Verified+1: OpenBMC CI <openbmcbump-ci@yahoo.com>
+Code-Review+2: Patrick Williams <patrick@stwcx.xyz>
+Code-Review+1: Ed Tanous <ed@tanous.net>
+Submitted-by: Matt Spinler <spinler@us.ibm.com>
+Submitted-at: Wed, 24 Jul 2024 13:24:18 +0000
+Reviewed-on: https://gerrit.openbmc.org/c/openbmc/sdbusplus/+/72907
+Comments-Total: 1
+Comments-Unresolved: 1
+Project: openbmc/sdbusplus
+Branch: refs/heads/master

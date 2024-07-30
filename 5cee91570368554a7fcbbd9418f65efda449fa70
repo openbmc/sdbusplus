@@ -16,6 +16,24 @@
       "message": "Are we working on getting this into its own recipe/subproject?",
       "revId": "5cee91570368554a7fcbbd9418f65efda449fa70",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2faa4a75_dd108b1a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-07-30T21:22:01Z",
+      "side": 1,
+      "message": "I\u0027m not currently, but it looks like maybe I should.  Do you think we\u0027d be ok if this is an openbmc recipe?  There seems to be a lot of flux upstream still where I\u0027ve had to make sdbusplus changes at the same time as importing the new version, so I don\u0027t really want to get tangled up on a subtree update.\n\nPreviously they didn\u0027t have a good \"install\" done but I just looked at it and I think they are installing now.  My only immediate concern is looking at which pieces we might be picking up that aren\u0027t formally part of the P2600 spec (like \u0027task\u0027 and \u0027async_scope\u0027) because a few of these are going to be part of the standard lately and they might not be installing them.",
+      "parentUuid": "d8430ac5_590bc873",
+      "revId": "5cee91570368554a7fcbbd9418f65efda449fa70",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

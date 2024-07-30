@@ -1,6 +1,6 @@
 /*
  * Copyright (c) Facebook, Inc. and its affiliates.
- * Copyright (c) 2021-2022 NVIDIA Corporation
+ * Copyright (c) 2021-2024 NVIDIA Corporation
  *
  * Licensed under the Apache License Version 2.0 with LLVM Exceptions
  * (the "License"); you may not use this file except in compliance with
@@ -48,39 +48,44 @@ struct __die_on_stop_t
             using __id = __receiver_id;
             _Receiver __receiver_;
 
-            template <__one_of<set_value_t, set_error_t> _Tag,
-                      __decays_to<__t> _Self, class... _Args>
-                requires __callable<_Tag, _Receiver, _Args...>
-            friend void tag_invoke(_Tag, _Self&& __self,
-                                   _Args&&... __args) noexcept
+            template <class... _Args>
+                requires __callable<set_value_t, _Receiver, _Args...>
+            void set_value(_Args&&... __args) noexcept
             {
-                _Tag{}(static_cast<_Receiver&&>(__self.__receiver_),
-                       static_cast<_Args&&>(__args)...);
+                stdexec::set_value(static_cast<_Receiver&&>(__receiver_),
+                                   static_cast<_Args&&>(__args)...);
             }
 
-            template <same_as<set_stopped_t> _Tag>
-            [[noreturn]] friend void tag_invoke(_Tag, __t&&) noexcept
+            template <class _Error>
+                requires __callable<set_error_t, _Receiver, _Error>
+            void set_error(_Error&& __err) noexcept
+            {
+                stdexec::set_error(static_cast<_Receiver&&>(__receiver_),
+                                   static_cast<_Error&&>(__err));
+            }
+
+            [[noreturn]] void set_stopped() noexcept
             {
                 std::terminate();
             }
 
-            friend auto tag_invoke(get_env_t, const __t& __self) noexcept
-                -> env_of_t<_Receiver>
+            auto get_env() const noexcept -> env_of_t<_Receiver>
             {
-                return get_env(__self.__receiver_);
+                return stdexec::get_env(__receiver_);
             }
         };
     };
+
     template <class _Rec>
     using __receiver = __t<__receiver_id<_Rec>>;
 
     template <class _Sender>
     struct __sender_id
     {
-        template <class _Env>
+        template <class... _Env>
         using __completion_signatures = //
-            __mapply<__remove<set_stopped_t(), __q<completion_signatures>>,
-                     completion_signatures_of_t<_Sender, _Env>>;
+            __mapply<__mremove<set_stopped_t(), __q<completion_signatures>>,
+                     __completion_signatures_of_t<_Sender, _Env...>>;
 
         struct __t
         {
@@ -91,26 +96,24 @@ struct __die_on_stop_t
 
             template <receiver _Receiver>
                 requires sender_to<_Sender, __receiver<_Receiver>>
-            friend auto tag_invoke(connect_t, __t&& __self,
-                                   _Receiver&& __rcvr) noexcept
+            auto connect(_Receiver __rcvr) && noexcept
                 -> connect_result_t<_Sender, __receiver<_Receiver>>
             {
                 return stdexec::connect(
-                    static_cast<_Sender&&>(__self.__sender_),
+                    static_cast<_Sender&&>(__sender_),
                     __receiver<_Receiver>{static_cast<_Receiver&&>(__rcvr)});
             }
 
-            template <__decays_to<__t> _Self, class _Env>
-            friend auto tag_invoke(get_completion_signatures_t, _Self&&, _Env&&)
-                -> __completion_signatures<_Env>
+            template <class... _Env>
+            auto get_completion_signatures(_Env&&...)
+                -> __completion_signatures<_Env...>
             {
                 return {};
             }
 
-            friend auto tag_invoke(get_env_t, const __t& __self) noexcept
-                -> env_of_t<_Sender>
+            auto get_env() const noexcept -> env_of_t<_Sender>
             {
-                return get_env(__self.__sender_);
+                return stdexec::get_env(__sender_);
             }
         };
     };
@@ -207,10 +210,9 @@ class [[nodiscard]] __task
     {
         const __promise& __promise_;
 
-        friend auto tag_invoke(get_scheduler_t, __env __self) noexcept
-            -> __any_scheduler
+        auto query(get_scheduler_t) const noexcept -> __any_scheduler
         {
-            return __self.__promise_.__scheduler_;
+            return __promise_.__scheduler_;
         }
     };
 
@@ -257,10 +259,9 @@ class [[nodiscard]] __task
                 __die_on_stop(static_cast<_Awaitable&&>(__awaitable)), *this);
         }
 
-        friend auto tag_invoke(get_env_t, const __promise& __self) noexcept
-            -> __env
+        auto get_env() const noexcept -> __env
         {
-            return {__self};
+            return {*this};
         }
 
         bool __is_unhandled_stopped_{false};

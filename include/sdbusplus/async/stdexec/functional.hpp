@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 NVIDIA Corporation
+ * Copyright (c) 2021-2024 NVIDIA Corporation
  *
  * Licensed under the Apache License Version 2.0 with LLVM Exceptions
  * (the "License"); you may not use this file except in compliance with
@@ -17,6 +17,7 @@
 
 #include "__detail/__config.hpp"
 #include "__detail/__meta.hpp"
+#include "__detail/__tag_invoke.hpp"
 #include "concepts.hpp"
 
 #include <cstddef>
@@ -24,59 +25,8 @@
 #include <tuple>
 #include <type_traits>
 
-namespace stdexec::__std_concepts
-{
-#if STDEXEC_HAS_STD_CONCEPTS_HEADER()
-using std::invocable;
-#else
-template <class _Fun, class... _As>
-concept invocable = //
-    requires(_Fun&& __f, _As&&... __as) {
-        std::invoke(static_cast<_Fun&&>(__f), static_cast<_As&&>(__as)...);
-    };
-#endif
-} // namespace stdexec::__std_concepts
-
-namespace std
-{
-using namespace stdexec::__std_concepts;
-} // namespace std
-
 namespace stdexec
 {
-template <auto _Fun>
-struct __function_constant
-{
-    using _FunT = decltype(_Fun);
-
-    template <class... _Args>
-        requires __callable<_FunT, _Args...>
-    STDEXEC_ATTRIBUTE((always_inline)) auto operator()(_Args&&... __args) const
-        noexcept(noexcept(_Fun(static_cast<_Args&&>(__args)...)))
-            -> decltype(_Fun(static_cast<_Args&&>(__args)...))
-    {
-        return _Fun(static_cast<_Args&&>(__args)...);
-    }
-};
-
-template <class _Ty, class _Cl, _Ty _Cl::*_MemPtr>
-struct __function_constant<_MemPtr>
-{
-    using _FunT = _Ty _Cl::*;
-
-    template <class _Arg>
-        requires requires(_Arg&& __arg) { static_cast<_Arg&&>(__arg).*_MemPtr; }
-    STDEXEC_ATTRIBUTE((always_inline)) constexpr auto
-        operator()(_Arg&& __arg) const noexcept
-        -> decltype(((static_cast<_Arg&&>(__arg)).*_MemPtr))
-    {
-        return static_cast<_Arg&&>(__arg).*_MemPtr;
-    }
-};
-
-template <auto _Fun>
-inline constexpr __function_constant<_Fun> __function_constant_v{};
-
 template <class _Fun0, class _Fun1>
 struct __composed
 {
@@ -313,11 +263,11 @@ using std::get;
 
 template <std::size_t... _Is, class _Fn, class _Tup>
 STDEXEC_ATTRIBUTE((always_inline))
-constexpr auto __impl(__indices<_Is...>, _Fn&& __fn, _Tup&& __tup) noexcept(
-    noexcept(__invoke(static_cast<_Fn&&>(__fn),
-                      get<_Is>(static_cast<_Tup&&>(__tup))...)))
-    -> decltype(__invoke(static_cast<_Fn&&>(__fn),
-                         get<_Is>(static_cast<_Tup&&>(__tup))...))
+constexpr auto __impl(__indices<_Is...>, _Fn&& __fn, _Tup&& __tup) //
+    noexcept(noexcept(__invoke(static_cast<_Fn&&>(__fn),
+                               get<_Is>(static_cast<_Tup&&>(__tup))...)))
+        -> decltype(__invoke(static_cast<_Fn&&>(__fn),
+                             get<_Is>(static_cast<_Tup&&>(__tup))...))
 {
     return __invoke(static_cast<_Fn&&>(__fn),
                     get<_Is>(static_cast<_Tup&&>(__tup))...);
@@ -337,8 +287,9 @@ concept __applicable = __mvalid<__apply_::__result_t, _Fn, _Tup>;
 
 template <class _Fn, class _Tup>
 concept __nothrow_applicable = __applicable<_Fn, _Tup> //
-    && noexcept(__apply_::__impl(__apply_::__tuple_indices<_Tup>(),
-                                 __declval<_Fn>(), __declval<_Tup>()));
+    &&                                                 //
+    noexcept(__apply_::__impl(__apply_::__tuple_indices<_Tup>(),
+                              __declval<_Fn>(), __declval<_Tup>()));
 
 template <class _Fn, class _Tup>
     requires __applicable<_Fn, _Tup>
@@ -386,87 +337,4 @@ struct __mkfield_
 
 template <class _Tag>
 inline constexpr __mkfield_<_Tag> __mkfield{};
-
-// [func.tag_invoke], tag_invoke
-namespace __tag_invoke
-{
-void tag_invoke();
-
-// NOT TO SPEC: Don't require tag_invocable to subsume invocable.
-// std::invoke is more expensive at compile time than necessary,
-// and results in diagnostics that are more verbose than necessary.
-template <class _Tag, class... _Args>
-concept tag_invocable = //
-    requires(_Tag __tag, _Args&&... __args) {
-        tag_invoke(static_cast<_Tag&&>(__tag), static_cast<_Args&&>(__args)...);
-    };
-
-template <class _Ret, class _Tag, class... _Args>
-concept __tag_invocable_r = //
-    requires(_Tag __tag, _Args&&... __args) {
-        {
-            static_cast<_Ret>(tag_invoke(static_cast<_Tag&&>(__tag),
-                                         static_cast<_Args&&>(__args)...))
-        };
-    };
-
-// NOT TO SPEC: nothrow_tag_invocable subsumes tag_invocable
-template <class _Tag, class... _Args>
-concept nothrow_tag_invocable =
-    tag_invocable<_Tag, _Args...> && //
-    requires(_Tag __tag, _Args&&... __args) {
-        {
-            tag_invoke(static_cast<_Tag&&>(__tag),
-                       static_cast<_Args&&>(__args)...)
-        } noexcept;
-    };
-
-template <class _Tag, class... _Args>
-using tag_invoke_result_t =
-    decltype(tag_invoke(__declval<_Tag>(), __declval<_Args>()...));
-
-template <class _Tag, class... _Args>
-struct tag_invoke_result
-{};
-
-template <class _Tag, class... _Args>
-    requires tag_invocable<_Tag, _Args...>
-struct tag_invoke_result<_Tag, _Args...>
-{
-    using type = tag_invoke_result_t<_Tag, _Args...>;
-};
-
-struct tag_invoke_t
-{
-    template <class _Tag, class... _Args>
-        requires tag_invocable<_Tag, _Args...>
-    STDEXEC_ATTRIBUTE((always_inline)) constexpr auto
-        operator()(_Tag __tag, _Args&&... __args) const
-        noexcept(nothrow_tag_invocable<_Tag, _Args...>)
-            -> tag_invoke_result_t<_Tag, _Args...>
-    {
-        return tag_invoke(static_cast<_Tag&&>(__tag),
-                          static_cast<_Args&&>(__args)...);
-    }
-};
-
-} // namespace __tag_invoke
-
-using __tag_invoke::tag_invoke_t;
-
-namespace __ti
-{
-inline constexpr tag_invoke_t tag_invoke{};
-} // namespace __ti
-
-using namespace __ti;
-
-template <auto& _Tag>
-using tag_t = __decay_t<decltype(_Tag)>;
-
-using __tag_invoke::__tag_invocable_r;
-using __tag_invoke::nothrow_tag_invocable;
-using __tag_invoke::tag_invocable;
-using __tag_invoke::tag_invoke_result;
-using __tag_invoke::tag_invoke_result_t;
 } // namespace stdexec

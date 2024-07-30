@@ -17,13 +17,15 @@
 
 #include "__config.hpp"
 
+#include <type_traits>
+
 namespace stdexec
 {
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 // A very simple std::declval replacement that doesn't handle void
 template <class _Tp>
-auto __declval() noexcept -> _Tp&&;
+extern auto (*__declval)() noexcept -> _Tp&&;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 // __decay_t: An efficient implementation for std::decay
@@ -179,12 +181,10 @@ using __copy_cvref_fn = decltype(__cpcvr<_Tp>);
 template <class _From, class _To>
 using __copy_cvref_t = typename __copy_cvref_fn<_From>::template __f<_To>;
 
-#if !STDEXEC_HAS_BUILTIN(__is_const)
 template <class>
-inline constexpr bool __is_const = false;
+inline constexpr bool __is_const_ = false;
 template <class _Up>
-inline constexpr bool __is_const<const _Up> = true;
-#endif
+inline constexpr bool __is_const_<const _Up> = true;
 
 namespace __tt
 {
@@ -196,4 +196,13 @@ template <class _Ty>
 using __remove_rvalue_reference_t =
     decltype(__tt::__remove_rvalue_reference_fn(__declval<_Ty>()));
 
+// Implemented as a class instead of a free function
+// because of a bizarre nvc++ compiler bug:
+struct __cref_fn
+{
+    template <class _Ty>
+    auto operator()(const _Ty&) -> const _Ty&;
+};
+template <class _Ty>
+using __cref_t = decltype(__cref_fn{}(__declval<_Ty>()));
 } // namespace stdexec

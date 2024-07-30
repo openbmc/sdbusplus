@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 NVIDIA Corporation
+ * Copyright (c) 2021-2024 NVIDIA Corporation
  *
  * Licensed under the Apache License Version 2.0 with LLVM Exceptions
  * (the "License"); you may not use this file except in compliance with
@@ -18,8 +18,10 @@
 #include "__concepts.hpp"
 #include "__config.hpp"
 #include "__type_traits.hpp"
+#include "__utility.hpp"
 
 #include <cassert>
+#include <compare>
 #include <cstddef>
 #include <exception>
 #include <type_traits>
@@ -27,60 +29,17 @@
 
 namespace stdexec
 {
-
-template <class...>
-struct __undefined;
-
-struct __
-{};
-
-struct __ignore
-{
-    __ignore() = default;
-
-    STDEXEC_ATTRIBUTE((always_inline))
-    constexpr __ignore(auto&&...) noexcept {}
-};
-
-struct __none_such
-{};
-
-namespace
-{
-struct __anon
-{};
-} // namespace
-
-struct __immovable
-{
-    __immovable() = default;
-
-  private:
-    STDEXEC_IMMOVABLE(__immovable);
-};
-
-struct __move_only
-{
-    __move_only() = default;
-
-    __move_only(__move_only&&) noexcept = default;
-    auto operator=(__move_only&&) noexcept -> __move_only& = default;
-
-    __move_only(const __move_only&) = delete;
-    auto operator=(const __move_only&) -> __move_only& = delete;
-};
-
 template <class _Tp>
 using __t = typename _Tp::__t;
-
-template <bool _Bp>
-using __mbool = std::bool_constant<_Bp>;
 
 template <class _Ty>
 struct __mtype
 {
     using __t = _Ty;
 };
+
+template <class...>
+inline constexpr bool __mnever = false;
 
 template <auto _Value>
 using __mtypeof = decltype(_Value);
@@ -91,20 +50,58 @@ struct __types;
 template <class _Tp>
 using __midentity = _Tp;
 
+template <auto _Np>
+struct __mconstant
+{
+    using type = __mconstant;
+    using value_type = __mtypeof<_Np>;
+    static constexpr auto value = _Np;
+
+    constexpr operator value_type() const noexcept
+    {
+        return value;
+    }
+
+    constexpr auto operator()() const noexcept -> value_type
+    {
+        return value;
+    }
+};
+
+// Because of nvc++ nvbugs#4679848, we can't make __mbool a simple alias for
+// __mconstant, and because of nvc++ nvbugs#4668709 it can't be a simple alias
+// for std::bool_constant, either. :-( template <bool _Bp> using __mbool =
+// __mconstant<_Bp>;
+
+template <bool _Bp>
+struct __mbool : std::bool_constant<_Bp>
+{};
+
+using __mtrue = __mbool<true>;
+using __mfalse = __mbool<false>;
+
+// nvbugs#4679848 and nvbugs#4668709 also preclude __mconstant from representing
+// a compile-time size_t.
+enum class __muchar : unsigned char
+{
+};
+
+#if STDEXEC_MSVC()
 template <std::size_t _Np>
-using __msize_t = char[_Np + 1];
-
-template <auto _Np>
-struct __mconstant_;
-
-template <auto _Np>
-using __mconstant = __mconstant_<_Np>*;
+using __msize_t = __mconstant<_Np>;
+#else
+template <std::size_t _Np>
+using __msize_t = __muchar (*)[_Np + 1]; // +1 to avoid zero-size array
+#endif
 
 template <class _Tp, class _Up>
 using __mfirst = _Tp;
 
 template <class _Tp, class _Up>
 using __msecond = _Up;
+
+template <class...>
+struct __undefined;
 
 template <class _Tp>
 extern const __undefined<_Tp> __v;
@@ -113,6 +110,8 @@ template <class _Tp>
     requires __typename<__mtypeof<_Tp::value>>
 inline constexpr auto __v<_Tp> = _Tp::value;
 
+// These specializations exist because instantiating a variable template is
+// cheaper than instantiating a class template.
 template <class _Tp, class _Up>
 inline constexpr bool __v<std::is_same<_Tp, _Up>> = false;
 
@@ -123,98 +122,171 @@ template <class _Tp, _Tp _Ip>
 inline constexpr _Tp __v<std::integral_constant<_Tp, _Ip>> = _Ip;
 
 template <auto _Np>
-inline constexpr __mtypeof<_Np> __v<__mconstant<_Np>> = _Np;
-
-template <std::size_t _Ip>
-inline constexpr std::size_t __v<char[_Ip]> = _Ip - 1;
-
-template <std::size_t... _Is>
-using __indices = std::index_sequence<_Is...>*;
+inline constexpr auto __v<__mconstant<_Np>> = _Np;
 
 template <std::size_t _Np>
-using __make_indices = std::make_index_sequence<_Np>*;
+inline constexpr std::size_t __v<__muchar (*)[_Np]> =
+    _Np - 1; // see definition of __msize_t
+
+namespace __pack
+{
+template <std::size_t... _Is>
+struct __t;
+} // namespace __pack
+
+template <std::size_t... _Is>
+using __indices = __pack::__t<_Is...>*;
+
+#if STDEXEC_MSVC()
+namespace __pack
+{
+template <class _Ty, _Ty... _Is>
+struct __idx;
+
+template <class>
+extern int __mkidx;
+
+template <std::size_t... _Is>
+extern __indices<_Is...> __mkidx<__idx<std::size_t, _Is...>>;
+} // namespace __pack
+
+template <std::size_t _Np>
+using __make_indices = //
+    decltype(__pack::__mkidx<
+             __make_integer_seq<__pack::__idx, std::size_t, _Np>>);
+#elif STDEXEC_HAS_BUILTIN(__make_integer_seq)
+namespace __pack
+{
+template <class _Ty, _Ty... _Is>
+using __idx = __indices<_Is...>;
+} // namespace __pack
+
+template <std::size_t _Np>
+using __make_indices = __make_integer_seq<__pack::__idx, std::size_t, _Np>;
+#elif STDEXEC_HAS_BUILTIN(__integer_pack)
+namespace __pack
+{
+template <std::size_t _Np>
+extern __indices<__integer_pack(_Np)...> __make_indices;
+} // namespace __pack
+
+template <std::size_t _Np>
+using __make_indices = decltype(__pack::__make_indices<_Np>);
+#else
+namespace __pack
+{
+template <std::size_t... _Is>
+auto __mk_indices(__indices<0, _Is...>) -> __indices<_Is...>;
+
+template <std::size_t _Np, class = char[_Np], std::size_t... _Is>
+auto __mk_indices(__indices<_Np, _Is...>)
+    -> decltype(__mk_indices(__indices<_Np - 1, 0, (_Is + 1)...>{}));
+} // namespace __pack
+
+template <std::size_t _Np>
+using __make_indices = decltype(__pack::__mk_indices(__indices<_Np>{}));
+#endif
 
 template <class... _Ts>
 using __indices_for = __make_indices<sizeof...(_Ts)>;
 
-template <class _Char>
-concept __mchar = __same_as<_Char, char>;
+STDEXEC_PRAGMA_PUSH()
+STDEXEC_PRAGMA_IGNORE_MSVC(4293)
+
+constexpr std::size_t __mpow2(std::size_t __size) noexcept
+{
+    --__size;
+    __size |= __size >> 1;
+    __size |= __size >> 2;
+    __size |= __size >> 4;
+    __size |= __size >> 8;
+    if constexpr (sizeof(__size) >= 4)
+        __size |= __size >> 16;
+    if constexpr (sizeof(__size) >= 8)
+        __size |= __size >> 32;
+    return ++__size;
+}
+
+STDEXEC_PRAGMA_POP()
 
 template <std::size_t _Len>
-class __mstring
+struct __mstring
 {
-    template <std::size_t... _Is>
-    constexpr __mstring(const char (&__str)[_Len], __indices<_Is...>) noexcept :
-        __what_{__str[_Is]...}
+#if STDEXEC_NVHPC()
+    template <std::size_t _Ny, std::size_t... _Is>
+    constexpr __mstring(const char (&__str)[_Ny], __indices<_Is...>) noexcept :
+        __what_{(_Is < _Ny ? __str[_Is] : '\0')...}
     {}
 
-  public:
-    constexpr __mstring(const char (&__str)[_Len]) noexcept :
+    template <std::size_t _Ny>
+    constexpr __mstring(const char (&__str)[_Ny], int = 0) noexcept :
         __mstring{__str, __make_indices<_Len>{}}
     {}
-
-    template <__mchar... _Char>
-        requires(sizeof...(_Char) == _Len)
-    constexpr __mstring(_Char... __chars) noexcept : __what_{__chars...}
-    {}
+#else
+    template <std::size_t _Ny>
+    constexpr __mstring(const char (&__str)[_Ny], int = 0) noexcept : __what_{}
+    {
+        for (auto __i = 0ull; char __ch : __str)
+        {
+            __what_[__i++] = __ch;
+        }
+    }
+#endif
 
     static constexpr auto __length() noexcept -> std::size_t
     {
         return _Len;
     }
 
-    template <std::size_t... _Is>
-    constexpr auto __equal(__mstring __other, __indices<_Is...>) const noexcept
+    constexpr auto operator==(const __mstring&) const noexcept
+        -> bool = default;
+
+    template <std::size_t _OtherLen>
+    constexpr auto operator==(const __mstring<_OtherLen>&) const noexcept
         -> bool
     {
-        return ((__what_[_Is] == __other.__what_[_Is]) && ...);
+        return false;
     }
 
-    constexpr auto operator==(__mstring __other) const noexcept -> bool
+#if !STDEXEC_NVHPC()
+    constexpr auto operator<=>(const __mstring&) const noexcept
+        -> std::strong_ordering = default;
+#endif
+
+    template <std::size_t _OtherLen>
+    constexpr auto
+        operator<=>(const __mstring<_OtherLen>& __other) const noexcept
+        -> std::strong_ordering
     {
-        return __equal(__other, __make_indices<_Len>());
+        constexpr std::size_t __len = _Len < _OtherLen ? _Len : _OtherLen;
+        for (std::size_t __i = 0; __i < __len; ++__i)
+        {
+            auto __cmp = (__what_[__i] <=> __other.__what_[__i]);
+            if (__cmp != 0)
+            {
+                return __cmp;
+            }
+        }
+        if constexpr (_Len == _OtherLen)
+        {
+            return std::strong_ordering::equal;
+        }
+        return (_Len < _OtherLen) ? std::strong_ordering::less
+                                  : std::strong_ordering::greater;
     }
 
-    const char __what_[_Len];
+    char __what_[_Len];
 };
 
 template <std::size_t _Len>
 __mstring(const char (&__str)[_Len]) -> __mstring<_Len>;
 
+template <std::size_t _Len>
+__mstring(const char (&__str)[_Len], int) -> __mstring<__mpow2(_Len)>;
+
 STDEXEC_PRAGMA_PUSH()
 STDEXEC_PRAGMA_IGNORE_GNU("-Wuser-defined-literals")
 
-#if STDEXEC_NVHPC() && (__EDG_VERSION__ < 604)
-// Use a non-standard extension for older nvc++ releases
-template <__mchar _Char, _Char... _Str>
-[[deprecated("Use _mstr instead")]] constexpr __mstring<sizeof...(_Str)>
-    operator""__csz() noexcept
-{
-    return {_Str...};
-}
-
-// Use a non-standard extension for older nvc++ releases
-template <__mchar _Char, _Char... _Str>
-constexpr __mstring<sizeof...(_Str)> operator""_mstr() noexcept
-{
-    return {_Str...};
-}
-#elif STDEXEC_NVHPC() && (__EDG_VERSION__ < 605)
-// This is to work around an unfiled (by me) EDG bug that fixed in build 605
-template <__mstring _Str>
-[[deprecated("Use _mstr instead")]] constexpr const __mtypeof<_Str>
-    operator""__csz() noexcept
-{
-    return _Str;
-}
-
-// This is to work around an unfiled (by me) EDG bug that fixed in build 605
-template <__mstring _Str>
-constexpr const __mtypeof<_Str> operator""_mstr() noexcept
-{
-    return _Str;
-}
-#else
 // Use a standard user-defined string literal template
 template <__mstring _Str>
 [[deprecated("Use _mstr instead")]] constexpr auto operator""__csz() noexcept
@@ -229,9 +301,18 @@ constexpr auto operator""_mstr() noexcept -> __mtypeof<_Str>
 {
     return _Str;
 }
-#endif
 
 STDEXEC_PRAGMA_POP()
+
+template <class T>
+constexpr auto __mnameof() noexcept
+{
+#if STDEXEC_MSVC()
+    return __mstring{__FUNCSIG__, 0};
+#else
+    return __mstring{__PRETTY_FUNCTION__, 0};
+#endif
+}
 
 using __msuccess = int;
 
@@ -245,7 +326,7 @@ struct _ERROR_
     auto operator,(__msuccess) const noexcept -> _ERROR_;
 };
 
-template <__mstring _What>
+template <__mstring... _What>
 struct _WHAT_
 {};
 
@@ -265,15 +346,15 @@ template <class... _Ts>
 using __disp = decltype((__msuccess(), ..., __ok_t<_Ts>()));
 
 template <class _Arg>
-concept __ok = __same_as<__ok_t<_Arg>, __msuccess>;
+concept __ok = STDEXEC_IS_SAME(__ok_t<_Arg>, __msuccess);
 
 template <class _Arg>
-concept __merror = !__ok<_Arg>;
+concept __merror = !STDEXEC_IS_SAME(__ok_t<_Arg>, __msuccess);
 
 template <class... _Args>
-concept _Ok = (__ok<_Args> && ...);
+concept _Ok = (STDEXEC_IS_SAME(__ok_t<_Args>, __msuccess) && ...);
 
-template <bool _AllOK>
+template <bool _ArgsOK, bool _FnOK = true>
 struct __i;
 
 #if STDEXEC_NVHPC()
@@ -281,7 +362,9 @@ struct __i;
 // nvc++ does not. So we memoize the type computations by
 // indirecting through a class template specialization.
 template <template <class...> class _Fn, class... _Args>
-using __meval__ = typename __i<_Ok<_Args...>>::template __g<_Fn, _Args...>;
+using __meval__ =                  //
+    typename __i<_Ok<_Args...>>    //
+    ::template __g<_Fn, _Args...>; //
 
 template <template <class...> class _Fn, class... _Args>
 struct __meval_
@@ -298,7 +381,10 @@ template <template <class...> class _Fn, class... _Args>
 using __meval = __t<__meval_<_Fn, _Args...>>;
 
 template <class _Fn, class... _Args>
-using __minvoke__ = typename __i<_Ok<_Fn>>::template __h<_Fn, _Args...>;
+using __minvoke__ =                       //
+    typename __i<_Ok<_Args...>, _Ok<_Fn>> //
+    ::template __f<_Fn>                   //
+    ::template __f<_Args...>;             //
 
 template <class _Fn, class... _Args>
 struct __minvoke_
@@ -317,39 +403,88 @@ using __minvoke = __t<__minvoke_<_Fn, _Args...>>;
 #else
 
 template <template <class...> class _Fn, class... _Args>
-using __meval = typename __i<_Ok<_Args...>>::template __g<_Fn, _Args...>;
+using __meval =                    //
+    typename __i<_Ok<_Args...>>    //
+    ::template __g<_Fn, _Args...>; //
 
 template <class _Fn, class... _Args>
-using __minvoke = typename __i<_Ok<_Fn>>::template __h<_Fn, _Args...>;
+using __minvoke =                         //
+    typename __i<_Ok<_Args...>, _Ok<_Fn>> //
+    ::template __f<_Fn>                   //
+    ::template __f<_Args...>;             //
 
 #endif
 
-template <bool _AllOK>
-struct __i
+template <class _Fn, class... _Args>
+using __mcall = typename _Fn::template __f<_Args...>;
+
+struct __disp_q
+{
+    template <class... _Args>
+    using __f = __disp<_Args...>;
+};
+
+template <>
+struct __i<true, true>
 {
     template <template <class...> class _Fn, class... _Args>
     using __g = _Fn<_Args...>;
 
-    template <class _Fn, class... _Args>
-    using __h = __meval<_Fn::template __f, _Args...>;
+    template <class _Fn>
+    using __f = _Fn;
 };
 
 template <>
-struct __i<false>
+struct __i<false, true>
 {
     template <template <class...> class, class... _Args>
     using __g = __disp<_Args...>;
 
-    template <class _Fn, class...>
-    using __h = _Fn;
+    template <class>
+    using __f = __disp_q;
+};
+
+template <bool _ArgsOK>
+struct __i<_ArgsOK, false>
+{
+    template <class _Fn>
+    using __f = _Fn;
 };
 
 template <template <class...> class _Fn>
 struct __q
 {
     template <class... _Args>
-    using __f = __meval<_Fn, _Args...>;
+    using __f = typename __i<_Ok<_Args...>>::template __g<_Fn, _Args...>;
 };
+
+template <template <class...> class _Fn>
+struct __qq
+{
+    template <class... _Args>
+    using __f = _Fn<_Args...>;
+};
+
+template <template <class> class _Fn>
+struct __q1
+{
+    template <class _Ty>
+    using __f = _Fn<_Ty>;
+};
+
+template <template <class, class> class _Fn>
+struct __q2
+{
+    template <class _Ty, class _Uy>
+    using __f = _Fn<_Ty, _Uy>;
+};
+
+template <template <class...> class _Fn>
+using __mtry_q = __q<_Fn>;
+
+template <class _Fn>
+struct __mtry : __mtry_q<_Fn::template __f>
+{};
 
 template <template <class...> class _Fn, class... _Front>
 struct __mbind_front_q
@@ -385,12 +520,12 @@ concept __minvocable_succeeds = __minvocable<_Fn, _Args...> &&
                                 __ok<__minvoke<_Fn, _Args...>>;
 
 template <class _Fn, class... _Args>
-struct __force_minvoke_
+struct __minvoke_force_
 {
     using __t = __minvoke<_Fn, _Args...>;
 };
 template <class _Fn, class... _Args>
-using __force_minvoke = __t<__force_minvoke_<_Fn, _Args...>>;
+using __minvoke_force = __t<__minvoke_force_<_Fn, _Args...>>;
 
 template <class _Fn, class... _Args>
 struct __mdefer_
@@ -527,8 +662,11 @@ using __mtry_invoke =
 template <class _Ty, class... _Default>
 using __msuccess_or_t = __if_c<__ok<_Ty>, _Ty, _Default...>;
 
+template <class _Ty, class... _Default>
+using __merror_or_t = __if_c<__merror<_Ty>, _Ty, _Default...>;
+
 template <class _Fn, class _Continuation = __q<__types>>
-struct __transform
+struct __mtransform
 {
     template <class... _Args>
     using __f = __minvoke<_Continuation, __minvoke<_Fn, _Args>...>;
@@ -557,102 +695,97 @@ struct __mfold_right
         __minvoke<__mfold_right_<sizeof...(_Args) == 0>, _Fn, _Init, _Args...>;
 };
 
-template <class _Continuation, class... _As>
-struct __mconcat_
-{};
-
-template <class _Continuation, class... _As>
-    requires(sizeof...(_As) == 0) && __minvocable<_Continuation, _As...>
-struct __mconcat_<_Continuation, _As...>
+template <bool>
+struct __mfold_left_
 {
-    using __t = __minvoke<_Continuation, _As...>;
+    template <class _Fn, class _State, class _Head, class... _Tail>
+    using __f = __minvoke<
+        _Fn,
+        __mcall<__mfold_left_<sizeof...(_Tail) == 0>, _Fn, _State, _Tail...>,
+        _Head>;
 };
 
-template <class _Continuation, template <class...> class _Ap, class... _As>
-    requires __minvocable<_Continuation, _As...>
-struct __mconcat_<_Continuation, _Ap<_As...>>
-{
-    using __t = __minvoke<_Continuation, _As...>;
+template <>
+struct __mfold_left_<true>
+{ // empty pack
+    template <class _Fn, class _State, class...>
+    using __f = _State;
 };
 
-template <               //
-    class _Continuation, //
-    template <class...> class _Ap,
-    class... _As,        //
-    template <class...> class _Bp, class... _Bs>
-    requires __minvocable<_Continuation, _As..., _Bs...>
-struct __mconcat_<_Continuation, _Ap<_As...>, _Bp<_Bs...>>
-{
-    using __t = __minvoke<_Continuation, _As..., _Bs...>;
-};
-
-template <               //
-    class _Continuation, //
-    template <class...> class _Ap,
-    class... _As,        //
-    template <class...> class _Bp,
-    class... _Bs,        //
-    template <class...> class _Cp, class... _Cs>
-    requires __minvocable<_Continuation, _As..., _Bs..., _Cs...>
-struct __mconcat_<_Continuation, _Ap<_As...>, _Bp<_Bs...>, _Cp<_Cs...>>
-{
-    using __t = __minvoke<_Continuation, _As..., _Bs..., _Cs...>;
-};
-
-template <               //
-    class _Continuation, //
-    template <class...> class _Ap,
-    class... _As,        //
-    template <class...> class _Bp,
-    class... _Bs,        //
-    template <class...> class _Cp,
-    class... _Cs,        //
-    template <class...> class _Dp,
-    class... _Ds,        //
-    class... _Tail>
-struct __mconcat_<_Continuation, _Ap<_As...>, _Bp<_Bs...>, _Cp<_Cs...>,
-                  _Dp<_Ds...>, _Tail...> :
-    __mconcat_<_Continuation, __types<_As..., _Bs..., _Cs..., _Ds...>, _Tail...>
-{};
-
-template <class _Continuation = __q<__types>>
-struct __mconcat
+template <class _Init, class _Fn>
+struct __mfold_left
 {
     template <class... _Args>
-    using __f = __t<__mconcat_<_Continuation, _Args...>>;
+    using __f =
+        __minvoke<__mfold_left_<sizeof...(_Args) == 0>, _Fn, _Init, _Args...>;
 };
 
 template <class _Fn>
-struct __curry
+struct __mcurry
 {
     template <class... _Ts>
     using __f = __minvoke<_Fn, _Ts...>;
 };
 
-template <class _Fn, class _Tp>
-struct __uncurry_;
+template <class _Tp>
+struct __muncurry_;
 
-template <__merror _Fn, class _Tp>
-struct __uncurry_<_Fn, _Tp>
+template <template <class...> class _Ap, class... _As>
+struct __muncurry_<_Ap<_As...>>
 {
-    using __t = _Fn;
+    template <class _Fn>
+    using __f = __minvoke<_Fn, _As...>;
 };
 
-template <class _Fn, template <class...> class _Ap, class... _As>
-    requires __minvocable<_Fn, _As...>
-struct __uncurry_<_Fn, _Ap<_As...>>
+template <class _What, class... _With>
+struct __muncurry_<_ERROR_<_What, _With...>>
 {
-    using __t = __minvoke<_Fn, _As...>;
+    template <class _Fn>
+    using __f = _ERROR_<_What, _With...>;
 };
 
 template <class _Fn>
-struct __uncurry
+struct __muncurry
 {
     template <class _Tp>
-    using __f = __t<__uncurry_<_Fn, _Tp>>;
+    using __f = typename __muncurry_<_Tp>::template __f<_Fn>;
 };
+
 template <class _Fn, class _List>
-using __mapply = __minvoke<__uncurry<_Fn>, _List>;
+using __mapply = __minvoke<__muncurry<_Fn>, _List>;
+
+template <bool>
+struct __mconcat_
+{
+    template <class... _Ts, template <class...> class _Ap = __types,
+              class... _As, template <class...> class _Bp = __types,
+              class... _Bs, template <class...> class _Cp = __types,
+              class... _Cs, template <class...> class _Dp = __types,
+              class... _Ds, class... _Tail>
+    static auto __f(__types<_Ts...>*, _Ap<_As...>*, _Bp<_Bs...>* = nullptr,
+                    _Cp<_Cs...>* = nullptr, _Dp<_Ds...>* = nullptr,
+                    _Tail*... __tail)
+        -> decltype(__mconcat_<(sizeof...(_Tail) == 0)>::__f(
+            static_cast<__types<_Ts..., _As..., _Bs..., _Cs..., _Ds...>*>(
+                nullptr),
+            __tail...));
+};
+
+template <>
+struct __mconcat_<true>
+{
+    template <class... _As>
+    static auto __f(__types<_As...>*) -> __types<_As...>;
+};
+
+template <class _Continuation = __qq<__types>>
+struct __mconcat
+{
+    template <class... _Args>
+    using __f = __mapply<_Continuation,
+                         decltype(__mconcat_<(sizeof...(_Args) == 0)>::__f(
+                             {}, static_cast<_Args*>(nullptr)...))>;
+};
 
 struct __msize
 {
@@ -675,36 +808,17 @@ struct __mcount_if
 };
 
 template <class _Tp>
-struct __contains
+struct __mcontains
 {
     template <class... _Args>
     using __f = __mbool<(__same_as<_Tp, _Args> || ...)>;
 };
 
 template <class _Continuation = __q<__types>>
-struct __push_back
+struct __mpush_back
 {
     template <class _List, class _Item>
     using __f = __mapply<__mbind_back<_Continuation, _Item>, _List>;
-};
-
-template <class _Continuation = __q<__types>>
-struct __push_back_unique
-{
-    template <class _List, class _Item>
-    using __f = //
-        __mapply<__if<__mapply<__contains<_Item>, _List>, _Continuation,
-                      __mbind_back<_Continuation, _Item>>,
-                 _List>;
-};
-
-template <class _Continuation = __q<__types>>
-struct __munique
-{
-    template <class... _Ts>
-    using __f = __mapply<
-        _Continuation,
-        __minvoke<__mfold_right<__types<>, __push_back_unique<>>, _Ts...>>;
 };
 
 template <class...>
@@ -731,8 +845,15 @@ struct __mcompose<_Last, _Penultimate, _Rest...>
                   __minvoke<__mcompose<_Penultimate, _Rest...>, _Args...>>;
 };
 
+template <template <class...> class _Second, template <class...> class _First>
+struct __mcompose_q
+{
+    template <class... _Args>
+    using __f = _Second<_First<_Args...>>;
+};
+
 template <class _Old, class _New, class _Continuation = __q<__types>>
-struct __replace
+struct __mreplace
 {
     template <class... _Args>
     using __f = __minvoke<_Continuation,
@@ -740,7 +861,7 @@ struct __replace
 };
 
 template <class _Old, class _Continuation = __q<__types>>
-struct __remove
+struct __mremove
 {
     template <class... _Args>
     using __f = //
@@ -749,7 +870,7 @@ struct __remove
 };
 
 template <class _Pred, class _Continuation = __q<__types>>
-struct __remove_if
+struct __mremove_if
 {
     template <class... _Args>
     using __f = //
@@ -776,13 +897,6 @@ template <class _Default, class... _As>
 using __msingle_or_ = __mfront<_As..., _Default>;
 template <class _Default>
 using __msingle_or = __mbind_front_q<__msingle_or_, _Default>;
-
-template <class _Continuation = __q<__types>>
-struct __pop_front
-{
-    template <class, class... _Ts>
-    using __f = __minvoke<_Continuation, _Ts...>;
-};
 
 template <class _Ty>
 concept __has_id = requires { typename _Ty::__id; };
@@ -835,24 +949,22 @@ template <class _Fun, class... _As>
 using __call_result_t = decltype(__declval<_Fun>()(__declval<_As>()...));
 #endif
 
+// BUGBUG TODO file this bug with nvc++
+#if STDEXEC_NVHPC()
 template <const auto& _Fun, class... _As>
 using __result_of = __call_result_t<decltype(_Fun), _As...>;
+#else
+template <const auto& _Fun, class... _As>
+using __result_of = decltype(_Fun(__declval<_As>()...));
+#endif
 
-// For working around clang's lack of support for CWG#2369:
-// http://www.open-std.org/jtc1/sc22/wg21/docs/cwg_defects.html#2369
-struct __qcall_result
-{
-    template <class _Fun, class... _As>
-    using __f = __call_result_t<_Fun, _As...>;
-};
-template <bool _Enable, class _Fun, class... _As>
-using __call_result_if_t =
-    __minvoke<__if<__mbool<_Enable>, __qcall_result, __>, _Fun, _As...>;
+template <const auto& _Fun, class... _As>
+inline constexpr bool __noexcept_of = noexcept(_Fun(__declval<_As>()...));
 
 // For emplacing non-movable types into optionals:
 template <class _Fn>
     requires std::is_nothrow_move_constructible_v<_Fn>
-struct __conv
+struct __emplace_from
 {
     _Fn __fn_;
     using __t = __call_result_t<_Fn>;
@@ -867,18 +979,9 @@ struct __conv
         return static_cast<_Fn&&>(__fn_)();
     }
 };
-template <class _Fn>
-__conv(_Fn) -> __conv<_Fn>;
 
-// Implemented as a class instead of a free function
-// because of a bizarre nvc++ compiler bug:
-struct __cref_fn
-{
-    template <class _Ty>
-    auto operator()(const _Ty&) -> const _Ty&;
-};
-template <class _Ty>
-using __cref_t = decltype(__cref_fn{}(__declval<_Ty>()));
+template <class _Fn>
+__emplace_from(_Fn) -> __emplace_from<_Fn>;
 
 template <class, class, class, class>
 struct __mzip_with2_;
@@ -903,27 +1006,6 @@ struct __mzip_with2
     template <class _Cp, class _Dp>
     using __f = __t<__mzip_with2_<_Fn, _Continuation, _Cp, _Dp>>;
 };
-
-#if STDEXEC_GCC() && (__GNUC__ < 12)
-template <class>
-extern int __mconvert_indices;
-template <std::size_t... _Indices>
-extern __types<__msize_t<_Indices>...>
-    __mconvert_indices<std::index_sequence<_Indices...>>;
-template <std::size_t _Np>
-using __mmake_index_sequence =
-    decltype(stdexec::__mconvert_indices<std::make_index_sequence<_Np>>);
-#else
-template <std::size_t... _Indices>
-auto __mconvert_indices(std::index_sequence<_Indices...>*)
-    -> __types<__msize_t<_Indices>...>;
-template <std::size_t _Np>
-using __mmake_index_sequence = decltype(stdexec::__mconvert_indices(
-    static_cast<std::make_index_sequence<_Np>*>(nullptr)));
-#endif
-
-template <class... _Ts>
-using __mindex_sequence_for = __mmake_index_sequence<sizeof...(_Ts)>;
 
 template <bool>
 struct __mfind_if_
@@ -960,20 +1042,37 @@ struct __mfind_if_i
                            __v<__minvoke<__mfind_if<_Fn, __msize>, _Args...>>)>;
 };
 
-template <class... _Booleans>
-using __mand_ = __mbool<(__v<_Booleans> && ...)>;
-template <class... _Booleans>
-using __mand = __meval<__mand_, _Booleans...>;
+#if STDEXEC_MSVC()
+#define __mvalue_of(...) __VA_ARGS__::value
+#else
+#define __mvalue_of(...) __v<__VA_ARGS__>
+#endif
 
 template <class... _Booleans>
-using __mor_ = __mbool<(__v<_Booleans> || ...)>;
+using __mand_t = __mbool<(__mvalue_of(_Booleans) && ...)>;
 template <class... _Booleans>
-using __mor = __meval<__mor_, _Booleans...>;
+using __mand = __meval<__mand_t, _Booleans...>;
+
+template <class... _Booleans>
+using __mor_t = __mbool<(__mvalue_of(_Booleans) || ...)>;
+template <class... _Booleans>
+using __mor = __meval<__mor_t, _Booleans...>;
 
 template <class _Boolean>
-using __mnot_ = __mbool<!__v<_Boolean>>;
+using __mnot_t = __mbool<!__mvalue_of(_Boolean)>;
 template <class _Boolean>
-using __mnot = __meval<__mnot_, _Boolean>;
+using __mnot = __meval<__mnot_t, _Boolean>;
+
+#if STDEXEC_NVHPC()
+template <class... _Ints>
+struct __mplus_t : __mconstant<(__v<_Ints> + ...)>
+{};
+#else
+template <class... _Ints>
+using __mplus_t = __mconstant<(__mvalue_of(_Ints) + ...)>;
+#endif
+
+#undef __mvalue_of
 
 template <class _Fn>
 struct __mall_of
@@ -996,15 +1095,25 @@ struct __many_of
     using __f = __mor<__minvoke<_Fn, _Args>...>;
 };
 
-#if STDEXEC_HAS_BUILTIN(__type_pack_element)
-template <std::size_t _Np, class... _Ts>
-struct __m_at_
-{
-    using __t = __type_pack_element<_Np, _Ts...>;
-};
+#if defined(__cpp_pack_indexing)
+template <class _Np, class... _Ts>
+using __m_at = _Ts...[__v<_Np>];
 
 template <std::size_t _Np, class... _Ts>
-using __m_at_c = __t<__m_at_<_Np, _Ts...>>;
+using __m_at_c = _Ts...[_Np];
+#elif STDEXEC_HAS_BUILTIN(__type_pack_element)
+template <bool>
+struct __m_at_
+{
+    template <class _Np, class... _Ts>
+    using __f = __type_pack_element<__v<_Np>, _Ts...>;
+};
+
+template <class _Np, class... _Ts>
+using __m_at = __minvoke<__m_at_<__v<_Np> == ~0ul>, _Np, _Ts...>;
+
+template <std::size_t _Np, class... _Ts>
+using __m_at_c = __minvoke<__m_at_<_Np == ~0ul>, __msize_t<_Np>, _Ts...>;
 #else
 template <std::size_t>
 using __void_ptr = void*;
@@ -1016,7 +1125,7 @@ template <class _Ty>
 struct __m_at_;
 
 template <std::size_t... _Is>
-struct __m_at_<std::index_sequence<_Is...>>
+struct __m_at_<__indices<_Is...>>
 {
     template <class _Up, class... _Us>
     static _Up __f_(__void_ptr<_Is>..., _Up*, _Us*...);
@@ -1025,11 +1134,11 @@ struct __m_at_<std::index_sequence<_Is...>>
 };
 
 template <std::size_t _Np, class... _Ts>
-using __m_at_c = __minvoke<__m_at_<std::make_index_sequence<_Np>>, _Ts...>;
-#endif
+using __m_at_c = __minvoke<__m_at_<__make_indices<_Np>>, _Ts...>;
 
 template <class _Np, class... _Ts>
 using __m_at = __m_at_c<__v<_Np>, _Ts...>;
+#endif
 
 template <class... _Ts>
 using __mback = __m_at_c<sizeof...(_Ts) - 1, _Ts...>;
@@ -1059,7 +1168,7 @@ struct __placeholder
 
     constexpr __placeholder(void*) noexcept {}
 
-    friend constexpr auto __get_placeholder_offset(__placeholder) noexcept
+    constexpr friend auto __get_placeholder_offset(__placeholder) noexcept
         -> std::size_t
     {
         return _Np;
@@ -1071,22 +1180,19 @@ using __1 = __placeholder<1>;
 using __2 = __placeholder<2>;
 using __3 = __placeholder<3>;
 
-#if STDEXEC_MSVC()
-// MSVCBUG
-// https://developercommunity.visualstudio.com/t/Incorrect-function-template-argument-sub/10437827
-
-template <std::size_t>
-struct __ignore_t
+#if defined(__cpp_pack_indexing)
+template <std::size_t _Np>
+struct __nth_pack_element_t
 {
-    __ignore_t() = default;
-
-    constexpr __ignore_t(auto&&...) noexcept {}
+    template <class... _Ts>
+    STDEXEC_ATTRIBUTE((always_inline))
+    constexpr decltype(auto) operator()(_Ts&&... __ts) const noexcept
+    {
+        static_assert(_Np < sizeof...(_Ts));
+        return (static_cast<_Ts&&>(__ts)...[_Np]);
+    }
 };
 #else
-template <std::size_t>
-using __ignore_t = __ignore;
-#endif
-
 template <class... _Ignore>
 struct __nth_pack_element_impl
 {
@@ -1116,6 +1222,7 @@ struct __nth_pack_element_t
         return __impl(__make_indices<_Np>())(static_cast<_Ts&&>(__ts)...);
     }
 };
+#endif
 
 template <std::size_t _Np>
 inline constexpr __nth_pack_element_t<_Np> __nth_pack_element{};
@@ -1268,7 +1375,7 @@ struct __mdispatch_<_Ret (*)(_Args..., ...), _Offset>
                 __callable<
                     __mdispatch_<__minvoke<__mpop_back<__qf<_Ret>>, _Args...>*>,
                     _Ts...>
-    auto operator()(_Ts&&... __ts) const
+    auto operator()(_Ts&&... __ts) const //
         noexcept(__nothrow_callable<
                  __mdispatch_<__minvoke<__mpop_back<__qf<_Ret>>, _Args...>*>,
                  _Ts...>)
@@ -1327,4 +1434,59 @@ using __make_dispatcher = //
     __minvoke<__mtry_catch<__mcompose<__q<__mdispatch>, __which<_Signatures>>,
                            _DefaultFn>,
               _Args...>;
+
+template <class _Set, class... _Ty>
+concept __mset_contains = (STDEXEC_IS_BASE_OF(__mtype<_Ty>, _Set) && ...);
+
+namespace __set
+{
+template <class... _Ts>
+struct __inherit
+{};
+
+template <class _Ty, class... _Ts>
+struct __inherit<_Ty, _Ts...> : __mtype<_Ty>, __inherit<_Ts...>
+{};
+
+template <class... _Set>
+auto operator+(__inherit<_Set...>&) -> __inherit<_Set...>;
+
+template <class... _Set, class _Ty>
+auto operator%(__inherit<_Set...>&, __mtype<_Ty>&) //
+    -> __if_c<                                     //
+        __mset_contains<__inherit<_Set...>, _Ty>, __inherit<_Set...>,
+        __inherit<_Ty, _Set...>>&;
+
+template <class _ExpectedSet, class... _Ts>
+concept __mset_eq =                                            //
+    (sizeof...(_Ts) == __v<__mapply<__msize, _ExpectedSet>>)&& //
+    __mset_contains<_ExpectedSet, _Ts...>;
+
+template <class _ExpectedSet>
+struct __eq
+{
+    template <class... _Ts>
+    using __f = __mbool<__mset_eq<_ExpectedSet, _Ts...>>;
+};
+} // namespace __set
+
+template <class... _Ts>
+using __mset = __set::__inherit<_Ts...>;
+
+template <class _Set, class... _Ts>
+using __mset_insert =
+    decltype(+(__declval<_Set&>() % ... % __declval<__mtype<_Ts>&>()));
+
+template <class... _Ts>
+using __mmake_set = __mset_insert<__mset<>, _Ts...>;
+
+template <class _Set1, class _Set2>
+concept __mset_eq = __v<__mapply<__set::__eq<_Set1>, _Set2>>;
+
+template <class _Continuation = __q<__types>>
+struct __munique
+{
+    template <class... _Ts>
+    using __f = __mapply<_Continuation, __mmake_set<_Ts...>>;
+};
 } // namespace stdexec

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 NVIDIA Corporation
+ * Copyright (c) 2021-2024 NVIDIA Corporation
  *
  * Licensed under the Apache License Version 2.0 with LLVM Exceptions
  * (the "License"); you may not use this file except in compliance with
@@ -16,12 +16,12 @@
 #pragma once
 
 #include "../functional.hpp"
-#include "__basic_sender.hpp"
 #include "__concepts.hpp"
 #include "__config.hpp"
 #include "__env.hpp"
 #include "__execution_fwd.hpp"
 #include "__meta.hpp"
+#include "__sender_introspection.hpp"
 
 namespace stdexec
 {
@@ -83,6 +83,41 @@ concept __has_apply_sender =
     requires(_DomainOrTag __tag, _Args&&... __args) {
         __tag.apply_sender(static_cast<_Args&&>(__args)...);
     };
+
+template <class _Sender>
+constexpr bool __is_nothrow_transform_sender()
+{
+    if constexpr (__callable<__sexpr_apply_t, _Sender,
+                             __domain::__legacy_customization>)
+    {
+        return __nothrow_callable<__sexpr_apply_t, _Sender,
+                                  __domain::__legacy_customization>;
+    }
+    else if constexpr (__domain::__has_default_transform_sender<_Sender>)
+    {
+        return noexcept(
+            tag_of_t<_Sender>().transform_sender(__declval<_Sender>()));
+    }
+    else
+    {
+        return __nothrow_constructible_from<_Sender, _Sender>;
+    }
+}
+
+template <class _Sender, class _Env>
+constexpr bool __is_nothrow_transform_sender() noexcept
+{
+    if constexpr (__domain::__has_default_transform_sender<_Sender, _Env>)
+    {
+        return //
+            noexcept(tag_of_t<_Sender>().transform_sender(
+                __declval<_Sender>(), __declval<const _Env&>()));
+    }
+    else
+    {
+        return __nothrow_constructible_from<_Sender, _Sender>;
+    }
+}
 } // namespace __domain
 
 struct default_domain
@@ -93,6 +128,7 @@ struct default_domain
     template <class _Sender>
     STDEXEC_ATTRIBUTE((always_inline))
     decltype(auto) transform_sender(_Sender&& __sndr) const
+        noexcept(__domain::__is_nothrow_transform_sender<_Sender>())
     {
         // Look for a legacy customization for the given tag, and if found,
         // apply it.
@@ -117,6 +153,7 @@ struct default_domain
     template <class _Sender, class _Env>
     STDEXEC_ATTRIBUTE((always_inline))
     decltype(auto) transform_sender(_Sender&& __sndr, const _Env& __env) const
+        noexcept(__domain::__is_nothrow_transform_sender<_Sender, _Env>())
     {
         if constexpr (__domain::__has_default_transform_sender<_Sender, _Env>)
         {
@@ -185,9 +222,9 @@ using __completion_domain_for =
 // are no completion schedulers or if they don't specify a domain.
 template <class _Env>
 struct __completion_domain_or_none_ :
-    __mdefer_<__transform<
+    __mdefer_<__mtransform<
                   __mbind_front_q<__completion_domain_for, _Env>,
-                  __remove<__none_such, __munique<__msingle_or<__none_such>>>>,
+                  __mremove<__none_such, __munique<__msingle_or<__none_such>>>>,
               set_value_t, set_error_t, set_stopped_t>
 {};
 
@@ -215,7 +252,7 @@ inline constexpr struct __get_early_domain_t
     {
         if constexpr (__callable<get_domain_t, env_of_t<_Sender>>)
         {
-            return __call_result_t<get_domain_t, env_of_t<_Sender>>();
+            return __domain_of_t<env_of_t<_Sender>>();
         }
         else if constexpr (__detail::__has_completion_domain<_Sender>)
         {

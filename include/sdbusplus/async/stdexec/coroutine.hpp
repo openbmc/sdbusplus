@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 NVIDIA Corporation
+ * Copyright (c) 2021-2024 NVIDIA Corporation
  *
  * Licensed under the Apache License Version 2.0 with LLVM Exceptions
  * (the "License"); you may not use this file except in compliance with
@@ -15,156 +15,130 @@
  */
 #pragma once
 
-#include "__detail/__concepts.hpp"
+#include "__detail/__awaitable.hpp"
 #include "__detail/__config.hpp"
-#include "concepts.hpp"
 
-#include <version>
-#if __cpp_impl_coroutine >= 201902 && __cpp_lib_coroutine >= 201902
-#include <coroutine>
-namespace __coro = std;
-#elif defined(__cpp_coroutines) && __has_include(<experimental/coroutine>)
-#include <experimental/coroutine>
-namespace __coro = std::experimental;
-#else
-#define STDEXEC_STD_NO_COROUTINES_ 1
-#endif
-
+#if STDEXEC_MSVC() && _MSC_VER >= 1939
 namespace stdexec
 {
-#if !STDEXEC_STD_NO_COROUTINES_
-// Define some concepts and utilities for working with awaitables
-template <class _Tp>
-concept __await_suspend_result =
-    __one_of<_Tp, void, bool> ||
-    __is_instance_of<_Tp, __coro::coroutine_handle>;
-
-template <class _Awaiter, class _Promise>
-concept __with_await_suspend =
-    same_as<_Promise, void> || //
-    requires(_Awaiter& __awaiter, __coro::coroutine_handle<_Promise> __h) {
-        {
-            __awaiter.await_suspend(__h)
-        } -> __await_suspend_result;
-    };
-
-template <class _Awaiter, class _Promise = void>
-concept __awaiter = //
-    requires(_Awaiter& __awaiter) {
-        __awaiter.await_ready() ? 1 : 0;
-        __awaiter.await_resume();
-    } && //
-    __with_await_suspend<_Awaiter, _Promise>;
-
-#if STDEXEC_MSVC()
 // MSVCBUG
-// https://developercommunity.visualstudio.com/t/operator-co_await-not-found-in-requires/10452721
+// https://developercommunity.visualstudio.com/t/destroy-coroutine-from-final_suspend-r/10096047
 
-template <class _Awaitable>
-void __co_await_constraint(_Awaitable&& __awaitable)
-    requires requires {
-                 operator co_await(static_cast<_Awaitable&&>(__awaitable));
-             };
-#endif
+// Prior to Visual Studio 17.9 (Feb, 2024), aka MSVC 19.39, MSVC incorrectly
+// allocates the return buffer for await_suspend calls within the suspended
+// coroutine frame. When the suspended coroutine is destroyed within
+// await_suspend, the continuation coroutine handle is not only used after free,
+// but also overwritten by the debug malloc implementation when NRVO is in play.
 
-template <class _Awaitable>
-auto __get_awaiter(_Awaitable&& __awaitable, void*) -> decltype(auto)
+// This workaround delays the destruction of the suspended coroutine by wrapping
+// the continuation in another coroutine which destroys the former and transfers
+// execution to the original continuation.
+
+// The wrapping coroutine is thread-local and is reused within the thread for
+// each destroy-and-continue sequence. The wrapping coroutine itself is
+// destroyed at thread exit.
+
+namespace __destroy_and_continue_msvc
 {
-    if constexpr (requires {
-                      static_cast<_Awaitable&&>(__awaitable)
-                          .
-                          operator co_await();
-                  })
-    {
-        return static_cast<_Awaitable&&>(__awaitable).operator co_await();
-    }
-    else if constexpr (requires {
-#if STDEXEC_MSVC()
-                           __co_await_constraint(
-                               static_cast<_Awaitable&&>(__awaitable));
-#else
-                           operator co_await(
-                               static_cast<_Awaitable&&>(__awaitable));
-#endif
-                       })
-    {
-        return operator co_await(static_cast<_Awaitable&&>(__awaitable));
-    }
-    else
-    {
-        return static_cast<_Awaitable&&>(__awaitable);
-    }
-}
-
-template <class _Awaitable, class _Promise>
-auto __get_awaiter(_Awaitable&& __awaitable, _Promise* __promise)
-    -> decltype(auto)
-    requires requires {
-                 __promise->await_transform(
-                     static_cast<_Awaitable&&>(__awaitable));
-             }
+struct __task
 {
-    if constexpr (requires {
-                      __promise
-                          ->await_transform(
-                              static_cast<_Awaitable&&>(__awaitable))
-                          .
-                          operator co_await();
-                  })
+    struct promise_type
     {
-        return __promise
-            ->await_transform(static_cast<_Awaitable&&>(__awaitable))
-            .
-            operator co_await();
-    }
-    else if constexpr (requires {
-#if STDEXEC_MSVC()
-                           __co_await_constraint(__promise->await_transform(
-                               static_cast<_Awaitable&&>(__awaitable)));
-#else
-                           operator co_await(__promise->await_transform(
-                               static_cast<_Awaitable&&>(__awaitable)));
-#endif
-                       })
-    {
-        return operator co_await(
-            __promise->await_transform(static_cast<_Awaitable&&>(__awaitable)));
-    }
-    else
-    {
-        return __promise->await_transform(
-            static_cast<_Awaitable&&>(__awaitable));
-    }
-}
-
-template <class _Awaitable, class _Promise = void>
-concept __awaitable = //
-    requires(_Awaitable&& __awaitable, _Promise* __promise) {
+        __task get_return_object() noexcept
         {
-            stdexec::__get_awaiter(static_cast<_Awaitable&&>(__awaitable),
-                                   __promise)
-        } -> __awaiter<_Promise>;
+            return {
+                __coro::coroutine_handle<promise_type>::from_promise(*this)};
+        }
+
+        static std::suspend_never initial_suspend() noexcept
+        {
+            return {};
+        }
+
+        static std::suspend_never final_suspend() noexcept
+        {
+            STDEXEC_ASSERT(!"Should never get here");
+            return {};
+        }
+
+        static void return_void() noexcept
+        {
+            STDEXEC_ASSERT(!"Should never get here");
+        }
+
+        static void unhandled_exception() noexcept
+        {
+            STDEXEC_ASSERT(!"Should never get here");
+        }
     };
 
-template <class _Tp>
-auto __as_lvalue(_Tp&&) -> _Tp&;
+    __coro::coroutine_handle<> __coro_;
+};
 
-template <class _Awaitable, class _Promise = void>
-    requires __awaitable<_Awaitable, _Promise>
-using __await_result_t =
-    decltype(stdexec::__as_lvalue(
-                 stdexec::__get_awaiter(std::declval<_Awaitable>(),
-                                        static_cast<_Promise*>(nullptr)))
-                 .await_resume());
+struct __continue_t
+{
+    static constexpr bool await_ready() noexcept
+    {
+        return false;
+    }
 
-#else
+    __coro::coroutine_handle<>
+        await_suspend(__coro::coroutine_handle<>) noexcept
+    {
+        return __continue_;
+    }
 
-template <class _Awaitable, class _Promise = void>
-concept __awaitable = false;
+    static void await_resume() noexcept {}
 
-template <class _Awaitable, class _Promise = void>
-    requires __awaitable<_Awaitable, _Promise>
-using __await_result_t = void;
+    __coro::coroutine_handle<> __continue_;
+};
 
-#endif
+struct __context
+{
+    __coro::coroutine_handle<> __destroy_;
+    __coro::coroutine_handle<> __continue_;
+};
+
+inline __task __co_impl(__context& __c)
+{
+    while (true)
+    {
+        co_await __continue_t{__c.__continue_};
+        __c.__destroy_.destroy();
+    }
+}
+
+struct __context_and_coro
+{
+    __context_and_coro()
+    {
+        __context_.__continue_ = __coro::noop_coroutine();
+        __coro_ = __co_impl(__context_).__coro_;
+    }
+
+    ~__context_and_coro()
+    {
+        __coro_.destroy();
+    }
+
+    __context __context_;
+    __coro::coroutine_handle<> __coro_;
+};
+
+inline __coro::coroutine_handle<> __impl(__coro::coroutine_handle<> __destroy,
+                                         __coro::coroutine_handle<> __continue)
+{
+    static thread_local __context_and_coro __c;
+    __c.__context_.__destroy_ = __destroy;
+    __c.__context_.__continue_ = __continue;
+    return __c.__coro_;
+}
+} // namespace __destroy_and_continue_msvc
 } // namespace stdexec
+
+#define STDEXEC_DESTROY_AND_CONTINUE(__destroy, __continue)                    \
+    (::stdexec::__destroy_and_continue_msvc::__impl(__destroy, __continue))
+#else
+#define STDEXEC_DESTROY_AND_CONTINUE(__destroy, __continue)                    \
+    (__destroy.destroy(), __continue)
+#endif

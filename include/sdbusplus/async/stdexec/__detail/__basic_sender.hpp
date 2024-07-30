@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 NVIDIA Corporation
+ * Copyright (c) 2021-2024 NVIDIA Corporation
  *
  * Licensed under the Apache License Version 2.0 with LLVM Exceptions
  * (the "License"); you may not use this file except in compliance with
@@ -15,12 +15,13 @@
  */
 #pragma once
 
-#include "../concepts.hpp"
 #include "__concepts.hpp"
-#include "__config.hpp"
+#include "__diagnostics.hpp"
 #include "__env.hpp"
 #include "__execution_fwd.hpp"
 #include "__meta.hpp"
+#include "__sender_introspection.hpp"
+#include "__senders_core.hpp"
 #include "__tuple.hpp"
 #include "__type_traits.hpp"
 
@@ -37,115 +38,39 @@ namespace __detail
 template <class _Sender>
 using __impl_of = decltype((__declval<_Sender>().__impl_));
 
-struct __get_tag
-{
-    template <class _Tag, class... _Rest>
-    STDEXEC_ATTRIBUTE((always_inline))
-    _Tag operator()(_Tag, _Rest&&...) const noexcept
-    {
-        return {};
-    }
-};
-
 struct __get_data
 {
-    template <class _Data, class... _Rest>
+    template <class _Data>
     STDEXEC_ATTRIBUTE((always_inline))
-    _Data&& operator()(__ignore, _Data&& __data, _Rest&&...) const noexcept
+    _Data&& operator()(__ignore, _Data&& __data, auto&&...) const noexcept
     {
         return static_cast<_Data&&>(__data);
     }
 };
-
-template <class _Continuation>
-struct __get_children
-{
-    template <class... _Child>
-    STDEXEC_ATTRIBUTE((always_inline))
-    auto operator()(__ignore, __ignore, _Child&&...) const noexcept
-        -> __mtype<__minvoke<_Continuation, _Child...>> (*)()
-    {
-        return nullptr;
-    }
-};
-
-template <class _Tag, class _Data, class... _Child>
-struct __desc
-{
-    using __tag = _Tag;
-    using __data = _Data;
-    using __children = __types<_Child...>;
-
-    template <class _Fn>
-    using __f = __minvoke<_Fn, _Tag, _Data, _Child...>;
-};
-
-template <class _Fn>
-struct __sexpr_uncurry_fn
-{
-    template <class _Tag, class _Data, class... _Child>
-        requires __minvocable<_Fn, _Tag, _Data, _Child...>
-    constexpr auto operator()(_Tag, _Data&&, _Child&&...) const noexcept
-        -> __minvoke<_Fn, _Tag, _Data, _Child...>;
-};
-
-template <class _Sender, class _Fn>
-using __sexpr_uncurry =
-    __call_result_t<__impl_of<_Sender>, __copy_cvref_fn<_Sender>,
-                    __sexpr_uncurry_fn<_Fn>>;
-
-template <class _Sender>
-using __desc_of = __sexpr_uncurry<_Sender, __q<__desc>>;
-
-using __get_desc = __sexpr_uncurry_fn<__q<__desc>>;
-
-template <class _Sender>
-extern __q<__midentity> __name_of_v;
-
-template <class _Sender>
-using __name_of_fn = decltype(__name_of_v<_Sender>);
-
-template <class _Sender>
-using __name_of = __minvoke<__name_of_fn<_Sender>, _Sender>;
 } // namespace __detail
 
-template <class _Sender>
-using tag_of_t = typename __detail::__desc_of<_Sender>::__tag;
-
-template <class _Sender>
-using __data_of = typename __detail::__desc_of<_Sender>::__data;
-
-template <class _Sender, class _Continuation = __q<__types>>
-using __children_of = //
-    __mapply<_Continuation, typename __detail::__desc_of<_Sender>::__children>;
-
-template <class _Ny, class _Sender>
-using __nth_child_of = __children_of<_Sender, __mbind_front_q<__m_at, _Ny>>;
-
-template <std::size_t _Ny, class _Sender>
-using __nth_child_of_c =
-    __children_of<_Sender, __mbind_front_q<__m_at, __msize_t<_Ny>>>;
-
-template <class _Sender>
-using __child_of = __children_of<_Sender, __q<__mfront>>;
-
-template <class _Sender>
-inline constexpr std::size_t __nbr_children_of =
-    __v<__children_of<_Sender, __msize>>;
-
-template <class _Fn, class _Tp>
-    requires __mvalid<tag_of_t, _Tp> &&
-             __mvalid<__detail::__sexpr_uncurry, _Tp, _Fn>
-struct __uncurry_<_Fn, _Tp>
+namespace
 {
-    using __t = __detail::__sexpr_uncurry<_Tp, _Fn>;
-};
+template <class _Descriptor, auto _DescriptorFn = [] { return _Descriptor(); }>
+inline constexpr auto __descriptor_fn_v = _DescriptorFn;
+
+template <class _Tag, class _Data, class... _Child>
+inline constexpr auto __descriptor_fn()
+{
+    return __descriptor_fn_v<__detail::__desc<_Tag, _Data, _Child...>>;
+}
+} // namespace
+
+#if STDEXEC_NVHPC()
+#define STDEXEC_SEXPR_DESCRIPTOR(_Tag, _Data, _Child)                          \
+    stdexec::__descriptor_fn<_Tag, _Data, _Child>()
+#else
+#define STDEXEC_SEXPR_DESCRIPTOR(_Tag, _Data, _Child)                          \
+    stdexec::__descriptor_fn_v<stdexec::__detail::__desc<_Tag, _Data, _Child>>
+#endif
 
 template <class _Tag>
 struct __sexpr_impl;
-
-template <class _Sender>
-using __name_of = __detail::__name_of<_Sender>;
 
 namespace __detail
 {
@@ -159,10 +84,11 @@ template <class _Tag, class _Sexpr, class _Receiver>
 using __state_type_t =
     __decay_t<__result_of<__sexpr_impl<_Tag>::get_state, _Sexpr, _Receiver&>>;
 
-template <class _Tag, class _Index, class _Sexpr, class _Receiver>
-using __env_type_t =
-    __result_of<__sexpr_impl<_Tag>::get_env, _Index,
-                __state_type_t<_Tag, _Sexpr, _Receiver>&, _Receiver&>;
+template <class _Self, class _Tag, class _Index, class _Sexpr, class _Receiver>
+using __env_type_t = __result_of<
+    __sexpr_impl<__meval<__msecond, _Self, _Tag>>::get_env, _Index,
+    __state_type_t<__meval<__msecond, _Self, _Tag>, _Sexpr, _Receiver>&,
+    _Receiver&>;
 
 template <class _Sexpr, class _Receiver>
 concept __connectable =
@@ -199,13 +125,14 @@ inline constexpr auto __get_env = //
 
 inline constexpr auto __get_state = //
     []<class _Sender>(_Sender&& __sndr, __ignore) noexcept -> decltype(auto) {
-    return STDEXEC_CALL_EXPLICIT_THIS_MEMFN(static_cast<_Sender&&>(__sndr),
-                                            apply)(__get_data());
+    return __sndr.apply(static_cast<_Sender&&>(__sndr), __get_data());
 };
 
-inline constexpr auto __connect = //
-    []<class _Sender, class _Receiver>(
-        _Sender&& __sndr, _Receiver __rcvr) -> __op_state<_Sender, _Receiver>
+inline constexpr auto __connect =                                          //
+    []<class _Sender, class _Receiver>(_Sender&& __sndr, _Receiver __rcvr) //
+    noexcept(__nothrow_constructible_from<__op_state<_Sender, _Receiver>,
+                                          _Sender, _Receiver>)
+    -> __op_state<_Sender, _Receiver>
     requires __connectable<_Sender, _Receiver>
 {
     return __op_state<_Sender, _Receiver>{static_cast<_Sender&&>(__sndr),
@@ -228,8 +155,12 @@ inline constexpr auto __complete = //
     _SetTag()(std::move(__rcvr), static_cast<_Args&&>(__args)...);
 };
 
-inline constexpr auto __get_completion_signatures = //
-    [](__ignore, __ignore) noexcept { return void(); };
+inline constexpr auto __sigs = //
+    []<class _Sender>(_Sender&& __sndr, __ignore = {}) noexcept {
+    static_assert(
+        __mnever<tag_of_t<_Sender>>,
+        "No customization of get_completion_signatures for this sender tag type.");
+};
 
 template <class _ReceiverId, class _Sexpr, class _Idx>
 struct __receiver
@@ -258,29 +189,43 @@ struct __receiver
         //   (static_cast<char*>(__child) - __offset); return __t{__parent};
         // }
 
-        template <__completion_tag _Tag, class... _Args>
+        template <class... _Args>
         STDEXEC_ATTRIBUTE((always_inline))
-        friend void tag_invoke(_Tag, __t&& __self, _Args&&... __args) noexcept
+        void set_value(_Args&&... __args) noexcept
         {
-            __self.__op_->__complete(_Idx(), _Tag(),
-                                     static_cast<_Args&&>(__args)...);
+            __op_->__complete(_Idx(), stdexec::set_value,
+                              static_cast<_Args&&>(__args)...);
         }
 
-        template <same_as<get_env_t> _Tag, class _SexprTag = __tag_t>
+        template <class _Error>
         STDEXEC_ATTRIBUTE((always_inline))
-        friend auto tag_invoke(_Tag, const __t& __self) noexcept
-            -> __env_type_t<_SexprTag, _Idx, _Sexpr, _Receiver>
+        void set_error(_Error&& __err) noexcept
         {
-            return __self.__op_->__get_env(_Idx());
+            __op_->__complete(_Idx(), stdexec::set_error,
+                              static_cast<_Error&&>(__err));
+        }
+
+        STDEXEC_ATTRIBUTE((always_inline))
+        void set_stopped() noexcept
+        {
+            __op_->__complete(_Idx(), stdexec::set_stopped);
+        }
+
+        template <__same_as<__t> _Self = __t>
+        STDEXEC_ATTRIBUTE((always_inline))
+        auto get_env() const noexcept
+            -> __env_type_t<_Self, __tag_t, _Idx, _Sexpr, _Receiver>
+        {
+            return __op_->__get_env(_Idx());
         }
     };
 };
 
-template <class _Receiver>
-using __sexpr_connected_with =
-    __mapply<__mbind_front_q<__m_at, typename _Receiver::__index>,
-             typename __call_result_t<__impl_of<typename _Receiver::__sexpr>,
-                                      __cp, __get_desc>::__children>;
+// template <class _Receiver>
+// using __sexpr_connected_with = __mapply<
+//   __mbind_front_q<__m_at, typename _Receiver::__index>,
+//   typename __call_result_t<__impl_of<typename _Receiver::__sexpr>, __cp,
+//   __get_desc>::__children>;
 
 template <class _Sexpr, class _Receiver>
 struct __op_base : __immovable
@@ -291,13 +236,20 @@ struct __op_base : __immovable
     STDEXEC_IMMOVABLE_NO_UNIQUE_ADDRESS _Receiver __rcvr_;
     STDEXEC_IMMOVABLE_NO_UNIQUE_ADDRESS __state_t __state_;
 
-    __op_base(_Sexpr&& __sndr, _Receiver&& __rcvr) :
+    __op_base(_Sexpr&& __sndr, _Receiver&& __rcvr) //
+        noexcept(__nothrow_decay_copyable<_Receiver> &&
+                 __nothrow_move_constructible<__state_t>) :
         __rcvr_(static_cast<_Receiver&&>(__rcvr)),
         __state_(__sexpr_impl<__tag_t>::get_state(static_cast<_Sexpr&&>(__sndr),
                                                   __rcvr_))
     {}
 
     auto __rcvr() & noexcept -> _Receiver&
+    {
+        return __rcvr_;
+    }
+
+    auto __rcvr() const& noexcept -> const _Receiver&
     {
         return __rcvr_;
     }
@@ -355,7 +307,7 @@ struct __connect_fn
 {
     template <std::size_t _Idx>
     using __receiver_t =
-        __t<__receiver<__id<_Receiver>, _Sexpr, __mconstant<_Idx>>>;
+        __t<__receiver<__id<_Receiver>, _Sexpr, __msize_t<_Idx>>>;
 
     __op_state<_Sexpr, _Receiver>* __op_;
 
@@ -363,25 +315,28 @@ struct __connect_fn
     {
         __op_state<_Sexpr, _Receiver>* __op_;
 
-        template <std::size_t... _Is, class _Tag, class _Data, class... _Child>
-        auto operator()(__indices<_Is...>, _Tag, _Data&&,
-                        _Child&&... __child) const
-            -> __tup::__tuple<__indices<_Is...>,
-                              connect_result_t<_Child, __receiver_t<_Is>>...>
+        template <std::size_t... _Is, class... _Child>
+        auto operator()(__indices<_Is...>, _Child&&... __child) const
+            noexcept((__nothrow_connectable<_Child, __receiver_t<_Is>> && ...))
+                -> __tuple_for<connect_result_t<_Child, __receiver_t<_Is>>...>
         {
             return __tuple{connect(static_cast<_Child&&>(__child),
                                    __receiver_t<_Is>{__op_})...};
         }
     };
 
-    template <class _Tag, class _Data, class... _Child>
-    auto operator()(_Tag, _Data&& __data, _Child&&... __child) const
-        -> __call_result_t<__impl, __indices_for<_Child...>, _Tag, _Data,
-                           _Child...>
+    template <class... _Child>
+    auto operator()(__ignore, __ignore, _Child&&... __child) const noexcept(
+        __nothrow_callable<__impl, __indices_for<_Child...>, _Child...>)
+        -> __call_result_t<__impl, __indices_for<_Child...>, _Child...>
     {
-        return __impl{__op_}(__indices_for<_Child...>(), _Tag(),
-                             static_cast<_Data&&>(__data),
+        return __impl{__op_}(__indices_for<_Child...>(),
                              static_cast<_Child&&>(__child)...);
+    }
+
+    auto operator()(__ignore, __ignore) const noexcept -> __tuple_for<>
+    {
+        return {};
     }
 };
 STDEXEC_PRAGMA_POP()
@@ -392,7 +347,7 @@ struct __op_state : __op_base<_Sexpr, _Receiver>
     using __desc_t = typename __decay_t<_Sexpr>::__desc_t;
     using __tag_t = typename __desc_t::__tag;
     using __data_t = typename __desc_t::__data;
-    using __children_t = typename __desc_t::__children;
+    // using __children_t = typename __desc_t::__children;
     using __state_t = typename __op_state::__state_t;
     using __inner_ops_t =
         __result_of<__sexpr_apply, _Sexpr, __connect_fn<_Sexpr, _Receiver>>;
@@ -402,29 +357,31 @@ struct __op_state : __op_base<_Sexpr, _Receiver>
     // template <std::size_t _Idx>
     // static std::ptrdiff_t __get_child_op_offset() noexcept {
     //   __op_state* __self = (__op_state*) &__self;
-    //   return (std::ptrdiff_t)((char*)
-    //   &__tup::__get<_Idx>(__self->__inner_ops_) -
-    //   static_cast<char*>(__self));
+    //   return (std::ptrdiff_t)((char*) &__tup::get<_Idx>(__self->__inner_ops_)
+    //   - static_cast<char*>(__self));
     // }
 
-    __op_state(_Sexpr&& __sexpr, _Receiver __rcvr) :
+    __op_state(_Sexpr&& __sexpr, _Receiver __rcvr) //
+        noexcept(__nothrow_constructible_from<__op_base<_Sexpr, _Receiver>,
+                                              _Sexpr&&, _Receiver&&> &&
+                 __nothrow_callable<__sexpr_apply_t, _Sexpr&&,
+                                    __connect_fn<_Sexpr, _Receiver>>) :
         __op_state::__op_base{static_cast<_Sexpr&&>(__sexpr),
                               static_cast<_Receiver&&>(__rcvr)},
         __inner_ops_(__sexpr_apply(static_cast<_Sexpr&&>(__sexpr),
                                    __connect_fn<_Sexpr, _Receiver>{this}))
     {}
 
-    template <same_as<start_t> _Tag2>
     STDEXEC_ATTRIBUTE((always_inline))
-    friend void tag_invoke(_Tag2, __op_state& __self) noexcept
+    void start() & noexcept
     {
         using __tag_t = typename __op_state::__tag_t;
-        auto&& __rcvr = __self.__rcvr();
-        __tup::__apply(
+        auto&& __rcvr = this->__rcvr();
+        __inner_ops_.apply(
             [&](auto&... __ops) noexcept {
-            __sexpr_impl<__tag_t>::start(__self.__state_, __rcvr, __ops...);
+            __sexpr_impl<__tag_t>::start(this->__state_, __rcvr, __ops...);
         },
-            __self.__inner_ops_);
+            __inner_ops_);
     }
 
     template <class _Index, class _Tag2, class... _Args>
@@ -433,15 +390,25 @@ struct __op_state : __op_base<_Sexpr, _Receiver>
     {
         using __tag_t = typename __op_state::__tag_t;
         auto&& __rcvr = this->__rcvr();
-        __sexpr_impl<__tag_t>::complete(_Index(), this->__state_, __rcvr,
-                                        _Tag2(),
-                                        static_cast<_Args&&>(__args)...);
+        using _CompleteFn = __mtypeof<__sexpr_impl<__tag_t>::complete>;
+        if constexpr (__callable<_CompleteFn, _Index, __op_state&, _Tag2,
+                                 _Args...>)
+        {
+            __sexpr_impl<__tag_t>::complete(_Index(), *this, _Tag2(),
+                                            static_cast<_Args&&>(__args)...);
+        }
+        else
+        {
+            __sexpr_impl<__tag_t>::complete(_Index(), this->__state_, __rcvr,
+                                            _Tag2(),
+                                            static_cast<_Args&&>(__args)...);
+        }
     }
 
     template <class _Index>
     STDEXEC_ATTRIBUTE((always_inline))
-    auto __get_env(_Index) noexcept
-        -> __env_type_t<__tag_t, _Index, _Sexpr, _Receiver>
+    auto __get_env(_Index) const noexcept
+        -> __env_type_t<_Index, __tag_t, _Index, _Sexpr, _Receiver>
     {
         const auto& __rcvr = this->__rcvr();
         return __sexpr_impl<__tag_t>::get_env(_Index(), this->__state_, __rcvr);
@@ -451,9 +418,8 @@ struct __op_state : __op_base<_Sexpr, _Receiver>
 inline constexpr auto __drop_front = //
     []<class _Fn>(_Fn __fn) noexcept {
     return
-        [__fn = std::move(__fn)]<class... _Rest>(
-            auto&&, _Rest&&... __rest) noexcept(__nothrow_callable<const _Fn&,
-                                                                   _Rest...>)
+        [__fn = std::move(__fn)]<class... _Rest>(auto&&, _Rest&&... __rest) //
+        noexcept(__nothrow_callable<const _Fn&, _Rest...>)
             -> __call_result_t<const _Fn&, _Rest...> {
         return __fn(static_cast<_Rest&&>(__rest)...);
     };
@@ -480,19 +446,6 @@ constexpr auto __captures(_Tag, _Captures&&... __captures2)
     };
 }
 
-template <class _Sender>
-concept __non_dependent_sender = //
-    requires { typename _Sender::completion_signatures; } ||
-    requires { requires _Sender::__is_non_dependent(); };
-
-template <class _Tag, class... _Child>
-concept __is_non_dependent_sexpr = //
-    !requires { typename __sexpr_impl<_Tag>::is_dependent; } &&
-    (__non_dependent_sender<_Child> && ...);
-
-template <class _Tag, class _Data, class... _Child>
-using __is_non_dependent_t = __mbool<__is_non_dependent_sexpr<_Tag, _Child...>>;
-
 template <class _Tag, class _Data, class... _Child>
 using __captures_t = decltype(__detail::__captures(_Tag(), __declval<_Data>(),
                                                    __declval<_Child>()...));
@@ -514,13 +467,14 @@ struct __sexpr_defaults
     static constexpr auto connect = __detail::__connect;
     static constexpr auto start = __detail::__start;
     static constexpr auto complete = __detail::__complete;
-    static constexpr auto get_completion_signatures =
-        __detail::__get_completion_signatures;
+    static constexpr auto get_completion_signatures = __detail::__sigs;
 };
 
 template <class _Tag>
 struct __sexpr_impl : __sexpr_defaults
-{};
+{
+    using not_specialized = void;
+};
 
 using __detail::__enable_receiver_from_this;
 
@@ -548,11 +502,6 @@ struct __sexpr
     using __tag_t = typename __desc_t::__tag;
     using __captures_t = __minvoke<__desc_t, __q<__detail::__captures_t>>;
 
-    static constexpr auto __is_non_dependent() noexcept -> bool
-    {
-        return __v<__minvoke<__desc_t, __q<__detail::__is_non_dependent_t>>>;
-    }
-
     mutable __captures_t __impl_;
 
     template <class _Tag, class _Data, class... _Child>
@@ -562,55 +511,45 @@ struct __sexpr
                                      static_cast<_Child&&>(__child)...))
     {}
 
-    template <class _Tag>
-    using __impl = __sexpr_impl<__meval<__msecond, _Tag, __tag_t>>;
+    template <class _Self>
+    using __impl = __sexpr_impl<__meval<__msecond, _Self, __tag_t>>;
 
-    template <same_as<get_env_t> _Tag, same_as<__sexpr> _Self>
+    template <class _Self = __sexpr>
     STDEXEC_ATTRIBUTE((always_inline))
-    friend auto tag_invoke(_Tag, const _Self& __self) noexcept           //
-        -> __msecond<
-            __if_c<same_as<_Tag, get_env_t> && same_as<_Self, __sexpr>>, //
-            __result_of<__sexpr_apply, const _Self&, __get_attrs_fn<__tag_t>>>
+    auto get_env() const noexcept
+        -> __result_of<__sexpr_apply, const _Self&, __get_attrs_fn<__tag_t>>
     {
-        return __sexpr_apply(__self,
-                             __detail::__drop_front(__impl<_Tag>::get_attrs));
+        return __sexpr_apply(*this,
+                             __detail::__drop_front(__impl<_Self>::get_attrs));
     }
 
-    template <same_as<get_completion_signatures_t> _Tag,
-              __decays_to<__sexpr> _Self, class _Env>
+    template <__decays_to<__sexpr> _Self, class... _Env>
     STDEXEC_ATTRIBUTE((always_inline))
-    friend auto tag_invoke(_Tag, _Self&& __self, _Env&& __env) noexcept //
-        -> __msecond<
-            __if_c<same_as<_Tag, get_completion_signatures_t> &&
-                   __decays_to<_Self, __sexpr>>,
-            __result_of<__impl<_Tag>::get_completion_signatures, _Self, _Env>>
+    static auto get_completion_signatures(_Self&&, _Env&&...) noexcept //
+        -> __msecond<__if_c<__decays_to<_Self, __sexpr>>,
+                     __result_of<__impl<_Self>::get_completion_signatures,
+                                 _Self, _Env...>>
     {
         return {};
     }
 
     // BUGBUG fix receiver constraint here:
-    template <same_as<connect_t> _Tag, __decays_to<__sexpr> _Self,
-              /*receiver*/ class _Receiver>
+    template <__decays_to<__sexpr> _Self, /*receiver*/ class _Receiver>
     STDEXEC_ATTRIBUTE((always_inline))
-    friend auto tag_invoke(_Tag, _Self&& __self, _Receiver&& __rcvr)          //
-        noexcept(noexcept(__impl<_Tag>::connect(
-            static_cast<_Self&&>(__self), static_cast<_Receiver&&>(__rcvr)))) //
-        -> __msecond<
-            __if_c<same_as<_Tag, connect_t> && __decays_to<_Self, __sexpr>>,
-            __result_of<__impl<_Tag>::connect, _Self, _Receiver>>
+    static auto connect(_Self&& __self, _Receiver&& __rcvr)               //
+        noexcept(__noexcept_of<__impl<_Self>::connect, _Self, _Receiver>) //
+        -> __msecond<__if_c<__decays_to<_Self, __sexpr>>,
+                     __result_of<__impl<_Self>::connect, _Self, _Receiver>>
     {
-        return __impl<_Tag>::connect(static_cast<_Self&&>(__self),
-                                     static_cast<_Receiver&&>(__rcvr));
+        return __impl<_Self>::connect(static_cast<_Self&&>(__self),
+                                      static_cast<_Receiver&&>(__rcvr));
     }
 
     template <class _Sender, class _ApplyFn>
     STDEXEC_ATTRIBUTE((always_inline))
-    STDEXEC_DEFINE_EXPLICIT_THIS_MEMFN(auto apply)(
-        this _Sender&& __sndr,
-        _ApplyFn&&
-            __fun) noexcept(__nothrow_callable<__detail::__impl_of<_Sender>,
-                                               __copy_cvref_fn<_Sender>,
-                                               _ApplyFn>) //
+    static auto apply(_Sender&& __sndr, _ApplyFn&& __fun)                //
+        noexcept(__nothrow_callable<__detail::__impl_of<_Sender>,
+                                    __copy_cvref_fn<_Sender>, _ApplyFn>) //
         -> __call_result_t<__detail::__impl_of<_Sender>,
                            __copy_cvref_fn<_Sender>, _ApplyFn>
     {                                                                    //
@@ -620,7 +559,7 @@ struct __sexpr
 
     template <std::size_t _Idx, __decays_to_derived_from<__sexpr> _Self>
     STDEXEC_ATTRIBUTE((always_inline))
-    friend decltype(auto) get(_Self&& __self) noexcept
+    friend auto get(_Self&& __self) noexcept -> decltype(auto)
         requires __detail::__in_range<_Idx, __desc_t>
     {
         if constexpr (_Idx == 0)
@@ -634,26 +573,6 @@ struct __sexpr
         }
     }
 };
-
-namespace
-{
-template <class _Descriptor, auto _DescriptorFn = [] { return _Descriptor(); }>
-inline constexpr auto __descriptor_fn_v = _DescriptorFn;
-
-template <class _Tag, class _Data, class... _Child>
-inline constexpr auto __descriptor_fn()
-{
-    return __descriptor_fn_v<__detail::__desc<_Tag, _Data, _Child...>>;
-}
-} // namespace
-
-#if STDEXEC_NVHPC()
-#define STDEXEC_SEXPR_DESCRIPTOR(_Tag, _Data, _Child)                          \
-    stdexec::__descriptor_fn<_Tag, _Data, _Child>()
-#else
-#define STDEXEC_SEXPR_DESCRIPTOR(_Tag, _Data, _Child)                          \
-    stdexec::__descriptor_fn_v<stdexec::__detail::__desc<_Tag, _Data, _Child>>
-#endif
 
 template <class _Tag, class _Data, class... _Child>
 STDEXEC_ATTRIBUTE((host, device))
@@ -682,42 +601,6 @@ struct __make_sexpr_t
 
 template <class _Tag>
 inline constexpr __detail::__make_sexpr_t<_Tag> __make_sexpr{};
-
-namespace __detail
-{
-struct __sexpr_apply_t
-{
-    template <class _Sender, class _ApplyFn>
-    STDEXEC_ATTRIBUTE((always_inline))
-    auto operator()(_Sender&& __sndr, _ApplyFn&& __fun) const
-        noexcept(noexcept(STDEXEC_CALL_EXPLICIT_THIS_MEMFN(
-            (static_cast<_Sender&&>(__sndr)),
-            apply)(static_cast<_ApplyFn&&>(__fun)))) //
-        -> decltype(STDEXEC_CALL_EXPLICIT_THIS_MEMFN(
-            (static_cast<_Sender&&>(__sndr)),
-            apply)(static_cast<_ApplyFn&&>(__fun)))
-    {
-        return STDEXEC_CALL_EXPLICIT_THIS_MEMFN(
-            (static_cast<_Sender&&>(__sndr)),
-            apply)(static_cast<_ApplyFn&&>(__fun)); //
-    }
-};
-} // namespace __detail
-
-using __detail::__sexpr_apply_t;
-inline constexpr __sexpr_apply_t __sexpr_apply{};
-
-template <class _Sender, class _ApplyFn>
-using __sexpr_apply_result_t =
-    __call_result_t<__sexpr_apply_t, _Sender, _ApplyFn>;
-
-template <class _Sender>
-concept sender_expr = //
-    __mvalid<tag_of_t, _Sender>;
-
-template <class _Sender, class _Tag>
-concept sender_expr_for = //
-    sender_expr<_Sender> && same_as<tag_of_t<_Sender>, _Tag>;
 
 // The __name_of utility defined below is used to pretty-print the type names of
 // senders in compiler diagnostics.

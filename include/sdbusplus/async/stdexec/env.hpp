@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 NVIDIA Corporation
+ * Copyright (c) 2021-2024 NVIDIA Corporation
  *
  * Licensed under the Apache License Version 2.0 with LLVM Exceptions
  * (the "License"); you may not use this file except in compliance with
@@ -23,7 +23,7 @@ STDEXEC_PRAGMA_IGNORE_EDG(1302)
 namespace exec
 {
 template <class _Tag, class _Value>
-using with_t = stdexec::__env::__with<_Value, _Tag>;
+using with_t = stdexec::prop<_Tag, _Value>;
 
 namespace __envs
 {
@@ -32,7 +32,7 @@ struct __with_t
     template <class _Tag, class _Value>
     auto operator()(_Tag, _Value&& __val) const
     {
-        return stdexec::__env::__with(static_cast<_Value&&>(__val), _Tag());
+        return stdexec::prop{_Tag(), static_cast<_Value&&>(__val)};
     }
 };
 
@@ -93,24 +93,25 @@ struct __operation
         _Default __default_;
         _Receiver __rcvr_;
 
-        friend void tag_invoke(start_t, __t& __self) noexcept
+        void start() & noexcept
         {
             try
             {
                 if constexpr (__callable<_Tag, env_of_t<_Receiver>>)
                 {
-                    const auto& __env = get_env(__self.__rcvr_);
-                    set_value(std::move(__self.__rcvr_), _Tag{}(__env));
+                    const auto& __env = get_env(__rcvr_);
+                    stdexec::set_value(std::move(__rcvr_), _Tag{}(__env));
                 }
                 else
                 {
-                    set_value(std::move(__self.__rcvr_),
-                              std::move(__self.__default_));
+                    stdexec::set_value(std::move(__rcvr_),
+                                       std::move(__default_));
                 }
             }
             catch (...)
             {
-                set_error(std::move(__self.__rcvr_), std::current_exception());
+                stdexec::set_error(std::move(__rcvr_),
+                                   std::current_exception());
             }
         }
     };
@@ -133,6 +134,7 @@ struct __sender
         __with_default<__mbind_back_q<__call_result_t, _Env>, _Default>, _Tag>;
     template <class _Env>
     using __default_t = __if_c<__callable<_Tag, _Env>, __ignore, _Default>;
+
     template <class _Env>
     using __completions_t =
         completion_signatures<set_value_t(__value_t<_Env>),
@@ -140,7 +142,7 @@ struct __sender
 
     template <__decays_to<__sender> _Self, class _Receiver>
         requires receiver_of<_Receiver, __completions_t<env_of_t<_Receiver>>>
-    friend auto tag_invoke(connect_t, _Self&& __self, _Receiver __rcvr) //
+    static auto connect(_Self&& __self, _Receiver __rcvr) //
         noexcept(std::is_nothrow_move_constructible_v<_Receiver>)
             -> __operation_t<_Tag, __default_t<env_of_t<_Receiver>>, _Receiver>
     {
@@ -150,8 +152,7 @@ struct __sender
     }
 
     template <class _Env>
-    friend auto tag_invoke(get_completion_signatures_t, __sender, _Env&&)
-        -> __completions_t<_Env>
+    auto get_completion_signatures(_Env&&) -> __completions_t<_Env>
     {
         return {};
     }
@@ -170,7 +171,8 @@ struct __read_with_default_t
 
 inline constexpr __read_with_default::__read_with_default_t read_with_default{};
 
-inline constexpr stdexec::__write_::__write_t write{};
+inline constexpr stdexec::__write_::__write_env_t write{};
+inline constexpr stdexec::__write_::__write_env_t write_env{};
 } // namespace exec
 
 STDEXEC_PRAGMA_POP()

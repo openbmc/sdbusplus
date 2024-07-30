@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2021-2022 Facebook, Inc. and its affiliates
- * Copyright (c) 2021-2022 NVIDIA Corporation
+ * Copyright (c) 2021-2024 NVIDIA Corporation
  *
  * Licensed under the Apache License Version 2.0 with LLVM Exceptions
  * (the "License"); you may not use this file except in compliance with
@@ -16,8 +16,7 @@
  */
 #pragma once
 
-#include "__detail/__config.hpp"
-#include "concepts.hpp"
+#include "__detail/__stop_token.hpp"
 
 #include <atomic>
 #include <concepts>
@@ -33,19 +32,9 @@
 
 namespace stdexec
 {
-// [stoptoken.inplace], class in_place_stop_token
-class in_place_stop_token;
-
-// [stopsource.inplace], class in_place_stop_source
-class in_place_stop_source;
-
-// [stopcallback.inplace], class template in_place_stop_callback
-template <class _Callback>
-class in_place_stop_callback;
-
 namespace __stok
 {
-struct __in_place_stop_callback_base
+struct __inplace_stop_callback_base
 {
     void __execute() noexcept
     {
@@ -53,10 +42,10 @@ struct __in_place_stop_callback_base
     }
 
   protected:
-    using __execute_fn_t = void(__in_place_stop_callback_base*) noexcept;
+    using __execute_fn_t = void(__inplace_stop_callback_base*) noexcept;
 
-    explicit __in_place_stop_callback_base(   //
-        const in_place_stop_source* __source, //
+    explicit __inplace_stop_callback_base(   //
+        const inplace_stop_source* __source, //
         __execute_fn_t* __execute) noexcept :
         __source_(__source),
         __execute_(__execute)
@@ -64,12 +53,12 @@ struct __in_place_stop_callback_base
 
     void __register_callback_() noexcept;
 
-    friend in_place_stop_source;
+    friend inplace_stop_source;
 
-    const in_place_stop_source* __source_;
+    const inplace_stop_source* __source_;
     __execute_fn_t* __execute_;
-    __in_place_stop_callback_base* __next_ = nullptr;
-    __in_place_stop_callback_base** __prev_ptr_ = nullptr;
+    __inplace_stop_callback_base* __next_ = nullptr;
+    __inplace_stop_callback_base** __prev_ptr_ = nullptr;
     bool* __removed_during_callback_ = nullptr;
     std::atomic<bool> __callback_completed_{false};
 };
@@ -96,9 +85,6 @@ struct __spin_wait
     static constexpr uint32_t __yield_threshold_ = 20;
     uint32_t __count_ = 0;
 };
-
-template <template <class> class>
-struct __check_type_alias_exists;
 } // namespace __stok
 
 // [stoptoken.never], class never_stop_token
@@ -128,17 +114,17 @@ struct never_stop_token
 };
 
 template <class _Callback>
-class in_place_stop_callback;
+class inplace_stop_callback;
 
-// [stopsource.inplace], class in_place_stop_source
-class in_place_stop_source
+// [stopsource.inplace], class inplace_stop_source
+class inplace_stop_source
 {
   public:
-    in_place_stop_source() noexcept = default;
-    ~in_place_stop_source();
-    in_place_stop_source(in_place_stop_source&&) = delete;
+    inplace_stop_source() noexcept = default;
+    ~inplace_stop_source();
+    inplace_stop_source(inplace_stop_source&&) = delete;
 
-    auto get_token() const noexcept -> in_place_stop_token;
+    auto get_token() const noexcept -> inplace_stop_token;
 
     auto request_stop() noexcept -> bool;
 
@@ -149,10 +135,10 @@ class in_place_stop_source
     }
 
   private:
-    friend in_place_stop_token;
-    friend __stok::__in_place_stop_callback_base;
+    friend inplace_stop_token;
+    friend __stok::__inplace_stop_callback_base;
     template <class>
-    friend class in_place_stop_callback;
+    friend class inplace_stop_callback;
 
     auto __lock_() const noexcept -> uint8_t;
     void __unlock_(uint8_t) const noexcept;
@@ -160,39 +146,38 @@ class in_place_stop_source
     auto __try_lock_unless_stop_requested_(bool) const noexcept -> bool;
 
     auto __try_add_callback_(
-        __stok::__in_place_stop_callback_base*) const noexcept -> bool;
+        __stok::__inplace_stop_callback_base*) const noexcept -> bool;
 
     void __remove_callback_(
-        __stok::__in_place_stop_callback_base*) const noexcept;
+        __stok::__inplace_stop_callback_base*) const noexcept;
 
     static constexpr uint8_t __stop_requested_flag_ = 1;
     static constexpr uint8_t __locked_flag_ = 2;
 
     mutable std::atomic<uint8_t> __state_{0};
-    mutable __stok::__in_place_stop_callback_base* __callbacks_ = nullptr;
+    mutable __stok::__inplace_stop_callback_base* __callbacks_ = nullptr;
     std::thread::id __notifying_thread_;
 };
 
-// [stoptoken.inplace], class in_place_stop_token
-class in_place_stop_token
+// [stoptoken.inplace], class inplace_stop_token
+class inplace_stop_token
 {
   public:
     template <class _Fun>
-    using callback_type = in_place_stop_callback<_Fun>;
+    using callback_type = inplace_stop_callback<_Fun>;
 
-    in_place_stop_token() noexcept : __source_(nullptr) {}
+    inplace_stop_token() noexcept : __source_(nullptr) {}
 
-    in_place_stop_token(const in_place_stop_token& __other) noexcept = default;
+    inplace_stop_token(const inplace_stop_token& __other) noexcept = default;
 
-    in_place_stop_token(in_place_stop_token&& __other) noexcept :
+    inplace_stop_token(inplace_stop_token&& __other) noexcept :
         __source_(std::exchange(__other.__source_, {}))
     {}
 
-    auto operator=(const in_place_stop_token& __other) noexcept
-        -> in_place_stop_token& = default;
+    auto operator=(const inplace_stop_token& __other) noexcept
+        -> inplace_stop_token& = default;
 
-    auto operator=(in_place_stop_token&& __other) noexcept
-        -> in_place_stop_token&
+    auto operator=(inplace_stop_token&& __other) noexcept -> inplace_stop_token&
     {
         __source_ = std::exchange(__other.__source_, nullptr);
         return *this;
@@ -208,51 +193,49 @@ class in_place_stop_token
         return __source_ != nullptr;
     }
 
-    void swap(in_place_stop_token& __other) noexcept
+    void swap(inplace_stop_token& __other) noexcept
     {
         std::swap(__source_, __other.__source_);
     }
 
-    auto operator==(const in_place_stop_token&) const noexcept
-        -> bool = default;
+    auto operator==(const inplace_stop_token&) const noexcept -> bool = default;
 
   private:
-    friend in_place_stop_source;
+    friend inplace_stop_source;
     template <class>
-    friend class in_place_stop_callback;
+    friend class inplace_stop_callback;
 
-    explicit in_place_stop_token(const in_place_stop_source* __source) noexcept
-        :
+    explicit inplace_stop_token(const inplace_stop_source* __source) noexcept :
         __source_(__source)
     {}
 
-    const in_place_stop_source* __source_;
+    const inplace_stop_source* __source_;
 };
 
-inline auto in_place_stop_source::get_token() const noexcept
-    -> in_place_stop_token
+inline auto inplace_stop_source::get_token() const noexcept
+    -> inplace_stop_token
 {
-    return in_place_stop_token{this};
+    return inplace_stop_token{this};
 }
 
-// [stopcallback.inplace], class template in_place_stop_callback
+// [stopcallback.inplace], class template inplace_stop_callback
 template <class _Fun>
-class in_place_stop_callback : __stok::__in_place_stop_callback_base
+class inplace_stop_callback : __stok::__inplace_stop_callback_base
 {
   public:
     template <class _Fun2>
         requires constructible_from<_Fun, _Fun2>
-    explicit in_place_stop_callback(in_place_stop_token __token,
-                                    _Fun2&& __fun) //
+    explicit inplace_stop_callback(inplace_stop_token __token,
+                                   _Fun2&& __fun) //
         noexcept(__nothrow_constructible_from<_Fun, _Fun2>) :
-        __stok::__in_place_stop_callback_base(
-            __token.__source_, &in_place_stop_callback::__execute_impl_),
+        __stok::__inplace_stop_callback_base(
+            __token.__source_, &inplace_stop_callback::__execute_impl_),
         __fun_(static_cast<_Fun2&&>(__fun))
     {
         __register_callback_();
     }
 
-    ~in_place_stop_callback()
+    ~inplace_stop_callback()
     {
         if (__source_ != nullptr)
             __source_->__remove_callback_(this);
@@ -260,9 +243,9 @@ class in_place_stop_callback : __stok::__in_place_stop_callback_base
 
   private:
     static void
-        __execute_impl_(__stok::__in_place_stop_callback_base* cb) noexcept
+        __execute_impl_(__stok::__inplace_stop_callback_base* cb) noexcept
     {
-        std::move(static_cast<in_place_stop_callback*>(cb)->__fun_)();
+        std::move(static_cast<inplace_stop_callback*>(cb)->__fun_)();
     }
 
     STDEXEC_ATTRIBUTE((no_unique_address))
@@ -271,7 +254,7 @@ class in_place_stop_callback : __stok::__in_place_stop_callback_base
 
 namespace __stok
 {
-inline void __in_place_stop_callback_base::__register_callback_() noexcept
+inline void __inplace_stop_callback_base::__register_callback_() noexcept
 {
     if (__source_ != nullptr)
     {
@@ -286,14 +269,14 @@ inline void __in_place_stop_callback_base::__register_callback_() noexcept
 }
 } // namespace __stok
 
-inline in_place_stop_source::~in_place_stop_source()
+inline inplace_stop_source::~inplace_stop_source()
 {
     STDEXEC_ASSERT(
         (__state_.load(std::memory_order_relaxed) & __locked_flag_) == 0);
     STDEXEC_ASSERT(__callbacks_ == nullptr);
 }
 
-inline auto in_place_stop_source::request_stop() noexcept -> bool
+inline auto inplace_stop_source::request_stop() noexcept -> bool
 {
     if (!__try_lock_unless_stop_requested_(true))
         return true;
@@ -330,7 +313,7 @@ inline auto in_place_stop_source::request_stop() noexcept -> bool
     return false;
 }
 
-inline auto in_place_stop_source::__lock_() const noexcept -> uint8_t
+inline auto inplace_stop_source::__lock_() const noexcept -> uint8_t
 {
     __stok::__spin_wait __spin;
     auto __old_state = __state_.load(std::memory_order_relaxed);
@@ -348,12 +331,12 @@ inline auto in_place_stop_source::__lock_() const noexcept -> uint8_t
     return __old_state;
 }
 
-inline void in_place_stop_source::__unlock_(uint8_t __old_state) const noexcept
+inline void inplace_stop_source::__unlock_(uint8_t __old_state) const noexcept
 {
     (void)__state_.store(__old_state, std::memory_order_release);
 }
 
-inline auto in_place_stop_source::__try_lock_unless_stop_requested_(
+inline auto inplace_stop_source::__try_lock_unless_stop_requested_(
     bool __set_stop_requested) const noexcept -> bool
 {
     __stok::__spin_wait __spin;
@@ -387,8 +370,8 @@ inline auto in_place_stop_source::__try_lock_unless_stop_requested_(
     return true;
 }
 
-inline auto in_place_stop_source::__try_add_callback_(
-    __stok::__in_place_stop_callback_base* __callbk) const noexcept -> bool
+inline auto inplace_stop_source::__try_add_callback_(
+    __stok::__inplace_stop_callback_base* __callbk) const noexcept -> bool
 {
     if (!__try_lock_unless_stop_requested_(false))
     {
@@ -408,8 +391,8 @@ inline auto in_place_stop_source::__try_add_callback_(
     return true;
 }
 
-inline void in_place_stop_source::__remove_callback_(
-    __stok::__in_place_stop_callback_base* __callbk) const noexcept
+inline void inplace_stop_source::__remove_callback_(
+    __stok::__inplace_stop_callback_base* __callbk) const noexcept
 {
     auto __old_state = __lock_();
 
@@ -452,50 +435,16 @@ inline void in_place_stop_source::__remove_callback_(
     }
 }
 
-template <class _Token>
-concept stoppable_token = copy_constructible<_Token> &&                   //
-                          move_constructible<_Token> &&                   //
-                          std::is_nothrow_copy_constructible_v<_Token> && //
-                          std::is_nothrow_move_constructible_v<_Token> && //
-                          equality_comparable<_Token> &&                  //
-                          requires(const _Token& __token) {
-                              {
-                                  __token.stop_requested()
-                              } noexcept -> __boolean_testable_;
-                              {
-                                  __token.stop_possible()
-                              } noexcept -> __boolean_testable_;
-    // workaround ICE in appleclang 13.1
-#if !defined(__clang__)
-                              typename __stok::__check_type_alias_exists<
-                                  _Token::template callback_type>;
-#endif
-                          };
+using in_place_stop_token
+    [[deprecated("in_place_stop_token has been renamed inplace_stop_token")]] =
+        inplace_stop_token;
 
-template <class _Token, typename _Callback, typename _Initializer = _Callback>
-concept stoppable_token_for =
-    stoppable_token<_Token> && __callable<_Callback> &&                 //
-    requires { typename _Token::template callback_type<_Callback>; } && //
-    constructible_from<_Callback, _Initializer> &&                      //
-    constructible_from<                                                 //
-        typename _Token::template callback_type<_Callback>, _Token,
-        _Initializer> &&                                                //
-    constructible_from<                                                 //
-        typename _Token::template callback_type<_Callback>, _Token&,
-        _Initializer> &&                                                //
-    constructible_from<                                                 //
-        typename _Token::template callback_type<_Callback>, const _Token,
-        _Initializer> &&                                                //
-    constructible_from<typename _Token::template callback_type<_Callback>,
-                       const _Token&, _Initializer>;
+using in_place_stop_source
+    [[deprecated("in_place_stop_token has been renamed inplace_stop_source")]] =
+        inplace_stop_source;
 
-template <class _Token>
-concept unstoppable_token =    //
-    stoppable_token<_Token> && //
-    requires {
-        {
-            _Token::stop_possible()
-        } -> __boolean_testable_;
-    } && //
-    (!_Token::stop_possible());
+template <class _Fun>
+using in_place_stop_callback [[deprecated(
+    "in_place_stop_callback has been renamed inplace_stop_callback")]] =
+    inplace_stop_callback<_Fun>;
 } // namespace stdexec

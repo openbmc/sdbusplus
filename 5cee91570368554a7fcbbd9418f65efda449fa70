@@ -34,6 +34,24 @@
       "parentUuid": "d8430ac5_590bc873",
       "revId": "5cee91570368554a7fcbbd9418f65efda449fa70",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "467ad836_ed1285c7",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2024-07-30T21:23:39Z",
+      "side": 1,
+      "message": "\u003e  Do you think we\u0027d be ok if this is an openbmc recipe?\n\nThat seems fine",
+      "parentUuid": "2faa4a75_dd108b1a",
+      "revId": "5cee91570368554a7fcbbd9418f65efda449fa70",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ],
   "submitRequirementResults": []

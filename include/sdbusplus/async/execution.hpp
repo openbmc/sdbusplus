@@ -11,6 +11,7 @@
 #pragma GCC diagnostic ignored "-Wnon-template-friend"
 #endif
 #pragma GCC diagnostic ignored "-Wmissing-field-initializers"
+#pragma GCC diagnostic ignored "-Wunused-parameter"
 #include <sdbusplus/async/stdexec/async_scope.hpp>
 #include <sdbusplus/async/stdexec/coroutine.hpp>
 #include <sdbusplus/async/stdexec/execution.hpp>

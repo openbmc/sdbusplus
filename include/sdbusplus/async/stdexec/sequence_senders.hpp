@@ -414,9 +414,9 @@ struct subscribe_t
     template <sender _Sender, receiver _Receiver>
         requires __next_connectable<__tfx_sndr<_Sender, _Receiver>,
                                     _Receiver> ||
-                 __subscribeable_with_tag_invoke<__tfx_sndr<_Sender, _Receiver>,
-                                                 _Receiver> ||
-                 __is_debug_env<env_of_t<_Receiver>>
+                     __subscribeable_with_tag_invoke<
+                         __tfx_sndr<_Sender, _Receiver>, _Receiver> ||
+                     __is_debug_env<env_of_t<_Receiver>>
     auto operator()(_Sender&& __sndr, _Receiver&& __rcvr) const
         noexcept(__nothrow_callable<__select_impl_t<_Sender, _Receiver>>)
             -> __call_result_t<__select_impl_t<_Sender, _Receiver>>
@@ -448,11 +448,11 @@ struct subscribe_t
                     tag_invoke_result_t<subscribe_t, _TfxSender, _Receiver>>,
                 "exec::subscribe(sender, receiver) must return a type that "
                 "satisfies the operation_state concept");
-            return tag_invoke(subscribe_t{},
-                              transform_sender(__domain,
-                                               static_cast<_Sender&&>(__sndr),
-                                               __env),
-                              static_cast<_Receiver&&>(__rcvr));
+            return tag_invoke(
+                subscribe_t{},
+                transform_sender(__domain, static_cast<_Sender&&>(__sndr),
+                                 __env),
+                static_cast<_Receiver&&>(__rcvr));
         }
         else if constexpr (enable_sequence_sender<
                                stdexec::__decay_t<_TfxSender>>)
@@ -496,11 +496,12 @@ inline constexpr subscribe_t subscribe;
 using __sequence_sndr::subscribe_result_t;
 
 template <class _Sender, class _Receiver>
-concept sequence_sender_to = sequence_receiver_from<_Receiver, _Sender> && //
-                             requires(_Sender&& __sndr, _Receiver&& __rcvr) {
-                                 subscribe(static_cast<_Sender&&>(__sndr),
-                                           static_cast<_Receiver&&>(__rcvr));
-                             };
+concept sequence_sender_to =
+    sequence_receiver_from<_Receiver, _Sender> && //
+    requires(_Sender&& __sndr, _Receiver&& __rcvr) {
+        subscribe(static_cast<_Sender&&>(__sndr),
+                  static_cast<_Receiver&&>(__rcvr));
+    };
 
 template <class _Receiver>
 concept __stoppable_receiver =                              //

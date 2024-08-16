@@ -59,7 +59,7 @@ struct __compose : sender_adaptor_closure<__compose<_T0, _T1>>
         requires __callable<_T0, _Sender> &&
                  __callable<_T1, __call_result_t<_T0, _Sender>>
     STDEXEC_ATTRIBUTE((always_inline))
-        __call_result_t<_T1, __call_result_t<_T0, _Sender>>
+    __call_result_t<_T1, __call_result_t<_T0, _Sender>>
         operator()(_Sender&& __sndr) &&
     {
         return static_cast<_T1&&>(__t1_)(
@@ -70,7 +70,7 @@ struct __compose : sender_adaptor_closure<__compose<_T0, _T1>>
         requires __callable<const _T0&, _Sender> &&
                  __callable<const _T1&, __call_result_t<const _T0&, _Sender>>
     STDEXEC_ATTRIBUTE((always_inline))
-        __call_result_t<_T1, __call_result_t<_T0, _Sender>>
+    __call_result_t<_T1, __call_result_t<_T0, _Sender>>
         operator()(_Sender&& __sndr) const&
     {
         return __t1_(__t0_(static_cast<_Sender&&>(__sndr)));
@@ -83,8 +83,8 @@ struct sender_adaptor_closure
 
 template <sender _Sender, __sender_adaptor_closure_for<_Sender> _Closure>
 STDEXEC_ATTRIBUTE((always_inline))
-__call_result_t<_Closure, _Sender> operator|(_Sender&& __sndr,
-                                             _Closure&& __clsur)
+__call_result_t<_Closure, _Sender>
+    operator|(_Sender&& __sndr, _Closure&& __clsur)
 {
     return static_cast<_Closure&&>(__clsur)(static_cast<_Sender&&>(__sndr));
 }
@@ -106,25 +106,25 @@ struct __binder_back :
 
     template <sender _Sender>
         requires __callable<_Fun, _Sender, _As...>
-    STDEXEC_ATTRIBUTE((host, device,
-                       always_inline)) __call_result_t<_Fun, _Sender, _As...>
-        operator()(_Sender&& __sndr) && noexcept(
-            __nothrow_callable<_Fun, _Sender, _As...>)
+    STDEXEC_ATTRIBUTE((host, device, always_inline))
+    __call_result_t<_Fun, _Sender, _As...> operator()(
+        _Sender&& __sndr) && noexcept(__nothrow_callable<_Fun, _Sender, _As...>)
     {
         return this->apply(
             [&__sndr, this](_As&... __as) noexcept(
                 __nothrow_callable<_Fun, _Sender, _As...>)
                 -> __call_result_t<_Fun, _Sender, _As...> {
-            return static_cast<_Fun&&>(__fun_)(static_cast<_Sender&&>(__sndr),
-                                               static_cast<_As&&>(__as)...);
-        },
+                return static_cast<_Fun&&>(
+                    __fun_)(static_cast<_Sender&&>(__sndr),
+                            static_cast<_As&&>(__as)...);
+            },
             *this);
     }
 
     template <sender _Sender>
         requires __callable<const _Fun&, _Sender, const _As&...>
-    STDEXEC_ATTRIBUTE((host, device, always_inline)) auto
-        operator()(_Sender&& __sndr) const& //
+    STDEXEC_ATTRIBUTE((host, device, always_inline))
+    auto operator()(_Sender&& __sndr) const& //
         noexcept(__nothrow_callable<const _Fun&, _Sender, const _As&...>)
             -> __call_result_t<const _Fun&, _Sender, const _As&...>
     {
@@ -132,8 +132,8 @@ struct __binder_back :
             [&__sndr, this](const _As&... __as) noexcept(
                 __nothrow_callable<_Fun, _Sender, const _As&...>)
                 -> __call_result_t<const _Fun&, _Sender, const _As&...> {
-            return __fun_(static_cast<_Sender&&>(__sndr), __as...);
-        },
+                return __fun_(static_cast<_Sender&&>(__sndr), __as...);
+            },
             *this);
     }
 };

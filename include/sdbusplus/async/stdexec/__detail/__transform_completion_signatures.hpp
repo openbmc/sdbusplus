@@ -134,9 +134,8 @@ auto __for_each_completion_signature_fn(completion_signatures<_Sigs...>**)
 template <class _Sigs, template <class...> class _Tuple,
           template <class...> class _Variant, class... _More>
 using __for_each_completion_signature =
-    decltype(__sigs::__for_each_completion_signature_fn<_Tuple, _Variant,
-                                                        _More...>(
-        static_cast<_Sigs**>(nullptr)));
+    decltype(__sigs::__for_each_completion_signature_fn<
+             _Tuple, _Variant, _More...>(static_cast<_Sigs**>(nullptr)));
 
 namespace __sigs
 {

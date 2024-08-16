@@ -153,9 +153,9 @@ source event::add_oneshot_timer(sd_event_time_handler_t handler, void* data,
 
     source s{*this};
 
-    auto rc = sd_event_add_time_relative(eventp, &s.sourcep, CLOCK_BOOTTIME,
-                                         time.count(), accuracy.count(),
-                                         handler, data);
+    auto rc = sd_event_add_time_relative(
+        eventp, &s.sourcep, CLOCK_BOOTTIME, time.count(), accuracy.count(),
+        handler, data);
 
     if (rc < 0)
     {

@@ -52,8 +52,8 @@ using __lowered_t = //
 struct continue_on_t
 {
     template <sender _Sender, scheduler _Scheduler>
-    auto operator()(_Sender&& __sndr, _Scheduler&& __sched) const
-        -> __well_formed_sender auto
+    auto operator()(_Sender&& __sndr,
+                    _Scheduler&& __sched) const -> __well_formed_sender auto
     {
         auto __domain = __get_early_domain(__sndr);
         using _Env = __t<__environ<__id<__decay_t<_Scheduler>>>>;

@@ -216,8 +216,8 @@ class __intrusive_queue<_Next>
             return __result;
         }
 
-        friend auto operator==(const iterator&, const iterator&) noexcept
-            -> bool = default;
+        friend auto operator==(const iterator&,
+                               const iterator&) noexcept -> bool = default;
     };
 
     [[nodiscard]] auto begin() const noexcept -> iterator

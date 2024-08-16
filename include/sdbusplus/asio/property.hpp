@@ -26,10 +26,9 @@ inline void getAllProperties(
 }
 
 template <typename Handler>
-inline void getAllProperties(sdbusplus::asio::connection& bus,
-                             const std::string& service,
-                             const std::string& path,
-                             const std::string& interface, Handler&& handler)
+inline void getAllProperties(
+    sdbusplus::asio::connection& bus, const std::string& service,
+    const std::string& path, const std::string& interface, Handler&& handler)
 {
     using arg1_type =
         std::tuple_element_t<1, boost::callable_traits::args_t<Handler>>;
@@ -52,22 +51,22 @@ inline void getProperty(
         [handler = std::move(handler)](
             boost::system::error_code ec,
             std::variant<std::monostate, PropertyType>& ret) mutable {
-        if (ec)
-        {
-            handler(ec, {});
-            return;
-        }
+            if (ec)
+            {
+                handler(ec, {});
+                return;
+            }
 
-        if (PropertyType* value = std::get_if<PropertyType>(&ret))
-        {
-            handler(ec, std::move(*value));
-            return;
-        }
+            if (PropertyType* value = std::get_if<PropertyType>(&ret))
+            {
+                handler(ec, std::move(*value));
+                return;
+            }
 
-        handler(boost::system::errc::make_error_code(
-                    boost::system::errc::invalid_argument),
-                {});
-    },
+            handler(boost::system::errc::make_error_code(
+                        boost::system::errc::invalid_argument),
+                    {});
+        },
         service, path, "org.freedesktop.DBus.Properties", "Get", interface,
         propertyName);
 }
@@ -76,47 +75,46 @@ inline void getProperty(
  * Use the getProperty overload above to make equivalent calls
  */
 template <typename T, typename OnError, typename OnSuccess>
-[[deprecated]] inline void
-    getProperty(sdbusplus::asio::connection& bus, const std::string& service,
-                const std::string& path, const std::string& interface,
-                const std::string& propertyName, OnError&& onError,
-                OnSuccess&& onSuccess)
+[[deprecated]] inline void getProperty(
+    sdbusplus::asio::connection& bus, const std::string& service,
+    const std::string& path, const std::string& interface,
+    const std::string& propertyName, OnError&& onError, OnSuccess&& onSuccess)
 {
     bus.async_method_call(
         [onError = std::move(onError), onSuccess = std::move(onSuccess)](
             boost::system::error_code ec,
             std::variant<std::monostate, T>& ret) {
-        if (ec)
-        {
-            onError(ec);
-            return;
-        }
+            if (ec)
+            {
+                onError(ec);
+                return;
+            }
 
-        if (T* value = std::get_if<T>(&ret))
-        {
-            onSuccess(*value);
-            return;
-        }
+            if (T* value = std::get_if<T>(&ret))
+            {
+                onSuccess(*value);
+                return;
+            }
 
-        onError(boost::system::errc::make_error_code(
-            boost::system::errc::invalid_argument));
-    },
+            onError(boost::system::errc::make_error_code(
+                boost::system::errc::invalid_argument));
+        },
         service, path, "org.freedesktop.DBus.Properties", "Get", interface,
         propertyName);
 }
 
 template <typename PropertyType, typename Handler>
-inline void setProperty(sdbusplus::asio::connection& bus,
-                        const std::string& service, const std::string& path,
-                        const std::string& interface,
-                        const std::string& propertyName,
-                        PropertyType&& propertyValue, Handler&& handler)
+inline void
+    setProperty(sdbusplus::asio::connection& bus, const std::string& service,
+                const std::string& path, const std::string& interface,
+                const std::string& propertyName, PropertyType&& propertyValue,
+                Handler&& handler)
 {
-    bus.async_method_call(std::forward<Handler>(handler), service, path,
-                          "org.freedesktop.DBus.Properties", "Set", interface,
-                          propertyName,
-                          std::variant<std::decay_t<PropertyType>>(
-                              std::forward<PropertyType>(propertyValue)));
+    bus.async_method_call(
+        std::forward<Handler>(handler), service, path,
+        "org.freedesktop.DBus.Properties", "Set", interface, propertyName,
+        std::variant<std::decay_t<PropertyType>>(
+            std::forward<PropertyType>(propertyValue)));
 }
 
 } // namespace sdbusplus::asio

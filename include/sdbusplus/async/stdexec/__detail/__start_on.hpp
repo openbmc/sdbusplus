@@ -61,8 +61,8 @@ struct start_on_t
         __types<tag_invoke_t(start_on_t, _Scheduler, _Sender)>;
 
     template <scheduler _Scheduler, sender _Sender>
-    auto operator()(_Scheduler&& __sched, _Sender&& __sndr) const
-        -> __well_formed_sender auto
+    auto operator()(_Scheduler&& __sched,
+                    _Sender&& __sndr) const -> __well_formed_sender auto
     {
         auto __domain = query_or(get_domain, __sched, default_domain());
         return stdexec::transform_sender(
@@ -90,13 +90,14 @@ struct start_on_t
     template <class _Sender, class _Env>
     static auto transform_sender(_Sender&& __sndr, const _Env&)
     {
-        return __sexpr_apply(static_cast<_Sender&&>(__sndr),
-                             []<class _Data, class _Child>(
-                                 __ignore, _Data&& __data, _Child&& __child) {
-            return let_value(
-                schedule(__data),
-                __detail::__always{static_cast<_Child&&>(__child)});
-        });
+        return __sexpr_apply(
+            static_cast<_Sender&&>(__sndr),
+            []<class _Data, class _Child>(__ignore, _Data&& __data,
+                                          _Child&& __child) {
+                return let_value(
+                    schedule(__data),
+                    __detail::__always{static_cast<_Child&&>(__child)});
+            });
     }
 };
 } // namespace __start_on

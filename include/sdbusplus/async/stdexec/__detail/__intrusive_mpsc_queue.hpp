@@ -49,8 +49,8 @@ class __intrusive_mpsc_queue<_Next>
     bool push_back(_Node* __new_node) noexcept
     {
         (__new_node->*_Next).store(nullptr, std::memory_order_relaxed);
-        void* __prev_back = __back_.exchange(__new_node,
-                                             std::memory_order_acq_rel);
+        void* __prev_back =
+            __back_.exchange(__new_node, std::memory_order_acq_rel);
         bool __is_nil = __prev_back == static_cast<void*>(&__nil_);
         if (__is_nil)
         {

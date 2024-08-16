@@ -309,8 +309,8 @@ struct read_single<S>
             return SD_BUS_TYPE_STRUCT;
         }();
 
-        int r = intf->sd_bus_message_enter_container(m, tupleType,
-                                                     dbusType.data());
+        int r =
+            intf->sd_bus_message_enter_container(m, tupleType, dbusType.data());
         if (r < 0)
         {
             throw exception::SdBusError(-r,

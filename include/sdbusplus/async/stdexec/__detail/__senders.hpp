@@ -251,7 +251,8 @@ struct connect_t
         {
             using _Result = __static_member_result_t<_TfxSender, _Receiver>;
             constexpr bool _Nothrow = //
-                _NothrowTfxSender&& noexcept(__declval<_TfxSender>().connect(
+                _NothrowTfxSender &&
+                noexcept(__declval<_TfxSender>().connect(
                     __declval<_TfxSender>(), __declval<_Receiver>()));
             return static_cast<_Result (*)() noexcept(_Nothrow)>(nullptr);
         }
@@ -259,8 +260,8 @@ struct connect_t
         {
             using _Result = __member_result_t<_TfxSender, _Receiver>;
             constexpr bool _Nothrow = //
-                _NothrowTfxSender&& noexcept(
-                    __declval<_TfxSender>().connect(__declval<_Receiver>()));
+                _NothrowTfxSender && noexcept(__declval<_TfxSender>().connect(
+                                         __declval<_Receiver>()));
             return static_cast<_Result (*)() noexcept(_Nothrow)>(nullptr);
         }
         else if constexpr (__with_tag_invoke<_TfxSender, _Receiver>)
@@ -292,11 +293,13 @@ struct connect_t
     template <sender _Sender, receiver _Receiver>
         requires __with_static_member<__tfx_sender<_Sender, _Receiver>,
                                       _Receiver> ||
-                 __with_member<__tfx_sender<_Sender, _Receiver>, _Receiver> ||
-                 __with_tag_invoke<__tfx_sender<_Sender, _Receiver>,
+                     __with_member<__tfx_sender<_Sender, _Receiver>,
                                    _Receiver> ||
-                 __with_co_await<__tfx_sender<_Sender, _Receiver>, _Receiver> ||
-                 __is_debug_env<env_of_t<_Receiver>>
+                     __with_tag_invoke<__tfx_sender<_Sender, _Receiver>,
+                                       _Receiver> ||
+                     __with_co_await<__tfx_sender<_Sender, _Receiver>,
+                                     _Receiver> ||
+                     __is_debug_env<env_of_t<_Receiver>>
     auto operator()(_Sender&& __sndr, _Receiver&& __rcvr) const
         noexcept(__nothrow_callable<__select_impl_t<_Sender, _Receiver>>)
             -> __call_result_t<__select_impl_t<_Sender, _Receiver>>
@@ -334,11 +337,11 @@ struct connect_t
                     tag_invoke_result_t<connect_t, _TfxSender, _Receiver>>,
                 "stdexec::connect(sender, receiver) must return a type that "
                 "satisfies the operation_state concept");
-            return tag_invoke(connect_t(),
-                              transform_sender(__domain,
-                                               static_cast<_Sender&&>(__sndr),
-                                               __env),
-                              static_cast<_Receiver&&>(__rcvr));
+            return tag_invoke(
+                connect_t(),
+                transform_sender(__domain, static_cast<_Sender&&>(__sndr),
+                                 __env),
+                static_cast<_Receiver&&>(__rcvr));
         }
         else if constexpr (__with_co_await<_TfxSender, _Receiver>)
         {

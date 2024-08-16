@@ -34,8 +34,8 @@ struct NonThrowingUnpack
         unpackPropertiesNoThrow(
             [&error](sdbusplus::UnpackErrorReason reason,
                      const std::string& property) {
-            error.emplace(reason, property);
-        },
+                error.emplace(reason, property);
+            },
             std::forward<Args>(args)...);
         return error;
     }
@@ -144,9 +144,9 @@ TYPED_TEST(UnpackPropertiesTest, setPresentPointersOnSuccess)
     const double* val3 = nullptr;
     const std::string* val4 = nullptr;
 
-    EXPECT_FALSE(this->unpackPropertiesCall(this->data, "Key-1", val1, "Key-2",
-                                            val2, "Key-3", val3, "Key-4",
-                                            val4));
+    EXPECT_FALSE(
+        this->unpackPropertiesCall(this->data, "Key-1", val1, "Key-2", val2,
+                                   "Key-3", val3, "Key-4", val4));
 
     ASSERT_TRUE(val1 && val2 && val3);
     ASSERT_TRUE(!val4);
@@ -265,8 +265,8 @@ TYPED_TEST(UnpackPropertiesNonThrowingTest, ErrorWhenOptionalTypeDoesntMatch)
     std::optional<std::string> val1;
     std::optional<std::string> val2;
 
-    auto badProperty = this->unpackPropertiesCall(this->data, "Key-1", val1,
-                                                  "Key-2", val2);
+    auto badProperty =
+        this->unpackPropertiesCall(this->data, "Key-1", val1, "Key-2", val2);
 
     ASSERT_TRUE(badProperty);
     EXPECT_THAT(badProperty->reason, Eq(UnpackErrorReason::wrongType));

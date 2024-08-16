@@ -116,10 +116,9 @@ class run_loop
             using __t = __schedule_task;
             using __id = __schedule_task;
             using sender_concept = sender_t;
-            using completion_signatures =
-                stdexec::completion_signatures<set_value_t(),
-                                               set_error_t(std::exception_ptr),
-                                               set_stopped_t()>;
+            using completion_signatures = stdexec::completion_signatures<
+                set_value_t(), set_error_t(std::exception_ptr),
+                set_stopped_t()>;
 
             template <class _Receiver>
             using __operation =

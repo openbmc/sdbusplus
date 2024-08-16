@@ -46,8 +46,8 @@ struct schedule_t
 
     template <class _Scheduler>
         requires tag_invocable<schedule_t, _Scheduler>
-    STDEXEC_ATTRIBUTE((host, device)) auto
-        operator()(_Scheduler&& __sched) const
+    STDEXEC_ATTRIBUTE((host, device))
+    auto operator()(_Scheduler&& __sched) const
         noexcept(nothrow_tag_invocable<schedule_t, _Scheduler>)
     {
         static_assert(sender<tag_invoke_result_t<schedule_t, _Scheduler>>);
@@ -67,9 +67,7 @@ inline constexpr schedule_t schedule{};
 template <class _Scheduler>
 concept __has_schedule = //
     requires(_Scheduler&& __sched) {
-        {
-            schedule(static_cast<_Scheduler&&>(__sched))
-        } -> sender;
+        { schedule(static_cast<_Scheduler&&>(__sched)) } -> sender;
     };
 
 template <class _Scheduler>
@@ -94,9 +92,7 @@ using schedule_result_t = __call_result_t<schedule_t, _Scheduler>;
 template <class _SchedulerProvider>
 concept __scheduler_provider = //
     requires(const _SchedulerProvider& __sp) {
-        {
-            get_scheduler(__sp)
-        } -> scheduler;
+        { get_scheduler(__sp) } -> scheduler;
     };
 
 namespace __queries
@@ -113,9 +109,8 @@ inline auto get_scheduler_t::operator()(const _Env& __env) const noexcept
 
 template <class _Env>
     requires tag_invocable<get_delegatee_scheduler_t, const _Env&>
-inline auto
-    get_delegatee_scheduler_t::operator()(const _Env& __env) const noexcept
-    -> tag_invoke_result_t<get_delegatee_scheduler_t, const _Env&>
+inline auto get_delegatee_scheduler_t::operator()(const _Env& __env) const
+    noexcept -> tag_invoke_result_t<get_delegatee_scheduler_t, const _Env&>
 {
     static_assert(
         nothrow_tag_invocable<get_delegatee_scheduler_t, const _Env&>);

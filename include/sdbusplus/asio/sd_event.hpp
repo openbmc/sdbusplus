@@ -115,11 +115,11 @@ class sd_event_wrapper
     {
         descriptor.async_wait(boost::asio::posix::stream_descriptor::wait_read,
                               [this](const boost::system::error_code& error) {
-            if (!error)
-            {
-                run();
-            }
-        });
+                                  if (!error)
+                                  {
+                                      run();
+                                  }
+                              });
     }
     sd_event* evt;
     boost::asio::posix::stream_descriptor descriptor;

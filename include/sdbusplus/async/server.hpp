@@ -58,8 +58,10 @@ concept has_get_property_nomsg =
 
 /* Determine if a type has a get property call that requires a msg. */
 template <typename Tag, typename Instance>
-concept has_get_property_msg = requires(
-    const Instance& i, sdbusplus::message_t& m) { i.get_property(Tag{}, m); };
+concept has_get_property_msg =
+    requires(const Instance& i, sdbusplus::message_t& m) {
+        i.get_property(Tag{}, m);
+    };
 
 /* Determine if a type has any get_property call. */
 template <typename Tag, typename Instance>
@@ -78,8 +80,10 @@ concept has_get_property_missing_const =
 
 /* Determine if a type has a set_property call. */
 template <typename Tag, typename Instance, typename Arg>
-concept has_set_property_nomsg = requires(
-    Instance& i, Arg&& a) { i.set_property(Tag{}, std::forward<Arg>(a)); };
+concept has_set_property_nomsg =
+    requires(Instance& i, Arg&& a) {
+        i.set_property(Tag{}, std::forward<Arg>(a));
+    };
 
 /* Determine if a type has a set property call that requires a msg. */
 template <typename Tag, typename Instance, typename Arg>

@@ -45,8 +45,8 @@ struct split_t
 {
     template <sender _Sender, class _Env = empty_env>
         requires sender_in<_Sender, _Env> && __decay_copyable<env_of_t<_Sender>>
-    auto operator()(_Sender&& __sndr, _Env&& __env = {}) const
-        -> __well_formed_sender auto
+    auto operator()(_Sender&& __sndr,
+                    _Env&& __env = {}) const -> __well_formed_sender auto
     {
         auto __domain = __get_late_domain(__sndr, __env);
         return stdexec::transform_sender(
@@ -79,17 +79,19 @@ struct split_t
             __receiver_t<__child_of<_Sender>, __decay_t<__data_of<_Sender>>>;
         static_assert(sender_to<__child_of<_Sender>, _Receiver>);
 
-        return __sexpr_apply(static_cast<_Sender&&>(__sndr),
-                             [&]<class _Env, class _Child>(
-                                 __ignore, _Env&& __env, _Child&& __child) {
-            // The shared state starts life with a ref-count of one.
-            auto __sh_state =
-                __make_intrusive<__shared_state<_Child, __decay_t<_Env>>, 2>(
-                    static_cast<_Child&&>(__child), static_cast<_Env&&>(__env));
+        return __sexpr_apply(
+            static_cast<_Sender&&>(__sndr),
+            [&]<class _Env, class _Child>(__ignore, _Env&& __env,
+                                          _Child&& __child) {
+                // The shared state starts life with a ref-count of one.
+                auto __sh_state =
+                    __make_intrusive<__shared_state<_Child, __decay_t<_Env>>,
+                                     2>(static_cast<_Child&&>(__child),
+                                        static_cast<_Env&&>(__env));
 
-            return __make_sexpr<__split_t>(
-                __box{__split_t(), std::move(__sh_state)});
-        });
+                return __make_sexpr<__split_t>(
+                    __box{__split_t(), std::move(__sh_state)});
+            });
     }
 };
 } // namespace __split

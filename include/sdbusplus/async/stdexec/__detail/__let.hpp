@@ -347,8 +347,8 @@ auto __mk_transform_sender_fn(_Env&&) noexcept
 {
     using _Set = __t<_LetTag>;
 
-    return
-        []<class _Fun, class _Child>(__ignore, _Fun&& __fun, _Child&& __child) {
+    return []<class _Fun, class _Child>(__ignore, _Fun&& __fun,
+                                        _Child&& __child) {
         using __completions_t = __completion_signatures_of_t<_Child, _Env>;
 
         if constexpr (__merror<__completions_t>)
@@ -404,8 +404,8 @@ struct __let_state
                                _Tuples>...>;
 
     template <class _ResultSender, class _OpState>
-    auto __get_result_receiver(const _ResultSender&, _OpState& __op_state)
-        -> decltype(auto)
+    auto __get_result_receiver(const _ResultSender&,
+                               _OpState& __op_state) -> decltype(auto)
     {
         if constexpr (__needs_receiver_ref<_ResultSender, _Sched, _Receiver>)
         {
@@ -483,8 +483,8 @@ struct __let_t
                 tag_invoke_t(__let_t, _Sender, _Function)>;
 
     template <sender_expr_for<__let_t<_Set>> _Sender, class _Env>
-    static auto transform_env(_Sender&& __sndr, const _Env& __env)
-        -> decltype(auto)
+    static auto transform_env(_Sender&& __sndr,
+                              const _Env& __env) -> decltype(auto)
     {
         return __sexpr_apply(static_cast<_Sender&&>(__sndr),
                              __mk_transform_env_fn<__let_t<_Set>>(__env));
@@ -492,8 +492,8 @@ struct __let_t
 
     template <sender_expr_for<__let_t<_Set>> _Sender, class _Env>
         requires same_as<__early_domain_of_t<_Sender>, dependent_domain>
-    static auto transform_sender(_Sender&& __sndr, const _Env& __env)
-        -> decltype(auto)
+    static auto
+        transform_sender(_Sender&& __sndr, const _Env& __env) -> decltype(auto)
     {
         return __sexpr_apply(static_cast<_Sender&&>(__sndr),
                              __mk_transform_sender_fn<__let_t<_Set>>(__env));
@@ -505,9 +505,9 @@ struct __let_impl : __sexpr_defaults
 {
     static constexpr auto get_attrs = //
         []<class _Child>(__ignore, const _Child& __child) noexcept {
-        return __env::__join(prop{get_domain, _Domain()},
-                             stdexec::get_env(__child));
-    };
+            return __env::__join(prop{get_domain, _Domain()},
+                                 stdexec::get_env(__child));
+        };
 
     static constexpr auto get_completion_signatures = //
         []<class _Self, class... _Env>(_Self&&, _Env&&...) noexcept
@@ -519,26 +519,27 @@ struct __let_impl : __sexpr_defaults
 
     static constexpr auto get_state = //
         []<class _Sender, class _Receiver>(_Sender&& __sndr, _Receiver&) {
-        static_assert(sender_expr_for<_Sender, __let_t<_Set, _Domain>>);
-        using _Fun = __data_of<_Sender>;
-        using _Child = __child_of<_Sender>;
-        using _Sched = __completion_sched<_Child, _Set>;
-        using __mk_let_state =
-            __mbind_front_q<__let_state, _Receiver, _Fun, _Set, _Sched>;
+            static_assert(sender_expr_for<_Sender, __let_t<_Set, _Domain>>);
+            using _Fun = __data_of<_Sender>;
+            using _Child = __child_of<_Sender>;
+            using _Sched = __completion_sched<_Child, _Set>;
+            using __mk_let_state =
+                __mbind_front_q<__let_state, _Receiver, _Fun, _Set, _Sched>;
 
-        using __let_state_t =
-            __gather_completions_of<_Set, _Child, env_of_t<_Receiver>,
-                                    __q<__decayed_tuple>, __mk_let_state>;
+            using __let_state_t =
+                __gather_completions_of<_Set, _Child, env_of_t<_Receiver>,
+                                        __q<__decayed_tuple>, __mk_let_state>;
 
-        return __sndr.apply(static_cast<_Sender&&>(__sndr),
-                            [&]<class _Fn, class _Child>(__ignore, _Fn&& __fn,
-                                                         _Child&& __child) {
-            _Sched __sched = query_or(get_completion_scheduler<_Set>,
-                                      stdexec::get_env(__child),
-                                      __unknown_scheduler());
-            return __let_state_t{static_cast<_Fn&&>(__fn), __sched};
-        });
-    };
+            return __sndr.apply(
+                static_cast<_Sender&&>(__sndr),
+                [&]<class _Fn, class _Child>(__ignore, _Fn&& __fn,
+                                             _Child&& __child) {
+                    _Sched __sched = query_or(get_completion_scheduler<_Set>,
+                                              stdexec::get_env(__child),
+                                              __unknown_scheduler());
+                    return __let_state_t{static_cast<_Fn&&>(__fn), __sched};
+                });
+        };
 
     template <class _State, class _OpState, class... _As>
     static void __bind_(_State& __state, _OpState& __op_state, _As&&... __as)

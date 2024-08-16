@@ -46,8 +46,7 @@ class property_callback
         std::function<SetPropertyReturnValue(message_t&)>&& on_set_message,
         std::function<SetPropertyReturnValue(const std::any&)>&& on_set_value,
         const char* signature, decltype(vtable_t::flags) flags) :
-        interface_(parent),
-        name_(name), on_get_(std::move(on_get)),
+        interface_(parent), name_(name), on_get_(std::move(on_get)),
         on_set_message_(std::move(on_set_message)),
         on_set_value_(std::move(on_set_value)), signature_(signature),
         flags_(flags)
@@ -68,8 +67,7 @@ class method_callback
                     std::function<int(message_t&)>&& call,
                     const char* arg_signature, const char* return_signature,
                     decltype(vtable_t::flags) flags) :
-        name_(name),
-        call_(std::move(call)), arg_signature_(arg_signature),
+        name_(name), call_(std::move(call)), arg_signature_(arg_signature),
         return_signature_(return_signature), flags_(flags)
     {}
     std::string name_;
@@ -115,8 +113,8 @@ inline const bool SecondArgIsMessage_v = std::is_same_v<
     message_t>;
 
 template <typename T>
-static constexpr bool callbackWantsMessage = FirstArgIsMessage_v<T> ||
-                                             SecondArgIsMessage_v<T>;
+static constexpr bool callbackWantsMessage =
+    FirstArgIsMessage_v<T> || SecondArgIsMessage_v<T>;
 
 namespace details
 {
@@ -228,9 +226,7 @@ class coroutine_method_instance
   public:
     using self_t = coroutine_method_instance<CallbackType>;
     coroutine_method_instance(boost::asio::io_context& io,
-                              CallbackType&& func) :
-        io_(io),
-        func_(func)
+                              CallbackType&& func) : io_(io), func_(func)
     {}
 
     int operator()(message_t& m)
@@ -308,8 +304,7 @@ class callback_get_instance
   public:
     callback_get_instance(const std::shared_ptr<PropertyType>& value,
                           CallbackType&& func) :
-        value_(value),
-        func_(std::forward<CallbackType>(func))
+        value_(value), func_(std::forward<CallbackType>(func))
     {}
     int operator()(message_t& m)
     {
@@ -330,8 +325,7 @@ class callback_set_message_instance
     callback_set_message_instance(
         const std::shared_ptr<PropertyType>& value,
         std::function<bool(const PropertyType&, PropertyType&)>&& func) :
-        value_(value),
-        func_(std::move(func))
+        value_(value), func_(std::move(func))
     {}
     SetPropertyReturnValue operator()(message_t& m)
     {
@@ -361,8 +355,7 @@ class callback_set_value_instance
     callback_set_value_instance(
         const std::shared_ptr<PropertyType>& value,
         std::function<bool(const PropertyType&, PropertyType&)>&& func) :
-        value_(value),
-        func_(std::move(func))
+        value_(value), func_(std::move(func))
     {}
     SetPropertyReturnValue operator()(const std::any& value)
     {
@@ -395,8 +388,7 @@ class dbus_interface
   public:
     dbus_interface(std::shared_ptr<sdbusplus::asio::connection> conn,
                    const std::string& path, const std::string& name) :
-        conn_(conn),
-        path_(path), name_(name)
+        conn_(conn), path_(path), name_(name)
 
     {}
 
@@ -454,11 +446,10 @@ class dbus_interface
 
     template <typename PropertyType, typename CallbackTypeSet,
               typename CallbackTypeGet>
-    bool register_property_rw(const std::string& name,
-                              const PropertyType& property,
-                              decltype(vtable_t::flags) flags,
-                              CallbackTypeSet&& setFunction,
-                              CallbackTypeGet&& getFunction)
+    bool register_property_rw(
+        const std::string& name, const PropertyType& property,
+        decltype(vtable_t::flags) flags, CallbackTypeSet&& setFunction,
+        CallbackTypeGet&& getFunction)
     {
         // can only register once
         if (is_initialized())
@@ -514,10 +505,10 @@ class dbus_interface
         }
         else
         {
-            return register_property_rw(name, property,
-                                        vtable::property_::emits_change,
-                                        details::nop_set_value<PropertyType>,
-                                        details::nop_get_value<PropertyType>);
+            return register_property_rw(
+                name, property, vtable::property_::emits_change,
+                details::nop_set_value<PropertyType>,
+                details::nop_get_value<PropertyType>);
         }
     }
 
@@ -527,10 +518,10 @@ class dbus_interface
                            const PropertyType& property,
                            CallbackTypeSet&& setFunction)
     {
-        return register_property_rw(name, property,
-                                    vtable::property_::emits_change,
-                                    std::forward<CallbackTypeSet>(setFunction),
-                                    details::nop_get_value<PropertyType>);
+        return register_property_rw(
+            name, property, vtable::property_::emits_change,
+            std::forward<CallbackTypeSet>(setFunction),
+            details::nop_get_value<PropertyType>);
     }
 
     // custom getter and setter, gets take an input of void and respond with a
@@ -542,10 +533,10 @@ class dbus_interface
                            CallbackTypeSet&& setFunction,
                            CallbackTypeGet&& getFunction)
     {
-        return register_property_rw(name, property,
-                                    vtable::property_::emits_change,
-                                    std::forward<CallbackTypeSet>(setFunction),
-                                    std::forward<CallbackTypeGet>(getFunction));
+        return register_property_rw(
+            name, property, vtable::property_::emits_change,
+            std::forward<CallbackTypeSet>(setFunction),
+            std::forward<CallbackTypeGet>(getFunction));
     }
 
     template <typename PropertyType, bool changesOnly = false>
@@ -851,8 +842,7 @@ class object_server
 {
   public:
     object_server(const std::shared_ptr<sdbusplus::asio::connection>& conn,
-                  const bool skipManager = false) :
-        conn_(conn)
+                  const bool skipManager = false) : conn_(conn)
     {
         if (!skipManager)
         {
@@ -860,8 +850,8 @@ class object_server
         }
     }
 
-    std::shared_ptr<dbus_interface> add_interface(const std::string& path,
-                                                  const std::string& name)
+    std::shared_ptr<dbus_interface>
+        add_interface(const std::string& path, const std::string& name)
     {
         auto dbusIface = std::make_shared<dbus_interface>(conn_, path, name);
         interfaces_.emplace_back(dbusIface);
@@ -901,8 +891,8 @@ class object_server
 
     bool remove_interface(const std::shared_ptr<dbus_interface>& iface)
     {
-        auto findIface = std::find(interfaces_.begin(), interfaces_.end(),
-                                   iface);
+        auto findIface =
+            std::find(interfaces_.begin(), interfaces_.end(), iface);
         if (findIface != interfaces_.end())
         {
             interfaces_.erase(findIface);

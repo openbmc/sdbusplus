@@ -28,8 +28,7 @@ SdBusError::SdBusError(int error_in, const char* prefix,
 
 SdBusError::SdBusError(int error_in, std::string&& prefix,
                        SdBusInterface* intf_in) :
-    error(SD_BUS_ERROR_NULL),
-    intf(intf_in)
+    error(SD_BUS_ERROR_NULL), intf(intf_in)
 {
     // We can't check the output of intf->sd_bus_error_set_errno() because
     // it returns the input errorcode. We don't want to try and guess
@@ -46,8 +45,7 @@ SdBusError::SdBusError(int error_in, std::string&& prefix,
 
 SdBusError::SdBusError(sd_bus_error* error_in, const char* prefix,
                        SdBusInterface* intf_in) :
-    error(*error_in),
-    intf(intf_in)
+    error(*error_in), intf(intf_in)
 {
     // We own the error so remove the caller's reference
     *error_in = SD_BUS_ERROR_NULL;
@@ -159,8 +157,7 @@ static std::string unpackErrorReasonToString(const UnpackErrorReason reason)
 
 UnpackPropertyError::UnpackPropertyError(std::string_view propertyNameIn,
                                          const UnpackErrorReason reasonIn) :
-    propertyName(propertyNameIn),
-    reason(reasonIn),
+    propertyName(propertyNameIn), reason(reasonIn),
     errWhatDetailed(std::string(errWhat) + " PropertyName: '" + propertyName +
                     "', Reason: '" + unpackErrorReasonToString(reason) + "'.")
 {}

@@ -134,7 +134,7 @@ struct callback_sender
 {
     using is_sender = void;
 
-    explicit callback_sender(Init init) : init(std::move(init)){};
+    explicit callback_sender(Init init) : init(std::move(init)) {};
 
     // This Sender yields a message_t.
     friend auto tag_invoke(execution::get_completion_signatures_t,
@@ -143,8 +143,8 @@ struct callback_sender
                                             execution::set_stopped_t()>;
 
     template <execution::receiver R>
-    friend auto tag_invoke(execution::connect_t, callback_sender&& self, R r)
-        -> callback_operation<Init, R>
+    friend auto tag_invoke(execution::connect_t, callback_sender&& self,
+                           R r) -> callback_operation<Init, R>
     {
         return {std::move(self.init), std::move(r)};
     }

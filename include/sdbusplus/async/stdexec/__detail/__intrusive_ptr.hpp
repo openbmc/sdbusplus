@@ -66,8 +66,8 @@ class __intrusive_ptr;
 template <class _Ty, std::size_t _ReservedBits = 0ul>
 struct __enable_intrusive_from_this
 {
-    auto __intrusive_from_this() noexcept
-        -> __intrusive_ptr<_Ty, _ReservedBits>;
+    auto
+        __intrusive_from_this() noexcept -> __intrusive_ptr<_Ty, _ReservedBits>;
     auto __intrusive_from_this() const noexcept
         -> __intrusive_ptr<const _Ty, _ReservedBits>;
 
@@ -99,8 +99,7 @@ struct __control_block
 
     template <class... _Us>
     explicit __control_block(_Us&&... __us) noexcept(noexcept(_Ty{
-        __declval<_Us>()...})) :
-        __ref_count_(__ref_count_increment)
+        __declval<_Us>()...})) : __ref_count_(__ref_count_increment)
     {
         // Construct the value *after* the initialization of the atomic in case
         // the constructor of _Ty calls __intrusive_from_this() (which
@@ -226,8 +225,8 @@ class __intrusive_ptr
 
     __intrusive_ptr(
         __enable_intrusive_from_this<_Ty, _ReservedBits>* __that) noexcept :
-        __intrusive_ptr(__that ? __that->__intrusive_from_this()
-                               : __intrusive_ptr())
+        __intrusive_ptr(
+            __that ? __that->__intrusive_from_this() : __intrusive_ptr())
     {}
 
     auto operator=(__intrusive_ptr&& __that) noexcept -> __intrusive_ptr&
@@ -242,12 +241,11 @@ class __intrusive_ptr
         return operator=(__intrusive_ptr(__that));
     }
 
-    auto operator=(
-        __enable_intrusive_from_this<_Ty, _ReservedBits>* __that) noexcept
-        -> __intrusive_ptr&
+    auto operator=(__enable_intrusive_from_this<_Ty, _ReservedBits>*
+                       __that) noexcept -> __intrusive_ptr&
     {
-        return operator=(__that ? __that->__intrusive_from_this()
-                                : __intrusive_ptr());
+        return operator=(
+            __that ? __that->__intrusive_from_this() : __intrusive_ptr());
     }
 
     ~__intrusive_ptr()

@@ -74,7 +74,7 @@ struct proxy : private sdbusplus::bus::details::bus_friend
 
     // Constructor allowing all 3 to be passed in.
     constexpr proxy(value_ref<S> s, value_ref<P> p, value_ref<I> i) :
-        s(s), p(p), i(i){};
+        s(s), p(p), i(i) {};
 
     // Functions to assign address fields.
     constexpr auto service(string_ref s) const noexcept
@@ -137,8 +137,10 @@ struct proxy : private sdbusplus::bus::details::bus_friend
         // contents.
         return callback([bus = get_busp(ctx),
                          msg = std::move(msg)](auto cb, auto data) mutable {
-            return sd_bus_call_async(bus, nullptr, msg.get(), cb, data, 0);
-        }) | execution::then([](message_t&& m) { return m.unpack<Rs...>(); });
+                   return sd_bus_call_async(bus, nullptr, msg.get(), cb, data,
+                                            0);
+               }) |
+               execution::then([](message_t&& m) { return m.unpack<Rs...>(); });
     }
 
     /** Get a property.

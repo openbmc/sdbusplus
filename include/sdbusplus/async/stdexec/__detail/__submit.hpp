@@ -135,8 +135,8 @@ struct __submit_t
             using _OpAlloc = typename std::allocator_traits<
                 _Alloc>::template rebind_alloc<_Op>;
             _OpAlloc __op_alloc{__alloc};
-            auto __op = std::allocator_traits<_OpAlloc>::allocate(__op_alloc,
-                                                                  1);
+            auto __op =
+                std::allocator_traits<_OpAlloc>::allocate(__op_alloc, 1);
             try
             {
                 std::allocator_traits<_OpAlloc>::construct(

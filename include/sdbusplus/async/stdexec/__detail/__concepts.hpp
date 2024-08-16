@@ -49,9 +49,7 @@ template <class _Fun, class... _As>
 concept __nothrow_callable =    //
     __callable<_Fun, _As...> && //
     requires(_Fun&& __fun, _As&&... __as) {
-        {
-            static_cast<_Fun&&>(__fun)(static_cast<_As&&>(__as)...)
-        } noexcept;
+        { static_cast<_Fun&&>(__fun)(static_cast<_As&&>(__as)...) } noexcept;
     };
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -88,7 +86,7 @@ template <class _Ty, class... _Us>
 concept __all_of = (__same_as<_Ty, _Us> && ...);
 
 template <class _Ty, class... _Us>
-concept __none_of = ((!__same_as<_Ty, _Us>)&&...);
+concept __none_of = ((!__same_as<_Ty, _Us>) && ...);
 
 template <class, template <class...> class>
 constexpr bool __is_instance_of_ = false;
@@ -133,12 +131,8 @@ concept convertible_to =                     //
 template <class _Ty>
 concept equality_comparable = //
     requires(__cref_t<_Ty> __t) {
-        {
-            __t == __t
-        } -> convertible_to<bool>;
-        {
-            __t != __t
-        } -> convertible_to<bool>;
+        { __t == __t } -> convertible_to<bool>;
+        { __t != __t } -> convertible_to<bool>;
     };
 #endif
 } // namespace stdexec::__std_concepts
@@ -156,9 +150,7 @@ concept destructible = __is_nothrow_destructible(_Ty);
 template <class _Ty>
 inline constexpr bool __destructible_ = //
     requires(_Ty && (&__fn)() noexcept) {
-        {
-            __fn().~_Ty()
-        } noexcept;
+        { __fn().~_Ty() } noexcept;
     };
 template <class _Ty>
 inline constexpr bool __destructible_<_Ty&> = true;
@@ -198,9 +190,7 @@ concept assignable_from =   //
     //   const std::remove_reference_t<_LHS>&,
     //   const std::remove_reference_t<_RHS>&> &&
     requires(_LHS __lhs, _RHS&& __rhs) {
-        {
-            __lhs = static_cast<_RHS&&>(__rhs)
-        } -> same_as<_LHS>;
+        { __lhs = static_cast<_RHS&&>(__rhs) } -> same_as<_LHS>;
     };
 
 namespace __swap
@@ -216,8 +206,8 @@ concept swappable_with =             //
 inline constexpr const auto __fn =                               //
     []<class _Ty, swappable_with<_Ty> _Uy>(_Ty&& __t, _Uy&& __u) //
     noexcept(noexcept(swap(static_cast<_Ty&&>(__t), static_cast<_Uy&&>(__u)))) {
-    swap(static_cast<_Ty&&>(__t), static_cast<_Uy&&>(__u));
-};
+        swap(static_cast<_Ty&&>(__t), static_cast<_Uy&&>(__u));
+    };
 } // namespace __swap
 
 using __swap::swappable_with;
@@ -259,30 +249,14 @@ concept __boolean_testable_ = convertible_to<_Ty, bool>;
 template <class T, class U>
 concept __partially_ordered_with = //
     requires(__cref_t<T> t, __cref_t<U> u) {
-        {
-            t < u
-        } -> __boolean_testable_;
-        {
-            t > u
-        } -> __boolean_testable_;
-        {
-            t <= u
-        } -> __boolean_testable_;
-        {
-            t >= u
-        } -> __boolean_testable_;
-        {
-            u < t
-        } -> __boolean_testable_;
-        {
-            u > t
-        } -> __boolean_testable_;
-        {
-            u <= t
-        } -> __boolean_testable_;
-        {
-            u >= t
-        } -> __boolean_testable_;
+        { t < u } -> __boolean_testable_;
+        { t > u } -> __boolean_testable_;
+        { t <= u } -> __boolean_testable_;
+        { t >= u } -> __boolean_testable_;
+        { u < t } -> __boolean_testable_;
+        { u > t } -> __boolean_testable_;
+        { u <= t } -> __boolean_testable_;
+        { u >= t } -> __boolean_testable_;
     };
 
 template <class _Ty>
@@ -299,9 +273,7 @@ template <class _Ty>
 concept __nothrow_movable_value = //
     __movable_value<_Ty> &&       //
     requires(_Ty&& __t) {
-        {
-            __decay_t<_Ty>{__decay_t<_Ty>{static_cast<_Ty&&>(__t)}}
-        } noexcept;
+        { __decay_t<_Ty>{__decay_t<_Ty>{static_cast<_Ty&&>(__t)}} } noexcept;
     };
 
 template <class _Ty, class... _As>

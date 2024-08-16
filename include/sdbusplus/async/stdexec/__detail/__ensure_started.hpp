@@ -87,20 +87,22 @@ struct ensure_started_t
             __receiver_t<__child_of<_Sender>, __decay_t<__data_of<_Sender>>>;
         static_assert(sender_to<__child_of<_Sender>, _Receiver>);
 
-        return __sexpr_apply(static_cast<_Sender&&>(__sndr),
-                             [&]<class _Env, class _Child>(
-                                 __ignore, _Env&& __env, _Child&& __child) {
-            // The shared state starts life with a ref-count of one.
-            auto __sh_state =
-                __make_intrusive<__shared_state<_Child, __decay_t<_Env>>, 2>(
-                    static_cast<_Child&&>(__child), static_cast<_Env&&>(__env));
+        return __sexpr_apply(
+            static_cast<_Sender&&>(__sndr),
+            [&]<class _Env, class _Child>(__ignore, _Env&& __env,
+                                          _Child&& __child) {
+                // The shared state starts life with a ref-count of one.
+                auto __sh_state =
+                    __make_intrusive<__shared_state<_Child, __decay_t<_Env>>,
+                                     2>(static_cast<_Child&&>(__child),
+                                        static_cast<_Env&&>(__env));
 
-            // Eagerly start the work:
-            __sh_state->__try_start();
+                // Eagerly start the work:
+                __sh_state->__try_start();
 
-            return __make_sexpr<__ensure_started_t>(
-                __box{__ensure_started_t(), std::move(__sh_state)});
-        });
+                return __make_sexpr<__ensure_started_t>(
+                    __box{__ensure_started_t(), std::move(__sh_state)});
+            });
     }
 };
 } // namespace __ensure_started

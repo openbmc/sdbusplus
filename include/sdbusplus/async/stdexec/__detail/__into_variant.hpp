@@ -81,10 +81,10 @@ struct __into_variant_impl : __sexpr_defaults
 {
     static constexpr auto get_state = //
         []<class _Self, class _Receiver>(_Self&&, _Receiver&) noexcept {
-        using __variant_t =
-            value_types_of_t<__child_of<_Self>, env_of_t<_Receiver>>;
-        return __mtype<__variant_t>();
-    };
+            using __variant_t =
+                value_types_of_t<__child_of<_Self>, env_of_t<_Receiver>>;
+            return __mtype<__variant_t>();
+        };
 
     static constexpr auto complete = //
         []<class _State, class _Receiver, class _Tag, class... _Args>(

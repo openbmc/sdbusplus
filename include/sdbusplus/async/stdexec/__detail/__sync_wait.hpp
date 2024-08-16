@@ -55,8 +55,8 @@ struct __env
         return __loop_->get_scheduler();
     }
 
-    auto query(get_delegatee_scheduler_t) const noexcept
-        -> run_loop::__scheduler
+    auto
+        query(get_delegatee_scheduler_t) const noexcept -> run_loop::__scheduler
     {
         return __loop_->get_scheduler();
     }
@@ -118,8 +118,8 @@ struct __receiver
         {
             if constexpr (__same_as<_Error, std::exception_ptr>)
             {
-                STDEXEC_ASSERT(__err !=
-                               nullptr); // std::exception_ptr must not be null.
+                STDEXEC_ASSERT(
+                    __err != nullptr); // std::exception_ptr must not be null.
                 __state_->__eptr_ = static_cast<_Error&&>(__err);
             }
             else if constexpr (__same_as<_Error, std::error_code>)
@@ -253,8 +253,8 @@ struct sync_wait_t
 {
     template <sender_in<__env> _Sender>
         requires __valid_sync_wait_argument<_Sender> &&
-                 __has_implementation_for<sync_wait_t,
-                                          __early_domain_of_t<_Sender>, _Sender>
+                     __has_implementation_for<
+                         sync_wait_t, __early_domain_of_t<_Sender>, _Sender>
     auto operator()(_Sender&& __sndr) const
         -> std::optional<__value_tuple_for_t<_Sender>>
     {

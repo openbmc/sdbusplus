@@ -141,26 +141,25 @@ inline constexpr auto __connect =                                          //
 
 inline constexpr auto __start = //
     []<class _StartTag = start_t, class... _ChildOps>(
-        __ignore, __ignore, _ChildOps&... __ops) noexcept
-{
-    (_StartTag()(__ops), ...);
-};
+        __ignore, __ignore, _ChildOps&... __ops) noexcept {
+        (_StartTag()(__ops), ...);
+    };
 
 inline constexpr auto __complete = //
     []<class _Index, class _Receiver, class _SetTag, class... _Args>(
         _Index, __ignore, _Receiver& __rcvr, _SetTag,
         _Args&&... __args) noexcept {
-    static_assert(__v<_Index> == 0,
-                  "I don't know how to complete this operation.");
-    _SetTag()(std::move(__rcvr), static_cast<_Args&&>(__args)...);
-};
+        static_assert(__v<_Index> == 0,
+                      "I don't know how to complete this operation.");
+        _SetTag()(std::move(__rcvr), static_cast<_Args&&>(__args)...);
+    };
 
 inline constexpr auto __sigs = //
     []<class _Sender>(_Sender&& __sndr, __ignore = {}) noexcept {
-    static_assert(
-        __mnever<tag_of_t<_Sender>>,
-        "No customization of get_completion_signatures for this sender tag type.");
-};
+        static_assert(
+            __mnever<tag_of_t<_Sender>>,
+            "No customization of get_completion_signatures for this sender tag type.");
+    };
 
 template <class _ReceiverId, class _Sexpr, class _Idx>
 struct __receiver
@@ -379,8 +378,8 @@ struct __op_state : __op_base<_Sexpr, _Receiver>
         auto&& __rcvr = this->__rcvr();
         __inner_ops_.apply(
             [&](auto&... __ops) noexcept {
-            __sexpr_impl<__tag_t>::start(this->__state_, __rcvr, __ops...);
-        },
+                __sexpr_impl<__tag_t>::start(this->__state_, __rcvr, __ops...);
+            },
             __inner_ops_);
     }
 
@@ -417,13 +416,13 @@ struct __op_state : __op_base<_Sexpr, _Receiver>
 
 inline constexpr auto __drop_front = //
     []<class _Fn>(_Fn __fn) noexcept {
-    return
-        [__fn = std::move(__fn)]<class... _Rest>(auto&&, _Rest&&... __rest) //
-        noexcept(__nothrow_callable<const _Fn&, _Rest...>)
-            -> __call_result_t<const _Fn&, _Rest...> {
-        return __fn(static_cast<_Rest&&>(__rest)...);
+        return [__fn = std::move(__fn)]<class... _Rest>(auto&&,
+                                                        _Rest&&... __rest) //
+               noexcept(__nothrow_callable<const _Fn&, _Rest...>)
+                   -> __call_result_t<const _Fn&, _Rest...> {
+                   return __fn(static_cast<_Rest&&>(__rest)...);
+               };
     };
-};
 
 template <class _Tag, class... _Captures>
 STDEXEC_ATTRIBUTE((host, device, always_inline))
@@ -576,8 +575,8 @@ struct __sexpr
 
 template <class _Tag, class _Data, class... _Child>
 STDEXEC_ATTRIBUTE((host, device))
-__sexpr(_Tag, _Data, _Child...)
-    -> __sexpr<STDEXEC_SEXPR_DESCRIPTOR(_Tag, _Data, _Child...)>;
+__sexpr(_Tag, _Data,
+        _Child...) -> __sexpr<STDEXEC_SEXPR_DESCRIPTOR(_Tag, _Data, _Child...)>;
 
 template <class _Tag, class _Data, class... _Child>
 using __sexpr_t = __sexpr<STDEXEC_SEXPR_DESCRIPTOR(_Tag, _Data, _Child...)>;

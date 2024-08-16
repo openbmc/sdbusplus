@@ -83,14 +83,16 @@ struct __valid_completions
 {
     template <class... _Args>
         requires __one_of<set_value_t (*)(_Args&&...), _Sigs...>
-    STDEXEC_ATTRIBUTE((host, device)) void set_value(_Args&&...) noexcept
+    STDEXEC_ATTRIBUTE((host, device))
+    void set_value(_Args&&...) noexcept
     {
         STDEXEC_TERMINATE();
     }
 
     template <class _Error>
         requires __one_of<set_error_t (*)(_Error&&), _Sigs...>
-    STDEXEC_ATTRIBUTE((host, device)) void set_error(_Error&&) noexcept
+    STDEXEC_ATTRIBUTE((host, device))
+    void set_error(_Error&&) noexcept
     {
         STDEXEC_TERMINATE();
     }
@@ -242,8 +244,8 @@ void __debug_sender(_Sender&& __sndr, const _Env& = {})
             // static_assert(receiver_of<_Receiver, _Sigs>);
             if constexpr (!same_as<_Operation, __debug_operation>)
             {
-                auto __op = connect(static_cast<_Sender&&>(__sndr),
-                                    _Receiver{});
+                auto __op =
+                    connect(static_cast<_Sender&&>(__sndr), _Receiver{});
                 stdexec::start(__op);
             }
         }
@@ -267,8 +269,8 @@ void __debug_sender(_Sender&& __sndr, const _Env& = {})
                 // static_assert(receiver_of<_Receiver, _Sigs>);
                 if constexpr (!same_as<_Operation, __debug_operation>)
                 {
-                    auto __op = connect(static_cast<_Sender&&>(__sndr),
-                                        _Receiver{});
+                    auto __op =
+                        connect(static_cast<_Sender&&>(__sndr), _Receiver{});
                     stdexec::start(__op);
                 }
             }

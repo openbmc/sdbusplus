@@ -139,12 +139,8 @@ inline constexpr __die_on_stop_t __die_on_stop;
 template <class _Promise>
 concept __has_continuation = //
     requires(_Promise& __promise, __continuation_handle<> __c) {
-        {
-            __promise.continuation()
-        } -> convertible_to<__continuation_handle<>>;
-        {
-            __promise.set_continuation(__c)
-        };
+        { __promise.continuation() } -> convertible_to<__continuation_handle<>>;
+        { __promise.set_continuation(__c) };
     };
 
 template <class... _Ts>
@@ -252,8 +248,8 @@ class [[nodiscard]] __task
         }
 
         template <class _Awaitable>
-        auto await_transform(_Awaitable&& __awaitable) noexcept
-            -> decltype(auto)
+        auto
+            await_transform(_Awaitable&& __awaitable) noexcept -> decltype(auto)
         {
             return as_awaitable(
                 __die_on_stop(static_cast<_Awaitable&&>(__awaitable)), *this);

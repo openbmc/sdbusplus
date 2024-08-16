@@ -26,8 +26,8 @@ static slot_t makeObjVtable(SdBusInterface* intf, sd_bus* bus, const char* path,
 interface::interface(sdbusplus::bus_t& bus, const char* path,
                      const char* interf, const sdbusplus::vtable_t* vtable,
                      void* context) :
-    _bus(get_busp(bus), bus.getInterface()),
-    _path(path), _interf(interf), _interface_added(false),
+    _bus(get_busp(bus), bus.getInterface()), _path(path), _interf(interf),
+    _interface_added(false),
     _slot(makeObjVtable(_bus.getInterface(), get_busp(_bus), _path.c_str(),
                         _interf.c_str(), vtable, context))
 {}

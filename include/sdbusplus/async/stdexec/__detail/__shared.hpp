@@ -69,9 +69,9 @@ auto __make_notify_visitor(_Receiver& __rcvr) noexcept
     return [&]<class _Tuple>(_Tuple&& __tupl) noexcept -> void {
         __tupl.apply(
             [&](auto __tag, auto&&... __args) noexcept -> void {
-            __tag(static_cast<_Receiver&&>(__rcvr),
-                  __forward_like<_Tuple>(__args)...);
-        },
+                __tag(static_cast<_Receiver&&>(__rcvr),
+                      __forward_like<_Tuple>(__args)...);
+            },
             __tupl);
     };
 }

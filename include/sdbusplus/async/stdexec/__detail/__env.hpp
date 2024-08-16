@@ -139,8 +139,8 @@ struct get_forward_progress_guarantee_t :
                           std::as_const(__t));
     }
 
-    constexpr auto operator()(auto&&) const noexcept
-        -> stdexec::forward_progress_guarantee
+    constexpr auto
+        operator()(auto&&) const noexcept -> stdexec::forward_progress_guarantee
     {
         return stdexec::forward_progress_guarantee::weakly_parallel;
     }
@@ -155,8 +155,8 @@ struct __has_algorithm_customizations_t :
 
     template <class _Tp>
         requires tag_invocable<__has_algorithm_customizations_t, __cref_t<_Tp>>
-    constexpr auto operator()(_Tp&&) const noexcept(noexcept(__result_t<_Tp>{}))
-        -> __result_t<_Tp>
+    constexpr auto operator()(_Tp&&) const
+        noexcept(noexcept(__result_t<_Tp>{})) -> __result_t<_Tp>
     {
         using _Boolean = tag_invoke_result_t<__has_algorithm_customizations_t,
                                              __cref_t<_Tp>>;
@@ -482,15 +482,15 @@ struct env
     constexpr decltype(auto) __get_1st() const noexcept
     {
         constexpr bool __flags[] = {__queryable<_Envs, _Query, _Args...>...};
-        constexpr std::size_t __idx = __pos_of(__flags,
-                                               __flags + sizeof...(_Envs));
+        constexpr std::size_t __idx =
+            __pos_of(__flags, __flags + sizeof...(_Envs));
         return __tup::get<__idx>(__tup_);
     }
 
     template <class _Query, class... _Args>
         requires(__queryable<_Envs, _Query, _Args...> || ...)
-    STDEXEC_ATTRIBUTE((always_inline)) constexpr decltype(auto)
-        query(_Query __q, _Args&&... __args) const
+    STDEXEC_ATTRIBUTE((always_inline))
+    constexpr decltype(auto) query(_Query __q, _Args&&... __args) const
         noexcept(__nothrow_queryable<decltype(__get_1st<_Query, _Args...>()),
                                      _Query, _Args...>)
     {
@@ -532,8 +532,8 @@ struct env<_Env0, _Env1>
     template <class _Query, class... _Args>
         requires __queryable<_Env0, _Query, _Args...> ||
                  __queryable<_Env1, _Query, _Args...>
-    STDEXEC_ATTRIBUTE((always_inline)) constexpr decltype(auto)
-        query(_Query __q, _Args&&... __args) const
+    STDEXEC_ATTRIBUTE((always_inline))
+    constexpr decltype(auto) query(_Query __q, _Args&&... __args) const
         noexcept(__nothrow_queryable<decltype(__get_1st<_Query, _Args...>()),
                                      _Query, _Args...>)
     {
@@ -645,9 +645,8 @@ struct __without_
 
         template <tag_invocable<__cvref_env_t> _Key>
         STDEXEC_ATTRIBUTE((always_inline))
-        auto query(_Key) const
-            noexcept(nothrow_tag_invocable<_Key, __cvref_env_t>)
-                -> decltype(auto)
+        auto query(_Key) const noexcept(
+            nothrow_tag_invocable<_Key, __cvref_env_t>) -> decltype(auto)
         {
             return tag_invoke(_Key(), __env_);
         }
@@ -659,8 +658,8 @@ struct __without_
 struct __without_fn
 {
     template <class _Env, class _Tag>
-    constexpr auto operator()(_Env&& __env, _Tag) const noexcept
-        -> decltype(auto)
+    constexpr auto operator()(_Env&& __env,
+                              _Tag) const noexcept -> decltype(auto)
     {
         if constexpr (tag_invocable<_Tag, _Env>)
         {
@@ -774,8 +773,8 @@ struct get_env_t
 
     template <class _EnvProvider>
         requires tag_invocable<get_env_t, const _EnvProvider&>
-    STDEXEC_ATTRIBUTE((always_inline)) constexpr auto
-        operator()(const _EnvProvider& __env_provider) const noexcept
+    STDEXEC_ATTRIBUTE((always_inline))
+    constexpr auto operator()(const _EnvProvider& __env_provider) const noexcept
         -> tag_invoke_result_t<get_env_t, const _EnvProvider&>
     {
         static_assert(
@@ -798,9 +797,7 @@ inline constexpr get_env_t get_env{};
 template <class _EnvProvider>
 concept environment_provider = //
     requires(_EnvProvider& __ep) {
-        {
-            get_env(std::as_const(__ep))
-        } -> queryable;
+        { get_env(std::as_const(__ep)) } -> queryable;
     };
 
 using __env::__as_root_env;
@@ -808,9 +805,7 @@ using __env::__as_root_env_t;
 
 template <class _Env>
 concept __is_root_env = requires(_Env&& __env) {
-                            {
-                                __root_t{}(__env)
-                            } -> same_as<bool>;
+                            { __root_t{}(__env) } -> same_as<bool>;
                         };
 
 template <class _Sender>

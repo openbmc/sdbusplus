@@ -96,10 +96,10 @@ struct __read_env_impl : __sexpr_defaults
 
     static constexpr auto get_state = //
         []<class _Self, class _Receiver>(const _Self&, _Receiver&) noexcept {
-        using __query = __data_of<_Self>;
-        using __result = __call_result_t<__query, env_of_t<_Receiver>>;
-        return __state<__query, __result>();
-    };
+            using __query = __data_of<_Self>;
+            using __result = __call_result_t<__query, env_of_t<_Receiver>>;
+            return __state<__query, __result>();
+        };
 
     static constexpr auto start = //
         []<class _State, class _Receiver>(_State& __state,
@@ -120,8 +120,8 @@ struct __read_env_impl : __sexpr_defaults
             auto __query_fn = [&]() noexcept(_Nothrow) -> __result&& {
                 __state.__result_.emplace(
                     __emplace_from{[&]() noexcept(_Nothrow) {
-                    return __query()(stdexec::get_env(__rcvr));
-                }});
+                        return __query()(stdexec::get_env(__rcvr));
+                    }});
                 return static_cast<__result&&>(*__state.__result_);
             };
             stdexec::__set_value_invoke(static_cast<_Receiver&&>(__rcvr),

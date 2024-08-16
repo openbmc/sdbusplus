@@ -64,8 +64,8 @@ class __continuation_handle<void>
         return __coro_;
     }
 
-    [[nodiscard]] auto unhandled_stopped() const noexcept
-        -> __coro::coroutine_handle<>
+    [[nodiscard]] auto
+        unhandled_stopped() const noexcept -> __coro::coroutine_handle<>
     {
         return __stopped_callback_(__coro_.address());
     }
@@ -94,8 +94,8 @@ class __continuation_handle
             __continuation_.handle().address());
     }
 
-    [[nodiscard]] auto unhandled_stopped() const noexcept
-        -> __coro::coroutine_handle<>
+    [[nodiscard]] auto
+        unhandled_stopped() const noexcept -> __coro::coroutine_handle<>
     {
         return __continuation_.unhandled_stopped();
     }

@@ -81,7 +81,7 @@ struct match_completion
     match_completion() = delete;
     match_completion(match_completion&&) = delete;
 
-    explicit match_completion(match& m) : m(m){};
+    explicit match_completion(match& m) : m(m) {};
     virtual ~match_completion() = default;
 
     friend match;
@@ -127,7 +127,7 @@ struct match_sender
     using is_sender = void;
 
     match_sender() = delete;
-    explicit match_sender(match& m) noexcept : m(m){};
+    explicit match_sender(match& m) noexcept : m(m) {};
 
     friend auto tag_invoke(execution::get_completion_signatures_t,
                            const match_sender&, auto)
@@ -135,8 +135,8 @@ struct match_sender
                                             execution::set_stopped_t()>;
 
     template <execution::receiver R>
-    friend auto tag_invoke(execution::connect_t, match_sender&& self, R r)
-        -> match_operation<R>
+    friend auto tag_invoke(execution::connect_t, match_sender&& self,
+                           R r) -> match_operation<R>
     {
         return {self.m, std::move(r)};
     }

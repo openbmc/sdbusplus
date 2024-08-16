@@ -38,8 +38,8 @@ struct stopped_as_error_t
             static_cast<_Sender&&>(__sndr),
             [__err2 = static_cast<_Error&&>(__err)]() mutable noexcept(
                 __nothrow_move_constructible<_Error>) {
-            return just_error(static_cast<_Error&&>(__err2));
-        });
+                return just_error(static_cast<_Error&&>(__err2));
+            });
     }
 
     template <__movable_value _Error>

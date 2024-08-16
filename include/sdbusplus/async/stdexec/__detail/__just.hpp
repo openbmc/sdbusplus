@@ -38,19 +38,19 @@ struct __impl : __sexpr_defaults
 
     static constexpr auto get_completion_signatures =
         []<class _Sender>(_Sender&&, auto&&...) noexcept {
-        static_assert(sender_expr_for<_Sender, _JustTag>);
-        return completion_signatures<
-            __mapply<__qf<__tag_t>, __decay_t<__data_of<_Sender>>>>{};
-    };
+            static_assert(sender_expr_for<_Sender, _JustTag>);
+            return completion_signatures<
+                __mapply<__qf<__tag_t>, __decay_t<__data_of<_Sender>>>>{};
+        };
 
     static constexpr auto start =
         []<class _State, class _Receiver>(_State& __state,
                                           _Receiver& __rcvr) noexcept -> void {
         __state.apply(
             [&]<class... _Ts>(_Ts&... __ts) noexcept {
-            __tag_t()(static_cast<_Receiver&&>(__rcvr),
-                      static_cast<_Ts&&>(__ts)...);
-        },
+                __tag_t()(static_cast<_Receiver&&>(__rcvr),
+                          static_cast<_Ts&&>(__ts)...);
+            },
             __state);
     };
 };

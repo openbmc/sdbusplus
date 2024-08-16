@@ -91,8 +91,8 @@ struct __scope_guard<_Fn, _T0, _T1>
     ~__scope_guard()
     {
         if (!__dismissed_)
-            static_cast<_Fn&&>(__fn_)(static_cast<_T0&&>(__t0_),
-                                      static_cast<_T1&&>(__t1_));
+            static_cast<_Fn&&>(
+                __fn_)(static_cast<_T0&&>(__t0_), static_cast<_T1&&>(__t1_));
     }
 };
 
@@ -120,9 +120,9 @@ struct __scope_guard<_Fn, _T0, _T1, _T2>
     ~__scope_guard()
     {
         if (!__dismissed_)
-            static_cast<_Fn&&>(__fn_)(static_cast<_T0&&>(__t0_),
-                                      static_cast<_T1&&>(__t1_),
-                                      static_cast<_T2&&>(__t2_));
+            static_cast<_Fn&&>(
+                __fn_)(static_cast<_T0&&>(__t0_), static_cast<_T1&&>(__t1_),
+                       static_cast<_T2&&>(__t2_));
     }
 };
 

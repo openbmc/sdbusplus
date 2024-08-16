@@ -47,8 +47,7 @@ struct __inplace_stop_callback_base
     explicit __inplace_stop_callback_base(   //
         const inplace_stop_source* __source, //
         __execute_fn_t* __execute) noexcept :
-        __source_(__source),
-        __execute_(__execute)
+        __source_(__source), __execute_(__execute)
     {}
 
     void __register_callback_() noexcept;
@@ -212,8 +211,8 @@ class inplace_stop_token
     const inplace_stop_source* __source_;
 };
 
-inline auto inplace_stop_source::get_token() const noexcept
-    -> inplace_stop_token
+inline auto
+    inplace_stop_source::get_token() const noexcept -> inplace_stop_token
 {
     return inplace_stop_token{this};
 }

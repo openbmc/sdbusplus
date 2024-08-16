@@ -109,8 +109,8 @@ struct tag_invoke_t
 {
     template <class _Tag, class... _Args>
         requires tag_invocable<_Tag, _Args...>
-    STDEXEC_ATTRIBUTE((always_inline)) constexpr auto
-        operator()(_Tag __tag, _Args&&... __args) const
+    STDEXEC_ATTRIBUTE((always_inline))
+    constexpr auto operator()(_Tag __tag, _Args&&... __args) const
         noexcept(nothrow_tag_invocable<_Tag, _Args...>)
             -> tag_invoke_result_t<_Tag, _Args...>
     {

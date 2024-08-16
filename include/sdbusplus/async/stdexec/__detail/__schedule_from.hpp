@@ -130,9 +130,9 @@ auto __make_visitor_fn(_State* __state) noexcept
             __tupl.apply(
                 [&]<class... _Args>(auto __tag,
                                     _Args&... __args) noexcept -> void {
-                __tag(std::move(__state->__receiver()),
-                      static_cast<_Args&&>(__args)...);
-            },
+                    __tag(std::move(__state->__receiver()),
+                          static_cast<_Args&&>(__args)...);
+                },
                 __tupl);
         }
     };
@@ -193,8 +193,8 @@ struct __state : __enable_receiver_from_this<_Sexpr, _Receiver>, __immovable
 struct schedule_from_t
 {
     template <scheduler _Scheduler, sender _Sender>
-    auto operator()(_Scheduler&& __sched, _Sender&& __sndr) const
-        -> __well_formed_sender auto
+    auto operator()(_Scheduler&& __sched,
+                    _Sender&& __sndr) const -> __well_formed_sender auto
     {
         using _Env = __t<__environ<__id<__decay_t<_Scheduler>>>>;
         auto __env = _Env{{static_cast<_Scheduler&&>(__sched)}};
@@ -221,8 +221,8 @@ struct __schedule_from_impl : __sexpr_defaults
     static constexpr auto get_attrs = //
         []<class _Data, class _Child>(const _Data& __data,
                                       const _Child& __child) noexcept {
-        return __env::__join(__data, stdexec::get_env(__child));
-    };
+            return __env::__join(__data, stdexec::get_env(__child));
+        };
 
     static constexpr auto get_completion_signatures = //
         []<class _Sender, class... _Env>(_Sender&&, _Env&&...) noexcept
@@ -234,19 +234,19 @@ struct __schedule_from_impl : __sexpr_defaults
 
     static constexpr auto get_state =
         []<class _Sender, class _Receiver>(_Sender&& __sndr, _Receiver&) {
-        static_assert(sender_expr_for<_Sender, schedule_from_t>);
-        auto __sched =
-            get_completion_scheduler<set_value_t>(stdexec::get_env(__sndr));
-        using _Scheduler = decltype(__sched);
-        return __state<_Scheduler, _Sender, _Receiver>{__sched};
-    };
+            static_assert(sender_expr_for<_Sender, schedule_from_t>);
+            auto __sched =
+                get_completion_scheduler<set_value_t>(stdexec::get_env(__sndr));
+            using _Scheduler = decltype(__sched);
+            return __state<_Scheduler, _Sender, _Receiver>{__sched};
+        };
 
     static constexpr auto complete = //
         []<class _State, class _Receiver, class _Tag, class... _Args>(
             __ignore, _State& __state, _Receiver& __rcvr, _Tag __tag,
             _Args&&... __args) noexcept -> void {
-        STDEXEC_APPLE_CLANG(__state.__self_ == &__state ? void()
-                                                        : std::terminate());
+        STDEXEC_APPLE_CLANG(
+            __state.__self_ == &__state ? void() : std::terminate());
         // Write the tag and the args into the operation state so that we can
         // forward the completion from within the scheduler's execution context.
         if constexpr (__nothrow_callable<__tup::__mktuple_t, _Tag, _Args...>)

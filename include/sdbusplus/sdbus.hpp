@@ -22,16 +22,13 @@ class SdBusInterface
     virtual int sd_bus_add_object_manager(sd_bus* bus, sd_bus_slot** slot,
                                           const char* path) = 0;
 
-    virtual int sd_bus_add_object_vtable(sd_bus* bus, sd_bus_slot** slot,
-                                         const char* path,
-                                         const char* interface,
-                                         const sd_bus_vtable* vtable,
-                                         void* userdata) = 0;
+    virtual int sd_bus_add_object_vtable(
+        sd_bus* bus, sd_bus_slot** slot, const char* path,
+        const char* interface, const sd_bus_vtable* vtable, void* userdata) = 0;
 
-    virtual int sd_bus_add_match(sd_bus* bus, sd_bus_slot** slot,
-                                 const char* path,
-                                 sd_bus_message_handler_t callback,
-                                 void* userdata) = 0;
+    virtual int
+        sd_bus_add_match(sd_bus* bus, sd_bus_slot** slot, const char* path,
+                         sd_bus_message_handler_t callback, void* userdata) = 0;
 
     virtual int sd_bus_attach_event(sd_bus* bus, sd_event* e, int priority) = 0;
 
@@ -39,24 +36,21 @@ class SdBusInterface
                             sd_bus_error* ret_error,
                             sd_bus_message** reply) = 0;
 
-    virtual int sd_bus_call_async(sd_bus* bus, sd_bus_slot** slot,
-                                  sd_bus_message* m,
-                                  sd_bus_message_handler_t callback,
-                                  void* userdata, uint64_t usec) = 0;
+    virtual int sd_bus_call_async(
+        sd_bus* bus, sd_bus_slot** slot, sd_bus_message* m,
+        sd_bus_message_handler_t callback, void* userdata, uint64_t usec) = 0;
 
     virtual int sd_bus_detach_event(sd_bus* bus) = 0;
 
     virtual int sd_bus_emit_interfaces_added_strv(sd_bus* bus, const char* path,
                                                   char** interfaces) = 0;
-    virtual int sd_bus_emit_interfaces_removed_strv(sd_bus* bus,
-                                                    const char* path,
-                                                    char** interfaces) = 0;
+    virtual int sd_bus_emit_interfaces_removed_strv(
+        sd_bus* bus, const char* path, char** interfaces) = 0;
     virtual int sd_bus_emit_object_added(sd_bus* bus, const char* path) = 0;
     virtual int sd_bus_emit_object_removed(sd_bus* bus, const char* path) = 0;
-    virtual int sd_bus_emit_properties_changed_strv(sd_bus* bus,
-                                                    const char* path,
-                                                    const char* interface,
-                                                    const char** names) = 0;
+    virtual int sd_bus_emit_properties_changed_strv(
+        sd_bus* bus, const char* path, const char* interface,
+        const char** names) = 0;
 
     virtual int sd_bus_error_set(sd_bus_error* e, const char* name,
                                  const char* message) = 0;
@@ -78,9 +72,8 @@ class SdBusInterface
     virtual int sd_bus_message_append_basic(sd_bus_message* message, char type,
                                             const void* value) = 0;
 
-    virtual int sd_bus_message_append_string_iovec(sd_bus_message* message,
-                                                   const struct iovec* iov,
-                                                   int iovcnt) = 0;
+    virtual int sd_bus_message_append_string_iovec(
+        sd_bus_message* message, const struct iovec* iov, int iovcnt) = 0;
 
     virtual int sd_bus_message_at_end(sd_bus_message* m, int complete) = 0;
 
@@ -102,42 +95,36 @@ class SdBusInterface
     virtual const char* sd_bus_message_get_member(sd_bus_message* m) = 0;
     virtual const char* sd_bus_message_get_path(sd_bus_message* m) = 0;
     virtual const char* sd_bus_message_get_sender(sd_bus_message* m) = 0;
-    virtual const char* sd_bus_message_get_signature(sd_bus_message* m,
-                                                     int complete) = 0;
+    virtual const char*
+        sd_bus_message_get_signature(sd_bus_message* m, int complete) = 0;
     virtual int sd_bus_message_get_errno(sd_bus_message* m) = 0;
     virtual const sd_bus_error* sd_bus_message_get_error(sd_bus_message* m) = 0;
 
-    virtual int sd_bus_message_is_method_call(sd_bus_message* m,
-                                              const char* interface,
-                                              const char* member) = 0;
+    virtual int sd_bus_message_is_method_call(
+        sd_bus_message* m, const char* interface, const char* member) = 0;
     virtual int sd_bus_message_is_method_error(sd_bus_message* m,
                                                const char* name) = 0;
-    virtual int sd_bus_message_is_signal(sd_bus_message* m,
-                                         const char* interface,
-                                         const char* member) = 0;
+    virtual int sd_bus_message_is_signal(
+        sd_bus_message* m, const char* interface, const char* member) = 0;
 
-    virtual int sd_bus_message_new_method_call(sd_bus* bus, sd_bus_message** m,
-                                               const char* destination,
-                                               const char* path,
-                                               const char* interface,
-                                               const char* member) = 0;
+    virtual int sd_bus_message_new_method_call(
+        sd_bus* bus, sd_bus_message** m, const char* destination,
+        const char* path, const char* interface, const char* member) = 0;
 
     virtual int sd_bus_message_new_method_return(sd_bus_message* call,
                                                  sd_bus_message** m) = 0;
 
-    virtual int sd_bus_message_new_method_error(sd_bus_message* call,
-                                                sd_bus_message** m,
-                                                const char* name,
-                                                const char* description) = 0;
+    virtual int sd_bus_message_new_method_error(
+        sd_bus_message* call, sd_bus_message** m, const char* name,
+        const char* description) = 0;
 
     virtual int sd_bus_message_new_method_errno(sd_bus_message* call,
                                                 sd_bus_message** m, int error,
                                                 const sd_bus_error* p) = 0;
 
-    virtual int sd_bus_message_new_signal(sd_bus* bus, sd_bus_message** m,
-                                          const char* path,
-                                          const char* interface,
-                                          const char* member) = 0;
+    virtual int sd_bus_message_new_signal(
+        sd_bus* bus, sd_bus_message** m, const char* path,
+        const char* interface, const char* member) = 0;
 
     virtual int sd_bus_message_open_container(sd_bus_message* m, char type,
                                               const char* contents) = 0;
@@ -332,9 +319,8 @@ class SdBusImpl : public SdBusInterface
         return ::sd_bus_message_append_basic(message, type, value);
     }
 
-    int sd_bus_message_append_string_iovec(sd_bus_message* message,
-                                           const struct iovec* iov,
-                                           int iovcnt) override
+    int sd_bus_message_append_string_iovec(
+        sd_bus_message* message, const struct iovec* iov, int iovcnt) override
     {
         return ::sd_bus_message_append_string_iovec(message, iov, iovcnt);
     }
@@ -440,10 +426,9 @@ class SdBusImpl : public SdBusInterface
         return ::sd_bus_message_is_signal(m, interface, member);
     }
 
-    int sd_bus_message_new_method_call(sd_bus* bus, sd_bus_message** m,
-                                       const char* destination,
-                                       const char* path, const char* interface,
-                                       const char* member) override
+    int sd_bus_message_new_method_call(
+        sd_bus* bus, sd_bus_message** m, const char* destination,
+        const char* path, const char* interface, const char* member) override
     {
         return ::sd_bus_message_new_method_call(bus, m, destination, path,
                                                 interface, member);

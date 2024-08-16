@@ -392,23 +392,23 @@ struct __future_op
                 {
                     std::visit(
                         [this, &__guard]<class _Tup>(_Tup& __tup) {
-                        if constexpr (same_as<_Tup, std::monostate>)
-                        {
-                            std::terminate();
-                        }
-                        else
-                        {
-                            std::apply(
-                                [this, &__guard]<class... _As>(auto tag,
-                                                               _As&... __as) {
-                                __guard.unlock();
-                                tag(static_cast<_Receiver&&>(__rcvr_),
-                                    static_cast<_As&&>(__as)...);
-                                __guard.lock();
-                            },
-                                __tup);
-                        }
-                    },
+                            if constexpr (same_as<_Tup, std::monostate>)
+                            {
+                                std::terminate();
+                            }
+                            else
+                            {
+                                std::apply(
+                                    [this, &__guard]<class... _As>(
+                                        auto tag, _As&... __as) {
+                                        __guard.unlock();
+                                        tag(static_cast<_Receiver&&>(__rcvr_),
+                                            static_cast<_As&&>(__as)...);
+                                        __guard.lock();
+                                    },
+                                    __tup);
+                            }
+                        },
                         __state->__data_);
                 }
             }
@@ -451,8 +451,8 @@ struct __future_op
                      std::unique_ptr<__future_state<_Sender, _Env>> __state) :
             __subscription{{},
                            [](__subscription* __self) noexcept -> void {
-            static_cast<__t*>(__self)->__complete_();
-        }},
+                               static_cast<__t*>(__self)->__complete_();
+                           }},
             __rcvr_(static_cast<_Receiver2&&>(__rcvr)),
             __state_(std::move(__state)),
             __forward_consumer_(get_stop_token(get_env(__rcvr_)),
@@ -756,8 +756,8 @@ struct __future
 
         template <__decays_to<__t> _Self, receiver _Receiver>
             requires receiver_of<_Receiver, __completions_t<_Self>>
-        static auto connect(_Self&& __self, _Receiver __rcvr)
-            -> __future_op_t<_Receiver>
+        static auto connect(_Self&& __self,
+                            _Receiver __rcvr) -> __future_op_t<_Receiver>
         {
             return __future_op_t<_Receiver>{
                 static_cast<_Receiver&&>(__rcvr),
@@ -871,8 +871,8 @@ struct __spawn_op
                     static_cast<_Env&&>(__env),
                     __spawn_env_{__scope->__stop_source_.get_token()}),
                 [](__spawn_op_base<_EnvId>* __op) {
-            delete static_cast<__t*>(__op);
-        }},
+                    delete static_cast<__t*>(__op);
+                }},
             __op_(stdexec::connect(static_cast<_Sndr&&>(__sndr),
                                    __spawn_receiver_t<_Env>{this}))
         {}
@@ -933,8 +933,8 @@ struct async_scope : __immovable
 
     template <__movable_value _Env = empty_env,
               sender_in<__env_t<_Env>> _Sender>
-    auto spawn_future(_Sender&& __sndr, _Env __env = {})
-        -> __future_t<_Sender, _Env>
+    auto spawn_future(_Sender&& __sndr,
+                      _Env __env = {}) -> __future_t<_Sender, _Env>
     {
         using __state_t = __future_state<nest_result_t<_Sender>, _Env>;
         auto __state =

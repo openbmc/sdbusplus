@@ -77,9 +77,9 @@ using __env_t = //
                                  __declval<inplace_stop_source&>()));
 
 template <class _Sender, class _Env>
-concept __max1_sender = sender_in<_Sender, _Env> &&
-                        __mvalid<__value_types_of_t, _Sender, _Env,
-                                 __mconst<int>, __msingle_or<void>>;
+concept __max1_sender =
+    sender_in<_Sender, _Env> && __mvalid<__value_types_of_t, _Sender, _Env,
+                                         __mconst<int>, __msingle_or<void>>;
 
 template <
     __mstring _Context = "In stdexec::when_all()..."_mstr,
@@ -160,9 +160,9 @@ void __set_values(_Receiver& __rcvr, _ValuesTuple& __values) noexcept
 {
     __values.apply(
         [&](auto&... __opt_vals) noexcept -> void {
-        __tup::__cat_apply(__when_all::__complete_fn(set_value, __rcvr),
-                           *__opt_vals...);
-    },
+            __tup::__cat_apply(__when_all::__complete_fn(set_value, __rcvr),
+                               *__opt_vals...);
+        },
         __values);
 }
 
@@ -300,23 +300,23 @@ struct __when_all_impl : __sexpr_defaults
 
     static constexpr auto get_attrs = //
         []<class... _Child>(__ignore, const _Child&...) noexcept {
-        using _Domain = __domain::__common_domain_t<_Child...>;
-        if constexpr (__same_as<_Domain, default_domain>)
-        {
-            return env();
-        }
-        else
-        {
-            return prop{get_domain, _Domain()};
-        }
-    };
+            using _Domain = __domain::__common_domain_t<_Child...>;
+            if constexpr (__same_as<_Domain, default_domain>)
+            {
+                return env();
+            }
+            else
+            {
+                return prop{get_domain, _Domain()};
+            }
+        };
 
     static constexpr auto get_completion_signatures = //
         []<class _Self, class... _Env>(_Self&&, _Env&&...) noexcept {
-        static_assert(sender_expr_for<_Self, when_all_t>);
-        return __minvoke<__mtry_catch<__q<__completions>, __q<__error_t>>,
-                         _Self, _Env...>();
-    };
+            static_assert(sender_expr_for<_Self, when_all_t>);
+            return __minvoke<__mtry_catch<__q<__completions>, __q<__error_t>>,
+                             _Self, _Env...>();
+        };
 
     static constexpr auto get_env =                                         //
         []<class _State, class _Receiver>(__ignore, _State& __state,
@@ -466,9 +466,9 @@ struct when_all_with_variant_t
         return __sexpr_apply(
             static_cast<_Sender&&>(__sndr),
             [&]<class... _Child>(__ignore, __ignore, _Child&&... __child) {
-            return when_all_t()(
-                into_variant(static_cast<_Child&&>(__child))...);
-        });
+                return when_all_t()(
+                    into_variant(static_cast<_Child&&>(__child))...);
+            });
     }
 };
 
@@ -476,16 +476,16 @@ struct __when_all_with_variant_impl : __sexpr_defaults
 {
     static constexpr auto get_attrs = //
         []<class... _Child>(__ignore, const _Child&...) noexcept {
-        using _Domain = __domain::__common_domain_t<_Child...>;
-        if constexpr (same_as<_Domain, default_domain>)
-        {
-            return env();
-        }
-        else
-        {
-            return prop{get_domain, _Domain()};
-        }
-    };
+            using _Domain = __domain::__common_domain_t<_Child...>;
+            if constexpr (same_as<_Domain, default_domain>)
+            {
+                return env();
+            }
+            else
+            {
+                return prop{get_domain, _Domain()};
+            }
+        };
 
     static constexpr auto get_completion_signatures = //
         []<class _Sender>(_Sender&&) noexcept         //
@@ -506,8 +506,8 @@ struct transfer_when_all_t
 
     template <scheduler _Scheduler, sender... _Senders>
         requires __domain::__has_common_domain<_Senders...>
-    auto operator()(_Scheduler&& __sched, _Senders&&... __sndrs) const
-        -> __well_formed_sender auto
+    auto operator()(_Scheduler&& __sched,
+                    _Senders&&... __sndrs) const -> __well_formed_sender auto
     {
         using _Env = __t<__schfr::__environ<__id<__decay_t<_Scheduler>>>>;
         auto __domain = query_or(get_domain, __sched, default_domain());
@@ -527,9 +527,10 @@ struct transfer_when_all_t
             static_cast<_Sender&&>(__sndr),
             [&]<class _Data, class... _Child>(__ignore, _Data&& __data,
                                               _Child&&... __child) {
-            return continue_on(when_all_t()(static_cast<_Child&&>(__child)...),
-                               get_completion_scheduler<set_value_t>(__data));
-        });
+                return continue_on(
+                    when_all_t()(static_cast<_Child&&>(__child)...),
+                    get_completion_scheduler<set_value_t>(__data));
+            });
     }
 };
 
@@ -560,8 +561,8 @@ struct transfer_when_all_with_variant_t
 
     template <scheduler _Scheduler, sender... _Senders>
         requires __domain::__has_common_domain<_Senders...>
-    auto operator()(_Scheduler&& __sched, _Senders&&... __sndrs) const
-        -> __well_formed_sender auto
+    auto operator()(_Scheduler&& __sched,
+                    _Senders&&... __sndrs) const -> __well_formed_sender auto
     {
         using _Env = __t<__schfr::__environ<__id<__decay_t<_Scheduler>>>>;
         auto __domain = query_or(get_domain, __sched, default_domain());
@@ -582,11 +583,11 @@ struct transfer_when_all_with_variant_t
             static_cast<_Sender&&>(__sndr),
             [&]<class _Data, class... _Child>(__ignore, _Data&& __data,
                                               _Child&&... __child) {
-            return transfer_when_all_t()(
-                get_completion_scheduler<set_value_t>(
-                    static_cast<_Data&&>(__data)),
-                into_variant(static_cast<_Child&&>(__child))...);
-        });
+                return transfer_when_all_t()(
+                    get_completion_scheduler<set_value_t>(
+                        static_cast<_Data&&>(__data)),
+                    into_variant(static_cast<_Child&&>(__child))...);
+            });
     }
 };
 

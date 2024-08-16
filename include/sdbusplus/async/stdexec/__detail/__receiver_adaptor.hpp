@@ -152,7 +152,8 @@ struct receiver_adaptor : __adaptor_base<_Base>, receiver_t
 
     template <class... _As, class _Self = _Derived>
         requires __callable<set_value_t, __base_t<_Self>, _As...>
-    STDEXEC_ATTRIBUTE((host, device)) void set_value(_As&&... __as) && noexcept
+    STDEXEC_ATTRIBUTE((host, device))
+    void set_value(_As&&... __as) && noexcept
     {
         return stdexec::set_value(__get_base(static_cast<_Self&&>(*this)),
                                   static_cast<_As&&>(__as)...);
@@ -160,7 +161,8 @@ struct receiver_adaptor : __adaptor_base<_Base>, receiver_t
 
     template <class _Error, class _Self = _Derived>
         requires __callable<set_error_t, __base_t<_Self>, _Error>
-    STDEXEC_ATTRIBUTE((host, device)) void set_error(_Error&& __err) && noexcept
+    STDEXEC_ATTRIBUTE((host, device))
+    void set_error(_Error&& __err) && noexcept
     {
         return stdexec::set_error(__get_base(static_cast<_Self&&>(*this)),
                                   static_cast<_Error&&>(__err));
@@ -168,7 +170,8 @@ struct receiver_adaptor : __adaptor_base<_Base>, receiver_t
 
     template <class _Self = _Derived>
         requires __callable<set_stopped_t, __base_t<_Self>>
-    STDEXEC_ATTRIBUTE((host, device)) void set_stopped() && noexcept
+    STDEXEC_ATTRIBUTE((host, device))
+    void set_stopped() && noexcept
     {
         return stdexec::set_stopped(__get_base(static_cast<_Self&&>(*this)));
     }

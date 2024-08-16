@@ -50,8 +50,8 @@ struct sleep_operation : public context_ref, details::context_friend
     {
         try
         {
-            self.source = self.event_loop().add_oneshot_timer(handler, &self,
-                                                              self.time);
+            self.source =
+                self.event_loop().add_oneshot_timer(handler, &self, self.time);
         }
         catch (...)
         {
@@ -93,8 +93,8 @@ struct sleep_sender : public context_ref, details::context_friend
             execution::set_stopped_t()>;
 
     template <execution::receiver R>
-    friend auto tag_invoke(execution::connect_t, sleep_sender&& self, R r)
-        -> sleep_operation<R>
+    friend auto tag_invoke(execution::connect_t, sleep_sender&& self,
+                           R r) -> sleep_operation<R>
     {
         return {self.ctx, self.time, std::move(r)};
     }

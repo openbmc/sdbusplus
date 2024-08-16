@@ -54,8 +54,8 @@ struct set_value_t
 
     template <class _Receiver, class... _As>
         requires tag_invocable<set_value_t, _Receiver, _As...>
-    STDEXEC_ATTRIBUTE((host, device, always_inline)) void
-        operator()(_Receiver&& __rcvr, _As&&... __as) const noexcept
+    STDEXEC_ATTRIBUTE((host, device, always_inline))
+    void operator()(_Receiver&& __rcvr, _As&&... __as) const noexcept
     {
         static_assert(nothrow_tag_invocable<set_value_t, _Receiver, _As...>);
         (void)tag_invoke(stdexec::set_value_t{},
@@ -90,8 +90,8 @@ struct set_error_t
 
     template <class _Receiver, class _Error>
         requires tag_invocable<set_error_t, _Receiver, _Error>
-    STDEXEC_ATTRIBUTE((host, device, always_inline)) void
-        operator()(_Receiver&& __rcvr, _Error&& __err) const noexcept
+    STDEXEC_ATTRIBUTE((host, device, always_inline))
+    void operator()(_Receiver&& __rcvr, _Error&& __err) const noexcept
     {
         static_assert(nothrow_tag_invocable<set_error_t, _Receiver, _Error>);
         (void)tag_invoke(stdexec::set_error_t{},
@@ -122,8 +122,8 @@ struct set_stopped_t
 
     template <class _Receiver>
         requires tag_invocable<set_stopped_t, _Receiver>
-    STDEXEC_ATTRIBUTE((host, device, always_inline)) void
-        operator()(_Receiver&& __rcvr) const noexcept
+    STDEXEC_ATTRIBUTE((host, device, always_inline))
+    void operator()(_Receiver&& __rcvr) const noexcept
     {
         static_assert(nothrow_tag_invocable<set_stopped_t, _Receiver>);
         (void)tag_invoke(stdexec::set_stopped_t{},

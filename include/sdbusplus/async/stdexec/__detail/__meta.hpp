@@ -238,12 +238,12 @@ struct __mstring
         return _Len;
     }
 
-    constexpr auto operator==(const __mstring&) const noexcept
-        -> bool = default;
+    constexpr auto
+        operator==(const __mstring&) const noexcept -> bool = default;
 
     template <std::size_t _OtherLen>
-    constexpr auto operator==(const __mstring<_OtherLen>&) const noexcept
-        -> bool
+    constexpr auto
+        operator==(const __mstring<_OtherLen>&) const noexcept -> bool
     {
         return false;
     }
@@ -254,9 +254,8 @@ struct __mstring
 #endif
 
     template <std::size_t _OtherLen>
-    constexpr auto
-        operator<=>(const __mstring<_OtherLen>& __other) const noexcept
-        -> std::strong_ordering
+    constexpr auto operator<=>(const __mstring<_OtherLen>& __other)
+        const noexcept -> std::strong_ordering
     {
         constexpr std::size_t __len = _Len < _OtherLen ? _Len : _OtherLen;
         for (std::size_t __i = 0; __i < __len; ++__i)
@@ -289,8 +288,8 @@ STDEXEC_PRAGMA_IGNORE_GNU("-Wuser-defined-literals")
 
 // Use a standard user-defined string literal template
 template <__mstring _Str>
-[[deprecated("Use _mstr instead")]] constexpr auto operator""__csz() noexcept
-    -> __mtypeof<_Str>
+[[deprecated("Use _mstr instead")]] constexpr auto
+    operator""__csz() noexcept -> __mtypeof<_Str>
 {
     return _Str;
 }
@@ -516,8 +515,8 @@ template <template <class...> class _Tp, class... _Args>
 concept __msucceeds = __mvalid<_Tp, _Args...> && __ok<__meval<_Tp, _Args...>>;
 
 template <class _Fn, class... _Args>
-concept __minvocable_succeeds = __minvocable<_Fn, _Args...> &&
-                                __ok<__minvoke<_Fn, _Args...>>;
+concept __minvocable_succeeds =
+    __minvocable<_Fn, _Args...> && __ok<__minvoke<_Fn, _Args...>>;
 
 template <class _Fn, class... _Args>
 struct __minvoke_force_
@@ -1038,8 +1037,8 @@ template <class _Fn>
 struct __mfind_if_i
 {
     template <class... _Args>
-    using __f = __msize_t<(sizeof...(_Args) -
-                           __v<__minvoke<__mfind_if<_Fn, __msize>, _Args...>>)>;
+    using __f = __msize_t<(
+        sizeof...(_Args) - __v<__minvoke<__mfind_if<_Fn, __msize>, _Args...>>)>;
 };
 
 #if STDEXEC_MSVC()
@@ -1168,8 +1167,8 @@ struct __placeholder
 
     constexpr __placeholder(void*) noexcept {}
 
-    constexpr friend auto __get_placeholder_offset(__placeholder) noexcept
-        -> std::size_t
+    constexpr friend auto
+        __get_placeholder_offset(__placeholder) noexcept -> std::size_t
     {
         return _Np;
     }
@@ -1306,8 +1305,9 @@ struct __mdispatch_<_Ret (*)(_Args...), _Offset>
 {
     template <class... _Ts>
         requires(__callable<__mdispatch_<_Args, _Offset>, _Ts...> && ...) &&
-                __callable<_Ret, __call_result_t<__mdispatch_<_Args, _Offset>,
-                                                 _Ts...>...>
+                    __callable<_Ret,
+                               __call_result_t<__mdispatch_<_Args, _Offset>,
+                                               _Ts...>...>
     auto operator()(_Ts&&... __ts) const noexcept(
         __nothrow_callable<
             _Ret, __call_result_t<__mdispatch_<_Args, _Offset>, _Ts...>...>)
@@ -1331,12 +1331,13 @@ struct __mdispatch_<_Ret (*)(_Args..., ...), _Offset>
     {
         template <std::size_t... _Idx, class... _Ts>
             requires(__callable<__mdispatch_<_Args>, _Ts...> && ...) &&
-                    (__callable<__mdispatch_<_Pattern, _Idx + 1>, _Ts...> &&
-                     ...) &&
-                    __callable< //
-                        _Ret, __call_result_t<__mdispatch_<_Args>, _Ts...>...,
-                        __call_result_t<__mdispatch_<_Pattern, _Idx + 1>,
-                                        _Ts...>...>
+                        (__callable<__mdispatch_<_Pattern, _Idx + 1>, _Ts...> &&
+                         ...) &&
+                        __callable< //
+                            _Ret,
+                            __call_result_t<__mdispatch_<_Args>, _Ts...>...,
+                            __call_result_t<__mdispatch_<_Pattern, _Idx + 1>,
+                                            _Ts...>...>
         auto operator()(__indices<_Idx...>, _Ts&&... __ts) const noexcept(
             __nothrow_callable<                                  //
                 _Ret,                                            //
@@ -1355,9 +1356,9 @@ struct __mdispatch_<_Ret (*)(_Args..., ...), _Offset>
 
     template <class... _Ts>
         requires(__offset < sizeof...(_Ts)) &&
-                __callable<__impl,
-                           __make_indices<sizeof...(_Ts) - __offset - 1>,
-                           _Ts...>
+                    __callable<__impl,
+                               __make_indices<sizeof...(_Ts) - __offset - 1>,
+                               _Ts...>
     auto operator()(_Ts&&... __ts) const noexcept(
         __nothrow_callable<
             __impl, __make_indices<sizeof...(_Ts) - __offset - 1>, _Ts...>)
@@ -1372,9 +1373,9 @@ struct __mdispatch_<_Ret (*)(_Args..., ...), _Offset>
 
     template <class... _Ts>
         requires(sizeof...(_Ts) == __offset) &&
-                __callable<
-                    __mdispatch_<__minvoke<__mpop_back<__qf<_Ret>>, _Args...>*>,
-                    _Ts...>
+                    __callable<__mdispatch_<__minvoke<__mpop_back<__qf<_Ret>>,
+                                                      _Args...>*>,
+                               _Ts...>
     auto operator()(_Ts&&... __ts) const //
         noexcept(__nothrow_callable<
                  __mdispatch_<__minvoke<__mpop_back<__qf<_Ret>>, _Args...>*>,
@@ -1458,8 +1459,8 @@ auto operator%(__inherit<_Set...>&, __mtype<_Ty>&) //
         __inherit<_Ty, _Set...>>&;
 
 template <class _ExpectedSet, class... _Ts>
-concept __mset_eq =                                            //
-    (sizeof...(_Ts) == __v<__mapply<__msize, _ExpectedSet>>)&& //
+concept __mset_eq =                                             //
+    (sizeof...(_Ts) == __v<__mapply<__msize, _ExpectedSet>>) && //
     __mset_contains<_ExpectedSet, _Ts...>;
 
 template <class _ExpectedSet>

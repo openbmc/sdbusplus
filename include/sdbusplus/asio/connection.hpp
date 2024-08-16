@@ -113,12 +113,10 @@ class connection : public sdbusplus::bus_t
      *
      */
     template <typename MessageHandler, typename... InputArgs>
-    void async_method_call_timed(MessageHandler&& handler,
-                                 const std::string& service,
-                                 const std::string& objpath,
-                                 const std::string& interf,
-                                 const std::string& method, uint64_t timeout,
-                                 const InputArgs&... a)
+    void async_method_call_timed(
+        MessageHandler&& handler, const std::string& service,
+        const std::string& objpath, const std::string& interf,
+        const std::string& method, uint64_t timeout, const InputArgs&... a)
     {
         using FunctionTuple = boost::callable_traits::args_t<MessageHandler>;
         using FunctionTupleType = utility::decay_tuple_t<FunctionTuple>;
@@ -133,39 +131,39 @@ class connection : public sdbusplus::bus_t
         }();
         using UnpackType = utility::strip_first_n_args_t<returnWithMsg ? 2 : 1,
                                                          FunctionTupleType>;
-        auto applyHandler = [handler = std::forward<MessageHandler>(handler)](
-                                boost::system::error_code ec,
-                                message_t& r) mutable {
-            UnpackType responseData;
-            if (!ec)
-            {
-                try
+        auto applyHandler =
+            [handler = std::forward<MessageHandler>(
+                 handler)](boost::system::error_code ec, message_t& r) mutable {
+                UnpackType responseData;
+                if (!ec)
                 {
-                    utility::read_into_tuple(responseData, r);
+                    try
+                    {
+                        utility::read_into_tuple(responseData, r);
+                    }
+                    catch (const std::exception&)
+                    {
+                        // Set error code if not already set
+                        ec = boost::system::errc::make_error_code(
+                            boost::system::errc::invalid_argument);
+                    }
                 }
-                catch (const std::exception&)
+                // Note.  Callback is called whether or not the unpack was
+                // successful to allow the user to implement their own handling
+                if constexpr (returnWithMsg)
                 {
-                    // Set error code if not already set
-                    ec = boost::system::errc::make_error_code(
-                        boost::system::errc::invalid_argument);
+                    auto response = std::tuple_cat(std::make_tuple(ec),
+                                                   std::forward_as_tuple(r),
+                                                   std::move(responseData));
+                    std::apply(handler, response);
                 }
-            }
-            // Note.  Callback is called whether or not the unpack was
-            // successful to allow the user to implement their own handling
-            if constexpr (returnWithMsg)
-            {
-                auto response = std::tuple_cat(std::make_tuple(ec),
-                                               std::forward_as_tuple(r),
-                                               std::move(responseData));
-                std::apply(handler, response);
-            }
-            else
-            {
-                auto response = std::tuple_cat(std::make_tuple(ec),
-                                               std::move(responseData));
-                std::apply(handler, response);
-            }
-        };
+                else
+                {
+                    auto response = std::tuple_cat(std::make_tuple(ec),
+                                                   std::move(responseData));
+                    std::apply(handler, response);
+                }
+            };
         message_t m;
         boost::system::error_code ec;
         try
@@ -225,12 +223,11 @@ class connection : public sdbusplus::bus_t
      *  @return Unpacked value of RetType
      */
     template <typename... RetTypes, typename... InputArgs>
-    auto yield_method_call(boost::asio::yield_context yield,
-                           boost::system::error_code& ec,
-                           const std::string& service,
-                           const std::string& objpath,
-                           const std::string& interf, const std::string& method,
-                           const InputArgs&... a)
+    auto yield_method_call(
+        boost::asio::yield_context yield, boost::system::error_code& ec,
+        const std::string& service, const std::string& objpath,
+        const std::string& interf, const std::string& method,
+        const InputArgs&... a)
     {
         message_t m;
         try
@@ -320,19 +317,19 @@ class connection : public sdbusplus::bus_t
         socket.async_read_some(
             boost::asio::null_buffers(),
             [&](const boost::system::error_code& ec, std::size_t) {
-            if (ec)
-            {
-                return;
-            }
-            if (process_discard())
-            {
-                read_immediate();
-            }
-            else
-            {
-                read_wait();
-            }
-        });
+                if (ec)
+                {
+                    return;
+                }
+                if (process_discard())
+                {
+                    read_immediate();
+                }
+                else
+                {
+                    read_wait();
+                }
+            });
     }
     void read_immediate()
     {

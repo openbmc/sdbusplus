@@ -18,25 +18,24 @@ class Application
   public:
     Application(boost::asio::io_context& ioc, sdbusplus::asio::connection& bus,
                 sdbusplus::asio::object_server& objServer) :
-        ioc_(ioc),
-        bus_(bus), objServer_(objServer)
+        ioc_(ioc), bus_(bus), objServer_(objServer)
     {
         demo_ = objServer_.add_unique_interface(
             demoObjectPath, demoInterfaceName,
             [this](sdbusplus::asio::dbus_interface& demo) {
-            demo.register_property_r<std::string>(
-                propertyGrettingName, sdbusplus::vtable::property_::const_,
-                [this](const auto&) { return greetings_; });
+                demo.register_property_r<std::string>(
+                    propertyGrettingName, sdbusplus::vtable::property_::const_,
+                    [this](const auto&) { return greetings_; });
 
-            demo.register_property_rw<std::string>(
-                propertyGoodbyesName,
-                sdbusplus::vtable::property_::emits_change,
-                [this](const auto& newPropertyValue, const auto&) {
-                goodbyes_ = newPropertyValue;
-                return true;
-            },
-                [this](const auto&) { return goodbyes_; });
-        });
+                demo.register_property_rw<std::string>(
+                    propertyGoodbyesName,
+                    sdbusplus::vtable::property_::emits_change,
+                    [this](const auto& newPropertyValue, const auto&) {
+                        goodbyes_ = newPropertyValue;
+                        return true;
+                    },
+                    [this](const auto&) { return goodbyes_; });
+            });
     }
 
     uint32_t fatalErrors() const
@@ -58,18 +57,18 @@ class Application
             bus_, demoServiceName, demoObjectPath, demoInterfaceName,
             propertyGrettingName,
             [this](boost::system::error_code ec, uint32_t) {
-            if (ec)
-            {
-                std::cout
-                    << "As expected failed to getProperty with wrong type: "
-                    << ec << "\n";
-                return;
-            }
+                if (ec)
+                {
+                    std::cout
+                        << "As expected failed to getProperty with wrong type: "
+                        << ec << "\n";
+                    return;
+                }
 
-            std::cerr << "Error: it was expected to fail getProperty due "
-                         "to wrong type\n";
-            ++fatalErrors_;
-        });
+                std::cerr << "Error: it was expected to fail getProperty due "
+                             "to wrong type\n";
+                ++fatalErrors_;
+            });
     }
 
     void asyncReadProperties()
@@ -78,25 +77,25 @@ class Application
             bus_, demoServiceName, demoObjectPath, demoInterfaceName,
             propertyGrettingName,
             [this](boost::system::error_code ec, std::string value) {
-            if (ec)
-            {
-                getFailed();
-                return;
-            }
-            std::cout << "Greetings value is: " << value << "\n";
-        });
+                if (ec)
+                {
+                    getFailed();
+                    return;
+                }
+                std::cout << "Greetings value is: " << value << "\n";
+            });
 
         sdbusplus::asio::getProperty<std::string>(
             bus_, demoServiceName, demoObjectPath, demoInterfaceName,
             propertyGoodbyesName,
             [this](boost::system::error_code ec, std::string value) {
-            if (ec)
-            {
-                getFailed();
-                return;
-            }
-            std::cout << "Goodbyes value is: " << value << "\n";
-        });
+                if (ec)
+                {
+                    getFailed();
+                    return;
+                }
+                std::cout << "Goodbyes value is: " << value << "\n";
+            });
     }
 
     void asyncChangeProperty()
@@ -105,32 +104,35 @@ class Application
             bus_, demoServiceName, demoObjectPath, demoInterfaceName,
             propertyGrettingName, "Hi, hey, hello",
             [this](const boost::system::error_code& ec) {
-            if (ec)
-            {
-                std::cout << "As expected, failed to set greetings property: "
-                          << ec << "\n";
-                return;
-            }
+                if (ec)
+                {
+                    std::cout
+                        << "As expected, failed to set greetings property: "
+                        << ec << "\n";
+                    return;
+                }
 
-            std::cout << "Error: it was expected to fail to change greetings\n";
-            ++fatalErrors_;
-        });
+                std::cout
+                    << "Error: it was expected to fail to change greetings\n";
+                ++fatalErrors_;
+            });
 
         sdbusplus::asio::setProperty(
             bus_, demoServiceName, demoObjectPath, demoInterfaceName,
             propertyGoodbyesName, "Bye bye",
             [this](const boost::system::error_code& ec) {
-            if (ec)
-            {
-                std::cout << "Error: it supposed to be ok to change goodbyes "
-                             "property: "
-                          << ec << "\n";
-                ++fatalErrors_;
-                return;
-            }
-            std::cout << "Changed goodbyes property as expected\n";
-            boost::asio::post(ioc_, [this] { asyncReadProperties(); });
-        });
+                if (ec)
+                {
+                    std::cout
+                        << "Error: it supposed to be ok to change goodbyes "
+                           "property: "
+                        << ec << "\n";
+                    ++fatalErrors_;
+                    return;
+                }
+                std::cout << "Changed goodbyes property as expected\n";
+                boost::asio::post(ioc_, [this] { asyncReadProperties(); });
+            });
     }
 
     void syncChangeGoodbyes(std::string_view value)
@@ -156,8 +158,9 @@ int main(int, char**)
     boost::asio::io_context ioc;
     boost::asio::signal_set signals(ioc, SIGINT, SIGTERM);
 
-    signals.async_wait(
-        [&ioc](const boost::system::error_code&, const int&) { ioc.stop(); });
+    signals.async_wait([&ioc](const boost::system::error_code&, const int&) {
+        ioc.stop();
+    });
 
     auto bus = std::make_shared<sdbusplus::asio::connection>(ioc);
     auto objServer = std::make_unique<sdbusplus::asio::object_server>(bus);

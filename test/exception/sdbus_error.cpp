@@ -169,12 +169,14 @@ TEST(SdBusError, CatchBaseClassExceptions)
      *       -> sdbusplus::exception::SdBusError
      */
     EXPECT_THROW({ throw SdBusError(-EINVAL, "SdBusError"); }, SdBusError);
-    EXPECT_THROW({ throw SdBusError(-EINVAL, "internal_exception"); },
-                 sdbusplus::exception::internal_exception);
-    EXPECT_THROW({ throw SdBusError(-EINVAL, "exception"); },
-                 sdbusplus::exception::exception);
-    EXPECT_THROW({ throw SdBusError(-EINVAL, "std::exception"); },
-                 std::exception);
+    EXPECT_THROW(
+        { throw SdBusError(-EINVAL, "internal_exception"); },
+        sdbusplus::exception::internal_exception);
+    EXPECT_THROW(
+        { throw SdBusError(-EINVAL, "exception"); },
+        sdbusplus::exception::exception);
+    EXPECT_THROW(
+        { throw SdBusError(-EINVAL, "std::exception"); }, std::exception);
 }
 
 } // namespace

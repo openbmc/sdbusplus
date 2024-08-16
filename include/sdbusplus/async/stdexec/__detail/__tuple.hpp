@@ -68,15 +68,15 @@ struct __tuple<_Idx, _Ts...> : __box<_Ts, _Is>...
                 static_cast<_Us&&>(__us)...,
                 static_cast<_Self&&>(__self).__box<_Ts, _Is>::__value...))
     {
-        return static_cast<_Fn&&>(__fn)(
-            static_cast<_Us&&>(__us)...,
-            static_cast<_Self&&>(__self).__box<_Ts, _Is>::__value...);
+        return static_cast<_Fn&&>(
+            __fn)(static_cast<_Us&&>(__us)...,
+                  static_cast<_Self&&>(__self).__box<_Ts, _Is>::__value...);
     }
 
     template <class _Fn, class _Self, class... _Us>
         requires(__callable<_Fn, _Us..., __copy_cvref_t<_Self, _Ts>> && ...)
-    STDEXEC_ATTRIBUTE((host, device, always_inline)) static auto for_each(
-        _Fn&& __fn, _Self&& __self, _Us&&... __us) //
+    STDEXEC_ATTRIBUTE((host, device, always_inline))
+    static auto for_each(_Fn&& __fn, _Self&& __self, _Us&&... __us) //
         noexcept((__nothrow_callable<_Fn, _Us..., __copy_cvref_t<_Self, _Ts>> &&
                   ...)) -> void
     {
@@ -102,8 +102,9 @@ concept __applicable =
 
 template <class _Fn, class _Tuple, class... _Us>
 concept __nothrow_applicable =
-    __applicable<_Fn, _Tuple, _Us...>&& noexcept(__declval<_Tuple>().apply(
-        __declval<_Fn>(), __declval<_Tuple>(), __declval<_Us>()...));
+    __applicable<_Fn, _Tuple, _Us...> &&
+    noexcept(__declval<_Tuple>().apply(__declval<_Fn>(), __declval<_Tuple>(),
+                                       __declval<_Us>()...));
 
 #if STDEXEC_GCC()
 template <class... _Ts>
@@ -142,9 +143,9 @@ auto operator<<(_Tuple&& __tup,
     return [&__tup, __fn]<class... _Us>(_Us&&... __us) //
            noexcept(__nothrow_applicable<_Fn, _Tuple, _Us...>)
                -> __apply_result_t<_Fn, _Tuple, _Us...> {
-        return __tup.apply(__fn, static_cast<_Tuple&&>(__tup),
-                           static_cast<_Us&&>(__us)...);
-    };
+               return __tup.apply(__fn, static_cast<_Tuple&&>(__tup),
+                                  static_cast<_Us&&>(__us)...);
+           };
 }
 
 template <class _Fn, class... _Tuples>

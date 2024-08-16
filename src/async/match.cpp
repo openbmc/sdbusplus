@@ -6,15 +6,15 @@ namespace sdbusplus::async
 slot_t match::makeMatch(context& ctx, const std::string_view& pattern)
 {
     // C-style callback to redirect into this::handle_match.
-    static auto match_cb = [](message::msgp_t msg, void* ctx,
-                              sd_bus_error*) noexcept {
-        static_cast<match*>(ctx)->handle_match(message_t{msg});
-        return 0;
-    };
+    static auto match_cb =
+        [](message::msgp_t msg, void* ctx, sd_bus_error*) noexcept {
+            static_cast<match*>(ctx)->handle_match(message_t{msg});
+            return 0;
+        };
 
     sd_bus_slot* s;
-    auto r = sd_bus_add_match(get_busp(ctx), &s, pattern.data(), match_cb,
-                              this);
+    auto r =
+        sd_bus_add_match(get_busp(ctx), &s, pattern.data(), match_cb, this);
     if (r < 0)
     {
         throw exception::SdBusError(-r, "sd_bus_add_match (async::match)");

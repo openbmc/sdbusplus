@@ -88,8 +88,8 @@ struct transfer_just_t
         __types<__legacy_customization_fn(_Data)>;
 
     template <scheduler _Scheduler, __movable_value... _Values>
-    auto operator()(_Scheduler&& __sched, _Values&&... __vals) const
-        -> __well_formed_sender auto
+    auto operator()(_Scheduler&& __sched,
+                    _Values&&... __vals) const -> __well_formed_sender auto
     {
         auto __domain = query_or(get_domain, __sched, default_domain());
         return stdexec::transform_sender(
@@ -119,8 +119,8 @@ struct __transfer_just_impl : __sexpr_defaults
 {
     static constexpr auto get_attrs = //
         []<class _Data>(const _Data& __data) noexcept {
-        return __data.apply(__make_env_fn(), __data);
-    };
+            return __data.apply(__make_env_fn(), __data);
+        };
 
     static constexpr auto get_completion_signatures = //
         []<class _Sender>(_Sender&&) noexcept         //

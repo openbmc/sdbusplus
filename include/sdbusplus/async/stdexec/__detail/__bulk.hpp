@@ -79,8 +79,8 @@ struct bulk_t
 {
     template <sender _Sender, integral _Shape, __movable_value _Fun>
     STDEXEC_ATTRIBUTE((host, device))
-    auto operator()(_Sender&& __sndr, _Shape __shape, _Fun __fun) const
-        -> __well_formed_sender auto
+    auto operator()(_Sender&& __sndr, _Shape __shape,
+                    _Fun __fun) const -> __well_formed_sender auto
     {
         auto __domain = __get_early_domain(__sndr);
         return stdexec::transform_sender(
@@ -91,8 +91,8 @@ struct bulk_t
 
     template <integral _Shape, class _Fun>
     STDEXEC_ATTRIBUTE((always_inline))
-    auto operator()(_Shape __shape, _Fun __fun) const
-        -> __binder_back<bulk_t, _Shape, _Fun>
+    auto operator()(_Shape __shape,
+                    _Fun __fun) const -> __binder_back<bulk_t, _Shape, _Fun>
     {
         return {{static_cast<_Shape&&>(__shape), static_cast<_Fun&&>(__fun)},
                 {},

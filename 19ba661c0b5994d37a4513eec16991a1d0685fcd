@@ -118,6 +118,30 @@
       },
       "revId": "19ba661c0b5994d37a4513eec16991a1d0685fcd",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8d41b7d5_47f647fe",
+        "filename": "include/sdbusplus/server/transaction.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2024-08-22T21:06:58Z",
+      "side": 1,
+      "message": "Patrick beat me to it.  I agree;  Although I suspect all this transaction stuff could be removed.",
+      "parentUuid": "8b43c4a9_50df02ae",
+      "range": {
+        "startLine": 30,
+        "startChar": 4,
+        "endLine": 30,
+        "endChar": 7
+      },
+      "revId": "19ba661c0b5994d37a4513eec16991a1d0685fcd",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

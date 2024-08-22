@@ -142,6 +142,30 @@
       },
       "revId": "19ba661c0b5994d37a4513eec16991a1d0685fcd",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "05656e62_fb44f3a3",
+        "filename": "include/sdbusplus/server/transaction.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1001743
+      },
+      "writtenOn": "2024-08-22T21:18:16Z",
+      "side": 1,
+      "message": "Yes, I agreed that this is a most properly way. \n\nBut I\u0027ve intention to obey safely way to solve such a minor issue, without any big changes. So, looks like the `Transaction` is obsolete there is no big deal to change the `time` field without appropriate unit tests.\n\nI\u0027ve published updates. Please, take a look. Thanks!",
+      "parentUuid": "8d41b7d5_47f647fe",
+      "range": {
+        "startLine": 30,
+        "startChar": 4,
+        "endLine": 30,
+        "endChar": 7
+      },
+      "revId": "19ba661c0b5994d37a4513eec16991a1d0685fcd",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

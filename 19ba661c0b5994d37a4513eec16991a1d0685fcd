@@ -22,6 +22,30 @@
       },
       "revId": "19ba661c0b5994d37a4513eec16991a1d0685fcd",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3a40d09b_926a422a",
+        "filename": "include/sdbusplus/server/transaction.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1001743
+      },
+      "writtenOn": "2024-08-22T19:42:19Z",
+      "side": 1,
+      "message": "yes, i looked at this way. But it is required to change logic of hashing transaction object to calculate ID (please, refer to the https://github.com/openbmc/sdbusplus/blob/master/src/server/transaction.cpp#L91)\n\nThe mentioned hashing algo used in the [`set_id()`] https://github.com/openbmc/sdbusplus/blob/master/src/server/transaction.cpp#L33).\n\nSo, changing type of `time` variable can impact on the `set_id` result and the PDI at all. \n\nThis looks like big change and a little bit dangerous :)\n\nMy first intention to fix warning without any logic changes.",
+      "parentUuid": "12afdfb2_ff5109d9",
+      "range": {
+        "startLine": 30,
+        "startChar": 4,
+        "endLine": 30,
+        "endChar": 7
+      },
+      "revId": "19ba661c0b5994d37a4513eec16991a1d0685fcd",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

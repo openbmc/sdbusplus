@@ -12,6 +12,7 @@ sdbusplusplus_depfiles = files(
   'sdbusplus/renderer.py',
   'sdbusplus/servicename.py',
   'sdbusplus/signal.py',
+  'sdbusplus/schemas/events.schema.yaml',
   'sdbusplus/templates/error.cpp.mako',
   'sdbusplus/templates/error.hpp.mako',
   'sdbusplus/templates/error.md.mako',

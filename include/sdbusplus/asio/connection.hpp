@@ -291,7 +291,7 @@ class connection : public sdbusplus::bus_t
             }
             try
             {
-                r.read(responseData);
+                utility::read_into_tuple(responseData, r);
             }
             catch (const std::exception&)
             {

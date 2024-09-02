@@ -291,7 +291,7 @@ class connection : public sdbusplus::bus_t
             }
             try
             {
-                r.read(responseData);
+                responseData = r.unpack<RetTypes...>();
             }
             catch (const std::exception&)
             {

@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ff248b70_970f00e1",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-09-03T14:12:17Z",
+      "side": 1,
+      "message": "Why does `r.read` not work?  I suspect it is because the message doesn\u0027t actually have a tuple, but we\u0027re just trying to read multiple elements out of it?  `unpack` should be used here...",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 25
+      },
+      "revId": "53c42164099d3247f64bf4e25fad8757e621d864",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "42c060e6_48b88d8a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-09-03T14:12:17Z",
+      "side": 1,
+      "message": "Would prefer use of `unpack` over the `utility::read_into_tuple`.  Most uses of `read_into_tuple` probably don\u0027t need to exist anymore.",
+      "revId": "53c42164099d3247f64bf4e25fad8757e621d864",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d59c1779_c0241833",
+        "filename": "include/sdbusplus/asio/connection.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 294,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-09-03T14:12:17Z",
+      "side": 1,
+      "message": "```\nreturn r.unpack\u003cRetTypes...\u003e();\n```",
+      "revId": "53c42164099d3247f64bf4e25fad8757e621d864",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

@@ -26,6 +26,30 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "ab489d9c_f2c614d5",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2024-09-04T02:21:19Z",
+      "side": 1,
+      "message": "Yes, some DBus methods return the multiple elements from a method, e.g. the `ResolveHostname` method from org.freedesktop.resolve1 has the result type of `a(iiay)st`.\nCalling this method requires sdbusplus to unpack/read_into_tuple instead of directly read the result into a tuple.\n\nI will add this information in the commit message as well.",
+      "parentUuid": "ff248b70_970f00e1",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 25
+      },
+      "revId": "53c42164099d3247f64bf4e25fad8757e621d864",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "42c060e6_48b88d8a",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 1
@@ -54,6 +78,24 @@
       "writtenOn": "2024-09-03T14:12:17Z",
       "side": 1,
       "message": "```\nreturn r.unpack\u003cRetTypes...\u003e();\n```",
+      "revId": "53c42164099d3247f64bf4e25fad8757e621d864",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "314cb41f_a823141f",
+        "filename": "include/sdbusplus/asio/connection.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 294,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2024-09-04T02:21:19Z",
+      "side": 1,
+      "message": "Acknowledged, will send a new path.",
+      "parentUuid": "d59c1779_c0241833",
       "revId": "53c42164099d3247f64bf4e25fad8757e621d864",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }

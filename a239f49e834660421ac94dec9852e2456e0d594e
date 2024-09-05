@@ -16,6 +16,24 @@
       "message": "Why not return directly?",
       "revId": "a239f49e834660421ac94dec9852e2456e0d594e",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "bc16be39_dce923db",
+        "filename": "include/sdbusplus/asio/connection.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 294,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2024-09-05T05:54:07Z",
+      "side": 1,
+      "message": "It does not really matter and it will return at line 302. And I guess the compiler will perform similar optimization anyway.",
+      "parentUuid": "580a915a_21a50aed",
+      "revId": "a239f49e834660421ac94dec9852e2456e0d594e",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

@@ -36,7 +36,7 @@ EOF
 ## if a repository contains old copies of the generated meson.build files and
 ## needs an update.  We should increment the version number whenever the
 ## resulting meson.build would change.
-tool_version="sdbus++-gen-meson version 7"
+tool_version="sdbus++-gen-meson version 8"
 function show_version() {
     echo "${tool_version}"
 }
@@ -187,6 +187,10 @@ function meson_cpp_target() {
                 outputs="${outputs}'error.cpp', 'error.hpp', "
                 ;;
 
+            events.yaml)
+                outputs="${outputs}'event.cpp', 'event.hpp', "
+                ;;
+
             interface.yaml)
                 outputs="${outputs}'common.hpp', "
                 outputs="${outputs}'server.cpp', 'server.hpp', "
@@ -256,7 +260,7 @@ EOF
 ## Handle command=meson by generating the tree of meson.build files.
 function cmd_meson() {
     # Find and sort all the YAML files
-    yamls="$(find "${rootdir}" -name '*.interface.yaml' -o -name '*.errors.yaml')"
+    yamls="$(find "${rootdir}" -name '*.interface.yaml' -o -name '*.errors.yaml' -o -name '*.events.yaml')"
     yamls="$(echo "${yamls}" | sort)"
 
     # Assign the YAML files into the hash-table by interface name.
@@ -293,7 +297,8 @@ function cmd_cpp() {
     fi
 
     if [[ ! -e "${rootdir}/$1.interface.yaml" ]] &&
-    [[ ! -e "${rootdir}/$1.errors.yaml" ]]; then
+    [[ ! -e "${rootdir}/$1.errors.yaml" ]] &&
+    [[ ! -e "${rootdir}/$1.events.yaml" ]]; then
         echo "Missing YAML for $1."
         exit 1
     fi
@@ -315,6 +320,11 @@ function cmd_cpp() {
         ${sdbusppcmd} error exception-header "${intf}" > "${outputdir}/error.hpp"
         ${sdbusppcmd} error exception-cpp "${intf}" > "${outputdir}/error.cpp"
     fi
+
+    if [[ -e "${rootdir}/$1.events.yaml" ]]; then
+        ${sdbusppcmd} event exception-header "${intf}" > "${outputdir}/event.hpp"
+        ${sdbusppcmd} event exception-cpp "${intf}" > "${outputdir}/event.cpp"
+    fi
 }
 
 ## Handle command=markdown by calling sdbus++ as appropriate.
@@ -329,7 +339,8 @@ function cmd_markdown() {
     fi
 
     if [[ ! -e "${rootdir}/$1.interface.yaml" ]] &&
-    [[ ! -e "${rootdir}/$1.errors.yaml" ]]; then
+    [[ ! -e "${rootdir}/$1.errors.yaml" ]] &&
+    [[ ! -e "${rootdir}/$1.events.yaml" ]]; then
         echo "Missing YAML for $1."
         exit 1
     fi
@@ -347,6 +358,10 @@ function cmd_markdown() {
 
     if [[ -e "${rootdir}/$1.errors.yaml" ]]; then
         ${sdbusppcmd} error markdown "${intf}" >> "${outputdir}/${base}.md"
+    fi
+
+    if [[ -e "${rootdir}/$1.events.yaml" ]]; then
+        ${sdbusppcmd} event markdown "${intf}" >> "${outputdir}/${base}.md"
     fi
 }
 

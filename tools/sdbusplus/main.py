@@ -9,7 +9,11 @@ import sdbusplus
 def main():
     module_path = os.path.dirname(sdbusplus.__file__)
 
-    valid_types = {"interface": sdbusplus.Interface, "error": sdbusplus.Error}
+    valid_types = {
+        "error": sdbusplus.Error,
+        "event": sdbusplus.Event,
+        "interface": sdbusplus.Interface,
+    }
     valid_processes = {
         "aserver-header": "async_server_header",
         "client-header": "client_header",
@@ -40,6 +44,14 @@ def main():
         help="Location of templates files.",
     )
     parser.add_argument(
+        "-s",
+        "--schemadir",
+        dest="schemadir",
+        default=os.path.join(module_path, "schemas"),
+        type=str,
+        help="Location of schema files.",
+    )
+    parser.add_argument(
         "typeName",
         metavar="TYPE",
         type=str,
@@ -64,6 +76,6 @@ def main():
 
     lookup = mako.lookup.TemplateLookup(directories=[args.templatedir])
 
-    instance = valid_types[args.typeName].load(args.item, args.rootdir)
+    instance = valid_types[args.typeName].load(args.item, args.rootdir, args.schemadir)
     function = getattr(instance, valid_processes[args.process])
     print(function(lookup))

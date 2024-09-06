@@ -14,7 +14,7 @@ from .signal import Signal
 
 class Interface(NamedElement, Renderer):
     @staticmethod
-    def load(name, rootdir="."):
+    def load(name, rootdir, schemadir):
         filename = os.path.join(
             rootdir, name.replace(".", "/") + ".interface.yaml"
         )

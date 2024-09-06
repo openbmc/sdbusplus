@@ -3,6 +3,7 @@ sdbusplusplus_depfiles = files(
   'sdbusplus/__init__.py',
   'sdbusplus/enum.py',
   'sdbusplus/error.py',
+  'sdbusplus/event.py',
   'sdbusplus/interface.py',
   'sdbusplus/main.py',
   'sdbusplus/method.py',

@@ -5,10 +5,10 @@ sdbuspp_gen_meson_ver = run_command(
     check: true,
 ).stdout().strip().split('\n')[0]
 
-if sdbuspp_gen_meson_ver != 'sdbus++-gen-meson version 7'
+if sdbuspp_gen_meson_ver != 'sdbus++-gen-meson version 8'
     warning('Generated meson files from wrong version of sdbus++-gen-meson.')
     warning(
-        'Expected "sdbus++-gen-meson version 7", got:',
+        'Expected "sdbus++-gen-meson version 8", got:',
         sdbuspp_gen_meson_ver
     )
 endif

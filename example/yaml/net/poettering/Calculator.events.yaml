@@ -1,0 +1,20 @@
+version: 0.0.0
+
+errors:
+    - name: DivisionByZero
+      severity: warning
+      errno: EDOM
+      en:
+          message: Attempted to divide by zero.
+
+    - name: PermissionDenied
+      severity: warning
+      errno: EPERM
+      en:
+          message: Insufficient privileges for operation.
+
+events:
+    - name: Cleared
+      en:
+          description: The calculator is cleared.
+          message: The calculator is cleared.

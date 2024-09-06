@@ -2,7 +2,7 @@
 subdir('Calculator')
 generated_others += custom_target(
     'net/poettering/Calculator__markdown'.underscorify(),
-    input: [ '../../../yaml/net/poettering/Calculator.errors.yaml', '../../../yaml/net/poettering/Calculator.interface.yaml',  ],
+    input: [ '../../../yaml/net/poettering/Calculator.errors.yaml', '../../../yaml/net/poettering/Calculator.events.yaml', '../../../yaml/net/poettering/Calculator.interface.yaml',  ],
     output: [ 'Calculator.md' ],
     depend_files: sdbusplusplus_depfiles,
     command: [

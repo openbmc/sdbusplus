@@ -212,6 +212,28 @@ class connection : public sdbusplus::bus_t
     }
 
 #ifndef SDBUSPLUS_DISABLE_BOOST_COROUTINES
+    template <typename... RetTypes>
+    auto default_ret_types()
+    {
+        if constexpr (sizeof...(RetTypes) == 0)
+        {
+            return;
+        }
+        else if constexpr (sizeof...(RetTypes) == 1 &&
+                           std::is_void_v<std::tuple_element_t<
+                               0, std::tuple<RetTypes...>>>)
+        {
+            return;
+        }
+        else if constexpr (sizeof...(RetTypes) == 1)
+        {
+            return std::tuple_element_t<0, std::tuple<RetTypes...>>{};
+        }
+        else
+        {
+            return std::tuple<RetTypes...>{};
+        }
+    }
     /** @brief Perform a yielding asynchronous method call, with input
      *         parameter packing and return value unpacking
      *
@@ -244,66 +266,21 @@ class connection : public sdbusplus::bus_t
             ec = boost::system::errc::make_error_code(
                 static_cast<boost::system::errc::errc_t>(e.get_errno()));
         }
-        message_t r;
         if (!ec)
         {
+            message_t r;
             r = async_send(m, yield[ec]);
-        }
-        if constexpr (sizeof...(RetTypes) == 0)
-        {
-            // void return
-            return;
-        }
-        else if constexpr (sizeof...(RetTypes) == 1)
-        {
-            if constexpr (std::is_same_v<utility::first_type_t<RetTypes...>,
-                                         void>)
-            {
-                return;
-            }
-            else
-            {
-                // single item return
-                utility::first_type_t<RetTypes...> responseData{};
-                // before attempting to read, check ec and bail on error
-                if (ec)
-                {
-                    return responseData;
-                }
-                try
-                {
-                    r.read(responseData);
-                }
-                catch (const std::exception&)
-                {
-                    ec = boost::system::errc::make_error_code(
-                        boost::system::errc::invalid_argument);
-                    // responseData will be default-constructed...
-                }
-                return responseData;
-            }
-        }
-        else
-        {
-            // tuple of things to return
-            std::tuple<RetTypes...> responseData{};
-            // before attempting to read, check ec and bail on error
-            if (ec)
-            {
-                return responseData;
-            }
             try
             {
-                responseData = r.unpack<RetTypes...>();
+                return r.unpack<RetTypes...>();
             }
             catch (const std::exception&)
             {
                 ec = boost::system::errc::make_error_code(
                     boost::system::errc::invalid_argument);
-                // responseData will be default-constructed...
             }
-            return responseData;
         }
+        return default_ret_types<RetTypes...>();
     }
 #endif
     boost::asio::io_context& get_io_context()

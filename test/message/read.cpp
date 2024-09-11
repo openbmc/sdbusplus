@@ -715,4 +715,10 @@ TEST_F(ReadTest, UnpackStructuredBinding)
     EXPECT_EQ(tisb, std::make_tuple(ret_ti, ret_ts, ret_tb));
 }
 
+TEST_F(ReadTest, UnpackVoid)
+{
+    new_message().unpack<>();
+    new_message().unpack<void>();
+}
+
 } // namespace

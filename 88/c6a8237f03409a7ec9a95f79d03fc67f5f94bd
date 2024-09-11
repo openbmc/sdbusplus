@@ -1,0 +1,9 @@
+Code-Review+2: Patrick Williams <patrick@stwcx.xyz>
+Verified+1: OpenBMC CI <openbmcbump-ci@yahoo.com>
+Submitted-by: Patrick Williams <patrick@stwcx.xyz>
+Submitted-at: Wed, 11 Sep 2024 14:44:46 +0000
+Reviewed-on: https://gerrit.openbmc.org/c/openbmc/sdbusplus/+/74526
+Comments-Total: 2
+Comments-Unresolved: 1
+Project: openbmc/sdbusplus
+Branch: refs/heads/master

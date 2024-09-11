@@ -167,6 +167,14 @@ class message : private sdbusplus::slot::details::slot_friend
     {
         if constexpr (sizeof...(Args) == 0)
         {
+            // No args
+            return;
+        }
+        else if constexpr (sizeof...(Args) == 1 &&
+                           std::is_void<std::tuple_element_t<
+                               0, std::tuple<Args...>>>::value)
+        {
+            // Args is void
             return;
         }
         else if constexpr (sizeof...(Args) == 1)

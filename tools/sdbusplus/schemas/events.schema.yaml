@@ -29,13 +29,8 @@ $defs:
                             type: string
                             description: The name of the metadata field.
                         type:
-                            enum:
-                                - string
-                                - size
-                                - int64
-                                - uint64
-                                - double
-                                - object_path
+                            type: string
+                            pattern: "(string)|(size)|(u?int64)|(double)|(object_path)|(enum\\[.*\\])"
                             description: The type of the metadata field.
                         primary:
                             type: boolean
@@ -43,6 +38,9 @@ $defs:
                                 Set to true when the metadata field is expected
                                 to be part of the Redfish `MessageArgs` (and not
                                 only in the extended `DiagnosticData`).
+                    required:
+                        - name
+                        - type
                 minItems: 1
         required:
             - name

@@ -230,7 +230,7 @@ function meson_md_target() {
     # Determine the source files based on the YAMLs present.
     sources=""
     for s in ${interfaces[$1]}; do
-        sources="'${yamldir}/$1.${s}', "
+        sources="${sources}'${yamldir}/$1.${s}', "
     done
 
     # Create the target to generate the interface.md file.

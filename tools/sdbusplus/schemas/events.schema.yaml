@@ -27,6 +27,7 @@ $defs:
                     properties:
                         name:
                             type: string
+                            pattern: "^[A-Z_][A-Z0-9_]*$"
                             description: The name of the metadata field.
                         type:
                             type: string
@@ -65,9 +66,7 @@ $defs:
                     - notice
                     - informational
                     - debug
-                description:
-                    The `xyz.openbmc_project.Logging.Entry.Level` value for this
-                    error.
+                description: The severity using `syslog`-style nomenclature.
             errno:
                 type: string
                 pattern: "^E[A-Z0-9]+$"

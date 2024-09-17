@@ -27,6 +27,7 @@ class NamedElement(object):
             "CamelCase": lambda: inflection.camelize(self.name),
             "camelCase": lambda: NamedElement.lower_camel_case(self.name),
             "snake_case": lambda: inflection.underscore(self.name),
+            "SNAKE_CASE": lambda: inflection.underscore(self.name).upper(),
         }.get(name)
 
         if lam:

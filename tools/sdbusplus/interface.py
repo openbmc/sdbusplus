@@ -44,14 +44,22 @@ class Interface(NamedElement, Renderer):
         includes = []
         for e in inc_list:
             e = e.replace("self.", self.name + ".")
-            n = "/".join(
-                e.split(".")[:-2],  # ignore the Error.Name
-            )
-            includes.append(f"{n}/error.hpp")
+            if ".Error." in e:
+                n = "/".join(
+                    e.split(".")[:-2],  # ignore the Error.Name at the end
+                )
+                includes.append(f"{n}/error.hpp")
+            else:
+                n = "/".join(
+                    e.split(".")[:-1],  # ignore the .Name at the end
+                )
+                includes.append(f"{n}/event.hpp")
         return sorted(set(includes))
 
     def errorNamespacedClass(self, error):
         error = error.replace("self.", self.name + ".")
+        if ".Error" not in error:
+            error = "error." + error
         return "sdbusplus::" + "::".join(error.split("."))
 
     def enum_includes(self, inc_list):

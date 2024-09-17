@@ -24,8 +24,9 @@ class EventLanguage(object):
 
 class EventElement(NamedElement):
     def __init__(self, **kwargs):
+        self.is_error = kwargs.pop("is_error", False)
         self.deprecated = kwargs.pop("deprecated", None)
-        self.errno = kwargs.pop("errno", None)
+        self.errno = kwargs.pop("errno", "EIO")
         self.languages = {
             key: EventLanguage(**kwargs.pop(key, {})) for key in ["en"]
         }
@@ -38,6 +39,25 @@ class EventElement(NamedElement):
         )
 
         super(EventElement, self).__init__(**kwargs)
+
+    def __getattribute__(self, name):
+        lam = {"description": lambda: self.__description()}.get(name)
+
+        if lam:
+            return lam()
+        try:
+            return super(EventElement, self).__getattribute__(name)
+        except Exception:
+            raise AttributeError(
+                "Attribute '%s' not found in %s.EventElement"
+                % (name, self.__module__)
+            )
+
+    def __description(self):
+        en = self.languages["en"]
+        if en.description:
+            return en.description
+        return en.message
 
     @staticmethod
     def syslog_severity(severity: str) -> str:
@@ -81,7 +101,9 @@ class Event(NamedElement, Renderer):
 
     def __init__(self, **kwargs):
         self.version = kwargs.pop("version")
-        self.errors = [EventElement(**n) for n in kwargs.pop("errors", [])]
+        self.errors = [
+            EventElement(**n, is_error=True) for n in kwargs.pop("errors", [])
+        ]
         self.events = [EventElement(**n) for n in kwargs.pop("events", [])]
 
         super(Event, self).__init__(**kwargs)

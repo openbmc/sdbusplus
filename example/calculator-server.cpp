@@ -1,5 +1,4 @@
 #include <net/poettering/Calculator/client.hpp>
-#include <net/poettering/Calculator/error.hpp>
 #include <net/poettering/Calculator/server.hpp>
 #include <sdbusplus/server.hpp>
 
@@ -29,7 +28,7 @@ struct Calculator : Calculator_inherit
      */
     int64_t divide(int64_t x, int64_t y) override
     {
-        using sdbusplus::error::net::poettering::calculator::DivisionByZero;
+        using sdbusplus::error::net::poettering::Calculator::DivisionByZero;
         if (y == 0)
         {
             status(State::Error);

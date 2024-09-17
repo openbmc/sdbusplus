@@ -8,7 +8,7 @@ ${event.languages["en"].description}
 ${event.languages["en"].message}
 % endif
 
-% if event.errno:
+% if event.is_error:
 - severity: `${event.severity}`
 - errno: `${event.errno}`
 % endif

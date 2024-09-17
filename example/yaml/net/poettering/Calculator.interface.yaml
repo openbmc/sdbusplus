@@ -40,7 +40,7 @@ methods:
             description: >
                 The result of (x/y).
       errors:
-          - self.Error.DivisionByZero
+          - self.DivisionByZero
     - name: Clear
       flags:
           - unprivileged
@@ -65,7 +65,7 @@ properties:
       description: >
           The name of the owner of the Calculator.
       errors:
-          - self.Error.PermissionDenied
+          - self.PermissionDenied
 signals:
     - name: Cleared
       description: >

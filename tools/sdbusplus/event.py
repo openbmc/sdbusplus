@@ -27,13 +27,20 @@ class EventElement(NamedElement):
         self.is_error = kwargs.pop("is_error", False)
         self.deprecated = kwargs.pop("deprecated", None)
         self.errno = kwargs.pop("errno", "EIO")
-        self.languages = {
-            key: EventLanguage(**kwargs.pop(key, {})) for key in ["en"]
-        }
+        self.redfish_map = kwargs.pop("redfish-mapping", None)
+        if not self.redfish_map:
+            self.languages = {
+                key: EventLanguage(**kwargs.pop(key, {})) for key in ["en"]
+            }
+        else:
+            self.languages = {
+                "en": EventLanguage(
+                    **{"message": f"Redfish({self.redfish_map})"}
+                )
+            }
         self.metadata = [
             EventMetadata(**n) for n in kwargs.pop("metadata", [])
         ]
-        self.redfish_map = kwargs.pop("redfish-mapping", None)
         self.severity = EventElement.syslog_severity(
             kwargs.pop("severity", "informational")
         )

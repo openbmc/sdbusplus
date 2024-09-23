@@ -105,11 +105,14 @@ $defs:
         properties:
             redfish-mapping:
                 type: string
+                pattern: "^[A-Z_][a-zA-Z0-9_]*(\\.[A-Z_][a-zA-Z0-9_]*)*$"
                 description:
                     Used when a `sdbusplus` event should map to a specific
                     Redfish Message rather than a generated one. This is useful
                     when an internal error has an analog in a standardized
                     registry.
+
+                    When specifying these, the version should be omitted.
         required:
             - redfish-mapping
 

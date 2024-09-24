@@ -3,7 +3,6 @@
  */
 #pragma once
 #include <sdbusplus/exception.hpp>
-#include <sdbusplus/utility/consteval_string.hpp>
 
 #include <cerrno>
 

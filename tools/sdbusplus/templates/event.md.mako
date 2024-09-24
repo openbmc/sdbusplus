@@ -15,7 +15,7 @@ ${event.languages["en"].message}
 % if event.metadata:
 - metadata:
 % for m in event.metadata:
-  - `${m.SNAKE_CASE}` as `${m.type}` \
+  - `${m.SNAKE_CASE}` as `${m.typeName}` \
 % if m.primary:
 **[PRIMARY]**
 % else:

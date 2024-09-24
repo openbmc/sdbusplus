@@ -1,7 +1,7 @@
 # Generated file; do not modify.
 generated_sources += custom_target(
     'net/poettering/Calculator__cpp'.underscorify(),
-    input: [ '../../../../yaml/net/poettering/Calculator.interface.yaml',  ],
+    input: [ '../../../../yaml/net/poettering/Calculator.events.yaml', '../../../../yaml/net/poettering/Calculator.interface.yaml',  ],
     output: [ 'event.cpp', 'event.hpp', 'common.hpp', 'server.cpp', 'server.hpp', 'aserver.hpp', 'client.hpp',  ],
     depend_files: sdbusplusplus_depfiles,
     command: [

@@ -112,20 +112,21 @@ class Property(NamedElement, Renderer):
     """ Determine the C++ header of an enumeration-type property.
     """
 
-    def enum_headers(self, interface):
+    def enum_headers(self, interface=None):
         typeTuple = self.__type_tuple()
-        return self.__enum_headers(interface, typeTuple)
+        return self.__enum_headers(typeTuple, interface)
 
-    def __enum_headers(self, interface, typeTuple):
+    def __enum_headers(self, typeTuple, interface=None):
         # Enums can be processed directly.
         if "enum" == typeTuple[0]:
             # Get enum type from typeTuple.
             enumType = typeTuple[1][0][0]
 
             # Local enums don't need a header.
-            if "self." in enumType:
+            if "self." in enumType and not interface:
                 return []
 
+            enumType = enumType.replace("self.", interface + ".")
             enumType = ".".join(enumType.split(".")[0:-1])
             return [NamedElement(name=enumType).headerFile()]
 
@@ -138,7 +139,7 @@ class Property(NamedElement, Renderer):
         # them recursively.
         r = []
         for t in typeTuple[1]:
-            r.extend(self.__enum_headers(interface, t))
+            r.extend(self.__enum_headers(t, interface))
         return r
 
     """ Convert the property type into a C++ type.

@@ -3,9 +3,13 @@
  */
 #pragma once
 #include <sdbusplus/exception.hpp>
+#include <sdbusplus/utility/consteval_string.hpp>
 
 #include <cerrno>
 
+% for h in events.cpp_includes():
+#include <${h}>
+% endfor
 %if events.errors:
 
 namespace sdbusplus::error::${events.cppNamespacedClass()}

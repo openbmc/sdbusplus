@@ -4,12 +4,12 @@ import jsonschema
 import yaml
 
 from .namedelement import NamedElement
+from .property import Property
 from .renderer import Renderer
 
 
-class EventMetadata(NamedElement):
+class EventMetadata(Property):
     def __init__(self, **kwargs):
-        self.type = kwargs.pop("type")
         self.primary = kwargs.pop("primary", False)
         super(EventMetadata, self).__init__(**kwargs)
 
@@ -46,6 +46,12 @@ class EventElement(NamedElement):
         )
 
         super(EventElement, self).__init__(**kwargs)
+
+    def cpp_includes(self, interface):
+        includes = []
+        for m in self.metadata:
+            includes.extend(m.enum_headers(interface))
+        return sorted(set(includes))
 
     def __getattribute__(self, name):
         lam = {"description": lambda: self.__description()}.get(name)
@@ -114,6 +120,14 @@ class Event(NamedElement, Renderer):
         self.events = [EventElement(**n) for n in kwargs.pop("events", [])]
 
         super(Event, self).__init__(**kwargs)
+
+    def cpp_includes(self):
+        includes = []
+        for e in self.errors:
+            includes.extend(e.cpp_includes(self.name))
+        for e in self.events:
+            includes.extend(e.cpp_includes(self.name))
+        return sorted(set(includes))
 
     def markdown(self, loader):
         return self.render(loader, "events.md.mako", events=self)

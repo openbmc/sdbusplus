@@ -65,7 +65,7 @@ class Interface(NamedElement, Renderer):
     def enum_includes(self, inc_list):
         includes = []
         for e in inc_list:
-            includes.extend(e.enum_headers(self.name))
+            includes.extend(e.enum_headers())
         return sorted(set(includes))
 
     def markdown(self, loader):

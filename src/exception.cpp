@@ -16,6 +16,16 @@ namespace exception
 
 void exception::unused() const noexcept {}
 
+int exception::set_error(sd_bus_error* e) const
+{
+    return sd_bus_error_set(e, name(), description());
+}
+
+int exception::set_error(SdBusInterface* i, sd_bus_error* e) const
+{
+    return i->sd_bus_error_set(e, name(), description());
+}
+
 int generated_exception::get_errno() const noexcept
 {
     return EIO;

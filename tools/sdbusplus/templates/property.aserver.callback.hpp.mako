@@ -38,7 +38,7 @@ i_name = interface.classname
         % for e in property.errors:
         catch (const ${interface.errorNamespacedClass(e)}& e)
         {
-            return sd_bus_error_set(error, e.name(), e.description());
+            return e.set_error(error);
         }
         % endfor
         catch (const std::exception&)
@@ -82,7 +82,7 @@ i_name = interface.classname
         % for e in property.errors:
         catch (const ${interface.errorNamespacedClass(e)}& e)
         {
-            return sd_bus_error_set(error, e.name(), e.description());
+            return e.set_error(error);
         }
         % endfor
         catch (const std::exception&)

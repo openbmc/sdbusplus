@@ -28,6 +28,9 @@ struct exception : public std::exception
     virtual const char* description() const noexcept = 0;
     virtual int get_errno() const noexcept = 0;
 
+    virtual int set_error(sd_bus_error*) const;
+    virtual int set_error(SdBusInterface*, sd_bus_error*) const;
+
   private:
     // This unused function is to ensure that the vtable for this class is
     // properly emitted when `-flto=auto` is used, which is the default in

@@ -641,7 +641,7 @@ class dbus_interface
 
         catch (const sdbusplus::exception_t& e)
         {
-            return sd_bus_error_set(error, e.name(), e.description());
+            return e.set_error(error);
         }
         catch (...)
         {
@@ -681,7 +681,7 @@ class dbus_interface
 
         catch (const sdbusplus::exception_t& e)
         {
-            return sd_bus_error_set(error, e.name(), e.description());
+            return e.set_error(error);
         }
         catch (...)
         {
@@ -711,7 +711,7 @@ class dbus_interface
 
         catch (const sdbusplus::exception_t& e)
         {
-            return sd_bus_error_set(error, e.name(), e.description());
+            return e.set_error(error);
         }
         catch (...)
         {

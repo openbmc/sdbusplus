@@ -25,7 +25,7 @@ int ${interface.classname}::_callback_get_${property.name}(
     % for e in property.errors:
     catch(const ${interface.errorNamespacedClass(e)}& e)
     {
-        return o->get_bus().getInterface()->sd_bus_error_set(error, e.name(), e.description());
+        return e.set_error(o->get_bus().getInterface(), error);
     }
     % endfor
     catch (const std::exception&)
@@ -79,7 +79,7 @@ int ${interface.classname}::_callback_set_${property.name}(
     % for e in property.errors:
     catch(const ${interface.errorNamespacedClass(e)}& e)
     {
-        return o->get_bus().getInterface()->sd_bus_error_set(error, e.name(), e.description());
+        return e.set_error(o->get_bus().getInterface(), error);
     }
     % endfor
     catch (const std::exception&)

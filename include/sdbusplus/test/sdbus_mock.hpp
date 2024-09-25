@@ -117,8 +117,7 @@ class SdBusMock : public SdBusInterface
                 (sd_bus_message*, sd_bus_message**), (override));
 
     MOCK_METHOD(int, sd_bus_message_new_method_error,
-                (sd_bus_message * call, sd_bus_message** m, const char* name,
-                 const char* description),
+                (sd_bus_message * call, sd_bus_message** m, sd_bus_error* e),
                 (override));
 
     MOCK_METHOD(int, sd_bus_message_new_method_errno,

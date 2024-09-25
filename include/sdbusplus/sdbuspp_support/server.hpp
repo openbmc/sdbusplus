@@ -53,7 +53,7 @@ int property_callback(sd_bus_message* msg, sdbusplus::SdBusInterface* intf,
     }
     catch (const sdbusplus::internal_exception_t& e)
     {
-        return intf->sd_bus_error_set(error, e.name(), e.description());
+        return e.set_error(intf, error);
     }
 
     // A positive integer must be returned to indicate that the callback
@@ -126,7 +126,7 @@ int method_callback(sd_bus_message* msg, sdbusplus::SdBusInterface* intf,
     }
     catch (const sdbusplus::internal_exception_t& e)
     {
-        return intf->sd_bus_error_set(error, e.name(), e.description());
+        return e.set_error(intf, error);
     }
 
     // A positive integer must be returned to indicate that the callback

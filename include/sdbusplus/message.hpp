@@ -368,8 +368,11 @@ class message : private sdbusplus::slot::details::slot_friend
     message new_method_error(const sdbusplus::exception::exception& e)
     {
         msgp_t reply = nullptr;
-        int r = _intf->sd_bus_message_new_method_error(
-            this->get(), &reply, e.name(), e.description());
+        sd_bus_error error = SD_BUS_ERROR_NULL;
+        e.set_error(_intf, &error);
+        int r =
+            _intf->sd_bus_message_new_method_error(this->get(), &reply, &error);
+        sd_bus_error_free(&error);
         if (r < 0)
         {
             throw exception::SdBusError(-r, "sd_bus_message_new_method_error");

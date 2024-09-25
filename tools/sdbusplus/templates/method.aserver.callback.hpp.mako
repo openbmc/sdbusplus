@@ -231,7 +231,7 @@ co_await self_i->method_call(
 % for e in method.errors:
         catch(const ${interface.errorNamespacedClass(e)}& e)
         {
-            return sd_bus_error_set(error, e.name(), e.description());
+            return e.set_error(error);
         }
 % endfor
         catch(const std::exception&)

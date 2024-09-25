@@ -56,7 +56,7 @@ int ${interface.classname}::_callback_${ method.CamelCase }(
     % for e in method.errors:
     catch(const ${interface.errorNamespacedClass(e)}& e)
     {
-        return o->get_bus().getInterface()->sd_bus_error_set(error, e.name(), e.description());
+        return e.set_error(o->get_bus().getInterface(), error);
     }
     % endfor
     catch (const std::exception&)

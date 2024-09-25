@@ -115,8 +115,7 @@ class SdBusInterface
                                                  sd_bus_message** m) = 0;
 
     virtual int sd_bus_message_new_method_error(
-        sd_bus_message* call, sd_bus_message** m, const char* name,
-        const char* description) = 0;
+        sd_bus_message* call, sd_bus_message** m, sd_bus_error* e) = 0;
 
     virtual int sd_bus_message_new_method_errno(sd_bus_message* call,
                                                 sd_bus_message** m, int error,
@@ -440,12 +439,10 @@ class SdBusImpl : public SdBusInterface
         return ::sd_bus_message_new_method_return(call, m);
     }
 
-    int sd_bus_message_new_method_error(sd_bus_message* call,
-                                        sd_bus_message** m, const char* name,
-                                        const char* description) override
+    int sd_bus_message_new_method_error(
+        sd_bus_message* call, sd_bus_message** m, sd_bus_error* e) override
     {
-        return ::sd_bus_message_new_method_errorf(call, m, name, "%s",
-                                                  description);
+        return ::sd_bus_message_new_method_error(call, m, e);
     }
 
     int sd_bus_message_new_method_errno(sd_bus_message* call,

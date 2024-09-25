@@ -10,7 +10,20 @@ namespace sdbusplus::error::${events.cppNamespacedClass()}
 ${events.render(loader, "event.cpp.mako", events=events, event=e)}\
 % endfor
 
+/* Load error map into sd_bus for errno translation. */
+static sd_bus_error_map errors[] = {
+% for e in events.errors:
+    SD_BUS_ERROR_MAP(${e.CamelCase}::errName, ${e.CamelCase}::errErrno),
+% endfor
+    SD_BUS_ERROR_MAP_END
+};
+[[gnu::constructor]] static void loadErrors()
+{
+    sd_bus_error_add_map(errors);
+}
+
 } // namespace sdbusplus::error::${events.cppNamespacedClass()}
+
 %endif
 %if events.errors:
 

@@ -12,6 +12,7 @@ project('sdbusplus', 'cpp', 'c',
 )
 
 libsystemd_pkg = dependency('libsystemd')
+nlohmann_json_dep = dependency('nlohmann_json', include_type: 'system')
 
 python = import('python')
 python_bin = python.find_installation('python3', modules:['inflection', 'yaml', 'mako'])
@@ -40,7 +41,10 @@ libsdbusplus = library(
     'sdbusplus',
     libsdbusplus_src,
     include_directories: root_inc,
-    dependencies: libsystemd_pkg,
+    dependencies: [
+        libsystemd_pkg,
+        nlohmann_json_dep
+    ],
     version: meson.project_version(),
     install: true,
 )
@@ -60,7 +64,11 @@ boost_dep = declare_dependency(
 sdbusplus_dep = declare_dependency(
     include_directories: root_inc,
     link_with: libsdbusplus,
-    dependencies: [ libsystemd_pkg, boost_dep ],
+    dependencies: [
+        boost_dep,
+        libsystemd_pkg,
+        nlohmann_json_dep,
+    ],
 )
 
 subdir('tools')

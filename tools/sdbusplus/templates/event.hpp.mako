@@ -12,10 +12,14 @@ struct ${event.CamelCase} final :
     {}
 
 %for m in event.metadata:
-    ${m.cppTypeParam(events.name)} ${m.camelCase};
+    const ${m.cppTypeParam(events.name)} ${m.camelCase};
 %endfor
 
 %endif
+    int set_error(sd_bus_error*) const override;
+    int set_error(SdBusInterface*, sd_bus_error*) const override;
+    auto to_json() const -> nlohmann::json;
+
     static constexpr auto errName =
         "${events.name}.${event.name}";
     static constexpr auto errDesc =

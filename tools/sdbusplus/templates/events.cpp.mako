@@ -25,7 +25,7 @@ static sd_bus_error_map errors[] = {
 } // namespace sdbusplus::error::${events.cppNamespacedClass()}
 
 %endif
-%if events.errors:
+%if events.events:
 
 namespace sdbusplus::event::${events.cppNamespacedClass()}
 {

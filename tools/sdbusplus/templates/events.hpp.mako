@@ -20,7 +20,7 @@ ${events.render(loader, "event.hpp.mako", events=events, event=e)}\
 
 } // namespace sdbusplus::error::${events.cppNamespacedClass()}
 %endif
-%if events.errors:
+%if events.events:
 
 namespace sdbusplus::event::${events.cppNamespacedClass()}
 {

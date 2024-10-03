@@ -29,6 +29,11 @@ $defs:
                             type: string
                             pattern: "^[A-Z_][A-Z0-9_]*$"
                             description: The name of the metadata field.
+                        description:
+                            type: string
+                            description:
+                                A description of the field for use by
+                                developers.
                         type:
                             type: string
                             pattern: "(string)|(size)|(u?int64)|(double)|(object_path)|(enum\\[.*\\])"
@@ -41,6 +46,7 @@ $defs:
                                 only in the extended `DiagnosticData`).
                     required:
                         - name
+                        - description
                         - type
                 minItems: 1
         required:

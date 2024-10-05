@@ -18,7 +18,7 @@ struct ${event.CamelCase} final :
 %endif
     int set_error(sd_bus_error*) const override;
     int set_error(SdBusInterface*, sd_bus_error*) const override;
-    auto to_json() const -> nlohmann::json;
+    auto to_json() const -> nlohmann::json override;
 
     static constexpr auto errName =
         "${events.name}.${event.name}";

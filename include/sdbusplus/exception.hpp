@@ -46,10 +46,17 @@ struct generated_exception : public exception
     int get_errno() const noexcept override;
 };
 
+/** Non-templated base for all new errors and events created by the sdbus++
+ * generator */
+struct generated_event_base : public generated_exception
+{
+    virtual auto to_json() const -> nlohmann::json = 0;
+};
+
 /** base exception for all new errors and events created by the sdbus++
  * generator */
 template <typename Event>
-struct generated_event : public generated_exception
+struct generated_event : public generated_event_base
 {
     const char* name() const noexcept override
     {

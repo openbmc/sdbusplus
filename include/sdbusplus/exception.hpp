@@ -51,6 +51,7 @@ struct generated_exception : public exception
 struct generated_event_base : public generated_exception
 {
     virtual auto to_json() const -> nlohmann::json = 0;
+    virtual int severity() const noexcept = 0;
 };
 
 /** base exception for all new errors and events created by the sdbus++
@@ -76,6 +77,11 @@ struct generated_event : public generated_event_base
     int get_errno() const noexcept override
     {
         return Event::errErrno;
+    }
+
+    int severity() const noexcept override
+    {
+        return Event::errSeverity;
     }
 
     template <utility::details::consteval_string_holder V>

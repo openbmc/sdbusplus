@@ -5,6 +5,7 @@
 #include <sdbusplus/exception.hpp>
 
 #include <cerrno>
+#include <sys/syslog.h>
 
 % for h in events.cpp_includes():
 #include <${h}>

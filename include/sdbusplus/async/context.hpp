@@ -40,7 +40,7 @@ struct context_friend;
 class context : public bus::details::bus_friend
 {
   public:
-    explicit context(bus_t&& bus = bus::new_default());
+    explicit context(bus_t&& bus = bus::new_bus());
     context(context&&) = delete;
     context(const context&) = delete;
 

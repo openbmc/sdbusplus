@@ -1,4 +1,5 @@
 #include <sdbusplus/bus.hpp>
+#include <sdbusplus/exception.hpp>
 
 namespace sdbusplus::bus
 {
@@ -23,7 +24,11 @@ void bus::emit_interfaces_removed(const char* path,
 bus new_default()
 {
     sd_bus* b = nullptr;
-    sd_bus_default(&b);
+    auto rc = sd_bus_default(&b);
+    if (rc < 0)
+    {
+        throw exception::SdBusError(-rc, __PRETTY_FUNCTION__);
+    }
     return bus(b, std::false_type());
 }
 
@@ -31,7 +36,11 @@ bus new_default()
 bus new_default_user()
 {
     sd_bus* b = nullptr;
-    sd_bus_default_user(&b);
+    auto rc = sd_bus_default_user(&b);
+    if (rc < 0)
+    {
+        throw exception::SdBusError(-rc, __PRETTY_FUNCTION__);
+    }
     return bus(b, std::false_type());
 }
 
@@ -39,7 +48,11 @@ bus new_default_user()
 bus new_default_system()
 {
     sd_bus* b = nullptr;
-    sd_bus_default_system(&b);
+    auto rc = sd_bus_default_system(&b);
+    if (rc < 0)
+    {
+        throw exception::SdBusError(-rc, __PRETTY_FUNCTION__);
+    }
     return bus(b, std::false_type());
 }
 
@@ -47,7 +60,11 @@ bus new_default_system()
 bus new_bus()
 {
     sd_bus* b = nullptr;
-    sd_bus_open(&b);
+    auto rc = sd_bus_open(&b);
+    if (rc < 0)
+    {
+        throw exception::SdBusError(-rc, __PRETTY_FUNCTION__);
+    }
     bus bus(b, std::false_type());
     bus.set_should_close(true);
     return bus;
@@ -57,7 +74,11 @@ bus new_bus()
 bus new_user()
 {
     sd_bus* b = nullptr;
-    sd_bus_open_user(&b);
+    auto rc = sd_bus_open_user(&b);
+    if (rc < 0)
+    {
+        throw exception::SdBusError(-rc, __PRETTY_FUNCTION__);
+    }
     bus bus(b, std::false_type());
     bus.set_should_close(true);
     return bus;
@@ -67,7 +88,11 @@ bus new_user()
 bus new_system()
 {
     sd_bus* b = nullptr;
-    sd_bus_open_system(&b);
+    auto rc = sd_bus_open_system(&b);
+    if (rc < 0)
+    {
+        throw exception::SdBusError(-rc, __PRETTY_FUNCTION__);
+    }
     bus bus(b, std::false_type());
     bus.set_should_close(true);
     return bus;

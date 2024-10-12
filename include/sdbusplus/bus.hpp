@@ -413,6 +413,16 @@ struct bus
         return _intf->sd_bus_get_fd(_bus.get());
     }
 
+    auto get_events()
+    {
+        return _intf->sd_bus_get_events(_bus.get());
+    }
+
+    auto get_timeout(uint64_t* timeout)
+    {
+        return _intf->sd_bus_get_timeout(_bus.get(), timeout);
+    }
+
     /** @brief Attach the bus with a sd-event event loop object.
      *
      *  @param[in] event - sd_event object.

@@ -63,6 +63,8 @@ class SdBusInterface
 
     virtual sd_event* sd_bus_get_event(sd_bus* bus) = 0;
     virtual int sd_bus_get_fd(sd_bus* bus) = 0;
+    virtual int sd_bus_get_events(sd_bus* bus) = 0;
+    virtual int sd_bus_get_timeout(sd_bus* bus, uint64_t* timeout_usec) = 0;
     virtual int sd_bus_get_unique_name(sd_bus* bus, const char** unique) = 0;
 
     virtual int sd_bus_list_names(sd_bus* bus, char*** acquired,
@@ -299,6 +301,16 @@ class SdBusImpl : public SdBusInterface
     int sd_bus_get_fd(sd_bus* bus) override
     {
         return ::sd_bus_get_fd(bus);
+    }
+
+    int sd_bus_get_events(sd_bus* bus) override
+    {
+        return ::sd_bus_get_events(bus);
+    }
+
+    int sd_bus_get_timeout(sd_bus* bus, uint64_t* timeout_usec) override
+    {
+        return ::sd_bus_get_timeout(bus, timeout_usec);
     }
 
     int sd_bus_get_unique_name(sd_bus* bus, const char** unique) override

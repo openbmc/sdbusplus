@@ -59,6 +59,9 @@ class SdBusMock : public SdBusInterface
 
     MOCK_METHOD(sd_event*, sd_bus_get_event, (sd_bus*), (override));
     MOCK_METHOD(int, sd_bus_get_fd, (sd_bus*), (override));
+    MOCK_METHOD(int, sd_bus_get_events, (sd_bus*), (override));
+    MOCK_METHOD(int, sd_bus_get_timeout, (sd_bus*, uint64_t* timeout_usec),
+                (override));
     MOCK_METHOD(int, sd_bus_get_unique_name, (sd_bus*, const char**),
                 (override));
 

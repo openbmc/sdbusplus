@@ -25,6 +25,7 @@
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/posix/stream_descriptor.hpp>
 #include <boost/asio/post.hpp>
+#include <boost/asio/steady_timer.hpp>
 #ifndef SDBUSPLUS_DISABLE_BOOST_COROUTINES
 #include <boost/asio/spawn.hpp>
 #endif
@@ -54,12 +55,13 @@ class connection : public sdbusplus::bus_t
     // default to system bus
     connection(boost::asio::io_context& io) :
         sdbusplus::bus_t(sdbusplus::bus::new_default()), io_(io),
-        socket(io_.get_executor(), get_fd())
+        socket(io_.get_executor(), get_fd()), timer(io_.get_executor())
     {
         read_immediate();
     }
     connection(boost::asio::io_context& io, sd_bus* bus) :
-        sdbusplus::bus_t(bus), io_(io), socket(io_.get_executor(), get_fd())
+        sdbusplus::bus_t(bus), io_(io), socket(io_.get_executor(), get_fd()),
+        timer(io_.get_executor())
     {
         read_immediate();
     }
@@ -311,38 +313,94 @@ class connection : public sdbusplus::bus_t
   private:
     boost::asio::io_context& io_;
     boost::asio::posix::stream_descriptor socket;
+    boost::asio::steady_timer timer;
+
+    void process()
+    {
+        if (process_discard())
+        {
+            read_immediate();
+        }
+        else
+        {
+            read_wait();
+        }
+    }
+
+    void on_fd_event(const boost::system::error_code& ec)
+    {
+        // This is expected if the timer expired before an fd event was
+        // available
+        if (ec == boost::asio::error::operation_aborted)
+        {
+            return;
+        }
+        timer.cancel();
+        if (ec)
+        {
+            return;
+        }
+        process();
+    }
+
+    void on_timer_event(const boost::system::error_code& ec)
+    {
+        if (ec == boost::asio::error::operation_aborted)
+        {
+            // This is expected if the fd was available before the timer expired
+            return;
+        }
+        // Abort existing operations on the socket
+        socket.cancel();
+        process();
+    }
 
     void read_wait()
     {
-        socket.async_read_some(
-            boost::asio::null_buffers(),
-            [&](const boost::system::error_code& ec, std::size_t) {
-                if (ec)
-                {
-                    return;
-                }
-                if (process_discard())
-                {
-                    read_immediate();
-                }
-                else
-                {
-                    read_wait();
-                }
-            });
+        int fd = get_fd();
+        if (fd < 0)
+        {
+            return;
+        }
+        if (fd != socket.native_handle())
+        {
+            socket.release();
+            socket.assign(fd);
+        }
+        int events = get_events();
+        if (events < 0)
+        {
+            return;
+        }
+        if (events & POLLIN)
+        {
+            socket.async_wait(boost::asio::posix::stream_descriptor::wait_read,
+                              std::bind_front(&connection::on_fd_event, this));
+        }
+        if (events & POLLOUT)
+        {
+            socket.async_wait(boost::asio::posix::stream_descriptor::wait_write,
+                              std::bind_front(&connection::on_fd_event, this));
+        }
+        if (events & POLLERR)
+        {
+            socket.async_wait(boost::asio::posix::stream_descriptor::wait_error,
+                              std::bind_front(&connection::on_fd_event, this));
+        }
+
+        uint64_t timeout = 0;
+        int timeret = get_timeout(&timeout);
+        if (timeret < 0)
+        {
+            return;
+        }
+        timer.expires_at(std::chrono::steady_clock::time_point(
+            std::chrono::microseconds(timeout)));
+        timer.async_wait(std::bind_front(&connection::on_timer_event, this));
     }
     void read_immediate()
     {
-        boost::asio::post(io_, [&] {
-            if (process_discard())
-            {
-                read_immediate();
-            }
-            else
-            {
-                read_wait();
-            }
-        });
+        boost::asio::post(io_, std::bind_front(&connection::process, this));
     }
 };
 

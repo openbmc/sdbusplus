@@ -75,6 +75,10 @@ signals:
           - type: int64
             description: >
                 Value of LastReset prior to Clear.
+    - name: Test
+      description: >
+        Test signal
+
 enumerations:
     - name: State
       description: >

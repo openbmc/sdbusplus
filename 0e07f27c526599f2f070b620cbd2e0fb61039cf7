@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a44d9912_124610c3",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000008
+      },
+      "writtenOn": "2024-10-22T14:51:55Z",
+      "side": 1,
+      "message": "In file included from ../include/sdbusplus/message/append.hpp:5,\n                 from ../include/sdbusplus/message.hpp:6,\n                 from ../include/sdbusplus/bus.hpp:7,\n                 from ../include/sdbusplus/async/context.hpp:5,\n                 from ../include/sdbusplus/async/server.hpp:3,\n                 from example/gen/net/poettering/Calculator/aserver.hpp:2,\n                 from ../example/calculator-aserver.cpp:1:\n../include/sdbusplus/message/types.hpp: In instantiation of ‘constexpr auto sdbusplus::message::types::type_id() [with Args \u003d {}]’:\nexample/gen/net/poettering/Calculator/aserver.hpp:372:58:   required from here\n../include/sdbusplus/message/types.hpp:302:72: error: no matching function for call to ‘type_id_multiple\u003c\u003e()’\n  302 |         details::type_id_multiple\u003cdetails::type_id_downcast_t\u003cArgs\u003e...\u003e(),\n      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~\n../include/sdbusplus/message/types.hpp:284:16: note: candidate: ‘template\u003cclass T, class ... Args\u003e constexpr auto sdbusplus::message::types::details::type_id_multiple()’\n  284 | constexpr auto type_id_multiple()\n      |                ^~~~~~~~~~~~~~~~\n../include/sdbusplus/message/types.hpp:284:16: note:   template argument deduction/substitution failed:\n../include/sdbusplus/message/types.hpp:302:72: note:   couldn’t deduce template parameter ‘T’\n  302 |         details::type_id_multiple\u003cdetails::type_id_downcast_t\u003cArgs\u003e...\u003e(),\n      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~",
+      "revId": "0e07f27c526599f2f070b620cbd2e0fb61039cf7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

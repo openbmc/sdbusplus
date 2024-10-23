@@ -27,6 +27,7 @@ root_inc = include_directories('include')
 libsdbusplus_src = files(
     'src/async/context.cpp',
     'src/async/match.cpp',
+    'src/async/fdio.cpp',
     'src/bus.cpp',
     'src/bus/match.cpp',
     'src/event.cpp',

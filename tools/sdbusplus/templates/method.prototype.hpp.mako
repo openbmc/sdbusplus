@@ -71,19 +71,11 @@ namespace details
 namespace ${interface.classname}
 {
 static const auto _param_${ method.CamelCase } =
-    % if len(method.parameters) == 0:
-        utility::tuple_to_array(std::make_tuple('\0'));
-    % else:
         utility::tuple_to_array(message::types::type_id<
                 ${ method.parameter_types_as_list(interface) }>());
-    % endif
 static const auto _return_${ method.CamelCase } =
-    % if len(method.returns) == 0:
-        utility::tuple_to_array(std::make_tuple('\0'));
-    % else:
         utility::tuple_to_array(message::types::type_id<
                 ${ method.returns_as_list(interface, full=True) }>());
-    % endif
 }
 }
     % endif

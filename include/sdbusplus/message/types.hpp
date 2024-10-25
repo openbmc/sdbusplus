@@ -303,6 +303,13 @@ constexpr auto type_id()
         std::make_tuple('\0') /* null terminator for C-string */);
 }
 
+// Special case for empty type.
+template<>
+constexpr auto type_id()
+{
+    return std::make_tuple('\0');
+}
+
 template <typename... Args>
 constexpr auto type_id_nonull()
 {

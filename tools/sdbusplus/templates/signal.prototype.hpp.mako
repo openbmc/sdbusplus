@@ -57,12 +57,8 @@ namespace details
 namespace ${interface.classname}
 {
 static const auto _signal_${ signal.CamelCase } =
-    % if len(signal.properties) == 0:
-        utility::tuple_to_array(std::make_tuple('\0'));
-    % else:
         utility::tuple_to_array(message::types::type_id<
                 ${ parameters_types_as_list() }>());
-    % endif
 }
 }
     % endif

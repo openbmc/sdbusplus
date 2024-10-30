@@ -2,10 +2,13 @@
  * Version: ${events.version}
  */
 #pragma once
+#include <pthread.h>
+#include <sys/syslog.h>
+
 #include <sdbusplus/exception.hpp>
 
 #include <cerrno>
-#include <sys/syslog.h>
+#include <source_location>
 
 % for h in events.cpp_includes():
 #include <${h}>

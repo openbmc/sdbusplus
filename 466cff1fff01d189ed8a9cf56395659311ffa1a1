@@ -16,6 +16,24 @@
       "message": "What do these look like on D-bus?",
       "revId": "466cff1fff01d189ed8a9cf56395659311ffa1a1",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8ea86785_7ed05b07",
+        "filename": "tools/sdbusplus/templates/event.cpp.mako",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-10-31T14:48:22Z",
+      "side": 1,
+      "message": "The transformation from JSON to the log entry has to happen in the phosphor-logging code. I\u0027ll write that this morning here. Simple answer is they will show up as entries in AdditionalData just like _PID does today.",
+      "parentUuid": "25438109_38e6844a",
+      "revId": "466cff1fff01d189ed8a9cf56395659311ffa1a1",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

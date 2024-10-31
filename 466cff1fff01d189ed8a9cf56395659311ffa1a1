@@ -34,6 +34,24 @@
       "parentUuid": "25438109_38e6844a",
       "revId": "466cff1fff01d189ed8a9cf56395659311ffa1a1",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "38dd78a6_047cd9ba",
+        "filename": "tools/sdbusplus/templates/event.cpp.mako",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1000008
+      },
+      "writtenOn": "2024-10-31T14:52:28Z",
+      "side": 1,
+      "message": "thanks.",
+      "parentUuid": "8ea86785_7ed05b07",
+      "revId": "466cff1fff01d189ed8a9cf56395659311ffa1a1",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

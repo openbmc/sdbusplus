@@ -58,9 +58,14 @@ $defs:
             - oneOf:
                   - $ref: "#/$defs/redfish-messages"
                   - $ref: "#/$defs/redfish-map"
+        unevaluatedProperties: false
     error:
         type: object
-        $ref: "#/$defs/event"
+        allOf:
+            - $ref: "#/$defs/base-event"
+            - oneOf:
+                  - $ref: "#/$defs/redfish-messages"
+                  - $ref: "#/$defs/redfish-map"
         properties:
             severity:
                 enum:
@@ -80,6 +85,7 @@ $defs:
         required:
             - severity
             - errno
+        unevaluatedProperties: false
     redfish-messages:
         type: object
         properties:

@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d33f05fd_b6951ddc",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2024-11-04T08:24:30Z",
+      "side": 1,
+      "message": "a dbus library doesn\u0027t seem like the right place for this, given that we already have code for dealing with dbus fds that don\u0027t require exposing raw apis like this.\n\nThis commit message is also once sentence, so I\u0027m not really going to try to guess why you\u0027re adding it.  Lets get written down what you\u0027re trying to accomplish, and we can go from there, but I really suspect that this isn\u0027t the right place for this generic, non dbus specific code.",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 59
+      },
+      "revId": "38c1755013646cf5559126dc29b99d036d02e7ec",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

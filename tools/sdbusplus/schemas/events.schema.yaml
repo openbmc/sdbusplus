@@ -27,8 +27,9 @@ $defs:
                     properties:
                         name:
                             type: string
-                            pattern: "^[A-Z_][A-Z0-9_]*$"
-                            description: The name of the metadata field.
+                            pattern: "^[A-Z][A-Z0-9a-z]*$"
+                            description:
+                                The name of the metadata field in CamelCase.
                         description:
                             type: string
                             description:

@@ -1,4 +1,5 @@
 #include <sdbusplus/exception.hpp>
+#include <sdbusplus/sdbuspp_support/event.hpp>
 
 #include <cerrno>
 #include <stdexcept>
@@ -9,9 +10,7 @@
 #pragma clang diagnostic ignored "-Wc99-extensions"
 #endif
 
-namespace sdbusplus
-{
-namespace exception
+namespace sdbusplus::exception
 {
 
 void exception::unused() const noexcept {}
@@ -212,8 +211,45 @@ int UnhandledStop::get_errno() const noexcept
     return ECANCELED;
 }
 
-} // namespace exception
-} // namespace sdbusplus
+static std::unordered_map<std::string, sdbusplus::sdbuspp::register_hook>
+    event_hooks = {};
+
+void throw_via_json(const nlohmann::json& j, const std::source_location& source)
+{
+    for (const auto& i : j.items())
+    {
+        if (auto it = event_hooks.find(i.key()); it != event_hooks.end())
+        {
+            it->second(j, source);
+        }
+    }
+}
+
+auto known_events() -> std::vector<std::string>
+{
+    std::vector<std::string> result{};
+
+    for (const auto& [key, _] : event_hooks)
+    {
+        result.emplace_back(key);
+    }
+
+    std::ranges::sort(result);
+
+    return result;
+}
+
+} // namespace sdbusplus::exception
+
+namespace sdbusplus::sdbuspp
+{
+
+void register_event(const std::string& event, register_hook throw_hook)
+{
+    sdbusplus::exception::event_hooks.emplace(event, throw_hook);
+}
+
+} // namespace sdbusplus::sdbuspp
 
 #ifdef __clang__
 #pragma clang diagnostic pop

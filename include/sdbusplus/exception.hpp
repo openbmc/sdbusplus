@@ -7,6 +7,7 @@
 #include <sdbusplus/utility/consteval_string.hpp>
 
 #include <exception>
+#include <source_location>
 #include <string>
 
 namespace sdbusplus
@@ -197,6 +198,15 @@ class UnhandledStop final : public internal_exception
     const char* what() const noexcept override;
     int get_errno() const noexcept override;
 };
+
+/** Throw a generated_event from the JSON representation.
+ *
+ *  @param[in] j - JSON representation of the event.
+ *  @param[in] source - The source code location of the origin.
+ */
+void throw_via_json(
+    const nlohmann::json& j,
+    const std::source_location& source = std::source_location::current());
 
 } // namespace exception
 

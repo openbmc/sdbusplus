@@ -1,24 +1,29 @@
 struct ${event.CamelCase} final :
     public sdbusplus::exception::generated_event<${event.CamelCase}>
 {
+    ${event.CamelCase}(const nlohmann::json&, const std::source_location&);
 %if len(event.metadata) == 0:
     ${event.CamelCase}(
-        std::source_location source = std::source_location::current()) :
-        source(source), pid(getpid())
+        const std::source_location& source = std::source_location::current()) :
+        source_file(source.file_name()), source_func(source.function_name()),
+        source_line(source.line()), source_column(source.column()),
+        pid(getpid())
     {}
 %else:
     ${event.CamelCase}(
         ${", ".join([
             f"metadata_t<\"{m.SNAKE_CASE}\">, {m.cppTypeParam(events.name)} {m.camelCase}_"
             for m in event.metadata ])},
-        std::source_location source = std::source_location::current()) :
+        const std::source_location& source = std::source_location::current()) :
         ${", ".join([
             f"{m.camelCase}({m.camelCase}_)" for m in event.metadata ])},
-        source(source), pid(getpid())
+        source_file(source.file_name()), source_func(source.function_name()),
+        source_line(source.line()), source_column(source.column()),
+        pid(getpid())
     {}
 
 %for m in event.metadata:
-    const ${m.cppTypeParam(events.name)} ${m.camelCase};
+    ${m.cppTypeParam(events.name)} ${m.camelCase};
 %endfor
 
 %endif
@@ -26,7 +31,10 @@ struct ${event.CamelCase} final :
     int set_error(SdBusInterface*, sd_bus_error*) const override;
     auto to_json() const -> nlohmann::json override;
 
-    std::source_location source;
+    std::string source_file;
+    std::string source_func;
+    size_t source_line;
+    size_t source_column;
     pid_t pid;
 
     static constexpr auto errName =

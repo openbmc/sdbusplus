@@ -1,6 +1,6 @@
-#include <${events.headerFile("event")}>
 #include <nlohmann/json.hpp>
-#
+#include <sdbusplus/sdbuspp_support/event.hpp>
+#include <${events.headerFile("event")}>
 %if events.errors:
 
 namespace sdbusplus::error::${events.cppNamespacedClass()}

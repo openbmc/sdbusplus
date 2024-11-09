@@ -6,6 +6,7 @@
 #include <unistd.h>
 
 #include <sdbusplus/exception.hpp>
+#include <sdbusplus/message.hpp>
 
 #include <cerrno>
 #include <source_location>

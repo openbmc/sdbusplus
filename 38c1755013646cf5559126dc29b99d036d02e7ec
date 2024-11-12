@@ -22,6 +22,30 @@
       },
       "revId": "38c1755013646cf5559126dc29b99d036d02e7ec",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f3b76b86_c500b2bd",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-11-12T22:03:06Z",
+      "side": 1,
+      "message": "Ideally either:\n   1. stdexec would handle sd_events\n   2. we would have a separate library to make sd_events async.\n\n(1) isn\u0027t the case today and isn\u0027t likely to be the case.\n(2) would require we split out a bunch of stuff around stdexec into a separate library that sdbusplus could build on top of, since sdbusplus also needs to handle some sd_events async code.\n\nI know there is sdeventplus; maybe this could live there.  We already have some existing sd_event and timer support in this library, so I don\u0027t think leveraging that was a big stretch.  It seems like fairly minor code that I\u0027m relatively ok with it living here for the time being until this space matures more.",
+      "parentUuid": "d33f05fd_b6951ddc",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 59
+      },
+      "revId": "38c1755013646cf5559126dc29b99d036d02e7ec",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

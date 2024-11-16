@@ -24,6 +24,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "711fb609_59be9a34",
+        "filename": "include/sdbusplus/async/fdio.hpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 1001758
+      },
+      "writtenOn": "2024-11-16T19:00:33Z",
+      "side": 1,
+      "message": "Done, changed to sdbusplus::async::match \u0026 next like flow.",
+      "parentUuid": "3cfb1f4d_4c2c396a",
+      "range": {
+        "startLine": 85,
+        "startChar": 0,
+        "endLine": 88,
+        "endChar": 1
+      },
+      "revId": "8034687031432945b93361587c82e1c8617256c1",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "7b79d046_b297e609",
@@ -37,6 +61,30 @@
       "writtenOn": "2024-11-12T22:03:06Z",
       "side": 1,
       "message": "nit: `writeToFile`.\n\nGenerally gtest prefers a \"fixture\" be created here where these two non-test functions would become static members.",
+      "range": {
+        "startLine": 12,
+        "startChar": 5,
+        "endLine": 12,
+        "endChar": 16
+      },
+      "revId": "8034687031432945b93361587c82e1c8617256c1",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5694b18d_15bd1be1",
+        "filename": "test/async/fdio.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1001758
+      },
+      "writtenOn": "2024-11-16T19:00:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7b79d046_b297e609",
       "range": {
         "startLine": 12,
         "startChar": 5,
@@ -70,6 +118,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "c2038401_bb5d7469",
+        "filename": "test/async/fdio.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1001758
+      },
+      "writtenOn": "2024-11-16T19:00:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9d355607_d705fc10",
+      "range": {
+        "startLine": 14,
+        "startChar": 26,
+        "endLine": 14,
+        "endChar": 70
+      },
+      "revId": "8034687031432945b93361587c82e1c8617256c1",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "3d1e2783_b246b8c5",
@@ -83,6 +155,30 @@
       "writtenOn": "2024-11-12T22:03:06Z",
       "side": 1,
       "message": "nit: `testFSEvents`",
+      "range": {
+        "startLine": 23,
+        "startChar": 5,
+        "endLine": 23,
+        "endChar": 17
+      },
+      "revId": "8034687031432945b93361587c82e1c8617256c1",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "03271455_7d591402",
+        "filename": "test/async/fdio.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1001758
+      },
+      "writtenOn": "2024-11-16T19:00:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3d1e2783_b246b8c5",
       "range": {
         "startLine": 23,
         "startChar": 5,
@@ -110,6 +206,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "c7a67537_f1d2c2b8",
+        "filename": "test/async/fdio.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1001758
+      },
+      "writtenOn": "2024-11-16T19:00:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6ad26da1_6289c5a8",
+      "revId": "8034687031432945b93361587c82e1c8617256c1",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e4b91c40_aecbacba",
@@ -123,6 +237,24 @@
       "writtenOn": "2024-11-12T22:03:06Z",
       "side": 1,
       "message": "Do you want something like `ctx.spawn(sdbusplus::async::execution::sleep_for(1s) | WriteToFile())` ?\n\nRight now I don\u0027t think you have any certainty that the inotify isn\u0027t already waiting by the time you call `async_fdio`.\n\nMaybe this is a hint to two test cases... one where we sleep prior to `WriteToFile` and one where we sleep prior to `async_fdio`.  This covers both cases of the event before and after the `co_await` (see my comment on the last file re race conditions).",
+      "revId": "8034687031432945b93361587c82e1c8617256c1",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "78a9f943_9af1f3c0",
+        "filename": "test/async/fdio.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1001758
+      },
+      "writtenOn": "2024-11-16T19:00:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e4b91c40_aecbacba",
       "revId": "8034687031432945b93361587c82e1c8617256c1",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }

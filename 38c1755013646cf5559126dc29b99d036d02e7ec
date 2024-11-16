@@ -46,6 +46,30 @@
       },
       "revId": "38c1755013646cf5559126dc29b99d036d02e7ec",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2ab93110_cadaa67c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1001758
+      },
+      "writtenOn": "2024-11-16T19:00:33Z",
+      "side": 1,
+      "message": "\u003e This commit message is also once sentence, so I\u0027m not really going to try to guess why you\u0027re adding it.\n\nAdded some more details to the description.",
+      "parentUuid": "f3b76b86_c500b2bd",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 59
+      },
+      "revId": "38c1755013646cf5559126dc29b99d036d02e7ec",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

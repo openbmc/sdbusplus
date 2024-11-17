@@ -52,10 +52,17 @@ ${event.CamelCase}::${event.CamelCase}(
     % if m.typeName == "object_path":
     ${m.camelCase} = self.at("${m.SNAKE_CASE}").get<std::string>();
     % elif m.is_enum():
-    ${m.camelCase} =
-        sdbusplus::message::convert_from_string<decltype(${m.camelCase})>(
-            self.at("${m.SNAKE_CASE}")
-        ).value();
+    if (auto enum_value =
+            sdbusplus::message::convert_from_string<decltype(${m.camelCase})>(
+                self.at("${m.SNAKE_CASE}"));
+        enum_value.has_value())
+    {
+        ${m.camelCase} = enum_value.value();
+    }
+    else
+    {
+        throw sdbusplus::exception::InvalidEnumString();
+    }
     % else:
     ${m.camelCase} = self.at("${m.SNAKE_CASE}");
     % endif

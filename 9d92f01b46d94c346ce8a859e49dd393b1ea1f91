@@ -1,0 +1,135 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "818180b7_c484b829",
+        "filename": "include/sdbusplus/async/fdio.hpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-11-25T16:23:02Z",
+      "side": 1,
+      "message": "We need a destructor that takes itself out of `fdio::complete`.  Otherwise we can end up with a completion registering and then being destructed before it completes.\n\nEx.  if someone writes this code:\n\n```\n   fdio::next();\n```\n\nThis code will compile without error and end up temporarily constructing a fdio_completion but then immediately destructing it.  We end up with `fdio::complete` having a dangling pointer to a destructed object.",
+      "revId": "9d92f01b46d94c346ce8a859e49dd393b1ea1f91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5b42a47a_b06c48c6",
+        "filename": "src/async/fdio.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-11-25T16:23:02Z",
+      "side": 1,
+      "message": "Why not `\u003d default` in the .hpp then?",
+      "revId": "9d92f01b46d94c346ce8a859e49dd393b1ea1f91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "53b7cf64_221458d7",
+        "filename": "src/async/fdio.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-11-25T16:23:02Z",
+      "side": 1,
+      "message": "Why unlock if we are exiting?",
+      "revId": "9d92f01b46d94c346ce8a859e49dd393b1ea1f91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9e4476bd_cd9dbd0f",
+        "filename": "src/async/fdio.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-11-25T16:23:02Z",
+      "side": 1,
+      "message": "Not necessary.",
+      "revId": "9d92f01b46d94c346ce8a859e49dd393b1ea1f91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "475047d2_be835f74",
+        "filename": "test/async/fdio.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-11-25T16:23:02Z",
+      "side": 1,
+      "message": "Do we want this sleep here?",
+      "revId": "9d92f01b46d94c346ce8a859e49dd393b1ea1f91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a8dde778_b1bae035",
+        "filename": "test/async/fdio.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-11-25T16:23:02Z",
+      "side": 1,
+      "message": "Please pick better names than \"events\" and \"events2\".  Name testcases based on what they are testing.",
+      "range": {
+        "startLine": 82,
+        "startChar": 17,
+        "endLine": 82,
+        "endChar": 27
+      },
+      "revId": "9d92f01b46d94c346ce8a859e49dd393b1ea1f91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "786a4df4_f53f4d82",
+        "filename": "test/async/fdio.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-11-25T16:23:02Z",
+      "side": 1,
+      "message": "Can we shorten this up to 5 seconds or less?\n\n(Having test cases that take a total of 20 seconds is annoying for rapid development where I run `ninja test`.",
+      "range": {
+        "startLine": 87,
+        "startChar": 42,
+        "endLine": 87,
+        "endChar": 45
+      },
+      "revId": "9d92f01b46d94c346ce8a859e49dd393b1ea1f91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

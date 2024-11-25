@@ -18,6 +18,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "5ff941c8_bba761ee",
+        "filename": "include/sdbusplus/async/fdio.hpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 1001758
+      },
+      "writtenOn": "2024-11-25T19:57:43Z",
+      "side": 1,
+      "message": "Done, added a destructor which resets the fdio::complete to nullptr.\n\nfdio_completion::~fdio_completion()\n{\n    std::unique_lock l{fdioInstance.lock};\n\n    if (fdioInstance.complete \u003d\u003d this)\n    {\n        std::exchange(fdioInstance.complete, nullptr);\n    }\n}",
+      "parentUuid": "818180b7_c484b829",
+      "revId": "9d92f01b46d94c346ce8a859e49dd393b1ea1f91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "5b42a47a_b06c48c6",
@@ -31,6 +49,24 @@
       "writtenOn": "2024-11-25T16:23:02Z",
       "side": 1,
       "message": "Why not `\u003d default` in the .hpp then?",
+      "revId": "9d92f01b46d94c346ce8a859e49dd393b1ea1f91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fbb910ca_483a3862",
+        "filename": "src/async/fdio.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1001758
+      },
+      "writtenOn": "2024-11-25T19:57:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5b42a47a_b06c48c6",
       "revId": "9d92f01b46d94c346ce8a859e49dd393b1ea1f91",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
@@ -52,6 +88,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f8449bc1_960a4a26",
+        "filename": "src/async/fdio.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1001758
+      },
+      "writtenOn": "2024-11-25T19:57:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "53b7cf64_221458d7",
+      "revId": "9d92f01b46d94c346ce8a859e49dd393b1ea1f91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "9e4476bd_cd9dbd0f",
@@ -69,6 +123,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "27508985_188b7609",
+        "filename": "src/async/fdio.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 1001758
+      },
+      "writtenOn": "2024-11-25T19:57:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9e4476bd_cd9dbd0f",
+      "revId": "9d92f01b46d94c346ce8a859e49dd393b1ea1f91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "475047d2_be835f74",
@@ -82,6 +154,24 @@
       "writtenOn": "2024-11-25T16:23:02Z",
       "side": 1,
       "message": "Do we want this sleep here?",
+      "revId": "9d92f01b46d94c346ce8a859e49dd393b1ea1f91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8aa55158_faff3117",
+        "filename": "test/async/fdio.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 1001758
+      },
+      "writtenOn": "2024-11-25T19:57:43Z",
+      "side": 1,
+      "message": "Removed.",
+      "parentUuid": "475047d2_be835f74",
       "revId": "9d92f01b46d94c346ce8a859e49dd393b1ea1f91",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
@@ -109,6 +199,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "116d7dac_cf6e0380",
+        "filename": "test/async/fdio.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 1001758
+      },
+      "writtenOn": "2024-11-25T19:57:43Z",
+      "side": 1,
+      "message": "Sorry i missed it in my last commit as i was planning to do it before push. Fixed it now.",
+      "parentUuid": "a8dde778_b1bae035",
+      "range": {
+        "startLine": 82,
+        "startChar": 17,
+        "endLine": 82,
+        "endChar": 27
+      },
+      "revId": "9d92f01b46d94c346ce8a859e49dd393b1ea1f91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "786a4df4_f53f4d82",
@@ -122,6 +236,30 @@
       "writtenOn": "2024-11-25T16:23:02Z",
       "side": 1,
       "message": "Can we shorten this up to 5 seconds or less?\n\n(Having test cases that take a total of 20 seconds is annoying for rapid development where I run `ninja test`.",
+      "range": {
+        "startLine": 87,
+        "startChar": 42,
+        "endLine": 87,
+        "endChar": 45
+      },
+      "revId": "9d92f01b46d94c346ce8a859e49dd393b1ea1f91",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "331e2a3a_cf98c2fb",
+        "filename": "test/async/fdio.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 1001758
+      },
+      "writtenOn": "2024-11-25T19:57:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "786a4df4_f53f4d82",
       "range": {
         "startLine": 87,
         "startChar": 42,

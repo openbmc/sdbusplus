@@ -190,6 +190,30 @@
       },
       "revId": "38c1755013646cf5559126dc29b99d036d02e7ec",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "73ce5ace_64321c44",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-11-26T17:23:26Z",
+      "side": 1,
+      "message": "\u003e std::exec seems like the overall right place. Has that topic been broached?\n\nI don\u0027t agree that std::exec is the right overall place.  They\u0027re focused mostly on getting `std::exec` into C++26 and as a reference implementation.  Supporting assorted io frameworks (like sd-event) seems way outside their scope.\n\n\u003e As written, it\u0027s being used in the public interface to read gpio. Needing sdbusplus to read a gpio seems like a design anti-pattern.\n\nI\u0027m not really following this.  sd-event already has handling for files.  This commit is enabling that to be used.  It has nothing specifically related to GPIOs; it could just as easily be used as a replacement for the boost socket monitoring stuff in bmcweb.",
+      "parentUuid": "bf4896ea_746eef5e",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 59
+      },
+      "revId": "38c1755013646cf5559126dc29b99d036d02e7ec",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

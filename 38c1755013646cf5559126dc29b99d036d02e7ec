@@ -262,6 +262,30 @@
       },
       "revId": "38c1755013646cf5559126dc29b99d036d02e7ec",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e18e8d1a_311a6953",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1001758
+      },
+      "writtenOn": "2024-11-26T18:31:46Z",
+      "side": 1,
+      "message": "The other use-case for this code is in cable-monitor which is going to watch for config file changes in xxx/cable.d/* dir. I am already using the last version of this API in there.",
+      "parentUuid": "8d36aaf0_07ac6331",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 59
+      },
+      "revId": "38c1755013646cf5559126dc29b99d036d02e7ec",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

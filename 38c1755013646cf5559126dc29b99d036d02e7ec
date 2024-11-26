@@ -238,6 +238,30 @@
       },
       "revId": "38c1755013646cf5559126dc29b99d036d02e7ec",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8d36aaf0_07ac6331",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-11-26T18:04:51Z",
+      "side": 1,
+      "message": "Yes, he wrote this to be able to use it in the gpio code.  As part of the gpio handling you need to be able to monitor a file descriptor.  But there isn\u0027t anything here that is GPIO specific.  It\u0027s just exposing existing sd-event support for monitoring a fd in an async way.",
+      "parentUuid": "97649b36_e3d81c3d",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 59
+      },
+      "revId": "38c1755013646cf5559126dc29b99d036d02e7ec",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

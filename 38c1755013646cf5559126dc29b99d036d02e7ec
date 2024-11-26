@@ -142,6 +142,30 @@
       },
       "revId": "38c1755013646cf5559126dc29b99d036d02e7ec",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d2cb8a58_d25b1092",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-11-26T02:09:56Z",
+      "side": 1,
+      "message": "Which other repository do you feel this belongs in?\n\nsdbusplus has had code for interfacing with sd_event for a long time (even before the async code).  Someone added a \u0027Timer\u0027 class about 6 years ago now.  When I added the async code, I added \u0027wait_for\u0027 (an async equivalent to Timer) because it was necessary for porting similar daemons.\n\nThe code in this commit might seem large but it is almost all boilerplate that stdexec requires for creating a send/receiver; there ends up being only about 3 real lines of code that aren\u0027t already trivially implemented on top of the existing sd_event support.\n\nhttps://github.com/openbmc/sdbusplus/blob/master/src/async/fdio.cpp#L7-L15\n\nI agree this \"isn\u0027t dbus\" but sd-bus itself is built on top of sd-event and we have to support sd-event anyhow.  Maybe you could argue that this belongs in sdeventplus, but it would be significantly more complex to try to spread the event loop implementation across both of these repos.  I don\u0027t really see the benefit of that.",
+      "parentUuid": "04a6e960_94fd384b",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 59
+      },
+      "revId": "38c1755013646cf5559126dc29b99d036d02e7ec",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

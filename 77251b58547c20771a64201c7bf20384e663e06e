@@ -16,6 +16,46 @@
       "message": "I removed the WIP here.  I probably won\u0027t have a chance to test deeper for a few weeks, but it sounds like others have tested it, so it\u0027s probably ready for review.",
       "revId": "77251b58547c20771a64201c7bf20384e663e06e",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b0d8858f_1f7ccc49",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2024-11-28T09:10:08Z",
+      "side": 1,
+      "message": "Tested OK, but with a minor comments.",
+      "revId": "77251b58547c20771a64201c7bf20384e663e06e",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fcf4a646_8335ab09",
+        "filename": "include/sdbusplus/asio/connection.hpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 394,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2024-11-28T09:10:08Z",
+      "side": 1,
+      "message": "Is it OK to skip this check and still use async_read_some()?\nI tried to change this piece of code to async_read_some(), and it works well.",
+      "range": {
+        "startLine": 375,
+        "startChar": 0,
+        "endLine": 394,
+        "endChar": 9
+      },
+      "revId": "77251b58547c20771a64201c7bf20384e663e06e",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

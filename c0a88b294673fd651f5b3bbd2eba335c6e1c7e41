@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "036a0416_5986600d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2024-11-29T22:24:37Z",
+      "side": 1,
+      "message": "@lei, patch looks fine.\n\nCan you give some indication of where you\u0027re actually using these bindings?  It was my intention to ultimately deprecate the boost::coroutine based things (given that they were depcreated even in boost before these were written).\n\nMy understanding was there were only two applications using them (telemetry and one other) upstream, and those could be moved over to either the c++20 coroutines, or callbacks.  Was your usage one of those applications?",
+      "revId": "c0a88b294673fd651f5b3bbd2eba335c6e1c7e41",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

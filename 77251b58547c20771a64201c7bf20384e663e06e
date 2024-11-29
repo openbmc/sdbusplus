@@ -80,6 +80,30 @@
       },
       "revId": "77251b58547c20771a64201c7bf20384e663e06e",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "45725b61_b719853e",
+        "filename": "include/sdbusplus/asio/connection.hpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 394,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2024-11-29T22:20:25Z",
+      "side": 1,
+      "message": "Documentation on deprecated async_read_some\nhttps://www.boost.org/doc/libs/1_86_0/doc/html/boost_asio/reference/null_buffers.html",
+      "parentUuid": "df55c5de_bc10c525",
+      "range": {
+        "startLine": 375,
+        "startChar": 0,
+        "endLine": 394,
+        "endChar": 9
+      },
+      "revId": "77251b58547c20771a64201c7bf20384e663e06e",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

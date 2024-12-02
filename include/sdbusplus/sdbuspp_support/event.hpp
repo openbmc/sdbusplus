@@ -11,14 +11,15 @@ namespace sdbusplus::sdbuspp
 using register_hook =
     std::function<void(const nlohmann::json&, const std::source_location&)>;
 
-void register_event(const std::string&, register_hook);
+void register_event(const std::string&, register_hook,
+                    const std::vector<std::string>& keysOrdered);
 
 template <typename T>
 struct register_event_helper
 {
     static void hook()
     {
-        register_event(T::errName, throw_event);
+        register_event(T::errName, throw_event, T::getMetadataKeysOrdered());
     }
 
     static void throw_event(const nlohmann::json& j,

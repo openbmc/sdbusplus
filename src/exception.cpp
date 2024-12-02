@@ -213,6 +213,8 @@ int UnhandledStop::get_errno() const noexcept
 
 static std::unordered_map<std::string, sdbusplus::sdbuspp::register_hook>
     event_hooks = {};
+static std::unordered_map<std::string, std::vector<std::string>>
+    metadataKeysOrderedMap = {};
 
 void throw_via_json(const nlohmann::json& j, const std::source_location& source)
 {
@@ -239,14 +241,29 @@ auto known_events() -> std::vector<std::string>
     return result;
 }
 
+auto known_event_metadata_keys(const std::string& messageId)
+    -> std::optional<std::vector<std::string>>
+{
+    if (!metadataKeysOrderedMap.contains(messageId))
+    {
+        return std::nullopt;
+    }
+
+    std::vector<std::string> result = metadataKeysOrderedMap[messageId];
+
+    return result;
+}
+
 } // namespace sdbusplus::exception
 
 namespace sdbusplus::sdbuspp
 {
 
-void register_event(const std::string& event, register_hook throw_hook)
+void register_event(const std::string& event, register_hook throw_hook,
+                    const std::vector<std::string>& keysOrdered)
 {
     sdbusplus::exception::event_hooks.emplace(event, throw_hook);
+    sdbusplus::exception::metadataKeysOrderedMap.emplace(event, keysOrdered);
 }
 
 } // namespace sdbusplus::sdbuspp

@@ -27,6 +27,9 @@ struct ${event.CamelCase} final :
 %endfor
 
 %endif
+
+    static std::vector<std::string> getMetadataKeysOrdered();
+
     int set_error(sd_bus_error*) const override;
     int set_error(SdBusInterface*, sd_bus_error*) const override;
     auto to_json() const -> nlohmann::json override;

@@ -211,6 +211,13 @@ void throw_via_json(
 /** Get the list of known events by name. */
 auto known_events() -> std::vector<std::string>;
 
+/** Get the metadata keys for the event in proper order
+ *  @param[in] messageId - the key under which the event is registered in our
+ * map
+ */
+auto known_event_metadata_keys(const std::string& messageId)
+    -> std::optional<std::vector<std::string>>;
+
 } // namespace exception
 
 using exception_t = exception::exception;

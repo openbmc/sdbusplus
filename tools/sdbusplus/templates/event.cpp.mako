@@ -43,6 +43,21 @@ auto ${event.CamelCase}::to_json() const -> nlohmann::json
     return nlohmann::json{ { errName, std::move(j) } };
 }
 
+std::vector<std::string> ${event.CamelCase}::getMetadataKeysOrdered() {
+
+%if len(event.metadata) == 0:
+	return {};
+%else:
+	std::vector<std::string> res = {
+	%for m in event.metadata:
+	    "${m.SNAKE_CASE}",
+	%endfor
+	};
+
+	return res;
+%endif
+};
+
 ${event.CamelCase}::${event.CamelCase}(
     const nlohmann::json& j, const std::source_location& s)
 {

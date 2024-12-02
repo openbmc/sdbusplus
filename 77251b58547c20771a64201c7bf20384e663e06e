@@ -104,6 +104,30 @@
       },
       "revId": "77251b58547c20771a64201c7bf20384e663e06e",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "76fe743b_b2188bfc",
+        "filename": "include/sdbusplus/asio/connection.hpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 394,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2024-12-02T07:32:28Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "45725b61_b719853e",
+      "range": {
+        "startLine": 375,
+        "startChar": 0,
+        "endLine": 394,
+        "endChar": 9
+      },
+      "revId": "77251b58547c20771a64201c7bf20384e663e06e",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

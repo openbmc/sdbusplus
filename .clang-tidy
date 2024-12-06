@@ -1,0 +1,10 @@
+Checks: '-*,
+    bugprone-unchecked-optional-access,
+    modernize-use-nullptr
+    '
+
+CheckOptions: []
+
+HeaderFilterRegex: (?!^subprojects).*
+
+WarningsAsErrors: '*'

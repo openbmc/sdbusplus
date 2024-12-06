@@ -107,13 +107,10 @@ TEST_F(Context, DestructMatcherWithPendingAwait)
 
     bool ran = false;
     auto m = std::make_optional<sdbusplus::async::match>(
-<<<<<<< HEAD
         ctx(), sdbusplus::match_rules::interfacesAdded(
                    "/this/is/a/bogus/path/for/SpawnMatcher"));
-=======
         get_ctx(), sdbusplus::bus::match::rules::interfacesAdded(
                        "/this/is/a/bogus/path/for/SpawnMatcher"));
->>>>>>> 3a43e7f (test: clang-tidy: clean up bugprone-unchecked-optional-access)
 
     // Await the match completion (which will never happen).
     get_ctx().spawn(m->next() | stdexec::then([&ran](...) { ran = true; }));
@@ -131,13 +128,10 @@ TEST_F(Context, DestructMatcherWithPendingAwaitAsTask)
     using namespace std::literals;
 
     auto m = std::make_optional<sdbusplus::async::match>(
-<<<<<<< HEAD
         ctx(), sdbusplus::match_rules::interfacesAdded(
                    "/this/is/a/bogus/path/for/SpawnMatcher"));
-=======
         get_ctx(), sdbusplus::bus::match::rules::interfacesAdded(
                        "/this/is/a/bogus/path/for/SpawnMatcher"));
->>>>>>> 3a43e7f (test: clang-tidy: clean up bugprone-unchecked-optional-access)
 
     struct _
     {

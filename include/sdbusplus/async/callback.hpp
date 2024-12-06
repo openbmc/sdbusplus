@@ -85,7 +85,7 @@ struct callback_operation
             // Check the message response for error.
             if (msg.is_method_error())
             {
-                sd_bus_error err = SD_BUS_ERROR_NULL;
+                sd_bus_error err = {};
                 sd_bus_error_copy(&err, msg.get_error());
                 throw exception::SdBusError(&err, "method");
             }

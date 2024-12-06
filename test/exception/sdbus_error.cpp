@@ -31,7 +31,7 @@ TEST(SdBusError, BasicErrno)
     const std::string prefix = "BasicErrno";
 
     // Build the reference sd_bus_error
-    sd_bus_error error = SD_BUS_ERROR_NULL;
+    sd_bus_error error = {};
     EXPECT_EQ(-errorVal, sd_bus_error_set_errno(&error, errorVal));
     EXPECT_TRUE(sd_bus_error_is_set(&error));
 
@@ -75,7 +75,7 @@ TEST(SdBusError, Move)
     const std::string prefix = "Move";
 
     // Build the reference sd_bus_error
-    sd_bus_error error = SD_BUS_ERROR_NULL;
+    sd_bus_error error = {};
     EXPECT_EQ(-errorVal, sd_bus_error_set_errno(&error, errorVal));
     EXPECT_TRUE(sd_bus_error_is_set(&error));
     const std::string name{error.name};
@@ -139,7 +139,7 @@ TEST(SdBusError, BasicError)
     const std::string description = "TestCase";
     const std::string prefix = "BasicError";
 
-    sd_bus_error error = SD_BUS_ERROR_NULL;
+    sd_bus_error error = {};
     sd_bus_error_set(&error, name.c_str(), description.c_str());
     EXPECT_TRUE(sd_bus_error_is_set(&error));
     const char* nameBeforeMove = error.name;

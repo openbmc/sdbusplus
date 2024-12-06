@@ -365,7 +365,7 @@ class message : private sdbusplus::slot::details::slot_friend
     message new_method_error(const sdbusplus::exception::exception& e)
     {
         msgp_t reply = nullptr;
-        sd_bus_error error = SD_BUS_ERROR_NULL;
+        sd_bus_error error = {};
         e.set_error(_intf, &error);
         int r =
             _intf->sd_bus_message_new_method_error(this->get(), &reply, &error);
@@ -426,7 +426,7 @@ class message : private sdbusplus::slot::details::slot_friend
      */
     auto call(std::optional<SdBusDuration> timeout = std::nullopt)
     {
-        sd_bus_error error = SD_BUS_ERROR_NULL;
+        sd_bus_error error = {};
         sd_bus_message* reply = nullptr;
         auto timeout_us = timeout ? timeout->count() : 0;
         int r = _intf->sd_bus_call(nullptr, get(), timeout_us, &error, &reply);

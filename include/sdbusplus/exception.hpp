@@ -122,7 +122,7 @@ class SdBusError final : public internal_exception
     const sd_bus_error* get_error() const noexcept;
 
   private:
-    sd_bus_error error = SD_BUS_ERROR_NULL;
+    sd_bus_error error = {};
     std::string full_message;
     SdBusInterface* intf;
 

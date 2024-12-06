@@ -56,12 +56,12 @@ SdBusError::SdBusError(sd_bus_error* error_in, const char* prefix,
     error(*error_in), intf(intf_in)
 {
     // We own the error so remove the caller's reference
-    *error_in = SD_BUS_ERROR_NULL;
+    *error_in = {};
 
     populateMessage(std::string(prefix));
 }
 
-SdBusError::SdBusError(SdBusError&& other) : error(SD_BUS_ERROR_NULL)
+SdBusError::SdBusError(SdBusError&& other) : error({})
 {
     move(std::move(other));
 }
@@ -126,7 +126,7 @@ void SdBusError::move(SdBusError&& other)
 
     intf->sd_bus_error_free(&error);
     error = other.error;
-    other.error = SD_BUS_ERROR_NULL;
+    other.error = {};
 
     full_message = std::move(other.full_message);
 }

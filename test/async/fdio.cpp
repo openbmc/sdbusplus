@@ -27,7 +27,7 @@ class FdioTest : public ::testing::Test
         fdioInstance = std::make_unique<sdbusplus::async::fdio>(*ctx, fd);
     }
 
-    ~FdioTest() override
+    ~FdioTest() noexcept override
     {
         if (fd != -1)
         {

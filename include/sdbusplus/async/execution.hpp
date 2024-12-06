@@ -7,6 +7,8 @@
 #ifdef __clang__
 #pragma clang diagnostic ignored "-Wunused-parameter"
 #pragma clang diagnostic ignored "-Wnon-pod-varargs"
+#pragma clang diagnostic ignored "-Winconsistent-missing-override"
+#pragma clang diagnostic ignored "-Wdeprecated-copy"
 #else
 #pragma GCC diagnostic ignored "-Wnon-template-friend"
 #endif

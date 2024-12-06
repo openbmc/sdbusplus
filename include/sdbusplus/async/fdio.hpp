@@ -34,7 +34,7 @@ class fdio : private context_ref, details::context_friend
     friend fdio_ns::fdio_completion;
 
   private:
-    int fd;
+    [[maybe_unused]] int fd;
     event_source_t source;
     std::mutex lock{};
     fdio_ns::fdio_completion* complete{nullptr};

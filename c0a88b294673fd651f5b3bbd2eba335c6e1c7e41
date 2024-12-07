@@ -34,6 +34,24 @@
       "parentUuid": "036a0416_5986600d",
       "revId": "c0a88b294673fd651f5b3bbd2eba335c6e1c7e41",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6c811086_1a7bd36b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2024-12-07T22:44:45Z",
+      "side": 1,
+      "message": "\u003e \u003e It was my intention to ultimately deprecate the boost::coroutine based things (given that they were depcreated even in boost before these were written).\n\u003e \n\u003e Oh I see, but boost now has coroutine2, is that the way we could go for? (https://www.boost.org/doc/libs/1_85_0/libs/coroutine2/doc/html/index.html)\n\n\nToday we should be using c++20 coroutines.\n\n\u003e \n\u003e \u003e My understanding was there were only two applications using them (telemetry and one other) upstream, and those could be moved over to either the c++20 coroutines, or callbacks. Was your usage one of those applications?\n\u003e \n\u003e In ipmid, the coroutine stuff is heavily used (see https://github.com/openbmc/phosphor-host-ipmid/blob/master/ipmid-new.cpp#L767);\n\nYes, this is a place where we\u0027d have to stage changes.\n\n\u003e In our downstream code, we added several oem handler in `bmcweb` that uses a lot of coroutine stuff to make the code more readable. (bmcweb by default uses the callback style and it is complicated if we have multiple level of callbacks.)\n\nUnderstood;  Keep in mind that upstream bmcweb has explicitly disabled boost coroutines because of compile time and static analysis problems, but feel free to continue to maintain your OEM schemas for as long as you like.  Completely agree that the callback style is less desirable than c++20 coroutines, but boost coroutines have their own tradeoffs.  Glad you\u0027re finding them useful.",
+      "parentUuid": "354b2717_d33109f5",
+      "revId": "c0a88b294673fd651f5b3bbd2eba335c6e1c7e41",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

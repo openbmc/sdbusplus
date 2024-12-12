@@ -2,7 +2,7 @@
 
 namespace sdbusplus::async
 {
-fdio::fdio(context& ctx, int fd) : context_ref(ctx), fd(fd)
+fdio::fdio(context& ctx, int fd) : context_ref(ctx)
 {
     static auto eventHandler =
         [](sd_event_source*, int, uint32_t, void* data) noexcept {

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9eebbee0_c76143ab",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-12-12T14:28:33Z",
+      "side": 1,
+      "message": "There\u0027s way too much stuff in here that isn\u0027t even relevant to us (ex. OSX, Fuscia, Webkit).  We need to get a reference copy in docs first before I merge this one.",
+      "revId": "be5900c7fa1d31f12b02aeb1428d83fd50c89942",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

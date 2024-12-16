@@ -155,7 +155,7 @@ template <__mstring _Where, __mstring _What>
 struct _FUNCTION_MUST_RETURN_A_VALID_SENDER_IN_THE_CURRENT_ENVIRONMENT_
 {};
 
-#if STDEXEC_NVHPC()
+#if STDEXEC_EDG()
 template <class _Sender, class _Set, class... _Env>
 struct __bad_result_sender_
 {
@@ -380,6 +380,9 @@ auto __mk_transform_sender_fn(_Env&&) noexcept
     };
 }
 
+//! Metafunction creating the operation state needed to connect the result of
+//! calling the sender factory function, `_Fun`, and passing its result to a
+//! receiver.
 template <class _Receiver, class _Fun, class _Set, class _Sched>
 struct __op_state_for
 {
@@ -390,6 +393,9 @@ struct __op_state_for
         _Sched, _Receiver>;
 };
 
+//! The core of the operation state for `let_*`.
+//! This gets bundled up into a larger operation state
+//! (`__detail::__op_state<...>`).
 template <class _Receiver, class _Fun, class _Set, class _Sched,
           class... _Tuples>
 struct __let_state
@@ -443,12 +449,20 @@ struct __let_state
         }
     }
 
-    STDEXEC_IMMOVABLE_NO_UNIQUE_ADDRESS _Fun __fun_;
-    STDEXEC_IMMOVABLE_NO_UNIQUE_ADDRESS _Sched __sched_;
+    STDEXEC_IMMOVABLE_NO_UNIQUE_ADDRESS
+    _Fun __fun_;
+    STDEXEC_IMMOVABLE_NO_UNIQUE_ADDRESS
+    _Sched __sched_;
+    //! Variant to hold the results passed from upstream before passing them to
+    //! the function:
     __result_variant __args_{};
+    //! Variant type for holding the operation state from connecting
+    //! the function result to the downstream receiver:
     __op_state_variant __op_state3_{};
 };
 
+//! Implementation of the `let_*_t` types, where `_Set` is, e.g., `set_value_t`
+//! for `let_value`.
 template <class _Set, class _Domain>
 struct __let_t
 {
@@ -541,13 +555,21 @@ struct __let_impl : __sexpr_defaults
                 });
         };
 
+    //! Helper function to actually invoke the function to produce `let_*`'s
+    //! sender, connect it to the downstream receiver, and start it. This is the
+    //! heart of `let_*`.
     template <class _State, class _OpState, class... _As>
     static void __bind_(_State& __state, _OpState& __op_state, _As&&... __as)
     {
+        // Store the passed-in (received) args:
         auto& __args = __state.__args_.emplace_from(
             __tup::__mktuple, static_cast<_As&&>(__as)...);
+        // Apply the function to the args to get the sender:
         auto __sndr2 = __args.apply(std::move(__state.__fun_), __args);
+        // Create a receiver based on the state, the computed sender, and the
+        // operation state:
         auto __rcvr2 = __state.__get_result_receiver(__sndr2, __op_state);
+        // Connect the sender to the receiver and start it:
         auto& __op2 = __state.__op_state3_.emplace_from(
             stdexec::connect, std::move(__sndr2), std::move(__rcvr2));
         stdexec::start(__op2);
@@ -595,10 +617,13 @@ struct __let_impl : __sexpr_defaults
             _As&&... __as) noexcept -> void {
         if constexpr (__same_as<_Tag, _Set>)
         {
+            // Intercept the channel of interest to compute the sender and
+            // connect it:
             __bind(__op_state, static_cast<_As&&>(__as)...);
         }
         else
         {
+            // Forward the other channels downstream:
             using _Receiver = decltype(__op_state.__rcvr_);
             _Tag()(static_cast<_Receiver&&>(__op_state.__rcvr_),
                    static_cast<_As&&>(__as)...);

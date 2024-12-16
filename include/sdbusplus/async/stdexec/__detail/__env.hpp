@@ -192,7 +192,10 @@ struct get_scheduler_t : __query<get_scheduler_t>
     auto operator()() const noexcept;
 };
 
-struct get_delegatee_scheduler_t : __query<get_delegatee_scheduler_t>
+//! The type for `get_delegation_scheduler` [exec.get.delegation.scheduler]
+//! A query object that asks for a scheduler that can be used to delegate
+//! work to for the purpose of forward progress delegation ([intro.progress]).
+struct get_delegation_scheduler_t : __query<get_delegation_scheduler_t>
 {
     static constexpr auto query(forwarding_query_t) noexcept -> bool
     {
@@ -200,11 +203,11 @@ struct get_delegatee_scheduler_t : __query<get_delegatee_scheduler_t>
     }
 
     template <class _Env>
-        requires tag_invocable<get_delegatee_scheduler_t, const _Env&>
+        requires tag_invocable<get_delegation_scheduler_t, const _Env&>
     auto operator()(const _Env& __t) const noexcept
-        -> tag_invoke_result_t<get_delegatee_scheduler_t, const _Env&>;
+        -> tag_invoke_result_t<get_delegation_scheduler_t, const _Env&>;
 
-    template <class _Tag = get_delegatee_scheduler_t>
+    template <class _Tag = get_delegation_scheduler_t>
     auto operator()() const noexcept;
 };
 
@@ -353,19 +356,22 @@ struct __root_env
 } // namespace __queries
 
 using __queries::__has_algorithm_customizations_t;
-using __queries::__is_scheduler_affine_t;
-using __queries::__root_env;
-using __queries::__root_t;
 using __queries::execute_may_block_caller_t;
 using __queries::forwarding_query_t;
 using __queries::get_allocator_t;
-using __queries::get_completion_scheduler_t;
-using __queries::get_delegatee_scheduler_t;
-using __queries::get_domain_t;
+using __queries::get_delegation_scheduler_t;
 using __queries::get_forward_progress_guarantee_t;
 using __queries::get_scheduler_t;
-using __queries::get_stop_token_t;
 using __queries::query_or_t;
+using get_delegatee_scheduler_t [[deprecated(
+    "get_delegatee_scheduler_t has been renamed get_delegation_scheduler_t")]] =
+    get_delegation_scheduler_t;
+using __queries::__is_scheduler_affine_t;
+using __queries::__root_env;
+using __queries::__root_t;
+using __queries::get_completion_scheduler_t;
+using __queries::get_domain_t;
+using __queries::get_stop_token_t;
 
 inline constexpr forwarding_query_t forwarding_query{};
 inline constexpr query_or_t query_or{}; // NOT TO SPEC
@@ -375,7 +381,10 @@ inline constexpr __has_algorithm_customizations_t
 inline constexpr get_forward_progress_guarantee_t
     get_forward_progress_guarantee{};
 inline constexpr get_scheduler_t get_scheduler{};
-inline constexpr get_delegatee_scheduler_t get_delegatee_scheduler{};
+inline constexpr get_delegation_scheduler_t get_delegation_scheduler{};
+inline constexpr auto& get_delegatee_scheduler [[deprecated(
+    "get_delegatee_scheduler has been renamed get_delegation_scheduler")]] =
+    get_delegation_scheduler;
 inline constexpr get_allocator_t get_allocator{};
 inline constexpr get_stop_token_t get_stop_token{};
 #if !STDEXEC_GCC() || defined(__OPTIMIZE_SIZE__)

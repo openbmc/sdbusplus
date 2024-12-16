@@ -147,8 +147,8 @@ struct receiver_t
 namespace __detail
 {
 template <class _Receiver>
-concept __enable_receiver =                                              //
-    (STDEXEC_NVHPC(requires { typename _Receiver::receiver_concept; }&&) //
+concept __enable_receiver =                                            //
+    (STDEXEC_EDG(requires { typename _Receiver::receiver_concept; }&&) //
      derived_from<typename _Receiver::receiver_concept, receiver_t>) ||
     requires { typename _Receiver::is_receiver; } // back-compat, NOT TO SPEC
     || STDEXEC_IS_BASE_OF(receiver_t,

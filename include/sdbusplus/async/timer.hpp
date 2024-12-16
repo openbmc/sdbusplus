@@ -104,7 +104,8 @@ struct sleep_sender : public context_ref, details::context_friend
         // Run the delay sender and then switch back to the worker thread.
         // The delay completion happens from the sd-event handler, which is
         // ran on the 'caller' thread.
-        return execution::transfer(sleep_sender(ctx, time), get_scheduler(ctx));
+        return execution::continues_on(sleep_sender(ctx, time),
+                                       get_scheduler(ctx));
     }
 
   private:

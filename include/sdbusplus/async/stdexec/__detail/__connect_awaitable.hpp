@@ -117,7 +117,11 @@ struct __promise
     {
         using __id = __promise;
 
+#if STDEXEC_EDG()
+        __t(auto&&, _Receiver&& __rcvr) noexcept : __rcvr_(__rcvr) {}
+#else
         explicit __t(auto&, _Receiver& __rcvr) noexcept : __rcvr_(__rcvr) {}
+#endif
 
         auto unhandled_stopped() noexcept -> __coro::coroutine_handle<>
         {

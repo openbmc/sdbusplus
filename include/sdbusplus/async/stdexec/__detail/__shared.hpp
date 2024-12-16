@@ -95,7 +95,8 @@ struct __shared_state;
 template <class _CvrefSender, class _Receiver>
 struct __local_state :
     __local_state_base,
-    __enable_receiver_from_this<_CvrefSender, _Receiver>
+    __enable_receiver_from_this<_CvrefSender, _Receiver,
+                                __local_state<_CvrefSender, _Receiver>>
 {
     using __tag_t = tag_of_t<_CvrefSender>;
     using __stok_t = stop_token_of_t<env_of_t<_Receiver>>;
@@ -228,6 +229,7 @@ inline __local_state_base* __get_tombstone() noexcept
     return &__tombstone_;
 }
 
+//! Heap-allocatable shared state for things like `stdexec::split`.
 template <class _CvrefSender, class _Env>
 struct __shared_state :
     private __enable_intrusive_from_this<__shared_state<_CvrefSender, _Env>, 2>

@@ -104,21 +104,62 @@ struct __binder_back :
     STDEXEC_ATTRIBUTE((no_unique_address))
     _Fun __fun_{};
 
+#if STDEXEC_INTELLISENSE()
+    // MSVCBUG
+    // https://developercommunity.visualstudio.com/t/rejects-valid-EDG-invocation-of-lambda/10786020
+
+    template <class _Sender>
+    struct __lambda_rvalue
+    {
+        __binder_back& __self_;
+        _Sender& __sndr_;
+
+        STDEXEC_ATTRIBUTE((host, device, always_inline))
+        auto operator()(_As&... __as) const //
+            noexcept(__nothrow_callable<_Fun, _Sender, _As...>)
+                -> __call_result_t<_Fun, _Sender, _As...>
+        {
+            return static_cast<_Fun&&>(__self_.__fun_)(
+                static_cast<_Sender&&>(__sndr_), static_cast<_As&&>(__as)...);
+        }
+    };
+
+    template <class _Sender>
+    struct __lambda_lvalue
+    {
+        const __binder_back& __self_;
+        _Sender& __sndr_;
+
+        STDEXEC_ATTRIBUTE((host, device, always_inline))
+        auto operator()(const _As&... __as) const //
+            noexcept(__nothrow_callable<const _Fun&, _Sender, const _As&...>)
+                -> __call_result_t<const _Fun&, _Sender, const _As&...>
+        {
+            return __self_.__fun_(static_cast<_Sender&&>(__sndr_), __as...);
+        }
+    };
+#endif
+
     template <sender _Sender>
         requires __callable<_Fun, _Sender, _As...>
     STDEXEC_ATTRIBUTE((host, device, always_inline))
-    __call_result_t<_Fun, _Sender, _As...> operator()(
-        _Sender&& __sndr) && noexcept(__nothrow_callable<_Fun, _Sender, _As...>)
+    auto operator()(_Sender&& __sndr) && //
+        noexcept(__nothrow_callable<_Fun, _Sender, _As...>)
+            -> __call_result_t<_Fun, _Sender, _As...>
     {
+#if STDEXEC_INTELLISENSE()
+        return this->apply(__lambda_rvalue<_Sender>{*this, __sndr}, *this);
+#else
         return this->apply(
-            [&__sndr, this](_As&... __as) noexcept(
-                __nothrow_callable<_Fun, _Sender, _As...>)
+            [&__sndr, this](_As&... __as) //
+            noexcept(__nothrow_callable<_Fun, _Sender, _As...>)
                 -> __call_result_t<_Fun, _Sender, _As...> {
                 return static_cast<_Fun&&>(
                     __fun_)(static_cast<_Sender&&>(__sndr),
                             static_cast<_As&&>(__as)...);
             },
             *this);
+#endif
     }
 
     template <sender _Sender>
@@ -128,13 +169,17 @@ struct __binder_back :
         noexcept(__nothrow_callable<const _Fun&, _Sender, const _As&...>)
             -> __call_result_t<const _Fun&, _Sender, const _As&...>
     {
+#if STDEXEC_INTELLISENSE()
+        return this->apply(__lambda_lvalue<_Sender>{*this, __sndr}, *this);
+#else
         return this->apply(
-            [&__sndr, this](const _As&... __as) noexcept(
-                __nothrow_callable<_Fun, _Sender, const _As&...>)
+            [&__sndr, this](const _As&... __as) //
+            noexcept(__nothrow_callable<const _Fun&, _Sender, const _As&...>)
                 -> __call_result_t<const _Fun&, _Sender, const _As&...> {
                 return __fun_(static_cast<_Sender&&>(__sndr), __as...);
             },
             *this);
+#endif
     }
 };
 } // namespace __closure

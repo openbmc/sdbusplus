@@ -18,7 +18,7 @@
 #include "__detail/__awaitable.hpp"
 #include "__detail/__config.hpp"
 
-#if STDEXEC_MSVC() && _MSC_VER >= 1939
+#if STDEXEC_MSVC() && _MSC_VER <= 1939
 namespace stdexec
 {
 // MSVCBUG

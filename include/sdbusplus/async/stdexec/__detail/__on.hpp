@@ -20,7 +20,7 @@
 // include these after __execution_fwd.hpp
 #include "__basic_sender.hpp"
 #include "__concepts.hpp"
-#include "__continue_on.hpp"
+#include "__continues_on.hpp"
 #include "__cpo.hpp"
 #include "__diagnostics.hpp"
 #include "__domain.hpp"
@@ -71,14 +71,13 @@ struct __no_scheduler_in_environment
 };
 
 template <class _Scheduler, class _Closure>
-struct __continue_on_data
+struct __on_data
 {
     _Scheduler __sched_;
     _Closure __clsur_;
 };
 template <class _Scheduler, class _Closure>
-__continue_on_data(_Scheduler,
-                   _Closure) -> __continue_on_data<_Scheduler, _Closure>;
+__on_data(_Scheduler, _Closure) -> __on_data<_Scheduler, _Closure>;
 
 template <class _Scheduler>
 struct __with_sched
@@ -122,10 +121,10 @@ struct on_t
     {
         auto __domain = __get_early_domain(__sndr);
         return stdexec::transform_sender(
-            __domain, __make_sexpr<on_t>(
-                          __continue_on_data{static_cast<_Scheduler&&>(__sched),
-                                             static_cast<_Closure&&>(__clsur)},
-                          static_cast<_Sender&&>(__sndr)));
+            __domain,
+            __make_sexpr<on_t>(__on_data{static_cast<_Scheduler&&>(__sched),
+                                         static_cast<_Closure&&>(__clsur)},
+                               static_cast<_Sender&&>(__sndr)));
     }
 
     template <scheduler _Scheduler, __sender_adaptor_closure _Closure>
@@ -172,9 +171,9 @@ struct on_t
                 {
                     if constexpr (__is_root_env<_Env>)
                     {
-                        return continue_on(
-                            start_on(static_cast<_Data&&>(__data),
-                                     static_cast<_Child&&>(__child)),
+                        return continues_on(
+                            starts_on(static_cast<_Data&&>(__data),
+                                      static_cast<_Child&&>(__child)),
                             __inln::__scheduler{});
                     }
                     else
@@ -184,9 +183,10 @@ struct on_t
                 }
                 else
                 {
-                    return continue_on(start_on(static_cast<_Data&&>(__data),
-                                                static_cast<_Child&&>(__child)),
-                                       static_cast<decltype(__old)&&>(__old));
+                    return continues_on(
+                        starts_on(static_cast<_Data&&>(__data),
+                                  static_cast<_Child&&>(__child)),
+                        static_cast<decltype(__old)&&>(__old));
                 }
             }
             else
@@ -204,9 +204,9 @@ struct on_t
                 {
                     auto&& [__sched, __clsur] = static_cast<_Data&&>(__data);
                     return __write_env(                               //
-                        continue_on(                                  //
+                        continues_on(                                 //
                             __forward_like<_Data>(__clsur)(           //
-                                continue_on(                          //
+                                continues_on(                         //
                                     __write_env(static_cast<_Child&&>(__child),
                                                 __with_sched{__old}), //
                                     __sched)),                        //

@@ -29,6 +29,9 @@
 
 namespace stdexec
 {
+//! Convenience metafunction getting the dependant type `__t` out of `_Tp`.
+//! That is, `typename _Tp::__t`.
+//! See MAINTAINERS.md#class-template-parameters for details.
 template <class _Tp>
 using __t = typename _Tp::__t;
 
@@ -86,7 +89,10 @@ enum class __muchar : unsigned char
 {
 };
 
-#if STDEXEC_MSVC()
+#if STDEXEC_NVCC() || STDEXEC_EDG()
+template <std::size_t _Np>
+using __msize_t = std::integral_constant<std::size_t, _Np>;
+#elif STDEXEC_MSVC()
 template <std::size_t _Np>
 using __msize_t = __mconstant<_Np>;
 #else
@@ -94,9 +100,11 @@ template <std::size_t _Np>
 using __msize_t = __muchar (*)[_Np + 1]; // +1 to avoid zero-size array
 #endif
 
+//! Metafunction selects the first of two type arguments.
 template <class _Tp, class _Up>
 using __mfirst = _Tp;
 
+//! Metafunction selects the second of two type arguments.
 template <class _Tp, class _Up>
 using __msecond = _Up;
 
@@ -212,7 +220,7 @@ STDEXEC_PRAGMA_POP()
 template <std::size_t _Len>
 struct __mstring
 {
-#if STDEXEC_NVHPC()
+#if STDEXEC_EDG()
     template <std::size_t _Ny, std::size_t... _Is>
     constexpr __mstring(const char (&__str)[_Ny], __indices<_Is...>) noexcept :
         __what_{(_Is < _Ny ? __str[_Is] : '\0')...}
@@ -248,7 +256,7 @@ struct __mstring
         return false;
     }
 
-#if !STDEXEC_NVHPC()
+#if !STDEXEC_EDG()
     constexpr auto operator<=>(const __mstring&) const noexcept
         -> std::strong_ordering = default;
 #endif
@@ -353,10 +361,20 @@ concept __merror = !STDEXEC_IS_SAME(__ok_t<_Arg>, __msuccess);
 template <class... _Args>
 concept _Ok = (STDEXEC_IS_SAME(__ok_t<_Args>, __msuccess) && ...);
 
+//! The struct `__i` is the implementation of P2300's
+//! [_`META-APPLY`_](https://eel.is/c++draft/exec#util.cmplsig-5).
+//! > [Note [1](https://eel.is/c++draft/exec#util.cmplsig-note-1): 
+//! > The purpose of META-APPLY is to make it valid to use non-variadic
+//! > templates as Variant and Tuple arguments to gather-signatures. — end note]
+//! In addition to avoiding the dreaded "pack expanded into non-pack argument"
+//! error, it is part of the meta-error propagation mechanism. if any of the
+//! argument types are a specialization of `_ERROR_`, `__i` will short-circuit
+//! and return the error.
+//! `__minvoke` and `__meval` are implemented in terms of `__i`.
 template <bool _ArgsOK, bool _FnOK = true>
 struct __i;
 
-#if STDEXEC_NVHPC()
+#if STDEXEC_EDG()
 // Most compilers memoize alias template specializations, but
 // nvc++ does not. So we memoize the type computations by
 // indirecting through a class template specialization.
@@ -406,6 +424,10 @@ using __meval =                    //
     typename __i<_Ok<_Args...>>    //
     ::template __g<_Fn, _Args...>; //
 
+//! Metafunction invocation
+//! Given a metafunction, `_Fn`, and args.
+//! We expect `_Fn::__f` to be type alias template "implementing" the
+//! metafunction `_Fn`.
 template <class _Fn, class... _Args>
 using __minvoke =                         //
     typename __i<_Ok<_Args...>, _Ok<_Fn>> //
@@ -450,6 +472,16 @@ struct __i<_ArgsOK, false>
     using __f = _Fn;
 };
 
+//! This struct template is like
+//! [mpl::quote](https://www.boost.org/doc/libs/1_86_0/libs/mpl/doc/refmanual/quote.html).
+//! It turns an alias/class template into a metafunction that also propagates
+//! "meta-exceptions". All of the meta utilities recognize specializations of
+//! stdexec::_ERROR_ as an error type. Error types short-circuit the evaluation
+//! of the metafunction and are automatically propagated like an exception.
+//! Note: `__minvoke` and `__meval` also participate in this error propagation.
+//!
+//! This design lets us report type errors briefly at the library boundary, even
+//! if the actual error happens deep inside a meta-program.
 template <template <class...> class _Fn>
 struct __q
 {
@@ -549,6 +581,9 @@ using __mmemoize_q = __mmemoize<__q<_Fn>, _Args...>;
 
 struct __if_
 {
+    //! Metafunction selects `_True` if the bool template is `true`, otherwise
+    //! the second. That is, `__<true>::__f<A, B>` is `A` and `__<false>::__f<A,
+    //! B>` is B. This is similar to `std::conditional_t<Cond, A, B>`.
     template <bool>
     struct __
     {
@@ -560,6 +595,7 @@ struct __if_
     using __f = __minvoke<__<static_cast<bool>(__v<_Pred>)>, _True, _False...>;
 };
 
+// Specialization; see above.
 template <>
 struct __if_::__<false>
 {
@@ -736,6 +772,20 @@ struct __muncurry_<_Ap<_As...>>
     using __f = __minvoke<_Fn, _As...>;
 };
 
+template <std::size_t... _Ns>
+struct __muncurry_<__pack::__t<_Ns...>*>
+{
+    template <class _Fn>
+    using __f = __minvoke<_Fn, __msize_t<_Ns>...>;
+};
+
+template <template <class _Np, _Np...> class _Cp, class _Np, _Np... _Ns>
+struct __muncurry_<_Cp<_Np, _Ns...>>
+{
+    template <class _Fn>
+    using __f = __minvoke<_Fn, std::integral_constant<_Np, _Ns>...>;
+};
+
 template <class _What, class... _With>
 struct __muncurry_<_ERROR_<_What, _With...>>
 {
@@ -897,9 +947,13 @@ using __msingle_or_ = __mfront<_As..., _Default>;
 template <class _Default>
 using __msingle_or = __mbind_front_q<__msingle_or_, _Default>;
 
+//! A concept checking if `_Ty` has a dependent type `_Ty::__id`.
+//! See MAINTAINERS.md#class-template-parameters.
 template <class _Ty>
 concept __has_id = requires { typename _Ty::__id; };
 
+//! Identity mapping `_Ty` to itself.
+//! That is, `std::is_same_v<T, typename _Id<T>::__t>`.
 template <class _Ty>
 struct _Id
 {
@@ -913,6 +967,7 @@ struct _Id
     // static_assert(!__has_id<std::remove_cvref_t<_Ty>>);
 };
 
+//! Helper metafunction detail of `__id`, below.
 template <bool = true>
 struct __id_
 {
@@ -926,6 +981,11 @@ struct __id_<false>
     template <class _Ty>
     using __f = _Id<_Ty>;
 };
+
+//! Metafunction mapping `_Ty` to either
+//! * `typename _Ty::__id` if that exists, or to
+//! * `_Ty` (itself) otherwise.
+//! See MAINTAINERS.md#class-template-parameters.
 template <class _Ty>
 using __id = __minvoke<__id_<__has_id<_Ty>>, _Ty>;
 
@@ -935,7 +995,7 @@ using __cvref_t = __copy_cvref_t<_From, __t<_To>>;
 template <class _From, class _To = __decay_t<_From>>
 using __cvref_id = __copy_cvref_t<_From, __id<_To>>;
 
-#if STDEXEC_NVHPC()
+#if STDEXEC_EDG()
 // nvc++ doesn't cache the results of alias template specializations.
 // To avoid repeated computation of the same function return type,
 // cache the result ourselves in a class template specialization.
@@ -949,7 +1009,7 @@ using __call_result_t = decltype(__declval<_Fun>()(__declval<_As>()...));
 #endif
 
 // BUGBUG TODO file this bug with nvc++
-#if STDEXEC_NVHPC()
+#if STDEXEC_EDG()
 template <const auto& _Fun, class... _As>
 using __result_of = __call_result_t<decltype(_Fun), _As...>;
 #else
@@ -982,8 +1042,11 @@ struct __emplace_from
 template <class _Fn>
 __emplace_from(_Fn) -> __emplace_from<_Fn>;
 
-template <class, class, class, class>
-struct __mzip_with2_;
+template <class _Fn, class _Continuation, class _List1, class _List2>
+struct __mzip_with2_ :
+    __mzip_with2_<_Fn, _Continuation, __mapply<__qq<__types>, _List1>,
+                  __mapply<__qq<__types>, _List2>>
+{};
 
 template <               //
     class _Fn,           //
@@ -1062,7 +1125,7 @@ using __mnot_t = __mbool<!__mvalue_of(_Boolean)>;
 template <class _Boolean>
 using __mnot = __meval<__mnot_t, _Boolean>;
 
-#if STDEXEC_NVHPC()
+#if STDEXEC_EDG()
 template <class... _Ints>
 struct __mplus_t : __mconstant<(__v<_Ints> + ...)>
 {};
@@ -1094,7 +1157,9 @@ struct __many_of
     using __f = __mor<__minvoke<_Fn, _Args>...>;
 };
 
-#if defined(__cpp_pack_indexing)
+// C++23 pack indexing is disabled for clang because of
+// https://github.com/llvm/llvm-project/issues/116105
+#if defined(__cpp_pack_indexing) && !STDEXEC_CLANG()
 template <class _Np, class... _Ts>
 using __m_at = _Ts...[__v<_Np>];
 
@@ -1188,7 +1253,7 @@ struct __nth_pack_element_t
     constexpr decltype(auto) operator()(_Ts&&... __ts) const noexcept
     {
         static_assert(_Np < sizeof...(_Ts));
-        return (static_cast<_Ts&&>(__ts)...[_Np]);
+        return static_cast<_Ts...[_Np] &&>(__ts...[_Np]);
     }
 };
 #else

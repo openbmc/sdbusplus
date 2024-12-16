@@ -31,10 +31,23 @@ extern auto (*__declval)() noexcept -> _Tp&&;
 // __decay_t: An efficient implementation for std::decay
 #if STDEXEC_HAS_BUILTIN(__decay)
 
-template <class _Ty>
-using __decay_t = __decay(_Ty);
+namespace __tt
+{
+template <class>
+struct __wrap;
 
-#elif STDEXEC_NVHPC()
+template <bool>
+struct __decay_
+{
+    template <class _Ty>
+    using __f = __decay(_Ty);
+};
+} // namespace __tt
+template <class _Ty>
+using __decay_t = typename __tt::__decay_<sizeof(__tt::__wrap<_Ty>*) ==
+                                          ~0ul>::template __f<_Ty>;
+
+#elif STDEXEC_EDG()
 
 template <class _Ty>
 using __decay_t = std::decay_t<_Ty>;

@@ -103,8 +103,8 @@ auto wait_process_completion::loop(context& ctx) -> task<>
     {
         // Handle the next sdbus event.  Completion likely happened on a
         // different thread so we need to transfer back to the worker thread.
-        co_await execution::transfer(wait_process_sender(ctx),
-                                     ctx.loop.get_scheduler());
+        co_await execution::continues_on(wait_process_sender(ctx),
+                                         ctx.loop.get_scheduler());
     }
 
     {

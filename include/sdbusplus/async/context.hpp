@@ -61,8 +61,8 @@ class context : public bus::details::bus_friend
     {
         check_stop_requested();
 
-        pending_tasks.spawn(
-            std::move(execution::on(loop.get_scheduler(), std::move(sender))));
+        pending_tasks.spawn(std::move(
+            execution::starts_on(loop.get_scheduler(), std::move(sender))));
 
         spawn_watcher();
     }

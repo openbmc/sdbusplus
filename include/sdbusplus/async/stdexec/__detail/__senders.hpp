@@ -91,6 +91,7 @@ concept __with_member_alias = __mvalid<__member_alias_t, _Sender>;
 struct get_completion_signatures_t
 {
     template <class _Sender, class... _Env>
+        requires(sizeof...(_Env) <= 1)
     static auto __impl()
     {
         // Compute the type of the transformed sender:

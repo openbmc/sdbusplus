@@ -147,9 +147,9 @@ inline auto get_scheduler_t::operator()() const noexcept
 }
 
 template <class _Tag>
-inline auto get_delegatee_scheduler_t::operator()() const noexcept
+inline auto get_delegation_scheduler_t::operator()() const noexcept
 {
-    return read_env(get_delegatee_scheduler);
+    return read_env(get_delegation_scheduler);
 }
 
 template <class _Tag>

@@ -209,8 +209,8 @@ struct __connect_awaitable_t
     __attribute__((__used__))
 #endif
     static auto
-        __co_impl(_Awaitable __awaitable,
-                  _Receiver __rcvr) -> __operation_t<_Receiver>
+        __co_impl(_Awaitable __awaitable, _Receiver __rcvr)
+            -> __operation_t<_Receiver>
     {
         using __result_t = __await_result_t<_Awaitable, __promise_t<_Receiver>>;
         std::exception_ptr __eptr;
@@ -244,8 +244,8 @@ struct __connect_awaitable_t
   public:
     template <class _Receiver, __awaitable<__promise_t<_Receiver>> _Awaitable>
         requires receiver_of<_Receiver, __completions_t<_Receiver, _Awaitable>>
-    auto operator()(_Awaitable&& __awaitable,
-                    _Receiver __rcvr) const -> __operation_t<_Receiver>
+    auto operator()(_Awaitable&& __awaitable, _Receiver __rcvr) const
+        -> __operation_t<_Receiver>
     {
         return __co_impl(static_cast<_Awaitable&&>(__awaitable),
                          static_cast<_Receiver&&>(__rcvr));

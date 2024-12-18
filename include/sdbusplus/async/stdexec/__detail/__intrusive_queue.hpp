@@ -29,7 +29,7 @@ namespace __queue
 template <auto _Next>
 class __intrusive_queue;
 
-template <class _Item, _Item* _Item::*_Next>
+template <class _Item, _Item* _Item::* _Next>
 class __intrusive_queue<_Next>
 {
   public:
@@ -216,8 +216,8 @@ class __intrusive_queue<_Next>
             return __result;
         }
 
-        friend auto operator==(const iterator&,
-                               const iterator&) noexcept -> bool = default;
+        friend auto operator==(const iterator&, const iterator&) noexcept
+            -> bool = default;
     };
 
     [[nodiscard]] auto begin() const noexcept -> iterator

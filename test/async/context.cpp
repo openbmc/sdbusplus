@@ -72,8 +72,8 @@ TEST_F(Context, SpawnRecursiveTask)
 {
     struct _
     {
-        static auto one(size_t count,
-                        size_t& executed) -> sdbusplus::async::task<size_t>
+        static auto one(size_t count, size_t& executed)
+            -> sdbusplus::async::task<size_t>
         {
             if (count)
             {
@@ -125,8 +125,8 @@ TEST_F(Context, DestructMatcherWithPendingAwaitAsTask)
 
     struct _
     {
-        static auto fn(decltype(m->next()) snd,
-                       bool& ran) -> sdbusplus::async::task<>
+        static auto fn(decltype(m->next()) snd, bool& ran)
+            -> sdbusplus::async::task<>
         {
             co_await std::move(snd);
             ran = true;

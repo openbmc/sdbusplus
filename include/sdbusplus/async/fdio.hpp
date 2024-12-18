@@ -106,14 +106,14 @@ struct fdio_sender
     explicit fdio_sender(fdio& fdioInstance) noexcept :
         fdioInstance(fdioInstance) {};
 
-    friend auto tag_invoke(
-        execution::get_completion_signatures_t, const fdio_sender&,
-        auto) -> execution::completion_signatures<execution::set_value_t(),
-                                                  execution::set_stopped_t()>;
+    friend auto tag_invoke(execution::get_completion_signatures_t,
+                           const fdio_sender&, auto)
+        -> execution::completion_signatures<execution::set_value_t(),
+                                            execution::set_stopped_t()>;
 
     template <execution::receiver R>
-    friend auto tag_invoke(execution::connect_t, fdio_sender&& self,
-                           R r) -> fdio_operation<R>
+    friend auto tag_invoke(execution::connect_t, fdio_sender&& self, R r)
+        -> fdio_operation<R>
     {
         return {self.fdioInstance, std::move(r)};
     }

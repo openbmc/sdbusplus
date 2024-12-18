@@ -50,8 +50,8 @@ class FdioTest : public ::testing::Test
         co_return;
     }
 
-    auto testFdEvents(bool& ran,
-                      bool sleepBeforeWrite) -> sdbusplus::async::task<>
+    auto testFdEvents(bool& ran, bool sleepBeforeWrite)
+        -> sdbusplus::async::task<>
     {
         for (int i = 0; i < testIterations; i++)
         {

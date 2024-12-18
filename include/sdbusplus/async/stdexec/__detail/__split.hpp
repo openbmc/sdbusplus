@@ -45,8 +45,8 @@ struct split_t
 {
     template <sender _Sender, class _Env = empty_env>
         requires sender_in<_Sender, _Env> && __decay_copyable<env_of_t<_Sender>>
-    auto operator()(_Sender&& __sndr,
-                    _Env&& __env = {}) const -> __well_formed_sender auto
+    auto operator()(_Sender&& __sndr, _Env&& __env = {}) const
+        -> __well_formed_sender auto
     {
         auto __domain = __get_late_domain(__sndr, __env);
         return stdexec::transform_sender(

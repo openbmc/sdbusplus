@@ -194,8 +194,8 @@ struct __state :
 struct schedule_from_t
 {
     template <scheduler _Scheduler, sender _Sender>
-    auto operator()(_Scheduler&& __sched,
-                    _Sender&& __sndr) const -> __well_formed_sender auto
+    auto operator()(_Scheduler&& __sched, _Sender&& __sndr) const
+        -> __well_formed_sender auto
     {
         using _Env = __t<__environ<__id<__decay_t<_Scheduler>>>>;
         auto __env = _Env{{static_cast<_Scheduler&&>(__sched)}};

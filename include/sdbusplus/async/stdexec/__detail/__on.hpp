@@ -105,8 +105,8 @@ __with_sched(_Scheduler) -> __with_sched<_Scheduler>;
 struct on_t
 {
     template <scheduler _Scheduler, sender _Sender>
-    auto operator()(_Scheduler&& __sched,
-                    _Sender&& __sndr) const -> __well_formed_sender auto
+    auto operator()(_Scheduler&& __sched, _Sender&& __sndr) const
+        -> __well_formed_sender auto
     {
         auto __domain = __get_early_domain(__sndr);
         return stdexec::transform_sender(

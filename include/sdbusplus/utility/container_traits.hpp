@@ -50,8 +50,8 @@ struct has_emplace_method
     {};
 
     template <typename C, typename P>
-    static constexpr auto
-        test(P* p) -> decltype(std::declval<C>().emplace(*p), std::true_type());
+    static constexpr auto test(P* p)
+        -> decltype(std::declval<C>().emplace(*p), std::true_type());
 
     template <typename, typename>
     static std::false_type test(...);

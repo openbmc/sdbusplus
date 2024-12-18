@@ -260,8 +260,8 @@ class [[nodiscard]] __task
         }
 
         template <class _Awaitable>
-        auto
-            await_transform(_Awaitable&& __awaitable) noexcept -> decltype(auto)
+        auto await_transform(_Awaitable&& __awaitable) noexcept
+            -> decltype(auto)
         {
             return as_awaitable(
                 __die_on_stop(static_cast<_Awaitable&&>(__awaitable)), *this);

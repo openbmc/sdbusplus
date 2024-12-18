@@ -755,8 +755,8 @@ struct __future
 
         template <__decays_to<__t> _Self, receiver _Receiver>
             requires receiver_of<_Receiver, __completions_t<_Self>>
-        static auto connect(_Self&& __self,
-                            _Receiver __rcvr) -> __future_op_t<_Receiver>
+        static auto connect(_Self&& __self, _Receiver __rcvr)
+            -> __future_op_t<_Receiver>
         {
             return __future_op_t<_Receiver>{
                 static_cast<_Receiver&&>(__rcvr),
@@ -932,8 +932,8 @@ struct async_scope : __immovable
 
     template <__movable_value _Env = empty_env,
               sender_in<__env_t<_Env>> _Sender>
-    auto spawn_future(_Sender&& __sndr,
-                      _Env __env = {}) -> __future_t<_Sender, _Env>
+    auto spawn_future(_Sender&& __sndr, _Env __env = {})
+        -> __future_t<_Sender, _Env>
     {
         using __state_t = __future_state<nest_result_t<_Sender>, _Env>;
         auto __state =

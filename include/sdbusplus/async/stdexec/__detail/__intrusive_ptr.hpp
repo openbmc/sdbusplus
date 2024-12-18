@@ -66,8 +66,8 @@ class __intrusive_ptr;
 template <class _Ty, std::size_t _ReservedBits = 0ul>
 struct __enable_intrusive_from_this
 {
-    auto
-        __intrusive_from_this() noexcept -> __intrusive_ptr<_Ty, _ReservedBits>;
+    auto __intrusive_from_this() noexcept
+        -> __intrusive_ptr<_Ty, _ReservedBits>;
     auto __intrusive_from_this() const noexcept
         -> __intrusive_ptr<const _Ty, _ReservedBits>;
 
@@ -241,8 +241,9 @@ class __intrusive_ptr
         return operator=(__intrusive_ptr(__that));
     }
 
-    auto operator=(__enable_intrusive_from_this<_Ty, _ReservedBits>*
-                       __that) noexcept -> __intrusive_ptr&
+    auto operator=(
+        __enable_intrusive_from_this<_Ty, _ReservedBits>* __that) noexcept
+        -> __intrusive_ptr&
     {
         return operator=(
             __that ? __that->__intrusive_from_this() : __intrusive_ptr());

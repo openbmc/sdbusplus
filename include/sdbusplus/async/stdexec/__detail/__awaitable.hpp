@@ -81,8 +81,8 @@ auto __get_awaiter(_Awaitable&& __awaitable, __ignore = {}) -> decltype(auto)
 }
 
 template <class _Awaitable, class _Promise>
-auto __get_awaiter(_Awaitable&& __awaitable,
-                   _Promise* __promise) -> decltype(auto)
+auto __get_awaiter(_Awaitable&& __awaitable, _Promise* __promise)
+    -> decltype(auto)
     requires requires {
                  __promise->await_transform(
                      static_cast<_Awaitable&&>(__awaitable));

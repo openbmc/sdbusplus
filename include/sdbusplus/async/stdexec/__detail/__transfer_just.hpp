@@ -88,8 +88,8 @@ struct transfer_just_t
         __types<__legacy_customization_fn(_Data)>;
 
     template <scheduler _Scheduler, __movable_value... _Values>
-    auto operator()(_Scheduler&& __sched,
-                    _Values&&... __vals) const -> __well_formed_sender auto
+    auto operator()(_Scheduler&& __sched, _Values&&... __vals) const
+        -> __well_formed_sender auto
     {
         auto __domain = query_or(get_domain, __sched, default_domain());
         return stdexec::transform_sender(

@@ -138,8 +138,9 @@ struct __memobj
 {
     template <class _Mbr, class _Class, class _Ty>
     STDEXEC_ATTRIBUTE((always_inline))
-    constexpr auto operator()(_Mbr _Class::*__mem_ptr, _Ty&& __ty)
-        const noexcept -> decltype(((static_cast<_Ty&&>(__ty)).*__mem_ptr))
+    constexpr auto operator()(_Mbr _Class::* __mem_ptr,
+                              _Ty&& __ty) const noexcept
+        -> decltype(((static_cast<_Ty&&>(__ty)).*__mem_ptr))
     {
         return ((static_cast<_Ty&&>(__ty)).*__mem_ptr);
     }
@@ -149,7 +150,7 @@ struct __memobj_refwrap
 {
     template <class _Mbr, class _Class, class _Ty>
     STDEXEC_ATTRIBUTE((always_inline))
-    constexpr auto operator()(_Mbr _Class::*__mem_ptr, _Ty __ty) const noexcept
+    constexpr auto operator()(_Mbr _Class::* __mem_ptr, _Ty __ty) const noexcept
         -> decltype((__ty.get().*__mem_ptr))
     {
         return (__ty.get().*__mem_ptr);
@@ -160,8 +161,9 @@ struct __memobj_smartptr
 {
     template <class _Mbr, class _Class, class _Ty>
     STDEXEC_ATTRIBUTE((always_inline))
-    constexpr auto operator()(_Mbr _Class::*__mem_ptr, _Ty&& __ty)
-        const noexcept -> decltype(((*static_cast<_Ty&&>(__ty)).*__mem_ptr))
+    constexpr auto operator()(_Mbr _Class::* __mem_ptr,
+                              _Ty&& __ty) const noexcept
+        -> decltype(((*static_cast<_Ty&&>(__ty)).*__mem_ptr))
     {
         return ((*static_cast<_Ty&&>(__ty)).*__mem_ptr);
     }

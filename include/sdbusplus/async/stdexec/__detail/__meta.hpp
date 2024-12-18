@@ -246,12 +246,12 @@ struct __mstring
         return _Len;
     }
 
-    constexpr auto
-        operator==(const __mstring&) const noexcept -> bool = default;
+    constexpr auto operator==(const __mstring&) const noexcept
+        -> bool = default;
 
     template <std::size_t _OtherLen>
-    constexpr auto
-        operator==(const __mstring<_OtherLen>&) const noexcept -> bool
+    constexpr auto operator==(const __mstring<_OtherLen>&) const noexcept
+        -> bool
     {
         return false;
     }
@@ -262,8 +262,9 @@ struct __mstring
 #endif
 
     template <std::size_t _OtherLen>
-    constexpr auto operator<=>(const __mstring<_OtherLen>& __other)
-        const noexcept -> std::strong_ordering
+    constexpr auto
+        operator<=>(const __mstring<_OtherLen>& __other) const noexcept
+        -> std::strong_ordering
     {
         constexpr std::size_t __len = _Len < _OtherLen ? _Len : _OtherLen;
         for (std::size_t __i = 0; __i < __len; ++__i)
@@ -296,8 +297,8 @@ STDEXEC_PRAGMA_IGNORE_GNU("-Wuser-defined-literals")
 
 // Use a standard user-defined string literal template
 template <__mstring _Str>
-[[deprecated("Use _mstr instead")]] constexpr auto
-    operator""__csz() noexcept -> __mtypeof<_Str>
+[[deprecated("Use _mstr instead")]] constexpr auto operator""__csz() noexcept
+    -> __mtypeof<_Str>
 {
     return _Str;
 }
@@ -1232,8 +1233,8 @@ struct __placeholder
 
     constexpr __placeholder(void*) noexcept {}
 
-    constexpr friend auto
-        __get_placeholder_offset(__placeholder) noexcept -> std::size_t
+    constexpr friend auto __get_placeholder_offset(__placeholder) noexcept
+        -> std::size_t
     {
         return _Np;
     }
@@ -1370,9 +1371,8 @@ struct __mdispatch_<_Ret (*)(_Args...), _Offset>
 {
     template <class... _Ts>
         requires(__callable<__mdispatch_<_Args, _Offset>, _Ts...> && ...) &&
-                    __callable<_Ret,
-                               __call_result_t<__mdispatch_<_Args, _Offset>,
-                                               _Ts...>...>
+                __callable<_Ret, __call_result_t<__mdispatch_<_Args, _Offset>,
+                                                 _Ts...>...>
     auto operator()(_Ts&&... __ts) const noexcept(
         __nothrow_callable<
             _Ret, __call_result_t<__mdispatch_<_Args, _Offset>, _Ts...>...>)
@@ -1396,13 +1396,12 @@ struct __mdispatch_<_Ret (*)(_Args..., ...), _Offset>
     {
         template <std::size_t... _Idx, class... _Ts>
             requires(__callable<__mdispatch_<_Args>, _Ts...> && ...) &&
-                        (__callable<__mdispatch_<_Pattern, _Idx + 1>, _Ts...> &&
-                         ...) &&
-                        __callable< //
-                            _Ret,
-                            __call_result_t<__mdispatch_<_Args>, _Ts...>...,
-                            __call_result_t<__mdispatch_<_Pattern, _Idx + 1>,
-                                            _Ts...>...>
+                    (__callable<__mdispatch_<_Pattern, _Idx + 1>, _Ts...> &&
+                     ...) &&
+                    __callable< //
+                        _Ret, __call_result_t<__mdispatch_<_Args>, _Ts...>...,
+                        __call_result_t<__mdispatch_<_Pattern, _Idx + 1>,
+                                        _Ts...>...>
         auto operator()(__indices<_Idx...>, _Ts&&... __ts) const noexcept(
             __nothrow_callable<                                  //
                 _Ret,                                            //
@@ -1421,9 +1420,9 @@ struct __mdispatch_<_Ret (*)(_Args..., ...), _Offset>
 
     template <class... _Ts>
         requires(__offset < sizeof...(_Ts)) &&
-                    __callable<__impl,
-                               __make_indices<sizeof...(_Ts) - __offset - 1>,
-                               _Ts...>
+                __callable<__impl,
+                           __make_indices<sizeof...(_Ts) - __offset - 1>,
+                           _Ts...>
     auto operator()(_Ts&&... __ts) const noexcept(
         __nothrow_callable<
             __impl, __make_indices<sizeof...(_Ts) - __offset - 1>, _Ts...>)
@@ -1438,9 +1437,9 @@ struct __mdispatch_<_Ret (*)(_Args..., ...), _Offset>
 
     template <class... _Ts>
         requires(sizeof...(_Ts) == __offset) &&
-                    __callable<__mdispatch_<__minvoke<__mpop_back<__qf<_Ret>>,
-                                                      _Args...>*>,
-                               _Ts...>
+                __callable<
+                    __mdispatch_<__minvoke<__mpop_back<__qf<_Ret>>, _Args...>*>,
+                    _Ts...>
     auto operator()(_Ts&&... __ts) const //
         noexcept(__nothrow_callable<
                  __mdispatch_<__minvoke<__mpop_back<__qf<_Ret>>, _Args...>*>,

@@ -93,8 +93,8 @@ struct sleep_sender : public context_ref, details::context_friend
             execution::set_stopped_t()>;
 
     template <execution::receiver R>
-    friend auto tag_invoke(execution::connect_t, sleep_sender&& self,
-                           R r) -> sleep_operation<R>
+    friend auto tag_invoke(execution::connect_t, sleep_sender&& self, R r)
+        -> sleep_operation<R>
     {
         return {self.ctx, self.time, std::move(r)};
     }

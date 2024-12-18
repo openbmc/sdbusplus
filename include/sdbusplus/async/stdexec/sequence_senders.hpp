@@ -414,9 +414,9 @@ struct subscribe_t
     template <sender _Sender, receiver _Receiver>
         requires __next_connectable<__tfx_sndr<_Sender, _Receiver>,
                                     _Receiver> ||
-                     __subscribeable_with_tag_invoke<
-                         __tfx_sndr<_Sender, _Receiver>, _Receiver> ||
-                     __is_debug_env<env_of_t<_Receiver>>
+                 __subscribeable_with_tag_invoke<__tfx_sndr<_Sender, _Receiver>,
+                                                 _Receiver> ||
+                 __is_debug_env<env_of_t<_Receiver>>
     auto operator()(_Sender&& __sndr, _Receiver&& __rcvr) const
         noexcept(__nothrow_callable<__select_impl_t<_Sender, _Receiver>>)
             -> __call_result_t<__select_impl_t<_Sender, _Receiver>>

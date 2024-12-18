@@ -239,8 +239,8 @@ inline constexpr bool has_convert_from_string_v =
 template <typename... Types>
 struct convert_from_string<std::variant<Types...>>
 {
-    static auto
-        op(const std::string& str) -> std::optional<std::variant<Types...>>
+    static auto op(const std::string& str)
+        -> std::optional<std::variant<Types...>>
     {
         if constexpr (0 < sizeof...(Types))
         {
@@ -255,8 +255,8 @@ struct convert_from_string<std::variant<Types...>>
     // a string, so we need to iterate through all the convertible-types
     // first and convert to string as a last resort.
     template <typename T, typename... Args>
-    static auto
-        process(const std::string& str) -> std::optional<std::variant<Types...>>
+    static auto process(const std::string& str)
+        -> std::optional<std::variant<Types...>>
     {
         // If convert_from_string exists for the type, attempt it.
         if constexpr (has_convert_from_string_v<T>)

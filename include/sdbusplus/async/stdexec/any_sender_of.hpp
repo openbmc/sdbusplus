@@ -35,8 +35,8 @@ struct __create_vtable_t
     template <class _VTable, class _Tp>
         requires __tag_invocable_r<const _VTable*, __create_vtable_t,
                                    __mtype<_VTable>, __mtype<_Tp>>
-    constexpr auto operator()(__mtype<_VTable>,
-                              __mtype<_Tp>) const noexcept -> const _VTable*
+    constexpr auto operator()(__mtype<_VTable>, __mtype<_Tp>) const noexcept
+        -> const _VTable*
     {
         return stdexec::tag_invoke(__create_vtable_t{}, __mtype<_VTable>{},
                                    __mtype<_Tp>{});
@@ -320,8 +320,8 @@ struct __immovable_storage
             sizeof(_Tp) <= __buffer_size && alignof(_Tp) <= __alignment;
 
         template <class _Tp>
-        static constexpr auto
-            __get_vtable_of_type() noexcept -> const __vtable_t*
+        static constexpr auto __get_vtable_of_type() noexcept
+            -> const __vtable_t*
         {
             return &__storage_vtbl<__t, __decay_t<_Tp>, _Vtable, __with_delete>;
         }
@@ -425,8 +425,8 @@ struct __immovable_storage
         }
 
         template <class _Tp>
-        STDEXEC_MEMFN_DECL(void __delete)
-        (this __mtype<_Tp>, __t& __self) noexcept
+        STDEXEC_MEMFN_DECL(void __delete)(this __mtype<_Tp>,
+                                          __t& __self) noexcept
         {
             if (!__self.__object_pointer_)
             {
@@ -538,16 +538,15 @@ class __storage<_Vtable, _Allocator, _Copyable, _InlineSize, _Alignment>::__t :
         (*__other.__vtable_)(__copy_construct, this, __other);
     }
 
-    auto operator=(const __t& __other) -> __t&
-        requires(_Copyable)
-    {
-        if (&__other != this)
-        {
-            __t tmp(__other);
-            *this = std::move(tmp);
-        }
-        return *this;
-    }
+    auto operator=(const __t& __other)
+        -> __t& requires(_Copyable) {
+                    if (&__other != this)
+                    {
+                        __t tmp(__other);
+                        *this = std::move(tmp);
+                    }
+                    return *this;
+                }
 
     __t(__t&& __other) noexcept
     {
@@ -621,8 +620,7 @@ class __storage<_Vtable, _Allocator, _Copyable, _InlineSize, _Alignment>::__t :
     }
 
     template <class _Tp>
-    STDEXEC_MEMFN_DECL(void __delete)
-    (this __mtype<_Tp>, __t& __self) noexcept
+    STDEXEC_MEMFN_DECL(void __delete)(this __mtype<_Tp>, __t& __self) noexcept
     {
         if (!__self.__object_pointer_)
         {
@@ -641,8 +639,8 @@ class __storage<_Vtable, _Allocator, _Copyable, _InlineSize, _Alignment>::__t :
     }
 
     template <class _Tp>
-    STDEXEC_MEMFN_DECL(void __move_construct)
-    (this __mtype<_Tp>, __t& __self, __t&& __other) noexcept
+    STDEXEC_MEMFN_DECL(void __move_construct)(this __mtype<_Tp>, __t& __self,
+                                              __t&& __other) noexcept
     {
         if (!__other.__object_pointer_)
         {
@@ -671,8 +669,8 @@ class __storage<_Vtable, _Allocator, _Copyable, _InlineSize, _Alignment>::__t :
 
     template <class _Tp>
         requires _Copyable
-    STDEXEC_MEMFN_DECL(void __copy_construct)
-    (this __mtype<_Tp>, __t& __self, const __t& __other)
+    STDEXEC_MEMFN_DECL(void __copy_construct)(this __mtype<_Tp>, __t& __self,
+                                              const __t& __other)
     {
         if (!__other.__object_pointer_)
         {
@@ -702,9 +700,9 @@ class __storage<_Vtable, _Allocator, _Copyable, _InlineSize, _Alignment>::__t :
 struct __empty_vtable
 {
     template <class _Sender>
-    STDEXEC_MEMFN_DECL(auto __create_vtable)
-    (this __mtype<__empty_vtable>,
-     __mtype<_Sender>) noexcept -> const __empty_vtable*
+    STDEXEC_MEMFN_DECL(auto __create_vtable)(this __mtype<__empty_vtable>,
+                                             __mtype<_Sender>) noexcept
+        -> const __empty_vtable*
     {
         static const __empty_vtable __vtable_{};
         return &__vtable_;
@@ -766,9 +764,10 @@ struct __vtable<completion_signatures<_Sigs...>, _Queries...>
       private:
         template <class _Rcvr>
             requires receiver_of<_Rcvr, completion_signatures<_Sigs...>> &&
-                         (__callable<__query_vfun_fn<_Rcvr>, _Queries> && ...)
-        STDEXEC_MEMFN_DECL(auto __create_vtable)
-        (this __mtype<__t>, __mtype<_Rcvr>) noexcept -> const __t*
+                     (__callable<__query_vfun_fn<_Rcvr>, _Queries> && ...)
+        STDEXEC_MEMFN_DECL(auto __create_vtable)(this __mtype<__t>,
+                                                 __mtype<_Rcvr>) noexcept
+            -> const __t*
         {
             static const __t __vtable_{
                 {__any_::__rcvr_vfun_fn(static_cast<_Rcvr*>(nullptr),
@@ -954,9 +953,9 @@ class __operation_vtable
 
   private:
     template <class _Op>
-    STDEXEC_MEMFN_DECL(auto __create_vtable)
-    (this __mtype<__operation_vtable>,
-     __mtype<_Op>) noexcept -> const __operation_vtable*
+    STDEXEC_MEMFN_DECL(auto __create_vtable)(this __mtype<__operation_vtable>,
+                                             __mtype<_Op>) noexcept
+        -> const __operation_vtable*
     {
         static __operation_vtable __vtable{
             [](void* __object_pointer) noexcept -> void {
@@ -1012,8 +1011,8 @@ struct __stoppable_receiver
 
         template <same_as<__t> _Self, class _Item>
             requires __callable<set_next_t, _Receiver&, _Item>
-        STDEXEC_MEMFN_DECL(auto set_next)
-        (this _Self& __self, _Item&& __item) noexcept
+        STDEXEC_MEMFN_DECL(auto set_next)(this _Self& __self,
+                                          _Item&& __item) noexcept
             -> __call_result_t<set_next_t, _Receiver&, _Item>
         {
             return exec::set_next(__self.__op_->__rcvr_,
@@ -1132,12 +1131,12 @@ class __query_vtable<_List<_Queries...>, _IsEnvProvider> :
 
   private:
     template <class _Queryable>
-        requires(__callable<__query_vfun_fn<_Queryable, _IsEnvProvider>,
-                            _Queries> &&
-                 ...)
-    STDEXEC_MEMFN_DECL(auto __create_vtable)
-    (this __mtype<__query_vtable>,
-     __mtype<_Queryable>) noexcept -> const __query_vtable*
+        requires(
+            __callable<__query_vfun_fn<_Queryable, _IsEnvProvider>, _Queries> &&
+            ...)
+    STDEXEC_MEMFN_DECL(auto __create_vtable)(this __mtype<__query_vtable>,
+                                             __mtype<_Queryable>) noexcept
+        -> const __query_vtable*
     {
         static const __query_vtable __vtable{
             {__query_vfun_fn<_Queryable, _IsEnvProvider>{}(
@@ -1169,8 +1168,9 @@ struct __sender
 
       private:
         template <sender_to<__receiver_ref_t> _Sender>
-        STDEXEC_MEMFN_DECL(auto __create_vtable)
-        (this __mtype<__vtable>, __mtype<_Sender>) noexcept -> const __vtable*
+        STDEXEC_MEMFN_DECL(auto __create_vtable)(this __mtype<__vtable>,
+                                                 __mtype<_Sender>) noexcept
+            -> const __vtable*
         {
             static const __vtable __vtable_{
                 {*__create_vtable(__mtype<__query_vtable<_SenderQueries>>{},
@@ -1325,9 +1325,9 @@ class __scheduler
 
       private:
         template <scheduler _Scheduler>
-        STDEXEC_MEMFN_DECL(auto __create_vtable)
-        (this __mtype<__vtable>,
-         __mtype<_Scheduler>) noexcept -> const __vtable*
+        STDEXEC_MEMFN_DECL(auto __create_vtable)(this __mtype<__vtable>,
+                                                 __mtype<_Scheduler>) noexcept
+            -> const __vtable*
         {
             static const __vtable __vtable_{
                 {*__create_vtable(
@@ -1476,7 +1476,7 @@ class any_receiver_ref
 
         template <stdexec::receiver_of<_Completions> _Receiver>
         auto connect(_Receiver __rcvr) && -> stdexec::connect_result_t<
-                                              __sender_base, _Receiver>
+            __sender_base, _Receiver>
         {
             return static_cast<__sender_base&&>(__sender_).connect(
                 static_cast<_Receiver&&>(__rcvr));

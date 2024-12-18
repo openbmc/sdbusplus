@@ -37,8 +37,8 @@ struct start_t
 {
     template <__same_as<start_t> _Self, class _OpState>
     STDEXEC_ATTRIBUTE((always_inline))
-    friend auto tag_invoke(_Self,
-                           _OpState& __op) noexcept -> decltype(__op.start())
+    friend auto tag_invoke(_Self, _OpState& __op) noexcept
+        -> decltype(__op.start())
     {
         static_assert(noexcept(__op.start()),
                       "start() members must be noexcept");

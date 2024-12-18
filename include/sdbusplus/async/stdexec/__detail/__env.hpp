@@ -139,8 +139,8 @@ struct get_forward_progress_guarantee_t :
                           std::as_const(__t));
     }
 
-    constexpr auto
-        operator()(auto&&) const noexcept -> stdexec::forward_progress_guarantee
+    constexpr auto operator()(auto&&) const noexcept
+        -> stdexec::forward_progress_guarantee
     {
         return stdexec::forward_progress_guarantee::weakly_parallel;
     }
@@ -155,8 +155,8 @@ struct __has_algorithm_customizations_t :
 
     template <class _Tp>
         requires tag_invocable<__has_algorithm_customizations_t, __cref_t<_Tp>>
-    constexpr auto operator()(_Tp&&) const
-        noexcept(noexcept(__result_t<_Tp>{})) -> __result_t<_Tp>
+    constexpr auto operator()(_Tp&&) const noexcept(noexcept(__result_t<_Tp>{}))
+        -> __result_t<_Tp>
     {
         using _Boolean = tag_invoke_result_t<__has_algorithm_customizations_t,
                                              __cref_t<_Tp>>;
@@ -654,8 +654,9 @@ struct __without_
 
         template <tag_invocable<__cvref_env_t> _Key>
         STDEXEC_ATTRIBUTE((always_inline))
-        auto query(_Key) const noexcept(
-            nothrow_tag_invocable<_Key, __cvref_env_t>) -> decltype(auto)
+        auto query(_Key) const
+            noexcept(nothrow_tag_invocable<_Key, __cvref_env_t>)
+                -> decltype(auto)
         {
             return tag_invoke(_Key(), __env_);
         }
@@ -667,8 +668,8 @@ struct __without_
 struct __without_fn
 {
     template <class _Env, class _Tag>
-    constexpr auto operator()(_Env&& __env,
-                              _Tag) const noexcept -> decltype(auto)
+    constexpr auto operator()(_Env&& __env, _Tag) const noexcept
+        -> decltype(auto)
     {
         if constexpr (tag_invocable<_Tag, _Env>)
         {

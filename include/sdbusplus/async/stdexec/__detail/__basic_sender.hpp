@@ -648,8 +648,8 @@ struct __sexpr
 
 template <class _Tag, class _Data, class... _Child>
 STDEXEC_ATTRIBUTE((host, device))
-__sexpr(_Tag, _Data,
-        _Child...) -> __sexpr<STDEXEC_SEXPR_DESCRIPTOR(_Tag, _Data, _Child...)>;
+__sexpr(_Tag, _Data, _Child...)
+    -> __sexpr<STDEXEC_SEXPR_DESCRIPTOR(_Tag, _Data, _Child...)>;
 
 template <class _Tag, class _Data, class... _Child>
 using __sexpr_t = __sexpr<STDEXEC_SEXPR_DESCRIPTOR(_Tag, _Data, _Child...)>;

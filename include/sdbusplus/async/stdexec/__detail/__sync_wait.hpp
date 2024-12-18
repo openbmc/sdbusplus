@@ -253,8 +253,8 @@ struct sync_wait_t
 {
     template <sender_in<__env> _Sender>
         requires __valid_sync_wait_argument<_Sender> &&
-                     __has_implementation_for<
-                         sync_wait_t, __early_domain_of_t<_Sender>, _Sender>
+                 __has_implementation_for<sync_wait_t,
+                                          __early_domain_of_t<_Sender>, _Sender>
     auto operator()(_Sender&& __sndr) const
         -> std::optional<__value_tuple_for_t<_Sender>>
     {

@@ -211,8 +211,8 @@ class inplace_stop_token
     const inplace_stop_source* __source_;
 };
 
-inline auto
-    inplace_stop_source::get_token() const noexcept -> inplace_stop_token
+inline auto inplace_stop_source::get_token() const noexcept
+    -> inplace_stop_token
 {
     return inplace_stop_token{this};
 }

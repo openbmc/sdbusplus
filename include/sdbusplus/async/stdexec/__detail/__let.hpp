@@ -410,8 +410,8 @@ struct __let_state
                                _Tuples>...>;
 
     template <class _ResultSender, class _OpState>
-    auto __get_result_receiver(const _ResultSender&,
-                               _OpState& __op_state) -> decltype(auto)
+    auto __get_result_receiver(const _ResultSender&, _OpState& __op_state)
+        -> decltype(auto)
     {
         if constexpr (__needs_receiver_ref<_ResultSender, _Sched, _Receiver>)
         {
@@ -497,8 +497,8 @@ struct __let_t
                 tag_invoke_t(__let_t, _Sender, _Function)>;
 
     template <sender_expr_for<__let_t<_Set>> _Sender, class _Env>
-    static auto transform_env(_Sender&& __sndr,
-                              const _Env& __env) -> decltype(auto)
+    static auto transform_env(_Sender&& __sndr, const _Env& __env)
+        -> decltype(auto)
     {
         return __sexpr_apply(static_cast<_Sender&&>(__sndr),
                              __mk_transform_env_fn<__let_t<_Set>>(__env));
@@ -506,8 +506,8 @@ struct __let_t
 
     template <sender_expr_for<__let_t<_Set>> _Sender, class _Env>
         requires same_as<__early_domain_of_t<_Sender>, dependent_domain>
-    static auto
-        transform_sender(_Sender&& __sndr, const _Env& __env) -> decltype(auto)
+    static auto transform_sender(_Sender&& __sndr, const _Env& __env)
+        -> decltype(auto)
     {
         return __sexpr_apply(static_cast<_Sender&&>(__sndr),
                              __mk_transform_sender_fn<__let_t<_Set>>(__env));

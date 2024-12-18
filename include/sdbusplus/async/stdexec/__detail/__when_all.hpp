@@ -506,8 +506,8 @@ struct transfer_when_all_t
 
     template <scheduler _Scheduler, sender... _Senders>
         requires __domain::__has_common_domain<_Senders...>
-    auto operator()(_Scheduler&& __sched,
-                    _Senders&&... __sndrs) const -> __well_formed_sender auto
+    auto operator()(_Scheduler&& __sched, _Senders&&... __sndrs) const
+        -> __well_formed_sender auto
     {
         using _Env = __t<__schfr::__environ<__id<__decay_t<_Scheduler>>>>;
         auto __domain = query_or(get_domain, __sched, default_domain());
@@ -561,8 +561,8 @@ struct transfer_when_all_with_variant_t
 
     template <scheduler _Scheduler, sender... _Senders>
         requires __domain::__has_common_domain<_Senders...>
-    auto operator()(_Scheduler&& __sched,
-                    _Senders&&... __sndrs) const -> __well_formed_sender auto
+    auto operator()(_Scheduler&& __sched, _Senders&&... __sndrs) const
+        -> __well_formed_sender auto
     {
         using _Env = __t<__schfr::__environ<__id<__decay_t<_Scheduler>>>>;
         auto __domain = query_or(get_domain, __sched, default_domain());

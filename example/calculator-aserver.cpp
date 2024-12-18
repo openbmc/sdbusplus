@@ -18,8 +18,8 @@ class Calculator :
         return r;
     }
 
-    auto method_call(divide_t, auto x,
-                     auto y) -> sdbusplus::async::task<divide_t::return_type>
+    auto method_call(divide_t, auto x, auto y)
+        -> sdbusplus::async::task<divide_t::return_type>
     {
         using sdbusplus::error::net::poettering::Calculator::DivisionByZero;
         if (y == 0)

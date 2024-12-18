@@ -330,14 +330,14 @@ using completion_signatures STDEXEC_STD_DEPRECATED =
     stdexec::completion_signatures<_Sigs...>;
 
 // [exec.utils.mkcmplsigs]
-template <                                                        //
-    class _Sender,                                                //
+template <                                          //
+    class _Sender,                                  //
     class _Env = __no_env,
-    class _Sigs = stdexec::completion_signatures<>,               //
-    template <class...>
-    class _SetValue = stdexec::__compl_sigs::__default_set_value, //
-    template <class>
-    class _SetError = stdexec::__compl_sigs::__default_set_error, //
+    class _Sigs = stdexec::completion_signatures<>, //
+    template <class...> class _SetValue =
+        stdexec::__compl_sigs::__default_set_value, //
+    template <class> class _SetError =
+        stdexec::__compl_sigs::__default_set_error, //
     class _SetStopped =
         stdexec::completion_signatures<stdexec::set_stopped_t()>>
 using make_completion_signatures STDEXEC_STD_DEPRECATED =

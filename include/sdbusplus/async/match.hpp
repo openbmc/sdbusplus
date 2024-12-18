@@ -135,8 +135,8 @@ struct match_sender
                                             execution::set_stopped_t()>;
 
     template <execution::receiver R>
-    friend auto tag_invoke(execution::connect_t, match_sender&& self,
-                           R r) -> match_operation<R>
+    friend auto tag_invoke(execution::connect_t, match_sender&& self, R r)
+        -> match_operation<R>
     {
         return {self.m, std::move(r)};
     }

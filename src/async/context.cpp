@@ -84,9 +84,9 @@ struct wait_process_sender : public context_ref
 
     explicit wait_process_sender(context& ctx) : context_ref(ctx) {}
 
-    friend auto tag_invoke(
-        execution::get_completion_signatures_t, const wait_process_sender&,
-        auto) -> execution::completion_signatures<execution::set_value_t()>;
+    friend auto tag_invoke(execution::get_completion_signatures_t,
+                           const wait_process_sender&, auto)
+        -> execution::completion_signatures<execution::set_value_t()>;
 
     template <execution::receiver R>
     friend auto tag_invoke(execution::connect_t, wait_process_sender&& self,

@@ -61,8 +61,8 @@ struct start_on_t
         __types<tag_invoke_t(start_on_t, _Scheduler, _Sender)>;
 
     template <scheduler _Scheduler, sender _Sender>
-    auto operator()(_Scheduler&& __sched,
-                    _Sender&& __sndr) const -> __well_formed_sender auto
+    auto operator()(_Scheduler&& __sched, _Sender&& __sndr) const
+        -> __well_formed_sender auto
     {
         auto __domain = query_or(get_domain, __sched, default_domain());
         return stdexec::transform_sender(

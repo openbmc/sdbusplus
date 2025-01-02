@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "334f298b_2f1b4dc3",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-01-02T21:03:45Z",
+      "side": 1,
+      "message": "Sample generated registries:\n\nhttps://gist.github.com/williamspatrick/3bd4bf727b3a78c48e65d7b27e7c2b42\nhttps://gist.github.com/williamspatrick/8601cec7bb6772689d1fb84f4d0479eb\nhttps://gist.github.com/williamspatrick/71251b6752f94aa5009ac127997c3b1a",
+      "revId": "9789ac6239742d979c7d2b7a4e55c617d2dfaea2",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

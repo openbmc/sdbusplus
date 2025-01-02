@@ -202,47 +202,77 @@ class Property(NamedElement, Renderer):
 
         return result
 
+    propertyMap = {
+        "byte": {"cppName": "uint8_t", "params": 0},
+        "boolean": {"cppName": "bool", "params": 0},
+        "int16": {"cppName": "int16_t", "params": 0},
+        "uint16": {"cppName": "uint16_t", "params": 0},
+        "int32": {"cppName": "int32_t", "params": 0},
+        "uint32": {"cppName": "uint32_t", "params": 0},
+        "int64": {
+            "cppName": "int64_t",
+            "params": 0,
+            "registryName": "number",
+        },
+        "uint64": {
+            "cppName": "uint64_t",
+            "params": 0,
+            "registryName": "number",
+        },
+        "size": {
+            "cppName": "size_t",
+            "params": 0,
+            "registryName": "number",
+        },
+        "ssize": {"cppName": "ssize_t", "params": 0},
+        "double": {
+            "cppName": "double",
+            "params": 0,
+            "registryName": "number",
+        },
+        "unixfd": {"cppName": "sdbusplus::message::unix_fd", "params": 0},
+        "string": {
+            "cppName": "std::string",
+            "params": 0,
+            "registryName": "string",
+        },
+        "object_path": {
+            "cppName": "sdbusplus::message::object_path",
+            "params": 0,
+            "registryName": "string",
+        },
+        "signature": {
+            "cppName": "sdbusplus::message::signature",
+            "params": 0,
+        },
+        "array": {"cppName": "std::vector", "params": 1},
+        "set": {"cppName": "std::set", "params": 1},
+        "struct": {"cppName": "std::tuple", "params": -1},
+        "variant": {"cppName": "std::variant", "params": -1},
+        "dict": {"cppName": "std::map", "params": 2},
+        "enum": {
+            "cppName": "enum",
+            "params": 1,
+            "registryName": "number",
+        },
+    }
+
+    """ Get the registry type of the property. """
+
+    def registry_type(self):
+        return Property.propertyMap[self.typeName]["registryName"]
+
     """ Take a list of dbus types and perform validity checking, such as:
             [ variant [ dict [ int32, int32 ], double ] ]
         This function then converts the type-list into a C++ type string.
     """
 
     def __parse_cpp_type__(self, typeTuple):
-        propertyMap = {
-            "byte": {"cppName": "uint8_t", "params": 0},
-            "boolean": {"cppName": "bool", "params": 0},
-            "int16": {"cppName": "int16_t", "params": 0},
-            "uint16": {"cppName": "uint16_t", "params": 0},
-            "int32": {"cppName": "int32_t", "params": 0},
-            "uint32": {"cppName": "uint32_t", "params": 0},
-            "int64": {"cppName": "int64_t", "params": 0},
-            "uint64": {"cppName": "uint64_t", "params": 0},
-            "size": {"cppName": "size_t", "params": 0},
-            "ssize": {"cppName": "ssize_t", "params": 0},
-            "double": {"cppName": "double", "params": 0},
-            "unixfd": {"cppName": "sdbusplus::message::unix_fd", "params": 0},
-            "string": {"cppName": "std::string", "params": 0},
-            "object_path": {
-                "cppName": "sdbusplus::message::object_path",
-                "params": 0,
-            },
-            "signature": {
-                "cppName": "sdbusplus::message::signature",
-                "params": 0,
-            },
-            "array": {"cppName": "std::vector", "params": 1},
-            "set": {"cppName": "std::set", "params": 1},
-            "struct": {"cppName": "std::tuple", "params": -1},
-            "variant": {"cppName": "std::variant", "params": -1},
-            "dict": {"cppName": "std::map", "params": 2},
-            "enum": {"cppName": "enum", "params": 1},
-        }
-
         if len(typeTuple) != 2:
             raise RuntimeError("Invalid typeTuple %s" % typeTuple)
 
         first = typeTuple[0]
-        entry = propertyMap[first]
+        entry = Property.propertyMap[first]
 
         result = entry["cppName"]
 

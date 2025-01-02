@@ -55,6 +55,15 @@ class NamedElement(object):
     def cppNamespacedClass(self):
         return self.cppNamespace() + "::" + self.classname
 
+    def registryPrefix(self, root_prefix):
+        name = inflection.camelize(
+            self.name.replace("xyz.openbmc_project.", "")
+            .replace("com.", "")
+            .replace(".", "_"),
+            uppercase_first_letter=True,
+        )
+        return root_prefix + "_" + name
+
     """ Some names are reserved in some languages.  Fixup names to avoid using
         reserved words.
     """

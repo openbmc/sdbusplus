@@ -14,3 +14,17 @@ generated_others += custom_target(
     ],
 )
 
+generated_others += custom_target(
+    'net/poettering/Calculator__registry'.underscorify(),
+    input: [ '../../../yaml/net/poettering/Calculator.events.yaml',  ],
+    output: [ 'Calculator.json' ],
+    depend_files: sdbusplusplus_depfiles,
+    command: [
+        sdbuspp_gen_meson_prog, '--command', 'registry',
+        '--output', meson.current_build_dir(),
+        '--tool', sdbusplusplus_prog,
+        '--directory', meson.current_source_dir() / '../../../yaml',
+        'net/poettering/Calculator',
+    ],
+)
+

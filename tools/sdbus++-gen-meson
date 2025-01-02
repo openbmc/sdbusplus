@@ -27,6 +27,7 @@ Commands:
                           to the source YAML files.
     cpp <intf>          - Generate the source files from a YAML interface.
     markdown <intf>     - Generate the markdown files from a YAML interface.
+    registry <intf>     - Generate the Redfish registry from a YAML interface.
     version             - Display this tool's version string.
 
 EOF
@@ -36,7 +37,7 @@ EOF
 ## if a repository contains old copies of the generated meson.build files and
 ## needs an update.  We should increment the version number whenever the
 ## resulting meson.build would change.
-tool_version="sdbus++-gen-meson version 9"
+tool_version="sdbus++-gen-meson version 10"
 function show_version() {
     echo "${tool_version}"
 }
@@ -257,6 +258,60 @@ generated_others += custom_target(
 EOF
 }
 
+## Generate the meson target for the registry files from a YAML interface.
+## $1 - The interface to generate a target for.
+function meson_registry_target() {
+    mesondir="${outputdir}/$(dirname "$1")"
+    yamldir="$(realpath --relative-to="${mesondir}" "${rootdir}")"
+
+    # Determine the source and output files based on the YAMLs present.
+    sources=""
+    outputs=""
+    for s in ${interfaces[$1]}; do
+        case "${s}" in
+            errors.yaml)
+                ;;
+
+            events.yaml)
+                sources="${sources}'${yamldir}/$1.${s}', "
+                outputs="${outputs}'event.cpp', 'event.hpp', "
+                ;;
+
+            interface.yaml)
+                ;;
+
+            *)
+                echo "Unknown interface type: ${s}"
+                exit 1
+                ;;
+        esac
+    done
+
+    if [[ -z "${sources}" ]]; then
+        return
+    fi
+
+    # Create the target to generate the interface.md file.
+    cat >> "${mesondir}/meson.build" \
+        << EOF
+generated_others += custom_target(
+    '$1__registry'.underscorify(),
+    input: [ ${sources} ],
+    output: [ '$(basename "$1").json' ],
+    depend_files: sdbusplusplus_depfiles,
+    command: [
+        sdbuspp_gen_meson_prog, '--command', 'registry',
+        '--output', meson.current_build_dir(),
+        '--tool', sdbusplusplus_prog,
+        '--directory', meson.current_source_dir() / '${yamldir}',
+        '$1',
+    ],
+)
+
+EOF
+}
+
+
 ## Handle command=meson by generating the tree of meson.build files.
 function cmd_meson() {
     # Find and sort all the YAML files
@@ -282,6 +337,7 @@ function cmd_meson() {
         meson_create_path "${i}"
         meson_cpp_target "${i}"
         meson_md_target "${i}"
+        meson_registry_target "${i}"
     done
 }
 
@@ -364,6 +420,34 @@ function cmd_markdown() {
         ${sdbusppcmd} event markdown "${intf}" >> "${outputdir}/${base}.md"
     fi
 }
+
+## Handle command=registry by calling sdbus++ as appropriate.
+## $1 - interface to generate.
+##
+## For an interface foo/bar, the outputdir is expected to be foo.
+function cmd_registry() {
+
+    if [[ "" == "$1" ]]; then
+        show_usage
+        exit 1
+    fi
+
+    if [[ ! -e "${rootdir}/$1.events.yaml" ]]; then
+        echo "Missing YAML for $1."
+        exit 1
+    fi
+
+    mkdir -p "${outputdir}"
+
+    sdbusppcmd="${sdbuspp} -r ${rootdir}"
+    intf="${1//\//.}"
+    base="$(basename "$1")"
+
+    if [[ -e "${rootdir}/$1.events.yaml" ]]; then
+        ${sdbusppcmd} event exception-registry "${intf}" > "${outputdir}/${base}.json"
+    fi
+}
+
 
 ## Handle command=version.
 function cmd_version() {

@@ -43,7 +43,7 @@ struct ${event.CamelCase} final :
         "${event.description}";
     static constexpr auto errWhat =
         "${events.name}.${event.name}: ${event.description}";
-    static constexpr int errSeverity = ${event.severity};
+    static constexpr int errSeverity = ${event.syslog_sev};
 
     static constexpr auto errErrno = ${event.errno};
 };

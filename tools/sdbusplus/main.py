@@ -20,6 +20,7 @@ def main():
         "common-header": "common_header",
         "exception-cpp": "exception_cpp",
         "exception-header": "exception_header",
+        "exception-registry": "exception_registry",
         "markdown": "markdown",
         "server-cpp": "server_cpp",
         "server-header": "server_header",
@@ -76,8 +77,6 @@ def main():
 
     lookup = mako.lookup.TemplateLookup(directories=[args.templatedir])
 
-    instance = valid_types[args.typeName].load(
-        args.item, args.rootdir, args.schemadir
-    )
+    instance = valid_types[args.typeName].load(args.item, args.rootdir, args.schemadir)
     function = getattr(instance, valid_processes[args.process])
     print(function(lookup))

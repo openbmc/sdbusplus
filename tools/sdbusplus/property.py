@@ -22,14 +22,11 @@ class Property(NamedElement, Renderer):
                 # because it will be rendered as C++ code
                 self.defaultValue = "true" if self.defaultValue else "false"
             elif (
-                isinstance(self.defaultValue, str)
-                and self.typeName.lower() == "string"
+                isinstance(self.defaultValue, str) and self.typeName.lower() == "string"
             ):
                 # Wrap string type default values with double-quotes
                 self.defaultValue = '"' + self.defaultValue + '"'
-            elif (
-                isinstance(self.defaultValue, str) and self.is_floating_point()
-            ):
+            elif isinstance(self.defaultValue, str) and self.is_floating_point():
                 if self.defaultValue.lower() == "nan":
                     self.defaultValue = (
                         f"std::numeric_limits<{self.cppTypeName}>::quiet_NaN()"
@@ -92,9 +89,7 @@ class Property(NamedElement, Renderer):
         else:
             return ""
 
-    def __cppTypeParam(
-        self, interface, cppTypeName, full=False, typename="common"
-    ):
+    def __cppTypeParam(self, interface, cppTypeName, full=False, typename="common"):
         iface = NamedElement(name=interface).cppNamespacedClass()
         r = cppTypeName
 
@@ -202,47 +197,77 @@ class Property(NamedElement, Renderer):
 
         return result
 
+    propertyMap = {
+        "byte": {"cppName": "uint8_t", "params": 0},
+        "boolean": {"cppName": "bool", "params": 0},
+        "int16": {"cppName": "int16_t", "params": 0},
+        "uint16": {"cppName": "uint16_t", "params": 0},
+        "int32": {"cppName": "int32_t", "params": 0},
+        "uint32": {"cppName": "uint32_t", "params": 0},
+        "int64": {
+            "cppName": "int64_t",
+            "params": 0,
+            "registryName": "number",
+        },
+        "uint64": {
+            "cppName": "uint64_t",
+            "params": 0,
+            "registryName": "number",
+        },
+        "size": {
+            "cppName": "size_t",
+            "params": 0,
+            "registryName": "number",
+        },
+        "ssize": {"cppName": "ssize_t", "params": 0},
+        "double": {
+            "cppName": "double",
+            "params": 0,
+            "registryName": "number",
+        },
+        "unixfd": {"cppName": "sdbusplus::message::unix_fd", "params": 0},
+        "string": {
+            "cppName": "std::string",
+            "params": 0,
+            "registryName": "string",
+        },
+        "object_path": {
+            "cppName": "sdbusplus::message::object_path",
+            "params": 0,
+            "registryName": "string",
+        },
+        "signature": {
+            "cppName": "sdbusplus::message::signature",
+            "params": 0,
+        },
+        "array": {"cppName": "std::vector", "params": 1},
+        "set": {"cppName": "std::set", "params": 1},
+        "struct": {"cppName": "std::tuple", "params": -1},
+        "variant": {"cppName": "std::variant", "params": -1},
+        "dict": {"cppName": "std::map", "params": 2},
+        "enum": {
+            "cppName": "enum",
+            "params": 1,
+            "registryName": "number",
+        },
+    }
+
+    """ Get the registry type of the property. """
+
+    def registry_type(self):
+        return Property.propertyMap[self.typeName]["registryName"]
+
     """ Take a list of dbus types and perform validity checking, such as:
             [ variant [ dict [ int32, int32 ], double ] ]
         This function then converts the type-list into a C++ type string.
     """
 
     def __parse_cpp_type__(self, typeTuple):
-        propertyMap = {
-            "byte": {"cppName": "uint8_t", "params": 0},
-            "boolean": {"cppName": "bool", "params": 0},
-            "int16": {"cppName": "int16_t", "params": 0},
-            "uint16": {"cppName": "uint16_t", "params": 0},
-            "int32": {"cppName": "int32_t", "params": 0},
-            "uint32": {"cppName": "uint32_t", "params": 0},
-            "int64": {"cppName": "int64_t", "params": 0},
-            "uint64": {"cppName": "uint64_t", "params": 0},
-            "size": {"cppName": "size_t", "params": 0},
-            "ssize": {"cppName": "ssize_t", "params": 0},
-            "double": {"cppName": "double", "params": 0},
-            "unixfd": {"cppName": "sdbusplus::message::unix_fd", "params": 0},
-            "string": {"cppName": "std::string", "params": 0},
-            "object_path": {
-                "cppName": "sdbusplus::message::object_path",
-                "params": 0,
-            },
-            "signature": {
-                "cppName": "sdbusplus::message::signature",
-                "params": 0,
-            },
-            "array": {"cppName": "std::vector", "params": 1},
-            "set": {"cppName": "std::set", "params": 1},
-            "struct": {"cppName": "std::tuple", "params": -1},
-            "variant": {"cppName": "std::variant", "params": -1},
-            "dict": {"cppName": "std::map", "params": 2},
-            "enum": {"cppName": "enum", "params": 1},
-        }
-
         if len(typeTuple) != 2:
             raise RuntimeError("Invalid typeTuple %s" % typeTuple)
 
         first = typeTuple[0]
-        entry = propertyMap[first]
+        entry = Property.propertyMap[first]
 
         result = entry["cppName"]
 
@@ -258,9 +283,7 @@ class Property(NamedElement, Renderer):
 
         # Confirm parameter count matches.
         if (entry["params"] != -1) and (entry["params"] != len(rest)):
-            raise RuntimeError(
-                "Invalid entry count for %s : %s" % (first, rest)
-            )
+            raise RuntimeError("Invalid entry count for %s : %s" % (first, rest))
 
         # Switch enum for proper type.
         if result == "enum":
@@ -276,9 +299,7 @@ class Property(NamedElement, Renderer):
                 [
                     "sdbusplus",
                     self.NONLOCAL_ENUM_MAGIC,
-                    NamedElement(
-                        name=".".join(result[0:-1])
-                    ).cppNamespacedClass(),
+                    NamedElement(name=".".join(result[0:-1])).cppNamespacedClass(),
                     NamedElement(name=result[-1]).classname,
                 ]
             )
@@ -293,14 +314,10 @@ class Property(NamedElement, Renderer):
         return result
 
     def markdown(self, loader):
-        return self.render(
-            loader, "property.md.mako", property=self, post=str.strip
-        )
+        return self.render(loader, "property.md.mako", property=self, post=str.strip)
 
     def cpp_includes(self, interface):
-        return interface.error_includes(self.errors) + interface.enum_includes(
-            [self]
-        )
+        return interface.error_includes(self.errors) + interface.enum_includes([self])
 
     def or_cpp_flags(self, flags):
         """Return the corresponding ORed cpp flags."""

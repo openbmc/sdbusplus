@@ -17,9 +17,7 @@ class NamedElement(object):
 
         self.old_namespaces = self.name.split(".")
         self.old_classname = self.old_namespaces.pop()
-        self.namespaces = [
-            inflection.underscore(x) for x in self.old_namespaces
-        ]
+        self.namespaces = [inflection.underscore(x) for x in self.old_namespaces]
         self.classname = inflection.camelize(self.old_classname)
 
     def __getattribute__(self, name):
@@ -36,8 +34,7 @@ class NamedElement(object):
             return super(NamedElement, self).__getattribute__(name)
         except Exception:
             raise AttributeError(
-                "Attribute '%s' not found in %s.NamedElement"
-                % (name, self.__module__)
+                "Attribute '%s' not found in %s.NamedElement" % (name, self.__module__)
             )
 
     def old_cppNamespace(self, typename="server"):
@@ -54,6 +51,15 @@ class NamedElement(object):
 
     def cppNamespacedClass(self):
         return self.cppNamespace() + "::" + self.classname
+
+    def registryPrefix(self, root_prefix):
+        name = inflection.camelize(
+            self.name.replace("xyz.openbmc_project.", "")
+            .replace("com.", "")
+            .replace(".", "_"),
+            uppercase_first_letter=True,
+        )
+        return root_prefix + "_" + name
 
     """ Some names are reserved in some languages.  Fixup names to avoid using
         reserved words.

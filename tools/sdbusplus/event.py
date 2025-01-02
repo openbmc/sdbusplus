@@ -1,3 +1,6 @@
+import datetime
+import itertools
+import json
 import os
 
 import jsonschema
@@ -34,16 +37,13 @@ class EventElement(NamedElement):
             }
         else:
             self.languages = {
-                "en": EventLanguage(
-                    **{"message": f"Redfish({self.redfish_map})"}
-                )
+                "en": EventLanguage(**{"message": f"Redfish({self.redfish_map})"})
             }
-        self.metadata = [
-            EventMetadata(**n) for n in kwargs.pop("metadata", [])
-        ]
-        self.severity = EventElement.syslog_severity(
-            kwargs.pop("severity", "informational")
-        )
+        self.metadata = [EventMetadata(**n) for n in kwargs.pop("metadata", [])]
+
+        self.severity = kwargs.pop("severity", "informational")
+        self.syslog_sev = EventElement.syslog_severity(self.severity)
+        self.registry_sev = EventElement.registry_severity(self.severity)
 
         super(EventElement, self).__init__(**kwargs)
 
@@ -52,6 +52,55 @@ class EventElement(NamedElement):
         for m in self.metadata:
             includes.extend(m.enum_headers(interface))
         return sorted(set(includes))
+
+    def registry_event(self, interface, language):
+        if language not in self.languages:
+            language = "en"
+        language_data = self.languages[language]
+
+        args = [x for x in self.metadata if x.primary]
+
+        for i, arg in enumerate(args):
+            language_data.message = language_data.message.replace(
+                f"{{{arg.name}}}", f"%{i+1}"
+            )
+
+        result = {}
+        if language_data.description:
+            result["Description"] = language_data.description
+        result["Message"] = language_data.message
+        if language_data.resolution:
+            result["Resolution"] = language_data.resolution
+
+        result["MessageSeverity"] = self.registry_sev
+
+        result["NumberOfArgs"] = len(args)
+        result["ParamTypes"] = [x.registry_type() for x in args]
+
+        result["OEM"] = {
+            "OpenBMC_Mapping": {
+                "Event": interface + "." + self.name,
+                "Args": self.registry_args_mapping(interface),
+            }
+        }
+
+        return result
+
+    def registry_mapping(self, interface):
+        return {
+            "RedfishEvent": self.redfish_map,
+            "Args": self.registry_args_mapping(interface),
+        }
+
+    def registry_args_mapping(self, interface):
+        args = [x for x in self.metadata if x.primary]
+        return [
+            {
+                "Name": x.SNAKE_CASE,
+                "Type": x.cppTypeParam(interface, full=True),
+            }
+            for x in args
+        ]
 
     def __getattribute__(self, name):
         lam = {"description": lambda: self.__description()}.get(name)
@@ -62,8 +111,7 @@ class EventElement(NamedElement):
             return super(EventElement, self).__getattribute__(name)
         except Exception:
             raise AttributeError(
-                "Attribute '%s' not found in %s.EventElement"
-                % (name, self.__module__)
+                "Attribute '%s' not found in %s.EventElement" % (name, self.__module__)
             )
 
     def __description(self):
@@ -85,6 +133,19 @@ class EventElement(NamedElement):
             "debug": "LOG_DEBUG",
         }[severity]
 
+    @staticmethod
+    def registry_severity(severity: str) -> str:
+        return {
+            "emergency": "Critical",
+            "alert": "Critical",
+            "critical": "Critical",
+            "error": "Warning",
+            "warning": "Warning",
+            "notice": "Warning",
+            "informational": "OK",
+            "debug": "OK",
+        }[severity]
+
 
 class Event(NamedElement, Renderer):
     @staticmethod
@@ -99,9 +160,7 @@ class Event(NamedElement, Renderer):
 
             validator = spec(schema)
 
-        filename = os.path.join(
-            rootdir, name.replace(".", "/") + ".events.yaml"
-        )
+        filename = os.path.join(rootdir, name.replace(".", "/") + ".events.yaml")
 
         with open(filename) as f:
             data = f.read()
@@ -137,3 +196,33 @@ class Event(NamedElement, Renderer):
 
     def exception_cpp(self, loader):
         return self.render(loader, "events.cpp.mako", events=self)
+
+    def exception_registry(self, loader):
+        language = "en"
+        registryName = self.registryPrefix("OpenBMC")
+
+        messages = {}
+        mappings = {}
+
+        for e in itertools.chain(self.errors, self.events):
+            if e.redfish_map:
+                mappings[self.name + "." + e.name] = e.registry_mapping(self.name)
+            else:
+                messages[e.name] = e.registry_event(self.name, language)
+
+        result = {
+            "@Redfish.Copyright": f"Copyright 2024-{datetime.date.today().year} OpenBMC.",
+            "@odata.type": "#MessageRegistry.v1_6_3.MessageRegistry",
+            "Id": f"{registryName}.{self.version}",
+            "Language": f"{language}",
+            "Message": messages,
+            "Name": f"OpenBMC Message Registry for {self.name}",
+            "OwningEntity": "OpenBMC",
+            "RegistryPrefix": f"{registryName}",
+            "RegistryVersion": f"{self.version}",
+        }
+
+        if len(mappings) != 0:
+            result["OEM"] = ({"OpenBMC_Mapping": mappings},)
+
+        return json.dumps(result, indent=4)

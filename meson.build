@@ -21,7 +21,6 @@ if not python_bin.found()
   error('No valid python3 installation found')
 endif
 
-
 root_inc = include_directories('include')
 
 libsdbusplus_src = files(
@@ -71,6 +70,10 @@ sdbusplus_dep = declare_dependency(
         nlohmann_json_dep,
     ],
 )
+
+should_generate_cpp = true
+should_generate_markdown = false
+should_generate_registry = false
 
 subdir('tools')
 

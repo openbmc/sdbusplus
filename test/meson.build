@@ -88,7 +88,9 @@ test(
 )
 
 generated_sources = []
-generated_others = []
+generated_markdown = []
+generated_registry = []
+
 subdir('gen')
 subdir('gen/server')
 

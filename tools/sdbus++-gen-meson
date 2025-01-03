@@ -130,6 +130,9 @@ if sdbuspp_gen_meson_ver != '${tool_version}'
     )
 endif
 
+inst_markdown_dir = get_option('datadir') / 'doc' / meson.project_name()
+inst_registry_dir = get_option('datadir') / 'redfish-registry' / meson.project_name()
+
 EOF
 }
 
@@ -169,6 +172,23 @@ function meson_create_path() {
     done
 }
 
+## Add the 'sdbusplus_current_path' to the meson file.
+##
+## $1 - The path to insert into.
+##
+## This is done after the subdir processing because we need to leave
+## the meson variable in this state for the install directives.
+function meson_insert_current_path() {
+    meson_path="${outputdir}/${1}"
+    current_path="${1}"
+    cat >> "${meson_path}/meson.build" \
+        << EOF
+
+sdbusplus_current_path = '${current_path}'
+
+EOF
+}
+
 ## Generate the meson target for the source files (.cpp/.hpp) from a YAML
 ## interface.
 ##
@@ -176,27 +196,48 @@ function meson_create_path() {
 function meson_cpp_target() {
     mesondir="${outputdir}/$1"
     yamldir="$(realpath --relative-to="${mesondir}" "${rootdir}")"
+    nl=$'\n'
+    ind="        "
 
     # Determine the source and output files based on the YAMLs present.
     sources=""
     outputs=""
+    install=""
     for s in ${interfaces[$1]}; do
-        sources="${sources}'${yamldir}/$1.${s}', "
+        sources="${sources}${ind}'${yamldir}/$1.${s}',${nl}"
 
         case "${s}" in
             errors.yaml)
-                outputs="${outputs}'error.cpp', 'error.hpp', "
+                outputs="${outputs}${ind}'error.cpp',${nl}"
+                install="${install}${ind}false,${nl}"
+
+                outputs="${outputs}${ind}'error.hpp',${nl}"
+                install="${install}${ind}get_option('includedir') / sdbusplus_current_path,${nl}"
                 ;;
 
             events.yaml)
-                outputs="${outputs}'event.cpp', 'event.hpp', "
+                outputs="${outputs}${ind}'event.cpp',${nl}"
+                install="${install}${ind}false,${nl}"
+
+                outputs="${outputs}${ind}'event.hpp',${nl}"
+                install="${install}${ind}get_option('includedir') / sdbusplus_current_path,${nl}"
                 ;;
 
             interface.yaml)
-                outputs="${outputs}'common.hpp', "
-                outputs="${outputs}'server.cpp', 'server.hpp', "
-                outputs="${outputs}'aserver.hpp', "
-                outputs="${outputs}'client.hpp', "
+                outputs="${outputs}${ind}'common.hpp',${nl}"
+                install="${install}${ind}get_option('includedir') / sdbusplus_current_path,${nl}"
+
+                outputs="${outputs}${ind}'server.hpp',${nl}"
+                install="${install}${ind}get_option('includedir') / sdbusplus_current_path,${nl}"
+
+                outputs="${outputs}${ind}'server.cpp',${nl}"
+                install="${install}${ind}false,${nl}"
+
+                outputs="${outputs}${ind}'aserver.hpp',${nl}"
+                install="${install}${ind}get_option('includedir') / sdbusplus_current_path,${nl}"
+
+                outputs="${outputs}${ind}'client.hpp',${nl}"
+                install="${install}${ind}get_option('includedir') / sdbusplus_current_path,${nl}"
                 ;;
 
             *)
@@ -211,8 +252,10 @@ function meson_cpp_target() {
         << EOF
 generated_sources += custom_target(
     '$1__cpp'.underscorify(),
-    input: [ ${sources} ],
-    output: [ ${outputs} ],
+    input: [
+${sources}    ],
+    output: [
+${outputs}    ],
     depend_files: sdbusplusplus_depfiles,
     command: [
         sdbuspp_gen_meson_prog, '--command', 'cpp',
@@ -221,6 +264,10 @@ generated_sources += custom_target(
         '--directory', meson.current_source_dir() / '${yamldir}',
         '$1',
     ],
+    install: should_generate_cpp,
+    install_dir: [
+${install}    ],
+    build_by_default: should_generate_cpp,
 )
 
 EOF
@@ -241,7 +288,7 @@ function meson_md_target() {
     # Create the target to generate the interface.md file.
     cat >> "${mesondir}/meson.build" \
         << EOF
-generated_others += custom_target(
+generated_markdown += custom_target(
     '$1__markdown'.underscorify(),
     input: [ ${sources} ],
     output: [ '$(basename "$1").md' ],
@@ -253,6 +300,9 @@ generated_others += custom_target(
         '--directory', meson.current_source_dir() / '${yamldir}',
         '$1',
     ],
+    install: should_generate_markdown,
+    install_dir: [inst_markdown_dir / sdbusplus_current_path],
+    build_by_default: should_generate_markdown,
 )
 
 EOF
@@ -294,7 +344,7 @@ function meson_registry_target() {
     # Create the target to generate the interface.md file.
     cat >> "${mesondir}/meson.build" \
         << EOF
-generated_others += custom_target(
+generated_registry += custom_target(
     '$1__registry'.underscorify(),
     input: [ ${sources} ],
     output: [ '$(basename "$1").json' ],
@@ -306,6 +356,9 @@ generated_others += custom_target(
         '--directory', meson.current_source_dir() / '${yamldir}',
         '$1',
     ],
+    install: should_generate_registry,
+    install_dir: [inst_registry_dir / sdbusplus_current_path],
+    build_by_default: should_generate_registry,
 )
 
 EOF
@@ -333,8 +386,16 @@ function cmd_meson() {
     meson_create_root
     # shellcheck disable=SC2312
     sorted_ifaces="$(echo "${!interfaces[@]}" | tr " " "\n" | sort)"
+    iface_parent_dirs="$(echo "${sorted_ifaces}" | xargs -n1 dirname)"
+    # shellcheck disable=SC2312
+    sorted_dirs="$(echo "${sorted_ifaces} ${iface_parent_dirs}" | tr " " "\n" | sort | uniq)"
     for i in ${sorted_ifaces}; do
         meson_create_path "${i}"
+    done
+    for i in ${sorted_dirs}; do
+        meson_insert_current_path "${i}"
+    done
+    for i in ${sorted_ifaces}; do
         meson_cpp_target "${i}"
         meson_md_target "${i}"
         meson_registry_target "${i}"

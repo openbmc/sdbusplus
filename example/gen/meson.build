@@ -13,3 +13,6 @@ if sdbuspp_gen_meson_ver != 'sdbus++-gen-meson version 10'
     )
 endif
 
+inst_markdown_dir = get_option('datadir') / 'doc' / meson.project_name()
+inst_registry_dir = get_option('datadir') / 'redfish-registry' / meson.project_name()
+

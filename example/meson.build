@@ -51,17 +51,11 @@ executable(
 )
 
 generated_sources = []
-generated_others = []
+generated_markdown = []
+generated_registry = []
+
 subdir('gen')
 subdir('gen/net')
-
-custom_target(
-    'example_md',
-    command: 'true',
-    output: 'example_md',
-    capture: true,
-    depends: generated_others,
-    build_by_default: true)
 
 executable(
     'calculator-server',

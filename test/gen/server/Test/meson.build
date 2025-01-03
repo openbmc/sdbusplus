@@ -1,8 +1,19 @@
 # Generated file; do not modify.
+
+sdbusplus_current_path = 'server/Test'
+
 generated_sources += custom_target(
     'server/Test__cpp'.underscorify(),
-    input: [ '../../../yaml/server/Test.interface.yaml',  ],
-    output: [ 'common.hpp', 'server.cpp', 'server.hpp', 'aserver.hpp', 'client.hpp',  ],
+    input: [
+        '../../../yaml/server/Test.interface.yaml',
+    ],
+    output: [
+        'common.hpp',
+        'server.hpp',
+        'server.cpp',
+        'aserver.hpp',
+        'client.hpp',
+    ],
     depend_files: sdbusplusplus_depfiles,
     command: [
         sdbuspp_gen_meson_prog, '--command', 'cpp',
@@ -11,5 +22,14 @@ generated_sources += custom_target(
         '--directory', meson.current_source_dir() / '../../../yaml',
         'server/Test',
     ],
+    install: should_generate_cpp,
+    install_dir: [
+        get_option('includedir') / sdbusplus_current_path,
+        get_option('includedir') / sdbusplus_current_path,
+        false,
+        get_option('includedir') / sdbusplus_current_path,
+        get_option('includedir') / sdbusplus_current_path,
+    ],
+    build_by_default: should_generate_cpp,
 )
 

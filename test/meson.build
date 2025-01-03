@@ -87,10 +87,8 @@ test(
     ),
 )
 
-generated_sources = []
-generated_others = []
+yaml_selected_subdirs = ['server']
 subdir('gen')
-subdir('gen/server')
 
 server_test_pre = declare_dependency(
     include_directories: include_directories('gen'),
@@ -102,17 +100,8 @@ server_test_lib = static_library(
     implicit_include_directories: false,
     dependencies: server_test_pre)
 
-generated_sources_header = []
-foreach s : generated_sources
-    foreach f : s.to_list()
-        if f.full_path().endswith('.hpp')
-            generated_sources_header += f
-        endif
-    endforeach
-endforeach
-
 server_test_dep = declare_dependency(
-  sources: generated_sources_header,
+  sources: generated_headers,
   link_with: server_test_lib,
   dependencies: server_test_pre)
 

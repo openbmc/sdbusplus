@@ -50,18 +50,8 @@ executable(
     dependencies: asio_dep,
 )
 
-generated_sources = []
-generated_others = []
+yaml_selected_subdirs = ['net']
 subdir('gen')
-subdir('gen/net')
-
-custom_target(
-    'example_md',
-    command: 'true',
-    output: 'example_md',
-    capture: true,
-    depends: generated_others,
-    build_by_default: true)
 
 executable(
     'calculator-server',

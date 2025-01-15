@@ -81,7 +81,7 @@ class EventElement(NamedElement):
         result["NumberOfArgs"] = len(args)
         result["ParamTypes"] = [x.registry_type() for x in args]
 
-        result["OEM"] = {
+        result["Oem"] = {
             "OpenBMC_Mapping": {
                 "Event": interface + "." + self.name,
                 "Args": self.registry_args_mapping(interface),
@@ -232,6 +232,6 @@ class Event(NamedElement, Renderer):
         }
 
         if len(mappings) != 0:
-            result["OEM"] = ({"OpenBMC_Mapping": mappings},)
+            result["Oem"] = {"OpenBMC_Mapping": mappings}
 
         return json.dumps(result, indent=4)

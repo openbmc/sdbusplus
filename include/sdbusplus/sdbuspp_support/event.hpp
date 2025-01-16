@@ -8,8 +8,8 @@
 namespace sdbusplus::sdbuspp
 {
 
-using register_hook =
-    std::function<void(const nlohmann::json&, const std::source_location&)>;
+using register_hook = void (*)(const nlohmann::json&,
+                               const std::source_location&);
 
 void register_event(const std::string&, register_hook);
 

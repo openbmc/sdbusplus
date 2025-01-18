@@ -6,7 +6,7 @@
     def parameter(p, defaultValue=False):
         r = "%s %s" % (p.cppTypeParam(interface.name), p.camelCase)
         if defaultValue:
-            r += default_value(p)
+            r += p.default_value(interface.name)
         return r
 
     def parameters_as_list():
@@ -15,12 +15,6 @@
     def parameters_types_as_list():
         return ", ".join([ p.cppTypeParam(interface.name, full=True)
                 for p in signal.properties ])
-
-    def default_value(p):
-        if p.defaultValue != None:
-            return " = " + str(p.defaultValue)
-        else:
-            return ""
 %>
 ###
 ### Emit 'header'

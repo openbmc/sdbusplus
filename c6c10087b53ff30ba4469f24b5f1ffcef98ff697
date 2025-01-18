@@ -43,6 +43,29 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "93a9f00e_76d0514e",
+        "filename": "tools/sdbusplus/templates/interface.client.hpp.mako",
+        "patchSetId": 1
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-01-18T02:17:57Z",
+      "side": 1,
+      "message": "nit: We generally use Allman brace style in OpenBMC.",
+      "range": {
+        "startLine": 52,
+        "startChar": 22,
+        "endLine": 52,
+        "endChar": 23
+      },
+      "revId": "c6c10087b53ff30ba4469f24b5f1ffcef98ff697",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "c052b635_fcfea1b0",
         "filename": "tools/sdbusplus/templates/interface.client.hpp.mako",
         "patchSetId": 1

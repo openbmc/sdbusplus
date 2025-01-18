@@ -1,6 +1,8 @@
 #pragma once
 #include <sdbusplus/async/client.hpp>
+#include <sdbusplus/async/execution.hpp>
 #include <type_traits>
+#include <variant>
 
 % for h in interface.cpp_includes():
 #include <${h}>
@@ -47,6 +49,12 @@ class ${interface.classname} :
     private sdbusplus::async::client::details::client_context_friend
 {
   public:
+    struct Properties {
+        % for p in interface.properties:
+        ${p.cppTypeParam(interface.name)} ${p.snake_case};
+        % endfor
+    };
+
     friend Client;
     template <typename, typename>
     friend struct sdbusplus::client::${interface.cppNamespacedClass()};
@@ -61,6 +69,33 @@ ${m.render(loader, "method.client.hpp.mako", method=m, interface=interface)}
     % for p in interface.properties:
 ${p.render(loader, "property.client.hpp.mako", property=p, interface=interface)}
     % endfor
+
+    auto all_properties() {
+        using variant_type = std::variant<${",".join(set([p.cppTypeParam(interface.name) for p in interface.properties]))}>;
+        return proxy.template get_all_properties<variant_type>(context()) |
+               sdbusplus::async::execution::then([](auto&& v) {
+                   Properties result;
+                   for (auto& [property, value] : v) {
+                       std::visit([&](auto v) {
+                           % for t in set([p.cppTypeParam(interface.name) for p in interface.properties]):
+                           if constexpr (std::is_same_v<std::remove_cvref_t<decltype(v)>, ${t}>)
+                           {
+                               % for p in interface.properties:
+                               % if p.cppTypeParam(interface.name) == t:
+                               if (property == "${p.name}")
+                               {
+                                   result.${p.snake_case} = v;
+                               }
+                               % endif
+                               % endfor
+                           }
+                           % endfor
+                       }, value);
+                   }
+                   return result;
+               });
+    }
+
   private:
     // Conversion constructor from proxy used by client_t.
     explicit constexpr ${interface.classname}(Proxy p) :

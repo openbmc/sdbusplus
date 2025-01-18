@@ -26,6 +26,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "2a8c1689_ff3b0f5c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1002343
+      },
+      "writtenOn": "2025-01-18T05:29:09Z",
+      "side": 1,
+      "message": "I\u0027ve inverted the loop and will now report the type mismatch via a suitable thrown exception. I didn\u0027t realize that exceptions were the way here, so now I think it makes more sense.\n\nAre you guaranteed to try to interpret/unpack as the enum first? If yes, then the failure will now be caught (see your other suggestion). If no, then isn\u0027t there is a concern that the type would be unpacked as a string, then *incorrectly* throw an exception?",
+      "parentUuid": "e2d83250_249a5afc",
+      "range": {
+        "startLine": 14,
+        "startChar": 0,
+        "endLine": 16,
+        "endChar": 29
+      },
+      "revId": "c6c10087b53ff30ba4469f24b5f1ffcef98ff697",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "f25750bc_b26d51e1",
         "filename": "/COMMIT_MSG",
         "patchSetId": 1
@@ -49,6 +73,30 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "7a51e796_22f755bf",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1002343
+      },
+      "writtenOn": "2025-01-18T05:29:09Z",
+      "side": 1,
+      "message": "Done. That method was duplicated a bit, I\u0027ve lifted it and removed that specific template, since it seems simpler without it.",
+      "parentUuid": "f25750bc_b26d51e1",
+      "range": {
+        "startLine": 18,
+        "startChar": 51,
+        "endLine": 21,
+        "endChar": 42
+      },
+      "revId": "c6c10087b53ff30ba4469f24b5f1ffcef98ff697",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "8b7c0177_92e45a22",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 1
@@ -60,6 +108,24 @@
       "writtenOn": "2025-01-18T02:17:00Z",
       "side": 1,
       "message": "Thanks.  This is great.\n\nThere is some behavior where we can use `sdbusplus::async::client\u003cT1, T2\u003e` to make a single proxy of both interfaces, which isn\u0027t covered by this code, but I think this is a good enough start.  I can refactor later on to support the `client\u003c...\u003e` case.\n\nHave a few minor comments.\n\nI don\u0027t know if you\u0027ve used `clang-format` against the generated code.  It\u0027s almost impossible to get generated code to not change against `clang-format` but I try to make the template.mako files as close to the `clang-format` output as possible.  I don\u0027t recall of off hand if the lambda formatting you used matches the default format we use.",
+      "revId": "c6c10087b53ff30ba4469f24b5f1ffcef98ff697",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "bf99d281_e6ad7718",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1002343
+      },
+      "writtenOn": "2025-01-18T05:29:09Z",
+      "side": 1,
+      "message": "Much appreciated that the complex case can be deferred.\n\nI\u0027ve made the output match clang-format perfectly for the example. No guarantees otherwise (and it was already a bit off in other parts, e.g. headers and constructor), but hopefully that\u0027s good for this change.",
+      "parentUuid": "8b7c0177_92e45a22",
       "revId": "c6c10087b53ff30ba4469f24b5f1ffcef98ff697",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
@@ -110,6 +176,54 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "9ef92e39_5910710a",
+        "filename": "tools/sdbusplus/templates/interface.client.hpp.mako",
+        "patchSetId": 1
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 1002343
+      },
+      "writtenOn": "2025-01-18T05:29:09Z",
+      "side": 1,
+      "message": "Zero issues, done.",
+      "parentUuid": "91870812_07c2dcc9",
+      "range": {
+        "startLine": 52,
+        "startChar": 11,
+        "endLine": 52,
+        "endChar": 21
+      },
+      "revId": "c6c10087b53ff30ba4469f24b5f1ffcef98ff697",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "68205be6_88b72300",
+        "filename": "tools/sdbusplus/templates/interface.client.hpp.mako",
+        "patchSetId": 1
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 1002343
+      },
+      "writtenOn": "2025-01-18T05:29:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "93a9f00e_76d0514e",
+      "range": {
+        "startLine": 52,
+        "startChar": 22,
+        "endLine": 52,
+        "endChar": 23
+      },
+      "revId": "c6c10087b53ff30ba4469f24b5f1ffcef98ff697",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c052b635_fcfea1b0",
@@ -123,6 +237,30 @@
       "writtenOn": "2025-01-18T02:17:00Z",
       "side": 1,
       "message": "Let\u0027s do this as `properties()`.",
+      "range": {
+        "startLine": 73,
+        "startChar": 9,
+        "endLine": 73,
+        "endChar": 23
+      },
+      "revId": "c6c10087b53ff30ba4469f24b5f1ffcef98ff697",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "89134c82_f51d4d4e",
+        "filename": "tools/sdbusplus/templates/interface.client.hpp.mako",
+        "patchSetId": 1
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 1002343
+      },
+      "writtenOn": "2025-01-18T05:29:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c052b635_fcfea1b0",
       "range": {
         "startLine": 73,
         "startChar": 9,
@@ -156,6 +294,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "54c4118a_1ae2d7d4",
+        "filename": "tools/sdbusplus/templates/interface.client.hpp.mako",
+        "patchSetId": 1
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 1002343
+      },
+      "writtenOn": "2025-01-18T05:29:09Z",
+      "side": 1,
+      "message": "Perfect. Done.",
+      "parentUuid": "2e3ccca2_c09a161f",
+      "range": {
+        "startLine": 74,
+        "startChar": 0,
+        "endLine": 75,
+        "endChar": 75
+      },
+      "revId": "c6c10087b53ff30ba4469f24b5f1ffcef98ff697",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "f4054603_c69970ef",
@@ -179,6 +341,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "484db212_72de1285",
+        "filename": "tools/sdbusplus/templates/interface.client.hpp.mako",
+        "patchSetId": 1
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 1002343
+      },
+      "writtenOn": "2025-01-18T05:29:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f4054603_c69970ef",
+      "range": {
+        "startLine": 78,
+        "startChar": 24,
+        "endLine": 78,
+        "endChar": 29
+      },
+      "revId": "c6c10087b53ff30ba4469f24b5f1ffcef98ff697",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "197c4869_e20703a8",
@@ -192,6 +378,30 @@
       "writtenOn": "2025-01-18T02:17:00Z",
       "side": 1,
       "message": "```suggestion\n                           if constexpr (std::is_same_v\u003cstd::decay_t\u003cdecltype(v)\u003e, ${t}\u003e)\n```\n\nI think generally I use `decay_t` rather than `remove_cvref_t` in the rest of the repository.  For this use case probably none of them are necessary, but for consistency I think we can use `decay_t` unless you have strong reasons for not.",
+      "range": {
+        "startLine": 81,
+        "startChar": 61,
+        "endLine": 81,
+        "endChar": 75
+      },
+      "revId": "c6c10087b53ff30ba4469f24b5f1ffcef98ff697",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7fc8e4c0_cfd35cca",
+        "filename": "tools/sdbusplus/templates/interface.client.hpp.mako",
+        "patchSetId": 1
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 1002343
+      },
+      "writtenOn": "2025-01-18T05:29:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "197c4869_e20703a8",
       "range": {
         "startLine": 81,
         "startChar": 61,

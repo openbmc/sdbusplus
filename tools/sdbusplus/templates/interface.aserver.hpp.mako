@@ -87,7 +87,7 @@ ${p.render(loader, "property.aserver.set.hpp.mako", property=p, interface=interf
 
   protected:
 % for p in interface.properties:
-${p.render(loader, "property.aserver.value.hpp.mako", property=p, interface=interface)}\
+    ${p.cppTypeParam(interface.name)} ${p.snake_case}_${p.default_value(interface.name)};
 % endfor
 
   private:

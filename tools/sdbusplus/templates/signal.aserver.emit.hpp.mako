@@ -5,17 +5,12 @@
 
     def parameter(p):
         r = "%s %s%s" % \
-            (p.cppTypeParam(interface.name), p.camelCase, default_value(p))
+            (p.cppTypeParam(interface.name), p.camelCase, p.default_value(interface.name))
         return r
 
     def parameters_as_list():
         return ", ".join([ p.camelCase for p in signal.properties ])
 
-    def default_value(p):
-        if p.defaultValue != None:
-            return " = " + str(p.defaultValue)
-        else:
-            return ""
 %>\
     /** @brief Send signal '${signal.name}'
      *

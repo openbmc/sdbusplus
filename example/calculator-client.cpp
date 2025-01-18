@@ -59,6 +59,13 @@ auto startup(sdbusplus::async::context& ctx) -> sdbusplus::async::task<>
         std::cout << "Should be 'client': " << _ << std::endl;
     }
 
+    {
+        // Grab all the properties and print them.
+        auto _ = co_await c.properties();
+        std::cout << "Should be 1234: " << _.last_result << std::endl;
+        std::cout << "Should be 'client': " << _.owner << std::endl;
+    }
+
     co_return;
 }
 

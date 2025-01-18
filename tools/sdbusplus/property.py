@@ -86,11 +86,15 @@ class Property(NamedElement, Renderer):
     def cppTypeParam(self, interface, full=False, typename="common"):
         return self.__cppTypeParam(interface, self.cppTypeName, full, typename)
 
-    def default_value(self):
-        if self.defaultValue is not None:
-            return " = " + str(self.defaultValue)
-        else:
+    def default_value(self, interface):
+        if self.defaultValue is None:
             return ""
+        value = str(self.defaultValue)
+        enum_prefix = ""
+        if self.is_enum():
+            p_type = self.cppTypeParam(interface)
+            enum_prefix = f"{p_type}::"
+        return f" = {enum_prefix}{value}"
 
     def __cppTypeParam(
         self, interface, cppTypeName, full=False, typename="common"

@@ -1,6 +1,52 @@
 {
   "comments": [
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "e2d83250_249a5afc",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-01-18T02:35:23Z",
+      "side": 1,
+      "message": "I\u0027m good with this position.  Using optional for all of them is a lot more clumsy. \n\nThere is a subtle case where this generated code is more likely to crash (actually, throw an exception) but any case of it is a server-side bug that we should really fix anyhow: enums.\n\nEnums aren\u0027t a first-class concept in dbus, but they are in sdbusplus.  What we do is generate fully qualified strings (ie. `xyz.openbmc_project.Interface.EnumType.EnumValue`) and that\u0027s what we send across dbus, but when they are pulled out of the message they are converted into a C++ enum.  If the conversion fails, it throws an exception.\n\nTwo possibilities with the code you have:\n1. `get_all_properties\u003cvariant\u003cenum, string\u003e\u003e` -- The enum conversion may fail, which will devolve into a string.  Your visit function will see the wrong type and skip the property.\n2. `get_all_properties\u003cvariant\u003cenum\u003e\u003e` -- The enum conversion may fail and will throw an exception because there is no other obvious type to convert to.\n\nI don\u0027t think a change is necessary, but up to you.  Right now your visit checks type and then name.  If we switch to name and then type we could report condition #1 rather than devolving to the default value (because the property name will match but the expected vs received type will not match).",
+      "range": {
+        "startLine": 14,
+        "startChar": 0,
+        "endLine": 16,
+        "endChar": 29
+      },
+      "revId": "c6c10087b53ff30ba4469f24b5f1ffcef98ff697",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f25750bc_b26d51e1",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-01-18T02:35:23Z",
+      "side": 1,
+      "message": "In theory we could use the default value in the property as the sane-default in the struct.\n\nThis method could be lifted up into the `property` class and then called similarly as `property \u003d default;` in the struct definition: https://github.com/openbmc/sdbusplus/blob/56dd6dd45837670e8cce56a0602e6dfe5dc75816/tools/sdbusplus/templates/property.aserver.value.hpp.mako#L5",
+      "range": {
+        "startLine": 18,
+        "startChar": 51,
+        "endLine": 21,
+        "endChar": 42
+      },
+      "revId": "c6c10087b53ff30ba4469f24b5f1ffcef98ff697",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "8b7c0177_92e45a22",

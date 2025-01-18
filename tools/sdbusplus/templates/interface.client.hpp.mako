@@ -1,6 +1,8 @@
 #pragma once
 #include <sdbusplus/async/client.hpp>
+#include <sdbusplus/async/execution.hpp>
 #include <type_traits>
+#include <variant>
 
 % for h in interface.cpp_includes():
 #include <${h}>
@@ -47,6 +49,13 @@ class ${interface.classname} :
     private sdbusplus::async::client::details::client_context_friend
 {
   public:
+    struct properties_t
+    {
+        % for p in interface.properties:
+        ${p.cppTypeParam(interface.name)} ${p.snake_case}${p.default_value(interface.name)};
+        % endfor
+    };
+
     friend Client;
     template <typename, typename>
     friend struct sdbusplus::client::${interface.cppNamespacedClass()};
@@ -61,6 +70,43 @@ ${m.render(loader, "method.client.hpp.mako", method=m, interface=interface)}
     % for p in interface.properties:
 ${p.render(loader, "property.client.hpp.mako", property=p, interface=interface)}
     % endfor
+
+    % if interface.properties:
+    auto properties()
+    {
+        return proxy.template get_all_properties<PropertiesVariant>(context()) |
+               sdbusplus::async::execution::then([](auto&& v) {
+                   properties_t result;
+                   for (const auto& [property, value] : v)
+                   {
+                       std::visit(
+                           [&](auto v) {
+                               % for p in interface.properties:
+                               if (property == "${p.name}")
+                               {
+                                   if constexpr (std::is_same_v<
+                                                     std::decay_t<decltype(v)>,
+                                                     ${p.cppTypeParam(interface.name)}>)
+                                   {
+                                       result.${p.snake_case} = v;
+                                       return;
+                                   }
+                                   else
+                                   {
+                                       throw exception::UnpackPropertyError(
+                                           property,
+                                           UnpackErrorReason::wrongType);
+                                   }
+                               }
+                               % endfor
+                           },
+                           value);
+                   }
+                   return result;
+               });
+    }
+    %endif
+
   private:
     // Conversion constructor from proxy used by client_t.
     explicit constexpr ${interface.classname}(Proxy p) :

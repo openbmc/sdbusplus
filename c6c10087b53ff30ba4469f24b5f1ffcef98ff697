@@ -1,0 +1,136 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8b7c0177_92e45a22",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-01-18T02:17:00Z",
+      "side": 1,
+      "message": "Thanks.  This is great.\n\nThere is some behavior where we can use `sdbusplus::async::client\u003cT1, T2\u003e` to make a single proxy of both interfaces, which isn\u0027t covered by this code, but I think this is a good enough start.  I can refactor later on to support the `client\u003c...\u003e` case.\n\nHave a few minor comments.\n\nI don\u0027t know if you\u0027ve used `clang-format` against the generated code.  It\u0027s almost impossible to get generated code to not change against `clang-format` but I try to make the template.mako files as close to the `clang-format` output as possible.  I don\u0027t recall of off hand if the lambda formatting you used matches the default format we use.",
+      "revId": "c6c10087b53ff30ba4469f24b5f1ffcef98ff697",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "91870812_07c2dcc9",
+        "filename": "tools/sdbusplus/templates/interface.client.hpp.mako",
+        "patchSetId": 1
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-01-18T02:17:00Z",
+      "side": 1,
+      "message": "Ok if we do `properties_t`?",
+      "range": {
+        "startLine": 52,
+        "startChar": 11,
+        "endLine": 52,
+        "endChar": 21
+      },
+      "revId": "c6c10087b53ff30ba4469f24b5f1ffcef98ff697",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c052b635_fcfea1b0",
+        "filename": "tools/sdbusplus/templates/interface.client.hpp.mako",
+        "patchSetId": 1
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-01-18T02:17:00Z",
+      "side": 1,
+      "message": "Let\u0027s do this as `properties()`.",
+      "range": {
+        "startLine": 73,
+        "startChar": 9,
+        "endLine": 73,
+        "endChar": 23
+      },
+      "revId": "c6c10087b53ff30ba4469f24b5f1ffcef98ff697",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2e3ccca2_c09a161f",
+        "filename": "tools/sdbusplus/templates/interface.client.hpp.mako",
+        "patchSetId": 1
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-01-18T02:17:00Z",
+      "side": 1,
+      "message": "```suggestion\n        return proxy.template get_all_properties\u003cPropertiesVariant\u003e(context()) |\n```\n\nWe already generate PropertiesVariant, which you\u0027ll want to use here.  The existing PropertiesVariant uses some template magic to deduplicate the types otherwise you can end up with `variant\u003cfoo, foo, ...\u003e` which doesn\u0027t compile.",
+      "range": {
+        "startLine": 74,
+        "startChar": 0,
+        "endLine": 75,
+        "endChar": 75
+      },
+      "revId": "c6c10087b53ff30ba4469f24b5f1ffcef98ff697",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f4054603_c69970ef",
+        "filename": "tools/sdbusplus/templates/interface.client.hpp.mako",
+        "patchSetId": 1
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-01-18T02:17:00Z",
+      "side": 1,
+      "message": "nit: `const auto\u0026`?",
+      "range": {
+        "startLine": 78,
+        "startChar": 24,
+        "endLine": 78,
+        "endChar": 29
+      },
+      "revId": "c6c10087b53ff30ba4469f24b5f1ffcef98ff697",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "197c4869_e20703a8",
+        "filename": "tools/sdbusplus/templates/interface.client.hpp.mako",
+        "patchSetId": 1
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-01-18T02:17:00Z",
+      "side": 1,
+      "message": "```suggestion\n                           if constexpr (std::is_same_v\u003cstd::decay_t\u003cdecltype(v)\u003e, ${t}\u003e)\n```\n\nI think generally I use `decay_t` rather than `remove_cvref_t` in the rest of the repository.  For this use case probably none of them are necessary, but for consistency I think we can use `decay_t` unless you have strong reasons for not.",
+      "range": {
+        "startLine": 81,
+        "startChar": 61,
+        "endLine": 81,
+        "endChar": 75
+      },
+      "revId": "c6c10087b53ff30ba4469f24b5f1ffcef98ff697",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

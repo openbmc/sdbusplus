@@ -34,6 +34,8 @@ struct ${interface.classname}
     % if interface.properties:
     using PropertiesVariant = sdbusplus::utility::dedup_variant_t<
         ${",\n        ".join(sorted(setOfPropertyTypes()))}>;
+    % else:
+    using PropertiesVariant = std::variant<std::monostate>;
     % endif \
 
     % for p in interface.paths:

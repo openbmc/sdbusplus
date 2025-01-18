@@ -66,6 +66,12 @@ auto startup(sdbusplus::async::context& ctx) -> sdbusplus::async::task<>
         std::cout << "Should be 'client': " << _.owner << std::endl;
     }
 
+    // Look at all calculator objects; there are currently none.
+    for (const auto& [path, prop] : co_await c.managed_objects<Calculator>())
+    {
+        std::cout << "Path: " << path.filename() << std::endl;
+    }
+
     co_return;
 }
 

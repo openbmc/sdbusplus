@@ -71,41 +71,59 @@ ${m.render(loader, "method.client.hpp.mako", method=m, interface=interface)}
 ${p.render(loader, "property.client.hpp.mako", property=p, interface=interface)}
     % endfor
 
-    % if interface.properties:
-    auto properties()
+    static properties_t
+        unpack(const std::unordered_map<std::string, PropertiesVariant>& props)
     {
-        return proxy.template get_all_properties<PropertiesVariant>(context()) |
-               sdbusplus::async::execution::then([](auto&& v) {
-                   properties_t result;
-                   for (const auto& [property, value] : v)
-                   {
-                       std::visit(
-                           [&](auto v) {
-                               % for p in interface.properties:
-                               if (property == "${p.name}")
-                               {
-                                   if constexpr (std::is_same_v<
-                                                     std::decay_t<decltype(v)>,
+        properties_t result;
+        for (const auto& [property, value] : props)
+        {
+            std::visit(
+                [&](auto v) {
+                    % for p in interface.properties:
+                    if (property == "${p.name}")
+                    {
+                        if constexpr (std::is_same_v<std::decay_t<decltype(v)>,
                                                      ${p.cppTypeParam(interface.name)}>)
-                                   {
-                                       result.${p.snake_case} = v;
-                                       return;
-                                   }
-                                   else
-                                   {
-                                       throw exception::UnpackPropertyError(
-                                           property,
-                                           UnpackErrorReason::wrongType);
-                                   }
-                               }
-                               % endfor
-                           },
-                           value);
+                        {
+                            result.${p.snake_case} = v;
+                            return;
+                        }
+                        else
+                        {
+                            throw exception::UnpackPropertyError(
+                                property, UnpackErrorReason::wrongType);
+                        }
+                    }
+                    % endfor
+                },
+                value);
+        }
+        return result;
+    }
+
+    template <typename V>
+    auto managed_objects()
+    {
+        using result_t = std::unordered_map<sdbusplus::message::object_path,
+                                            typename V::properties_t>;
+        return proxy.template get_managed_objects<V>(context()) |
+               sdbusplus::async::execution::then([](auto&& v) {
+                   result_t result;
+                   for (const auto& [path, properties] : v)
+                   {
+                       result.emplace(path.filename(), V::unpack(properties));
                    }
                    return result;
                });
     }
-    %endif
+
+    auto properties()
+    {
+        return proxy.template get_all_properties<PropertiesVariant>(context()) |
+               sdbusplus::async::execution::then([](auto&& v) {
+                   return unpack(v);
+               });
+    }
 
   private:
     // Conversion constructor from proxy used by client_t.

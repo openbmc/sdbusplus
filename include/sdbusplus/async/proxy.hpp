@@ -182,6 +182,46 @@ struct proxy : private sdbusplus::bus::details::bus_friend
         return prop_intf.template call<result_t>(ctx, "GetAll", c_str(i));
     }
 
+    /** Get all managed objects corresponding to the given interface.
+     *
+     * @tparam V - The client class for the interface.
+     *
+     * @param[in] ctx - The context to use.
+     *
+     * @return A map of paths to properties.
+     */
+    template <typename V>
+    auto get_managed_objects(context& ctx) const
+        requires((S) && (P) && (I))
+    {
+        using variant_t = typename V::PropertiesVariant;
+        using result_t = std::unordered_map<
+            sdbusplus::message::object_path,
+            std::unordered_map<std::string, // Interface name.
+                               std::unordered_map<std::string, // Property.
+                                                  variant_t>>>;
+        auto prop_intf = proxy(s, p, dbus_objman_intf);
+
+        return prop_intf.template call<result_t>(ctx, "GetManagedObjects") |
+               execution::then([](auto&& v) {
+                   std::unordered_map<
+                       sdbusplus::message::object_path,
+                       std::unordered_map<std::string, variant_t>>
+                       results;
+                   for (auto& [path, interfaces] : v)
+                   {
+                       for (auto& [interface, properties] : interfaces)
+                       {
+                           if (interface == V::interface)
+                           {
+                               results.emplace(path, std::move(properties));
+                           }
+                       }
+                   }
+                   return results;
+               });
+    }
+
     /** Set a property.
      *
      * @tparam T - The type of the property (usually deduced by the compiler).
@@ -204,6 +244,8 @@ struct proxy : private sdbusplus::bus::details::bus_friend
 
   private:
     static constexpr auto dbus_prop_intf = "org.freedesktop.DBus.Properties";
+    static constexpr auto dbus_objman_intf =
+        "org.freedesktop.DBus.ObjectManager";
 
     // Helper to get the underlying c-string of a string_view or string.
     static auto c_str(string_ref v)

@@ -74,6 +74,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "a06cfe50_2a573bd4",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-01-21T20:11:02Z",
+      "side": 1,
+      "message": "I think this works as-is right now.\n\nhttps://github.com/openbmc/sdbusplus/blob/56dd6dd45837670e8cce56a0602e6dfe5dc75816/include/sdbusplus/message/read.hpp#L389\nhttps://github.com/openbmc/sdbusplus/blob/56dd6dd45837670e8cce56a0602e6dfe5dc75816/include/sdbusplus/message/native_types.hpp#L240\n\nThe first one is a specialization for `read_single\u003cvariant\u003e`.  This identifies if the variant type is either a string or an enum (when decoding) and delegates it to another function (`convert_from_string`).\n\nThe second one is the `convert_from_string` implementation for variants.  It iterates through all the types, trying the enums first and then falling back to the string.  (If the variant only had enums, it ends up returning an empty `optional`, which the `read` function turns into an exception.)",
+      "parentUuid": "8ab92634_e9fdfc12",
+      "range": {
+        "startLine": 14,
+        "startChar": 0,
+        "endLine": 16,
+        "endChar": 29
+      },
+      "revId": "c6c10087b53ff30ba4469f24b5f1ffcef98ff697",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "f25750bc_b26d51e1",
         "filename": "/COMMIT_MSG",
         "patchSetId": 1

@@ -168,6 +168,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "9a1bf558_08fe09ea",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-01-21T22:59:22Z",
+      "side": 1,
+      "message": "\u003e This code is just undoing that if necessary, e.g. if you want a string and see something that was decoded from a string on the wire (i.e. an Enum), then just undoes that a saves the property as a strong.\n\nOh.  Understood.\n\n\u003e If this edge case is too esoteric then I can roll it back, but hopefully we\u0027re on the same page about the case it is handling.\n\nYeah, let\u0027s just drop it.  That\u0027s not really supported in the base read code either.  The enum strings are purposefully encoded in a way that this shouldn\u0027t be a real use-case.  If someone has a string-that-looks-like-an-enum-but-isn\u0027t, they probably have a bug in their interface design anyhow.  (We almost never allow raw strings that are programmatically interpreted, rather than intended for humans)",
+      "parentUuid": "7e4f3cdb_e580117a",
+      "range": {
+        "startLine": 14,
+        "startChar": 0,
+        "endLine": 16,
+        "endChar": 29
+      },
+      "revId": "c6c10087b53ff30ba4469f24b5f1ffcef98ff697",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "f25750bc_b26d51e1",

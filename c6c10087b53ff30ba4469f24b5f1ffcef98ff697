@@ -50,6 +50,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "8ab92634_e9fdfc12",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1002343
+      },
+      "writtenOn": "2025-01-21T18:11:52Z",
+      "side": 1,
+      "message": "Looking at the read code, I believe this is a bit broken and may throw invalid exceptions if there is an enum type present. I think that we need to do the following:\n\n1) Omit the enum types from the variants during decode\n2) Perform the enum type conversion at name matching instead\n\nThis is a bunch of template magic that I\u0027m happy to have you land afterwards if you feel comfortable with that, but wanted to check my understanding.",
+      "parentUuid": "2a8c1689_ff3b0f5c",
+      "range": {
+        "startLine": 14,
+        "startChar": 0,
+        "endLine": 16,
+        "endChar": 29
+      },
+      "revId": "c6c10087b53ff30ba4469f24b5f1ffcef98ff697",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "f25750bc_b26d51e1",
         "filename": "/COMMIT_MSG",
         "patchSetId": 1

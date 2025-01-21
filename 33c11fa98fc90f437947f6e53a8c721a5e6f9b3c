@@ -20,6 +20,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "d2c4ec56_8bffb81f",
+        "filename": "include/sdbusplus/async/proxy.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 193,
+      "author": {
+        "id": 1002343
+      },
+      "writtenOn": "2025-01-21T21:12:23Z",
+      "side": 1,
+      "message": "Yeah, the problem is actually that it will be challenging to universally decode objects since we can\u0027t automatically construct a union over the properties for each interface.\n\nI don\u0027t think it\u0027s just my use case, I suspect that there are lots of cases where you care about a single interface, you know where the object manager is located (by convention or whatever), and so you can do something like:\n\n`proxy.path(\"/openbmc_xyz/Logging\").managed_objects\u003cLoggingEntry\u003e()`\n\n(Similar for sensors, etc.)\n\nAnd grab the lot of them, without caring about the other kinds coming back. I think that supporting multiple interfaces is going to need a lot more surgery in the message decoding, because it is \"context sensitive\" (e.g. the variant you are dispatching to depends on the string you decode just before that). If there\u0027s a simple solution, I\u0027m open to it 😊\n\nI\u0027m not imaging that this actually replaces the existing code paths, just that in some cases you may try this first, and then fall back to walking the full object tree.",
+      "parentUuid": "b6dae48f_4f8fed38",
+      "revId": "33c11fa98fc90f437947f6e53a8c721a5e6f9b3c",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "f1ba2764_533020df",
         "filename": "include/sdbusplus/async/proxy.hpp",
         "patchSetId": 1
@@ -31,6 +49,24 @@
       "writtenOn": "2025-01-21T20:20:22Z",
       "side": 1,
       "message": "I\u0027m afraid this is more challenging than what you wrote here.  `GetManagedObjects` is hosted by the `org.freedesktop.DBus.ObjectManager`, which is usually created with calls to create a `manager_t`.  The problem is that there is nothing (in either the spec or OpenBMC standards) that dictates what path the ObjectManager.  Some daemons put them at `/`, some put them at `/some/path/of/objects`, and some put in _multiple_ ObjectManagers.\n\nSo, in many cases, this call will fail because there is not an ObjectManager there.  In almost every case where you have `/some/path/to/object`, the `ObjectManager` is at least going to be at `/some/path/to` but it could be higher in the hierarchy.  It won\u0027t be at `/some/path/to/object` because the `ObjectManager` is required to only give children below the path it is hosted at (ie. it won\u0027t give itself).",
+      "revId": "33c11fa98fc90f437947f6e53a8c721a5e6f9b3c",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "645fcc8f_d5c9f26a",
+        "filename": "include/sdbusplus/async/proxy.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 203,
+      "author": {
+        "id": 1002343
+      },
+      "writtenOn": "2025-01-21T21:12:23Z",
+      "side": 1,
+      "message": "I\u0027m not actually mandating the path here, is the issue you\u0027re describing the fact that the call with fail and throw an exception? (And the user has no way to probe this?) What\u0027s the recommended approach for that kind of thing?\n\n(Separately from the discussion about the multiple interfaces.)",
+      "parentUuid": "f1ba2764_533020df",
       "revId": "33c11fa98fc90f437947f6e53a8c721a5e6f9b3c",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }

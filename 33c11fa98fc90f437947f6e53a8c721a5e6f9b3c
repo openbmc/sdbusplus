@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b6dae48f_4f8fed38",
+        "filename": "include/sdbusplus/async/proxy.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 193,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-01-21T20:20:22Z",
+      "side": 1,
+      "message": "I\u0027m fairly certain that this is a case where we\u0027re really going to want some sort of `typename Args...`, like what is done in `include/sdbusplus/async/client.hpp`.\n\nIt is fairly rare to only host exactly 1 interface type (and only want exactly 1 interface type) from a daemon.  Many of our interfaces have some \"primary\" interface and multiple optional \"secondary\" interfaces.\n\nIf you look at `phosphor-logging` as an example, these are all of the interfaces hosted at any single event entry path:\n\n```\norg.freedesktop.DBus.Introspectable\norg.freedesktop.DBus.Peer\norg.freedesktop.DBus.Properties\nxyz.openbmc_project.Association.Definitions\nxyz.openbmc_project.Common.FilePath\nxyz.openbmc_project.Logging.Entry\nxyz.openbmc_project.Object.Delete\nxyz.openbmc_project.Software.Version\n```\n\nNow, it may be that your particular use case only cares about one of them.  I\u0027m not sure that this is a great API for us to maintain though if it doesn\u0027t work for most use-cases.",
+      "revId": "33c11fa98fc90f437947f6e53a8c721a5e6f9b3c",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f1ba2764_533020df",
+        "filename": "include/sdbusplus/async/proxy.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 203,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-01-21T20:20:22Z",
+      "side": 1,
+      "message": "I\u0027m afraid this is more challenging than what you wrote here.  `GetManagedObjects` is hosted by the `org.freedesktop.DBus.ObjectManager`, which is usually created with calls to create a `manager_t`.  The problem is that there is nothing (in either the spec or OpenBMC standards) that dictates what path the ObjectManager.  Some daemons put them at `/`, some put them at `/some/path/of/objects`, and some put in _multiple_ ObjectManagers.\n\nSo, in many cases, this call will fail because there is not an ObjectManager there.  In almost every case where you have `/some/path/to/object`, the `ObjectManager` is at least going to be at `/some/path/to` but it could be higher in the hierarchy.  It won\u0027t be at `/some/path/to/object` because the `ObjectManager` is required to only give children below the path it is hosted at (ie. it won\u0027t give itself).",
+      "revId": "33c11fa98fc90f437947f6e53a8c721a5e6f9b3c",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

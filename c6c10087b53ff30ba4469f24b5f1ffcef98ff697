@@ -144,6 +144,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "7e4f3cdb_e580117a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1002343
+      },
+      "writtenOn": "2025-01-21T21:15:34Z",
+      "side": 1,
+      "message": "The read will try to resolve each Enum in the variant first (makes sense). But if you want to send the string \"xyz.openbmc_project.Interface.EnumType.EnumValue\" and it happens to match with an existing Enum, even if happens to correspond to a string property, it will try to decoded as the Enum variant.\n\nThis code is just undoing that if necessary, e.g. if you want a string and see something that was decoded from a string on the wire (i.e. an Enum), then just undoes that a saves the property as a strong.\n\nIf this edge case is too esoteric then I can roll it back, but hopefully we\u0027re on the same page about the case it is handling.",
+      "parentUuid": "c0c0613c_fdbeaf70",
+      "range": {
+        "startLine": 14,
+        "startChar": 0,
+        "endLine": 16,
+        "endChar": 29
+      },
+      "revId": "c6c10087b53ff30ba4469f24b5f1ffcef98ff697",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "f25750bc_b26d51e1",

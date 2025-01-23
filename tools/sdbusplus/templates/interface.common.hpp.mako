@@ -32,10 +32,15 @@ struct ${interface.classname}
     % endfor
 
     % if interface.properties:
+    struct properties_t
+    {
+        % for p in interface.properties:
+        ${p.cppTypeParam(interface.name)} ${p.snake_case}${p.default_value(interface.name)};
+        % endfor
+    };
+
     using PropertiesVariant = sdbusplus::utility::dedup_variant_t<
         ${",\n        ".join(sorted(setOfPropertyTypes()))}>;
-    % else:
-    using PropertiesVariant = std::variant<std::monostate>;
     % endif \
 
     % for p in interface.paths:

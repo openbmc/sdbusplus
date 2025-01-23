@@ -49,13 +49,6 @@ class ${interface.classname} :
     private sdbusplus::async::client::details::client_context_friend
 {
   public:
-    struct properties_t
-    {
-        % for p in interface.properties:
-        ${p.cppTypeParam(interface.name)} ${p.snake_case}${p.default_value(interface.name)};
-        % endfor
-    };
-
     friend Client;
     template <typename, typename>
     friend struct sdbusplus::client::${interface.cppNamespacedClass()};
@@ -71,6 +64,7 @@ ${m.render(loader, "method.client.hpp.mako", method=m, interface=interface)}
 ${p.render(loader, "property.client.hpp.mako", property=p, interface=interface)}
     % endfor
 
+    % if interface.properties:
     auto properties()
     {
         return proxy.template get_all_properties<PropertiesVariant>(context()) |
@@ -104,6 +98,7 @@ ${p.render(loader, "property.client.hpp.mako", property=p, interface=interface)}
                    return result;
                });
     }
+    % endif
 
   private:
     // Conversion constructor from proxy used by client_t.

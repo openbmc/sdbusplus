@@ -88,7 +88,7 @@ class Property(NamedElement, Renderer):
 
     def default_value(self, interface):
         if self.defaultValue is None:
-            return ""
+            return " = {}"
         value = str(self.defaultValue)
         enum_prefix = ""
         if self.is_enum():

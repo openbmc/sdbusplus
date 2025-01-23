@@ -113,3 +113,25 @@ test(
         dependencies: [gmock_dep, gtest_dep, server_test_dep],
     ),
 )
+
+uninit_tests = [
+    'test_server_no_uninitialized_value_constructor',
+    'test_aserver_no_uninitialized_value_constructor',
+]
+
+foreach t : uninit_tests
+    test(
+        t,
+        executable(
+            t,
+            f'gen/@t@.cpp',
+            generated_sources,
+            include_directories: [
+                include_directories('../build'),
+                include_directories('../build/test/gen'),
+                root_inc,
+            ],
+            dependencies: [sdbusplus_dep],
+        ),
+    )
+endforeach

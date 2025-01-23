@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7fe3f9b0_78265871",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-01-23T18:38:59Z",
+      "side": 1,
+      "message": "This fixes a compile issue in phosphor-inventory-manager.\n\nhttps://github.com/openbmc/phosphor-inventory-manager/blob/174d7ea16385500e5377c1e64c4ed7dc35385f1f/interface_ops.hpp#L29",
+      "revId": "2dd0380b9202993aa5ce2e49a1667be2b9b3e5ae",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

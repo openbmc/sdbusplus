@@ -71,6 +71,7 @@ ${m.render(loader, "method.client.hpp.mako", method=m, interface=interface)}
 ${p.render(loader, "property.client.hpp.mako", property=p, interface=interface)}
     % endfor
 
+    % if interface.properties:
     auto properties()
     {
         return proxy.template get_all_properties<PropertiesVariant>(context()) |
@@ -104,6 +105,7 @@ ${p.render(loader, "property.client.hpp.mako", property=p, interface=interface)}
                    return result;
                });
     }
+    % endif
 
   private:
     // Conversion constructor from proxy used by client_t.

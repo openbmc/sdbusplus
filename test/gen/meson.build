@@ -33,3 +33,25 @@ foreach s : generated_sources
     endforeach
 endforeach
 
+incdir = include_directories('../../build/')
+
+uninit_tests = [
+  'test_server_no_uninitialized_value_constructor',
+  'test_aserver_no_uninitialized_value_constructor',
+]
+
+
+foreach t : uninit_tests
+test(
+  t,
+  executable(
+    t,
+    f'@t@.cpp',
+    generated_sources,
+    include_directories: [incdir, root_inc],
+    dependencies: [
+      sdbusplus_dep,
+    ]
+  )
+)
+endforeach

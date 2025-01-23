@@ -55,6 +55,8 @@ class Property(NamedElement, Renderer):
                     self.defaultValue = (
                         f"std::numeric_limits<{self.cppTypeName}>::min()"
                     )
+        else:
+            self.defaultValue = "{}"
 
         super(Property, self).__init__(**kwargs)
 

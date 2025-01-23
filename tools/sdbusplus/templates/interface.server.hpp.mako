@@ -144,7 +144,7 @@ ${ m.cpp_prototype(loader, interface=interface, ptype='callback-header') }
     % for p in interface.properties:
         % if p.defaultValue is not None:
         ${p.cppTypeParam(interface.name)} _${p.camelCase} = \
-            % if p.is_enum():
+            % if p.is_enum() and p.defaultValue != "{}":
 ${p.cppTypeParam(interface.name)}::\
             % endif
 ${p.defaultValue};

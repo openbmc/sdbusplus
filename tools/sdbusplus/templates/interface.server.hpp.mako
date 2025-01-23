@@ -141,19 +141,10 @@ ${ m.cpp_prototype(loader, interface=interface, ptype='callback-header') }
         sdbusplus::server::interface_t
                 _${interface.joinedName("_", "interface")};
         bus_t&  _sdbusplus_bus;
+
     % for p in interface.properties:
-        % if p.defaultValue is not None:
-        ${p.cppTypeParam(interface.name)} _${p.camelCase} = \
-            % if p.is_enum():
-${p.cppTypeParam(interface.name)}::\
-            % endif
-${p.defaultValue};
-        % else:
-        ${p.cppTypeParam(interface.name)} _${p.camelCase}{};
-        % endif
-
+        ${p.cppTypeParam(interface.name)} _${p.camelCase}${p.default_value(interface.name)};
     % endfor
-
 };
 
 } // namespace sdbusplus::server::${interface.cppNamespace()}

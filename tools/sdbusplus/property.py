@@ -55,6 +55,8 @@ class Property(NamedElement, Renderer):
                     self.defaultValue = (
                         f"std::numeric_limits<{self.cppTypeName}>::min()"
                     )
+        else:
+            self.defaultValue = "{}"
 
         super(Property, self).__init__(**kwargs)
 
@@ -89,6 +91,8 @@ class Property(NamedElement, Renderer):
     def default_value(self, interface):
         if self.defaultValue is None:
             return ""
+        if self.defaultValue == "{}":
+            return " = {}"
         value = str(self.defaultValue)
         enum_prefix = ""
         if self.is_enum():

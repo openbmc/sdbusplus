@@ -77,10 +77,10 @@ should_generate_registry = false
 
 subdir('tools')
 
-if not get_option('examples').disabled()
+if get_option('examples').allowed()
   subdir('example')
 endif
-if not get_option('tests').disabled()
+if get_option('tests').allowed()
   subdir('test')
 endif
 

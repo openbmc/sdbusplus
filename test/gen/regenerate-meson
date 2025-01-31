@@ -1,4 +1,5 @@
 #!/bin/bash
 cd "$(dirname "$0")" || exit
 export PATH="${PWD}/../../tools:${PATH}"
-exec sdbus++-gen-meson --command meson --directory ../yaml --output .
+sdbus++-gen-meson --command meson --directory ../yaml --output .
+find . -name "meson.build" -exec meson format -i {} +

@@ -4,9 +4,7 @@ sdbusplus_current_path = 'server/Test'
 
 generated_sources += custom_target(
     'server/Test__cpp'.underscorify(),
-    input: [
-        '../../../yaml/server/Test.interface.yaml',
-    ],
+    input: ['../../../yaml/server/Test.interface.yaml'],
     output: [
         'common.hpp',
         'server.hpp',
@@ -16,10 +14,15 @@ generated_sources += custom_target(
     ],
     depend_files: sdbusplusplus_depfiles,
     command: [
-        sdbuspp_gen_meson_prog, '--command', 'cpp',
-        '--output', meson.current_build_dir(),
-        '--tool', sdbusplusplus_prog,
-        '--directory', meson.current_source_dir() / '../../../yaml',
+        sdbuspp_gen_meson_prog,
+        '--command',
+        'cpp',
+        '--output',
+        meson.current_build_dir(),
+        '--tool',
+        sdbusplusplus_prog,
+        '--directory',
+        meson.current_source_dir() / '../../../yaml',
         'server/Test',
     ],
     install: should_generate_cpp,

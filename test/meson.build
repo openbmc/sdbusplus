@@ -8,13 +8,13 @@ if not gtest_dep.found() or not gmock_dep.found()
                 dependency('threads'),
                 gtest_proj.dependency('gtest'),
                 gtest_proj.dependency('gtest_main'),
-            ]
+            ],
         )
         gmock_dep = gtest_proj.dependency('gmock')
     else
         assert(
             not get_option('tests').enabled(),
-            'Googletest is required if tests are enabled'
+            'Googletest is required if tests are enabled',
         )
     endif
 endif
@@ -46,18 +46,14 @@ foreach t : tests
         executable(
             'test-' + t.underscorify(),
             t + '.cpp',
-            dependencies: [
-                gtest_dep,
-                gmock_dep,
-                sdbusplus_dep,
-            ],
-        )
+            dependencies: [gtest_dep, gmock_dep, sdbusplus_dep],
+        ),
     )
 endforeach
 
 assert(
     not get_option('tests').allowed() or boost_dep.found(),
-    'Boost is required when tests are enabled'
+    'Boost is required when tests are enabled',
 )
 
 test(
@@ -65,13 +61,8 @@ test(
     executable(
         'test-bus_aio',
         'bus/aio.cpp',
-        dependencies: [
-            boost_dep,
-            gmock_dep,
-            gtest_dep,
-            sdbusplus_dep,
-        ],
-    )
+        dependencies: [boost_dep, gmock_dep, gtest_dep, sdbusplus_dep],
+    ),
 )
 
 test(
@@ -80,10 +71,7 @@ test(
         'test-vtable',
         'vtable/vtable.cpp',
         'vtable/vtable_c.c',
-        dependencies: [
-            gtest_dep,
-            sdbusplus_dep,
-        ],
+        dependencies: [gtest_dep, sdbusplus_dep],
     ),
 )
 
@@ -92,29 +80,28 @@ subdir('gen')
 
 server_test_pre = declare_dependency(
     include_directories: include_directories('gen'),
-    dependencies: sdbusplus_dep)
+    dependencies: sdbusplus_dep,
+)
 
 server_test_lib = static_library(
     'server-test',
     generated_sources,
     implicit_include_directories: false,
-    dependencies: server_test_pre)
+    dependencies: server_test_pre,
+)
 
 server_test_dep = declare_dependency(
-  sources: generated_headers,
-  link_with: server_test_lib,
-  dependencies: server_test_pre)
+    sources: generated_headers,
+    link_with: server_test_lib,
+    dependencies: server_test_pre,
+)
 
 test(
     'test-server',
     executable(
         'test-server',
         'server/object.cpp',
-        dependencies: [
-            gmock_dep,
-            gtest_dep,
-            server_test_dep,
-        ],
+        dependencies: [gmock_dep, gtest_dep, server_test_dep],
     ),
 )
 
@@ -123,10 +110,6 @@ test(
     executable(
         'test-server-message-variant',
         'server/message_variant.cpp',
-        dependencies: [
-            gmock_dep,
-            gtest_dep,
-            server_test_dep,
-        ],
+        dependencies: [gmock_dep, gtest_dep, server_test_dep],
     ),
 )

@@ -1,21 +1,18 @@
-executable(
-    'list-users',
-    'list-users.cpp',
-    dependencies: sdbusplus_dep,
-)
+executable('list-users', 'list-users.cpp', dependencies: sdbusplus_dep)
 
 has_asio = meson.get_compiler('cpp').has_header_symbol(
-  'boost/asio.hpp',
-  'boost::asio::io_context',
-  required: false)
+    'boost/asio.hpp',
+    'boost::asio::io_context',
+    required: false,
+)
 asio_dep = sdbusplus_dep
 if not has_asio
-  asio_dep = disabler()
+    asio_dep = disabler()
 endif
 
 assert(
     not get_option('examples').allowed() or has_asio,
-    'Boost is required when examples are enabled'
+    'Boost is required when examples are enabled',
 )
 
 executable(
@@ -35,14 +32,10 @@ executable(
 executable(
     'coroutine-example',
     'coroutine-example.cpp',
-    dependencies: [ sdbusplus_dep ],
+    dependencies: [sdbusplus_dep],
 )
 
-executable(
-    'register-property',
-    'register-property.cpp',
-    dependencies: asio_dep,
-)
+executable('register-property', 'register-property.cpp', dependencies: asio_dep)
 
 executable(
     'get-all-properties',

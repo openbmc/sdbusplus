@@ -26,9 +26,9 @@ class SdBusInterface
         sd_bus* bus, sd_bus_slot** slot, const char* path,
         const char* interface, const sd_bus_vtable* vtable, void* userdata) = 0;
 
-    virtual int
-        sd_bus_add_match(sd_bus* bus, sd_bus_slot** slot, const char* path,
-                         sd_bus_message_handler_t callback, void* userdata) = 0;
+    virtual int sd_bus_add_match(
+        sd_bus* bus, sd_bus_slot** slot, const char* path,
+        sd_bus_message_handler_t callback, void* userdata) = 0;
 
     virtual int sd_bus_attach_event(sd_bus* bus, sd_event* e, int priority) = 0;
 
@@ -97,8 +97,8 @@ class SdBusInterface
     virtual const char* sd_bus_message_get_member(sd_bus_message* m) = 0;
     virtual const char* sd_bus_message_get_path(sd_bus_message* m) = 0;
     virtual const char* sd_bus_message_get_sender(sd_bus_message* m) = 0;
-    virtual const char*
-        sd_bus_message_get_signature(sd_bus_message* m, int complete) = 0;
+    virtual const char* sd_bus_message_get_signature(sd_bus_message* m,
+                                                     int complete) = 0;
     virtual int sd_bus_message_get_errno(sd_bus_message* m) = 0;
     virtual const sd_bus_error* sd_bus_message_get_error(sd_bus_message* m) = 0;
 

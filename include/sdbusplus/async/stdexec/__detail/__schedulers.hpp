@@ -109,8 +109,8 @@ inline auto get_scheduler_t::operator()(const _Env& __env) const noexcept
 
 template <class _Env>
     requires tag_invocable<get_delegation_scheduler_t, const _Env&>
-inline auto
-    get_delegation_scheduler_t::operator()(const _Env& __env) const noexcept
+inline auto get_delegation_scheduler_t::operator()(
+    const _Env& __env) const noexcept
     -> tag_invoke_result_t<get_delegation_scheduler_t, const _Env&>
 {
     static_assert(

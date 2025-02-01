@@ -95,10 +95,10 @@ constexpr vtable_t property_o(const char* member, const char* signature,
  * @param[in] offset - Offset within object for property.
  * @param[in] flags - optional sdbusplus::vtable::property_ value.
  */
-constexpr vtable_t
-    property_o(const char* member, const char* signature,
-               sd_bus_property_get_t get, sd_bus_property_set_t set,
-               size_t offset, decltype(vtable_t::flags) flags = 0);
+constexpr vtable_t property_o(const char* member, const char* signature,
+                              sd_bus_property_get_t get,
+                              sd_bus_property_set_t set, size_t offset,
+                              decltype(vtable_t::flags) flags = 0);
 
 namespace common_
 {

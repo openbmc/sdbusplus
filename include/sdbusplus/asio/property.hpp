@@ -104,11 +104,11 @@ template <typename T, typename OnError, typename OnSuccess>
 }
 
 template <typename PropertyType, typename Handler>
-inline void
-    setProperty(sdbusplus::asio::connection& bus, const std::string& service,
-                const std::string& path, const std::string& interface,
-                const std::string& propertyName, PropertyType&& propertyValue,
-                Handler&& handler)
+inline void setProperty(sdbusplus::asio::connection& bus,
+                        const std::string& service, const std::string& path,
+                        const std::string& interface,
+                        const std::string& propertyName,
+                        PropertyType&& propertyValue, Handler&& handler)
 {
     bus.async_method_call(
         std::forward<Handler>(handler), service, path,

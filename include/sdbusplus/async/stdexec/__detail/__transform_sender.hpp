@@ -155,8 +155,8 @@ struct __transform_dependent_sender
     // requested domain.
     template <class _Domain, sender_expr _Sender, class _Env>
         requires same_as<__early_domain_of_t<_Sender>, dependent_domain>
-    /*constexpr*/ auto
-        operator()(_Domain __dom, _Sender&& __sndr, const _Env& __env) const
+    /*constexpr*/ auto operator()(_Domain __dom, _Sender&& __sndr,
+                                  const _Env& __env) const
         noexcept(noexcept(__transform_sender()(
             __dom,
             dependent_domain().transform_sender(static_cast<_Sender&&>(__sndr),

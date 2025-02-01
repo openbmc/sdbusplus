@@ -241,8 +241,8 @@ class inplace_stop_callback : __stok::__inplace_stop_callback_base
     }
 
   private:
-    static void
-        __execute_impl_(__stok::__inplace_stop_callback_base* cb) noexcept
+    static void __execute_impl_(
+        __stok::__inplace_stop_callback_base* cb) noexcept
     {
         std::move(static_cast<inplace_stop_callback*>(cb)->__fun_)();
     }

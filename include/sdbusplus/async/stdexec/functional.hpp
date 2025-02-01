@@ -39,8 +39,8 @@ struct __composed
         requires __callable<_Fun1, _Ts...> &&
                  __callable<_Fun0, __call_result_t<_Fun1, _Ts...>>
     STDEXEC_ATTRIBUTE((always_inline))
-    __call_result_t<_Fun0, __call_result_t<_Fun1, _Ts...>>
-        operator()(_Ts&&... __ts) &&
+    __call_result_t<_Fun0, __call_result_t<_Fun1, _Ts...>> operator()(
+        _Ts&&... __ts) &&
     {
         return static_cast<_Fun0&&>(__t0_)(
             static_cast<_Fun1&&>(__t1_)(static_cast<_Ts&&>(__ts)...));
@@ -50,8 +50,8 @@ struct __composed
         requires __callable<const _Fun1&, _Ts...> &&
                  __callable<const _Fun0&, __call_result_t<const _Fun1&, _Ts...>>
     STDEXEC_ATTRIBUTE((always_inline))
-    __call_result_t<_Fun0, __call_result_t<_Fun1, _Ts...>>
-        operator()(_Ts&&... __ts) const&
+    __call_result_t<_Fun0, __call_result_t<_Fun1, _Ts...>> operator()(
+        _Ts&&... __ts) const&
     {
         return __t0_(__t1_(static_cast<_Ts&&>(__ts)...));
     }

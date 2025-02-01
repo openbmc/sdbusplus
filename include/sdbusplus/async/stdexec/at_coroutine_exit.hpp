@@ -194,8 +194,8 @@ class [[nodiscard]] __task
             return false;
         }
 
-        static auto
-            await_suspend(__coro::coroutine_handle<__promise> __h) noexcept
+        static auto await_suspend(
+            __coro::coroutine_handle<__promise> __h) noexcept
             -> __coro::coroutine_handle<>
         {
             __promise& __p = __h.promise();

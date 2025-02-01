@@ -852,16 +852,16 @@ class object_server
         }
     }
 
-    std::shared_ptr<dbus_interface>
-        add_interface(const std::string& path, const std::string& name)
+    std::shared_ptr<dbus_interface> add_interface(const std::string& path,
+                                                  const std::string& name)
     {
         auto dbusIface = std::make_shared<dbus_interface>(conn_, path, name);
         interfaces_.emplace_back(dbusIface);
         return dbusIface;
     }
 
-    std::unique_ptr<dbus_interface>
-        add_unique_interface(const std::string& path, const std::string& name)
+    std::unique_ptr<dbus_interface> add_unique_interface(
+        const std::string& path, const std::string& name)
     {
         return std::make_unique<dbus_interface>(conn_, path, name);
     }
@@ -875,9 +875,9 @@ class object_server
       @return an unique_ptr to initialized dbus_interface
       */
     template <class Initializer>
-    std::unique_ptr<dbus_interface>
-        add_unique_interface(const std::string& path, const std::string& name,
-                             Initializer&& initializer)
+    std::unique_ptr<dbus_interface> add_unique_interface(
+        const std::string& path, const std::string& name,
+        Initializer&& initializer)
     {
         auto dbusIface = std::make_unique<dbus_interface>(conn_, path, name);
         initializer(*dbusIface);

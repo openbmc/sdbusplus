@@ -390,8 +390,8 @@ struct AppendHelper<1>
  *  sd_bus_message_append.
  */
 template <typename Tuple>
-std::enable_if_t<2 <= std::tuple_size_v<Tuple>>
-    append_tuple(sdbusplus::SdBusInterface* intf, sd_bus_message* m, Tuple&& t)
+std::enable_if_t<2 <= std::tuple_size_v<Tuple>> append_tuple(
+    sdbusplus::SdBusInterface* intf, sd_bus_message* m, Tuple&& t)
 {
     // This was called because the tuple had at least 2 items in it.
     AppendHelper<std::tuple_size_v<Tuple>>::op(intf, m, std::move(t));
@@ -408,8 +408,8 @@ std::enable_if_t<2 <= std::tuple_size_v<Tuple>>
  *  can_append_multiple_v == false.
  */
 template <typename Tuple>
-std::enable_if_t<1 == std::tuple_size_v<Tuple>>
-    append_tuple(sdbusplus::SdBusInterface* intf, sd_bus_message* m, Tuple&& t)
+std::enable_if_t<1 == std::tuple_size_v<Tuple>> append_tuple(
+    sdbusplus::SdBusInterface* intf, sd_bus_message* m, Tuple&& t)
 {
     using itemType = decltype(std::get<0>(t));
     append_single_t<itemType>::op(intf, m,

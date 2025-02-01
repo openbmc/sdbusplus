@@ -262,9 +262,8 @@ struct __mstring
 #endif
 
     template <std::size_t _OtherLen>
-    constexpr auto
-        operator<=>(const __mstring<_OtherLen>& __other) const noexcept
-        -> std::strong_ordering
+    constexpr auto operator<=>(const __mstring<_OtherLen>& __other)
+        const noexcept -> std::strong_ordering
     {
         constexpr std::size_t __len = _Len < _OtherLen ? _Len : _OtherLen;
         for (std::size_t __i = 0; __i < __len; ++__i)

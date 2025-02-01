@@ -66,8 +66,8 @@ struct hash<sdbusplus::message_t>
 template <>
 struct hash<sdbusplus::server::transaction::Transaction>
 {
-    size_t
-        operator()(const sdbusplus::server::transaction::Transaction& t) const;
+    size_t operator()(
+        const sdbusplus::server::transaction::Transaction& t) const;
 };
 
 /** @ brief Overload of std::hash for details::Transaction */

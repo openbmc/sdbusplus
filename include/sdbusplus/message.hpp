@@ -449,8 +449,8 @@ class message : private sdbusplus::slot::details::slot_friend
      *  @return The slot handle that manages the lifetime of the call object.
      */
     template <typename Cb>
-    [[nodiscard]] slot_t
-        call_async(Cb&& cb, std::optional<SdBusDuration> timeout = std::nullopt)
+    [[nodiscard]] slot_t call_async(
+        Cb&& cb, std::optional<SdBusDuration> timeout = std::nullopt)
     {
         sd_bus_slot* slot;
         auto timeout_us = timeout ? timeout->count() : 0;

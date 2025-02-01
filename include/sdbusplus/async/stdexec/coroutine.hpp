@@ -82,8 +82,8 @@ struct __continue_t
         return false;
     }
 
-    __coro::coroutine_handle<>
-        await_suspend(__coro::coroutine_handle<>) noexcept
+    __coro::coroutine_handle<> await_suspend(
+        __coro::coroutine_handle<>) noexcept
     {
         return __continue_;
     }

@@ -51,8 +51,8 @@ struct __unknown_scheduler
             return true;
         }
 
-        constexpr auto
-            query(get_completion_scheduler_t<set_value_t>) const noexcept
+        constexpr auto query(
+            get_completion_scheduler_t<set_value_t>) const noexcept
         {
             return __unknown_scheduler{};
         }

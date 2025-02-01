@@ -1,11 +1,14 @@
-project('sdbusplus', 'cpp', 'c',
+project(
+    'sdbusplus',
+    'cpp',
+    'c',
     default_options: [
-      'buildtype=debugoptimized',
-      'cpp_std=c++23',
-      'warning_level=3',
-      'werror=true',
-      'tests=' + (meson.is_subproject() ? 'disabled' : 'auto'),
-      'examples=' + (meson.is_subproject() ? 'disabled' : 'auto'),
+        'buildtype=debugoptimized',
+        'cpp_std=c++23',
+        'warning_level=3',
+        'werror=true',
+        'tests=' + (meson.is_subproject() ? 'disabled' : 'auto'),
+        'examples=' + (meson.is_subproject() ? 'disabled' : 'auto'),
     ],
     version: '1.0.0',
     meson_version: '>=1.1.1',
@@ -15,18 +18,21 @@ libsystemd_pkg = dependency('libsystemd')
 nlohmann_json_dep = dependency('nlohmann_json', include_type: 'system')
 
 python = import('python')
-python_bin = python.find_installation('python3', modules:['inflection', 'yaml', 'mako'])
+python_bin = python.find_installation(
+    'python3',
+    modules: ['inflection', 'yaml', 'mako'],
+)
 
 if not python_bin.found()
-  error('No valid python3 installation found')
+    error('No valid python3 installation found')
 endif
 
 root_inc = include_directories('include')
 
 libsdbusplus_src = files(
     'src/async/context.cpp',
-    'src/async/match.cpp',
     'src/async/fdio.cpp',
+    'src/async/match.cpp',
     'src/bus.cpp',
     'src/bus/match.cpp',
     'src/event.cpp',
@@ -41,10 +47,7 @@ libsdbusplus = library(
     'sdbusplus',
     libsdbusplus_src,
     include_directories: root_inc,
-    dependencies: [
-        libsystemd_pkg,
-        nlohmann_json_dep
-    ],
+    dependencies: [libsystemd_pkg, nlohmann_json_dep],
     version: meson.project_version(),
     install: true,
 )
@@ -59,16 +62,13 @@ boost_compile_args = [
 
 boost_dep = declare_dependency(
     dependencies: dependency('boost', required: false),
-    compile_args: boost_compile_args)
+    compile_args: boost_compile_args,
+)
 
 sdbusplus_dep = declare_dependency(
     include_directories: root_inc,
     link_with: libsdbusplus,
-    dependencies: [
-        boost_dep,
-        libsystemd_pkg,
-        nlohmann_json_dep,
-    ],
+    dependencies: [boost_dep, libsystemd_pkg, nlohmann_json_dep],
 )
 
 should_generate_cpp = true
@@ -78,10 +78,10 @@ should_generate_registry = false
 subdir('tools')
 
 if get_option('examples').allowed()
-  subdir('example')
+    subdir('example')
 endif
 if get_option('tests').allowed()
-  subdir('test')
+    subdir('test')
 endif
 
 install_subdir(

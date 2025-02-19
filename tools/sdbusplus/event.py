@@ -224,7 +224,7 @@ class Event(NamedElement, Renderer):
             "@odata.type": "#MessageRegistry.v1_6_3.MessageRegistry",
             "Id": f"{registryName}.{self.version}",
             "Language": f"{language}",
-            "Message": messages,
+            "Messages": messages,
             "Name": f"OpenBMC Message Registry for {self.name}",
             "OwningEntity": "OpenBMC",
             "RegistryPrefix": f"{registryName}",

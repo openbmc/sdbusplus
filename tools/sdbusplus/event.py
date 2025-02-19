@@ -75,6 +75,8 @@ class EventElement(NamedElement):
         result["Message"] = language_data.message
         if language_data.resolution:
             result["Resolution"] = language_data.resolution
+        else:
+            result["Resolution"] = "None."
 
         result["MessageSeverity"] = self.registry_sev
 

@@ -179,10 +179,9 @@ template <typename S>
              std::is_same_v<S, details::string_path_wrapper>)
 struct read_single<S>
 {
-    template <typename T>
-    static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, T&& t)
+    static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, S& t)
     {
-        constexpr auto dbusType = std::get<0>(types::type_id<T>());
+        constexpr auto dbusType = std::get<0>(types::type_id<S>());
         const char* str = nullptr;
         int r = intf->sd_bus_message_read_basic(m, dbusType, &str);
         if (r < 0)
@@ -198,10 +197,9 @@ template <typename S>
     requires(std::is_same_v<S, bool>)
 struct read_single<S>
 {
-    template <typename T>
-    static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, T&& t)
+    static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, S& t)
     {
-        constexpr auto dbusType = std::get<0>(types::type_id<T>());
+        constexpr auto dbusType = std::get<0>(types::type_id<S>());
         int i = 0;
         int r = intf->sd_bus_message_read_basic(m, dbusType, &i);
         if (r < 0)
@@ -217,8 +215,7 @@ template <typename S>
     requires(utility::has_emplace_back_method_v<S>)
 struct read_single<S>
 {
-    template <typename T>
-    static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, T&& t)
+    static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, S& t)
     {
         constexpr auto dbusType = utility::tuple_to_array(types::type_id<S>());
         int r = intf->sd_bus_message_enter_container(m, SD_BUS_TYPE_ARRAY,
@@ -255,8 +252,7 @@ template <typename S>
     requires(utility::has_emplace_method_v<S>)
 struct read_single<S>
 {
-    template <typename T>
-    static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, T&& t)
+    static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, S& t)
     {
         constexpr auto dbusType = utility::tuple_to_array(types::type_id<S>());
         int r = intf->sd_bus_message_enter_container(m, SD_BUS_TYPE_ARRAY,
@@ -293,8 +289,7 @@ template <typename S>
     requires requires(S& s) { std::get<0>(s); }
 struct read_single<S>
 {
-    template <typename T>
-    static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, T&& t)
+    static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, S& t)
     {
         constexpr auto dbusType =
             utility::tuple_to_array(types::type_id_tuple<S>());
@@ -339,7 +334,7 @@ struct read_single<std::variant<Args...>>
     using Td = types::details::type_id_downcast_t<T>;
 
     template <typename T, typename T1, typename... Args1>
-    static void read(sdbusplus::SdBusInterface* intf, sd_bus_message* m, T&& t)
+    static void read(sdbusplus::SdBusInterface* intf, sd_bus_message* m, T& t)
     {
         constexpr auto dbusType = utility::tuple_to_array(types::type_id<T1>());
 
@@ -411,10 +406,10 @@ struct read_single<std::variant<Args...>>
         }
     }
 
-    template <typename T>
-    static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, T&& t)
+    static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m,
+                   std::variant<Args...>& t)
     {
-        read<T, Args...>(intf, m, t);
+        read<std::variant<Args...>, Args...>(intf, m, t);
     }
 };
 
@@ -423,9 +418,7 @@ template <typename S>
     requires(std::is_same_v<S, std::monostate>)
 struct read_single<S>
 {
-    template <typename T>
-    static void op(sdbusplus::SdBusInterface*, sd_bus_message*, T&&)
-    {}
+    static void op(sdbusplus::SdBusInterface*, sd_bus_message*, S&) {}
 };
 
 template <typename T>

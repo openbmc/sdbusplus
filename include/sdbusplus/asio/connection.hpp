@@ -211,10 +211,11 @@ class connection : public sdbusplus::bus_t
     void async_method_call(MessageHandler&& handler, const std::string& service,
                            const std::string& objpath,
                            const std::string& interf, const std::string& method,
-                           const InputArgs&... a)
+                           InputArgs&&... a)
     {
         async_method_call_timed(std::forward<MessageHandler>(handler), service,
-                                objpath, interf, method, 0, a...);
+                                objpath, interf, method, 0,
+                                std::forward<InputArgs>(a)...);
     }
 
 #ifndef SDBUSPLUS_DISABLE_BOOST_COROUTINES

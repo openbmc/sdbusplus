@@ -103,6 +103,55 @@ class connection : public sdbusplus::bus_t
     }
 #endif
 
+    template <typename MessageHandler>
+    static void unpack(boost::system::error_code ec, message_t& r,
+                       MessageHandler&& handler)
+    {
+        using FunctionTuple = boost::callable_traits::args_t<MessageHandler>;
+        using FunctionTupleType = utility::decay_tuple_t<FunctionTuple>;
+        constexpr bool returnWithMsg = []() {
+            if constexpr ((std::tuple_size_v<FunctionTupleType>) > 1)
+            {
+                return std::is_same_v<
+                    std::tuple_element_t<1, FunctionTupleType>,
+                    sdbusplus::message_t>;
+            }
+            return false;
+        }();
+        using UnpackType = utility::strip_first_n_args_t<returnWithMsg ? 2 : 1,
+                                                         FunctionTupleType>;
+        UnpackType responseData;
+        if (!ec)
+        {
+            try
+            {
+                utility::read_into_tuple(responseData, r);
+            }
+            catch (const std::exception&)
+            {
+                // Set error code if not already set
+                ec = boost::system::errc::make_error_code(
+                    boost::system::errc::invalid_argument);
+            }
+        }
+        // Note.  Callback is called whether or not the unpack was
+        // successful to allow the user to implement their own
+        // handling
+        if constexpr (returnWithMsg)
+        {
+            auto response =
+                std::tuple_cat(std::make_tuple(ec), std::forward_as_tuple(r),
+                               std::move(responseData));
+            std::apply(handler, response);
+        }
+        else
+        {
+            auto response =
+                std::tuple_cat(std::make_tuple(ec), std::move(responseData));
+            std::apply(handler, response);
+        }
+    }
+
     /** @brief Perform an asynchronous method call, with input parameter packing
      *         and return value unpacking.
      *
@@ -126,51 +175,12 @@ class connection : public sdbusplus::bus_t
         const std::string& objpath, const std::string& interf,
         const std::string& method, uint64_t timeout, const InputArgs&... a)
     {
-        using FunctionTuple = boost::callable_traits::args_t<MessageHandler>;
-        using FunctionTupleType = utility::decay_tuple_t<FunctionTuple>;
-        constexpr bool returnWithMsg = []() {
-            if constexpr ((std::tuple_size_v<FunctionTupleType>) > 1)
-            {
-                return std::is_same_v<
-                    std::tuple_element_t<1, FunctionTupleType>,
-                    sdbusplus::message_t>;
-            }
-            return false;
-        }();
-        using UnpackType = utility::strip_first_n_args_t<returnWithMsg ? 2 : 1,
-                                                         FunctionTupleType>;
-        auto applyHandler =
+        using callback_t = std::move_only_function<void(
+            boost::system::error_code, message_t&)>;
+        callback_t applyHandler =
             [handler = std::forward<MessageHandler>(
                  handler)](boost::system::error_code ec, message_t& r) mutable {
-                UnpackType responseData;
-                if (!ec)
-                {
-                    try
-                    {
-                        utility::read_into_tuple(responseData, r);
-                    }
-                    catch (const std::exception&)
-                    {
-                        // Set error code if not already set
-                        ec = boost::system::errc::make_error_code(
-                            boost::system::errc::invalid_argument);
-                    }
-                }
-                // Note.  Callback is called whether or not the unpack was
-                // successful to allow the user to implement their own handling
-                if constexpr (returnWithMsg)
-                {
-                    auto response = std::tuple_cat(std::make_tuple(ec),
-                                                   std::forward_as_tuple(r),
-                                                   std::move(responseData));
-                    std::apply(handler, response);
-                }
-                else
-                {
-                    auto response = std::tuple_cat(std::make_tuple(ec),
-                                                   std::move(responseData));
-                    std::apply(handler, response);
-                }
+                unpack(ec, r, std::move(handler));
             };
         message_t m;
         boost::system::error_code ec;
@@ -187,8 +197,7 @@ class connection : public sdbusplus::bus_t
             applyHandler(ec, m);
             return;
         }
-        async_send(m, std::forward<decltype(applyHandler)>(applyHandler),
-                   timeout);
+        async_send(m, std::move(applyHandler), timeout);
     }
 
     /** @brief Perform an asynchronous method call, with input parameter packing

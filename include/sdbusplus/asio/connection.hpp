@@ -82,21 +82,27 @@ class connection : public sdbusplus::bus_t
      *  @param[in] timeout - The timeout in microseconds
      *
      */
-    template <typename CompletionToken>
-    inline auto async_send(message_t& m, CompletionToken&& token,
-                           uint64_t timeout = 0)
+
+    using callback_t = void(boost::system::error_code, message_t&);
+    using send_function = std::move_only_function<callback_t>;
+    inline void async_send(
+        message_t& m,
+        send_function&& callback,
+        uint64_t timeout = 0)
     {
-#ifdef SDBUSPLUS_DISABLE_BOOST_COROUTINES
-        constexpr bool is_yield = false;
-#else
-        constexpr bool is_yield =
-            std::is_same_v<CompletionToken, boost::asio::yield_context>;
-#endif
-        using return_t = std::conditional_t<is_yield, message_t, message_t&>;
-        using callback_t = void(boost::system::error_code, return_t);
-        return boost::asio::async_initiate<CompletionToken, callback_t>(
+        boost::asio::async_initiate<send_function,
+            callback_t>(detail::async_send_handler(get(), m, timeout), callback);
+    }
+#ifndef SDBUSPLUS_DISABLE_BOOST_COROUTINES
+    inline auto async_send_yield(message_t& m,
+                                 boost::asio::yield_context&& token,
+                                 uint64_t timeout = 0)
+    {
+        return boost::asio::async_initiate<boost::asio::yield_context,
+                                           callback_t>(
             detail::async_send_handler(get(), m, timeout), token);
     }
+#endif
 
     /** @brief Perform an asynchronous method call, with input parameter packing
      *         and return value unpacking.
@@ -269,7 +275,7 @@ class connection : public sdbusplus::bus_t
         if (!ec)
         {
             message_t r;
-            r = async_send(m, yield[ec]);
+            r = async_send_yield(m, yield[ec]);
             try
             {
                 return r.unpack<RetTypes...>();

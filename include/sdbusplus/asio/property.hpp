@@ -12,14 +12,14 @@ inline void getAllProperties(
     sdbusplus::asio::connection& bus, const std::string& service,
     const std::string& path, const std::string& interface,
     std::function<void(
-        const boost::system::error_code,
+        const boost::system::error_code&,
         const std::vector<std::pair<std::string, VariantType>>&)>&& handler)
 {
     static_assert(std::is_same_v<VariantType, std::decay_t<VariantType>>);
 
     bus.async_method_call(
         [handler = std::move(handler)](
-            const boost::system::error_code ec,
+            const boost::system::error_code& ec,
             const std::vector<std::pair<std::string, VariantType>>&
                 data) mutable { handler(ec, data); },
         service, path, "org.freedesktop.DBus.Properties", "GetAll", interface);
@@ -49,7 +49,7 @@ inline void getProperty(
 
     bus.async_method_call(
         [handler = std::move(handler)](
-            boost::system::error_code ec,
+            const boost::system::error_code& ec,
             std::variant<std::monostate, PropertyType>& ret) mutable {
             if (ec)
             {

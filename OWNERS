@@ -36,7 +36,7 @@ owners:
 - wak@google.com
 
 reviewers:
-- vernon.mauery@linux.intel.com
+- vernon.mauery@gmail.com
 - mine260309@gmail.com
 - ed@tanous.net
 
@@ -50,7 +50,7 @@ openbmc:
   email: patrick@stwcx.xyz
   discord: stwcx
 - name: Vernon Mauery
-  email: vernon.mauery@linux.intel.com
+  email: vernon.mauery@gmail.com
   discord: vmauery
 - name: William Kennington
   email: wak@google.com

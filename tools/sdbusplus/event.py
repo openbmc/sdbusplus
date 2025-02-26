@@ -228,6 +228,7 @@ class Event(NamedElement, Renderer):
             "Language": f"{language}",
             "Messages": messages,
             "Name": f"OpenBMC Message Registry for {self.name}",
+            "Description": f"OpenBMC Message Registry for {self.name}",
             "OwningEntity": "OpenBMC",
             "RegistryPrefix": f"{registryName}",
             "RegistryVersion": f"{self.version}",

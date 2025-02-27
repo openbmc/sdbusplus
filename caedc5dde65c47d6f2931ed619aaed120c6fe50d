@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d6a2ca31_eadf2896",
+        "filename": "include/sdbusplus/asio/connection.hpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2025-02-27T02:08:18Z",
+      "side": 1,
+      "message": "Not to the reviewer, this call means we now have a dependence on c++23.... I think we already have that here, so should be no change?",
+      "range": {
+        "startLine": 87,
+        "startChar": 31,
+        "endLine": 87,
+        "endChar": 49
+      },
+      "revId": "caedc5dde65c47d6f2931ed619aaed120c6fe50d",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

@@ -16,6 +16,24 @@
       "message": "This increases the call to sd_bus for message unpacking of multiple args.",
       "revId": "577bb1b505662e8edf61c493b1985b122c75db8b",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "567e2424_139167e0",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2025-03-03T20:17:41Z",
+      "side": 1,
+      "message": "Yep, will characterize performance impact and rework if needed.",
+      "parentUuid": "9ee62b42_9c3e07ba",
+      "revId": "577bb1b505662e8edf61c493b1985b122c75db8b",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

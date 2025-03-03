@@ -13,6 +13,10 @@ project(
     version: '1.0.0',
     meson_version: '>=1.1.1',
 )
+cxx = meson.get_compiler('cpp')
+if (cxx.get_id() == 'clang')
+    add_project_arguments(['-Wno-c++26-extensions'], language: 'cpp')
+endif
 
 libsystemd_pkg = dependency('libsystemd')
 nlohmann_json_dep = dependency('nlohmann_json', include_type: 'system')

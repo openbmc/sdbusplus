@@ -1,0 +1,9 @@
+description: >
+    A test interface
+properties:
+    - name: NewValue
+      type: int64
+    - name: OtherValue
+      type: int64
+      flags:
+          - const

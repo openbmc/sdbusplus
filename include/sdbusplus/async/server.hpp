@@ -15,6 +15,42 @@ namespace details
 struct server_context_friend;
 }
 
+template <typename T>
+concept HasPropType = requires { typename T::PropType; };
+
+template <typename T>
+    requires HasPropType<T>
+constexpr bool allHavePropType()
+{
+    return true;
+}
+
+template <typename... Ts>
+concept NonEmpty = sizeof...(Ts) >= 1;
+
+constexpr bool allHavePropType()
+{
+    return true;
+}
+
+template <typename... Ts>
+    requires(sizeof...(Ts) == 0)
+constexpr bool allHavePropType()
+{
+    return true;
+}
+
+template <typename T, typename... Ts>
+    requires NonEmpty<Ts...> && HasPropType<T> && (allHavePropType<Ts...>())
+constexpr bool allHavePropType()
+{
+    return true;
+}
+
+template <typename... Types>
+concept AllTypesHavePropType =
+    requires { requires allHavePropType<Types...>(); };
+
 template <typename Instance, template <typename, typename> typename... Types>
 class server :
     public sdbusplus::async::context_ref,
@@ -27,6 +63,14 @@ class server :
     server() = delete;
     explicit server(sdbusplus::async::context& ctx, const char* path) :
         context_ref(ctx), Types<Instance, Self>(path)...
+    {}
+
+    // This constructor accepting one PropType per interface:
+    explicit server(sdbusplus::async::context& ctx, const char* path,
+                    typename Types<Instance, Self>::PropType... propValues)
+        requires(AllTypesHavePropType<Types<Instance, Self>...>) &&
+                    (sizeof...(propValues) > 0)
+        : context_ref(ctx), Types<Instance, Self>(path, propValues)...
     {}
 };
 

@@ -41,7 +41,9 @@ struct ${interface.classname}
 
     using PropertiesVariant = sdbusplus::utility::dedup_variant_t<
         ${",\n        ".join(sorted(setOfPropertyTypes()))}>;
-    % endif \
+    % else:
+    using properties_t = std::nullopt_t;
+    % endif
 
     % for p in interface.paths:
         % if p.description:

@@ -52,6 +52,16 @@ class ${interface.classname} :
             _context(), path, interface, _vtable, this)
     {}
 
+    ${interface.classname}(
+            const char* path,
+            [[maybe_unused]] ${interface.classname}::properties_t props)
+        : ${interface.classname}(path)
+    {
+        % for p in interface.properties:
+        ${p.snake_case}_ = props.${p.snake_case};
+        % endfor
+    }
+
 % for s in interface.signals:
 ${s.render(loader, "signal.aserver.emit.hpp.mako", signal=s, interface=interface)}
 % endfor

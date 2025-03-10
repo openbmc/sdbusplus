@@ -1,5 +1,6 @@
 # Generated file; do not modify.
 subdir('Test')
+subdir('Test2')
 
 sdbusplus_current_path = 'server'
 

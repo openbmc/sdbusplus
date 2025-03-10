@@ -24,14 +24,14 @@ template <typename Instance, typename Server = void>
 struct ${interface.classname} :
     public std::conditional_t<
         std::is_void_v<Server>,
-        sdbusplus::async::server_t<Instance, details::${interface.classname}>,
+        sdbusplus::async::server_t<Instance, sdbusplus::common::${interface.cppNamespace()}::${interface.classname}::properties_t, details::${interface.classname}>,
         details::${interface.classname}<Instance, Server>>
 {
     template <typename... Args>
     ${interface.classname}(Args&&... args) :
         std::conditional_t<
             std::is_void_v<Server>,
-            sdbusplus::async::server_t<Instance, details::${interface.classname}>,
+            sdbusplus::async::server_t<Instance, sdbusplus::common::${interface.cppNamespace()}::${interface.classname}::properties_t, details::${interface.classname}>,
             details::${interface.classname}<Instance, Server>>(std::forward<Args>(args)...)
     {}
 };
@@ -51,6 +51,16 @@ class ${interface.classname} :
         _${interface.joinedName("_", "interface")}(
             _context(), path, interface, _vtable, this)
     {}
+
+${interface.classname}(const char* path, ${interface.classname}::properties_t props)
+   : ${interface.classname}(path)
+{
+% for p in interface.properties:
+    ${p.snake_case}_ = props.${p.snake_case};
+% endfor
+
+    emit_added();
+}
 
 % for s in interface.signals:
 ${s.render(loader, "signal.aserver.emit.hpp.mako", signal=s, interface=interface)}

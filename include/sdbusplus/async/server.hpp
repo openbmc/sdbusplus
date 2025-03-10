@@ -15,25 +15,31 @@ namespace details
 struct server_context_friend;
 }
 
-template <typename Instance, template <typename, typename> typename... Types>
+template <typename Instance, typename PropType,
+          template <typename, typename> typename... Types>
 class server :
     public sdbusplus::async::context_ref,
-    public Types<Instance, server<Instance, Types...>>...
+    public Types<Instance, server<Instance, PropType, Types...>>...
 {
   public:
-    using Self = server<Instance, Types...>;
+    using Self = server<Instance, PropType, Types...>;
     friend details::server_context_friend;
 
     server() = delete;
     explicit server(sdbusplus::async::context& ctx, const char* path) :
         context_ref(ctx), Types<Instance, Self>(path)...
     {}
+    explicit server(sdbusplus::async::context& ctx, const char* path,
+                    PropType& propType) :
+        context_ref(ctx), Types<Instance, Self>(path, propType)...
+    {}
 };
 
 } // namespace server
 
-template <typename Instance, template <typename, typename> typename... Types>
-using server_t = server::server<Instance, Types...>;
+template <typename Instance, typename PropType,
+          template <typename, typename> typename... Types>
+using server_t = server::server<Instance, PropType, Types...>;
 
 namespace server::details
 {

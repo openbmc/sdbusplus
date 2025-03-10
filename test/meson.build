@@ -117,6 +117,7 @@ test(
 uninit_tests = [
     'test_server_no_uninitialized_value_constructor',
     'test_aserver_no_uninitialized_value_constructor',
+    'test_aserver_emit_interfaces_added_signal',
 ]
 
 foreach t : uninit_tests

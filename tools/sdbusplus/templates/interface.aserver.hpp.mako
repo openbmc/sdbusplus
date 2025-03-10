@@ -47,10 +47,22 @@ class ${interface.classname} :
     protected server_details::server_context_friend
 {
   public:
+    using PropType = details::${interface.classname}<Instance, Server>::properties_t;
+
     explicit ${interface.classname}(const char* path) :
         _${interface.joinedName("_", "interface")}(
             _context(), path, interface, _vtable, this)
     {}
+
+${interface.classname}(const char* path, ${interface.classname}::properties_t props)
+   : ${interface.classname}(path)
+{
+% for p in interface.properties:
+    ${p.snake_case}_ = props.${p.snake_case};
+% endfor
+
+    emit_added();
+}
 
 % for s in interface.signals:
 ${s.render(loader, "signal.aserver.emit.hpp.mako", signal=s, interface=interface)}

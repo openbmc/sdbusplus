@@ -235,8 +235,8 @@ class coroutine_method_instance
         message_t b{m};
 
         // spawn off a new coroutine to handle the method call
-        boost::asio::spawn(io_, std::bind_front(&self_t::after_spawn, this, b),
-                           {});
+        (void)boost::asio::spawn(
+            io_, std::bind_front(&self_t::after_spawn, this, b), {});
 
         return 1;
     }

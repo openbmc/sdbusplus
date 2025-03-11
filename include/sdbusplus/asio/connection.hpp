@@ -39,6 +39,7 @@
 #include <chrono>
 #include <string>
 #include <tuple>
+#include <functional>
 
 namespace sdbusplus
 {

@@ -37,6 +37,7 @@
 #include <sdbusplus/utility/type_traits.hpp>
 
 #include <chrono>
+#include <functional>
 #include <string>
 #include <tuple>
 

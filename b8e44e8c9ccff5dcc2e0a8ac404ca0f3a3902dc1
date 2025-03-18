@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d040a2af_81b0b188",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-03-18T16:24:45Z",
+      "side": 1,
+      "message": "nit: `asio: explicitly discard...`",
+      "revId": "b8e44e8c9ccff5dcc2e0a8ac404ca0f3a3902dc1",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c0c4735d_c34034d9",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-03-18T16:24:45Z",
+      "side": 1,
+      "message": "nit: can you fix `sdbusplus/example/asio-example.cpp` also?",
+      "revId": "b8e44e8c9ccff5dcc2e0a8ac404ca0f3a3902dc1",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "afc1d907_4f4332b3",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 238,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-03-18T16:24:45Z",
+      "side": 1,
+      "message": "Looks like phopshor-host-ipmid took the same approach (cast to void) so I\u0027m good with this.  Let\u0027s fix the example.cpp also and I\u0027ll give this a +2.",
+      "revId": "b8e44e8c9ccff5dcc2e0a8ac404ca0f3a3902dc1",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

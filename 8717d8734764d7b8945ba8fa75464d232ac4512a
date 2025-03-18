@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "680d03e3_1ad49be1",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-03-18T16:35:01Z",
+      "side": 1,
+      "message": "One case which appears to be unhandled by this proposal is the use of `async::server_t` to combine multiple objects together.  I don\u0027t want to see us omit that case.  (Maybe I\u0027m missing something here but it doesn\u0027t appear to be handled).",
+      "revId": "8717d8734764d7b8945ba8fa75464d232ac4512a",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4b55eec3_4477d5fa",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-03-18T16:35:01Z",
+      "side": 1,
+      "message": "nit: fix",
+      "range": {
+        "startLine": 45,
+        "startChar": 121,
+        "endLine": 45,
+        "endChar": 248
+      },
+      "revId": "8717d8734764d7b8945ba8fa75464d232ac4512a",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "49391927_aead9f8b",
+        "filename": "tools/sdbusplus/templates/interface.aserver.hpp.mako",
+        "patchSetId": 2
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-03-18T16:35:01Z",
+      "side": 1,
+      "message": "Can we get the PropType from the `Instance` type directly?  It doesn\u0027t seem like it actually needs to be a template parameter because the code on line 55 isn\u0027t using a template parameter.",
+      "range": {
+        "startLine": 27,
+        "startChar": 45,
+        "endLine": 27,
+        "endChar": 129
+      },
+      "revId": "8717d8734764d7b8945ba8fa75464d232ac4512a",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

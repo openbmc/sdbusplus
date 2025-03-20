@@ -257,14 +257,14 @@ class Property(NamedElement, Renderer):
         "enum": {
             "cppName": "enum",
             "params": 1,
-            "registryName": "number",
+            "registryName": "string",
         },
     }
 
     """ Get the registry type of the property. """
 
     def registry_type(self):
-        return Property.propertyMap[self.typeName]["registryName"]
+        return Property.propertyMap[self.__type_tuple()[0]]["registryName"]
 
     """ Take a list of dbus types and perform validity checking, such as:
             [ variant [ dict [ int32, int32 ], double ] ]

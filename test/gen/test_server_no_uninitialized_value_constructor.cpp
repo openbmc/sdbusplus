@@ -2,10 +2,9 @@
 #include "sdbusplus/server.hpp"
 #include "server/Test/server.hpp"
 
+#include <cassert>
 #include <memory>
 #include <regex>
-
-#include <gtest/gtest.h>
 
 int main()
 {

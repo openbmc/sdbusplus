@@ -127,7 +127,7 @@ foreach t : uninit_tests
             f'gen/@t@.cpp',
             generated_sources,
             include_directories: [root_inc],
-            dependencies: [sdbusplus_dep, server_test_dep],
+            dependencies: [gtest_dep, sdbusplus_dep, server_test_dep],
         ),
     )
 endforeach

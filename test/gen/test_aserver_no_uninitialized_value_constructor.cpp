@@ -3,10 +3,9 @@
 
 #include <sdbusplus/async/context.hpp>
 
+#include <cassert>
 #include <memory>
 #include <regex>
-
-#include <gtest/gtest.h>
 
 class A : public sdbusplus::aserver::server::Test<A>
 {};

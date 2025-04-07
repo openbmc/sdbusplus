@@ -54,9 +54,11 @@ namespace asio
 class connection : public sdbusplus::bus_t
 {
   public:
-    // default to system bus
-    connection(boost::asio::io_context& io) :
-        sdbusplus::bus_t(sdbusplus::bus::new_default()), io_(io),
+    // default to default bus
+    explicit connection(
+        boost::asio::io_context& io,
+        sdbusplus::bus_t&& bus = sdbusplus::bus::new_default()) :
+        sdbusplus::bus_t(std::move(bus)), io_(io),
         socket(io_.get_executor(), get_fd()), timer(io_.get_executor())
     {
         read_immediate();

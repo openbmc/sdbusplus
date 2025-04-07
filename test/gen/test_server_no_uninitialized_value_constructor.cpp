@@ -5,8 +5,6 @@
 #include <memory>
 #include <regex>
 
-#include <gtest/gtest.h>
-
 int main()
 {
     auto bus = sdbusplus::bus::new_default();

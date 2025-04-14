@@ -38,6 +38,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "620777e6_2885ebd7",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1001712
+      },
+      "writtenOn": "2025-04-14T12:12:46Z",
+      "side": 1,
+      "message": "Ok, looks like this possibility is already used in patches\n\nhttps://gerrit.openbmc.org/c/openbmc/dbus-sensors/+/75329/64/src/leakdetector/LeakGPIODetector.hpp Line 31\n\n```\n\nusing DetectorIntf \u003d sdbusplus::async::server_t\u003c\n    GPIODetector,\n    sdbusplus::aserver::xyz::openbmc_project::association::Definitions,\n    sdbusplus::aserver::xyz::openbmc_project::state::leak::Detector\u003e;\n```",
+      "parentUuid": "ecc2f421_68c572b5",
+      "revId": "8717d8734764d7b8945ba8fa75464d232ac4512a",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "4b55eec3_4477d5fa",
         "filename": "/COMMIT_MSG",
         "patchSetId": 2

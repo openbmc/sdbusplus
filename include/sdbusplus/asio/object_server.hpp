@@ -7,6 +7,7 @@
 #endif
 
 #ifndef SDBUSPLUS_DISABLE_BOOST_COROUTINES
+#include <boost/asio/detached.hpp>
 #include <boost/asio/spawn.hpp>
 #endif
 #include <sdbusplus/asio/connection.hpp>
@@ -235,8 +236,8 @@ class coroutine_method_instance
         message_t b{m};
 
         // spawn off a new coroutine to handle the method call
-        (void)boost::asio::spawn(
-            io_, std::bind_front(&self_t::after_spawn, this, b), {});
+        boost::asio::spawn(io_, std::bind_front(&self_t::after_spawn, this, b),
+                           boost::asio::detached);
 
         return 1;
     }

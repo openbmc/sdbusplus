@@ -59,13 +59,14 @@ class connection : public sdbusplus::bus_t
         boost::asio::io_context& io,
         sdbusplus::bus_t&& bus = sdbusplus::bus::new_default()) :
         sdbusplus::bus_t(std::move(bus)), io_(io),
-        socket(io_.get_executor(), get_fd()), timer(io_.get_executor())
+        socket(io_.get_executor(), get_fd()), timer(io_.get_executor()),
+        idle_timer(io_.get_executor())
     {
         read_immediate();
     }
     connection(boost::asio::io_context& io, sd_bus* bus) :
         sdbusplus::bus_t(bus), io_(io), socket(io_.get_executor(), get_fd()),
-        timer(io_.get_executor())
+        timer(io_.get_executor()), idle_timer(io_.get_executor())
     {
         read_immediate();
     }
@@ -310,6 +311,8 @@ class connection : public sdbusplus::bus_t
     boost::asio::io_context& io_;
     boost::asio::posix::stream_descriptor socket;
     boost::asio::steady_timer timer;
+    boost::asio::steady_timer idle_timer;
+    uint64_t bus_accuracy_time_usec = 250 * 1000; // 250ms
 
     void process()
     {
@@ -319,7 +322,7 @@ class connection : public sdbusplus::bus_t
         }
         else
         {
-            read_wait();
+            idle_wait();
         }
     }
 
@@ -336,6 +339,7 @@ class connection : public sdbusplus::bus_t
         {
             return;
         }
+        idle_timer.cancel();
         process();
     }
 
@@ -355,7 +359,35 @@ class connection : public sdbusplus::bus_t
         process();
     }
 
-    void read_wait()
+    void on_timer_idle(const boost::system::error_code& ec)
+    {
+        if (ec == boost::asio::error::operation_aborted)
+        {
+            // This is expected if the fd was available before the timer expired
+            return;
+        }
+        if (ec)
+        {
+            return;
+        }
+
+        socket.cancel();
+
+        uint64_t rqueued_size = 0;
+        uint64_t wqueued_size = 0;
+        int ret_r = sd_bus_get_n_queued_read(_bus.get(), &rqueued_size);
+        int ret_w = sd_bus_get_n_queued_write(_bus.get(), &wqueued_size);
+        if ((ret_r == 0 && rqueued_size != 0) || (ret_w == 0 && wqueued_size !=0 ))
+        {
+            process();
+        }
+        else
+        {
+            idle_wait();
+        }
+    }
+
+    void idle_wait()
     {
         int fd = get_fd();
         if (fd < 0)
@@ -367,6 +399,7 @@ class connection : public sdbusplus::bus_t
             socket.release();
             socket.assign(fd);
         }
+
         int events = get_events();
         if (events < 0)
         {
@@ -400,16 +433,22 @@ class connection : public sdbusplus::bus_t
         SdDuration sdTimeout(timeout);
         // sd-bus always returns a 64 bit timeout regardless of architecture,
         // and per the documentation routinely returns UINT64_MAX
-        if (sdTimeout > clock::duration::max())
+        // No need to start the timer if the expiration is longer than
+        // underlying timer can run.
+        if (sdTimeout <= clock::duration::max())
         {
-            // No need to start the timer if the expiration is longer than
-            // underlying timer can run.
-            return;
+            auto nativeTimeout = std::chrono::floor<clock::duration>(sdTimeout);
+            timer.expires_at(clock::time_point(nativeTimeout));
+            timer.async_wait(std::bind_front(&connection::on_timer_event, this));
         }
-        auto nativeTimeout = std::chrono::floor<clock::duration>(sdTimeout);
-        timer.expires_at(clock::time_point(nativeTimeout));
-        timer.async_wait(std::bind_front(&connection::on_timer_event, this));
+        else
+        {
+            // start idle timer
+            idle_timer.expires_after(std::chrono::microseconds(bus_accuracy_time_usec));
+            idle_timer.async_wait(std::bind_front(&connection::on_timer_idle, this));
+        }
     }
+
     void read_immediate()
     {
         boost::asio::post(io_, std::bind_front(&connection::process, this));

@@ -538,15 +538,16 @@ class __storage<_Vtable, _Allocator, _Copyable, _InlineSize, _Alignment>::__t :
         (*__other.__vtable_)(__copy_construct, this, __other);
     }
 
-    auto operator=(const __t& __other)
-        -> __t& requires(_Copyable) {
-                    if (&__other != this)
-                    {
-                        __t tmp(__other);
-                        *this = std::move(tmp);
-                    }
-                    return *this;
-                }
+    auto operator=(const __t& __other) -> __t&
+        requires(_Copyable)
+    {
+        if (&__other != this)
+        {
+            __t tmp(__other);
+            *this = std::move(tmp);
+        }
+        return *this;
+    }
 
     __t(__t&& __other) noexcept
     {

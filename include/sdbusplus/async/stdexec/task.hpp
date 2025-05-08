@@ -133,10 +133,11 @@ class __default_task_context_impl
         __scheduler_{static_cast<_Scheduler&&>(__scheduler)}
     {}
 
-    auto query(get_scheduler_t) const noexcept
-        -> const __any_scheduler& requires(__with_scheduler) {
-                                      return __scheduler_;
-                                  }
+    auto query(get_scheduler_t) const noexcept -> const __any_scheduler&
+        requires(__with_scheduler)
+    {
+        return __scheduler_;
+    }
 
     auto query(get_stop_token_t) const noexcept -> inplace_stop_token
     {

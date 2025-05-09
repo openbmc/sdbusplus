@@ -5,6 +5,8 @@
 #include <sdbusplus/async/timer.hpp>
 
 #include <chrono>
+#include <string>
+#include <vector>
 
 namespace sdbusplus::async
 {
@@ -359,6 +361,40 @@ int context::dbus_event_handle(sd_event_source*, int, uint32_t, void* data)
     }
 
     return 0;
+}
+
+void context::emit_object_added(const char* path)
+{
+    if (name_requested)
+    {
+        get_bus().emit_object_added(path);
+    }
+}
+
+void context::emit_object_removed(const char* path)
+{
+    if (name_requested)
+    {
+        get_bus().emit_object_removed(path);
+    }
+}
+
+void context::emit_interfaces_added(const char* path,
+                                    const std::vector<std::string>& ifaces)
+{
+    if (name_requested)
+    {
+        get_bus().emit_interfaces_added(path, ifaces);
+    }
+}
+
+void context::emit_interfaces_removed(const char* path,
+                                      const std::vector<std::string>& ifaces)
+{
+    if (name_requested)
+    {
+        get_bus().emit_interfaces_removed(path, ifaces);
+    }
 }
 
 } // namespace sdbusplus::async

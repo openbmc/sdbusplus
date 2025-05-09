@@ -8,7 +8,9 @@
 #include <condition_variable>
 #include <mutex>
 #include <stop_token>
+#include <string>
 #include <thread>
+#include <vector>
 
 namespace sdbusplus::async
 {
@@ -100,6 +102,13 @@ class context : public sdbusplus::details::bus_friend
     {
         return initial_stop.stop_requested();
     }
+
+    void emit_object_added(const char* path);
+    void emit_object_removed(const char* path);
+    void emit_interfaces_added(const char* path,
+                               const std::vector<std::string>& ifaces);
+    void emit_interfaces_removed(const char* path,
+                                 const std::vector<std::string>& ifaces);
 
     friend details::wait_process_completion;
     friend details::context_friend;

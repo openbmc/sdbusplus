@@ -76,8 +76,10 @@ auto startup(sdbusplus::async::context& ctx) -> sdbusplus::async::task<>
     // Listen for the signal 4 times...
     for (size_t i = 0; i < 4; ++i)
     {
-        auto [service, old_name, new_name] =
+        auto nextResult =
             co_await match.next<std::string, std::string, std::string>();
+
+        auto [service, old_name, new_name] = nextResult;
 
         if (!new_name.empty())
         {

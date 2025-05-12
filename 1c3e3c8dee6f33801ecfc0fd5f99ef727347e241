@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8f68ee04_ea902d0d",
+        "filename": "example/coroutine-example.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-05-12T15:10:48Z",
+      "side": 1,
+      "message": "```suggestion\n        auto [service, old_name, new_name] \u003d std::move(nextResult);\n```",
+      "revId": "1c3e3c8dee6f33801ecfc0fd5f99ef727347e241",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

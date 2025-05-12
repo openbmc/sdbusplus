@@ -16,6 +16,24 @@
       "message": "```suggestion\n        auto [service, old_name, new_name] \u003d std::move(nextResult);\n```",
       "revId": "1c3e3c8dee6f33801ecfc0fd5f99ef727347e241",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4033de4a_692c92ba",
+        "filename": "example/coroutine-example.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 1001712
+      },
+      "writtenOn": "2025-05-12T15:25:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8f68ee04_ea902d0d",
+      "revId": "1c3e3c8dee6f33801ecfc0fd5f99ef727347e241",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

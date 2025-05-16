@@ -1,7 +1,7 @@
 #pragma once
 #include <sdbusplus/async/context.hpp>
 #include <sdbusplus/async/execution.hpp>
-#include <sdbusplus/bus/match.hpp>
+#include <sdbusplus/bus/match.hpp> // IWYU pragma: export
 #include <sdbusplus/message.hpp>
 #include <sdbusplus/slot.hpp>
 

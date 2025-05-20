@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "312b5ba3_dc18d31d",
+        "filename": "include/sdbusplus/message/read.hpp",
+        "patchSetId": 15
+      },
+      "lineNbr": 217,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-05-20T20:54:28Z",
+      "side": 1,
+      "message": "This concept name isn\u0027t obvious to me what it means.",
+      "range": {
+        "startLine": 217,
+        "startChar": 8,
+        "endLine": 217,
+        "endChar": 29
+      },
+      "revId": "085323d2e705ae04e628743b6f2bb0b5196ebb01",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f182a8be_c3ad42e3",
+        "filename": "include/sdbusplus/utility/container_traits.hpp",
+        "patchSetId": 15
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-05-20T20:54:28Z",
+      "side": 1,
+      "message": "nit: sdbusplus generally uses std naming rules (everything is lower_camel_case).",
+      "range": {
+        "startLine": 30,
+        "startChar": 8,
+        "endLine": 30,
+        "endChar": 22
+      },
+      "revId": "085323d2e705ae04e628743b6f2bb0b5196ebb01",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

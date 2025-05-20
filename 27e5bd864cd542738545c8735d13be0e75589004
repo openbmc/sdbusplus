@@ -34,6 +34,24 @@
       "parentUuid": "56ef7faa_b9642890",
       "revId": "27e5bd864cd542738545c8735d13be0e75589004",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d991d190_4d923e34",
+        "filename": "include/sdbusplus/utility/container_traits.hpp",
+        "patchSetId": 15
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2025-05-20T23:07:38Z",
+      "side": 0,
+      "message": "oh duh... namespace is needed based on the folder.  It\u0027s been fixed.",
+      "parentUuid": "7970ff2c_65df7dba",
+      "revId": "27e5bd864cd542738545c8735d13be0e75589004",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

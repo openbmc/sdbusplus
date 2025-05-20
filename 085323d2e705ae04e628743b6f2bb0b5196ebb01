@@ -50,6 +50,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "add390f0_f47f6a9d",
+        "filename": "include/sdbusplus/message/read.hpp",
+        "patchSetId": 15
+      },
+      "lineNbr": 217,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2025-05-20T23:07:38Z",
+      "side": 1,
+      "message": "Changed to can_read_array_contiguous.  PTAL",
+      "parentUuid": "9b077eca_442e325c",
+      "range": {
+        "startLine": 217,
+        "startChar": 8,
+        "endLine": 217,
+        "endChar": 29
+      },
+      "revId": "085323d2e705ae04e628743b6f2bb0b5196ebb01",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "f182a8be_c3ad42e3",
         "filename": "include/sdbusplus/utility/container_traits.hpp",
         "patchSetId": 15
@@ -85,6 +109,30 @@
       "side": 1,
       "message": "ACK.  Will fix everywhere.",
       "parentUuid": "f182a8be_c3ad42e3",
+      "range": {
+        "startLine": 30,
+        "startChar": 8,
+        "endLine": 30,
+        "endChar": 22
+      },
+      "revId": "085323d2e705ae04e628743b6f2bb0b5196ebb01",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b814f9c8_07d69dc6",
+        "filename": "include/sdbusplus/utility/container_traits.hpp",
+        "patchSetId": 15
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2025-05-20T23:07:38Z",
+      "side": 1,
+      "message": "Fixed.",
+      "parentUuid": "8e0a8618_128e7752",
       "range": {
         "startLine": 30,
         "startChar": 8,

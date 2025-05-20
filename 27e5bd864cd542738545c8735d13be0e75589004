@@ -20,6 +20,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "ffdd4795_e57bd759",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 7
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2025-05-20T22:51:11Z",
+      "side": 1,
+      "message": "Agreed, this was cryptic.  Has been fixed.",
+      "parentUuid": "55e0dd23_03a3b836",
+      "revId": "27e5bd864cd542738545c8735d13be0e75589004",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "637b8485_8d78de41",
         "filename": "test/message/append.cpp",
         "patchSetId": 7
@@ -54,6 +72,48 @@
       "writtenOn": "2025-05-20T20:30:30Z",
       "side": 1,
       "message": "Shouldn\u0027t we test both strings and some POD?  It isn\u0027t clear to me why substituting one type for another is a net positive.\n\nI guess that\u0027s because we\u0027re going to have coverage in the next commit for numbers?",
+      "revId": "27e5bd864cd542738545c8735d13be0e75589004",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "78c266fd_a6760eb2",
+        "filename": "test/message/append.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 288,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2025-05-20T22:51:11Z",
+      "side": 1,
+      "message": "Agree, we should test both.   Next patch tests the equivalent of what this has changed.",
+      "parentUuid": "c94ff76e_9a8d0e36",
+      "revId": "27e5bd864cd542738545c8735d13be0e75589004",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "55897509_99ff11cb",
+        "filename": "test/message/append.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 288,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2025-05-20T22:51:11Z",
+      "side": 1,
+      "message": "Changed to abcd",
+      "parentUuid": "637b8485_8d78de41",
+      "range": {
+        "startLine": 288,
+        "startChar": 38,
+        "endLine": 288,
+        "endChar": 39
+      },
       "revId": "27e5bd864cd542738545c8735d13be0e75589004",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }

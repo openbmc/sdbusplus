@@ -52,6 +52,23 @@
       "parentUuid": "567e2424_139167e0",
       "revId": "577bb1b505662e8edf61c493b1985b122c75db8b",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f02f0a30_bc1b331c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2025-05-20T15:49:28Z",
+      "side": 1,
+      "message": "I was only able to find 2 instances of interfaces that could use the group optimization.\n\nhttps://github.com/openbmc/ipmbbridge/blob/35e1485f76a1562d0782a3a0dc003d0a7ac76ed9/ipmbbridged.cpp#L854\n\nAnd ipmi\n\nhttps://github.com/openbmc/phosphor-host-ipmid/blob/920602f5f89b7aeeb7fd31dc77c768f1149cc1f2/ipmid-new.cpp#L493\n\nI wasn\u0027t able to see any meaningful performance change in either under-load CPU usage (running ipmitool sensor list in a fast loop) with this patch for ipmi.\n\n\n\nI think the overall improvement in compile times isn\u0027t worth having the hypothetical improvement by grouping systemd calls for what amounts to 2 APIs.\n\n\nPlease reconsider this and let me know your thoughts.",
+      "revId": "577bb1b505662e8edf61c493b1985b122c75db8b",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

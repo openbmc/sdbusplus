@@ -70,6 +70,30 @@
       },
       "revId": "9f2424e9e58afd8944f6977635d66a7d62202783",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "15574c89_17b9a685",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2025-05-21T22:37:27Z",
+      "side": 1,
+      "message": "\u003e Did you test this being built against openbmc/openbmc?\n\nYes, openbmc master builds just fine.  I built S7106, but I\u0027d assume all the other targets would build as well.  I ran through a couple redfish commands (just because that\u0027s what I have set up, not because it\u0027s the best possible test) just to make sure the basic read/append things work, and it seems to work just fine.\n\n\u003e  If this were the write path, I wouldn\u0027t expect it to work, since there would be a lot of `const foo`s that don\u0027t match the `is_same` checks, but since this is the read path maybe it works fine.\n\nAgreed.  In the write path, I would expect we\u0027d need to do a std::decay_v on the main template param to get rid of the const/volatileness to deduplicate the parameters, but I haven\u0027t looked at that much yet.  For whatever reason, the Append path doesn\u0027t show up in compile-time profiles as much, but I intend to do that at some point.",
+      "parentUuid": "eca07ff9_b8866db3",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 11,
+        "endChar": 25
+      },
+      "revId": "9f2424e9e58afd8944f6977635d66a7d62202783",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

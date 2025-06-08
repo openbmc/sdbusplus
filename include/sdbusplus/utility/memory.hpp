@@ -5,7 +5,7 @@
 static inline void* mfree(void* memory)
 {
     free(memory);
-    return NULL;
+    return nullptr;
 }
 
 static inline void freep(void* p)

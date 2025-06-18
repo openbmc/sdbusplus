@@ -50,6 +50,24 @@
       "message": "emit_added() no longer handled by constructor?",
       "revId": "cad7af9ccfa141ca4ce37a91975627964b5d546b",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d1c35afd_5fe4a3dd",
+        "filename": "tools/sdbusplus/templates/interface.aserver.hpp.mako",
+        "patchSetId": 12
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-06-18T10:23:41Z",
+      "side": 1,
+      "message": "Correct. I’m going to add another constructor parameter in another patch that is similar to the way we’re doing it in the sync side. It isn’t safe to just call emit_added without more information and we have to pair it with an emit_removed.",
+      "parentUuid": "f0293d9e_793b6379",
+      "revId": "cad7af9ccfa141ca4ce37a91975627964b5d546b",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

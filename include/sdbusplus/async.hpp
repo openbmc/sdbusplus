@@ -1,6 +1,7 @@
 #pragma once
 
 #include <sdbusplus/async/context.hpp>
+#include <sdbusplus/async/defer.hpp>
 #include <sdbusplus/async/execution.hpp>
 #include <sdbusplus/async/fdio.hpp>
 #include <sdbusplus/async/match.hpp>

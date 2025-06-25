@@ -123,6 +123,21 @@ source event::add_io(int fd, uint32_t events, sd_event_io_handler_t handler,
     return s;
 }
 
+source event::add_defer(sd_event_handler_t handler, void* data)
+{
+    auto l = obtain_lock();
+
+    source s{*this};
+
+    auto rc = sd_event_add_defer(eventp, &s.sourcep, handler, data);
+    if (rc < 0)
+    {
+        throw exception::SdBusError(-rc, __func__);
+    }
+
+    return s;
+}
+
 condition event::add_condition(sd_event_io_handler_t handler, void* data)
 {
     // We don't need any locks here because we only touch the sd_event

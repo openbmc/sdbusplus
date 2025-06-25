@@ -108,6 +108,9 @@ class event
     source add_io(int fd, uint32_t events, sd_event_io_handler_t handler,
                   void* data);
 
+    /** Add a defer source to the run-loop. */
+    source add_defer(sd_event_handler_t handler, void* data);
+
     /** Add a eventfd-based sdbusplus::event::condition to the run-loop. */
     condition add_condition(sd_event_io_handler_t handler, void* data);
 

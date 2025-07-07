@@ -1,0 +1,129 @@
+#pragma once
+
+#include <sdbusplus/async/context.hpp>
+#include <sdbusplus/async/execution.hpp>
+#include <sdbusplus/event.hpp>
+
+#include <atomic>
+#include <queue>
+#include <string>
+
+namespace sdbusplus::async
+{
+
+namespace mutex_ns
+{
+struct mutex_completion;
+} // namespace mutex_ns
+
+class mutex : private context_ref, details::context_friend
+{
+  public:
+    mutex() = delete;
+    mutex(const mutex&) = delete;
+    mutex& operator=(const mutex&) = delete;
+    mutex(mutex&&) = delete;
+    mutex& operator=(mutex&&) = delete;
+    ~mutex() = default;
+
+    mutex(context& ctx, const std::string& name = "sdbusplus::async::mutex");
+
+    auto lock() noexcept;
+    void unlock();
+
+    friend mutex_ns::mutex_completion;
+
+  private:
+    std::string name;
+    std::atomic<bool> locked{false};
+    std::queue<mutex_ns::mutex_completion*> waitingTasks;
+};
+
+namespace mutex_ns
+{
+
+struct mutex_completion
+{
+    mutex_completion() = delete;
+    mutex_completion(const mutex_completion&) = delete;
+    mutex_completion& operator=(const mutex_completion&) = delete;
+    mutex_completion(mutex_completion&&) = delete;
+    ~mutex_completion() = default;
+
+    explicit mutex_completion(mutex& mutexInstance) noexcept :
+        mutexInstance(mutexInstance) {};
+
+    friend mutex;
+
+    friend void tag_invoke(execution::start_t, mutex_completion& self) noexcept
+    {
+        self.arm();
+    }
+
+  protected:
+    bool tryLock();
+
+  private:
+    virtual void complete() noexcept = 0;
+    virtual void stop() noexcept = 0;
+    void arm() noexcept;
+
+    mutex& mutexInstance;
+};
+
+// Implementation (templated based on Receiver) of mutex_completion.
+template <execution::receiver Receiver>
+struct mutex_operation : mutex_completion
+{
+    mutex_operation(mutex& mutexInstance, Receiver r) :
+        mutex_completion(mutexInstance), receiver(std::move(r))
+    {}
+
+  private:
+    void complete() noexcept override final
+    {
+        auto res = tryLock();
+        execution::set_value(std::move(receiver), res);
+    }
+
+    void stop() noexcept override final
+    {
+        execution::set_stopped(std::move(receiver));
+    }
+
+    Receiver receiver;
+};
+
+// mutex sender
+struct mutex_sender
+{
+    using is_sender = void;
+
+    mutex_sender() = delete;
+    explicit mutex_sender(mutex& mutexInstance) noexcept :
+        mutexInstance(mutexInstance) {};
+
+    friend auto tag_invoke(execution::get_completion_signatures_t,
+                           const mutex_sender&, auto)
+        -> execution::completion_signatures<execution::set_value_t(bool),
+                                            execution::set_stopped_t()>;
+
+    template <execution::receiver R>
+    friend auto tag_invoke(execution::connect_t, mutex_sender&& self, R r)
+        -> mutex_operation<R>
+    {
+        return {self.mutexInstance, std::move(r)};
+    }
+
+  private:
+    mutex& mutexInstance;
+};
+
+} // namespace mutex_ns
+
+inline auto mutex::lock() noexcept
+{
+    return mutex_ns::mutex_sender{*this};
+}
+
+} // namespace sdbusplus::async

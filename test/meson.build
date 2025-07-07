@@ -24,6 +24,7 @@ tests = [
     'async/task',
     'async/timer',
     'async/fdio',
+    'async/mutex',
     'bus/exception',
     'bus/list_names',
     'bus/match',

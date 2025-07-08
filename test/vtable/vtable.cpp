@@ -42,12 +42,9 @@ constexpr bool operator==(const sd_bus_vtable& t1, const sd_bus_vtable& t2)
     {
         case _SD_BUS_VTABLE_START:
             return t1.x.start.element_size == t2.x.start.element_size &&
-                   t1.x.start.features == t2.x.start.features;
-            // FIXME: In systemd 243, there is the new vtable_format_reference
-            // member, but current CI is using libsystemd 242, so we can not
-            // check it yet.
-            // && t1.x.start.vtable_format_reference
-            //      == t2.x.start.vtable_format_reference;
+                   t1.x.start.features == t2.x.start.features &&
+                   t1.x.start.vtable_format_reference ==
+                       t2.x.start.vtable_format_reference;
         case _SD_BUS_VTABLE_END:
         {
             // The union x shall be all zeros for END

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <systemd/sd-bus.h>
+#include <systemd/sd-daemon.h>
 
 #include <chrono>
 
@@ -165,6 +166,10 @@ class SdBusInterface
     virtual int sd_bus_is_open(sd_bus* bus) = 0;
 
     virtual int sd_bus_wait(sd_bus* bus, uint64_t timeout_usec) = 0;
+
+    virtual int sd_notify(int unset_environment, const char* state) = 0;
+
+    virtual int sd_watchdog_enabled(int unset_environment, uint64_t* usec) = 0;
 
     virtual int sd_bus_message_append_array(sd_bus_message* m, char type,
                                             const void* ptr, size_t size) = 0;
@@ -569,6 +574,16 @@ class SdBusImpl : public SdBusInterface
     int sd_bus_wait(sd_bus* bus, uint64_t timeout_usec) override
     {
         return ::sd_bus_wait(bus, timeout_usec);
+    }
+
+    int sd_notify(int unset_environment, const char* state) override
+    {
+        return ::sd_notify(unset_environment, state);
+    }
+
+    int sd_watchdog_enabled(int unset_environment, uint64_t* usec) override
+    {
+        return ::sd_watchdog_enabled(unset_environment, usec);
     }
 
     int sd_bus_message_append_array(sd_bus_message* m, char type,

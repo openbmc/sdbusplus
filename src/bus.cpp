@@ -141,4 +141,33 @@ bus::bus(busp_t b, std::false_type) :
     }
 }
 
+void bus::watchdog_heartbeat()
+{
+    int r = _intf->sd_notify(0, "WATCHDOG=1");
+    if (r < 0)
+    {
+        throw exception::SdBusError(-r, "sd_notify WATCHDOG=1");
+    }
+}
+
+void bus::watchdog_trigger()
+{
+    int r = _intf->sd_notify(0, "WATCHDOG=trigger");
+    if (r < 0)
+    {
+        throw exception::SdBusError(-r, "sd_notify WATCHDOG=trigger");
+    }
+}
+
+uint64_t bus::watchdog_enabled()
+{
+    uint64_t usec = 0;
+    int r = _intf->sd_watchdog_enabled(0, &usec);
+    if (r < 0)
+    {
+        throw exception::SdBusError(-r, "sd_watchdog_enabled");
+    }
+    return usec;
+}
+
 } // namespace sdbusplus::bus

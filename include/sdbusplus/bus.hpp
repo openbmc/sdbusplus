@@ -531,6 +531,12 @@ struct bus
         current_exception = exception;
     }
 
+    void watchdog_heartbeat();
+
+    void watchdog_trigger();
+
+    uint64_t watchdog_enabled();
+
     friend struct details::bus_friend;
 
   protected:

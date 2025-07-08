@@ -22,6 +22,30 @@
       },
       "revId": "1660b1515bf28d8f4a731e79f85acca3dc411dc5",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d328128e_f43a4a55",
+        "filename": "include/sdbusplus/message/read.hpp",
+        "patchSetId": 19
+      },
+      "lineNbr": 265,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2025-07-08T16:17:13Z",
+      "side": 1,
+      "message": "It looks like it got rebased so that https://gerrit.openbmc.org/c/openbmc/sdbusplus/+/70363 is no longer included.  That\u0027s required for this to succeed, otherwise the old vector tests will be looking for the array append mechanisms.",
+      "parentUuid": "23293b1f_1872de3e",
+      "range": {
+        "startLine": 258,
+        "startChar": 0,
+        "endLine": 265,
+        "endChar": 36
+      },
+      "revId": "1660b1515bf28d8f4a731e79f85acca3dc411dc5",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

@@ -1,6 +1,8 @@
 #include <systemd/sd-bus.h>
 
 #include <sdbusplus/async/context.hpp>
+#include <sdbusplus/async/task.hpp>
+#include <sdbusplus/async/timer.hpp>
 
 #include <chrono>
 
@@ -146,8 +148,29 @@ void context::run()
     }
 }
 
+static auto watchdog_loop(sdbusplus::async::context& ctx) -> task<>
+{
+    auto watchdog_time =
+        std::chrono::microseconds(ctx.get_bus().watchdog_enabled());
+    if (watchdog_time.count() == 0)
+    {
+        co_return;
+    }
+
+    // Recommended interval is half of WATCHDOG_USEC
+    watchdog_time /= 2;
+
+    while (!ctx.stop_requested())
+    {
+        ctx.get_bus().watchdog_pet();
+        co_await sleep_for(ctx, watchdog_time);
+    }
+}
+
 void context::worker_run()
 {
+    internal_tasks.spawn(watchdog_loop(*this));
+
     // Start the sdbus 'wait/process' loop; treat it as an internal task.
     internal_tasks.spawn(details::wait_process_completion::loop(*this));
 

@@ -531,6 +531,18 @@ struct bus
         current_exception = exception;
     }
 
+    /** @brief Determine if the systemd watchdog feature is enabled.
+     *
+     *  @return 0 - watchdog disabled, N - watchdog interval in uSec.
+     */
+    uint64_t watchdog_enabled();
+
+    /** @brief Pet the systemd watchdog for this application. */
+    void watchdog_pet();
+
+    /** @brief Trigger a systemd watchdog failure for this application. */
+    void watchdog_trigger();
+
     friend struct details::bus_friend;
 
   protected:

@@ -16,6 +16,24 @@
       "message": "Should we remove the `can_append_multiple` support too?",
       "revId": "c6135e10ca3e0fe7f6ec0ec77d55b326d2145963",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7cde5b4a_b6d4728d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2025-07-09T20:04:23Z",
+      "side": 1,
+      "message": "yes, but for whatever reason it didn\u0027t show up as a problem in build profiles that I ran.  I couldn\u0027t really explain that (maybe because input params are simpler than output params?)\n\nI\u0027ll put together a patchset for that.",
+      "parentUuid": "b622a76c_252f0840",
+      "revId": "c6135e10ca3e0fe7f6ec0ec77d55b326d2145963",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

@@ -1,0 +1,170 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9835db37_9e66ca09",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-07-10T02:59:40Z",
+      "side": 1,
+      "message": "I\u0027m not comfortable with this as-written even though you have passing test cases.  It seems to me like there are potential race conditions.",
+      "revId": "3cf6ff968371be600a2abe1b1fefb2177d3ff577",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "47153621_1d2e0e1b",
+        "filename": "include/sdbusplus/async/mutex.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-07-10T02:59:40Z",
+      "side": 1,
+      "message": "interestingly, it seems like we never have use for the context.  Should we remove this?",
+      "range": {
+        "startLine": 31,
+        "startChar": 10,
+        "endLine": 31,
+        "endChar": 23
+      },
+      "revId": "3cf6ff968371be600a2abe1b1fefb2177d3ff577",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3641abd6_696a53b5",
+        "filename": "include/sdbusplus/async/mutex.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-07-10T02:59:40Z",
+      "side": 1,
+      "message": "Wait... this means we can complete without successfully obtaining the lock, right?  That\u0027s pretty unexpected I think for most users.",
+      "range": {
+        "startLine": 110,
+        "startChar": 0,
+        "endLine": 111,
+        "endChar": 55
+      },
+      "revId": "3cf6ff968371be600a2abe1b1fefb2177d3ff577",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c3cfde3a_c81dd4fe",
+        "filename": "src/async/mutex.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-07-10T02:59:40Z",
+      "side": 1,
+      "message": "It seems dangerous that we are doing operations after effectively releasing the lock.",
+      "revId": "3cf6ff968371be600a2abe1b1fefb2177d3ff577",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a38f85f6_1a26018d",
+        "filename": "src/async/mutex.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-07-10T02:59:40Z",
+      "side": 1,
+      "message": "In what cases would `wasLocked` not be true?  Isn\u0027t that always a bug?",
+      "revId": "3cf6ff968371be600a2abe1b1fefb2177d3ff577",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5844251f_3ea25ebf",
+        "filename": "src/async/mutex.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-07-10T02:59:40Z",
+      "side": 1,
+      "message": "We should probably be very clear in the documentation that this code is _not_ thread-safe but it is async-safe.  Or, we should also have a real mutex here to ensure the code is also thread-safe.  Without a mutex, there is not a good way to maintain the task list, unless you want to convert the std::queue to an intrusive-queue (which is what stdexec does) such that the completion itself holds the next-pointers.",
+      "range": {
+        "startLine": 12,
+        "startChar": 0,
+        "endLine": 16,
+        "endChar": 33
+      },
+      "revId": "3cf6ff968371be600a2abe1b1fefb2177d3ff577",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c04e8b7c_d65faaf4",
+        "filename": "src/async/mutex.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-07-10T02:59:40Z",
+      "side": 1,
+      "message": "It\u0027s really not clear to me how we ensure that the lock is set when the waiting task starts running.  I think there is something where it attempts to call `tryLock` again as part of the completion, but as I pointed out there, there is actually a race condition where we could end up not successfully getting the lock.\n\nWe need to revamp this so that when completion is triggered, the task can immediately start.  That means we need to keep the `locked` state as true until we\u0027re sure we\u0027re _not_ letting another task run.  We need to keep the `locked` state, pop the waiting task off the queue, etc.",
+      "range": {
+        "startLine": 21,
+        "startChar": 0,
+        "endLine": 23,
+        "endChar": 31
+      },
+      "revId": "3cf6ff968371be600a2abe1b1fefb2177d3ff577",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ba919ba5_0042d40d",
+        "filename": "src/async/mutex.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-07-10T02:59:40Z",
+      "side": 1,
+      "message": "I don\u0027t understand what is going on here.  Don\u0027t we need to have a `tryLock`-like call somewhere in here?",
+      "range": {
+        "startLine": 38,
+        "startChar": 0,
+        "endLine": 40,
+        "endChar": 19
+      },
+      "revId": "3cf6ff968371be600a2abe1b1fefb2177d3ff577",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

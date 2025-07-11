@@ -18,6 +18,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f1d39ef6_f6628003",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1001758
+      },
+      "writtenOn": "2025-07-11T02:56:18Z",
+      "side": 1,
+      "message": "Sure, addressed your last set of comments. Please let me know if you still see any loopholes.",
+      "parentUuid": "9835db37_9e66ca09",
+      "revId": "3cf6ff968371be600a2abe1b1fefb2177d3ff577",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "47153621_1d2e0e1b",

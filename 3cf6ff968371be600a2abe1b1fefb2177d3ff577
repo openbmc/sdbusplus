@@ -41,6 +41,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "4f90259b_acca1f56",
+        "filename": "include/sdbusplus/async/mutex.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1001758
+      },
+      "writtenOn": "2025-07-11T02:55:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "47153621_1d2e0e1b",
+      "range": {
+        "startLine": 31,
+        "startChar": 10,
+        "endLine": 31,
+        "endChar": 23
+      },
+      "revId": "3cf6ff968371be600a2abe1b1fefb2177d3ff577",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "3641abd6_696a53b5",
@@ -54,6 +78,30 @@
       "writtenOn": "2025-07-10T02:59:40Z",
       "side": 1,
       "message": "Wait... this means we can complete without successfully obtaining the lock, right?  That\u0027s pretty unexpected I think for most users.",
+      "range": {
+        "startLine": 110,
+        "startChar": 0,
+        "endLine": 111,
+        "endChar": 55
+      },
+      "revId": "3cf6ff968371be600a2abe1b1fefb2177d3ff577",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "63c8e3fb_2892e0de",
+        "filename": "include/sdbusplus/async/mutex.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 1001758
+      },
+      "writtenOn": "2025-07-11T02:55:12Z",
+      "side": 1,
+      "message": "Changed the logic to always keep the state locked until the full queue expires.",
+      "parentUuid": "3641abd6_696a53b5",
       "range": {
         "startLine": 110,
         "startChar": 0,
@@ -81,6 +129,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "a259a257_331e855f",
+        "filename": "src/async/mutex.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1001758
+      },
+      "writtenOn": "2025-07-11T02:55:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c3cfde3a_c81dd4fe",
+      "revId": "3cf6ff968371be600a2abe1b1fefb2177d3ff577",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a38f85f6_1a26018d",
@@ -98,6 +164,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "eaa82dee_b106db8b",
+        "filename": "src/async/mutex.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1001758
+      },
+      "writtenOn": "2025-07-11T02:55:12Z",
+      "side": 1,
+      "message": "Yes, called std::terminate in that case.",
+      "parentUuid": "a38f85f6_1a26018d",
+      "revId": "3cf6ff968371be600a2abe1b1fefb2177d3ff577",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "5844251f_3ea25ebf",
@@ -111,6 +195,30 @@
       "writtenOn": "2025-07-10T02:59:40Z",
       "side": 1,
       "message": "We should probably be very clear in the documentation that this code is _not_ thread-safe but it is async-safe.  Or, we should also have a real mutex here to ensure the code is also thread-safe.  Without a mutex, there is not a good way to maintain the task list, unless you want to convert the std::queue to an intrusive-queue (which is what stdexec does) such that the completion itself holds the next-pointers.",
+      "range": {
+        "startLine": 12,
+        "startChar": 0,
+        "endLine": 16,
+        "endChar": 33
+      },
+      "revId": "3cf6ff968371be600a2abe1b1fefb2177d3ff577",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "01c909e2_2fe1f892",
+        "filename": "src/async/mutex.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1001758
+      },
+      "writtenOn": "2025-07-11T02:55:12Z",
+      "side": 1,
+      "message": "Added the std::mutex to make code thread safe.",
+      "parentUuid": "5844251f_3ea25ebf",
       "range": {
         "startLine": 12,
         "startChar": 0,
@@ -144,6 +252,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ed53a9e4_eaf255c6",
+        "filename": "src/async/mutex.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1001758
+      },
+      "writtenOn": "2025-07-11T02:55:12Z",
+      "side": 1,
+      "message": "\u003e It\u0027s really not clear to me how we ensure that the lock is set when the waiting task starts running.  I think there is something where it attempts to call `tryLock` again as part of the completion, but as I pointed out there, there is actually a race condition where we could end up not successfully getting the lock.\n\u003e \n\u003e We need to revamp this so that when completion is triggered, the task can immediately start.  That means we need to keep the `locked` state as true until we\u0027re sure we\u0027re _not_ letting another task run.  We need to keep the `locked` state, pop the waiting task off the queue, etc.\n\n\nChanged the logic to always keep the locked state as true until the full queue expires.",
+      "parentUuid": "c04e8b7c_d65faaf4",
+      "range": {
+        "startLine": 21,
+        "startChar": 0,
+        "endLine": 23,
+        "endChar": 31
+      },
+      "revId": "3cf6ff968371be600a2abe1b1fefb2177d3ff577",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ba919ba5_0042d40d",
@@ -157,6 +289,30 @@
       "writtenOn": "2025-07-10T02:59:40Z",
       "side": 1,
       "message": "I don\u0027t understand what is going on here.  Don\u0027t we need to have a `tryLock`-like call somewhere in here?",
+      "range": {
+        "startLine": 38,
+        "startChar": 0,
+        "endLine": 40,
+        "endChar": 19
+      },
+      "revId": "3cf6ff968371be600a2abe1b1fefb2177d3ff577",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4eed114d_829abfc1",
+        "filename": "src/async/mutex.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1001758
+      },
+      "writtenOn": "2025-07-11T02:55:12Z",
+      "side": 1,
+      "message": "Changed logic to use tryLock().",
+      "parentUuid": "ba919ba5_0042d40d",
       "range": {
         "startLine": 38,
         "startChar": 0,

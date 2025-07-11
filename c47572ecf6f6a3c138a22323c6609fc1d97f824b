@@ -16,6 +16,24 @@
       "message": "I suppose via this API you are poking/punching the watchdog? I am wondering if it will be better to rename this to watchdog_punch or watchdog_poke or watchdog_send_heartbeat or something similar as its not watchdog\u0027s heartbeat but app\u0027s heartbeat which is being monitored by watchdog.",
       "revId": "c47572ecf6f6a3c138a22323c6609fc1d97f824b",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "60fb0e42_ab633a0e",
+        "filename": "include/sdbusplus/bus.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 534,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-07-11T02:59:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d62b0426_a1e4dc41",
+      "revId": "c47572ecf6f6a3c138a22323c6609fc1d97f824b",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

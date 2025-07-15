@@ -294,6 +294,22 @@ TEST_F(AppendTest, VectorIntegral)
     new_message().append(v);
 }
 
+TEST_F(AppendTest, VectorBoolean)
+{
+    const std::vector<bool> v{false, true, false, true};
+    {
+        testing::InSequence seq;
+        expect_open_container(SD_BUS_TYPE_ARRAY, "b");
+        for (const auto& i : v)
+        {
+            expect_basic<bool>(SD_BUS_TYPE_BOOLEAN, (int)i);
+        }
+        expect_close_container();
+    }
+    new_message().append(v);
+}
+
+
 TEST_F(AppendTest, VectorNestIntegral)
 {
     const std::vector<std::array<int32_t, 3>> v{

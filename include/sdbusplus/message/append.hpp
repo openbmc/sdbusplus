@@ -225,11 +225,12 @@ struct append_single<T>
     template <typename S>
     static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, S&& s)
     {
-        constexpr auto dbusType = utility::tuple_to_array(types::type_id<T>());
+        constexpr auto dbusType =
+            utility::tuple_to_array(types::type_id<typename T::value_type>());
 
         intf->sd_bus_message_open_container(m, SD_BUS_TYPE_ARRAY,
-                                            dbusType.data() + 1);
-        for (auto&& i : s)
+                                            dbusType.data());
+        for (const typename T::value_type& i : s)
         {
             sdbusplus::message::append(intf, m, i);
         }

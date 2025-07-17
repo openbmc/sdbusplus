@@ -39,7 +39,8 @@ int ${interface.classname}::_callback_${ method.CamelCase }(
 
     try
     {
-        return sdbusplus::sdbuspp::method_callback\
+        o->_msg = msg;
+        auto result = sdbusplus::sdbuspp::method_callback\
     % if len(method.returns) > 1:
 <true>\
     % endif
@@ -52,6 +53,8 @@ int ${interface.classname}::_callback_${ method.CamelCase }(
                                 ${method.parameters_as_list()});
                     }
                 ));
+        o->_msg = nullptr;
+        return result;
     }
     % for e in method.errors:
     catch(const ${interface.errorNamespacedClass(e)}& e)

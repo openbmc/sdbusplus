@@ -22,8 +22,8 @@ class fdio : private context_ref, details::context_friend
     fdio& operator=(fdio&&) = delete;
     ~fdio() = default;
 
-    /** Construct a new fdio object from a context and a file descriptor. */
-    fdio(context& ctx, int fd);
+    fdio(context& ctx, int fd,
+         std::chrono::microseconds timeout = std::chrono::microseconds(0));
 
     /** Get the next fd event.
      *  Note: the implementation only supports a single awaiting task.  Two
@@ -34,6 +34,7 @@ class fdio : private context_ref, details::context_friend
     friend fdio_ns::fdio_completion;
 
   private:
+    event_t::time_resolution timeout;
     event_source_t source;
     std::mutex lock{};
     fdio_ns::fdio_completion* complete{nullptr};
@@ -44,6 +45,13 @@ class fdio : private context_ref, details::context_friend
     }
 
     void handleEvent() noexcept;
+    void handleTimeout() noexcept;
+};
+
+class fdio_timeout_exception : public std::runtime_error
+{
+  public:
+    fdio_timeout_exception() : std::runtime_error("Timeout") {}
 };
 
 namespace fdio_ns
@@ -69,10 +77,12 @@ struct fdio_completion
 
   private:
     virtual void complete() noexcept = 0;
+    virtual void error(std::exception_ptr exceptionPtr) noexcept = 0;
     virtual void stop() noexcept = 0;
     void arm() noexcept;
 
     fdio& fdioInstance;
+    event_source_t source;
 };
 
 // Implementation (templated based on Receiver) of fdio_completion.
@@ -87,6 +97,11 @@ struct fdio_operation : fdio_completion
     void complete() noexcept override final
     {
         execution::set_value(std::move(receiver));
+    }
+
+    void error(std::exception_ptr exceptionPtr) noexcept override final
+    {
+        execution::set_error(std::move(receiver), exceptionPtr);
     }
 
     void stop() noexcept override final
@@ -108,8 +123,10 @@ struct fdio_sender
 
     friend auto tag_invoke(execution::get_completion_signatures_t,
                            const fdio_sender&, auto)
-        -> execution::completion_signatures<execution::set_value_t(),
-                                            execution::set_stopped_t()>;
+        -> execution::completion_signatures<
+            execution::set_value_t(),
+            execution::set_error_t(std::exception_ptr),
+            execution::set_stopped_t()>;
 
     template <execution::receiver R>
     friend auto tag_invoke(execution::connect_t, fdio_sender&& self, R r)

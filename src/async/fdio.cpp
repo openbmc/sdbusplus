@@ -2,7 +2,9 @@
 
 namespace sdbusplus::async
 {
-fdio::fdio(context& ctx, int fd) : context_ref(ctx)
+fdio::fdio(context& ctx, int fd, std::chrono::microseconds timeout) :
+    context_ref(ctx),
+    timeout(std::chrono::duration_cast<event_t::time_resolution>(timeout))
 {
     static auto eventHandler =
         [](sd_event_source*, int, uint32_t, void* data) noexcept {
@@ -30,6 +32,18 @@ void fdio::handleEvent() noexcept
     auto c = std::exchange(complete, nullptr);
     l.unlock();
     c->complete();
+}
+
+void fdio::handleTimeout() noexcept
+{
+    std::unique_lock l{lock};
+    if (complete == nullptr)
+    {
+        return;
+    }
+    auto c = std::exchange(complete, nullptr);
+    l.unlock();
+    c->error(std::make_exception_ptr(fdio_timeout_exception()));
 }
 
 namespace fdio_ns
@@ -63,6 +77,28 @@ void fdio_completion::arm() noexcept
         catch (...)
         {
             std::terminate();
+        }
+    }
+
+    l.unlock();
+
+    // Schedule the timeout
+    if (fdioInstance.timeout != event_t::time_resolution::zero())
+    {
+        static auto eventHandler =
+            [](sd_event_source*, uint64_t, void* data) noexcept {
+                static_cast<fdio*>(data)->handleTimeout();
+                return 0;
+            };
+
+        try
+        {
+            source = fdioInstance.event_loop().add_oneshot_timer(
+                eventHandler, &fdioInstance, fdioInstance.timeout);
+        }
+        catch (...)
+        {
+            error(std::current_exception());
         }
     }
 }

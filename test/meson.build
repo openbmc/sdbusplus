@@ -22,6 +22,7 @@ endif
 tests = [
     'async/context',
     'async/fdio',
+    'async/fdio_timed',
     'async/mutex',
     'async/task',
     'async/timer',

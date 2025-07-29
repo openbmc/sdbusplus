@@ -75,6 +75,10 @@ sdbusplus_dep = declare_dependency(
     dependencies: [boost_dep, libsystemd_pkg, nlohmann_json_dep],
 )
 
+if meson.is_subproject()
+    sdbusplus_dep = sdbusplus_dep.as_system()
+endif
+
 should_generate_cpp = true
 should_generate_markdown = false
 should_generate_registry = false

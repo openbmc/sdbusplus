@@ -34,6 +34,24 @@
       "parentUuid": "1a669f10_4e9d7dd9",
       "revId": "63190dde0d374ab4d0f0bf8ce8a02543b5c2ce18",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "cfafb672_68c820d9",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2025-07-30T20:16:20Z",
+      "side": 1,
+      "message": "Interesting that setting doesn\u0027t work transiently in subprojects.  Thanks for the brain dump.  In other places I\u0027ve just made the subprojects explicit and in the appropriate order.  With that said, this change is probably fine too.",
+      "parentUuid": "f4816fb5_2be36dbf",
+      "revId": "63190dde0d374ab4d0f0bf8ce8a02543b5c2ce18",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

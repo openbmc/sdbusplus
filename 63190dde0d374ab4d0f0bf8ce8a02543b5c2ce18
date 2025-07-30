@@ -16,6 +16,24 @@
       "message": "Normally I\u0027ve solved this by adding something like\n\ndependency(\"sdbusplus\", include_type: \"system\");\n\nhttps://mesonbuild.com/Reference-manual_functions.html#dependency_include_type\n\nDoes that not work in this case?\n\nThis argument used to not exist, so from the calling code I would call as_system on the dependency, that for sure solved this same problem.\n\nhttps://github.com/openbmc/bmcweb/blob/master/meson.build#L259\n\nIf neither of those work for you for whatever reason, this patch is fine.",
       "revId": "63190dde0d374ab4d0f0bf8ce8a02543b5c2ce18",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f4816fb5_2be36dbf",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000002
+      },
+      "writtenOn": "2025-07-30T02:15:24Z",
+      "side": 1,
+      "message": "bmcweb was my starting/reference point.  These techniques work when you have a simple, direct dependency like bmcweb does on sdbusplus.  But when you have dependencies that themselves have downstream implicit dependencies... for example:\n\nmapperx depends on phosphor-dbus-interfaces (don\u0027t ask) depends on sdbusplus...the phosphor-dbus-interfaces subproject will invoke the sdbusplus subproject itself and the parent project (mapper) can\u0027t control (nor should it) that downstream, implicit dependency object.\n\nMy inspiration for this patch was the wrapdb injected gtest meson.build - it behaves the same way as this patch (you get a system mode dependency object by default).  I couldn\u0027t think of a use case for non-system mode dependency objects in subprojects...can you?  My point being..why make all the subproject users call as_system() ?",
+      "parentUuid": "1a669f10_4e9d7dd9",
+      "revId": "63190dde0d374ab4d0f0bf8ce8a02543b5c2ce18",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

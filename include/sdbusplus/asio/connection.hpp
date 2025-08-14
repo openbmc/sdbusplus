@@ -77,6 +77,28 @@ class connection : public sdbusplus::bus_t
         socket.release();
     }
 
+    /** @brief Perform a synchronous message call.
+     *         Should not mix asynchronous and synchronous call, but this call
+     *         override will process the data properly if you really need to use
+     *         it.
+     *
+     *  @param[in] m - The method_call message.
+     *  @param[in] timeout_us - The timeout for the method call.
+     *
+     *  @return The response message.
+     */
+    auto call(message_t& m, std::optional<SdBusDuration> timeout = std::nullopt)
+    {
+        auto r = bus::call(m, timeout ? timeout->count() : 0);
+
+        socket.cancel();
+        timer.cancel();
+        // Make sure we don't have any message in the dbus queue from the sync
+        // call.
+        read_immediate();
+        return r;
+    }
+
     /** @brief Perform an asynchronous send of a message, executing the handler
      *         upon return and return
      *

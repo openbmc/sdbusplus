@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "84929dd7_b8551c34",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2025-08-14T06:08:10Z",
+      "side": 1,
+      "message": "This resolve the issue when call() is used with asio, but be noted that sdbusplus::match has the same issue, and it\u0027s resolved by https://gerrit.openbmc.org/c/openbmc/sdbusplus/+/68860, which is not merged.",
+      "revId": "c8a3572f6c1dd05f80d6642c6d05770c200a7aff",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

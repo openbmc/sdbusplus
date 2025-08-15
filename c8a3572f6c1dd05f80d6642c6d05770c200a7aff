@@ -16,6 +16,24 @@
       "message": "This resolve the issue when call() is used with asio, but be noted that sdbusplus::match has the same issue, and it\u0027s resolved by https://gerrit.openbmc.org/c/openbmc/sdbusplus/+/68860, which is not merged.",
       "revId": "c8a3572f6c1dd05f80d6642c6d05770c200a7aff",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ca79b71c_d5abf0b2",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000885
+      },
+      "writtenOn": "2025-08-15T05:03:31Z",
+      "side": 1,
+      "message": "yeah, ideally we have something like in run\n\n```\nwhile (true)\n    {\n        // Block for one job\n        io-\u003erun_one();\n\n        // Process all ongoing jobs\n        while (io-\u003epoll_one())\n        {\n        }\n\n        // Process all existing dbus messages\n        while (systemBusPtr-\u003eprocess_discard())\n        {\n        }\n    }\n```\n\nto just process any of the read messages so that doesn\u0027t get signal anymore. Not sure how to set that up in the sbudplus level.\n\n😞",
+      "parentUuid": "84929dd7_b8551c34",
+      "revId": "c8a3572f6c1dd05f80d6642c6d05770c200a7aff",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

@@ -270,7 +270,7 @@ class coroutine_method_instance
             {
                 InputTupleType inputArgs = std::tuple_cat(
                     std::forward_as_tuple(std::move(yield)),
-                    std::forward_as_tuple(std::move(b)), dbusArgs);
+                    b, dbusArgs);
                 callFunction(ret, inputArgs, func_);
             }
             else

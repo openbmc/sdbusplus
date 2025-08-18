@@ -34,6 +34,63 @@
       "parentUuid": "84929dd7_b8551c34",
       "revId": "c8a3572f6c1dd05f80d6642c6d05770c200a7aff",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4be2939c_10fe8e9e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2025-08-18T15:46:18Z",
+      "side": 1,
+      "message": "Is there an example of using this that would be a correct usage?  Unless we have some example, I\u0027d rather just make sure it\u0027s not callable so people aren\u0027t surprised.",
+      "revId": "c8a3572f6c1dd05f80d6642c6d05770c200a7aff",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "07be5d8b_7ecdaaba",
+        "filename": "include/sdbusplus/asio/connection.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2025-08-18T15:46:18Z",
+      "side": 1,
+      "message": "1.  Should mark this override?\n\n2. Should we make this no-op instead of trying to fix it?  Is there a correct usage of a sync API in an async reactor?",
+      "revId": "c8a3572f6c1dd05f80d6642c6d05770c200a7aff",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0cefc4c3_4aa4de45",
+        "filename": "include/sdbusplus/asio/connection.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2025-08-18T15:46:18Z",
+      "side": 1,
+      "message": "I\u0027m still not sure this is correct.  It might make this call not deadlock, but will (likely) cause other async messages to be dropped, or attempted to be handled in the callbacks elsewhere which is definitely not the intent of this.\n\nWe\u0027d need to cancel BEFORE we start the sync call, queue up all callback responses while the sync call was happening, then unload them.\n\n\nAlso, wouldn\u0027t we want to cancel BEFORE we do the sync call?  Otherwise we might end up with duplicated reads?",
+      "range": {
+        "startLine": 92,
+        "startChar": 0,
+        "endLine": 95,
+        "endChar": 23
+      },
+      "revId": "c8a3572f6c1dd05f80d6642c6d05770c200a7aff",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

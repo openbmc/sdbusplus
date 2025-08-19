@@ -268,7 +268,7 @@ class coroutine_method_instance
             auto ret = b.new_method_return();
             if constexpr (callbackWantsMessage<CallbackType>)
             {
-                InputTupleType inputArgs = std::tuple_cat(
+                auto inputArgs = std::tuple_cat(
                     std::forward_as_tuple(std::move(yield)),
                     std::forward_as_tuple(std::move(b)), dbusArgs);
                 callFunction(ret, inputArgs, func_);

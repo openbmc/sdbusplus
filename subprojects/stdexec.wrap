@@ -1,0 +1,6 @@
+[wrap-git]
+revision = HEAD
+url = https://github.com/NVIDIA/stdexec
+
+[provide]
+stdexec = stdexec_dep

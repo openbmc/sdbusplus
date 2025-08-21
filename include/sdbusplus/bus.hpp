@@ -280,6 +280,19 @@ struct bus
         }
     }
 
+    /** @brief Release a service name on the dbus.
+     *
+     *  @param[in] service - The service name to release.
+     */
+    void release_name(const char* service)
+    {
+        int r = _intf->sd_bus_release_name(_bus.get(), service);
+        if (r < 0)
+        {
+            throw exception::SdBusError(-r, "sd_bus_release_name");
+        }
+    }
+
     /** @brief Create a method_call message.
      *
      *  @param[in] service - The service to call.

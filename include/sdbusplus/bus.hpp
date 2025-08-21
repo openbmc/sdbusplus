@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <climits>
 #include <exception>
+#include <functional>
 #include <memory>
 #include <optional>
 #include <string>
@@ -277,6 +278,44 @@ struct bus
         if (r < 0)
         {
             throw exception::SdBusError(-r, "sd_bus_request_name");
+        }
+    }
+
+    /** @brief Release a service name on the dbus.
+     *
+     *  @param[in] service - The service name to release.
+     */
+    void release_name(const char* service)
+    {
+        int r = _intf->sd_bus_release_name(_bus.get(), service);
+        if (r < 0)
+        {
+            throw exception::SdBusError(-r, "sd_bus_release_name");
+        }
+    }
+
+    /** @brief Release a service name on the dbus asynchronously.
+     *
+     *  @param[in] service - The service name to release.
+     *  @param[in] callback - The callback to call when the name as been released.
+     */
+    void release_name_async(const char* service, std::function<void()> callback)
+    {
+        current_release_name_callback = std::move(callback);
+        int r = _intf->sd_bus_release_name_async(
+            _bus.get(),
+            nullptr,
+            service,
+            [](sd_bus_message*, void* userData, sd_bus_error*){
+                auto* b = static_cast<bus*>(userData);
+                b->current_release_name_callback();
+                return 0;
+            },
+            this
+        );
+        if (r < 0)
+        {
+            throw exception::SdBusError(-r, "sd_bus_release_name");
         }
     }
 
@@ -555,6 +594,7 @@ struct bus
 
   private:
     std::exception_ptr current_exception;
+    std::function<void()> current_release_name_callback;
 };
 
 namespace details

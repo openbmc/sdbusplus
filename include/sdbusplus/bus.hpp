@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <climits>
 #include <exception>
+#include <functional>
 #include <memory>
 #include <optional>
 #include <string>
@@ -277,6 +278,45 @@ struct bus
         if (r < 0)
         {
             throw exception::SdBusError(-r, "sd_bus_request_name");
+        }
+    }
+
+    /** @brief Release a service name on the dbus.
+     *
+     *  @param[in] service - The service name to release.
+     */
+    void release_name(const char* service)
+    {
+        int r = _intf->sd_bus_release_name(_bus.get(), service);
+        if (r < 0)
+        {
+            throw exception::SdBusError(-r, "sd_bus_release_name");
+        }
+    }
+
+    /** @brief Release a service name on the dbus asynchronously.
+     *
+     *  @param[in] service - The service name to release.
+     *  @param[in] callback - The callback to call when the name as been released.
+     */
+    void release_name_async(const char* service, std::function<void()> callback)
+    {
+        void* callback_void_pointer = new std::function<void()>(std::move(callback));
+        int r = _intf->sd_bus_release_name_async(
+            _bus.get(),
+            nullptr,
+            service,
+            [](sd_bus_message*, void* userData, sd_bus_error*){
+                // Transfer the user data to a unique_ptr so that it's destroyed at the end of the scope
+                std::unique_ptr<std::function<void()>> cb{static_cast<std::function<void()>*>(userData)};
+                (*cb)();
+                return 0;
+            },
+            callback_void_pointer
+        );
+        if (r < 0)
+        {
+            throw exception::SdBusError(-r, "sd_bus_release_name");
         }
     }
 

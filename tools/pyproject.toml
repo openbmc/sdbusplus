@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=61.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sdbusplus"
+version = "1.0"
+license = "Apache-2.0"
+urls = { Homepage = "http://github.com/openbmc/sdbusplus" }
+dependencies = ["inflection", "mako", "pyyaml"]
+
+[tool.setuptools]
+script-files = ["sdbus++", "sdbus++-gen-meson"]
+include-package-data = false
+
+[tool.setuptools.packages]
+find = { namespaces = false }
+
+[tool.setuptools.package-data]
+sdbusplus = ["schemas/*.yaml", "templates/*.mako"]

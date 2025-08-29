@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "59bbe09f_8d562503",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2025-08-29T19:44:57Z",
+      "side": 1,
+      "message": "I\u0027ll let Patrick add more color here, but I believe at this level of the bindings not having access to the raw message is intentional.  The goal would be to expose the pieces of the message required through typed interfaces, rather than giving this \"raw\" access to the direct API.  If you could articulate what you\u0027re trying to do with the message, we could likely give you more pointers on how best to go about doing that.",
+      "revId": "28f0e038d1b5bb09a5e8f10e094b1cc3bb80fe59",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

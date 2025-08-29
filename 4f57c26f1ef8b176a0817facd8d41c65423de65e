@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "16b6beac_1c8d76f3",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2025-08-29T19:42:59Z",
+      "side": 1,
+      "message": "Please write a commit message, specifically try to articulate why this is useful.  It\u0027s known that sd_bus supports it, but generally i would expect that you\u0027d want to associate this with an actual destroy/reconnect of the connection itself.",
+      "revId": "4f57c26f1ef8b176a0817facd8d41c65423de65e",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5f592c79_ab3c844a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2025-08-29T19:42:59Z",
+      "side": 1,
+      "message": "It looks like you\u0027re new.  Thank you for the patch!\n\nWe have our contributing guide documented here.  You\u0027ll likely need to execute one of the CLAs that are available before we can merge this.  If your company already has a CLA, please make sure the CLA manager adds you to the list of approved contributors.",
+      "revId": "4f57c26f1ef8b176a0817facd8d41c65423de65e",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "801aee33_5fcdbd73",
+        "filename": "include/sdbusplus/bus.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 597,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2025-08-29T19:42:59Z",
+      "side": 1,
+      "message": "We generally don\u0027t want to hold state like this within the connection object itself.  Normally you would pass this by std::move into your various handlers in case this call is done multiple times in a row before the first callback succeeds.",
+      "range": {
+        "startLine": 597,
+        "startChar": 0,
+        "endLine": 597,
+        "endChar": 56
+      },
+      "revId": "4f57c26f1ef8b176a0817facd8d41c65423de65e",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

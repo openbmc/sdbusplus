@@ -18,6 +18,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "10c00ed6_ddd302e3",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1002620
+      },
+      "writtenOn": "2025-09-01T08:55:59Z",
+      "side": 1,
+      "message": "Added an explanation. If you want a higher level wrapper instead (like `start_shutdown()` and `ready_to_shut_down()` methods) let me know. What\u0027s important is that `sd_bus_release_name_async()` can be called somewhere to avoid race conditions with systemd.",
+      "parentUuid": "16b6beac_1c8d76f3",
+      "revId": "4f57c26f1ef8b176a0817facd8d41c65423de65e",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "5f592c79_ab3c844a",
@@ -48,6 +66,30 @@
       "writtenOn": "2025-08-29T19:42:59Z",
       "side": 1,
       "message": "We generally don\u0027t want to hold state like this within the connection object itself.  Normally you would pass this by std::move into your various handlers in case this call is done multiple times in a row before the first callback succeeds.",
+      "range": {
+        "startLine": 597,
+        "startChar": 0,
+        "endLine": 597,
+        "endChar": 56
+      },
+      "revId": "4f57c26f1ef8b176a0817facd8d41c65423de65e",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4a761957_90bd4423",
+        "filename": "include/sdbusplus/bus.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 597,
+      "author": {
+        "id": 1002620
+      },
+      "writtenOn": "2025-09-01T08:55:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "801aee33_5fcdbd73",
       "range": {
         "startLine": 597,
         "startChar": 0,

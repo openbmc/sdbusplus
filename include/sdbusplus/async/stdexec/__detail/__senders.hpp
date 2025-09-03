@@ -379,8 +379,8 @@ concept sender_to =                            //
     && sender_in<_Sender, env_of_t<_Receiver>> //
     && __receiver_from<_Receiver, _Sender>     //
     && requires(_Sender&& __sndr, _Receiver&& __rcvr) {
-           connect(static_cast<_Sender &&>(__sndr),
-                   static_cast<_Receiver &&>(__rcvr));
+           connect(static_cast<_Sender&&>(__sndr),
+                   static_cast<_Receiver&&>(__rcvr));
        };
 
 template <class _Tag, class... _Args>

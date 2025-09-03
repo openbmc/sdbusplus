@@ -58,7 +58,7 @@ struct __legacy_customization
 template <class _DomainOrTag, class _Sender, class... _Env>
 concept __has_transform_sender =
     requires(_DomainOrTag __tag, _Sender&& __sender, const _Env&... __env) {
-        __tag.transform_sender(static_cast<_Sender &&>(__sender), __env...);
+        __tag.transform_sender(static_cast<_Sender&&>(__sender), __env...);
     };
 
 template <class _Sender, class... _Env>
@@ -69,8 +69,8 @@ concept __has_default_transform_sender = //
 template <class _Type, class _Sender, class _Env>
 concept __has_transform_env =
     requires(_Type __obj, _Sender&& __sender, _Env&& __env) {
-        __obj.transform_env(static_cast<_Sender &&>(__sender),
-                            static_cast<_Env &&>(__env));
+        __obj.transform_env(static_cast<_Sender&&>(__sender),
+                            static_cast<_Env&&>(__env));
     };
 
 template <class _Sender, class _Env>
@@ -81,7 +81,7 @@ concept __has_default_transform_env = //
 template <class _DomainOrTag, class... _Args>
 concept __has_apply_sender =
     requires(_DomainOrTag __tag, _Args&&... __args) {
-        __tag.apply_sender(static_cast<_Args &&>(__args)...);
+        __tag.apply_sender(static_cast<_Args&&>(__args)...);
     };
 
 template <class _Sender>

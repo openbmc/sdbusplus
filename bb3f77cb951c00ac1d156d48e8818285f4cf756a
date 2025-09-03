@@ -16,6 +16,24 @@
       "message": "I\u0027m assuming this was automation, and we don\u0027t actually want to reformat the contents of stdexec?",
       "revId": "bb3f77cb951c00ac1d156d48e8818285f4cf756a",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0e516faa_51b6a634",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-09-03T19:45:30Z",
+      "side": 1,
+      "message": "Right now it has been formatted previously with clang-format.  It wasn\u0027t on an exemption list, so yeah, it does need to be formatted for clang-21.",
+      "parentUuid": "702a8ee0_43ec725d",
+      "revId": "bb3f77cb951c00ac1d156d48e8818285f4cf756a",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

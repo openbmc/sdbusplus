@@ -37,6 +37,7 @@ tests = [
     'message/types',
     'timer',
     'unpack_properties',
+    'utility/make_dbus_args_tuple',
     'utility/tuple_to_array',
     'utility/type_traits',
 ]

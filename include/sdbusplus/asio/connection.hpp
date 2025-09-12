@@ -33,7 +33,6 @@
 #include <boost/callable_traits.hpp>
 #include <sdbusplus/asio/detail/async_send_handler.hpp>
 #include <sdbusplus/message.hpp>
-#include <sdbusplus/utility/read_into_tuple.hpp>
 #include <sdbusplus/utility/type_traits.hpp>
 
 #include <chrono>
@@ -128,7 +127,7 @@ class connection : public sdbusplus::bus_t
         {
             try
             {
-                utility::read_into_tuple(responseData, r);
+                std::apply([&r](auto&... x) { r.read(x...); }, responseData);
             }
             catch (const std::exception&)
             {

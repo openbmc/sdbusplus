@@ -30,7 +30,7 @@
 #ifndef SDBUSPLUS_DISABLE_BOOST_COROUTINES
 #include <boost/asio/spawn.hpp>
 #endif
-#include <boost/callable_traits.hpp>
+#include <boost/callable_traits/args.hpp>
 #include <sdbusplus/asio/detail/async_send_handler.hpp>
 #include <sdbusplus/message.hpp>
 #include <sdbusplus/utility/read_into_tuple.hpp>

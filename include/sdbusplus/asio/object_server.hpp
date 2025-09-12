@@ -6,6 +6,8 @@
 #define BOOST_COROUTINES_NO_DEPRECATION_WARNING
 #endif
 
+#include <boost/callable_traits/args.hpp>
+#include <boost/callable_traits/return_type.hpp>
 #ifndef SDBUSPLUS_DISABLE_BOOST_COROUTINES
 #include <boost/asio/detached.hpp>
 #include <boost/asio/spawn.hpp>

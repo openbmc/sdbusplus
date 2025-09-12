@@ -34,7 +34,6 @@
 #include <sdbusplus/asio/detail/async_send_handler.hpp>
 #include <sdbusplus/message.hpp>
 #include <sdbusplus/utility/make_dbus_args_tuple.hpp>
-#include <sdbusplus/utility/read_into_tuple.hpp>
 #include <sdbusplus/utility/type_traits.hpp>
 
 #include <chrono>

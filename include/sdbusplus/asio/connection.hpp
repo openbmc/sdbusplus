@@ -47,6 +47,36 @@ namespace sdbusplus
 namespace asio
 {
 
+template <std::size_t FirstArgIndex, typename Tuple, std::size_t... Is>
+auto make_sub_tuple_impl(Tuple& t, std::index_sequence<Is...>)
+{
+    return std::make_tuple(std::get<FirstArgIndex + Is>(t)...);
+}
+
+/*
+ * Given a tuple of function args to a method callback, return a tuple
+ * with references to only the dbus message arguments.
+ * */
+template <typename Tuple>
+auto make_dbus_args_tuple(Tuple& t)
+{
+    constexpr size_t skipArgs = []() {
+        if constexpr ((std::tuple_size_v<Tuple>) > 1)
+        {
+            if (std::is_same_v<std::tuple_element_t<1, Tuple>,
+                               sdbusplus::message_t>)
+            {
+                return 2;
+            }
+        }
+        return 1;
+    }();
+    constexpr std::size_t original_size = std::tuple_size<Tuple>::value;
+    constexpr std::size_t new_size = original_size - skipArgs;
+    return make_sub_tuple_impl<skipArgs>(t,
+                                         std::make_index_sequence<new_size>{});
+}
+
 /// Root D-Bus IO object
 /**
  * A connection to a bus, through which messages may be sent or received.
@@ -112,47 +142,24 @@ class connection : public sdbusplus::bus_t
     {
         using FunctionTuple = boost::callable_traits::args_t<MessageHandler>;
         using FunctionTupleType = utility::decay_tuple_t<FunctionTuple>;
-        constexpr bool returnWithMsg = []() {
-            if constexpr ((std::tuple_size_v<FunctionTupleType>) > 1)
-            {
-                return std::is_same_v<
-                    std::tuple_element_t<1, FunctionTupleType>,
-                    sdbusplus::message_t>;
-            }
-            return false;
-        }();
-        using UnpackType = utility::strip_first_n_args_t<returnWithMsg ? 2 : 1,
-                                                         FunctionTupleType>;
-        UnpackType responseData;
-        if (!ec)
+        FunctionTupleType responseData;
+        if (ec)
         {
+            std::get<0>(responseData) = ec;
+        } else {
             try
             {
-                utility::read_into_tuple(responseData, r);
+                auto unpack = make_dbus_args_tuple(responseData);
+                std::apply([&r](auto&&... x) { (r.read(x), ...); }, unpack);
             }
             catch (const std::exception&)
             {
                 // Set error code if not already set
-                ec = boost::system::errc::make_error_code(
+                std::get<0>(responseData) = boost::system::errc::make_error_code(
                     boost::system::errc::invalid_argument);
             }
         }
-        // Note.  Callback is called whether or not the unpack was
-        // successful to allow the user to implement their own
-        // handling
-        if constexpr (returnWithMsg)
-        {
-            auto response =
-                std::tuple_cat(std::make_tuple(ec), std::forward_as_tuple(r),
-                               std::move(responseData));
-            std::apply(handler, response);
-        }
-        else
-        {
-            auto response =
-                std::tuple_cat(std::make_tuple(ec), std::move(responseData));
-            std::apply(handler, response);
-        }
+        std::apply(handler, responseData);
     }
 
     /** @brief Perform an asynchronous method call, with input parameter packing

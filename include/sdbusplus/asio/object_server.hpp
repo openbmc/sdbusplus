@@ -200,10 +200,12 @@ class callback_method_instance
             details::NonDbusArgsCount<InputTupleType>::size(), InputTupleType>;
 
         DbusTupleType dbusArgs;
-        if (!utility::read_into_tuple(dbusArgs, m))
+        if (m.is_method_error())
         {
             return -EINVAL;
         }
+        std::apply([&m](auto&... x) { m.read(x...); }, dbusArgs);
+
         auto ret = m.new_method_return();
         if constexpr (callbackWantsMessage<CallbackType>)
         {
@@ -254,7 +256,7 @@ class coroutine_method_instance
         DbusTupleType dbusArgs;
         try
         {
-            utility::read_into_tuple(dbusArgs, b);
+            std::apply([&b](auto&... x) { b.read(x...); }, dbusArgs);
         }
         catch (const exception::SdBusError& e)
         {

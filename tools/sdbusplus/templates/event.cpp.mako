@@ -43,6 +43,25 @@ auto ${event.CamelCase}::to_json() const -> nlohmann::json
     return nlohmann::json{ { errName, std::move(j) } };
 }
 
+auto ${event.CamelCase}::getRedfishArgs() const -> nlohmann::ordered_json
+{
+    nlohmann::ordered_json oj = { };
+% for m in event.metadata:
+    % if not m.primary:
+        <% continue %>
+    % endif
+    % if m.typeName == "object_path":
+    oj["${m.SNAKE_CASE}"] = ${m.camelCase}.str;
+    % elif m.is_enum():
+    oj["${m.SNAKE_CASE}"] = sdbusplus::message::convert_to_string(${m.camelCase});
+    % else:
+    oj["${m.SNAKE_CASE}"] = ${m.camelCase};
+    % endif
+% endfor
+
+    return nlohmann::ordered_json{ { errName, std::move(oj) } };
+}
+
 ${event.CamelCase}::${event.CamelCase}(
     const nlohmann::json& j, const std::source_location& s)
 {

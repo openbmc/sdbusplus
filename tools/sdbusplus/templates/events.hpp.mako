@@ -4,6 +4,7 @@
 #pragma once
 #include <sys/syslog.h>
 #include <unistd.h>
+#include <string>
 
 #include <sdbusplus/exception.hpp>
 #include <sdbusplus/message.hpp>

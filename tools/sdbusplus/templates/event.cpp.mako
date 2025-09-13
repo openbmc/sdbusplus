@@ -43,6 +43,31 @@ auto ${event.CamelCase}::to_json() const -> nlohmann::json
     return nlohmann::json{ { errName, std::move(j) } };
 }
 
+auto ${event.CamelCase}::to_ordered_json() const -> nlohmann::ordered_json
+{
+    nlohmann::ordered_json oj = { };
+% for m in event.metadata:
+    % if m.typeName == "object_path":
+    oj["${m.SNAKE_CASE}"] = ${m.camelCase}.str;
+    % elif m.is_enum():
+    oj["${m.SNAKE_CASE}"] = sdbusplus::message::convert_to_string(${m.camelCase});
+    % else:
+    oj["${m.SNAKE_CASE}"] = ${m.camelCase};
+    % endif
+% endfor
+
+    // Add common source and pid info.
+    nlohmann::ordered_json source_info = {};
+    source_info["FILE"] = source_file;
+    source_info["FUNCTION"] = source_func;
+    source_info["LINE"] = source_line;
+    source_info["COLUMN"] = source_column;
+    source_info["PID"] = pid;
+    oj["_SOURCE"] = source_info;
+
+    return nlohmann::ordered_json{ { errName, std::move(oj) } };
+}
+
 ${event.CamelCase}::${event.CamelCase}(
     const nlohmann::json& j, const std::source_location& s)
 {

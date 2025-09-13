@@ -30,6 +30,7 @@ struct ${event.CamelCase} final :
     int set_error(sd_bus_error*) const override;
     int set_error(SdBusInterface*, sd_bus_error*) const override;
     auto to_json() const -> nlohmann::json override;
+    auto to_ordered_json() const -> nlohmann::ordered_json override;
 
     std::string source_file;
     std::string source_func;
@@ -46,6 +47,13 @@ struct ${event.CamelCase} final :
     static constexpr int errSeverity = ${event.syslog_sev};
 
     static constexpr auto errErrno = ${event.errno};
+
+    static constexpr auto redfishMessageId =
+% if event.redfish_map:
+        "${event.redfish_map.split(".")[0]}.${events.version.rsplit(".", 1)[0]}.${event.redfish_map.split(".")[1]}";
+% else:
+        "${events.registryPrefix("OpenBMC")}.${events.version.rsplit(".", 1)[0]}.${event.name}";
+% endif
 };
 
 namespace details

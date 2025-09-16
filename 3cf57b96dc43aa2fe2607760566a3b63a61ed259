@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2469b689_9dbd382d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2025-09-16T15:49:11Z",
+      "side": 1,
+      "message": "Should we just encapsulate this within an \"async_shutdown\" method?\n\nPart of this is also that when we shut down, we need to cancel the watching on the socket object, so that the io_context shuts itself down and doesn\u0027t have to be shut down explicitly.",
+      "range": {
+        "startLine": 15,
+        "startChar": 0,
+        "endLine": 22,
+        "endChar": 1
+      },
+      "revId": "3cf57b96dc43aa2fe2607760566a3b63a61ed259",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

@@ -36,6 +36,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "99293639_2d68dfa0",
+        "filename": "include/sdbusplus/asio/connection.hpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2025-09-18T18:20:28Z",
+      "side": 1,
+      "message": "Moved to utility namespace, and moved the helper method to details.",
+      "parentUuid": "9d13a7a9_02500fbe",
+      "revId": "501f73b51121a7709c871c41be6144240b7a4893",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "45bad59c_100e5837",
@@ -67,6 +85,24 @@
       "side": 1,
       "message": "Yep, This was me moving to a real qemu build to test the options between std::tie and std::reference_wrapper.",
       "parentUuid": "45bad59c_100e5837",
+      "revId": "501f73b51121a7709c871c41be6144240b7a4893",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "090dcdf6_0cbba80b",
+        "filename": "include/sdbusplus/asio/connection.hpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2025-09-18T18:20:28Z",
+      "side": 1,
+      "message": "std::tie seems like what we want here.  Current code uses it.\n\nI\u0027m still not clear on std::tie vs std::tuple, but there\u0027s unit tests that prove that we got it right.",
+      "parentUuid": "63dfabaa_21430da9",
       "revId": "501f73b51121a7709c871c41be6144240b7a4893",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }

@@ -20,6 +20,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "9d13a7a9_02500fbe",
+        "filename": "include/sdbusplus/asio/connection.hpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2025-09-18T15:58:13Z",
+      "side": 1,
+      "message": "yep.  On the list to move to the utility namespace.",
+      "parentUuid": "7df281ac_9b43fd34",
+      "revId": "501f73b51121a7709c871c41be6144240b7a4893",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "45bad59c_100e5837",
         "filename": "include/sdbusplus/asio/connection.hpp",
         "patchSetId": 3
@@ -31,6 +49,24 @@
       "writtenOn": "2025-09-18T15:51:21Z",
       "side": 1,
       "message": "This doesn\u0027t actually give a tuple\u003cfoo\u0026, bar\u0026\u003e, does it?  It gives a tuple\u003cfoo, bar\u003e.\n\nhttps://en.cppreference.com/w/cpp/utility/tuple/make_tuple\n\n\u003e For each Ti in Types..., the corresponding type Vi in VTypes... is std::decay\u003cTi\u003e::type unless application of std::decay results in std::reference_wrapper\u003cX\u003e for some type X, in which case the deduced type is X\u0026.",
+      "revId": "501f73b51121a7709c871c41be6144240b7a4893",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "63dfabaa_21430da9",
+        "filename": "include/sdbusplus/asio/connection.hpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2025-09-18T15:58:13Z",
+      "side": 1,
+      "message": "Yep, This was me moving to a real qemu build to test the options between std::tie and std::reference_wrapper.",
+      "parentUuid": "45bad59c_100e5837",
       "revId": "501f73b51121a7709c871c41be6144240b7a4893",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }

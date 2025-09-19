@@ -61,8 +61,8 @@ concept sender_in =
     && sender<_Sender>     //
     && requires(_Sender&& __sndr, _Env&&... __env) {
            {
-               get_completion_signatures(static_cast<_Sender &&>(__sndr),
-                                         static_cast<_Env &&>(__env)...)
+               get_completion_signatures(static_cast<_Sender&&>(__sndr),
+                                         static_cast<_Env&&>(__env)...)
            } -> __valid_completion_signatures;
        };
 } // namespace stdexec

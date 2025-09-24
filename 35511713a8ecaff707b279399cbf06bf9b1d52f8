@@ -1,0 +1,84 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2d734799_48cb884a",
+        "filename": "include/sdbusplus/async/mutex.hpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-09-24T19:57:05Z",
+      "side": 1,
+      "message": "If no one ever calls lock but the lock_guard is destructed, we still call unlock.",
+      "range": {
+        "startLine": 56,
+        "startChar": 0,
+        "endLine": 61,
+        "endChar": 25
+      },
+      "revId": "35511713a8ecaff707b279399cbf06bf9b1d52f8",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "423b9c5e_15739e8a",
+        "filename": "src/async/mutex.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-09-24T19:57:05Z",
+      "side": 1,
+      "message": "We cannot call the \"completion\" here while holding the lock from line 10.  This potentially causes a co-routine context switch.  You\u0027re holding a [thread] mutex at that point, via unique_lock, but due to the co-routine context switch you can end up in a deadlock.\n\nYou\u0027ll need to put everything from line 10 to 29 into one scope and then call the completion outside of that scope (after you\u0027ve moved the receiver out of the waitingTasks list).  Alternatively you can call `l.unlock()` between line 29 and 30.\n\nIf you look at match.cpp:99 you\u0027ll see that I explicitly unlock any unique_lock prior to calling complete.  This is the reason why.",
+      "revId": "35511713a8ecaff707b279399cbf06bf9b1d52f8",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "62e3c421_c488ac65",
+        "filename": "src/async/mutex.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-09-24T19:57:05Z",
+      "side": 1,
+      "message": "I suspect there isn\u0027t really much performance benefit to us at this point of using compare_exchange_strong rather than a lock/exchange.  The way this is currently written we have a mutex/unique_lock for some paths and a atomic for other paths.  I\u0027d suggest we can simplify and just us a normal bool.",
+      "range": {
+        "startLine": 38,
+        "startChar": 0,
+        "endLine": 39,
+        "endChar": 72
+      },
+      "revId": "35511713a8ecaff707b279399cbf06bf9b1d52f8",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b213a959_6f894597",
+        "filename": "src/async/mutex.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-09-24T19:57:05Z",
+      "side": 1,
+      "message": "Again, should not call complete while holding the lock.\n\nI\u0027m not sure why we have the unique_lock on line 44 and not on line 50.  If we move the lock obtaining lower, this tryLock+complete is then safe.",
+      "revId": "35511713a8ecaff707b279399cbf06bf9b1d52f8",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

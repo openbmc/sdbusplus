@@ -91,6 +91,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "5f028835_4f3c43eb",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1002620
+      },
+      "writtenOn": "2025-09-25T13:46:36Z",
+      "side": 1,
+      "message": "From what I understand the problem is that our company is owned by Canon, and your CLA has some sort of \"affiliates\" part requiring us to sign it on behalf of Canon, which we cannot do. Our legal team is wondering if you can remove this \"affiliates\" so that we can sign the agreement without involving any other companies?\n\nIt might also be easier of our legal team could contact you directly, what would be the best way of doing that?",
+      "parentUuid": "b0d73357_232bd406",
+      "revId": "4f57c26f1ef8b176a0817facd8d41c65423de65e",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "801aee33_5fcdbd73",
         "filename": "include/sdbusplus/bus.hpp",
         "patchSetId": 2

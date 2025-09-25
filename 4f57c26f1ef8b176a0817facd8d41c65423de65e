@@ -109,6 +109,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "144c0008_7c88945a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-09-25T17:01:15Z",
+      "side": 1,
+      "message": "This is a standard form from Linux Foundation.  We cannot change it.  If there are concerns with it from your company we\u0027ll have to email the CLA coordinator for LF: manager@lfprojects.org.",
+      "parentUuid": "5f028835_4f3c43eb",
+      "revId": "4f57c26f1ef8b176a0817facd8d41c65423de65e",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "801aee33_5fcdbd73",
         "filename": "include/sdbusplus/bus.hpp",
         "patchSetId": 2

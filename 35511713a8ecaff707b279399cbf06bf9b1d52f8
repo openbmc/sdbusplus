@@ -24,6 +24,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "afcbba39_67605951",
+        "filename": "include/sdbusplus/async/mutex.hpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 1001758
+      },
+      "writtenOn": "2025-09-26T20:00:55Z",
+      "side": 1,
+      "message": "Thanks for flagging this. Added a check to see if it locked first before unlocking. Also added a related test which was failing without this change.",
+      "parentUuid": "2d734799_48cb884a",
+      "range": {
+        "startLine": 56,
+        "startChar": 0,
+        "endLine": 61,
+        "endChar": 25
+      },
+      "revId": "35511713a8ecaff707b279399cbf06bf9b1d52f8",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "423b9c5e_15739e8a",
@@ -37,6 +61,24 @@
       "writtenOn": "2025-09-24T19:57:05Z",
       "side": 1,
       "message": "We cannot call the \"completion\" here while holding the lock from line 10.  This potentially causes a co-routine context switch.  You\u0027re holding a [thread] mutex at that point, via unique_lock, but due to the co-routine context switch you can end up in a deadlock.\n\nYou\u0027ll need to put everything from line 10 to 29 into one scope and then call the completion outside of that scope (after you\u0027ve moved the receiver out of the waitingTasks list).  Alternatively you can call `l.unlock()` between line 29 and 30.\n\nIf you look at match.cpp:99 you\u0027ll see that I explicitly unlock any unique_lock prior to calling complete.  This is the reason why.",
+      "revId": "35511713a8ecaff707b279399cbf06bf9b1d52f8",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0c15fd47_3c31bc5e",
+        "filename": "src/async/mutex.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1001758
+      },
+      "writtenOn": "2025-09-26T20:00:55Z",
+      "side": 1,
+      "message": "Done, moved the l.unlock() between line 29 and 30.",
+      "parentUuid": "423b9c5e_15739e8a",
       "revId": "35511713a8ecaff707b279399cbf06bf9b1d52f8",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
@@ -64,6 +106,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "abaf5b67_2ff7ddc0",
+        "filename": "src/async/mutex.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1001758
+      },
+      "writtenOn": "2025-09-26T20:00:55Z",
+      "side": 1,
+      "message": "Sure, changed the code to use bool var with std::exchange and locks.",
+      "parentUuid": "62e3c421_c488ac65",
+      "range": {
+        "startLine": 38,
+        "startChar": 0,
+        "endLine": 39,
+        "endChar": 72
+      },
+      "revId": "35511713a8ecaff707b279399cbf06bf9b1d52f8",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "b213a959_6f894597",
@@ -77,6 +143,24 @@
       "writtenOn": "2025-09-24T19:57:05Z",
       "side": 1,
       "message": "Again, should not call complete while holding the lock.\n\nI\u0027m not sure why we have the unique_lock on line 44 and not on line 50.  If we move the lock obtaining lower, this tryLock+complete is then safe.",
+      "revId": "35511713a8ecaff707b279399cbf06bf9b1d52f8",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b6629ebb_4e7965d7",
+        "filename": "src/async/mutex.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1001758
+      },
+      "writtenOn": "2025-09-26T20:00:55Z",
+      "side": 1,
+      "message": "Released the lock before calling complete as i need the lock as per your other comment https://gerrit.openbmc.org/c/openbmc/sdbusplus/+/81674/comment/62e3c421_c488ac65/ since i am moving the code around.",
+      "parentUuid": "b213a959_6f894597",
       "revId": "35511713a8ecaff707b279399cbf06bf9b1d52f8",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }

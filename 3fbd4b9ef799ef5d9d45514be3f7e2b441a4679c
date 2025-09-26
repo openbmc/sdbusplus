@@ -18,6 +18,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "40c598ee_3bcacfd1",
+        "filename": "include/sdbusplus/async/fdio.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 1001758
+      },
+      "writtenOn": "2025-09-26T01:51:07Z",
+      "side": 1,
+      "message": "Reverted the API to old signature so no bool will be passed.",
+      "parentUuid": "2f047ead_6288c4fa",
+      "revId": "3fbd4b9ef799ef5d9d45514be3f7e2b441a4679c",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "b498c9f2_46fbec20",
@@ -35,6 +53,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "bfcf80e0_e43cc58f",
+        "filename": "include/sdbusplus/async/fdio.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 1001758
+      },
+      "writtenOn": "2025-09-26T01:51:07Z",
+      "side": 1,
+      "message": "Sure, i have added it in latest patch and now since we are returning an exception we don\u0027t need a new API for timed fdio as code became exactly same after i dropped the bool return.",
+      "parentUuid": "b498c9f2_46fbec20",
+      "revId": "3fbd4b9ef799ef5d9d45514be3f7e2b441a4679c",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "483a926a_8abc9dee",
@@ -48,6 +84,30 @@
       "writtenOn": "2025-09-24T20:11:07Z",
       "side": 1,
       "message": "I don\u0027t really like that we have a timeout as a bool but we also now have a `set_error` for certain exceptions.  Can we treat a timeout as an exception and `set_error` in that case also?",
+      "range": {
+        "startLine": 149,
+        "startChar": 0,
+        "endLine": 153,
+        "endChar": 9
+      },
+      "revId": "3fbd4b9ef799ef5d9d45514be3f7e2b441a4679c",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1959c137_4c791ee7",
+        "filename": "include/sdbusplus/async/fdio.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 153,
+      "author": {
+        "id": 1001758
+      },
+      "writtenOn": "2025-09-26T01:51:07Z",
+      "side": 1,
+      "message": "Sure, changed the code to return an exception in case of timeout. I also updated code to use same next() API rather than an extra new API as code became exactly same for both senders receiver pairs after dropping the return type bool.",
+      "parentUuid": "483a926a_8abc9dee",
       "range": {
         "startLine": 149,
         "startChar": 0,

@@ -123,6 +123,7 @@ uninit_tests = [
     'test_aserver_no_uninitialized_value_constructor',
     'test_aserver_emit_interfaces_added_signal',
     'test_aserver_multiple_interfaces',
+    'test_property_names',
 ]
 
 foreach t : uninit_tests
@@ -133,7 +134,7 @@ foreach t : uninit_tests
             f'gen/@t@.cpp',
             generated_sources,
             include_directories: [root_inc],
-            dependencies: [sdbusplus_dep, server_test_dep],
+            dependencies: [sdbusplus_dep, server_test_dep, gtest_dep],
         ),
     )
 endforeach

@@ -34,6 +34,24 @@
       "parentUuid": "b85f878d_27b13fd7",
       "revId": "5f943d5e60b0d693b1b8f49c8f075d4f91e19a88",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "26cddedd_0093fbc2",
+        "filename": "include/sdbusplus/asio/connection.hpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 136,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2025-10-02T16:08:46Z",
+      "side": 1,
+      "message": "\u003e but goto isn\u0027t unreasonable for this\n\nUnfortunately, the coding standard disagrees with you on that 😊\n\nhttps://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#Res-goto\n\nthe goal with this structure was as you saw, to avoid duplicating the std::apply call.  Technically both paths are \"happy\" paths, just one involves not reading params on an error return.\n\nI appreciate the input, but I\u0027m going to go ahead and decline because one of the \"rules\" in asio is one wait should result in exactly one callback.  That\u0027s easy to verify in this flow, because there is literally only one callback.  If we duplicate, that\u0027s harder to \"see\" even if it\u0027s correct.",
+      "parentUuid": "22308e50_7ddb67c6",
+      "revId": "5f943d5e60b0d693b1b8f49c8f075d4f91e19a88",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

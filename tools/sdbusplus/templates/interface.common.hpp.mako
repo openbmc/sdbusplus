@@ -39,6 +39,13 @@ struct ${interface.classname}
         % endfor
     };
 
+    struct property_names
+    {
+        % for p in interface.properties:
+        static constexpr auto ${p.snake_case} = "${p.name}";
+        % endfor
+    };
+
     using PropertiesVariant = sdbusplus::utility::dedup_variant_t<
         ${",\n        ".join(sorted(setOfPropertyTypes()))}>;
     % else:

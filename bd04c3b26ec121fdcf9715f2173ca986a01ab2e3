@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "22f2cc95_c23c881c",
+        "filename": "include/sdbusplus/async/mutex.hpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 1001758
+      },
+      "writtenOn": "2025-10-07T20:57:14Z",
+      "side": 1,
+      "message": "@patrick@stwcx.xyz Shouldn\u0027t this be done in the receiver instead if the lock is actually acquired?",
+      "revId": "bd04c3b26ec121fdcf9715f2173ca986a01ab2e3",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "430d05ce_116106fb",
+        "filename": "include/sdbusplus/async/mutex.hpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 156,
+      "author": {
+        "id": 1001758
+      },
+      "writtenOn": "2025-10-07T20:57:14Z",
+      "side": 1,
+      "message": "I suppose you are adding the unlock to provide an added flexibility if user wants to explicitly unlock? (Given the fact that lock_guard already supports RAII based destruction which releases all the resources)",
+      "revId": "bd04c3b26ec121fdcf9715f2173ca986a01ab2e3",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

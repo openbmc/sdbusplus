@@ -56,6 +56,29 @@
       },
       "revId": "3619c965a7ef4b4df40837be4c7c18bbd5e74b4f",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f9e6647f_6b48a928",
+        "filename": "tools/sdbusplus/templates/event.hpp.mako",
+        "patchSetId": 1
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-10-09T21:50:54Z",
+      "side": 1,
+      "message": "This is not correct.  The event file version and the Redfish version are not equivalent.  This is a big part of why I didn\u0027t do this in sdbusplus and instead did it in bmcweb.  Only bmcweb has the Redfish Message Registries from the DMTF, so only bmcweb knows the right version.",
+      "range": {
+        "startLine": 53,
+        "startChar": 0,
+        "endLine": 53,
+        "endChar": 116
+      },
+      "revId": "3619c965a7ef4b4df40837be4c7c18bbd5e74b4f",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

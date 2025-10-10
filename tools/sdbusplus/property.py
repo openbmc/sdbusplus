@@ -104,7 +104,7 @@ class Property(NamedElement, Renderer):
 
         # Fix up local enum placeholders.
         if full:
-            r = r.replace(self.LOCAL_ENUM_MAGIC, iface)
+            r = r.replace(self.LOCAL_ENUM_MAGIC, "sdbusplus::common::" + iface)
         else:
             r = r.replace(self.LOCAL_ENUM_MAGIC + "::", "")
 

@@ -34,7 +34,7 @@ The sdbus++ application is installed as a standard Python package using
 
 ```sh
 cd tools
-./setup.py install
+pip install .
 ```
 
 ## C++ library

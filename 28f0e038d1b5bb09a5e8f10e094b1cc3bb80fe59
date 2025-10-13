@@ -34,6 +34,24 @@
       "parentUuid": "59bbe09f_8d562503",
       "revId": "28f0e038d1b5bb09a5e8f10e094b1cc3bb80fe59",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9d209abc_7fc0e9a8",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2025-10-13T21:19:39Z",
+      "side": 1,
+      "message": "My opinion is lets just add a sender method.",
+      "parentUuid": "d13f3403_5066f95e",
+      "revId": "28f0e038d1b5bb09a5e8f10e094b1cc3bb80fe59",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

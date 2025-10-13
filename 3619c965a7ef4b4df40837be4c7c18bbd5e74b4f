@@ -18,6 +18,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e5e105c9_85160650",
+        "filename": "include/sdbusplus/exception.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 1001198
+      },
+      "writtenOn": "2025-10-13T04:32:59Z",
+      "side": 1,
+      "message": "I updated the name of this function to getRedfishArgs",
+      "parentUuid": "5feb2f32_85b8c344",
+      "revId": "3619c965a7ef4b4df40837be4c7c18bbd5e74b4f",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "871a958f_f1fab56b",
@@ -31,6 +49,24 @@
       "writtenOn": "2025-10-09T21:47:41Z",
       "side": 1,
       "message": "I\u0027d really rather not do more to bind Redfish this deeply into sdbusplus, but if phosphor-logging is on-board with this I\u0027d maybe consider it.\n\n@spinler@us.ibm.com",
+      "revId": "3619c965a7ef4b4df40837be4c7c18bbd5e74b4f",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "188f0d0a_a75db73c",
+        "filename": "include/sdbusplus/exception.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 1001198
+      },
+      "writtenOn": "2025-10-13T04:32:59Z",
+      "side": 1,
+      "message": "When all of application switch to use lg2::commit to create Redfish events, we can consider to revert this commit.",
+      "parentUuid": "871a958f_f1fab56b",
       "revId": "3619c965a7ef4b4df40837be4c7c18bbd5e74b4f",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
@@ -58,6 +94,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "89a0d9ed_8430379d",
+        "filename": "tools/sdbusplus/templates/event.cpp.mako",
+        "patchSetId": 1
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 1001198
+      },
+      "writtenOn": "2025-10-13T04:32:59Z",
+      "side": 1,
+      "message": "I removed those lines of code.",
+      "parentUuid": "ea7f1c45_1fdbca46",
+      "range": {
+        "startLine": 59,
+        "startChar": 0,
+        "endLine": 66,
+        "endChar": 32
+      },
+      "revId": "3619c965a7ef4b4df40837be4c7c18bbd5e74b4f",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "f9e6647f_6b48a928",
@@ -71,6 +131,30 @@
       "writtenOn": "2025-10-09T21:50:54Z",
       "side": 1,
       "message": "This is not correct.  The event file version and the Redfish version are not equivalent.  This is a big part of why I didn\u0027t do this in sdbusplus and instead did it in bmcweb.  Only bmcweb has the Redfish Message Registries from the DMTF, so only bmcweb knows the right version.",
+      "range": {
+        "startLine": 53,
+        "startChar": 0,
+        "endLine": 53,
+        "endChar": 116
+      },
+      "revId": "3619c965a7ef4b4df40837be4c7c18bbd5e74b4f",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d8d98683_5eed47dc",
+        "filename": "tools/sdbusplus/templates/event.hpp.mako",
+        "patchSetId": 1
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 1001198
+      },
+      "writtenOn": "2025-10-13T04:32:59Z",
+      "side": 1,
+      "message": "Currently, the bmcweb does not need the version of event. It only need the RegitriesRefix and Event name. I think we can accept this limitation.",
+      "parentUuid": "f9e6647f_6b48a928",
       "range": {
         "startLine": 53,
         "startChar": 0,

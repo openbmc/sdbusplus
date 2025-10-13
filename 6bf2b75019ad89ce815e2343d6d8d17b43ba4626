@@ -41,6 +41,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "a6937667_1ee10786",
+        "filename": "test/gen/test_property_names.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1001712
+      },
+      "writtenOn": "2025-10-13T17:26:13Z",
+      "side": 1,
+      "message": "Yeah, that\u0027s easier on the eyes. Applied it.",
+      "parentUuid": "6d110c75_9d376b50",
+      "range": {
+        "startLine": 18,
+        "startChar": 4,
+        "endLine": 18,
+        "endChar": 14
+      },
+      "revId": "6bf2b75019ad89ce815e2343d6d8d17b43ba4626",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "5d8686b4_b7b94a45",
@@ -54,6 +78,30 @@
       "writtenOn": "2025-10-13T16:06:07Z",
       "side": 1,
       "message": "Maybe this would be a good place to put the actual \u0027char*\u0027 type so there\u0027s no ambiguity to anyone, but just a suggestion.",
+      "range": {
+        "startLine": 45,
+        "startChar": 25,
+        "endLine": 45,
+        "endChar": 29
+      },
+      "revId": "6bf2b75019ad89ce815e2343d6d8d17b43ba4626",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "030904a5_c74218d9",
+        "filename": "tools/sdbusplus/templates/interface.common.hpp.mako",
+        "patchSetId": 1
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1001712
+      },
+      "writtenOn": "2025-10-13T17:26:13Z",
+      "side": 1,
+      "message": "i tried it and apparently it\u0027s not a `char*` because this is what i get 😄\n\n```\ntest/gen/server/Test/common.hpp:50:44: error: ISO C++ forbids converting a string constant to ‘char*’ [-Werror\u003dwrite-strings]\n   50 |         static constexpr char* someValue \u003d \"SomeValue\";\n      |                                            ^~~~~~~~~~~\n```\n\nThanks for this idea, agree that the generated code should be verbose with the type for the benefit of the reader.\n\nI set it to be `std::string_view` for now because that\u0027s a type for which the example compiles. We can re-open this in case someone has a better idea for a type.",
+      "parentUuid": "5d8686b4_b7b94a45",
       "range": {
         "startLine": 45,
         "startChar": 25,

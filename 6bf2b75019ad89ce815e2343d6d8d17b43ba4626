@@ -110,6 +110,30 @@
       },
       "revId": "6bf2b75019ad89ce815e2343d6d8d17b43ba4626",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "777d41e0_4937558c",
+        "filename": "tools/sdbusplus/templates/interface.common.hpp.mako",
+        "patchSetId": 1
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1001712
+      },
+      "writtenOn": "2025-10-14T20:52:10Z",
+      "side": 1,
+      "message": "Apparently if it\u0027s `const char*` it works out with the assignment. Just tested it out.\n\nSo you were in a way right all along, i was just missing the \u0027const\u0027 part.",
+      "parentUuid": "030904a5_c74218d9",
+      "range": {
+        "startLine": 45,
+        "startChar": 25,
+        "endLine": 45,
+        "endChar": 29
+      },
+      "revId": "6bf2b75019ad89ce815e2343d6d8d17b43ba4626",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

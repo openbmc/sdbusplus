@@ -68,6 +68,54 @@
       },
       "revId": "ea7660f3ed5e2282841cc78f0cd4b165a56df71d",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d5e064e5_880b2730",
+        "filename": "tools/sdbusplus/templates/interface.common.hpp.mako",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1001712
+      },
+      "writtenOn": "2025-10-14T20:52:10Z",
+      "side": 1,
+      "message": "We discussed it in https://gerrit.openbmc.org/c/openbmc/sdbusplus/+/84199/comment/5d8686b4_b7b94a45/\n\nand i assume it would be `const char*` if we used auto.\n\n```\n[alex@odroid tmp]$ g++ --std\u003dc++23 main.cpp\nmain.cpp: In function ‘int main()’:\nmain.cpp:5:11: error: request for member ‘k’ in ‘x’, which is of non-class type ‘const char*’\n    5 |         x.k \u003d 30;\n      |           ^\n[alex@odroid tmp]$ cat main.cpp \n\nint main(){\n\n\tauto x \u003d \"hello\";\n\tx.k \u003d 30;\n\n\treturn 0;\n}\n```\n\nnow we can go from one to the other without too much effort but `string_view` has a various methods which can be used on it and it\u0027s a more modern approach which also stores the size alongside the pointer.\n\nCan you explain why you prefer `auto`?\n\nDoes it not make the code harder to read, given we know the actual type?",
+      "parentUuid": "af2e86d6_fd7daf35",
+      "range": {
+        "startLine": 45,
+        "startChar": 25,
+        "endLine": 45,
+        "endChar": 41
+      },
+      "revId": "ea7660f3ed5e2282841cc78f0cd4b165a56df71d",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "eaf2d7dc_48e82dad",
+        "filename": "tools/sdbusplus/templates/interface.common.hpp.mako",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1001712
+      },
+      "writtenOn": "2025-10-14T20:52:10Z",
+      "side": 1,
+      "message": "I went with it because that\u0027s what looked closest to the actual property name in a lot of cases. \n\nWill adjust in next revision.",
+      "parentUuid": "442e6165_9f4cfa38",
+      "range": {
+        "startLine": 45,
+        "startChar": 46,
+        "endLine": 45,
+        "endChar": 55
+      },
+      "revId": "ea7660f3ed5e2282841cc78f0cd4b165a56df71d",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

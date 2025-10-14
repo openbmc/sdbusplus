@@ -116,6 +116,30 @@
       },
       "revId": "ea7660f3ed5e2282841cc78f0cd4b165a56df71d",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "79916001_d55ae254",
+        "filename": "tools/sdbusplus/templates/interface.common.hpp.mako",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-10-14T21:49:09Z",
+      "side": 1,
+      "message": "1. I prefer “almost-always-auto” over “explicit types”. This is a philosophical discussion about “which is easier to read” and you’ll find plenty of pros and cons mused about elsewhere; I’m not planning to enumerate those in detail.  \n\n2. “auto” implies “the compiler can choose what is optimal”. Some compilers use const char* and some use const char[].  I’d prefer to leave decisions to compilers rather than humans when humans don’t really care. \n\n3. string_view, while “more modern” is not required to be null terminated, which means it isn’t as simple to use as most people assume.\n\n4. “more modern” in this case doesn’t even mean that the older one is deprecated. Even Rust has about 4 different ways to represent strings. \n\n5. Most of sdbusplus doesn’t use (or accept) string_view anyhow, so it is ergonomically worse to have to use accessor functions everywhere because the functions you want to use the data with don’t support sv.",
+      "parentUuid": "d5e064e5_880b2730",
+      "range": {
+        "startLine": 45,
+        "startChar": 25,
+        "endLine": 45,
+        "endChar": 41
+      },
+      "revId": "ea7660f3ed5e2282841cc78f0cd4b165a56df71d",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "cd32deb5_8861410f",
+        "filename": "test/gen/test_property_names.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-10-14T19:56:23Z",
+      "side": 1,
+      "message": "Wow.  Us naming that test case \"server\" was a bad choice, wasn\u0027t it...\n\nI was thrown by \"common::server\".",
+      "range": {
+        "startLine": 14,
+        "startChar": 26,
+        "endLine": 14,
+        "endChar": 33
+      },
+      "revId": "ea7660f3ed5e2282841cc78f0cd4b165a56df71d",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "442e6165_9f4cfa38",
+        "filename": "tools/sdbusplus/templates/interface.common.hpp.mako",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-10-14T19:56:23Z",
+      "side": 1,
+      "message": "I\u0027d prefer if these are snake_case.  The async server and client code uses snake_case everywhere.",
+      "range": {
+        "startLine": 45,
+        "startChar": 46,
+        "endLine": 45,
+        "endChar": 55
+      },
+      "revId": "ea7660f3ed5e2282841cc78f0cd4b165a56df71d",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "af2e86d6_fd7daf35",
+        "filename": "tools/sdbusplus/templates/interface.common.hpp.mako",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-10-14T19:56:23Z",
+      "side": 1,
+      "message": "I\u0027d prefer an `auto` here.  Is there a reason to make it explicitly a string_view?",
+      "range": {
+        "startLine": 45,
+        "startChar": 25,
+        "endLine": 45,
+        "endChar": 41
+      },
+      "revId": "ea7660f3ed5e2282841cc78f0cd4b165a56df71d",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

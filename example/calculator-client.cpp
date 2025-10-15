@@ -59,14 +59,31 @@ auto startup(sdbusplus::async::context& ctx) -> sdbusplus::async::task<>
         std::cout << "Should be 'client': " << _ << std::endl;
     }
 
-    {
-        // Grab all the properties and print them.
-        auto _ = co_await c.properties();
-        std::cout << "Should be 1234: " << _.last_result << std::endl;
-        std::cout << "Should be 'client': " << _.owner << std::endl;
-    }
+    auto calc = sdbusplus::async::proxy()
+                    .service(Calculator::default_service)
+                    .path(Calculator::instance_path)
+                    .interface(Calculator::interface);
 
-    co_return;
+    std::cout
+        << "Calling get_all_properties with empty States and NewStates. This works.\n";
+    auto props =
+        co_await calc.get_all_properties<Calculator::PropertiesVariant>(ctx);
+
+    std::cout
+        << "Setting value for States.  This will cause get_all_properties to fail.\n";
+    std::vector<Calculator::State> sValues{Calculator::State::Error};
+    co_await c.states(sValues);
+
+    std::cout << "Calling get_all_properties again.  It will fail\n";
+    try
+    {
+        props = co_await calc.get_all_properties<Calculator::PropertiesVariant>(
+            ctx);
+    }
+    catch (const std::exception& e)
+    {
+        std::cout << "get_all_properties failed with: " << e.what() << '\n';
+    }
 }
 
 int main()

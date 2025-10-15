@@ -66,6 +66,14 @@ properties:
           The name of the owner of the Calculator.
       errors:
           - self.PermissionDenied
+    - name: States
+      type: array[enum[self.State]]
+      description: >
+          Set of states
+    - name: NewStates
+      type: array[enum[self.NewState]]
+      description: >
+          set of NewStates
 signals:
     - name: Cleared
       description: >
@@ -84,6 +92,16 @@ enumerations:
             description: >
                 No error has been encountered.
           - name: Error
+            description: >
+                The service has encountered an error.
+    - name: NewState
+      description: >
+          Identifies if the service has encountered an error or not.
+      values:
+          - name: NewSuccess
+            description: >
+                No error has been encountered.
+          - name: NewError
             description: >
                 The service has encountered an error.
 

@@ -7,6 +7,7 @@
 #include <sdbusplus/utility/tuple_to_array.hpp>
 #include <sdbusplus/utility/type_traits.hpp>
 
+#include <iostream>
 #include <string>
 #include <tuple>
 #include <type_traits>
@@ -99,6 +100,8 @@ struct read_single
         auto r = sdbusplus::message::convert_from_string<Td<T>>(value);
         if (!r)
         {
+            std::cout << "    read_single: throwing InvalidEnumString for "
+                      << value << '\n';
             throw sdbusplus::exception::InvalidEnumString();
         }
         t = *r;
@@ -240,8 +243,16 @@ struct read_single<S>
         while (!(r = intf->sd_bus_message_at_end(m, false)))
         {
             types::details::type_id_downcast_t<typename S::value_type> s;
-            sdbusplus::message::read(intf, m, s);
-            t.emplace(std::move(s));
+            try
+            {
+                sdbusplus::message::read(intf, m, s);
+                t.emplace(std::move(s));
+            }
+            catch (std::exception& e)
+            {
+                std::cout << "Exception while reading out of map\n";
+                throw;
+            }
         }
         if (r < 0)
         {

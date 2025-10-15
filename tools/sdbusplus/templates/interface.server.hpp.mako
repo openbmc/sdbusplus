@@ -119,6 +119,13 @@ ${p.camelCase}(${p.cppTypeParam(interface.name)} value);
             return  _sdbusplus_bus;
         }
 
+    protected:
+        /** @return the current sdbus message, or nullptr if no method is currently being called */
+        sd_bus_message* get_current_message()
+        {
+            return _msg;
+        }
+
     private:
     % for m in interface.methods:
 ${ m.cpp_prototype(loader, interface=interface, ptype='callback-header') }
@@ -141,6 +148,7 @@ ${ m.cpp_prototype(loader, interface=interface, ptype='callback-header') }
         sdbusplus::server::interface_t
                 _${interface.joinedName("_", "interface")};
         bus_t&  _sdbusplus_bus;
+        sd_bus_message* _msg;
 
     % for p in interface.properties:
         ${p.cppTypeParam(interface.name)} _${p.camelCase}${p.default_value(interface.name)};

@@ -1,0 +1,10 @@
+description: >
+    A test interface with a method
+methods:
+    - name: UpdateValue
+      parameters:
+          - name: updatedValue
+            type: int64
+      returns:
+          - name: status
+            type: boolean

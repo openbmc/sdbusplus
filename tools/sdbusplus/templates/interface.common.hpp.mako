@@ -52,6 +52,15 @@ struct ${interface.classname}
     using properties_t = std::nullopt_t;
     % endif
 
+    % if interface.methods:
+    struct method_names
+    {
+        % for method in interface.methods:
+        static constexpr auto ${method.snake_case} = "${method.name}";
+        % endfor
+    };
+    % endif
+
     % for p in interface.paths:
         % if p.description:
     /** ${p.description.strip()} */

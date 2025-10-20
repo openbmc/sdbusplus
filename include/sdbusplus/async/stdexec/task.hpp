@@ -422,6 +422,14 @@ class [[nodiscard]] basic_task
             this->__data_.template emplace<1>(std::current_exception());
         }
 
+        // not a template, so the NOLINT applies correctly
+        __promise_context_t& getContextUnchecked(__optional<__promise_context_t>& ctx)
+        {
+            // NOLINTBEGIN(clang-analyzer-core.uninitialized.Branch)
+            return *ctx;
+            // NOLINTEND(clang-analyzer-core.uninitialized.Branch)
+        }
+
         template <sender _Awaitable>
             requires __scheduler_provider<_Context>
         auto await_transform(_Awaitable&& __awaitable) noexcept
@@ -431,7 +439,7 @@ class [[nodiscard]] basic_task
             // optimize this to avoid the reschedule
             return as_awaitable(
                 continues_on(static_cast<_Awaitable&&>(__awaitable),
-                             get_scheduler(*__context_)),
+                             get_scheduler(getContextUnchecked(__context_))),
                 *this);
         }
 
@@ -445,7 +453,7 @@ class [[nodiscard]] basic_task
             {
                 // Create a cleanup action that transitions back onto the
                 // current scheduler:
-                auto __sched = get_scheduler(*__context_);
+                auto __sched = get_scheduler(getContextUnchecked(__context_));
                 auto __cleanup_task =
                     at_coroutine_exit(schedule, std::move(__sched));
                 // Insert the cleanup action into the head of the continuation

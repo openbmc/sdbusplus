@@ -429,6 +429,10 @@ class [[nodiscard]] basic_task
         {
             // TODO: If we have a complete-where-it-starts query then we can
             // optimize this to avoid the reschedule
+            if (!__context_.has_value())
+            {
+                std::terminate();
+            }
             return as_awaitable(
                 continues_on(static_cast<_Awaitable&&>(__awaitable),
                              get_scheduler(*__context_)),
@@ -445,6 +449,10 @@ class [[nodiscard]] basic_task
             {
                 // Create a cleanup action that transitions back onto the
                 // current scheduler:
+                if (!__context_.has_value())
+                {
+                    std::terminate();
+                }
                 auto __sched = get_scheduler(*__context_);
                 auto __cleanup_task =
                     at_coroutine_exit(schedule, std::move(__sched));

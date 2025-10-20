@@ -61,6 +61,15 @@ struct ${interface.classname}
     };
     % endif
 
+    % if interface.signals:
+    struct signal_names
+    {
+        % for signal in interface.signals:
+        static constexpr auto ${signal.snake_case} = "${signal.name}";
+        % endfor
+    };
+    % endif
+
     % for p in interface.paths:
         % if p.description:
     /** ${p.description.strip()} */

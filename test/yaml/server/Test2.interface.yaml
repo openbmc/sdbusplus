@@ -7,3 +7,8 @@ properties:
       type: int64
       flags:
           - const
+signals:
+    - name: OtherValueChanged
+      properties:
+          - name: Value
+            type: int64

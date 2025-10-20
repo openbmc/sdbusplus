@@ -16,6 +16,24 @@
       "message": "You probably want to do Signals also?",
       "revId": "4aa58f5a00af9bbd18602eb5fba438b7a072c102",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1ae0c3b6_a78f2437",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1001712
+      },
+      "writtenOn": "2025-10-20T12:59:12Z",
+      "side": 1,
+      "message": "Sure, raised a follow-up patch https://gerrit.openbmc.org/c/openbmc/sdbusplus/+/84535\n\nHere is one example where it could be used:\n\nhttps://github.com/openbmc/phosphor-sel-logger/blob/27bfd425a52f2894e82abf43a1a9c204bc1a4430/include/threshold_alarm_event_monitor.hpp#L101",
+      "parentUuid": "f7c13bf6_9b7fa5bd",
+      "revId": "4aa58f5a00af9bbd18602eb5fba438b7a072c102",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ],
   "submitRequirementResults": []

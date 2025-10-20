@@ -429,10 +429,12 @@ class [[nodiscard]] basic_task
         {
             // TODO: If we have a complete-where-it-starts query then we can
             // optimize this to avoid the reschedule
+            // NOLINTBEGIN(clang-analyzer-core.uninitialized.Branch)
             return as_awaitable(
                 continues_on(static_cast<_Awaitable&&>(__awaitable),
                              get_scheduler(*__context_)),
                 *this);
+            // NOLINTEND(clang-analyzer-core.uninitialized.Branch)
         }
 
         template <class _Scheduler>
@@ -445,7 +447,9 @@ class [[nodiscard]] basic_task
             {
                 // Create a cleanup action that transitions back onto the
                 // current scheduler:
+                // NOLINTBEGIN(clang-analyzer-core.uninitialized.Branch)
                 auto __sched = get_scheduler(*__context_);
+                // NOLINTEND(clang-analyzer-core.uninitialized.Branch)
                 auto __cleanup_task =
                     at_coroutine_exit(schedule, std::move(__sched));
                 // Insert the cleanup action into the head of the continuation

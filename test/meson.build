@@ -19,14 +19,10 @@ if not gtest_dep.found() or not gmock_dep.found()
     endif
 endif
 
+subdir('async')
+subdir('timer')
+
 tests = [
-    'async/context',
-    'async/fdio',
-    'async/fdio_timed',
-    'async/mutex',
-    'async/task',
-    'async/timer',
-    'async/watchdog',
     'bus/exception',
     'bus/list_names',
     'bus/match',
@@ -37,7 +33,6 @@ tests = [
     'message/native_types',
     'message/read',
     'message/types',
-    'timer',
     'unpack_properties',
     'utility/make_dbus_args_tuple',
     'utility/tuple_to_array',

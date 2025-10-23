@@ -12,6 +12,12 @@ class ServiceName(NamedElement):
         if "default" in kwargs:
             kwargs["name"] = "DefaultService"
             self.value = kwargs.pop("default")
+        elif "indexed_prefix" in kwargs:
+            # indexed prefix service name such as `xyz.openbmc_project.Host`,
+            # which can be used to construct `xyz.openbmc_project.Host{N}`
+            # The index must be directly appended, no other construction is intended.
+            kwargs["name"] = "IndexedPrefix"
+            self.value = kwargs.pop("indexed_prefix")
         else:
             self.value = kwargs.pop("value", False)
 

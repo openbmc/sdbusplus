@@ -16,6 +16,24 @@
       "message": "nit: git-lint is complaining about the length of this line.\n\n\nRather than spelling this out here, you can say that we upgraded from setup.py to pyproject.toml and you are updating the documentation accordingly.  Then at the footer (before Change-Id) you can add:\n\n```\nFixes: ed24aa516d98 (\"sdbus++: convert from setup.py to pyproject.toml\")\n```",
       "revId": "074795c40dbd00c02649c477e36a39cf51363512",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "69db1da2_7c16ea9c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-10-30T15:48:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "412e4523_c6064db7",
+      "revId": "074795c40dbd00c02649c477e36a39cf51363512",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

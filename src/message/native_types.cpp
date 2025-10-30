@@ -33,17 +33,7 @@ constexpr std::array<int8_t, 256> unhex = [] {
     return ret;
 }();
 
-inline bool pathShouldEscape(char c)
-{
-    return !std::isalnum(c);
-}
-
-inline bool pathRequiresEscape(char c)
-{
-    return pathShouldEscape(c) && c != '_';
-}
-
-inline void pathAppendEscape(std::string& s, char c)
+void pathAppendEscape(std::string& s, char c)
 {
     s.append(1, '_');
     s.append(1, hex[(c >> 4) & 0xf]);

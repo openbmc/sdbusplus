@@ -175,6 +175,37 @@ using unix_fd = details::unix_fd_type;
 namespace details
 {
 
+// std::isalnum is not constexpr
+// (assume that's because it depends on locale).
+// https://en.cppreference.com/w/cpp/string/byte/isalnum.html
+constexpr int isalnumConstexpr(char c)
+{
+    if (c >= 'a' && c <= 'z')
+    {
+        return 1;
+    }
+    if (c >= 'A' && c <= 'Z')
+    {
+        return 1;
+    }
+    if (c >= '0' && c <= '9')
+    {
+        return 1;
+    }
+    return 0;
+}
+
+constexpr bool pathShouldEscape(char c)
+{
+    return !isalnumConstexpr(c);
+}
+
+constexpr bool pathRequiresEscape(char c)
+{
+    return pathShouldEscape(c) && c != '_';
+}
+void pathAppendEscape(std::string& s, char c);
+
 template <typename T>
 struct convert_from_string
 {

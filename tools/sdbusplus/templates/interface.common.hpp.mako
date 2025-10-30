@@ -8,6 +8,7 @@
 
 #include <sdbusplus/exception.hpp>
 #include <sdbusplus/message.hpp>
+#include <sdbusplus/message/obj_path.hpp>
 #include <sdbusplus/utility/dedup_variant.hpp>
 <%
     def setOfPropertyTypes():
@@ -75,11 +76,11 @@ struct ${interface.classname}
     /** ${p.description.strip()} */
         % endif
         % if len(p.segments) == 0:
-    static constexpr auto ${p.snake_case} = "${p.value}";
+    static constexpr sdbusplus::message::obj_path<"${p.value}"> ${p.snake_case}{};
         % else:
     struct ${p.snake_case}
     {
-        static constexpr auto value = "${p.value}";
+        static constexpr sdbusplus::message::obj_path<"${p.value}"> value{};
             % for s in p.segments:
                 % if s.description:
         /** ${s.description.strip()} */

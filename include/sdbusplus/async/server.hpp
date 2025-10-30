@@ -28,10 +28,20 @@ class server :
     explicit server(sdbusplus::async::context& ctx, const char* path) :
         context_ref(ctx), Types<Instance, Self>(path)...
     {}
+    explicit server(sdbusplus::async::context& ctx,
+                    const sdbusplus::message::object_path& path) :
+        context_ref(ctx), Types<Instance, Self>(path)...
+    {}
 
     // This constructor accepting one properties_t per interface:
     explicit server(
         sdbusplus::async::context& ctx, const char* path,
+        typename Types<Instance, Self>::properties_t... propValues) :
+        context_ref(ctx), Types<Instance, Self>(path, propValues)...
+    {}
+    explicit server(
+        sdbusplus::async::context& ctx,
+        const sdbusplus::message::object_path& path,
         typename Types<Instance, Self>::properties_t... propValues) :
         context_ref(ctx), Types<Instance, Self>(path, propValues)...
     {}

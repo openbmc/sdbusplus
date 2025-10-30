@@ -43,6 +43,9 @@ class ${interface.classname} :
                 bus, path, interface, _vtable, this),
             _sdbusplus_bus(bus) {}
 
+        ${interface.classname}(bus_t& bus, const sdbusplus::message::object_path& path) :
+            ${interface.classname}(bus, path.str.c_str()) {}
+
     % if interface.properties:
         /** @brief Constructor to initialize the object from a map of
          *         properties.
@@ -61,6 +64,11 @@ class ${interface.classname} :
                 setPropertyByName(v.first, v.second, skipSignal);
             }
         }
+
+        ${interface.classname}(bus_t& bus, const sdbusplus::message::object_path& path,
+                     const std::map<std::string, PropertiesVariant>& vals,
+                     bool skipSignal = false) :
+            ${interface.classname}(bus, path.str.c_str(), vals, skipSignal) {}
 
     % endif
     % for m in interface.methods:

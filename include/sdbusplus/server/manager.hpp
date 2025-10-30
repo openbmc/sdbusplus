@@ -32,6 +32,12 @@ struct manager : private sdbusplus::bus::details::bus_friend
         return slot_t{slot, intf};
     }
 
+    static slot_t makeManager(SdBusInterface* intf, sd_bus* bus,
+                              const sdbusplus::message::object_path& path)
+    {
+        return makeManager(intf, bus, path.str.c_str());
+    }
+
   public:
     /** @brief Register an object manager at a path.
      *
@@ -39,6 +45,11 @@ struct manager : private sdbusplus::bus::details::bus_friend
      *  @param[in] path - The path to register.
      */
     manager(sdbusplus::bus_t& bus, const char* path) :
+        _slot(makeManager(bus.getInterface(), get_busp(bus), path))
+    {}
+
+    manager(sdbusplus::bus_t& bus,
+            const sdbusplus::message::object_path& path) :
         _slot(makeManager(bus.getInterface(), get_busp(bus), path))
     {}
 };

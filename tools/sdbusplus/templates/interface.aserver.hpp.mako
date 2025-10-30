@@ -51,6 +51,10 @@ class ${interface.classname} :
         _${interface.joinedName("_", "interface")}(
             _context(), path, interface, _vtable, this)
     {}
+    explicit ${interface.classname}(const sdbusplus::message::object_path& path) :
+        _${interface.joinedName("_", "interface")}(
+            _context(), path, interface, _vtable, this)
+    {}
 
     ${interface.classname}(
             const char* path,
@@ -61,6 +65,12 @@ class ${interface.classname} :
         ${p.snake_case}_ = props.${p.snake_case};
         % endfor
     }
+
+    ${interface.classname}(
+        const sdbusplus::message::object_path& path,
+        [[maybe_unused]] ${interface.classname}::properties_t props) :
+        ${interface.classname}(path.str.c_str(), props)
+    {}
 
 % for s in interface.signals:
 ${s.render(loader, "signal.aserver.emit.hpp.mako", signal=s, interface=interface)}

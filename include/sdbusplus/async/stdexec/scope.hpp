@@ -17,21 +17,18 @@
 
 #include "../stdexec/__detail/__scope.hpp"
 
-namespace exec
-{
+namespace exec {
 
-template <class _Fn, class... _Ts>
+  template <class _Fn, class... _Ts>
     requires stdexec::__nothrow_callable<_Fn, _Ts...>
-struct scope_guard
-{
+  struct scope_guard {
     stdexec::__scope_guard<_Fn, _Ts...> __guard_;
 
-    void dismiss() noexcept
-    {
-        __guard_.__dismiss();
+    void dismiss() noexcept {
+      __guard_.__dismiss();
     }
-};
-template <class _Fn, class... _Ts>
-scope_guard(_Fn, _Ts...) -> scope_guard<_Fn, _Ts...>;
+  };
+  template <class _Fn, class... _Ts>
+  scope_guard(_Fn, _Ts...) -> scope_guard<_Fn, _Ts...>;
 
 } // namespace exec

@@ -22,37 +22,31 @@
 #include "__diagnostics.hpp"
 #include "__meta.hpp"
 
-namespace stdexec
-{
-/////////////////////////////////////////////////////////////////////////////
-// completion_signatures
-namespace __sigs
-{
-template <class... _Args>
-inline constexpr bool __is_compl_sig<set_value_t(_Args...)> = true;
-template <class _Error>
-inline constexpr bool __is_compl_sig<set_error_t(_Error)> = true;
-template <>
-inline constexpr bool __is_compl_sig<set_stopped_t()> = true;
+namespace stdexec {
+  /////////////////////////////////////////////////////////////////////////////
+  // completion_signatures
+  namespace __sigs {
+    template <class... _Args>
+    inline constexpr bool __is_compl_sig<set_value_t(_Args...)> = true;
+    template <class _Error>
+    inline constexpr bool __is_compl_sig<set_error_t(_Error)> = true;
+    template <>
+    inline constexpr bool __is_compl_sig<set_stopped_t()> = true;
 
-template <class>
-inline constexpr bool __is_completion_signatures = false;
-template <class... _Sigs>
-inline constexpr bool
-    __is_completion_signatures<completion_signatures<_Sigs...>> = true;
-} // namespace __sigs
+    template <class>
+    inline constexpr bool __is_completion_signatures = false;
+    template <class... _Sigs>
+    inline constexpr bool __is_completion_signatures<completion_signatures<_Sigs...>> = true;
+  } // namespace __sigs
 
-template <class... _Sigs>
-struct completion_signatures
-{};
+  template <class... _Sigs>
+  struct completion_signatures { };
 
-template <class _Completions>
-concept __valid_completion_signatures = //
-    __same_as<__ok_t<_Completions>, __msuccess> &&
-    __sigs::__is_completion_signatures<_Completions>;
+  template <class _Completions>
+  concept __valid_completion_signatures = __same_as<__ok_t<_Completions>, __msuccess>
+                                       && __sigs::__is_completion_signatures<_Completions>;
 
-template <class _Sender, class _Env>
-using __unrecognized_sender_error = //
-    __mexception<_UNRECOGNIZED_SENDER_TYPE_<>, _WITH_SENDER_<_Sender>,
-                 _WITH_ENVIRONMENT_<_Env>>;
+  template <class _Sender, class... _Env>
+  using __unrecognized_sender_error =
+    __mexception<_UNRECOGNIZED_SENDER_TYPE_<>, _WITH_SENDER_<_Sender>, _WITH_ENVIRONMENT_<_Env>...>;
 } // namespace stdexec

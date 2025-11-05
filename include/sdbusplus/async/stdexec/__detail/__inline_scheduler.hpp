@@ -15,74 +15,75 @@
  */
 #pragma once
 
-#include "__basic_sender.hpp"
-#include "__cpo.hpp"
-#include "__env.hpp"
 #include "__execution_fwd.hpp"
+
+#include "__env.hpp"
 #include "__receivers.hpp"
 #include "__schedulers.hpp"
-#include "__utility.hpp"
 
-namespace stdexec
-{
-namespace __inln
-{
-struct __schedule_t
-{};
+namespace stdexec {
+  struct inline_scheduler {
+   private:
+    template <class _Receiver>
+    struct __opstate {
+      using __id = __opstate;
+      using __t = __opstate;
 
-struct __scheduler
-{
-    using __t = __scheduler;
-    using __id = __scheduler;
+      using operation_state_concept = operation_state_t;
 
-    template <class _Tag = __schedule_t>
-    STDEXEC_ATTRIBUTE((host, device))
-    STDEXEC_MEMFN_DECL(auto schedule)(this __scheduler)
-    {
-        return __make_sexpr<_Tag>();
-    }
+      STDEXEC_ATTRIBUTE(host, device)
+      constexpr void start() noexcept {
+        stdexec::set_value(static_cast<_Receiver&&>(__rcvr_));
+      }
 
-    auto query(get_forward_progress_guarantee_t) const noexcept
-        -> forward_progress_guarantee
-    {
-        return forward_progress_guarantee::weakly_parallel;
-    }
-
-    auto operator==(const __scheduler&) const noexcept -> bool = default;
-};
-
-struct __env
-{
-    static constexpr bool query(__is_scheduler_affine_t) noexcept
-    {
-        return true;
-    }
-
-    constexpr auto query(get_completion_scheduler_t<set_value_t>) const noexcept
-        -> __scheduler
-    {
-        return {};
-    }
-};
-} // namespace __inln
-
-template <>
-struct __sexpr_impl<__inln::__schedule_t> : __sexpr_defaults
-{
-    static constexpr auto get_attrs = //
-        [](__ignore) noexcept { return __inln::__env(); };
-
-    static constexpr auto get_completion_signatures = //
-        [](__ignore,
-           __ignore = {}) noexcept -> completion_signatures<set_value_t()> {
-        return {};
+      _Receiver __rcvr_;
     };
 
-    static constexpr auto start = //
-        []<class _Receiver>(__ignore, _Receiver& __rcvr) noexcept -> void {
-        stdexec::set_value(static_cast<_Receiver&&>(__rcvr));
-    };
-};
+    struct __attrs {
+      STDEXEC_ATTRIBUTE(nodiscard, host, device)
+      static constexpr auto query(get_completion_behavior_t) noexcept {
+        return completion_behavior::inline_completion;
+      }
 
-static_assert(__is_scheduler_affine<schedule_result_t<__inln::__scheduler>>);
+      STDEXEC_ATTRIBUTE(nodiscard, host, device)
+      static constexpr auto query(get_completion_scheduler_t<set_value_t>) noexcept //
+        -> inline_scheduler {
+        return {};
+      }
+    };
+
+    struct __sender {
+      using __id = __sender;
+      using __t = __sender;
+
+      using sender_concept = sender_t;
+      using completion_signatures = stdexec::completion_signatures<set_value_t()>;
+
+      template <class _Receiver>
+      STDEXEC_ATTRIBUTE(nodiscard, host, device)
+      static constexpr auto connect(_Receiver __rcvr) noexcept -> __opstate<_Receiver> {
+        return {static_cast<_Receiver&&>(__rcvr)};
+      }
+
+      STDEXEC_ATTRIBUTE(nodiscard, host, device)
+      static constexpr auto get_env() noexcept -> __attrs {
+        return {};
+      }
+    };
+
+   public:
+    using __t = inline_scheduler;
+    using __id = inline_scheduler;
+
+    using scheduler_concept = scheduler_t;
+
+    STDEXEC_ATTRIBUTE(nodiscard, host, device)
+    static constexpr auto schedule() noexcept -> __sender {
+      return {};
+    }
+
+    auto operator==(const inline_scheduler&) const noexcept -> bool = default;
+  };
+
+  static_assert(__is_scheduler_affine<schedule_result_t<inline_scheduler>>);
 } // namespace stdexec

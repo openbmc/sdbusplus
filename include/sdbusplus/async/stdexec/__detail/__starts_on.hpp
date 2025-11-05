@@ -22,106 +22,80 @@
 #include "__diagnostics.hpp"
 #include "__domain.hpp"
 #include "__env.hpp"
+#include "__just.hpp"
 #include "__let.hpp"
-#include "__meta.hpp"
 #include "__schedulers.hpp"
 #include "__senders_core.hpp"
-#include "__tag_invoke.hpp"
 #include "__transform_sender.hpp"
 #include "__utility.hpp"
 
-namespace stdexec
-{
-namespace __detail
-{
-//! Constant function object always returning `__val_`.
-template <class _Ty, class = __name_of<__decay_t<_Ty>>>
-struct __always
-{
-    _Ty __val_;
+namespace stdexec {
+  namespace __detail {
+    //! Constant function object always returning `__val_`.
+    template <class _Ty, class = __name_of<__decay_t<_Ty>>>
+    struct __always {
+      _Ty __val_;
 
-    auto operator()() noexcept -> _Ty
-    {
+      STDEXEC_ATTRIBUTE(always_inline)
+      constexpr auto operator()() noexcept(__nothrow_constructible_from<_Ty, _Ty>) -> _Ty {
         return static_cast<_Ty&&>(__val_);
-    }
-};
+      }
+    };
 
-template <class _Ty>
-__always(_Ty) -> __always<_Ty>;
-} // namespace __detail
+    template <class _Ty>
+    __always(_Ty) -> __always<_Ty>;
+  } // namespace __detail
 
-/////////////////////////////////////////////////////////////////////////////
-// [execution.senders.adaptors.starts_on]
-namespace __starts_on_ns
-{
-struct starts_on_t
-{
-    using _Sender = __1;
-    using _Scheduler = __0;
-    using __legacy_customizations_t =
-        __types<tag_invoke_t(starts_on_t, _Scheduler, _Sender)>;
-
-    template <scheduler _Scheduler, sender _Sender>
-    auto operator()(_Scheduler&& __sched, _Sender&& __sndr) const
-        -> __well_formed_sender auto
-    {
+  /////////////////////////////////////////////////////////////////////////////
+  // [execution.senders.adaptors.starts_on]
+  namespace __starts_on_ns {
+    struct starts_on_t {
+      template <scheduler _Scheduler, sender _Sender>
+      auto operator()(_Scheduler&& __sched, _Sender&& __sndr) const -> __well_formed_sender auto {
         auto __domain = query_or(get_domain, __sched, default_domain());
         return stdexec::transform_sender(
-            __domain,
-            __make_sexpr<starts_on_t>(static_cast<_Scheduler&&>(__sched),
-                                      static_cast<_Sender&&>(__sndr)));
-    }
+          __domain,
+          __make_sexpr<starts_on_t>(
+            static_cast<_Scheduler&&>(__sched), static_cast<_Sender&&>(__sndr)));
+      }
 
-    template <class _Env>
-    STDEXEC_ATTRIBUTE((always_inline))
-    static auto __transform_env_fn(_Env&& __env) noexcept
-    {
+      template <class _Env>
+      STDEXEC_ATTRIBUTE(always_inline)
+      static auto __transform_env_fn(_Env&& __env) noexcept {
         return [&](__ignore, auto __sched, __ignore) noexcept {
-            return __detail::__mkenv_sched(static_cast<_Env&&>(__env), __sched);
+          return __env::__join(__sched_env{__sched}, static_cast<_Env&&>(__env));
         };
-    }
+      }
 
-    template <class _Sender, class _Env>
-    static auto transform_env(const _Sender& __sndr, _Env&& __env) noexcept
-    {
-        return __sexpr_apply(__sndr,
-                             __transform_env_fn(static_cast<_Env&&>(__env)));
-    }
+      template <class _Sender, class _Env>
+      static auto transform_env(const _Sender& __sndr, _Env&& __env) noexcept {
+        return __sexpr_apply(__sndr, __transform_env_fn(static_cast<_Env&&>(__env)));
+      }
 
-    template <class _Sender, class _Env>
-    static auto transform_sender(_Sender&& __sndr, const _Env&)
-    {
+      template <class _Sender, class _Env>
+      static auto transform_sender(_Sender&& __sndr, const _Env&) {
         return __sexpr_apply(
-            static_cast<_Sender&&>(__sndr),
-            []<class _Data, class _Child>(__ignore, _Data&& __data,
-                                          _Child&& __child) {
-                // This is the heart of starts_on: It uses `let_value` to
-                // schedule `__child` on the given scheduler:
-                return let_value(
-                    schedule(__data),
-                    __detail::__always{static_cast<_Child&&>(__child)});
-            });
-    }
-};
-} // namespace __starts_on_ns
-
-using __starts_on_ns::starts_on_t;
-inline constexpr starts_on_t starts_on{};
-
-using on_t = starts_on_t;
-inline constexpr starts_on_t on{};
-
-using start_on_t = starts_on_t;
-inline constexpr starts_on_t start_on{};
-
-template <>
-struct __sexpr_impl<starts_on_t> : __sexpr_defaults
-{
-    static constexpr auto get_completion_signatures = //
-        []<class _Sender>(_Sender&&) noexcept         //
-        -> __completion_signatures_of_t<              //
-            transform_sender_result_t<default_domain, _Sender, empty_env>> {
-        return {};
+          static_cast<_Sender&&>(__sndr),
+          []<class _Data, class _Child>(__ignore, _Data&& __data, _Child&& __child) -> auto {
+            // This is the heart of starts_on: It uses `let_value` to schedule `__child` on the given scheduler:
+            return let_value(
+              continues_on(just(), __data), __detail::__always{static_cast<_Child&&>(__child)});
+          });
+      }
     };
-};
+  } // namespace __starts_on_ns
+
+  using __starts_on_ns::starts_on_t;
+  inline constexpr starts_on_t starts_on{};
+
+  using start_on_t = starts_on_t;
+  inline constexpr starts_on_t start_on{};
+
+  template <>
+  struct __sexpr_impl<starts_on_t> : __sexpr_defaults {
+    static constexpr auto get_completion_signatures = []<class _Sender>(_Sender&&) noexcept
+      -> __completion_signatures_of_t<transform_sender_result_t<default_domain, _Sender, env<>>> {
+      return {};
+    };
+  };
 } // namespace stdexec

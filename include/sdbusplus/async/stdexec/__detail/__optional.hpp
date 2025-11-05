@@ -19,152 +19,165 @@
 
 // include these after __execution_fwd.hpp
 #include "__concepts.hpp"
-#include "__type_traits.hpp"
+#include "__scope.hpp"
 
+#include <new> // IWYU pragma: keep for ::new
 #include <exception>
 #include <memory>
-#include <new>
 #include <utility>
 
-namespace stdexec
-{
-namespace __opt
-{
-struct __bad_optional_access : std::exception
-{
-    const char* what() const noexcept override
-    {
+namespace stdexec {
+  namespace __opt {
+    struct __bad_optional_access : std::exception {
+      [[nodiscard]]
+      auto what() const noexcept -> const char* override {
         return "stdexec::__optional: bad access";
-    }
-};
-
-inline constexpr struct __nullopt_t
-{
-} __nullopt{};
-
-// A simplified version of std::optional for better compile times
-template <class _Tp>
-struct __optional
-{
-    static_assert(destructible<_Tp>);
-
-    union
-    {
-        _Tp __value;
+      }
     };
 
-    bool __has_value = false;
+    inline auto __mk_has_value_guard(bool& __has_value) noexcept {
+      __has_value = true;
+      return __scope_guard{[&]() noexcept { __has_value = false; }};
+    }
 
-    __optional() noexcept {}
+    inline constexpr struct __nullopt_t {
+    } __nullopt{};
 
-    __optional(__nullopt_t) noexcept {}
+    // A simplified version of std::optional for better compile times
+    template <class _Tp>
+    struct __optional {
+      static_assert(destructible<_Tp>);
 
-    __optional(__optional&&) = delete; // immovable for simplicity's sake
+      union {
+        _Tp __value_;
+      };
 
-    template <__not_decays_to<__optional> _Up>
+      bool __has_value_ = false;
+
+      __optional() noexcept {
+      }
+
+      __optional(__nullopt_t) noexcept {
+      }
+
+      __optional(__optional&&) = delete; // immovable for simplicity's sake
+
+      template <__not_decays_to<__optional> _Up>
         requires constructible_from<_Tp, _Up>
-    __optional(_Up&& __v) : __value(static_cast<_Up&&>(__v)), __has_value(true)
-    {}
+      __optional(_Up&& __v) noexcept(__nothrow_constructible_from<_Tp, _Up>) {
+        emplace(static_cast<_Up&&>(__v));
+      }
 
-    template <class... _Us>
+      template <class... _Us>
         requires constructible_from<_Tp, _Us...>
-    __optional(std::in_place_t, _Us&&... __us) :
-        __value(static_cast<_Us&&>(__us)...), __has_value(true)
-    {}
+      __optional(std::in_place_t, _Us&&... __us)
+        noexcept(__nothrow_constructible_from<_Tp, _Us...>) {
+        emplace(static_cast<_Us&&>(__us)...);
+      }
 
-    ~__optional()
-    {
-        if (__has_value)
-        {
-            std::destroy_at(std::addressof(__value));
+      ~__optional() {
+        if (__has_value_) {
+          std::destroy_at(std::addressof(__value_));
         }
-    }
+      }
 
-    template <class... _Us>
+      // The following emplace function must take great care to avoid use-after-free bugs.
+      // If the object being constructed calls `start` on a newly created operation state
+      // (as does the object returned from `submit`), and if `start` completes inline, it
+      // could cause the destruction of the outer operation state that owns *this. The
+      // function below uses the following pattern to avoid this:
+      // 1. Set __has_value_ to true.
+      // 2. Create a scope guard that will reset __has_value_ to false if the constructor
+      //    throws.
+      // 3. Construct the new object in the storage, which may cause the invalidation of
+      //    *this. The emplace function must not access any members of *this after this point.
+      // 4. Dismiss the scope guard, which will leave __has_value_ set to true.
+      // 5. Return a reference to the new object -- which may be invalid! Calling code
+      //    must be aware of the danger.
+      template <class... _Us>
         requires constructible_from<_Tp, _Us...>
-    _Tp& emplace(_Us&&... __us) noexcept(
-        __nothrow_constructible_from<_Tp, _Us...>)
-    {
-        reset(); // sets __has_value to false in case the next line throws
-        ::new (&__value) _Tp{static_cast<_Us&&>(__us)...};
-        __has_value = true;
-        return __value;
-    }
+      auto emplace(_Us&&... __us) noexcept(__nothrow_constructible_from<_Tp, _Us...>) -> _Tp& {
+        reset();
+        auto __sg = __mk_has_value_guard(__has_value_);
+        auto* __p = ::new (static_cast<void*>(std::addressof(__value_)))
+          _Tp{static_cast<_Us&&>(__us)...};
+        __sg.__dismiss();
+        return *std::launder(__p);
+      }
 
-    _Tp& value() &
-    {
-        if (!__has_value)
-        {
-            throw __bad_optional_access();
+      template <class _Fn, class... _Args>
+        requires same_as<_Tp, __call_result_t<_Fn, _Args...>>
+      auto __emplace_from(_Fn&& __f, _Args&&... __args) noexcept(__nothrow_callable<_Fn, _Args...>)
+        -> _Tp& {
+        reset();
+        auto __sg = __mk_has_value_guard(__has_value_);
+        auto* __p = ::new (static_cast<void*>(std::addressof(__value_)))
+          _Tp(static_cast<_Fn&&>(__f)(static_cast<_Args&&>(__args)...));
+        __sg.__dismiss();
+        return *std::launder(__p);
+      }
+
+      auto value() & -> _Tp& {
+        if (!__has_value_) {
+          STDEXEC_THROW(__bad_optional_access());
         }
-        return __value;
-    }
+        return __value_;
+      }
 
-    const _Tp& value() const&
-    {
-        if (!__has_value)
-        {
-            throw __bad_optional_access();
+      auto value() const & -> const _Tp& {
+        if (!__has_value_) {
+          STDEXEC_THROW(__bad_optional_access());
         }
-        return __value;
-    }
+        return __value_;
+      }
 
-    _Tp&& value() &&
-    {
-        if (!__has_value)
-        {
-            throw __bad_optional_access();
+      auto value() && -> _Tp&& {
+        if (!__has_value_) {
+          STDEXEC_THROW(__bad_optional_access());
         }
-        return static_cast<_Tp&&>(__value);
-    }
+        return static_cast<_Tp&&>(__value_);
+      }
 
-    _Tp& operator*() & noexcept
-    {
-        STDEXEC_ASSERT(__has_value);
-        return __value;
-    }
+      auto operator*() & noexcept -> _Tp& {
+        STDEXEC_ASSERT(__has_value_);
+        return __value_;
+      }
 
-    const _Tp& operator*() const& noexcept
-    {
-        STDEXEC_ASSERT(__has_value);
-        return __value;
-    }
+      auto operator*() const & noexcept -> const _Tp& {
+        STDEXEC_ASSERT(__has_value_);
+        return __value_;
+      }
 
-    _Tp&& operator*() && noexcept
-    {
-        STDEXEC_ASSERT(__has_value);
-        return static_cast<_Tp&&>(__value);
-    }
+      auto operator*() && noexcept -> _Tp&& {
+        STDEXEC_ASSERT(__has_value_);
+        return static_cast<_Tp&&>(__value_);
+      }
 
-    _Tp* operator->() & noexcept
-    {
-        STDEXEC_ASSERT(__has_value);
-        return &__value;
-    }
+      auto operator->() & noexcept -> _Tp* {
+        STDEXEC_ASSERT(__has_value_);
+        return &__value_;
+      }
 
-    const _Tp* operator->() const& noexcept
-    {
-        STDEXEC_ASSERT(__has_value);
-        return &__value;
-    }
+      auto operator->() const & noexcept -> const _Tp* {
+        STDEXEC_ASSERT(__has_value_);
+        return &__value_;
+      }
 
-    bool has_value() const noexcept
-    {
-        return __has_value;
-    }
+      [[nodiscard]]
+      auto has_value() const noexcept -> bool {
+        return __has_value_;
+      }
 
-    void reset() noexcept
-    {
-        if (__has_value)
-        {
-            std::destroy_at(std::addressof(__value));
-            __has_value = false;
+      void reset() noexcept {
+        if (__has_value_) {
+          std::destroy_at(std::addressof(__value_));
+          __has_value_ = false;
         }
-    }
-};
-} // namespace __opt
+      }
+    };
+  } // namespace __opt
 
-using __opt::__bad_optional_access;
-using __opt::__nullopt;
-using __opt::__optional;
+  using __opt::__optional;
+  using __opt::__bad_optional_access;
+  using __opt::__nullopt;
 } // namespace stdexec

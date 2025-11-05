@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 NVIDIA Corporation
+ * Copyright (c) 2025 NVIDIA Corporation
  *
  * Licensed under the Apache License Version 2.0 with LLVM Exceptions
  * (the "License"); you may not use this file except in compliance with
@@ -15,11 +15,13 @@
  */
 #pragma once
 
-#include "../stdexec/execution.hpp"
+#include "__execution_fwd.hpp"
 
-namespace exec {
-  // A simple scheduler that executes its continuation inline, on the
-  // thread of the caller of start().
-  using inline_scheduler
-    [[deprecated("Use stdexec::inline_scheduler instead")]] = stdexec::inline_scheduler;
-} // namespace exec
+// include these after __execution_fwd.hpp
+#include "__env.hpp"
+#include "__write_env.hpp"
+#include "../stop_token.hpp"
+
+namespace stdexec {
+  inline constexpr auto unstoppable = write_env(prop{get_stop_token, never_stop_token{}});
+} // namespace stdexec

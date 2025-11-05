@@ -11,5 +11,4 @@ do
     sed -i "s#include <stdexec/#include <sdbusplus/async/stdexec/#" -- "${f}"
     sed -i "s#include <exec/#include <sdbusplus/async/stdexec/#" -- "${f}"
     sed -i 's#include "\./\([^"]*\)"#include <sdbusplus/async/stdexec/\1>#' -- "${f}"
-    clang-format -i "${f}"
 done

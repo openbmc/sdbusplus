@@ -17,6 +17,7 @@ namespace details
 {
 struct wait_process_completion;
 struct context_friend;
+
 } // namespace details
 
 /** @brief A run-loop context for handling asynchronous dbus operations.
@@ -56,7 +57,7 @@ class context : public bus::details::bus_friend
      *
      * @param[in] sender - The Sender to run.
      */
-    template <execution::sender_of<execution::set_value_t()> Snd>
+    template <typename Snd>
     void spawn(Snd&& sender)
     {
         check_stop_requested();

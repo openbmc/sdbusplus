@@ -336,8 +336,8 @@ class callback_set_message_instance
     {}
     SetPropertyReturnValue operator()(message_t& m)
     {
-        PropertyType input;
-        m.read(input);
+        auto input = m.unpack<PropertyType>();
+
         PropertyType oldValue = *value_;
         if (!func_(input, *value_))
         {

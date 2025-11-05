@@ -315,8 +315,8 @@ int client()
             std::cerr << "error with async_send\n";
             return;
         }
-        GetSubTreeType data;
-        ret.read(data);
+        auto data = ret.unpack<GetSubTreeType>();
+
         for (auto& item : data)
         {
             std::cout << item.first << "\n";

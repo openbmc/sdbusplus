@@ -28,8 +28,8 @@ message newBusIdReq(bus_t& b)
 
 std::string syncBusId(bus_t& b)
 {
-    std::string ret;
-    newBusIdReq(b).call().read(ret);
+    auto ret = newBusIdReq(b).call().unpack<std::string>();
+
     return ret;
 }
 

@@ -30,6 +30,7 @@ tests = [
     'exception/sdbus_error',
     'message/append',
     'message/call',
+    'message/flat_map_test',
     'message/native_types',
     'message/read',
     'message/types',

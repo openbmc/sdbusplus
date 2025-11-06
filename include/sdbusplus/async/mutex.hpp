@@ -85,15 +85,11 @@ struct mutex_completion
 
     friend mutex;
 
-    friend void tag_invoke(execution::start_t, mutex_completion& self) noexcept
-    {
-        self.arm();
-    }
+    void start() noexcept;
 
   private:
     virtual void complete() noexcept = 0;
     virtual void stop() noexcept = 0;
-    void arm() noexcept;
 
     mutex& mutexInstance;
 };
@@ -123,22 +119,21 @@ struct mutex_operation : mutex_completion
 // mutex sender
 struct mutex_sender
 {
-    using is_sender = void;
+    using sender_concept = execution::sender_t;
 
     mutex_sender() = delete;
     explicit mutex_sender(mutex& mutexInstance) noexcept :
         mutexInstance(mutexInstance) {};
 
-    friend auto tag_invoke(execution::get_completion_signatures_t,
-                           const mutex_sender&, auto)
+    template <typename Self, class... Env>
+    static constexpr auto get_completion_signatures(Self&&, Env&&...)
         -> execution::completion_signatures<execution::set_value_t(),
                                             execution::set_stopped_t()>;
 
     template <execution::receiver R>
-    friend auto tag_invoke(execution::connect_t, mutex_sender&& self, R r)
-        -> mutex_operation<R>
+    auto connect(R r) -> mutex_operation<R>
     {
-        return {self.mutexInstance, std::move(r)};
+        return {mutexInstance, std::move(r)};
     }
 
   private:

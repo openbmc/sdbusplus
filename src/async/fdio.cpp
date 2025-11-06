@@ -59,7 +59,7 @@ fdio_completion::~fdio_completion()
     }
 }
 
-void fdio_completion::arm() noexcept
+void fdio_completion::start() noexcept
 {
     // Set ourselves as the awaiting Receiver
     std::unique_lock l{fdioInstance.lock};

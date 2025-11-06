@@ -100,12 +100,11 @@ struct callback_operation
     }
 
     // Call the init function upon Sender start.
-    friend void tag_invoke(execution::start_t,
-                           callback_operation& self) noexcept
+    void start() noexcept
     {
         try
         {
-            auto rc = self.init(handler, &self);
+            auto rc = init(handler, this);
             if (rc < 0)
             {
                 throw exception::SdBusError(-rc, __PRETTY_FUNCTION__);
@@ -113,8 +112,7 @@ struct callback_operation
         }
         catch (...)
         {
-            execution::set_error(std::move(self.receiver),
-                                 std::current_exception());
+            execution::set_error(std::move(receiver), std::current_exception());
         }
     }
 
@@ -132,21 +130,20 @@ struct callback_operation
 template <takes_msg_handler Init>
 struct callback_sender
 {
-    using is_sender = void;
+    using sender_concept = execution::sender_t;
 
     explicit callback_sender(Init init) : init(std::move(init)) {};
 
     // This Sender yields a message_t.
-    friend auto tag_invoke(execution::get_completion_signatures_t,
-                           const callback_sender&, auto)
+    template <typename Self, class... Env>
+    static constexpr auto get_completion_signatures(Self&&, Env&&...)
         -> execution::completion_signatures<execution::set_value_t(message_t),
                                             execution::set_stopped_t()>;
 
     template <execution::receiver R>
-    friend auto tag_invoke(execution::connect_t, callback_sender&& self, R r)
-        -> callback_operation<Init, R>
+    auto connect(R r) -> callback_operation<Init, R>
     {
-        return {std::move(self.init), std::move(r)};
+        return {std::move(init), std::move(r)};
     }
 
   private:

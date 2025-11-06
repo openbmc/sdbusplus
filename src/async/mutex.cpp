@@ -34,7 +34,7 @@ void mutex::unlock()
 namespace mutex_ns
 {
 
-void mutex_completion::arm() noexcept
+void mutex_completion::start() noexcept
 {
     std::unique_lock l{mutexInstance.lock};
 

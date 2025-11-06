@@ -86,15 +86,11 @@ struct match_completion
 
     friend match;
 
-    friend void tag_invoke(execution::start_t, match_completion& self) noexcept
-    {
-        self.arm();
-    }
+    void start() noexcept;
 
   private:
     virtual void complete(message_t&&) noexcept = 0;
     virtual void stop() noexcept = 0;
-    void arm() noexcept;
 
     match& m;
 };
@@ -124,21 +120,20 @@ struct match_operation : match_completion
 // match Sender implementation.
 struct match_sender
 {
-    using is_sender = void;
+    using sender_concept = execution::sender_t;
 
     match_sender() = delete;
     explicit match_sender(match& m) noexcept : m(m) {};
 
-    friend auto tag_invoke(execution::get_completion_signatures_t,
-                           const match_sender&, auto)
+    template <typename Self, class... Env>
+    static constexpr auto get_completion_signatures(Self&&, Env&&...)
         -> execution::completion_signatures<execution::set_value_t(message_t),
                                             execution::set_stopped_t()>;
 
     template <execution::receiver R>
-    friend auto tag_invoke(execution::connect_t, match_sender&& self, R r)
-        -> match_operation<R>
+    auto connect(R r) -> match_operation<R>
     {
-        return {self.m, std::move(r)};
+        return {m, std::move(r)};
     }
 
   private:

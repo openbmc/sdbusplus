@@ -16,6 +16,24 @@
       "message": "This seems fine, so long as the old one isn\u0027t going away entirely.",
       "revId": "7c0fb15f6bca1fb107d4c55006a5eed9bd82b325",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "eff2c1a4_a1f2efb2",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-11-06T02:22:49Z",
+      "side": 1,
+      "message": "No, the old one won’t go away. The new one has been around for a few years now and I just got to playing with ast-grep to facilitate doing this refactoring automatically.",
+      "parentUuid": "9ccb5ed2_1260bbad",
+      "revId": "7c0fb15f6bca1fb107d4c55006a5eed9bd82b325",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

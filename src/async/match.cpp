@@ -42,7 +42,7 @@ match::~match()
     }
 }
 
-void match_ns::match_completion::arm() noexcept
+void match_ns::match_completion::start() noexcept
 {
     // Set ourselves as the awaiting Receiver and see if there is a message
     // to immediately complete on.

@@ -34,8 +34,7 @@ struct wait_process_completion : context_ref, bus::details::bus_friend
     // Called by the `caller` to indicate the Sender should be stopped.
     virtual void stop() noexcept = 0;
 
-    // Arm the completion event.
-    void arm() noexcept;
+    void start() noexcept;
 
     // Data to share with the worker.
     event_t::time_resolution timeout{};
@@ -70,32 +69,25 @@ struct wait_process_operation : public wait_process_completion
         execution::set_value(std::move(this->receiver));
     }
 
-    friend void tag_invoke(execution::start_t,
-                           wait_process_operation& self) noexcept
-    {
-        self.arm();
-    }
-
     R receiver;
 };
 
 /* The sender for the wait/process event. */
 struct wait_process_sender : public context_ref
 {
-    using is_sender = void;
+    using sender_concept = execution::sender_t;
 
     explicit wait_process_sender(context& ctx) : context_ref(ctx) {}
 
-    friend auto tag_invoke(execution::get_completion_signatures_t,
-                           const wait_process_sender&, auto)
+    template <typename Self, class... Env>
+    static constexpr auto get_completion_signatures(Self&&, Env&&...)
         -> execution::completion_signatures<execution::set_value_t()>;
 
     template <execution::receiver R>
-    friend auto tag_invoke(execution::connect_t, wait_process_sender&& self,
-                           R r) -> wait_process_operation<R>
+    auto connect(R r) -> wait_process_operation<R>
     {
         // Create the completion for the wait.
-        return {self.ctx, std::move(r)};
+        return {ctx, std::move(r)};
     }
 };
 
@@ -282,7 +274,7 @@ void context::wait_for_wait_process_stopped()
     }
 }
 
-void details::wait_process_completion::arm() noexcept
+void details::wait_process_completion::start() noexcept
 {
     // Call process.  True indicates something was handled and we do not
     // need to `wait`, because there might be yet another pending operation

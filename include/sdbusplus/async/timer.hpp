@@ -46,17 +46,15 @@ struct sleep_operation : public context_ref, details::context_friend
         return 0;
     }
 
-    friend auto tag_invoke(execution::start_t, sleep_operation& self) noexcept
+    void start() noexcept
     {
         try
         {
-            self.source =
-                self.event_loop().add_oneshot_timer(handler, &self, self.time);
+            source = event_loop().add_oneshot_timer(handler, this, time);
         }
         catch (...)
         {
-            execution::set_error(std::move(self.receiver),
-                                 std::current_exception());
+            execution::set_error(std::move(receiver), std::current_exception());
         }
     }
 
@@ -77,7 +75,7 @@ struct sleep_operation : public context_ref, details::context_friend
  */
 struct sleep_sender : public context_ref, details::context_friend
 {
-    using is_sender = void;
+    using sender_concept = execution::sender_t;
 
     sleep_sender() = delete;
 
@@ -85,18 +83,17 @@ struct sleep_sender : public context_ref, details::context_friend
         context_ref(ctx), time(time)
     {}
 
-    friend auto tag_invoke(execution::get_completion_signatures_t,
-                           const sleep_sender&, auto)
+    template <typename Self, class... Env>
+    static constexpr auto get_completion_signatures(Self&&, Env&&...)
         -> execution::completion_signatures<
             execution::set_value_t(),
             execution::set_error_t(std::exception_ptr),
             execution::set_stopped_t()>;
 
     template <execution::receiver R>
-    friend auto tag_invoke(execution::connect_t, sleep_sender&& self, R r)
-        -> sleep_operation<R>
+    auto connect(R r) -> sleep_operation<R>
     {
-        return {self.ctx, self.time, std::move(r)};
+        return {ctx, time, std::move(r)};
     }
 
     static auto sleep_for(context& ctx, event_t::time_resolution time)

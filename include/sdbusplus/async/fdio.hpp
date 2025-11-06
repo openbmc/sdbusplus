@@ -70,16 +70,12 @@ struct fdio_completion
 
     friend fdio;
 
-    friend void tag_invoke(execution::start_t, fdio_completion& self) noexcept
-    {
-        self.arm();
-    }
+    void start() noexcept;
 
   private:
     virtual void complete() noexcept = 0;
     virtual void error(std::exception_ptr exceptionPtr) noexcept = 0;
     virtual void stop() noexcept = 0;
-    void arm() noexcept;
 
     fdio& fdioInstance;
     event_source_t source;
@@ -115,24 +111,24 @@ struct fdio_operation : fdio_completion
 // fdio Sender implementation.
 struct fdio_sender
 {
-    using is_sender = void;
+    using sender_concept = execution::sender_t;
 
     fdio_sender() = delete;
     explicit fdio_sender(fdio& fdioInstance) noexcept :
         fdioInstance(fdioInstance) {};
 
-    friend auto tag_invoke(execution::get_completion_signatures_t,
-                           const fdio_sender&, auto)
+    template <typename Self, class... Env>
+    static constexpr auto get_completion_signatures(Self&&, Env&&...)
         -> execution::completion_signatures<
             execution::set_value_t(),
             execution::set_error_t(std::exception_ptr),
             execution::set_stopped_t()>;
 
     template <execution::receiver R>
-    friend auto tag_invoke(execution::connect_t, fdio_sender&& self, R r)
+    auto connect(R r)
         -> fdio_operation<R>
     {
-        return {self.fdioInstance, std::move(r)};
+        return {fdioInstance, std::move(r)};
     }
 
   private:

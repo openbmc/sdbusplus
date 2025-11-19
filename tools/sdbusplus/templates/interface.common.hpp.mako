@@ -70,7 +70,25 @@ ${method.render(loader, "method.common.tag.hpp.mako", method=method, interface=i
         static constexpr auto ${signal.snake_case} = "${signal.name}";
         % endfor
     };
+    % endif
 
+    % if interface.associations:
+    struct association_names
+    {
+        struct forward
+        {
+            % for assoc in interface.associations:
+            static constexpr auto ${assoc.snake_case} = "${assoc.name}";
+            % endfor
+        };
+        struct reverse
+        {
+            % for assoc in interface.associations:
+            static constexpr auto ${assoc.reverse.snake_case} = "${assoc.reverse.name}";
+            % endfor
+        };
+
+    };
     % endif
 \
     % for p in interface.paths:

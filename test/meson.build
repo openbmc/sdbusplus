@@ -124,6 +124,7 @@ uninit_tests = [
     'test_signal_names',
     'test_server_construct_with_object_path',
     'test_aserver_construct_with_object_path',
+    'test_association_names',
 ]
 
 foreach t : uninit_tests

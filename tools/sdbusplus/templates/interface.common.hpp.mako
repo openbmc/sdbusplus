@@ -70,6 +70,31 @@ struct ${interface.classname}
     };
     % endif
 
+    % if interface.associations:
+    struct associations
+    {
+        % for assoc in interface.associations:
+        struct ${assoc.snake_case} {
+            static constexpr auto forward = "${assoc.name}";
+            static constexpr auto reverse = "${assoc.reverse_name.name}";
+            // required endpoint interfaces can go here if/once needed
+        };
+        % endfor
+    };
+    struct forward_associations
+    {
+        % for assoc in interface.associations:
+        static constexpr auto ${assoc.snake_case} = "${assoc.name}";
+        % endfor
+    };
+    struct reverse_associations
+    {
+        % for assoc in interface.associations:
+        static constexpr auto ${assoc.reverse_name.snake_case} = "${assoc.reverse_name.name}";
+        % endfor
+    };
+    % endif
+
     % for p in interface.paths:
         % if p.description:
     /** ${p.description.strip()} */

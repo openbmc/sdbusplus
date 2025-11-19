@@ -12,3 +12,11 @@ signals:
       properties:
           - name: Value
             type: int64
+
+associations:
+    - name: containing
+      description: >
+          Optionally define this association for containment.
+      reverse_name: contained_by
+      required_endpoint_interfaces:
+          - org.example.Container

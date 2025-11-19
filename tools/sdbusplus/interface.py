@@ -2,6 +2,7 @@ import os
 
 import yaml
 
+from .association import Association
 from .enum import Enum
 from .method import Method
 from .namedelement import NamedElement
@@ -31,6 +32,9 @@ class Interface(NamedElement, Renderer):
         self.signals = [Signal(**s) for s in kwargs.pop("signals", [])]
         self.enums = [Enum(**e) for e in kwargs.pop("enumerations", [])]
         self.paths = [Path(**p) for p in kwargs.pop("paths", [])]
+        self.associations = [
+            Association(**a) for a in kwargs.pop("associations", [])
+        ]
         self.service_names = [
             ServiceName(**s) for s in kwargs.pop("service_names", [])
         ]

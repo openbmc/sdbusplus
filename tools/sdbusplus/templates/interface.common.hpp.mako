@@ -74,6 +74,25 @@ struct ${interface.classname}
     };
     % endif
 
+    % if interface.associations:
+    struct association_names
+    {
+        struct forward
+        {
+            % for assoc in interface.associations:
+            static constexpr auto ${assoc.snake_case} = "${assoc.name}";
+            % endfor
+        };
+        struct reverse
+        {
+            % for assoc in interface.associations:
+            static constexpr auto ${assoc.reverse.snake_case} = "${assoc.reverse.name}";
+            % endfor
+        };
+
+    };
+    % endif
+
     % for p in interface.paths:
         % if p.description:
     /** ${p.description.strip()} */

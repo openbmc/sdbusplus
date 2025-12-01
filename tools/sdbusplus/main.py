@@ -16,6 +16,7 @@ def main():
     }
     valid_processes = {
         "aserver-header": "async_server_header",
+        "aserver-asio-header": "async_server_asio_header",
         "client-header": "client_header",
         "common-header": "common_header",
         "exception-cpp": "exception_cpp",

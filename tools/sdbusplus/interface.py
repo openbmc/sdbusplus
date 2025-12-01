@@ -76,6 +76,11 @@ class Interface(NamedElement, Renderer):
             loader, "interface.aserver.hpp.mako", interface=self
         )
 
+    def async_server_asio_header(self, loader):
+        return self.render(
+            loader, "interface.aserver_asio.hpp.mako", interface=self
+        )
+
     def server_header(self, loader):
         return self.render(loader, "interface.server.hpp.mako", interface=self)
 

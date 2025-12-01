@@ -39,14 +39,6 @@ namespace types
 template <typename... Args>
 constexpr auto type_id();
 
-/** @fn type_id_nonull()
- *  @brief A non-null-terminated version of type_id.
- *
- *  This is useful when type-ids may need to be concatenated.
- */
-template <typename... Args>
-constexpr auto type_id_nonull();
-
 namespace details
 {
 
@@ -68,15 +60,15 @@ struct downcast_members
 template <typename... Args>
 struct downcast_members<std::pair<Args...>>
 {
-    using type = std::pair<utility::array_to_ptr_t<
-        char, std::remove_cv_t<std::remove_reference_t<Args>>>...>;
+    using type =
+        std::pair<utility::array_to_ptr_t<char, std::decay_t<Args>>...>;
 };
 
 template <typename... Args>
 struct downcast_members<std::tuple<Args...>>
 {
-    using type = std::tuple<utility::array_to_ptr_t<
-        char, std::remove_cv_t<std::remove_reference_t<Args>>>...>;
+    using type =
+        std::tuple<utility::array_to_ptr_t<char, std::decay_t<Args>>...>;
 };
 
 template <typename T>
@@ -94,51 +86,42 @@ using downcast_members_t = typename downcast_members<T>::type;
 template <typename T>
 struct type_id_downcast
 {
-    using type = utility::array_to_ptr_t<
-        char, downcast_members_t<std::remove_cv_t<std::remove_reference_t<T>>>>;
+    using type =
+        utility::array_to_ptr_t<char, downcast_members_t<std::decay_t<T>>>;
 };
 
 template <typename T>
 using type_id_downcast_t = typename type_id_downcast<T>::type;
 
+/** @struct null_type_id
+ *  @brief Special type indicating the dbus-type is skipped for a C++ type.
+ */
+struct null_type_id
+{
+    static constexpr std::string value()
+    {
+        return "";
+    }
+};
+
 /** @struct undefined_type_id
  *  @brief Special type indicating no dbus-type_id is defined for a C++ type.
  */
-struct undefined_type_id
-{
-    /** An empty tuple indicating no type-characters. */
-    // We want this to be tuple so that we can use operations like
-    // tuple_cat on it without cascading compile failures.  There is a
-    // static_assert in type_id_single to ensure this is never used, but to
-    // keep the compile failures as clean as possible.
-    static constexpr auto value = std::make_tuple();
-};
+struct undefined_type_id : public null_type_id
+{};
 
-/** @brief Special type indicating a tuple of dbus-type_id's.
+/** @brief Special type indicating a single character string of dbus-type_id's.
  *
- *  @tparam C1 - The first dbus type character character.
- *  @tparam C - The remaining sequence of dbus type characters.
- *
- *  A tuple_type_id must be one or more characters.  The C1 template param
- *  ensures at least one is present.
+ *  @tparam C - The dbus type character character.
  */
-template <char C1, char... C>
-struct tuple_type_id
+template <char C>
+struct type_id_inherit
 {
-/* This version check is required because a fix for auto is in 5.2+.
- * https://gcc.gnu.org/bugzilla/show_bug.cgi?id=66421
- */
-/** A tuple containing the type-characters. */
-#if (__GNUC__ > 5) || (__GNUC__ == 5 && (__GNUC_MINOR__ >= 2))
-    static constexpr auto value = std::make_tuple(C1, C...);
-#else
-    static constexpr decltype(std::make_tuple(C1, C...)) value =
-        std::make_tuple(C1, C...);
-#endif
+    static constexpr std::string value()
+    {
+        return std::string(1, C);
+    }
 };
-
-template <char... Chars>
-inline constexpr auto tuple_type_id_v = tuple_type_id<Chars...>::value;
 
 /** @fn type_id_single()
  *  @brief Get a tuple containing the dbus type character(s) for a C++ type.
@@ -147,16 +130,6 @@ inline constexpr auto tuple_type_id_v = tuple_type_id<Chars...>::value;
  */
 template <typename T>
 constexpr auto type_id_single();
-
-/** @fn type_id_multiple()
- *  @brief Get a tuple containing the dbus type characters for a sequence of
- *         C++ types.
- *
- *  @tparam T - The first type to get the dbus type character(s) for.
- *  @tparam Args - The remaining types.
- */
-template <typename T, typename... Args>
-constexpr auto type_id_multiple();
 
 /** @brief Defined dbus type tuple for a C++ type.
  *
@@ -169,106 +142,112 @@ constexpr auto type_id_multiple();
  *  routines.
  */
 template <typename T, typename Enable = void>
-struct type_id :
-    public std::conditional_t<
-        std::is_enum_v<T>, tuple_type_id<SD_BUS_TYPE_STRING>, undefined_type_id>
+struct type_id : undefined_type_id
 {};
 
 template <typename... Args>
-inline constexpr auto type_id_v = type_id<Args...>::value;
+inline constexpr auto type_id_v = []() { return type_id<Args...>::value(); }();
 
 // Specializations for built-in types.
 template <>
-struct type_id<bool> : tuple_type_id<SD_BUS_TYPE_BOOLEAN>
+struct type_id<bool> : type_id_inherit<SD_BUS_TYPE_BOOLEAN>
 {};
 template <>
-struct type_id<uint8_t> : tuple_type_id<SD_BUS_TYPE_BYTE>
+struct type_id<uint8_t> : type_id_inherit<SD_BUS_TYPE_BYTE>
 {};
 // int8_t isn't supported by dbus.
 template <>
-struct type_id<uint16_t> : tuple_type_id<SD_BUS_TYPE_UINT16>
+struct type_id<uint16_t> : type_id_inherit<SD_BUS_TYPE_UINT16>
 {};
 template <>
-struct type_id<int16_t> : tuple_type_id<SD_BUS_TYPE_INT16>
+struct type_id<int16_t> : type_id_inherit<SD_BUS_TYPE_INT16>
 {};
 template <>
-struct type_id<uint32_t> : tuple_type_id<SD_BUS_TYPE_UINT32>
+struct type_id<uint32_t> : type_id_inherit<SD_BUS_TYPE_UINT32>
 {};
 template <>
-struct type_id<int32_t> : tuple_type_id<SD_BUS_TYPE_INT32>
+struct type_id<int32_t> : type_id_inherit<SD_BUS_TYPE_INT32>
 {};
 template <>
-struct type_id<uint64_t> : tuple_type_id<SD_BUS_TYPE_UINT64>
+struct type_id<uint64_t> : type_id_inherit<SD_BUS_TYPE_UINT64>
 {};
 template <>
-struct type_id<int64_t> : tuple_type_id<SD_BUS_TYPE_INT64>
+struct type_id<int64_t> : type_id_inherit<SD_BUS_TYPE_INT64>
 {};
 // float isn't supported by dbus.
 template <>
-struct type_id<double> : tuple_type_id<SD_BUS_TYPE_DOUBLE>
+struct type_id<double> : type_id_inherit<SD_BUS_TYPE_DOUBLE>
 {};
 template <>
-struct type_id<const char*> : tuple_type_id<SD_BUS_TYPE_STRING>
+struct type_id<const char*> : type_id_inherit<SD_BUS_TYPE_STRING>
 {};
 template <>
-struct type_id<char*> : tuple_type_id<SD_BUS_TYPE_STRING>
+struct type_id<char*> : type_id_inherit<SD_BUS_TYPE_STRING>
 {};
 template <>
-struct type_id<unix_fd> : tuple_type_id<SD_BUS_TYPE_UNIX_FD>
+struct type_id<unix_fd> : type_id_inherit<SD_BUS_TYPE_UNIX_FD>
 {};
 template <>
-struct type_id<std::string> : tuple_type_id<SD_BUS_TYPE_STRING>
+struct type_id<std::string> : type_id_inherit<SD_BUS_TYPE_STRING>
 {};
 template <>
-struct type_id<std::string_view> : tuple_type_id<SD_BUS_TYPE_STRING>
+struct type_id<std::string_view> : type_id_inherit<SD_BUS_TYPE_STRING>
 {};
 template <>
-struct type_id<object_path> : tuple_type_id<SD_BUS_TYPE_OBJECT_PATH>
+struct type_id<object_path> : type_id_inherit<SD_BUS_TYPE_OBJECT_PATH>
 {};
 template <>
-struct type_id<signature> : tuple_type_id<SD_BUS_TYPE_SIGNATURE>
+struct type_id<signature> : type_id_inherit<SD_BUS_TYPE_SIGNATURE>
+{};
+template <>
+struct type_id<void> : null_type_id
+{};
+template <>
+struct type_id<std::monostate> : null_type_id
+{};
+
+template <utility::is_dbus_enum T>
+struct type_id<T> : type_id_inherit<SD_BUS_TYPE_STRING>
+{};
+
+template <typename... Args>
+struct type_id<std::variant<Args...>> : type_id_inherit<SD_BUS_TYPE_VARIANT>
 {};
 
 template <utility::is_dbus_array T>
-struct type_id<T> : std::false_type
+struct type_id<T>
 {
-    static constexpr auto value =
-        std::tuple_cat(tuple_type_id_v<SD_BUS_TYPE_ARRAY>,
-                       type_id_v<type_id_downcast_t<typename T::value_type>>);
+    static constexpr std::string value()
+    {
+        std::string s(1, SD_BUS_TYPE_ARRAY);
+        s += type_id<type_id_downcast_t<typename T::value_type>>::value();
+        return s;
+    };
 };
 
 template <typename T1, typename T2>
 struct type_id<std::pair<T1, T2>>
 {
-    static constexpr auto value = std::tuple_cat(
-        tuple_type_id_v<SD_BUS_TYPE_DICT_ENTRY_BEGIN>,
-        type_id_v<type_id_downcast_t<T1>>, type_id_v<type_id_downcast_t<T2>>,
-        tuple_type_id_v<SD_BUS_TYPE_DICT_ENTRY_END>);
+    static constexpr std::string value()
+    {
+        std::string s(1, SD_BUS_TYPE_DICT_ENTRY_BEGIN);
+        s += type_id<type_id_downcast_t<T1>>::value();
+        s += type_id<type_id_downcast_t<T2>>::value();
+        s += SD_BUS_TYPE_DICT_ENTRY_END;
+        return s;
+    }
 };
 
 template <typename... Args>
 struct type_id<std::tuple<Args...>>
 {
-    static constexpr auto value =
-        std::tuple_cat(tuple_type_id_v<SD_BUS_TYPE_STRUCT_BEGIN>,
-                       type_id_v<type_id_downcast_t<Args>>...,
-                       tuple_type_id_v<SD_BUS_TYPE_STRUCT_END>);
-};
-
-template <typename... Args>
-struct type_id<std::variant<Args...>> : tuple_type_id<SD_BUS_TYPE_VARIANT>
-{};
-
-template <>
-struct type_id<void>
-{
-    constexpr static auto value = std::make_tuple('\0');
-};
-
-template <>
-struct type_id<std::monostate>
-{
-    constexpr static auto value = std::make_tuple('\0');
+    static constexpr std::string value()
+    {
+        std::string s(1, SD_BUS_TYPE_STRUCT_BEGIN);
+        ((s += type_id<type_id_downcast_t<Args>>::value()), ...);
+        s += SD_BUS_TYPE_STRUCT_END;
+        return s;
+    }
 };
 
 template <typename T>
@@ -276,13 +255,16 @@ constexpr auto type_id_single()
 {
     static_assert(!std::is_base_of_v<undefined_type_id, type_id<T>>,
                   "No dbus type conversion provided for type.");
-    return type_id_v<T>;
+    return type_id<T>::value();
 }
 
 template <typename T, typename... Args>
 constexpr auto type_id_multiple()
 {
-    return std::tuple_cat(type_id_single<T>(), type_id_single<Args>()...);
+    std::string s{};
+    s += type_id_single<T>();
+    ((s += type_id_single<Args>()), ...);
+    return s;
 }
 
 template <typename T, std::size_t... I>
@@ -297,32 +279,28 @@ constexpr auto type_id_tuple(std::index_sequence<I...>)
 template <typename... Args>
 constexpr auto type_id()
 {
-    return std::tuple_cat(
-        details::type_id_multiple<details::type_id_downcast_t<Args>...>(),
-        std::make_tuple('\0') /* null terminator for C-string */);
+    return details::type_id_multiple<details::type_id_downcast_t<Args>...>();
 }
 
 // Special case for empty type.
 template <>
 constexpr auto type_id()
 {
-    return std::make_tuple('\0');
-}
-
-template <typename... Args>
-constexpr auto type_id_nonull()
-{
-    return details::type_id_multiple<details::type_id_downcast_t<Args>...>();
+    return std::string{};
 }
 
 template <typename T>
 constexpr auto type_id_tuple()
 {
-    return std::tuple_cat(
-        details::type_id_tuple<T>(
-            std::make_index_sequence<
-                std::tuple_size_v<details::type_id_downcast_t<T>>>()),
-        std::make_tuple('\0'));
+    if constexpr (std::tuple_size_v<T> == 0)
+    {
+        return std::string{};
+    }
+    else
+    {
+        return details::type_id_tuple<T>(
+            std::make_index_sequence<std::tuple_size_v<T>>());
+    }
 }
 
 } // namespace types

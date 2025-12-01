@@ -51,8 +51,8 @@ namespace details
 namespace ${interface.classname}
 {
 static const auto _signal_${ signal.CamelCase } =
-        utility::tuple_to_array(message::types::type_id<
-                ${ parameters_types_as_list() }>());
+        message::types::type_id<
+                ${ parameters_types_as_list() }>();
 }
 }
     % endif

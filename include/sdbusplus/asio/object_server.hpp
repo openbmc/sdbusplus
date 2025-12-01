@@ -17,7 +17,6 @@
 #include <sdbusplus/message/read.hpp>
 #include <sdbusplus/message/types.hpp>
 #include <sdbusplus/server.hpp>
-#include <sdbusplus/utility/tuple_to_array.hpp>
 #include <sdbusplus/utility/type_traits.hpp>
 
 #include <any>
@@ -141,8 +140,9 @@ struct NonDbusArgsCount<std::tuple<FirstArg, OtherArgs...>>
     constexpr static std::size_t size()
     {
 #ifndef SDBUSPLUS_DISABLE_BOOST_COROUTINES
-        if constexpr (std::is_same_v<FirstArg, message_t> ||
-                      std::is_same_v<FirstArg, boost::asio::yield_context>)
+        if constexpr (std::is_same_v<std::decay_t<FirstArg>, message_t> ||
+                      std::is_same_v<std::decay_t<FirstArg>,
+                                     boost::asio::yield_context>)
         {
             return 1 + NonDbusArgsCount<std::tuple<OtherArgs...>>::size();
         }
@@ -425,8 +425,7 @@ class dbus_interface
         {
             return false;
         }
-        static const auto type =
-            utility::tuple_to_array(message::types::type_id<PropertyType>());
+        static const auto type = message::types::type_id<PropertyType>();
 
         auto propertyPtr = std::make_shared<PropertyType>(property);
 
@@ -437,7 +436,7 @@ class dbus_interface
             nullptr,
             callback_set_value_instance<PropertyType>(
                 propertyPtr, details::nop_set_value<PropertyType>),
-            type.data(), flags);
+            type.c_str(), flags);
 
         return true;
     }
@@ -467,8 +466,7 @@ class dbus_interface
         {
             return false;
         }
-        static const auto type =
-            utility::tuple_to_array(message::types::type_id<PropertyType>());
+        static const auto type = message::types::type_id<PropertyType>();
 
         auto propertyPtr = std::make_shared<PropertyType>(property);
 
@@ -481,7 +479,7 @@ class dbus_interface
             callback_set_value_instance<PropertyType>(propertyPtr,
                                                       std::move(setFunction)),
 
-            type.data(), flags);
+            type.c_str(), flags);
 
         return true;
     }
@@ -588,10 +586,10 @@ class dbus_interface
             return false;
         }
 
-        static constexpr auto signature = utility::tuple_to_array(
-            message::types::type_id<SignalSignature...>());
+        static const auto signature =
+            message::types::type_id<SignalSignature...>();
 
-        signals_.emplace_back(name, signature.data());
+        signals_.emplace_back(name, signature.c_str());
         return true;
     }
 
@@ -610,10 +608,9 @@ class dbus_interface
         {
             return false;
         }
-        static const auto argType = utility::strip_ends(
-            utility::tuple_to_array(message::types::type_id<InputTupleType>()));
-        static const auto resultType =
-            utility::tuple_to_array(message::types::type_id<ResultType>());
+        static const auto argType =
+            message::types::type_id_tuple<InputTupleType>();
+        static const auto resultType = message::types::type_id<ResultType>();
 
         std::function<int(message_t&)> func;
         if constexpr (FirstArgIsYield_v<CallbackType>)

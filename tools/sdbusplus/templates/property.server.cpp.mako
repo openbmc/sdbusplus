@@ -95,7 +95,7 @@ namespace details
 namespace ${interface.classname}
 {
 static const auto _property_${property.name} =
-    utility::tuple_to_array(message::types::type_id<
-            ${property.cppTypeParam(interface.name, full=True)}>());
+    message::types::type_id<
+            ${property.cppTypeParam(interface.name, full=True)}>();
 }
 }

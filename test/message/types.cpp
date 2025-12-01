@@ -1,14 +1,12 @@
 #include <sdbusplus/message/types.hpp>
-#include <sdbusplus/utility/tuple_to_array.hpp>
 
 #include <gtest/gtest.h>
 
 template <typename... Args>
 auto dbus_string(Args&&... /*args*/)
 {
-    return std::string(sdbusplus::utility::tuple_to_array(
-                           sdbusplus::message::types::type_id<Args...>())
-                           .data());
+    static const auto s = sdbusplus::message::types::type_id<Args...>();
+    return s;
 }
 
 TEST(MessageTypes, Integer)
@@ -127,4 +125,18 @@ TEST(MessageTypes, SetOfString)
     std::set<std::string> s = {"a", "b"};
 
     EXPECT_EQ(dbus_string(s), "as");
+}
+
+TEST(MessageTypes, ReallyBigType)
+{
+    std::tuple<std::string, std::string, std::string, std::string, size_t,
+               std::vector<std::string>, uint64_t,
+               std::vector<std::tuple<
+                   std::vector<std::tuple<sdbusplus::message::object_path,
+                                          std::string>>,
+                   std::string, std::string, std::string, uint64_t>>,
+               bool>
+        s{};
+
+    EXPECT_EQ(dbus_string(s), "(sssstasta(a(os)ssst)b)");
 }

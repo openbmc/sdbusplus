@@ -4,7 +4,6 @@
 
 #include <sdbusplus/exception.hpp>
 #include <sdbusplus/message/types.hpp>
-#include <sdbusplus/utility/tuple_to_array.hpp>
 #include <sdbusplus/utility/type_traits.hpp>
 
 #include <string>
@@ -80,7 +79,7 @@ struct read_single
                           std::is_convertible_v<Td<T>, details::unix_fd_type>,
                       "Non-basic types are not allowed.");
 
-        constexpr auto dbusType = std::get<0>(types::type_id<T>());
+        static constexpr auto dbusType = types::type_id<T>()[0];
         int r = intf->sd_bus_message_read_basic(m, dbusType, &t);
         if (r < 0)
         {
@@ -121,7 +120,7 @@ struct read_single<S>
 {
     static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, S& t)
     {
-        constexpr auto dbusType = std::get<0>(types::type_id<S>());
+        static constexpr auto dbusType = types::type_id<S>()[0];
         const char* str = nullptr;
         int r = intf->sd_bus_message_read_basic(m, dbusType, &str);
         if (r < 0)
@@ -139,7 +138,7 @@ struct read_single<S>
 {
     static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, S& t)
     {
-        constexpr auto dbusType = std::get<0>(types::type_id<S>());
+        static constexpr auto dbusType = types::type_id<S>()[0];
         int i = 0;
         int r = intf->sd_bus_message_read_basic(m, dbusType, &i);
         if (r < 0)
@@ -162,9 +161,9 @@ struct read_single<S>
 {
     static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, S& t)
     {
-        constexpr auto dbusType = utility::tuple_to_array(types::type_id<S>());
+        static const auto dbusType = types::type_id<S>();
         int r = intf->sd_bus_message_enter_container(m, SD_BUS_TYPE_ARRAY,
-                                                     dbusType.data() + 1);
+                                                     dbusType.c_str() + 1);
         if (r < 0)
         {
             throw exception::SdBusError(
@@ -209,9 +208,8 @@ struct read_single<S>
     {
         size_t sizeInBytes = 0;
         const void* p = nullptr;
-        constexpr auto dbusType = utility::tuple_to_array(types::type_id<S>());
-        int r =
-            intf->sd_bus_message_read_array(m, dbusType[1], &p, &sizeInBytes);
+        static constexpr auto dbusType = types::type_id<S>()[1];
+        int r = intf->sd_bus_message_read_array(m, dbusType, &p, &sizeInBytes);
         if (r < 0)
         {
             throw exception::SdBusError(-r, "sd_bus_message_read_array");
@@ -228,9 +226,9 @@ struct read_single<S>
 {
     static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, S& t)
     {
-        constexpr auto dbusType = utility::tuple_to_array(types::type_id<S>());
+        static const auto dbusType = types::type_id<S>();
         int r = intf->sd_bus_message_enter_container(m, SD_BUS_TYPE_ARRAY,
-                                                     dbusType.data() + 1);
+                                                     dbusType.c_str() + 1);
         if (r < 0)
         {
             throw exception::SdBusError(
@@ -265,8 +263,7 @@ struct read_single<S>
 {
     static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, S& t)
     {
-        constexpr auto dbusType =
-            utility::tuple_to_array(types::type_id_tuple<S>());
+        static const auto dbusType = types::type_id_tuple<S>();
 
         // Tuples use TYPE_STRUCT, pair uses TYPE_DICT_ENTRY.
         // Use the presence of `t.first` to determine if it is a pair.
@@ -278,8 +275,8 @@ struct read_single<S>
             return SD_BUS_TYPE_STRUCT;
         }();
 
-        int r =
-            intf->sd_bus_message_enter_container(m, tupleType, dbusType.data());
+        int r = intf->sd_bus_message_enter_container(m, tupleType,
+                                                     dbusType.c_str());
         if (r < 0)
         {
             throw exception::SdBusError(-r,
@@ -310,10 +307,10 @@ struct read_single<std::variant<Args...>>
     template <typename T, typename T1, typename... Args1>
     static void read(sdbusplus::SdBusInterface* intf, sd_bus_message* m, T& t)
     {
-        constexpr auto dbusType = utility::tuple_to_array(types::type_id<T1>());
+        static const auto dbusType = types::type_id<T1>();
 
         int r = intf->sd_bus_message_verify_type(m, SD_BUS_TYPE_VARIANT,
-                                                 dbusType.data());
+                                                 dbusType.c_str());
         if (r < 0)
         {
             throw exception::SdBusError(-r,

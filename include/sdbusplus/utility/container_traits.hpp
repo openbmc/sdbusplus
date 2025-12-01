@@ -32,5 +32,8 @@ concept has_emplace_back = requires(T v) { v.emplace_back(); };
 
 template <typename T>
 concept has_emplace = requires(T v) { v.emplace(); };
+
+template <typename T>
+concept is_dbus_enum = std::is_enum_v<T>;
 } // namespace utility
 } // namespace sdbusplus

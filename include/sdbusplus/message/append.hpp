@@ -5,7 +5,6 @@
 #include <sdbusplus/message/types.hpp>
 #include <sdbusplus/sdbus.hpp>
 #include <sdbusplus/utility/container_traits.hpp>
-#include <sdbusplus/utility/tuple_to_array.hpp>
 #include <sdbusplus/utility/type_traits.hpp>
 
 #include <bit>
@@ -106,7 +105,7 @@ struct append_single
                           std::is_convertible_v<Td<T>, const char*>,
                       "Non-basic types are not allowed.");
 
-        constexpr auto dbusType = std::get<0>(types::type_id<T>());
+        static constexpr auto dbusType = types::type_id<T>()[0];
         intf->sd_bus_message_append_basic(m, dbusType,
                                           address_of(std::forward<T>(t)));
     }
@@ -140,7 +139,7 @@ struct append_single<details::unix_fd_type>
     template <typename T>
     static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, T&& s)
     {
-        constexpr auto dbusType = std::get<0>(types::type_id<T>());
+        static constexpr auto dbusType = types::type_id<T>()[0];
         intf->sd_bus_message_append_basic(m, dbusType, &s.fd);
 
         // sd-bus now owns the file descriptor
@@ -155,7 +154,7 @@ struct append_single<std::string>
     template <typename T>
     static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, T&& s)
     {
-        constexpr auto dbusType = std::get<0>(types::type_id<T>());
+        static constexpr auto dbusType = types::type_id<T>()[0];
         intf->sd_bus_message_append_basic(m, dbusType, s.c_str());
     }
 };
@@ -179,7 +178,7 @@ struct append_single<details::string_wrapper>
     template <typename S>
     static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, S&& s)
     {
-        constexpr auto dbusType = std::get<0>(types::type_id<S>());
+        static constexpr auto dbusType = types::type_id<S>()[0];
         intf->sd_bus_message_append_basic(m, dbusType, s.str.c_str());
     }
 };
@@ -191,7 +190,7 @@ struct append_single<details::string_path_wrapper>
     template <typename S>
     static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, S&& s)
     {
-        constexpr auto dbusType = std::get<0>(types::type_id<S>());
+        static constexpr auto dbusType = types::type_id<S>()[0];
         intf->sd_bus_message_append_basic(m, dbusType, s.str.c_str());
     }
 };
@@ -203,7 +202,7 @@ struct append_single<bool>
     template <typename T>
     static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, T&& b)
     {
-        constexpr auto dbusType = std::get<0>(types::type_id<T>());
+        static constexpr auto dbusType = types::type_id<T>()[0];
         int i = b;
         intf->sd_bus_message_append_basic(m, dbusType, &i);
     }
@@ -225,11 +224,10 @@ struct append_single<T>
     template <typename S>
     static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, S&& s)
     {
-        constexpr auto dbusType =
-            utility::tuple_to_array(types::type_id<typename T::value_type>());
+        static const auto dbusType = types::type_id<typename T::value_type>();
 
         intf->sd_bus_message_open_container(m, SD_BUS_TYPE_ARRAY,
-                                            dbusType.data());
+                                            dbusType.c_str());
         for (const typename T::value_type& i : s)
         {
             sdbusplus::message::append(intf, m, i);
@@ -253,10 +251,9 @@ struct append_single<T>
     template <typename S>
     static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, S&& s)
     {
-        constexpr auto dbusType = utility::tuple_to_array(types::type_id<T>());
+        static constexpr auto dbusType = types::type_id<T>()[1];
         intf->sd_bus_message_append_array(
-            m, dbusType[1], s.data(),
-            s.size() * sizeof(typename T::value_type));
+            m, dbusType, s.data(), s.size() * sizeof(typename T::value_type));
     }
 };
 
@@ -267,11 +264,10 @@ struct append_single<std::pair<T1, T2>>
     template <typename S>
     static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, S&& s)
     {
-        constexpr auto dbusType = utility::tuple_to_array(
-            std::tuple_cat(types::type_id_nonull<T1>(), types::type_id<T2>()));
+        static const auto dbusType = types::type_id<T1, T2>();
 
         intf->sd_bus_message_open_container(m, SD_BUS_TYPE_DICT_ENTRY,
-                                            dbusType.data());
+                                            dbusType.c_str());
         sdbusplus::message::append(intf, m, s.first, s.second);
         intf->sd_bus_message_close_container(m);
     }
@@ -291,12 +287,10 @@ struct append_single<std::tuple<Args...>>
     template <typename S>
     static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, S&& s)
     {
-        constexpr auto dbusType = utility::tuple_to_array(std::tuple_cat(
-            types::type_id_nonull<Args...>(),
-            std::make_tuple('\0') /* null terminator for C-string */));
+        static const auto dbusType = types::type_id<Args...>();
 
         intf->sd_bus_message_open_container(m, SD_BUS_TYPE_STRUCT,
-                                            dbusType.data());
+                                            dbusType.c_str());
         _op(intf, m, std::forward<S>(s),
             std::make_index_sequence<sizeof...(Args)>());
         intf->sd_bus_message_close_container(m);
@@ -311,11 +305,10 @@ struct append_single<std::variant<Args...>>
     static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, S&& s)
     {
         auto apply = [intf, m](auto&& arg) {
-            constexpr auto dbusType =
-                utility::tuple_to_array(types::type_id<decltype(arg)>());
+            static const auto dbusType = types::type_id<decltype(arg)>();
 
             intf->sd_bus_message_open_container(m, SD_BUS_TYPE_VARIANT,
-                                                dbusType.data());
+                                                dbusType.c_str());
             sdbusplus::message::append(intf, m, arg);
             intf->sd_bus_message_close_container(m);
         };

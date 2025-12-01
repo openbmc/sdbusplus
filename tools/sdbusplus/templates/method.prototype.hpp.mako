@@ -70,12 +70,12 @@ namespace details
 {
 namespace ${interface.classname}
 {
-static const auto _param_${ method.CamelCase } =
-        utility::tuple_to_array(message::types::type_id<
-                ${ method.parameter_types_as_list(interface) }>());
-static const auto _return_${ method.CamelCase } =
-        utility::tuple_to_array(message::types::type_id<
-                ${ method.returns_as_list(interface, full=True) }>());
+static constexpr auto _param_${ method.CamelCase } =
+        message::types::type_id<
+                ${ method.parameter_types_as_list(interface) }>();
+static constexpr auto _return_${ method.CamelCase } =
+        message::types::type_id<
+                ${ method.returns_as_list(interface, full=True) }>();
 }
 }
     % endif

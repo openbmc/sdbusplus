@@ -16,6 +16,24 @@
       "message": "Presumbly the fix to this would be to make argNpath constexpr rather than making these non constexpr?",
       "revId": "61b731e10fa770cf5252c42ed895f9f4c0bedf0e",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a18e2024_84c4dae9",
+        "filename": "include/sdbusplus/bus/match.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 147,
+      "author": {
+        "id": 1002620
+      },
+      "writtenOn": "2025-12-11T08:37:34Z",
+      "side": 1,
+      "message": "I tried that and that doesn\u0027t work because `argNpath` calls `std::to_string` which isn\u0027t constexpr.\n\nAlso it would be nice if you could make these changes yourself in another review and merge them, because this is blocking us and my company is still having issues with the CLA (my other two reviews aren\u0027t as urgent).",
+      "parentUuid": "a0e343e7_7776fb27",
+      "revId": "61b731e10fa770cf5252c42ed895f9f4c0bedf0e",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

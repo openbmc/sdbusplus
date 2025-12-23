@@ -91,8 +91,6 @@ class MutexTest : public ::testing::Test
 
   private:
     std::unique_ptr<sdbusplus::async::fdio> fdioInstance;
-    int fd = -1;
-    int wd = -1;
 };
 
 TEST_F(MutexTest, TestAsyncAddition)

@@ -12,6 +12,7 @@ namespace fs = std::filesystem;
 class MutexTest : public ::testing::Test
 {
   protected:
+    ~MutexTest() noexcept override = default;
     constexpr static std::string testMutex = "TestMutex";
     const fs::path path = "/tmp";
 

@@ -69,6 +69,24 @@
       "parentUuid": "d932eee3_fa7f9a74",
       "revId": "6857bd1f13f628f7a0210da0a4043a190b1ee124",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6ecf8958_a1aadad5",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000086
+      },
+      "writtenOn": "2025-12-25T03:16:24Z",
+      "side": 1,
+      "message": "Added .clang-tidy-ignore files which will help to disbale selected files.please see https://gerrit.openbmc.org/c/openbmc/sdbusplus/+/86199/1 for details.",
+      "parentUuid": "5a94de11_99523cde",
+      "revId": "6857bd1f13f628f7a0210da0a4043a190b1ee124",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

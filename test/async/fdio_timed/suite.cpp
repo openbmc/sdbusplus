@@ -7,6 +7,7 @@
 #include <filesystem>
 #include <format>
 #include <fstream>
+#include <print>
 
 #include <gtest/gtest.h>
 
@@ -68,6 +69,12 @@ auto FdioTimedTest::testFdTimedEvents(
     bool& ran, testWriteOperation writeOperation, int testIterations)
     -> sdbusplus::async::task<>
 {
+    if (!ctx)
+    {
+        co_return;
+    }
+    auto& io = *ctx;
+
     for (int i = 0; i < testIterations; i++)
     {
         switch (writeOperation)
@@ -76,8 +83,8 @@ auto FdioTimedTest::testFdTimedEvents(
                 co_await writeToFile();
                 break;
             case testWriteOperation::writeAsync:
-                ctx->spawn(sdbusplus::async::sleep_for(*ctx, 1s) |
-                           stdexec::then([&]() { ctx->spawn(writeToFile()); }));
+                io.spawn(sdbusplus::async::sleep_for(io, 1s) |
+                         stdexec::then([&]() { io.spawn(writeToFile()); }));
                 break;
             case testWriteOperation::writeSkip:
             default:

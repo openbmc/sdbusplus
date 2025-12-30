@@ -176,8 +176,9 @@ TYPED_TEST(UnpackPropertiesThrowingTest, throwsErrorWhenKeyIsMissing)
         this->unpackPropertiesCall(this->data, "Key-1", val1, "Key-4", val2,
                                    "Key-3", val3);
     });
-
-    ASSERT_TRUE(error);
+    ASSERT_TRUE(error.has_value());
+    if (!error.has_value())
+        return; // structural guard just for the analyzer
     ASSERT_THAT(error->reason, Eq(UnpackErrorReason::missingProperty));
     ASSERT_THAT(error->propertyName, Eq("Key-4"));
 }
@@ -194,8 +195,9 @@ TYPED_TEST(UnpackPropertiesThrowingTest, throwsErrorWhenTypeDoesntMatch)
         this->unpackPropertiesCall(this->data, "Key-1", val1, "Key-2", val2,
                                    "Key-3", val3);
     });
-
-    ASSERT_TRUE(error);
+    ASSERT_TRUE(error.has_value());
+    if (!error.has_value())
+        return; // structural guard just for the analyzer
     ASSERT_THAT(error->reason, Eq(UnpackErrorReason::wrongType));
     ASSERT_THAT(error->propertyName, Eq("Key-2"));
 }
@@ -210,8 +212,9 @@ TYPED_TEST(UnpackPropertiesThrowingTest, throwsErrorWhenOptionalTypeDoesntMatch)
     auto error = captureException<exception::UnpackPropertyError>([&] {
         this->unpackPropertiesCall(this->data, "Key-1", val1, "Key-2", val2);
     });
-
-    ASSERT_TRUE(error);
+    ASSERT_TRUE(error.has_value());
+    if (!error.has_value())
+        return; // structural guard just for the analyzer
     ASSERT_THAT(error->reason, Eq(UnpackErrorReason::wrongType));
     ASSERT_THAT(error->propertyName, Eq("Key-2"));
 }
@@ -235,8 +238,9 @@ TYPED_TEST(UnpackPropertiesNonThrowingTest, ErrorWhenKeyIsMissing)
 
     auto badProperty = this->unpackPropertiesCall(this->data, "Key-1", val1,
                                                   "Key-4", val2, "Key-3", val3);
-
-    ASSERT_TRUE(badProperty);
+    EXPECT_TRUE(badProperty.has_value());
+    if (!badProperty.has_value())
+        return; // structural guard just for the analyzer
     EXPECT_THAT(badProperty->reason, Eq(UnpackErrorReason::missingProperty));
     EXPECT_THAT(badProperty->property, Eq("Key-4"));
 }
@@ -251,8 +255,9 @@ TYPED_TEST(UnpackPropertiesNonThrowingTest, ErrorWhenTypeDoesntMatch)
 
     auto badProperty = this->unpackPropertiesCall(this->data, "Key-1", val1,
                                                   "Key-2", val2, "Key-3", val3);
-
-    ASSERT_TRUE(badProperty);
+    ASSERT_TRUE(badProperty.has_value());
+    if (!badProperty.has_value())
+        return; // structural guard just for the analyzer
     EXPECT_THAT(badProperty->reason, Eq(UnpackErrorReason::wrongType));
     EXPECT_THAT(badProperty->property, Eq("Key-2"));
 }
@@ -266,8 +271,9 @@ TYPED_TEST(UnpackPropertiesNonThrowingTest, ErrorWhenOptionalTypeDoesntMatch)
 
     auto badProperty =
         this->unpackPropertiesCall(this->data, "Key-1", val1, "Key-2", val2);
-
-    ASSERT_TRUE(badProperty);
+    ASSERT_TRUE(badProperty.has_value());
+    if (!badProperty.has_value())
+        return; // structural guard just for the analyzer
     EXPECT_THAT(badProperty->reason, Eq(UnpackErrorReason::wrongType));
     EXPECT_THAT(badProperty->property, Eq("Key-2"));
 }

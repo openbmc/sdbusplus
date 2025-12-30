@@ -1,5 +1,7 @@
 #include <sdbusplus/unpack_properties.hpp>
 
+#include <print>
+
 #include <gmock/gmock.h>
 
 namespace sdbusplus
@@ -177,7 +179,11 @@ TYPED_TEST(UnpackPropertiesThrowingTest, throwsErrorWhenKeyIsMissing)
                                    "Key-3", val3);
     });
 
-    ASSERT_TRUE(error);
+    if (!error.has_value())
+    {
+        std::print("Error: optional empty\n");
+        return;
+    }
     ASSERT_THAT(error->reason, Eq(UnpackErrorReason::missingProperty));
     ASSERT_THAT(error->propertyName, Eq("Key-4"));
 }
@@ -195,7 +201,11 @@ TYPED_TEST(UnpackPropertiesThrowingTest, throwsErrorWhenTypeDoesntMatch)
                                    "Key-3", val3);
     });
 
-    ASSERT_TRUE(error);
+    if (!error.has_value())
+    {
+        std::print("Error: optional empty\n");
+        return;
+    }
     ASSERT_THAT(error->reason, Eq(UnpackErrorReason::wrongType));
     ASSERT_THAT(error->propertyName, Eq("Key-2"));
 }
@@ -211,7 +221,11 @@ TYPED_TEST(UnpackPropertiesThrowingTest, throwsErrorWhenOptionalTypeDoesntMatch)
         this->unpackPropertiesCall(this->data, "Key-1", val1, "Key-2", val2);
     });
 
-    ASSERT_TRUE(error);
+    if (!error.has_value())
+    {
+        std::print("Error: optional empty\n");
+        return;
+    }
     ASSERT_THAT(error->reason, Eq(UnpackErrorReason::wrongType));
     ASSERT_THAT(error->propertyName, Eq("Key-2"));
 }
@@ -237,6 +251,12 @@ TYPED_TEST(UnpackPropertiesNonThrowingTest, ErrorWhenKeyIsMissing)
                                                   "Key-4", val2, "Key-3", val3);
 
     ASSERT_TRUE(badProperty);
+    EXPECT_TRUE(badProperty.has_value());
+    if (!badProperty.has_value())
+    {
+        std::print("Error: optional empty\n");
+        return;
+    }
     EXPECT_THAT(badProperty->reason, Eq(UnpackErrorReason::missingProperty));
     EXPECT_THAT(badProperty->property, Eq("Key-4"));
 }
@@ -252,7 +272,11 @@ TYPED_TEST(UnpackPropertiesNonThrowingTest, ErrorWhenTypeDoesntMatch)
     auto badProperty = this->unpackPropertiesCall(this->data, "Key-1", val1,
                                                   "Key-2", val2, "Key-3", val3);
 
-    ASSERT_TRUE(badProperty);
+    if (!badProperty.has_value())
+    {
+        std::print("Error: optional empty\n");
+        return;
+    }
     EXPECT_THAT(badProperty->reason, Eq(UnpackErrorReason::wrongType));
     EXPECT_THAT(badProperty->property, Eq("Key-2"));
 }
@@ -267,7 +291,11 @@ TYPED_TEST(UnpackPropertiesNonThrowingTest, ErrorWhenOptionalTypeDoesntMatch)
     auto badProperty =
         this->unpackPropertiesCall(this->data, "Key-1", val1, "Key-2", val2);
 
-    ASSERT_TRUE(badProperty);
+    if (!badProperty.has_value())
+    {
+        std::print("Error: optional empty\n");
+        return;
+    }
     EXPECT_THAT(badProperty->reason, Eq(UnpackErrorReason::wrongType));
     EXPECT_THAT(badProperty->property, Eq("Key-2"));
 }

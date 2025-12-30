@@ -9,10 +9,15 @@ using namespace std::literals;
 TEST_F(FdioTimedTest, TestWriteAsyncWithTimeout)
 {
     bool ran = false;
-    ctx->spawn(testFdTimedEvents(ran, testWriteOperation::writeAsync, 1));
-    ctx->spawn(
-        sdbusplus::async::sleep_for(*ctx, 2s) |
-        sdbusplus::async::execution::then([&]() { ctx->request_stop(); }));
-    ctx->run();
+    if (!ctx.has_value())
+    {
+        GTEST_SKIP() << "ctx empty";
+    }
+
+    auto& io = ctx.value();
+    io.spawn(testFdTimedEvents(ran, testWriteOperation::writeAsync, 1));
+    io.spawn(sdbusplus::async::sleep_for(io, 2s) |
+             sdbusplus::async::execution::then([&]() { io.request_stop(); }));
+    io.run();
     EXPECT_TRUE(ran);
 }

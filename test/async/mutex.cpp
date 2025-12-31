@@ -77,7 +77,13 @@ class MutexTest : public ::testing::Test
         sdbusplus::async::lock_guard lg{mutex};
         co_await lg.lock();
 
-        ctx->spawn(writeToFile());
+        if (!ctx)
+        {
+            co_return;
+        }
+        auto& io = *ctx;
+
+        io.spawn(writeToFile());
         co_await fdioInstance->next();
         co_await readFromFile();
         ran++;
@@ -96,16 +102,21 @@ class MutexTest : public ::testing::Test
 TEST_F(MutexTest, TestAsyncAddition)
 {
     constexpr auto testIterations = 10;
+
+    ASSERT_TRUE(ctx.has_value());
+    if (!ctx)
+        return; // structural guard just for the analyzer
+    auto& io = *ctx;
+
     for (auto i = 0; i < testIterations; i++)
     {
-        ctx->spawn(testAsyncAddition());
+        io.spawn(testAsyncAddition());
     }
 
-    ctx->spawn(
-        sdbusplus::async::sleep_for(*ctx, 1s) |
-        sdbusplus::async::execution::then([&]() { ctx->request_stop(); }));
+    io.spawn(sdbusplus::async::sleep_for(io, 1s) |
+             sdbusplus::async::execution::then([&]() { io.request_stop(); }));
 
-    ctx->run();
+    io.run();
 
     EXPECT_EQ(sharedVar, testIterations);
 }
@@ -113,17 +124,21 @@ TEST_F(MutexTest, TestAsyncAddition)
 TEST_F(MutexTest, TestAsyncMixed)
 {
     constexpr auto testIterations = 10;
+    ASSERT_TRUE(ctx.has_value());
+    if (!ctx)
+        return; // structural guard just for the analyzer
+    auto& io = *ctx;
+
     for (auto i = 0; i < testIterations; i++)
     {
-        ctx->spawn(testAsyncAddition());
-        ctx->spawn(testAsyncSubtraction(2));
+        io.spawn(testAsyncAddition());
+        io.spawn(testAsyncSubtraction(2));
     }
 
-    ctx->spawn(
-        sdbusplus::async::sleep_for(*ctx, 1s) |
-        sdbusplus::async::execution::then([&]() { ctx->request_stop(); }));
+    io.spawn(sdbusplus::async::sleep_for(io, 1s) |
+             sdbusplus::async::execution::then([&]() { io.request_stop(); }));
 
-    ctx->run();
+    io.run();
 
     EXPECT_EQ(sharedVar, -testIterations);
 }
@@ -131,15 +146,19 @@ TEST_F(MutexTest, TestAsyncMixed)
 TEST_F(MutexTest, TestFdEvents)
 {
     constexpr static auto testIterations = 5;
+    if (!ctx)
+    {
+        GTEST_SKIP() << "ctx empty";
+    }
+    auto& io = *ctx;
 
     for (auto i = 0; i < testIterations; i++)
     {
-        ctx->spawn(testFdEvents());
+        io.spawn(testFdEvents());
     }
-    ctx->spawn(
-        sdbusplus::async::sleep_for(*ctx, 3s) |
-        sdbusplus::async::execution::then([&]() { ctx->request_stop(); }));
-    ctx->run();
+    io.spawn(sdbusplus::async::sleep_for(io, 3s) |
+             sdbusplus::async::execution::then([&]() { io.request_stop(); }));
+    io.run();
     EXPECT_EQ(ran, testIterations);
 }
 

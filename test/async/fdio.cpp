@@ -53,12 +53,18 @@ class FdioTest : public ::testing::Test
     auto testFdEvents(bool& ran, bool sleepBeforeWrite)
         -> sdbusplus::async::task<>
     {
+        if (!ctx)
+        {
+            co_return;
+        }
+        auto& io = *ctx;
+
         for (int i = 0; i < testIterations; i++)
         {
             if (sleepBeforeWrite)
             {
-                ctx->spawn(sdbusplus::async::sleep_for(*ctx, 1s) |
-                           stdexec::then([&]() { ctx->spawn(writeToFile()); }));
+                io.spawn(sdbusplus::async::sleep_for(io, 1s) |
+                         stdexec::then([&]() { io.spawn(writeToFile()); }));
             }
             else
             {
@@ -81,21 +87,30 @@ class FdioTest : public ::testing::Test
 TEST_F(FdioTest, TestFdEvents)
 {
     bool ran = false;
-    ctx->spawn(testFdEvents(ran, false));
-    ctx->spawn(
-        sdbusplus::async::sleep_for(*ctx, 1s) |
-        sdbusplus::async::execution::then([&]() { ctx->request_stop(); }));
-    ctx->run();
+    if (!ctx)
+    {
+        GTEST_SKIP() << "ctx empty";
+    }
+
+    auto& io = *ctx;
+    io.spawn(testFdEvents(ran, false));
+    io.spawn(sdbusplus::async::sleep_for(io, 1s) |
+             sdbusplus::async::execution::then([&]() { io.request_stop(); }));
+    io.run();
     EXPECT_TRUE(ran);
 }
 
 TEST_F(FdioTest, TestFdEventsWithSleep)
 {
     bool ran = false;
-    ctx->spawn(testFdEvents(ran, true));
-    ctx->spawn(
-        sdbusplus::async::sleep_for(*ctx, 5s) |
-        sdbusplus::async::execution::then([&]() { ctx->request_stop(); }));
-    ctx->run();
+    if (!ctx)
+    {
+        GTEST_SKIP() << "ctx empty";
+    }
+    auto& io = *ctx;
+    io.spawn(testFdEvents(ran, true));
+    io.spawn(sdbusplus::async::sleep_for(io, 5s) |
+             sdbusplus::async::execution::then([&]() { io.request_stop(); }));
+    io.run();
     EXPECT_TRUE(ran);
 }

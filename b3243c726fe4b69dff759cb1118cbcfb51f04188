@@ -26,6 +26,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "403f3fe5_b296591b",
+        "filename": "test/unpack_properties.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 186,
+      "author": {
+        "id": 1000086
+      },
+      "writtenOn": "2026-01-07T08:34:20Z",
+      "side": 1,
+      "message": "Use explicit control‑flow guards (if (opt) { use(*opt); } / if (!opt) return;) because clang‑tidy doesn’t treat test macros (ASSERT_TRUE, EXPECT_TRUE) as flow‑stopping—so keep assertions for tests, .Use EXPECT_TRUE(error.has_value()) plus if (!ctx) return; to avoid duplication while keeping failures visible and the optional access analyzable.",
+      "parentUuid": "5b0af196_69ca03d3",
+      "range": {
+        "startLine": 182,
+        "startChar": 0,
+        "endLine": 186,
+        "endChar": 5
+      },
+      "revId": "b3243c726fe4b69dff759cb1118cbcfb51f04188",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "18a0755e_6e10e043",
         "filename": "test/unpack_properties.cpp",
         "patchSetId": 2
@@ -37,6 +61,30 @@
       "writtenOn": "2026-01-06T22:48:30Z",
       "side": 1,
       "message": "Just make this one an ASSERT.",
+      "range": {
+        "startLine": 253,
+        "startChar": 0,
+        "endLine": 254,
+        "endChar": 41
+      },
+      "revId": "b3243c726fe4b69dff759cb1118cbcfb51f04188",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b94a3d05_403682df",
+        "filename": "test/unpack_properties.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 254,
+      "author": {
+        "id": 1000086
+      },
+      "writtenOn": "2026-01-07T08:34:20Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "18a0755e_6e10e043",
       "range": {
         "startLine": 253,
         "startChar": 0,

@@ -22,6 +22,30 @@
       },
       "revId": "f4aab0f7aed95bbda1e42a4b1d634230690bc479",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "68fbb6aa_c1d5e5d5",
+        "filename": "test/async/fdio_timed/fdio_timed_write_async_with_timeout.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1000086
+      },
+      "writtenOn": "2026-01-07T15:58:05Z",
+      "side": 1,
+      "message": "Use EXPECT_TRUE(ctx.has_value()) plus if (!ctx) return; to avoid duplication while keeping failures visible and the optional access analyzable.",
+      "parentUuid": "2a654c75_b9420513",
+      "range": {
+        "startLine": 12,
+        "startChar": 0,
+        "endLine": 15,
+        "endChar": 5
+      },
+      "revId": "f4aab0f7aed95bbda1e42a4b1d634230690bc479",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

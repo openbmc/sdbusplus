@@ -13,10 +13,17 @@ class MutexTest : public ::testing::Test
 {
   protected:
     ~MutexTest() noexcept override = default;
+    auto& get_ctx()
+    {
+        return *ctx;
+    }
     constexpr static std::string testMutex = "TestMutex";
     const fs::path path = "/tmp";
 
-    MutexTest() : mutex(testMutex)
+    std::unique_ptr<sdbusplus::async::context> ctx;
+
+    MutexTest() :
+        ctx(std::make_unique<sdbusplus::async::context>()), mutex(testMutex)
     {
         auto fd = inotify_init1(IN_NONBLOCK);
         EXPECT_NE(fd, -1) << "Error occurred during the inotify_init1, error: "
@@ -25,10 +32,8 @@ class MutexTest : public ::testing::Test
         auto wd = inotify_add_watch(fd, path.c_str(), IN_CLOSE_WRITE);
         EXPECT_NE(wd, -1)
             << "Error occurred during the inotify_add_watch, error: " << errno;
-        fdioInstance = std::make_unique<sdbusplus::async::fdio>(*ctx, fd);
+        fdioInstance = std::make_unique<sdbusplus::async::fdio>(get_ctx(), fd);
     }
-
-    std::optional<sdbusplus::async::context> ctx{std::in_place};
 
     auto testAsyncAddition(int val = 1) -> sdbusplus::async::task<>
     {
@@ -77,7 +82,7 @@ class MutexTest : public ::testing::Test
         sdbusplus::async::lock_guard lg{mutex};
         co_await lg.lock();
 
-        ctx->spawn(writeToFile());
+        get_ctx().spawn(writeToFile());
         co_await fdioInstance->next();
         co_await readFromFile();
         ran++;
@@ -98,14 +103,14 @@ TEST_F(MutexTest, TestAsyncAddition)
     constexpr auto testIterations = 10;
     for (auto i = 0; i < testIterations; i++)
     {
-        ctx->spawn(testAsyncAddition());
+        get_ctx().spawn(testAsyncAddition());
     }
 
-    ctx->spawn(
-        sdbusplus::async::sleep_for(*ctx, 1s) |
-        sdbusplus::async::execution::then([&]() { ctx->request_stop(); }));
+    get_ctx().spawn(
+        sdbusplus::async::sleep_for(get_ctx(), 1s) |
+        sdbusplus::async::execution::then([&]() { get_ctx().request_stop(); }));
 
-    ctx->run();
+    get_ctx().run();
 
     EXPECT_EQ(sharedVar, testIterations);
 }
@@ -115,15 +120,15 @@ TEST_F(MutexTest, TestAsyncMixed)
     constexpr auto testIterations = 10;
     for (auto i = 0; i < testIterations; i++)
     {
-        ctx->spawn(testAsyncAddition());
-        ctx->spawn(testAsyncSubtraction(2));
+        get_ctx().spawn(testAsyncAddition());
+        get_ctx().spawn(testAsyncSubtraction(2));
     }
 
-    ctx->spawn(
-        sdbusplus::async::sleep_for(*ctx, 1s) |
-        sdbusplus::async::execution::then([&]() { ctx->request_stop(); }));
+    get_ctx().spawn(
+        sdbusplus::async::sleep_for(get_ctx(), 1s) |
+        sdbusplus::async::execution::then([&]() { get_ctx().request_stop(); }));
 
-    ctx->run();
+    get_ctx().run();
 
     EXPECT_EQ(sharedVar, -testIterations);
 }
@@ -134,12 +139,12 @@ TEST_F(MutexTest, TestFdEvents)
 
     for (auto i = 0; i < testIterations; i++)
     {
-        ctx->spawn(testFdEvents());
+        get_ctx().spawn(testFdEvents());
     }
-    ctx->spawn(
-        sdbusplus::async::sleep_for(*ctx, 3s) |
-        sdbusplus::async::execution::then([&]() { ctx->request_stop(); }));
-    ctx->run();
+    get_ctx().spawn(
+        sdbusplus::async::sleep_for(get_ctx(), 3s) |
+        sdbusplus::async::execution::then([&]() { get_ctx().request_stop(); }));
+    get_ctx().run();
     EXPECT_EQ(ran, testIterations);
 }
 

@@ -14,7 +14,8 @@ using namespace std::literals;
 
 namespace fs = std::filesystem;
 
-FdioTimedTest::FdioTimedTest()
+FdioTimedTest::FdioTimedTest() :
+    ctx(std::make_unique<sdbusplus::async::context>())
 {
     constexpr auto path_base = "/tmp/test_fdio_timed";
 
@@ -33,7 +34,7 @@ FdioTimedTest::FdioTimedTest()
     EXPECT_NE(wd, -1) << "Error occurred during the inotify_add_watch, error: "
                       << errno;
     fdioInstance = std::make_unique<sdbusplus::async::fdio>(
-        *ctx, fd, std::chrono::microseconds(1000));
+        get_ctx(), fd, std::chrono::microseconds(1000));
 }
 
 FdioTimedTest::~FdioTimedTest() noexcept
@@ -46,6 +47,7 @@ FdioTimedTest::~FdioTimedTest() noexcept
         }
         close(fd);
     }
+    fdioInstance.reset();
     ctx.reset();
 
     if (fs::exists(path))
@@ -76,8 +78,9 @@ auto FdioTimedTest::testFdTimedEvents(
                 co_await writeToFile();
                 break;
             case testWriteOperation::writeAsync:
-                ctx->spawn(sdbusplus::async::sleep_for(*ctx, 1s) |
-                           stdexec::then([&]() { ctx->spawn(writeToFile()); }));
+                get_ctx().spawn(
+                    sdbusplus::async::sleep_for(get_ctx(), 1s) |
+                    stdexec::then([&]() { get_ctx().spawn(writeToFile()); }));
                 break;
             case testWriteOperation::writeSkip:
             default:

@@ -9,10 +9,10 @@ using namespace std::literals;
 TEST_F(FdioTimedTest, TestWriteSyncIterative)
 {
     bool ran = false;
-    ctx->spawn(testFdTimedEvents(ran, testWriteOperation::writeSync, 100));
-    ctx->spawn(
-        sdbusplus::async::sleep_for(*ctx, 2s) |
-        sdbusplus::async::execution::then([&]() { ctx->request_stop(); }));
-    ctx->run();
+    get_ctx().spawn(testFdTimedEvents(ran, testWriteOperation::writeSync, 100));
+    get_ctx().spawn(
+        sdbusplus::async::sleep_for(get_ctx(), 2s) |
+        sdbusplus::async::execution::then([&]() { get_ctx().request_stop(); }));
+    get_ctx().run();
     EXPECT_TRUE(ran);
 }

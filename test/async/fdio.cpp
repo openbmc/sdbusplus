@@ -13,9 +13,13 @@ class FdioTest : public ::testing::Test
 {
   protected:
     const fs::path path = "/tmp";
+    auto& get_ctx()
+    {
+        return *ctx;
+    }
     constexpr static auto testIterations = 5;
 
-    FdioTest()
+    FdioTest() : ctx(std::make_unique<sdbusplus::async::context>())
     {
         auto fd = inotify_init1(IN_NONBLOCK);
         EXPECT_NE(fd, -1) << "Error occurred during the inotify_init1, error: "
@@ -24,7 +28,7 @@ class FdioTest : public ::testing::Test
         auto wd = inotify_add_watch(fd, path.c_str(), IN_CLOSE_WRITE);
         EXPECT_NE(wd, -1)
             << "Error occurred during the inotify_add_watch, error: " << errno;
-        fdioInstance = std::make_unique<sdbusplus::async::fdio>(*ctx, fd);
+        fdioInstance = std::make_unique<sdbusplus::async::fdio>(get_ctx(), fd);
     }
 
     ~FdioTest() noexcept override
@@ -35,8 +39,10 @@ class FdioTest : public ::testing::Test
             {
                 inotify_rm_watch(fd, wd);
             }
+
             close(fd);
         }
+        fdioInstance.reset();
         ctx.reset();
     }
 
@@ -57,8 +63,9 @@ class FdioTest : public ::testing::Test
         {
             if (sleepBeforeWrite)
             {
-                ctx->spawn(sdbusplus::async::sleep_for(*ctx, 1s) |
-                           stdexec::then([&]() { ctx->spawn(writeToFile()); }));
+                get_ctx().spawn(
+                    sdbusplus::async::sleep_for(get_ctx(), 1s) |
+                    stdexec::then([&]() { get_ctx().spawn(writeToFile()); }));
             }
             else
             {
@@ -71,7 +78,7 @@ class FdioTest : public ::testing::Test
     }
 
     std::unique_ptr<sdbusplus::async::fdio> fdioInstance;
-    std::optional<sdbusplus::async::context> ctx{std::in_place};
+    std::unique_ptr<sdbusplus::async::context> ctx;
 
   private:
     int fd = -1;
@@ -81,21 +88,21 @@ class FdioTest : public ::testing::Test
 TEST_F(FdioTest, TestFdEvents)
 {
     bool ran = false;
-    ctx->spawn(testFdEvents(ran, false));
-    ctx->spawn(
-        sdbusplus::async::sleep_for(*ctx, 1s) |
-        sdbusplus::async::execution::then([&]() { ctx->request_stop(); }));
-    ctx->run();
+    get_ctx().spawn(testFdEvents(ran, false));
+    get_ctx().spawn(
+        sdbusplus::async::sleep_for(get_ctx(), 1s) |
+        sdbusplus::async::execution::then([&]() { get_ctx().request_stop(); }));
+    get_ctx().run();
     EXPECT_TRUE(ran);
 }
 
 TEST_F(FdioTest, TestFdEventsWithSleep)
 {
     bool ran = false;
-    ctx->spawn(testFdEvents(ran, true));
-    ctx->spawn(
-        sdbusplus::async::sleep_for(*ctx, 5s) |
-        sdbusplus::async::execution::then([&]() { ctx->request_stop(); }));
-    ctx->run();
+    get_ctx().spawn(testFdEvents(ran, true));
+    get_ctx().spawn(
+        sdbusplus::async::sleep_for(get_ctx(), 5s) |
+        sdbusplus::async::execution::then([&]() { get_ctx().request_stop(); }));
+    get_ctx().run();
     EXPECT_TRUE(ran);
 }

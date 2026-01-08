@@ -16,7 +16,10 @@ class MutexTest : public ::testing::Test
     constexpr static std::string testMutex = "TestMutex";
     const fs::path path = "/tmp";
 
-    MutexTest() : mutex(testMutex)
+    std::unique_ptr<sdbusplus::async::context> ctx;
+
+    MutexTest() :
+        ctx(std::make_unique<sdbusplus::async::context>()), mutex(testMutex)
     {
         auto fd = inotify_init1(IN_NONBLOCK);
         EXPECT_NE(fd, -1) << "Error occurred during the inotify_init1, error: "
@@ -27,8 +30,6 @@ class MutexTest : public ::testing::Test
             << "Error occurred during the inotify_add_watch, error: " << errno;
         fdioInstance = std::make_unique<sdbusplus::async::fdio>(*ctx, fd);
     }
-
-    std::optional<sdbusplus::async::context> ctx{std::in_place};
 
     auto testAsyncAddition(int val = 1) -> sdbusplus::async::task<>
     {

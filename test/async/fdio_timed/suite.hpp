@@ -33,8 +33,8 @@ class FdioTimedTest : public ::testing::Test
     auto testFdTimedEvents(bool& ran, testWriteOperation writeOperation,
                            int testIterations) -> sdbusplus::async::task<>;
 
+    std::unique_ptr<sdbusplus::async::context> ctx;
     std::unique_ptr<sdbusplus::async::fdio> fdioInstance;
-    std::optional<sdbusplus::async::context> ctx{std::in_place};
 
   private:
     int fd = -1;

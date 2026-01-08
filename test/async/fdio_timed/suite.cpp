@@ -14,7 +14,8 @@ using namespace std::literals;
 
 namespace fs = std::filesystem;
 
-FdioTimedTest::FdioTimedTest()
+FdioTimedTest::FdioTimedTest() :
+    ctx(std::make_unique<sdbusplus::async::context>())
 {
     constexpr auto path_base = "/tmp/test_fdio_timed";
 
@@ -46,6 +47,7 @@ FdioTimedTest::~FdioTimedTest() noexcept
         }
         close(fd);
     }
+    fdioInstance.reset();
     ctx.reset();
 
     if (fs::exists(path))

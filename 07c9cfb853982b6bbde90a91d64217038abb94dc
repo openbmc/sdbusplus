@@ -16,6 +16,24 @@
       "message": "Can we revert all of these io conversions?",
       "revId": "07c9cfb853982b6bbde90a91d64217038abb94dc",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5b417a29_1bbb5164",
+        "filename": "test/async/fdio.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 1000086
+      },
+      "writtenOn": "2026-01-08T11:04:18Z",
+      "side": 1,
+      "message": "Same as previous patchset comments",
+      "parentUuid": "a49f9836_3479eb51",
+      "revId": "07c9cfb853982b6bbde90a91d64217038abb94dc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

@@ -27,6 +27,10 @@ class FdioTimedTest : public ::testing::Test
     FdioTimedTest();
 
     ~FdioTimedTest() noexcept override;
+    auto& get_ctx()
+    {
+        return *ctx;
+    }
 
     auto writeToFile() -> sdbusplus::async::task<>;
 
@@ -34,7 +38,7 @@ class FdioTimedTest : public ::testing::Test
                            int testIterations) -> sdbusplus::async::task<>;
 
     std::unique_ptr<sdbusplus::async::fdio> fdioInstance;
-    std::optional<sdbusplus::async::context> ctx{std::in_place};
+    std::unique_ptr<sdbusplus::async::context> ctx;
 
   private:
     int fd = -1;

@@ -4,39 +4,29 @@
 
 struct Context : public testing::Test
 {
+    Context() : ctx(std::make_unique<sdbusplus::async::context>()) {}
     ~Context() noexcept override = default;
 
     void TearDown() override
     {
         // Destructing the context can throw, so we have to do it in
         // the TearDown in order to make our destructor noexcept.
-        context.reset();
-    }
-
-    // Local accessor that makes clang-tidy's flow analysis happy.
-    // It provides a local guard that the optional is engaged.
-    auto ctx() -> sdbusplus::async::context&
-    {
-        if (!context.has_value())
-        {
-            throw std::logic_error("Context is not initialized");
-        }
-        return context.value();
+        ctx.reset();
     }
 
     void spawnStop()
     {
-        ctx().spawn(stdexec::just() |
-                    stdexec::then([this]() { ctx().request_stop(); }));
+        ctx->spawn(stdexec::just() |
+                   stdexec::then([this]() { ctx->request_stop(); }));
     }
 
     void runToStop()
     {
         spawnStop();
-        ctx().run();
+        ctx->run();
     }
 
-    std::optional<sdbusplus::async::context> context{std::in_place};
+    std::unique_ptr<sdbusplus::async::context> ctx;
 };
 
 TEST_F(Context, RunSimple)
@@ -46,7 +36,7 @@ TEST_F(Context, RunSimple)
 
 TEST_F(Context, SpawnedTask)
 {
-    ctx().spawn(stdexec::just());
+    ctx->spawn(stdexec::just());
     runToStop();
 }
 
@@ -55,7 +45,7 @@ TEST_F(Context, ReentrantRun)
     runToStop();
     for (int i = 0; i < 100; ++i)
     {
-        ctx().run();
+        ctx->run();
     }
 }
 
@@ -67,8 +57,8 @@ TEST_F(Context, SpawnDelayedTask)
     auto start = std::chrono::steady_clock::now();
 
     bool ran = false;
-    ctx().spawn(sdbusplus::async::sleep_for(ctx(), timeout) |
-                stdexec::then([&ran]() { ran = true; }));
+    ctx->spawn(sdbusplus::async::sleep_for(*ctx, timeout) |
+               stdexec::then([&ran]() { ran = true; }));
 
     runToStop();
 
@@ -98,8 +88,8 @@ TEST_F(Context, SpawnRecursiveTask)
     static constexpr size_t count = 100;
     size_t executed = 0;
 
-    ctx().spawn(_::one(count, executed) |
-                stdexec::then([=](auto result) { EXPECT_EQ(result, count); }));
+    ctx->spawn(_::one(count, executed) |
+               stdexec::then([=](auto result) { EXPECT_EQ(result, count); }));
 
     runToStop();
 
@@ -112,15 +102,15 @@ TEST_F(Context, DestructMatcherWithPendingAwait)
 
     bool ran = false;
     auto m = std::make_optional<sdbusplus::async::match>(
-        ctx(), sdbusplus::bus::match::rules::interfacesAdded(
-                   "/this/is/a/bogus/path/for/SpawnMatcher"));
+        *ctx, sdbusplus::bus::match::rules::interfacesAdded(
+                  "/this/is/a/bogus/path/for/SpawnMatcher"));
 
     // Await the match completion (which will never happen).
-    ctx().spawn(m->next() | stdexec::then([&ran](...) { ran = true; }));
+    ctx->spawn(m->next() | stdexec::then([&ran](...) { ran = true; }));
 
     // Destruct the match.
-    ctx().spawn(sdbusplus::async::sleep_for(ctx(), 1ms) |
-                stdexec::then([&m](...) { m.reset(); }));
+    ctx->spawn(sdbusplus::async::sleep_for(*ctx, 1ms) |
+               stdexec::then([&m](...) { m.reset(); }));
 
     runToStop();
     EXPECT_FALSE(ran);
@@ -131,8 +121,8 @@ TEST_F(Context, DestructMatcherWithPendingAwaitAsTask)
     using namespace std::literals;
 
     auto m = std::make_optional<sdbusplus::async::match>(
-        ctx(), sdbusplus::bus::match::rules::interfacesAdded(
-                   "/this/is/a/bogus/path/for/SpawnMatcher"));
+        *ctx, sdbusplus::bus::match::rules::interfacesAdded(
+                  "/this/is/a/bogus/path/for/SpawnMatcher"));
 
     struct _
     {
@@ -146,9 +136,9 @@ TEST_F(Context, DestructMatcherWithPendingAwaitAsTask)
     };
 
     bool ran = false;
-    ctx().spawn(_::fn(m->next(), ran));
-    ctx().spawn(sdbusplus::async::sleep_for(ctx(), 1ms) |
-                stdexec::then([&]() { m.reset(); }));
+    ctx->spawn(_::fn(m->next(), ran));
+    ctx->spawn(sdbusplus::async::sleep_for(*ctx, 1ms) |
+               stdexec::then([&]() { m.reset(); }));
 
     runToStop();
     EXPECT_FALSE(ran);

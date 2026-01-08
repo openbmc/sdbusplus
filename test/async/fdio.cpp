@@ -15,7 +15,7 @@ class FdioTest : public ::testing::Test
     const fs::path path = "/tmp";
     constexpr static auto testIterations = 5;
 
-    FdioTest()
+    FdioTest() : ctx(std::make_unique<sdbusplus::async::context>())
     {
         auto fd = inotify_init1(IN_NONBLOCK);
         EXPECT_NE(fd, -1) << "Error occurred during the inotify_init1, error: "
@@ -35,8 +35,10 @@ class FdioTest : public ::testing::Test
             {
                 inotify_rm_watch(fd, wd);
             }
+
             close(fd);
         }
+        fdioInstance.reset();
         ctx.reset();
     }
 
@@ -71,7 +73,7 @@ class FdioTest : public ::testing::Test
     }
 
     std::unique_ptr<sdbusplus::async::fdio> fdioInstance;
-    std::optional<sdbusplus::async::context> ctx{std::in_place};
+    std::unique_ptr<sdbusplus::async::context> ctx;
 
   private:
     int fd = -1;

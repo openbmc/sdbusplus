@@ -1,0 +1,78 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "65983b72_0a3b9ce0",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2026-01-23T23:24:35Z",
+      "side": 1,
+      "message": "Overall in support of this.  At one point I had a version of this refactor that turned type_id into a constexpr method with a bunch of std::is_same.  I never finished it because it wasn\u0027t clear that was any better than template specialization we had, but it\u0027s good to see these get modernized.",
+      "revId": "f20088b5bf4aa6878eb1cc459ca16278dfc6861c",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5a453284_0c723699",
+        "filename": "include/sdbusplus/message/read.hpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 266,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2026-01-23T23:24:35Z",
+      "side": 1,
+      "message": "This couldn\u0027t be constexpr anymore?",
+      "range": {
+        "startLine": 266,
+        "startChar": 8,
+        "endLine": 266,
+        "endChar": 14
+      },
+      "revId": "f20088b5bf4aa6878eb1cc459ca16278dfc6861c",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "93aa517c_22e5f958",
+        "filename": "include/sdbusplus/message/types.hpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 267,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2026-01-23T23:24:35Z",
+      "side": 1,
+      "message": ".... you can concat and return std::string in constexpr now?  Sweet.",
+      "revId": "f20088b5bf4aa6878eb1cc459ca16278dfc6861c",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "13a5658e_3e9f2627",
+        "filename": "include/sdbusplus/utility/container_traits.hpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2026-01-23T23:24:35Z",
+      "side": 1,
+      "message": "I\u0027m not that worried about it, but is there a reason we can\u0027t just use is_enum_v directly?",
+      "revId": "f20088b5bf4aa6878eb1cc459ca16278dfc6861c",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

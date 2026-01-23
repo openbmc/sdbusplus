@@ -70,6 +70,19 @@ struct ${interface.classname}
     };
     % endif
 
+    % if interface.enums:
+    struct enum_strings
+    {
+        % for e in interface.enums:
+        struct ${e.name} {
+            % for v in e.values:
+                static constexpr auto ${v.snake_case} = "${interface.name}.${e.name}.${v.name}";
+            % endfor
+        };
+        % endfor
+    };
+    % endif
+
     % for p in interface.paths:
         % if p.description:
     /** ${p.description.strip()} */
@@ -147,7 +160,7 @@ using namespace std::literals::string_view_literals;
 /** String to enum mapping for ${interface.classname}::${e.name} */
 inline constexpr std::array mapping${interface.classname}${e.name} = {
     % for v in e.values:
-    std::make_tuple("${interface.name}.${e.name}.${v.name}"sv,
+    std::make_tuple(${interface.classname}::enum_strings::${e.name}::${v.snake_case},
                     ${interface.classname}::${e.name}::${v.name} ),
     % endfor
 };

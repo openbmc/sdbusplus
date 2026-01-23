@@ -122,6 +122,7 @@ uninit_tests = [
     'test_property_names',
     'test_method_names',
     'test_signal_names',
+    'test_enum_strings',
 ]
 
 foreach t : uninit_tests

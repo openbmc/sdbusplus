@@ -18,6 +18,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "4756a982_02e90359",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-01-27T21:35:59Z",
+      "side": 1,
+      "message": "I\u0027m having a bit of trouble getting this all working because it relies on fairly new support.  It seems like GCC 15.2 is the minimum to make it work and Yocto right now is on 15.1.  We\u0027ll keep playing.",
+      "parentUuid": "65983b72_0a3b9ce0",
+      "revId": "f20088b5bf4aa6878eb1cc459ca16278dfc6861c",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "5a453284_0c723699",
@@ -31,6 +49,30 @@
       "writtenOn": "2026-01-23T23:24:35Z",
       "side": 1,
       "message": "This couldn\u0027t be constexpr anymore?",
+      "range": {
+        "startLine": 266,
+        "startChar": 8,
+        "endLine": 266,
+        "endChar": 14
+      },
+      "revId": "f20088b5bf4aa6878eb1cc459ca16278dfc6861c",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "862ee4e3_2faf92a0",
+        "filename": "include/sdbusplus/message/read.hpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 266,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-01-27T21:35:59Z",
+      "side": 1,
+      "message": "Correct.  Anytime the string potentially lives outside the pure constexpr evaluation state it needs to be converted from a constexpr to a static const.  This is because of small-string-optimization (SSO) and constexpr requirements.\n\nIf the string is long enough to no longer fit into SSO, it would have an allocation.  If this variable were a constexpr, the compiler considers that allocation as having lived past the constexpr-context, and fails the compile.  But, if the string is converted to a static const, it\u0027s ok...\n\nYou\u0027ll see in this commit a change in the test cases where I had to make a \"ReallyBigType\" to cover this case.  All of the framework code where we potentially hold the type_id, we have to use as a static const to ensure we don\u0027t violate the SSO length when leaving the constexpr.",
+      "parentUuid": "5a453284_0c723699",
       "range": {
         "startLine": 266,
         "startChar": 8,
@@ -71,6 +113,24 @@
       "writtenOn": "2026-01-23T23:24:35Z",
       "side": 1,
       "message": "I\u0027m not that worried about it, but is there a reason we can\u0027t just use is_enum_v directly?",
+      "revId": "f20088b5bf4aa6878eb1cc459ca16278dfc6861c",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "cf5be8e5_76cf39a2",
+        "filename": "include/sdbusplus/utility/container_traits.hpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-01-27T21:35:59Z",
+      "side": 1,
+      "message": "No.  When you use it as a template restriction, you have to use a constraint (ie. a concept).  Here is the compile error with the proposed change:\n\n```\n../include/sdbusplus/message/types.hpp:209:11: error: ‘std::is_enum_v’ is not a type\n  209 | template \u003cstd::is_enum_v T\u003e\n```",
+      "parentUuid": "13a5658e_3e9f2627",
       "revId": "f20088b5bf4aa6878eb1cc459ca16278dfc6861c",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }

@@ -30,7 +30,9 @@ generated_markdown += custom_target(
 
 generated_registry += custom_target(
     'net/poettering/Calculator__registry'.underscorify(),
-    input: ['../../../yaml/net/poettering/Calculator.events.yaml'],
+    input: [
+        '../../../yaml/net/poettering/Calculator.events.yaml',
+    ],
     output: ['Calculator.json'],
     depend_files: sdbusplusplus_depfiles,
     command: [

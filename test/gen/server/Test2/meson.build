@@ -4,7 +4,9 @@ sdbusplus_current_path = 'server/Test2'
 
 generated_sources += custom_target(
     'server/Test2__cpp'.underscorify(),
-    input: ['../../../yaml/server/Test2.interface.yaml'],
+    input: [
+        '../../../yaml/server/Test2.interface.yaml',
+    ],
     output: [
         'common.hpp',
         'server.hpp',

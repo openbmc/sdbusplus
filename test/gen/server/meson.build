@@ -8,7 +8,9 @@ sdbusplus_current_path = 'server'
 
 generated_markdown += custom_target(
     'server/Test__markdown'.underscorify(),
-    input: ['../../yaml/server/Test.interface.yaml'],
+    input: [
+        '../../yaml/server/Test.interface.yaml',
+    ],
     output: ['Test.md'],
     depend_files: sdbusplusplus_depfiles,
     command: [
@@ -30,7 +32,9 @@ generated_markdown += custom_target(
 
 generated_markdown += custom_target(
     'server/Test2__markdown'.underscorify(),
-    input: ['../../yaml/server/Test2.interface.yaml'],
+    input: [
+        '../../yaml/server/Test2.interface.yaml',
+    ],
     output: ['Test2.md'],
     depend_files: sdbusplusplus_depfiles,
     command: [
@@ -52,7 +56,9 @@ generated_markdown += custom_target(
 
 generated_markdown += custom_target(
     'server/Test3__markdown'.underscorify(),
-    input: ['../../yaml/server/Test3.interface.yaml'],
+    input: [
+        '../../yaml/server/Test3.interface.yaml',
+    ],
     output: ['Test3.md'],
     depend_files: sdbusplusplus_depfiles,
     command: [
@@ -74,7 +80,9 @@ generated_markdown += custom_target(
 
 generated_markdown += custom_target(
     'server/TestWithMethod__markdown'.underscorify(),
-    input: ['../../yaml/server/TestWithMethod.interface.yaml'],
+    input: [
+        '../../yaml/server/TestWithMethod.interface.yaml',
+    ],
     output: ['TestWithMethod.md'],
     depend_files: sdbusplusplus_depfiles,
     command: [

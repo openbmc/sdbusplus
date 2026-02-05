@@ -2,6 +2,10 @@
 
 sdbusplus_current_path = 'server/TestWithMethod'
 
+all_yaml_files += files(
+    '../../../yaml/server/TestWithMethod.interface.yaml',
+)
+
 generated_sources += custom_target(
     'server/TestWithMethod__cpp'.underscorify(),
     input: [

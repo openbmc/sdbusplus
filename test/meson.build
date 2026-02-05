@@ -78,6 +78,8 @@ test(
 yaml_selected_subdirs = ['server']
 subdir('gen')
 
+sdbusplus_current_path = 'server/Test'
+
 server_test_pre = declare_dependency(
     include_directories: include_directories('gen'),
     dependencies: sdbusplus_dep,
@@ -122,6 +124,7 @@ uninit_tests = [
     'test_property_names',
     'test_method_names',
     'test_signal_names',
+    'test_full_tree',
 ]
 
 foreach t : uninit_tests

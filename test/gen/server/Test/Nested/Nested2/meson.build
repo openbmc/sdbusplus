@@ -1,15 +1,15 @@
 # Generated file; do not modify.
 
-sdbusplus_current_path = 'server/Test2'
+sdbusplus_current_path = 'server/Test/Nested/Nested2'
 
 all_yaml_files += files(
-    '../../../yaml/server/Test2.interface.yaml',
+    '../../../../../yaml/server/Test/Nested/Nested2.interface.yaml',
 )
 
 generated_sources += custom_target(
-    'server/Test2__cpp'.underscorify(),
+    'server/Test/Nested/Nested2__cpp'.underscorify(),
     input: [
-        '../../../yaml/server/Test2.interface.yaml',
+        '../../../../../yaml/server/Test/Nested/Nested2.interface.yaml',
     ],
     output: [
         'common.hpp',
@@ -28,8 +28,8 @@ generated_sources += custom_target(
         '--tool',
         sdbusplusplus_prog,
         '--directory',
-        meson.current_source_dir() / '../../../yaml',
-        'server/Test2',
+        meson.current_source_dir() / '../../../../../yaml',
+        'server/Test/Nested/Nested2',
     ],
     install: should_generate_cpp,
     install_dir: [

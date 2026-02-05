@@ -5,7 +5,6 @@ import mako.lookup
 
 import sdbusplus
 
-
 def main():
     module_path = os.path.dirname(sdbusplus.__file__)
 
@@ -13,11 +12,13 @@ def main():
         "error": sdbusplus.Error,
         "event": sdbusplus.Event,
         "interface": sdbusplus.Interface,
+        "full-tree": sdbusplus.FullTree,
     }
     valid_processes = {
         "aserver-header": "async_server_header",
         "client-header": "client_header",
         "common-header": "common_header",
+        "tree-header": "tree_header",
         "exception-cpp": "exception_cpp",
         "exception-header": "exception_header",
         "exception-registry": "exception_registry",
@@ -77,8 +78,10 @@ def main():
 
     lookup = mako.lookup.TemplateLookup(directories=[args.templatedir])
 
+
     instance = valid_types[args.typeName].load(
         args.item, args.rootdir, args.schemadir
     )
+
     function = getattr(instance, valid_processes[args.process])
     print(function(lookup))

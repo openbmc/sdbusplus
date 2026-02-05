@@ -28,6 +28,7 @@ Commands:
     cpp <intf>          - Generate the source files from a YAML interface.
     markdown <intf>     - Generate the markdown files from a YAML interface.
     registry <intf>     - Generate the Redfish registry from a YAML interface.
+    tree <intf>         - Generate the full tree for all interfaces
     version             - Display this tool's version string.
 
 EOF
@@ -459,6 +460,24 @@ function cmd_cpp() {
         ${sdbusppcmd} event exception-header "${intf}" > "${outputdir}/event.hpp"
         ${sdbusppcmd} event exception-cpp "${intf}" > "${outputdir}/event.cpp"
     fi
+}
+
+## Handle command=tree by calling sdbus++ as appropriate.
+## $1 - interfaces to generate.
+##
+## For an interface foo/bar, the outputdir is expected to be foo/bar.
+function cmd_tree() {
+
+    if [[ "" == "$1" ]]; then
+        show_usage
+        exit 1
+    fi
+
+    mkdir -p "${outputdir}"
+
+    sdbusppcmd="${sdbuspp} -r ${rootdir}"
+
+    ${sdbusppcmd} full-tree tree-header "${1}" > "${outputdir}/full_tree.hpp"
 }
 
 ## Handle command=markdown by calling sdbus++ as appropriate.

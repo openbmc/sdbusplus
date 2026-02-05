@@ -1,0 +1,6 @@
+description: >
+    A nested interface (2)
+properties:
+    - name: MyValue2
+      type: int64
+

@@ -4,6 +4,7 @@ sdbusplusplus_depfiles = files(
     'sdbusplus/enum.py',
     'sdbusplus/error.py',
     'sdbusplus/event.py',
+    'sdbusplus/fulltree.py',
     'sdbusplus/interface.py',
     'sdbusplus/main.py',
     'sdbusplus/method.py',
@@ -14,6 +15,7 @@ sdbusplusplus_depfiles = files(
     'sdbusplus/schemas/events.schema.yaml',
     'sdbusplus/servicename.py',
     'sdbusplus/signal.py',
+    'sdbusplus/structNode.py',
     'sdbusplus/templates/error.cpp.mako',
     'sdbusplus/templates/error.hpp.mako',
     'sdbusplus/templates/error.md.mako',
@@ -23,6 +25,7 @@ sdbusplusplus_depfiles = files(
     'sdbusplus/templates/events.cpp.mako',
     'sdbusplus/templates/events.hpp.mako',
     'sdbusplus/templates/events.md.mako',
+    'sdbusplus/templates/full_tree.hpp.mako',
     'sdbusplus/templates/interface.aserver.hpp.mako',
     'sdbusplus/templates/interface.client.hpp.mako',
     'sdbusplus/templates/interface.common.hpp.mako',
@@ -53,6 +56,7 @@ sdbusplusplus_depfiles = files(
     'sdbusplus/templates/signal.md.mako',
     'sdbusplus/templates/signal.prototype.hpp.mako',
     'sdbusplus/templates/signal.server.vtable.cpp.mako',
+    'sdbusplus/templates/structNode.hpp.mako',
 )
 meson.override_find_program('sdbus++', files('sdbus++'))
 sdbusplusplus_prog = find_program('sdbus++', native: true)

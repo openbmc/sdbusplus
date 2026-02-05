@@ -78,6 +78,40 @@ test(
 yaml_selected_subdirs = ['server']
 subdir('gen')
 
+sdbusplus_current_path = 'server/Test'
+
+generated_headers += custom_target(
+    'common/full_tree'.underscorify(),
+    input: [
+        'yaml/server/Test.interface.yaml',
+        'yaml/server/Test/Nested.interface.yaml',
+        'yaml/server/Test/Nested/Nested2.interface.yaml',
+        'yaml/server/Test2.interface.yaml',
+        'yaml/server/Test3.interface.yaml',
+        'yaml/server/TestWithMethod.interface.yaml',
+    ],
+    output: [
+        'full_tree.hpp',
+    ],
+    depend_files: sdbusplusplus_depfiles,
+    command: [
+        sdbuspp_gen_meson_prog,
+        '--command',
+        'tree',
+        '--output',
+        meson.current_build_dir(),
+        '--tool',
+        sdbusplusplus_prog,
+        '--directory',
+        meson.current_source_dir() / 'yaml',
+    ],
+    install: should_generate_cpp,
+    install_dir: [
+        get_option('includedir') / sdbusplus_current_path,
+    ],
+    build_by_default: should_generate_cpp,
+)
+
 server_test_pre = declare_dependency(
     include_directories: include_directories('gen'),
     dependencies: sdbusplus_dep,
@@ -122,6 +156,7 @@ uninit_tests = [
     'test_property_names',
     'test_method_names',
     'test_signal_names',
+    'test_full_tree',
 ]
 
 foreach t : uninit_tests

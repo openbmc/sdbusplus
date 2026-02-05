@@ -1,0 +1,10 @@
+description: >
+    A nested interface
+properties:
+    - name: MyValue
+      type: int64
+    - name: MyOtherValue
+      type: int64
+      flags:
+          - readonly
+          - emits_change

@@ -1,16 +1,16 @@
 # Generated file; do not modify.
-subdir('Nested')
+subdir('Nested2')
 
-sdbusplus_current_path = 'server/Test'
+sdbusplus_current_path = 'server/Test/Nested'
 
 all_yaml_files += files(
-    '../../../yaml/server/Test.interface.yaml',
+    '../../../../yaml/server/Test/Nested.interface.yaml',
 )
 
 generated_sources += custom_target(
-    'server/Test__cpp'.underscorify(),
+    'server/Test/Nested__cpp'.underscorify(),
     input: [
-        '../../../yaml/server/Test.interface.yaml',
+        '../../../../yaml/server/Test/Nested.interface.yaml',
     ],
     output: [
         'common.hpp',
@@ -29,8 +29,8 @@ generated_sources += custom_target(
         '--tool',
         sdbusplusplus_prog,
         '--directory',
-        meson.current_source_dir() / '../../../yaml',
-        'server/Test',
+        meson.current_source_dir() / '../../../../yaml',
+        'server/Test/Nested',
     ],
     install: should_generate_cpp,
     install_dir: [
@@ -44,11 +44,11 @@ generated_sources += custom_target(
 )
 
 generated_markdown += custom_target(
-    'server/Test/Nested__markdown'.underscorify(),
+    'server/Test/Nested/Nested2__markdown'.underscorify(),
     input: [
-        '../../../yaml/server/Test/Nested.interface.yaml',
+        '../../../../yaml/server/Test/Nested/Nested2.interface.yaml',
     ],
-    output: ['Nested.md'],
+    output: ['Nested2.md'],
     depend_files: sdbusplusplus_depfiles,
     command: [
         sdbuspp_gen_meson_prog,
@@ -59,8 +59,8 @@ generated_markdown += custom_target(
         '--tool',
         sdbusplusplus_prog,
         '--directory',
-        meson.current_source_dir() / '../../../yaml',
-        'server/Test/Nested',
+        meson.current_source_dir() / '../../../../yaml',
+        'server/Test/Nested/Nested2',
     ],
     install: should_generate_markdown,
     install_dir: [inst_markdown_dir / sdbusplus_current_path],

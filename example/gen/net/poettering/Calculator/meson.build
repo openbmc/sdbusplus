@@ -2,6 +2,11 @@
 
 sdbusplus_current_path = 'net/poettering/Calculator'
 
+all_yaml_files += files(
+    '../../../../yaml/net/poettering/Calculator.events.yaml',
+    '../../../../yaml/net/poettering/Calculator.interface.yaml',
+)
+
 generated_sources += custom_target(
     'net/poettering/Calculator__cpp'.underscorify(),
     input: [

@@ -9,6 +9,10 @@
 #include <sdbusplus/exception.hpp>
 #include <sdbusplus/message.hpp>
 #include <sdbusplus/utility/dedup_variant.hpp>
+
+% for h in interface.cpp_includes():
+#include <${h}>
+% endfor
 <%
     def setOfPropertyTypes():
         return set(p.cppTypeParam(interface.name) for p in

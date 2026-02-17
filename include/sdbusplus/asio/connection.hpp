@@ -113,11 +113,18 @@ class connection : public sdbusplus::bus_t
         using FunctionTuple = boost::callable_traits::args_t<MessageHandler>;
         using FunctionTupleType = utility::decay_tuple_t<FunctionTuple>;
         FunctionTupleType responseData;
-        if (ec)
+
+        std::get<0>(responseData) = ec;
+
+        if constexpr (utility::details::args_to_skip<FunctionTupleType>() == 2)
         {
-            std::get<0>(responseData) = ec;
+            // Forward the message so handlers can inspect get_error() on D-Bus
+            // error replies. ec is derived from message.get_errno(), so the
+            // message is valid even when ec is non-zero.
+            std::get<1>(responseData) = r;
         }
-        else
+
+        if (!ec)
         {
             try
             {
@@ -126,7 +133,9 @@ class connection : public sdbusplus::bus_t
             }
             catch (const std::exception&)
             {
-                // Set error code if not already set
+                // This message was received with no error, however we failed
+                // to parse the message; force error-code to let the consumer
+                // know of the failure in the handler.
                 std::get<0>(responseData) =
                     boost::system::errc::make_error_code(
                         boost::system::errc::invalid_argument);

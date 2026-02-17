@@ -19,6 +19,12 @@ auto make_sub_tuple_impl(Tuple& t, std::index_sequence<Is...>)
     return std::tie(std::get<FirstArgIndex + Is>(t)...);
 }
 
+/*
+ * Given a tuple, returns how many args to skip before the
+ * dbus payload args begin. First arg is always assumed to be
+ * an error_code, second element may be message_t or the
+ * start of dbus payload.
+ */
 template <typename TupleType>
 constexpr size_t args_to_skip()
 {

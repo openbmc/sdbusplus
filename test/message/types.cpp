@@ -41,6 +41,17 @@ TEST(MessageTypes, ObjectPath)
     EXPECT_EQ(dbus_string(sdbusplus::message::object_path("/asdf")), "o");
 }
 
+TEST(MessageTypes, ObjectPathValidDefaultConstruct)
+{
+    const auto objPath1 = sdbusplus::message::object_path();
+
+    // The root path '/' is a valid object path, the empty string is not.
+    EXPECT_EQ(objPath1.str, "/");
+
+    const sdbusplus::message::object_path objPath2 = {};
+    EXPECT_EQ(objPath2.str, "/");
+}
+
 TEST(MessageTypes, ObjectPathFilename)
 {
     EXPECT_EQ(sdbusplus::message::object_path("/abc/def").filename(), "def");
@@ -49,6 +60,7 @@ TEST(MessageTypes, ObjectPathFilename)
     EXPECT_EQ(sdbusplus::message::object_path("/_61bc").filename(), "abc");
     EXPECT_EQ(sdbusplus::message::object_path("/").filename(), "");
     EXPECT_EQ(sdbusplus::message::object_path("").filename(), "");
+    EXPECT_EQ(sdbusplus::message::object_path().filename(), "");
     EXPECT_EQ(sdbusplus::message::object_path("abc").filename(), "");
     EXPECT_EQ(sdbusplus::message::object_path("/_2d").filename(), "-");
     EXPECT_EQ(sdbusplus::message::object_path("/_20").filename(), " ");
@@ -71,10 +83,16 @@ TEST(MessageTypes, ObjectPathParent)
               sdbusplus::message::object_path("/"));
     EXPECT_EQ(sdbusplus::message::object_path("/").parent_path(),
               sdbusplus::message::object_path("/"));
+    EXPECT_EQ(sdbusplus::message::object_path().parent_path(),
+              sdbusplus::message::object_path("/"));
+    EXPECT_EQ(sdbusplus::message::object_path().parent_path(),
+              sdbusplus::message::object_path());
 }
 
 TEST(MessageTypes, ObjectPathOperatorSlash)
 {
+    EXPECT_EQ(sdbusplus::message::object_path() / "abc",
+              sdbusplus::message::object_path("/abc"));
     EXPECT_EQ(sdbusplus::message::object_path("/") / "abc",
               sdbusplus::message::object_path("/abc"));
     EXPECT_EQ(sdbusplus::message::object_path("/") / "abc",
@@ -108,6 +126,10 @@ TEST(MessageTypes, ObjectPathOperatorSlashEqual)
     sdbusplus::message::object_path path2("/");
     path2 /= std::string("d-ef");
     EXPECT_EQ(path2, sdbusplus::message::object_path("/_64_2def"));
+
+    sdbusplus::message::object_path path3;
+    path3 /= "abc";
+    EXPECT_EQ(path3, sdbusplus::message::object_path("/abc"));
 }
 
 TEST(MessageTypes, Signature)

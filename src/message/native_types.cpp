@@ -111,7 +111,7 @@ string_path_wrapper string_path_wrapper::parent_path() const
 
 string_path_wrapper string_path_wrapper::operator/(std::string_view extId) const
 {
-    string_path_wrapper out;
+    string_path_wrapper out("");
     out.str.reserve(str.size() + 1 + extId.size() * 3);
     out.str.append(str);
     return out /= extId;

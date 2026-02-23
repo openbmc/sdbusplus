@@ -84,7 +84,10 @@ struct string_path_wrapper
 {
     std::string str;
 
-    string_path_wrapper() = default;
+    // (D-Bus object) path default constructs to "/",
+    // the empty string is not a valid (object) path.
+    string_path_wrapper() : str("/") {}
+
     string_path_wrapper(const string_path_wrapper&) = default;
     string_path_wrapper& operator=(const string_path_wrapper&) = default;
     string_path_wrapper(string_path_wrapper&&) = default;

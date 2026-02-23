@@ -16,6 +16,8 @@ TEST(AServerConstructWithObjectPath, NoProps)
     sdbusplus::message::object_path path("/");
 
     sdbusplus::aserver::server::Test<A> t2(ctx, path);
+
+    EXPECT_EQ(t2.object_path(), "/");
 }
 
 // Test that we can construct with an object path (the overload with properties
@@ -33,4 +35,6 @@ TEST(AServerConstructWithObjectPath, WithProps)
     sdbusplus::message::object_path path("/");
 
     sdbusplus::aserver::server::Test<A> t2(ctx, path, props);
+
+    EXPECT_EQ(t2.object_path(), "/my/path");
 }

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f9d0349e_48c857e1",
+        "filename": "include/sdbusplus/asio/connection.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 129,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2026-02-23T18:06:53Z",
+      "side": 0,
+      "message": "Why was this removed?",
+      "revId": "034fbc69ee8d87af750aa0485db4b6ce75b69a6d",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

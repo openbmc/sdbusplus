@@ -85,7 +85,12 @@ struct string_path_wrapper
 {
     std::string str;
 
-    string_path_wrapper() = default;
+    // NOTE: object paths should be initialized
+    // NOTE: do not rely on the value returned here, it is only for debug of
+    // broken code and to stay within D-Bus spec. Instead either use the other
+    // constructors or overwrite the default value.
+    string_path_wrapper() : str("/invalid") {}
+
     string_path_wrapper(const string_path_wrapper&) = default;
     string_path_wrapper& operator=(const string_path_wrapper&) = default;
     string_path_wrapper(string_path_wrapper&&) = default;

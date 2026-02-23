@@ -16,6 +16,24 @@
       "message": "Why was this removed?",
       "revId": "034fbc69ee8d87af750aa0485db4b6ce75b69a6d",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1e95ef80_f2cc884d",
+        "filename": "include/sdbusplus/asio/connection.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 129,
+      "author": {
+        "id": 1002872
+      },
+      "writtenOn": "2026-02-23T18:29:59Z",
+      "side": 0,
+      "message": "The error code is now always set, so this comment is now not accurate (the error code may be set to no-error, but it is always set). If it\u0027s better, I can change it to something like \"Override error code to invalid argument to let consumer know parsing the message failed\".",
+      "parentUuid": "f9d0349e_48c857e1",
+      "revId": "034fbc69ee8d87af750aa0485db4b6ce75b69a6d",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

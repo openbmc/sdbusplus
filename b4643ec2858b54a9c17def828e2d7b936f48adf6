@@ -3,6 +3,29 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "df277747_7a95d877",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2026-02-23T18:00:32Z",
+      "side": 1,
+      "message": "Nit, lets maybe say something like \"to /\"\n\n\n\"correctly\" doesn\u0027t make clear what\u0027s going on.",
+      "range": {
+        "startLine": 7,
+        "startChar": 30,
+        "endLine": 7,
+        "endChar": 39
+      },
+      "revId": "b4643ec2858b54a9c17def828e2d7b936f48adf6",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "002d85c8_5fe36930",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 1

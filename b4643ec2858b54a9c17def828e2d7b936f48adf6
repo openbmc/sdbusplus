@@ -24,6 +24,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "7e7460ea_97534106",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1001712
+      },
+      "writtenOn": "2026-02-24T01:53:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "df277747_7a95d877",
+      "range": {
+        "startLine": 7,
+        "startChar": 30,
+        "endLine": 7,
+        "endChar": 39
+      },
+      "revId": "b4643ec2858b54a9c17def828e2d7b936f48adf6",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "002d85c8_5fe36930",
@@ -37,6 +61,24 @@
       "writtenOn": "2026-02-23T17:59:44Z",
       "side": 1,
       "message": "This behavior was somewhat on purpose.  A default constructed object_path basically shouldn\u0027t be used, but was required in the context of unpacking.\n\nDo you have an example of where this would be used in code?",
+      "revId": "b4643ec2858b54a9c17def828e2d7b936f48adf6",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "82ccf63c_003fd733",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1001712
+      },
+      "writtenOn": "2026-02-24T01:53:02Z",
+      "side": 1,
+      "message": "\u003e A default constructed object_path basically shouldn\u0027t be used\n\nWell, it is used multiple times in bmcweb\n```\n rg -i \"sdbusplus::message::object_path .*Path;\"\nfeatures/openbmc_rest/image_upload.hpp\n81:            sdbusplus::message::object_path path;\n\nredfish-core/src/dbus_log_watcher.cpp\n79:    sdbusplus::message::object_path objectPath;\n\nredfish-core/include/utils/systems_utils.hpp\n151:    sdbusplus::message::object_path systemPath;\n\nredfish-core/lib/update_service.hpp\n272:    sdbusplus::message::object_path objPath;\n421:    sdbusplus::message::object_path objPath;\n\nredfish-core/lib/certificate_service.hpp\n573:    sdbusplus::message::object_path objectPath;\n891:            sdbusplus::message::object_path csrObjectPath;\n```\n\n\u003e but was required in the context of unpacking.\n\nBut that\u0027s what friend classes/methods are for, right? \n\nCurrently that intent of \"shouldn\u0027t be used\" does not look like it\u0027s even documented.\n\nAnyways, can you explain why it is required for unpacking? I\u0027m not completely following why it can\u0027t be done some other way.\n\nThere\u0027s also a number of cases where the root path is explicitly constructed.\n```\nredfish-core/lib/hypervisor_system.hpp\n331:    sdbusplus::message::object_path path(\"/\");\nredfish-core/lib/sensors.hpp\n1190:    sdbusplus::message::object_path path(\"/\");\n```\n\nIn both cases, default-constructing with `\"/\"` would be either safer or less verbose (but in unpacking cases, create some extra overhead).\n\n\nFor the unpacking use-case, could it be more appropriate to directly create the correct object path instead of creating an invalid one and then modifying it at some later point? That robs us of the ability to make it `const`, creating readability problems in bmcweb code (mutable object path which is never modified after unpacking).\n\n\u003e Do you have an example of where this would be used in code?\n\nYes, you can have a look at reactors with generated servers. Rarely they will have interfaces which have a property of type object path. If the default constructor is wrong for object path is wrong then these will throw unless the properties are initialized.\n\nThat makes using the (a)server unnecessarily bug prone and *inconsistent* (some interfaces can default-construct, others cannot).",
+      "parentUuid": "002d85c8_5fe36930",
       "revId": "b4643ec2858b54a9c17def828e2d7b936f48adf6",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }

@@ -33,6 +33,17 @@ std::string syncBusId(bus_t& b)
     return ret;
 }
 
+bool consumeMessagesUntil(bus_t& b, std::function<bool()> done)
+{
+    auto deadline = std::chrono::steady_clock::now() + 10s;
+    while (!done() && std::chrono::steady_clock::now() < deadline)
+    {
+        b.wait(1s);
+        b.process_discard();
+    }
+    return done();
+}
+
 TEST(CallAsync, Function)
 {
     auto b = bus::new_default();
@@ -40,8 +51,8 @@ TEST(CallAsync, Function)
     while (b.process_discard())
         ;
     auto slot = newBusIdReq(b).call_async(setGlobalId);
-    b.wait(1s);
-    b.process_discard();
+    ASSERT_TRUE(consumeMessagesUntil(b, [&] { return !globalId.empty(); }))
+        << "Async callback not invoked within timeout";
     EXPECT_EQ(syncBusId(b), globalId);
 }
 
@@ -52,8 +63,8 @@ TEST(CallAsync, FunctionPointer)
     while (b.process_discard())
         ;
     auto slot = newBusIdReq(b).call_async(&setGlobalId);
-    b.wait(1s);
-    b.process_discard();
+    ASSERT_TRUE(consumeMessagesUntil(b, [&] { return !globalId.empty(); }))
+        << "Async callback not invoked within timeout";
     EXPECT_EQ(syncBusId(b), globalId);
 }
 
@@ -64,8 +75,8 @@ TEST(CallAsync, Lambda)
     while (b.process_discard())
         ;
     auto slot = newBusIdReq(b).call_async([&](message&& m) { m.read(id); });
-    b.wait(1s);
-    b.process_discard();
+    ASSERT_TRUE(consumeMessagesUntil(b, [&] { return !id.empty(); }))
+        << "Async callback not invoked within timeout";
     EXPECT_EQ(syncBusId(b), id);
 }
 
@@ -93,8 +104,9 @@ TEST(CallAsync, ExceptionCaught)
             auto slot = newBusIdReq(b).call_async([&](message&&) {
                 throw std::runtime_error("testerror");
             });
-            b.wait(1s);
-            b.process_discard();
+            consumeMessagesUntil(b, [] { return false; });
+            // If we get here, the callback never fired
+            std::abort();
         }(),
         "testerror");
 }

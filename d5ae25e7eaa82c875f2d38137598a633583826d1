@@ -46,6 +46,30 @@
       },
       "revId": "d5ae25e7eaa82c875f2d38137598a633583826d1",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7d465e3e_9617fa3f",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2026-02-24T02:15:18Z",
+      "side": 1,
+      "message": "\u003e The testcase has an example ((debug) log message).\n\nI meant a real example in a repository that would potentially use this.  I did see the test case.  I really don\u0027t understand where this fits in the middle between \"Use PDI\" and \"Use strings\".  This seems like a medium that\u0027s worse than either of those two and we\u0027d probably direct people to use one or the other in that case.\n\n\u003e Maybe someone will find a creative use for them\n\nWould like to see some of these creative uses before we deem this to be a good idea.  sdbusplus is a limited API on purpose.",
+      "parentUuid": "e6a43c43_18cb23a1",
+      "range": {
+        "startLine": 16,
+        "startChar": 0,
+        "endLine": 19,
+        "endChar": 0
+      },
+      "revId": "d5ae25e7eaa82c875f2d38137598a633583826d1",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

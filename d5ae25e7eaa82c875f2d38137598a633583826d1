@@ -22,6 +22,30 @@
       },
       "revId": "d5ae25e7eaa82c875f2d38137598a633583826d1",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e6a43c43_18cb23a1",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1001712
+      },
+      "writtenOn": "2026-02-24T01:18:36Z",
+      "side": 1,
+      "message": "\u003e Do you have an example \n\nThe testcase has an example ((debug) log message).\n\nAnother case would be retrofitting PDI onto existing boost asio reactors, without re-writing a bunch of stuff.\n\nBasically staying within what\u0027s possible to do with \u0027Inspection only\u0027.\n\n\u003e For PDI enabled repos, they don\u0027t need access to this, right?\n\nProbably not, but i don\u0027t want to force a single way to use PDI onto people...\n\nFolks should probably use the conversion functions, but i see PDI also as a way of exposing information about D-Bus interfaces to other code, which includes the representations of enum values on D-Bus.\n\nMaybe someone will find a creative use for them, otherwise i can use these to retrofit existing code. Maybe at some point it will be obsolete to expose them.",
+      "parentUuid": "e14476bb_35c4fd16",
+      "range": {
+        "startLine": 16,
+        "startChar": 0,
+        "endLine": 19,
+        "endChar": 0
+      },
+      "revId": "d5ae25e7eaa82c875f2d38137598a633583826d1",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

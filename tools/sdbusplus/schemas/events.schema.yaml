@@ -107,7 +107,7 @@ $defs:
             message:
                 type: string
                 description:
-                    The end-user message, including placeholders for arguemnts.
+                    The end-user message, including placeholders for arguments.
             resolution:
                 type: string
                 description: The end-user resolution.

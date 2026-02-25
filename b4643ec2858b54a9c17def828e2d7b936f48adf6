@@ -99,6 +99,24 @@
       "parentUuid": "82ccf63c_003fd733",
       "revId": "b4643ec2858b54a9c17def828e2d7b936f48adf6",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f6d33f41_f2d6a412",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1001712
+      },
+      "writtenOn": "2026-02-25T01:33:18Z",
+      "side": 1,
+      "message": "\u003e I would expect every property to be explicitly initialized to something\n sane for that interface, not relying on the underlying object_path \nobject to do something reasonable.\n\nThere is a constructor for generated server which does not take properties. If you were right, we would not have that constructor?\n\nIndependently of the developer, IMO sdbusplus needs to make a best effort to not break D-Bus by creating invalid values for object path.\n\n\u003e FWIW, I can\u0027t really think of a case where a property pointing at \"/\" is\n correct behavior either\n\n`/` could be used to indicate absence of a value, so there is a use-case for it. \nUsing special values to represent optional is widely used in the PDI.\nIt depends on the interface and what it needs to represent.\n\n\u003e so in that case we\u0027ve moved from a startup bug\n to a runtime bug?\n\nD-Bus interfaces are not only created at startup, they can be created at any point in time. IMO it is preferable to not throw and terminate as a default behavior.\n\n\u003e and deprecate the default constructor entirely rather than try to improve it.  \n\nThat idea creates lots of edge cases in the mako cpp and python code for the generated headers.\n\nI estimate it would be a large amount of work to implement your idea since then default construction of some interfaces via generated server will not be possible anymore. The generated code and the code to generate it is already quite complicated so i would try to avoid going down that route.",
+      "parentUuid": "d3a15d3d_bbb3f13b",
+      "revId": "b4643ec2858b54a9c17def828e2d7b936f48adf6",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

@@ -70,3 +70,49 @@ TEST(MessageNativeTypeConversions, WrapperMove)
     auto out = static_cast<std::string>(std::move(obj));
     EXPECT_EQ(orig, out);
 }
+
+TEST(MessageFormatting, Format1ArgNoTrailingSlash)
+{
+    const auto obj =
+        sdbusplus::message::object_path("/xyz/openbmc_project", "inventory");
+    EXPECT_EQ(obj.str, "/xyz/openbmc_project/inventory");
+}
+
+TEST(MessageFormatting, Format1ArgTrailingSlash)
+{
+    const auto obj =
+        sdbusplus::message::object_path("/xyz/openbmc_project/", "inventory");
+    EXPECT_EQ(obj.str, "/xyz/openbmc_project/inventory");
+}
+
+TEST(MessageFormatting, Format2Args)
+{
+    const auto obj = sdbusplus::message::object_path(
+        "/xyz/openbmc_project/", "software", "HostSPIFlash3892");
+    EXPECT_EQ(obj.str, "/xyz/openbmc_project/software/HostSPIFlash3892");
+}
+
+TEST(MessageFormatting, EmptyFormat)
+{
+    const auto obj = sdbusplus::message::object_path("/xyz/", "");
+    EXPECT_EQ(obj.str, "/xyz/");
+}
+
+TEST(MessageFormatting, EscapesSegmentsNoTrailingSlash)
+{
+    const auto obj = sdbusplus::message::object_path("/xyz", " ");
+    EXPECT_EQ(obj.str, "/xyz/_20");
+}
+
+TEST(MessageFormatting, EscapesSegmentsTrailingSlash)
+{
+    const auto obj = sdbusplus::message::object_path("/xyz/", " ");
+    EXPECT_EQ(obj.str, "/xyz/_20");
+}
+
+TEST(MessageFormatting, ConcatExistingPath)
+{
+    const auto obj = sdbusplus::message::object_path("/xyz/");
+    const auto obj2 = sdbusplus::message::object_path(obj, "inventory");
+    EXPECT_EQ(obj2.str, "/xyz/inventory");
+}

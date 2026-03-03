@@ -3,6 +3,7 @@
 #include <optional>
 #include <string>
 #include <string_view>
+#include <utility>
 #include <variant>
 
 namespace sdbusplus
@@ -93,6 +94,15 @@ struct string_path_wrapper
 
     string_path_wrapper(const std::string& str_in) : str(str_in) {}
     string_path_wrapper(std::string&& str_in) : str(std::move(str_in)) {}
+
+    template <typename Base, typename... Args>
+    [[nodiscard]] inline string_path_wrapper(const Base& base, Args&&... args)
+        requires(sizeof...(Args) >= 1)
+    {
+        string_path_wrapper res = {base};
+        ((res /= std::forward<Args>(args)), ...);
+        str = std::move(res.str);
+    }
 
     operator const std::string&() const volatile&
     {

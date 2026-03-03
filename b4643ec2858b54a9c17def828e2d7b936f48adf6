@@ -117,6 +117,24 @@
       "parentUuid": "d3a15d3d_bbb3f13b",
       "revId": "b4643ec2858b54a9c17def828e2d7b936f48adf6",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fbec2bcd_83ffcc3b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2026-03-03T03:51:59Z",
+      "side": 1,
+      "message": "\u003e \u003e I would expect every property to be explicitly initialized to something\n\u003e  sane for that interface, not relying on the underlying object_path \n\u003e object to do something reasonable.\n\u003e \n\u003e There is a constructor for generated server which does not take properties. If you were right, we would not have that constructor?\n\nThis is object path, not properties, but yes, I would expect every object path to be set at some point, and not rely on a default.\n\n\u003e \n\u003e Independently of the developer, IMO sdbusplus needs to make a best effort to not break D-Bus by creating invalid values for object path.\n\nI agree with the statement, I disagree that it should promote incorrect code to do it.  If you default initialize an object_path, then use it, you\u0027re doing something wrong.  Maybe we default it to /this/object_path/is/wrong?  (That\u0027s not a serious suggestion)\n\n\u003e \n\u003e \u003e FWIW, I can\u0027t really think of a case where a property pointing at \"/\" is\n\u003e  correct behavior either\n\u003e \n\u003e `/` could be used to indicate absence of a value, so there is a use-case for it. \n\nEmpty string currently indicates the absence of a value.  I\u0027m not sure why we\u0027d rely on a valid path as \"absence\".\n\n\u003e Using special values to represent optional is widely used in the PDI.\n\u003e It depends on the interface and what it needs to represent.\n\u003e \n\u003e \u003e so in that case we\u0027ve moved from a startup bug\n\u003e  to a runtime bug?\n\u003e \n\u003e D-Bus interfaces are not only created at startup, they can be created at any point in time. IMO it is preferable to not throw and terminate as a default behavior.\n\nWe agree in this.  Where do we terminate if an object_path is unset?  That should be making sure that if an incorrect object path is used it doesn\u0027t terminate.\n\n\u003e \n\u003e \u003e and deprecate the default constructor entirely rather than try to improve it.  \n\u003e \n\u003e That idea creates lots of edge cases in the mako cpp and python code for the generated headers.\n\u003e \n\u003e I estimate it would be a large amount of work to implement your idea since then default construction of some interfaces via generated server will not be possible anymore. The generated code and the code to generate it is already quite complicated so i would try to avoid going down that route.\n\nI don\u0027t know if we agree in those estimates, but without patches we\u0027re both guessing.  Hence why the default constructor exists as it is.  It is very obvious when you have a bug at startup.  If we accept this patch, now we silently get a path of /, which is almost always incorrect.  I\u0027d rather we keep the incorrect behavior return an error rather than silently doing \"something\".\n\naserver is all generated code, and worked before this patch, so clearly wasn\u0027t using this codepath.",
+      "parentUuid": "f6d33f41_f2d6a412",
+      "revId": "b4643ec2858b54a9c17def828e2d7b936f48adf6",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

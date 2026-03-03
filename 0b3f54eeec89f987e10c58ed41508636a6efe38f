@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f676c53e_a7f3f188",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2026-03-03T03:51:59Z",
+      "side": 1,
+      "message": "While we\u0027re talking about possible improvements, a std::format equivalent for dbus object paths would be awesome.\n\nobject_path path \u003d object_path::format(\"/xyz/openbmc_project/{}\", \"inventory\");\n\nI\u0027ll probably never get there, but I\u0027ll put the idea out there in case someone else cares to attempt it.",
+      "revId": "0b3f54eeec89f987e10c58ed41508636a6efe38f",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

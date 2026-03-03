@@ -16,6 +16,24 @@
       "message": "While we\u0027re talking about possible improvements, a std::format equivalent for dbus object paths would be awesome.\n\nobject_path path \u003d object_path::format(\"/xyz/openbmc_project/{}\", \"inventory\");\n\nI\u0027ll probably never get there, but I\u0027ll put the idea out there in case someone else cares to attempt it.",
       "revId": "0b3f54eeec89f987e10c58ed41508636a6efe38f",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3c276f4f_3b04b221",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1001712
+      },
+      "writtenOn": "2026-03-03T07:37:53Z",
+      "side": 1,
+      "message": "Maybe `std::format` equivalent would be too powerful for openbmc use-case.\n\nUsually the object path is just concatenated with a path segment or a number.\n\nStarted a simple change here https://gerrit.openbmc.org/c/openbmc/sdbusplus/+/87976, maybe we can iterate on that to get some improved object path construction.",
+      "parentUuid": "f676c53e_a7f3f188",
+      "revId": "0b3f54eeec89f987e10c58ed41508636a6efe38f",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

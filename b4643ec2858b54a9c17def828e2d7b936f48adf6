@@ -135,6 +135,24 @@
       "parentUuid": "f6d33f41_f2d6a412",
       "revId": "b4643ec2858b54a9c17def828e2d7b936f48adf6",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "af89c910_50de0997",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1001712
+      },
+      "writtenOn": "2026-03-04T03:19:22Z",
+      "side": 1,
+      "message": "\u003e Hence why the default constructor exists as it is. It is very obvious when you have a bug at startup\n\nThis patch is not specific to \"startup\". It\u0027s about object construction which can happen at any point during runtime.\n\n\u003e aserver is all generated code, and worked before this patch, so clearly wasn\u0027t using this codepath.\n\nThe generated code fails quite easily because of this problem.\n\nTry modifying a testcase to let a client query a property containing an invalid default constructed object path. Below diff can be used.\n\n```\n--- a/test/gen/test_aserver_construct_with_object_path.cpp\n+++ b/test/gen/test_aserver_construct_with_object_path.cpp\n@@ -1,21 +1,40 @@\n+#include \"client.hpp\"\n #include \"sdbusplus/async.hpp\"\n #include \"server/Test/aserver.hpp\"\n \n #include \u003csdbusplus/async/context.hpp\u003e\n \n #include \u003cgtest/gtest.h\u003e\n+#include \u003ciostream\u003e\n \n class A : public sdbusplus::aserver::server::Test\u003cA\u003e\n {};\n \n+sdbusplus::async::task\u003c\u003e mytask(sdbusplus::async::context\u0026 ctx){\n+\n+    sdbusplus::message::object_path path(\"/\");\n+\n+    sdbusplus::aserver::server::Test\u003cA\u003e t2(ctx, path);\n+\n+    ctx.request_name(\"xyz.openbmc_project.Test\");\n+\n+    auto client \u003d sdbusplus::client::server::Test(ctx)\n+    .path(path.str).service(\"xyz.openbmc_project.Test\");\n+\n+    auto p \u003d co_await client.object_path();\n+    std::cout \u003c\u003c p.str \u003c\u003c std::endl;\n+    ctx.request_stop();\n+    co_return;\n+}\n+\n // Test that we can construct with an object path\n TEST(AServerConstructWithObjectPath, NoProps)\n {\n     sdbusplus::async::context ctx;\n \n-    sdbusplus::message::object_path path(\"/\");\n+    ctx.spawn(mytask(ctx));\n \n-    sdbusplus::aserver::server::Test\u003cA\u003e t2(ctx, path);\n+    ctx.run();\n }\n```\n\nThe client throws and the application crashes.\n\n```\n[ RUN      ] AServerConstructWithObjectPath.NoProps\nterminate called after throwing an instance of \u0027sdbusplus::exception::SdBusError\u0027\n  what():  sd_bus_process discard: org.freedesktop.DBus.Error.InvalidArgs: Invalid argument\nAborted                    (core dumped) ./build/test/test_aserver_construct_with_object_path\n```\n\nSo a small mistake in initializing an interface can bring down an entire application because of the exception.\n\nAnd because the failure looks like it\u0027s occurring on the client side, it may not even happen in the same process or close in time to when the interface was created.\n\nStuff like this can easily trip up reviewers if they assume the generated server can just be default constructed.\n\nIt really depends on which interface and even introducing an object path member in the PDI can break reactors using the generated server without anyone noticing.\n\nSince suddenly the interface goes from \"safe to default-construct\" to \"default-constructing could crash other applications\", all without even modifying a single line of code in the application itself.",
+      "parentUuid": "fbec2bcd_83ffcc3b",
+      "revId": "b4643ec2858b54a9c17def828e2d7b936f48adf6",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

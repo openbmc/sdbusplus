@@ -153,6 +153,24 @@
       "parentUuid": "fbec2bcd_83ffcc3b",
       "revId": "b4643ec2858b54a9c17def828e2d7b936f48adf6",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2932969e_216c080f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-03-04T15:39:38Z",
+      "side": 1,
+      "message": "I looked through 287 files where object_path is used to check all the places where we might be default-initializing an object path and resulting in incorrect behavior if we were to change the default-default.\n\n```\n$ rg \"object_path[^\u003d\u0026]+\" -l -t cpp | grep -v systemd | grep -v ipmitool | grep -v libgpiod | grep -v test | wc\n    287     287   12704\n```\n\nThere is exactly one case that gives me any concern and I think that is a bug in that there is a dbus method call that isn\u0027t returning an error.\n\nphosphor-bmc-code-mgmt/bmc/update_manager.cpp : startUpdate method\n\n\u003e If you default initialize an object_path, then use it, you\u0027re doing something wrong. Maybe we default it to /this/object_path/is/wrong? (That\u0027s not a serious suggestion)\n\n@ed@tanous.net\n\nWhy must this be true?  I don\u0027t see anything intrinsically wrong with having the default become \"/\" (the root).\n\n\u003e Empty string currently indicates the absence of a value. I\u0027m not sure why we\u0027d rely on a valid path as \"absence\".\n\nWhen is an \"absent object_path\" necessary?  I\u0027m not finding any code paths that rely on this conceptually.\n\n\u003e So a small mistake in initializing an interface can bring down an entire application because of the exception.\n\n@alexander.hansen@9elements.com\n\nWe can alternatively fix the generated code to ensure it never sends out a bogus object_path, right?  Thankfully it seems like dbus itself is preventing us from sending a bogus object_path but we should probably be better at that in the bindings.",
+      "parentUuid": "af89c910_50de0997",
+      "revId": "b4643ec2858b54a9c17def828e2d7b936f48adf6",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

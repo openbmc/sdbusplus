@@ -171,6 +171,24 @@
       "parentUuid": "af89c910_50de0997",
       "revId": "b4643ec2858b54a9c17def828e2d7b936f48adf6",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8ce67d0d_39631a07",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2026-03-06T00:46:40Z",
+      "side": 1,
+      "message": "\u003e This patch is not specific to \"startup\".\n\nNo disagreement.\n\n\u003e So a small mistake in initializing an interface can bring down an entire application because of the exception.\n\nOnly if there\u0027s a failure to catch the resulting exception?  That seems more a reason to not use exceptions for this case, or to make sure that that exceptions are caught.  Simply making this a silent error I don\u0027t think is the answer.\n\n\u003e I looked through 287 files \n\nI agree, this patchset itself is unlikely to directly break anything.  I\u0027m worried about future regressions where object_path is now default constructable with a path that isn\u0027t obviously incorrect as Alexander gives in his example.  That example would compile and run, but is now silently incorrect because there\u0027s no correct daemon that directly adds objects at the root anymore.\n\n\u003e I don\u0027t see anything intrinsically wrong with having the default become \"/\"\n\nBased on our naming conventions for namespaces, I can\u0027t think of any correct usage where / would be a correct path?  Maybe I\u0027m missing something?\n\n\u003e When is an \"absent object_path\" necessary?\n\nThe only reason I did it in the first place is because to read a property you used to have to do\nobject_path path;\nobj.read(path);\n\nWhich required having some default constructor.  unpack I think fixes this use, in which case I think we make the default constructor private once we\u0027ve moved to unpack everywhere\n\n\u003e We can alternatively fix the generated code to ensure it never sends out a bogus object_path, right?\n\nThis would be my mid-strong preference to avoid footguns in default constructing an objects and forgetting to declare a path.\n\n\n\n@alexander, was there a real piece of code that had a default initialized bug that drove this, or was this just wanting to use object_path in more places?  The example you gave wouldn\u0027t pick / as the object path in a real application, so it confuses me a little.",
+      "parentUuid": "2932969e_216c080f",
+      "revId": "b4643ec2858b54a9c17def828e2d7b936f48adf6",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

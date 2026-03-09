@@ -1,4 +1,51 @@
 {
-  "comments": [],
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "187ac52a_d7236580",
+        "filename": "include/sdbusplus/message/native_types.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2026-03-09T18:54:06Z",
+      "side": 1,
+      "message": "We\u0027re accepting base by template, and not even rvalue?  What prevents constructing a bad dbus path this way if we allow potential user input in this constructor?",
+      "range": {
+        "startLine": 98,
+        "startChar": 23,
+        "endLine": 98,
+        "endChar": 27
+      },
+      "revId": "a84a0c502fee45582e1fa0cb0b1a968f2d907702",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1cb68965_628d3823",
+        "filename": "include/sdbusplus/message/native_types.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2026-03-09T18:54:06Z",
+      "side": 1,
+      "message": "I like this concept overall, but could we make this API not require a base?\n\n\nFor example:\nsdbusplus::message::object_path(\"/xyz/openbmc_project\", \"inventory\");\n\nis harder to understand as an API than\n\nsdbusplus::message::object_path(\"xyz\", \"openbmc_project\", \"inventory\");\n\nThe prior API could potentially be used unsafely.\n\nsdbusplus::message::object_path(\"//bad_path\", \"inventory\");\n\nAnd still result in a crash, where the later API can\u0027t.",
+      "range": {
+        "startLine": 99,
+        "startChar": 0,
+        "endLine": 99,
+        "endChar": 64
+      },
+      "revId": "a84a0c502fee45582e1fa0cb0b1a968f2d907702",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ],
   "submitRequirementResults": []
 }

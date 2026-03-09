@@ -207,6 +207,24 @@
       "parentUuid": "8ce67d0d_39631a07",
       "revId": "b4643ec2858b54a9c17def828e2d7b936f48adf6",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "89dc2544_8137f7a7",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2026-03-09T19:03:02Z",
+      "side": 1,
+      "message": "\u003e \u003e I agree, this patchset itself is unlikely to directly break anything.  \n\u003e I\u0027m worried about future regressions where object_path is now default \n\u003e constructable with a path that isn\u0027t obviously incorrect as Alexander \n\u003e gives in his example.  That example would compile and run, but is now \n\u003e silently incorrect because there\u0027s no correct daemon that directly adds \n\u003e objects at the root anymore.\n\u003e \n\u003e So the application may have crashed, and with this patch it (or its clients) does not crash anymore. Is that a regression to you?\n\nThe application would only crash if you failed to catch the exceptions thrown.  Functionally, the application still doesn\u0027t work if it\u0027s relying on a default constructed dbus path.\n\n\u003e \n\u003e Note that a single application may expose various object paths under various namespaces. IMO a failure to initialize an object path properly should not have a blast radius larger than necessary.\n\nAgreed, but if you\u0027re using exceptions, that relies on catching that exception and handling it rather than just making the code do something you didn\u0027t intend but \"allowed\"\n\n\u003e \n\u003e \u003e  but is now silently incorrect\n\u003e \n\u003e How did you come to this conclusion? Usually applications provide a highly visible `lg2::error` message if they encounter unexpected / missing values / object paths on D-Bus and still continue with other tasks instead of crashing.\n\nGiven our dbus conventions, there\u0027s not a correct usage of the path \"/\" that I\u0027m aware of.  The crash only occurs if the code in question doesn\u0027t catch exceptions and handle them, that\u0027s why I\u0027m not really sure what makes this change neccesary.\n\n\u003e \n\u003e \u003e \u003e We can alternatively fix the generated code to ensure it never sends out a bogus object_path, right?\n\u003e \n\u003e \u003e This would be my mid-strong preference to avoid footguns in default constructing an objects and forgetting to declare a path.\n\u003e \n\u003e That\u0027s just a partial fix and on top of that it\u0027s conceptually inconsistent. Why should an object path as part of a generated server produce a different default value than when it\u0027s constructed independently?\n\nI\u0027m not sure what you mean.  How is \"A user should always set an object path.\" inconsistent?\n\n\u003e \n\u003e The default constructor is wrong so it should be fixed or go away. The problem is not just in the generated code.\n\nAgreed, so lets make it go away, not be relied on more.  This change will allow more code that\u0027s incorrect to \"just work\", even though it\u0027s silently wrong.\n\n\u003e If we accept this `\"\"` as our internal state then technically every function receiving an object path would need do object path validation. It\u0027s like needing to check `int*` for `nullptr`.\n\nI would say it\u0027s different than checking for nullptr, (in that case we would say use string_view to avoid that problem), but yes, functions do check for bad dbus paths already, that\u0027s where the exception was being thrown, no?\n\n\u003e \n\u003e \u003e @alexander, was there a real piece of code that had a default \n\u003e initialized bug that drove this, or was this just wanting to use \n\u003e object_path in more places?\n\u003e \n\u003e I hit this bug sometimes but i do not remember the specific patch. Since i tested my code i changed over to pass the properties to initialize the interface.\n\nThat\u0027s what I would expect correct code to do, that\u0027s why I don\u0027t want this patch, it\u0027s an API that makes people believe their code works.\n\n\u003e \n\u003e So yes, it\u0027s a real bug that people can hit and unnecessarily error prone API in combination with the generated server.\n\nNo example was provided of correct code that hit that bug, so I\u0027m confused.  Yes, you can hit that path from incorrect code, but if we\u0027re trying to make the API easier to use, removing the default constructor entirely seems preferable.",
+      "parentUuid": "9e590165_d8fd8f64",
+      "revId": "b4643ec2858b54a9c17def828e2d7b936f48adf6",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

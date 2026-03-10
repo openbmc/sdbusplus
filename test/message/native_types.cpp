@@ -94,8 +94,7 @@ TEST(MessageFormatting, Format2Args)
 
 TEST(MessageFormatting, EmptyFormat)
 {
-    const auto obj = sdbusplus::object_path("/xyz/", "");
-    EXPECT_EQ(obj.str, "/xyz/");
+    EXPECT_THROW(sdbusplus::object_path("/xyz/", ""), std::invalid_argument);
 }
 
 TEST(MessageFormatting, EscapesSegmentsNoTrailingSlash)

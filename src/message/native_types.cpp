@@ -120,12 +120,21 @@ string_path_wrapper string_path_wrapper::operator/(std::string_view extId) const
 string_path_wrapper& string_path_wrapper::operator/=(std::string_view extId)
 {
     str.reserve(str.size() + 1 + extId.size() * 3);
+
+    if (extId.empty())
+    {
+        // Appending a path segment here preserves the user code intent
+        // of append operation.
+        // The specific value is for debug only and user code shall not depend
+        // on it.
+        return operator/=("error_empty_string_append");
+    }
+
     if (!str.empty() && str[str.size() - 1] != '/')
     {
         str.append(1, '/');
     }
-    if (extId.empty() ||
-        (!pathShouldEscape(extId[0]) &&
+    if ((!pathShouldEscape(extId[0]) &&
          std::none_of(extId.begin() + 1, extId.end(), pathRequiresEscape)))
     {
         str.append(extId);

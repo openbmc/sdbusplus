@@ -1,5 +1,13 @@
 
-async_tests = ['context', 'fdio', 'mutex', 'task', 'timer', 'watchdog']
+async_tests = [
+    'barrier',
+    'context',
+    'fdio',
+    'mutex',
+    'task',
+    'timer',
+    'watchdog',
+]
 
 foreach t : async_tests
     test(

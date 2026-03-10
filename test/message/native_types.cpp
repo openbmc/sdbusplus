@@ -95,7 +95,7 @@ TEST(MessageFormatting, Format2Args)
 TEST(MessageFormatting, EmptyFormat)
 {
     const auto obj = sdbusplus::object_path("/xyz/", "");
-    EXPECT_EQ(obj.str, "/xyz/");
+    EXPECT_EQ(obj.str, "/xyz/error_empty_string_append");
 }
 
 TEST(MessageFormatting, EscapesSegmentsNoTrailingSlash)

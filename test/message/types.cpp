@@ -74,6 +74,10 @@ TEST(MessageTypes, ObjectPathParent)
 
 TEST(MessageTypes, ObjectPathOperatorSlash)
 {
+    // append empty string
+    EXPECT_THROW(sdbusplus::object_path("/") / "", std::invalid_argument);
+    EXPECT_THROW(sdbusplus::object_path("/abc") / "", std::invalid_argument);
+
     EXPECT_EQ(sdbusplus::object_path("/") / "abc",
               sdbusplus::object_path("/abc"));
     EXPECT_EQ(sdbusplus::object_path("/") / "abc",
@@ -107,6 +111,9 @@ TEST(MessageTypes, ObjectPathOperatorSlashEqual)
     sdbusplus::object_path path2("/");
     path2 /= std::string("d-ef");
     EXPECT_EQ(path2, sdbusplus::object_path("/_64_2def"));
+
+    sdbusplus::object_path path3("/xyz");
+    EXPECT_THROW(path3 /= "", std::invalid_argument);
 }
 
 TEST(MessageTypes, Signature)

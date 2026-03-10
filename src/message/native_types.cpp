@@ -4,6 +4,7 @@
 #include <array>
 #include <cctype>
 #include <cstdint>
+#include <stdexcept>
 
 namespace sdbusplus
 {
@@ -125,12 +126,17 @@ string_path_wrapper string_path_wrapper::operator/(std::string_view extId) const
 string_path_wrapper& string_path_wrapper::operator/=(std::string_view extId)
 {
     str.reserve(str.size() + 1 + extId.size() * 3);
+
+    if (extId.empty())
+    {
+        throw std::invalid_argument("empty string append");
+    }
+
     if (!str.empty() && str[str.size() - 1] != '/')
     {
         str.append(1, '/');
     }
-    if (extId.empty() ||
-        (!pathShouldEscape(extId[0]) &&
+    if ((!pathShouldEscape(extId[0]) &&
          std::none_of(extId.begin() + 1, extId.end(), pathRequiresEscape)))
     {
         str.append(extId);

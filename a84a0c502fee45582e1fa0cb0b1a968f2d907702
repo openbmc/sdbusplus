@@ -45,6 +45,30 @@
       },
       "revId": "a84a0c502fee45582e1fa0cb0b1a968f2d907702",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5c1ca1f3_1e95318f",
+        "filename": "include/sdbusplus/message/native_types.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 1001712
+      },
+      "writtenOn": "2026-03-10T16:57:20Z",
+      "side": 1,
+      "message": "We should strive to avoid constructing invalid values, but also need to avoid creating unintended or confusing results.\n\nExample without a base:\n\n```\nconst auto obj2 \u003d sdbusplus::message::object_path(\"/xyz/inventory/\", \"abc\");\n```\n\nresults in \n\n```\n/_2fxyz_2finventory_2f/abc\n```\n\nI worry that if we just append everything to `/` without checking, it will will be inconsistent with the existing constructor `sdbusplus::message::object_path(\"/xyz/inventory\")` which would then give a different result in\n\n```\nsdbusplus::message::object_path(\"/xyz/inventory\", \"sensors\") \n\n!\u003d sdbusplus::message::object_path(\"/xyz/inventory/sensors\")\n```\n\nWhat if we checked `base[0] \u003d\u003d \u0027/\u0027` to detect an object path instead of path segment and handle it differently, would it work for you?",
+      "parentUuid": "1cb68965_628d3823",
+      "range": {
+        "startLine": 99,
+        "startChar": 0,
+        "endLine": 99,
+        "endChar": 64
+      },
+      "revId": "a84a0c502fee45582e1fa0cb0b1a968f2d907702",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ],
   "submitRequirementResults": []

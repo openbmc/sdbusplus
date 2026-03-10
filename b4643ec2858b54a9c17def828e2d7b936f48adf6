@@ -225,6 +225,24 @@
       "parentUuid": "9e590165_d8fd8f64",
       "revId": "b4643ec2858b54a9c17def828e2d7b936f48adf6",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "82576c00_34b61727",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1001712
+      },
+      "writtenOn": "2026-03-10T14:37:27Z",
+      "side": 1,
+      "message": "### currently it\u0027s broken and needs to be fixed\n\n\u003e but if we\u0027re trying to make the API easier to use, removing the default constructor entirely seems preferable.\n\nCore guideline\nhttps://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#c43-ensure-that-a-copyable-class-has-a-default-constructor\n applies here. The exemption\n\n\u003e Classes that don’t have a reasonable default construction are usually \nnot copyable either, so they don’t fall under this guideline.\n\ndoes not apply since `/` is both valid and reasonable as a default value for an object path.\n\n\u003e Empty string currently indicates the absence of a value.  \n\nAlso https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#c42-if-a-constructor-cannot-construct-a-valid-object-throw-an-exception\nand https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#c41-a-constructor-should-create-a-fully-initialized-object\n\nD-Bus API Design guidelines  https://dbus.freedesktop.org/doc/dbus-api-design.html also has something to say under the **API versioning** section.\n\n\u003e Note, however, that supporting multiple interface versions simultaneously\n  requires that object paths are versioned as well, so objects must not\n  be put on the bus at the root path (‘/’). \n\nI think the key point is that `sdbusplus::message::object_path` is a value wrapper for a D-Bus object-path value, not a policy type for “recommended exported OpenBMC object locations”.\n\nCurrently the `string_path_wrapper::parent_path()` is also wrong because it returns `\"/\"` as the parent path of `\"\"` (the current default value).\n\n**An empty string has no parent path because it\u0027s not even a path.**\n\nThe `parent_path` of the default value should probably be the default value again, that\u0027s in line with\nhttps://en.cppreference.com/w/cpp/filesystem/path/parent_path.html\nand what linux does.\n\n### possibility of a stricter object path (without `/`)\n\nIf you are interested in a class to represent object paths excluding `/`, that should probably be modeled separately. \n\nLet\u0027s explore what would be required for `sdbusplus::message::obj_path` (strict).\n\nFirst of all the `parent_path` implementation for such a class is different since\n`sdbusplus::message::obj_path(\"/xyz\")` is `/` which is of the regular `object_path` type. \nSo we can only return that there. Which already tells us that we need the regular `object_path` type in addition to that stricter type.\n\n`sdbusplus::message::obj_path` has no meaningful default construction but can be copied. When constructing `sdbusplus::message::obj_path`, validation can be used to make sure we have at least one path segment.\n\nOne benefit is that the `sdbusplus::message::obj_path::filename()` function will always return a non-empty string since we have at least one path segment.\n\nTo summarize, a stricter version of object path seems possible from a first look, but a wider object path implementation (allowing `/`) is still necessary to form a **complete** API.",
+      "parentUuid": "89dc2544_8137f7a7",
+      "revId": "b4643ec2858b54a9c17def828e2d7b936f48adf6",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

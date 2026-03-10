@@ -120,12 +120,17 @@ string_path_wrapper string_path_wrapper::operator/(std::string_view extId) const
 string_path_wrapper& string_path_wrapper::operator/=(std::string_view extId)
 {
     str.reserve(str.size() + 1 + extId.size() * 3);
+
+    if (extId.empty())
+    {
+        return *this;
+    }
+
     if (!str.empty() && str[str.size() - 1] != '/')
     {
         str.append(1, '/');
     }
-    if (extId.empty() ||
-        (!pathShouldEscape(extId[0]) &&
+    if ((!pathShouldEscape(extId[0]) &&
          std::none_of(extId.begin() + 1, extId.end(), pathRequiresEscape)))
     {
         str.append(extId);

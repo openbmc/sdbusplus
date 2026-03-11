@@ -1,4 +1,22 @@
 {
-  "comments": [],
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6931a113_0f19166d",
+        "filename": "include/sdbusplus/message/read.hpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 1001839
+      },
+      "writtenOn": "2026-03-11T04:11:47Z",
+      "side": 1,
+      "message": "Why is `s` an r-value hare? Shouldn\u0027t it be just a reference `S\u0026 s` so that we can assign to it?\n\nI didn\u0027t find any follow up change so pardon me if I missed the fix commit.",
+      "revId": "66f731e8b767d967dfd93869ee21cd0960358f76",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ],
   "submitRequirementResults": []
 }

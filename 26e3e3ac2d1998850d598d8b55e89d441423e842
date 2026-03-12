@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "050c2219_42c97dce",
+        "filename": "src/message/native_types.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2026-03-12T19:15:33Z",
+      "side": 1,
+      "message": "This change has the potential to cause subtle security bugs in the webserver.  extId in this case is routinely a client-generated parameter.  If that silently now gets promoted to the parent namespace, it might be possible to access objects that weren\u0027t intended, or your user shouldn\u0027t have access to.\n\nAs the code exists on master, the incorrect path would result in an error (usually 404), which gets propagated to the user.  After this patch, now a valid path is formed.\n\nIs there a compelling reason (if you have example of code that would benefit, please share it) to make this promote to the parent object?  I agree, we could handle this case better.  I\u0027d advocate for the resulting path being something like.\n\n/\u003cinvalid_path\u003e\n\nas something easy to implement, but doesn\u0027t impact existing code.  In a quick test, it does look like std::filesystem will promote an empty append to the parent.  If that\u0027s the route we want to go here, the existing bmcweb code will need to be moved to another method, or we need to explicitly check for empty string at every operator/ site that deals with untrusted input (nearly all of them).  Is that a change you\u0027re willing to go engineer and propose as part of this patchset?  I\u0027m guessing not, but certainly worth asking\n\n\nFWIW, I think the cleanest API for the webservers usage of this would be a std::format-like variant and no usage of operator/ at all, but that\u0027s a ton of work that I don\u0027t want to put on this change trying to make things more correct.",
+      "revId": "26e3e3ac2d1998850d598d8b55e89d441423e842",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

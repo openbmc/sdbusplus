@@ -16,6 +16,24 @@
       "message": "This change has the potential to cause subtle security bugs in the webserver.  extId in this case is routinely a client-generated parameter.  If that silently now gets promoted to the parent namespace, it might be possible to access objects that weren\u0027t intended, or your user shouldn\u0027t have access to.\n\nAs the code exists on master, the incorrect path would result in an error (usually 404), which gets propagated to the user.  After this patch, now a valid path is formed.\n\nIs there a compelling reason (if you have example of code that would benefit, please share it) to make this promote to the parent object?  I agree, we could handle this case better.  I\u0027d advocate for the resulting path being something like.\n\n/\u003cinvalid_path\u003e\n\nas something easy to implement, but doesn\u0027t impact existing code.  In a quick test, it does look like std::filesystem will promote an empty append to the parent.  If that\u0027s the route we want to go here, the existing bmcweb code will need to be moved to another method, or we need to explicitly check for empty string at every operator/ site that deals with untrusted input (nearly all of them).  Is that a change you\u0027re willing to go engineer and propose as part of this patchset?  I\u0027m guessing not, but certainly worth asking\n\n\nFWIW, I think the cleanest API for the webservers usage of this would be a std::format-like variant and no usage of operator/ at all, but that\u0027s a ton of work that I don\u0027t want to put on this change trying to make things more correct.",
       "revId": "26e3e3ac2d1998850d598d8b55e89d441423e842",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "22150d36_ec88ed20",
+        "filename": "src/message/native_types.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 1001712
+      },
+      "writtenOn": "2026-03-16T10:38:30Z",
+      "side": 1,
+      "message": "First of all, thanks for all the input here 👍\n\n\u003e Is there a compelling reason (if you have example of code that would benefit, please share it) to make this promote to the parent \nobject? \n\nI never saw a use-case for an append operation `/\u003d` to not append anything. That would make it a maybe-append operation and more complicated for review.\n\n\u003e  In a quick test, it does look like std::filesystem will promote an empty append to the parent.\n\nAs per your check, `std::filesystem::path` operates this way but our D-Bus use-case is slightly different. While it is common to find things like config files at different levels in the filesystem tree, D-Bus interface are usually found at a given level of depth. At least currently that is the case for most interfaces.\n\nWe cannot let `std::filesystem::path` do our homework here anyways because it appends a trailing `/`.\n\n```cpp\nstd::filesystem::path path(\"/xyz/openbmc_project/software\");\nstd::cout \u003c\u003c (path / \"\") \u003c\u003c std::endl;\n\n// \"/xyz/openbmc_project/software/\"\n```\n\n\u003e I agree, we could handle this case better.  I\u0027d advocate for \nthe resulting path being something like /\u003cinvalid_path\u003e\n\nI am ok with this alternative. Appending some error string which clearly describes what went wrong and preserves the user code intent to append a path segment.\n\nSomething like\n\n```\nsdbusplus::message::object_path path(\"/xyz/openbmc_project\");\n\npath /\u003d \"\";\n\n// path is now /xyz/openbmc_project/error_empty_string_append\n```\n\nThis lands us at the user code intended depth and preserves both the namespace path as well as what went wrong.\n\nKindly review again and check if the new revision is acceptable.",
+      "parentUuid": "050c2219_42c97dce",
+      "revId": "26e3e3ac2d1998850d598d8b55e89d441423e842",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

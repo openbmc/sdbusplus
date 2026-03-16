@@ -20,22 +20,26 @@ class Application
                 sdbusplus::asio::object_server& objServer) :
         ioc_(ioc), bus_(bus), objServer_(objServer)
     {
-        demo_ = objServer_.add_unique_interface(
-            demoObjectPath, demoInterfaceName,
-            [this](sdbusplus::asio::dbus_interface& demo) {
-                demo.register_property_r<std::string>(
-                    propertyGrettingName, sdbusplus::vtable::property_::const_,
-                    [this](const auto&) { return greetings_; });
+        demo_ = objServer_.add_interface(demoObjectPath, demoInterfaceName);
 
-                demo.register_property_rw<std::string>(
-                    propertyGoodbyesName,
-                    sdbusplus::vtable::property_::emits_change,
-                    [this](const auto& newPropertyValue, const auto&) {
-                        goodbyes_ = newPropertyValue;
-                        return true;
-                    },
-                    [this](const auto&) { return goodbyes_; });
-            });
+        demo_->register_property_r<std::string>(
+            propertyGrettingName, sdbusplus::vtable::property_::const_,
+            [this](const auto&) { return greetings_; });
+
+        demo_->register_property_rw<std::string>(
+            propertyGoodbyesName, sdbusplus::vtable::property_::emits_change,
+            [this](const auto& newPropertyValue, const auto&) {
+                goodbyes_ = newPropertyValue;
+                return true;
+            },
+            [this](const auto&) { return goodbyes_; });
+
+        demo_->initialize();
+    }
+
+    ~Application()
+    {
+        objServer_.remove_interface(demo_);
     }
 
     uint32_t fatalErrors() const
@@ -146,7 +150,7 @@ class Application
     sdbusplus::asio::connection& bus_;
     sdbusplus::asio::object_server& objServer_;
 
-    std::unique_ptr<sdbusplus::asio::dbus_interface> demo_;
+    std::shared_ptr<sdbusplus::asio::dbus_interface> demo_;
     std::string greetings_ = "Hello";
     std::string goodbyes_ = "Bye";
 

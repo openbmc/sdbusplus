@@ -70,6 +70,30 @@
       },
       "revId": "d5ae25e7eaa82c875f2d38137598a633583826d1",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "201a18f6_857e8396",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1001712
+      },
+      "writtenOn": "2026-03-17T10:45:03Z",
+      "side": 1,
+      "message": "\u003e  This seems like a medium that\u0027s worse than either of those two and we\u0027d\n probably direct people to use one or the other in that case.\n\nYou did not outline why this is worse and making blanket statement.\n\n\u003e Would like to see some of these creative uses before we deem this to be a good idea.  sdbusplus is a limited API on purpose.\n\nI have outlined that this is a way to improve the failure mode of exsiting code (failing to build vs. failing at runtime on missing enum member / typo) while making a change that\u0027s simple enough to get merged without requiring manual testing.\n\nIf you want to require folks migrating code to fully convert it to PDI without intermediate steps you will have to accept that some code will simply not get improved / refactored at all since testing might not be possible.\n\n\u003e sdbusplus is a limited API on purpose.\n\nOverall `sdbusplus` is a mixed API which provides different abstraction layers for the same purpose of D-Bus access.\n\nIf you like a restricted API which does everything for you, you should start using PDI.\n\nIf you accept the risk of things falling apart (or work on stuff that\u0027s well maintained), hardcoding strings can be a way to do it.\n\nIf you want to ensure that some enum member you are comparing actually exists, this patch can help with that.\n\nKeep in mind i am sometimes migrating various older / legacy codes to use more modern APIs such as generated headers.\n\nAs part of that process i sometimes find property names, method names and other stuff which simply do not exist.\n\nThis API i am proposing here is not primarily intended to be used for new code.\n\nIt\u0027s to patch up existing code and make sure it fails to build when the time comes and the things that (largely unmaintained) code depends on change or disappear.",
+      "parentUuid": "7d465e3e_9617fa3f",
+      "range": {
+        "startLine": 16,
+        "startChar": 0,
+        "endLine": 19,
+        "endChar": 0
+      },
+      "revId": "d5ae25e7eaa82c875f2d38137598a633583826d1",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "83b61ed3_2dcdaec7",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2026-03-17T22:24:54Z",
+      "side": 1,
+      "message": "This is going to change the behavior from throwing an exception on initialize() which can be caught, to throwing an exception in the constructor.  This is arguably a good change, but there\u0027s a lot of code that needs fixed across a bunch of repos if you want to do this.  I\u0027m in support if that\u0027s something you want to make and test, but as-is I don\u0027t think we\u0027re there.\n\nThe commit message makes no mention of the above.  If this is something you\u0027ve thought about, please comment there.",
+      "revId": "2fe63625587696dfde0b49c6df09761e0dae5dce",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "edeb09e0_20cd1610",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 397,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2026-03-17T22:24:54Z",
+      "side": 1,
+      "message": "What is the benefit here if we\u0027re not doing any error handling?",
+      "revId": "2fe63625587696dfde0b49c6df09761e0dae5dce",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

@@ -94,6 +94,30 @@
       },
       "revId": "d5ae25e7eaa82c875f2d38137598a633583826d1",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e5f4e56f_7217f643",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2026-03-17T22:32:48Z",
+      "side": 1,
+      "message": "\u003e You did not outline why this is worse and making blanket statement.\n\nBecause you have taken a dependency on PDI, and therefore all the negatives (need PDI merge before code merge) but no longer have the benefits of it (type safety, automated unpacking, ect).\n\n\n\u003e If you want to require folks migrating code to fully convert it to PDI \n\nNo, this is not what I asked.  I asked for ONE example of a repo that is improved by this existing.  Nowhere did I ask you to fully convert anything to PDI.\n\n\u003e testing might not be possible.\n\nI\u0027m not sure why you say that.  I routinely accept commits where testing truly isn\u0027t possible.  The problem tends to be that people _could_ test at least in partial, or at least review that behavior shouldn\u0027t change, but don\u0027t want to do the it.\n\n\u003e If you want to ensure that some enum member you are comparing actually exists, this patch can help with that.\n\nIt\u0027s statements like this that I don\u0027t understand without an example.  Very likely as stated this could be an improvement.  I don\u0027t really understand it, because PDI already has a first class enum.\n\n\u003e It\u0027s to patch up existing code \n\nAnd this is where I\u0027m stuck.  You claim to watch to patch up existing code, but can\u0027t show an example of existing code that is improved by this.",
+      "parentUuid": "201a18f6_857e8396",
+      "range": {
+        "startLine": 16,
+        "startChar": 0,
+        "endLine": 19,
+        "endChar": 0
+      },
+      "revId": "d5ae25e7eaa82c875f2d38137598a633583826d1",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

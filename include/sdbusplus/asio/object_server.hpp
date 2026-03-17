@@ -394,7 +394,8 @@ class dbus_interface
 {
   public:
     dbus_interface(std::shared_ptr<sdbusplus::asio::connection> conn,
-                   const std::string& path, const std::string& name) :
+                   const sdbusplus::message::object_path& path,
+                   const std::string& name) :
         conn_(conn), path_(path), name_(name)
 
     {}
@@ -406,7 +407,7 @@ class dbus_interface
 
     ~dbus_interface()
     {
-        conn_->emit_interfaces_removed(path_.c_str(),
+        conn_->emit_interfaces_removed(path_.str.c_str(),
                                        std::vector<std::string>{name_});
     }
 
@@ -792,10 +793,10 @@ class dbus_interface
         vtable_.shrink_to_fit();
 
         interface_.emplace(static_cast<sdbusplus::bus_t&>(*conn_),
-                           path_.c_str(), name_.c_str(),
+                           path_.str.c_str(), name_.c_str(),
                            static_cast<const sd_bus_vtable*>(&vtable_[0]),
                            nullptr);
-        conn_->emit_interfaces_added(path_.c_str(),
+        conn_->emit_interfaces_added(path_.str.c_str(),
                                      std::vector<std::string>{name_});
         if (!skipPropertyChangedSignal)
         {
@@ -822,7 +823,7 @@ class dbus_interface
         return true;
     }
 
-    std::string get_object_path(void)
+    sdbusplus::message::object_path get_object_path(void)
     {
         return path_;
     }
@@ -834,7 +835,7 @@ class dbus_interface
 
   private:
     std::shared_ptr<sdbusplus::asio::connection> conn_;
-    std::string path_;
+    sdbusplus::message::object_path path_;
     std::string name_;
 
     std::vector<signal> signals_;

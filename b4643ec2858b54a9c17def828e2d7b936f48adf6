@@ -261,6 +261,24 @@
       "parentUuid": "82576c00_34b61727",
       "revId": "b4643ec2858b54a9c17def828e2d7b936f48adf6",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "50a498b2_000cb5a0",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1001712
+      },
+      "writtenOn": "2026-03-17T11:58:58Z",
+      "side": 1,
+      "message": "\u003e We disagree, and repeated asks for examples of correct code that\u0027s broken have been ignored.\n\nPeople testing things and working code does not mean the underlying APIs are well done or bug-free. You are asking for something no one in their right mind would merge.\n\n\u003e there\u0027s no requirement that the default-constructed state is usable as-is.\n\nI don\u0027t see a use-case for a maybe-contains-an-object-path class.\n\nIf you need it, you could use `std::optional\u003csdbusplus::message::object_path\u003e`,\nthis patch is not preventing you from it.\n\nThroughout this conversation we talked about 3 different classes\n\n- S1: maybe-contains-an-object-path (e.g. ``, ` `, `foo`, `bar`, `/`, `//` `/xyz/`)\n- S2: actually-contains-an-object-path (e.g.(`/`, `/xyz`, `/com/ibm`)\n- S3: contains-valid-non-root-object-path (e.g. `/xyz/openbmc_project`)\n\nIf you model that as sets, you get\n```\nS1 contains S2 \nS2 contains S3\n```\n\nIt looks like you are trying to make `sdbusplus::message::object_path` behave as S1 and S3 which is not possible in terms of API design.\n\nIf it\u0027s S3 then it automatically is S2 which requires the D-Bus object path invariant.\n\nIMO, from the perspective of sdbusplus, the actually-contains-an-object-path value type is the only thing that makes sense to use internally since sdbusplus is a D-Bus abstraction and not tied to `/xyz` object path namespace.\n\nIt needs to be able to represent every object path.\n\nIf you need some type in user code that always contains a non-root object path, you need to use a different class, not `sdbusplus::message::object_path`.\n\n\u003e otherwise I see this as a new footgun (default constructed is silently wrong) we can never get rid of.\n\nPeople can always do the work of modeling a type for `contains-valid-non-root-object-path` (no default constructor, always valid), but so far i have not seen a patch.\n\nI\u0027m not against such a type, but i would prioritize making our current `object_path` safe to use before defining something on top.",
+      "parentUuid": "b1189cd9_b140de98",
+      "revId": "b4643ec2858b54a9c17def828e2d7b936f48adf6",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

@@ -16,6 +16,24 @@
       "message": "This is very creative!   I\u0027m a little bit worried about the complexity it brings along with python + yet another generation script + having to pull the full free worth of interfaces into every file, but I\u0027ll come with an open mind.  Will look at this deeper in the next few weeks.",
       "revId": "87409f8c68fb73585df28f33104f12fa3e1b29ee",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ad528264_d42e90af",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1001712
+      },
+      "writtenOn": "2026-03-17T09:45:12Z",
+      "side": 1,
+      "message": "\u003e I\u0027m a little bit worried about the complexity it brings along with python + yet another generation script\n\nLooking at the OWNERS file, this is primarily something for maintainers to worry about. I\u0027m not happy about the piles of python code in sdbusplus either but refactoring all of that to C++ is out of scope for this change.\n\nSince you and Brad were not happy with existing generated codes, this is an attempt to make something to fit your requirements, please look at it from a user code perspective.\n\n\u003e having to pull the full free worth of interfaces into every file\n\nFrom my understanding it\u0027s not possible to re-define a struct in C++.\nSo if we define `xyz` we need to already know which members exist.\n\nAnd if we make the definition of `xyz` dependent on which headers were included we get an include order dependency as well as multiple definitions in different translation units.\n\n\u003e Will look at this deeper in the next few weeks.\n\nThanks. If the notation tracks, other things can possibly be adjusted to reach performance targets for e.g. bmcweb build.",
+      "parentUuid": "6b2d275e_68e4bc64",
+      "revId": "87409f8c68fb73585df28f33104f12fa3e1b29ee",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

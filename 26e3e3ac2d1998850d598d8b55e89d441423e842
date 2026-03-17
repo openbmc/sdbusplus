@@ -70,6 +70,24 @@
       "parentUuid": "534c1220_bb7cf14f",
       "revId": "26e3e3ac2d1998850d598d8b55e89d441423e842",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "77382625_0164c6c1",
+        "filename": "src/message/native_types.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2026-03-17T17:28:40Z",
+      "side": 1,
+      "message": "\u003e \u003e so the invalid object path throwing an exceptino later is \"correct\"\n\u003e \n\u003e Usually i try to follow these steps\n\u003e \n\u003e - parse user input\n\u003e - sanitize user input\n\u003e - further processing\n\u003e \n\nAs a generalist, I agree with you, but std::filesystem doesn\u0027t really seem to operate that way, so if the goal is to follow that API, we need to decide which goal is more important, the above, or doing what stdlib does.\n\nTo do the way you want here, we\u0027d need a path to return an error, and the prototype would need to change, maybe we could have an append(str) method that works the way we want?\n\n\u003e I don\u0027t like issues caused by user input to surface later deep inside some library code when it could have been caught beforehand. The error could appear at a different point in time and can be harder to debug.\n\u003e \n\u003e If we do it any different then one can never make any assumption about an object path.\n\u003e \n\u003e I would like to make the assumption that my object path is actually a valid object path (i know, currently we cannot assume it, but maybe some day in the future).\n\nI think this is where we disagree (at this moment).  I could see us implementing an object with \"always valid\" semantics, but then we need to adjust how we\u0027re returning errors to not match std::filesystem, which I believe allows setting an invalid path today.\n\n\u003e \n\u003e Otherwise it\u0027s hard to convince someone to use a class like this if it\u0027s just a fancy string wrapper and cannot provide any invariants.\n\u003e \n\u003e I\u0027ll mark this as resolved since you said you\u0027re okay with it.",
+      "parentUuid": "9b213473_56c19301",
+      "revId": "26e3e3ac2d1998850d598d8b55e89d441423e842",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

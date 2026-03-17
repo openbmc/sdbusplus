@@ -279,6 +279,24 @@
       "parentUuid": "b1189cd9_b140de98",
       "revId": "b4643ec2858b54a9c17def828e2d7b936f48adf6",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ea1aabc0_cf246310",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2026-03-17T22:48:51Z",
+      "side": 1,
+      "message": "\u003e \u003e We disagree, and repeated asks for examples of correct code that\u0027s broken have been ignored.\n\u003e \n\u003e People testing things and working code does not mean the underlying APIs are well done or bug-free. You are asking for something no one in their right mind would merge.\n\nLets keep things technical \"well done\" and \"bug free\" are debatable.  Today, the intent of the author was that this was default constructible in an invalid state.  You want to change that, which is certainly a discussion, but \n\n\u003e I don\u0027t see a use-case for a maybe-contains-an-object-path class.\n\nI do and applications use it.  keep in mind, even with the patch here, you still are in \"maybe contains an object-path\" because there\u0027s still the string constructor.\n\n\u003e \n\u003e \u003e there\u0027s no requirement that the default-constructed state is usable as-is.\n\u003e \n\u003e I don\u0027t see a use-case for a maybe-contains-an-object-path class.\n\nYou\u0027ve pointed to a few of them already.  read() is the largest use case.\n\n\u003e \n\u003e If you need it, you could use `std::optional\u003csdbusplus::message::object_path\u003e`,\n\u003e this patch is not preventing you from it.\n\nI don\u0027t see anything in this patch that returns a std::optional, are you saying I could go write one?\n\n\u003e \n\u003e Throughout this conversation we talked about 3 different classes\n\u003e \n\u003e - S1: maybe-contains-an-object-path (e.g. ``, ` `, `foo`, `bar`, `/`, `//` `/xyz/`)\n\nThis is what this object is currently, and by design of the author, and what a lot of code currently makes use of.\n\n\u003e - S2: actually-contains-an-object-path (e.g.(`/`, `/xyz`, `/com/ibm`)\n\nPossibly containing an object path that the user didn\u0027t intend, like /\n\n\u003e - S3: contains-valid-non-root-object-path (e.g. `/xyz/openbmc_project`)\n\nI don\u0027t understand how S2 differs from S3.  Isn\u0027t /xyz/openbmc_project functionally the same as /com/ibm ?\n\n\u003e \n\u003e If you model that as sets, you get\n\u003e ```\n\u003e S1 contains S2 \n\u003e S2 contains S3\n\u003e ```\n\u003e \n\u003e It looks like you are trying to make `sdbusplus::message::object_path` behave as S1 and S3 which is not possible in terms of API design.\n\nNo, I am arguing that if we want S1, we shouldn\u0027t have a default constructor.\n\n\u003e \n\u003e If it\u0027s S3 then it automatically is S2 which requires the D-Bus object path invariant.\n\u003e \n\u003e IMO, from the perspective of sdbusplus, the actually-contains-an-object-path value type is the only thing that makes sense to use internally since sdbusplus is a D-Bus abstraction and not tied to `/xyz` object path namespace.\n\nBe careful with this statement.  sd-bus implements a lot of correct-path checking internally.  We don\u0027t want to duplicate.\n\n\u003e \n\u003e It needs to be able to represent every object path.\n\u003e \n\u003e If you need some type in user code that always contains a non-root object path, you need to use a different class, not `sdbusplus::message::object_path`.\n\nI don\u0027t agree.  object_path was intended for that purpose.\n\n\u003e \n\u003e \u003e otherwise I see this as a new footgun (default constructed is silently wrong) we can never get rid of.\n\u003e \n\u003e People can always do the work of modeling a type for `contains-valid-non-root-object-path` (no default constructor, always valid), but so far i have not seen a patch.\n\nYou\u0027re trying to modify the result of my patch to do that.  If you\u0027re saying that I should take the object_path that exists here, and go copy it into the repos I maintain.  Root \"might\" be a valid case in some scenarios.  I\u0027m arguing it should be explicit.\n\n\u003e \n\u003e I\u0027m not against such a type, but i would prioritize making our current `object_path` safe to use before defining something on top.\n\nYou and I define safety differently.  Today, if you attempt to use a default constructed path, you get an exception on use.  That\u0027s \"safe\" against incorrect use, even if the error happens later than you want.  What you\u0027re trying to argue is \"fails quietly by defaulting to the wrong value\" is \"safe\".",
+      "parentUuid": "50a498b2_000cb5a0",
+      "revId": "b4643ec2858b54a9c17def828e2d7b936f48adf6",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

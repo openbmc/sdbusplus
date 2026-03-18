@@ -69,6 +69,30 @@
       },
       "revId": "a84a0c502fee45582e1fa0cb0b1a968f2d907702",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "07319362_6d044e2a",
+        "filename": "include/sdbusplus/message/native_types.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2026-03-18T20:29:36Z",
+      "side": 1,
+      "message": "\u003e We should strive to avoid constructing invalid values, but also need to avoid creating unintended or confusing results.\n\u003e \n\u003e Example without a base:\n\u003e \n\u003e ```\n\u003e const auto obj2 \u003d sdbusplus::message::object_path(\"/xyz/inventory/\", \"abc\");\n\u003e ```\n\u003e \n\u003e results in \n\u003e \n\u003e ```\n\u003e /_2fxyz_2finventory_2f/abc\n\n\u003e ```\n\nYes, but that is a valid path, and any person looking at it will clearly know they messed up.  That API is also safe to use on fuzzers.\n\n\u003e \n\u003e I worry that if we just append everything to `/` without checking, it will will be inconsistent with the existing constructor `sdbusplus::message::object_path(\"/xyz/inventory\")` which would then give a different result in\n\u003e \n\u003e ```\n\u003e sdbusplus::message::object_path(\"/xyz/inventory\", \"sensors\") \n\u003e \n\u003e !\u003d sdbusplus::message::object_path(\"/xyz/inventory/sensors\")\n\n\u003e ```\n\nI\u0027m confused, neither of the above is the API i suggested.  I suggested\n```\nobject_path(\"xyz\", \"inventory\", \"sensors\");\n```\n\nThe advantage there is that each element of that is directly able to be constructed from untrusted data (config file read, ect).\n\n\u003e \n\u003e What if we checked `base[0] \u003d\u003d \u0027/\u0027` to detect an object path instead of path segment and handle it differently, would it work for you?\n\nthat would fail for an invalid path like \"//\"\n\n\nWhat I\u0027d really like is a std::format equivalent, because that\u0027s relatively well defined behavior, we can check the static part of the strings at compile time, and it\u0027s an API that users are familiar with.  Boost::urls::format does something very similar for URIs that is effective.\n\nAnywho, this is merged already, and I don\u0027t care enough to revert.",
+      "parentUuid": "5c1ca1f3_1e95318f",
+      "range": {
+        "startLine": 99,
+        "startChar": 0,
+        "endLine": 99,
+        "endChar": 64
+      },
+      "revId": "a84a0c502fee45582e1fa0cb0b1a968f2d907702",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ],
   "submitRequirementResults": []

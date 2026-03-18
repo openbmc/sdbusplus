@@ -315,6 +315,24 @@
       "parentUuid": "ea1aabc0_cf246310",
       "revId": "b4643ec2858b54a9c17def828e2d7b936f48adf6",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d14b50b3_9fc8e12a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2026-03-18T20:23:42Z",
+      "side": 1,
+      "message": "\u003e Does it work for you if we default construct to `/invalid` ?\n\nI still have a minor preference for the status quo, but if this is something you\u0027re very passionate about, sure, /invalid doesn\u0027t cause a harder issue.  Would\u0027ve also preferred some more characters in there to make clear that the code is broken if you ever see this, but what\u0027s there is enough.\n\n\u003e \n\u003e \u003e And because the failure looks like it\u0027s occurring on the client side, it\n\u003e  may not even happen in the same process or close in time to when the \n\u003e interface was created.\n\u003e \n\u003e That avoids the failure mode of a default initialized object path crashing other (non-buggy) processes.\n\nWait..... how does that happen?  The broker should be rejecting any path that\u0027s invalid.  Do you have an example of how this could occur?  If it\u0027s possible, that changes some of my feelings on this.  I would expect the current behavior to be some kind of client crash (either a bus disconnect, or thrown exception on initialize())\n\n\u003e \n\u003e `/invalid` is better than `/` in some situations because it is more obviously \u0027wrong\u0027 and it cannot create the same amount of processing overhead when passed to e.g. the mapper.\n\n\n?  How would this ever get to the mapper in a request.\n\n\u003e \n\u003e I would be fine to compromise on this value because it moves us closer to an  actually-contains-an-object-path design.\n\nIf we agree that the eventual goal is that the default constructor goes away entirely, maybe.  I want to understand the above, because in my understanding that\u0027s not possible.  Please point to code where that happens.",
+      "parentUuid": "4d8b8227_af840bb2",
+      "revId": "b4643ec2858b54a9c17def828e2d7b936f48adf6",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

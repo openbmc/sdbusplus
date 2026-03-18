@@ -38,6 +38,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "50ce774c_ab0fcd86",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2026-03-18T20:17:52Z",
+      "side": 1,
+      "message": "\u003e \u003e This is going to change the behavior from throwing an exception on \n\u003e initialize() which can be caught, to throwing an exception in the \n\u003e constructor.\n\u003e \n\u003e I\u0027m not following here, can you kindly explain, which exception is thrown on which line?\n\u003e \n\u003e Do you mean the `dbus_interface` constructor? I don\u0027t see any interesting differences in  exception behavior there but I\u0027m also not an expert on C++ initialization or exceptions.\n\nobject_path can throw an exception if the path isn\u0027t valid in the passed in string.\n\nSo when you call \n```\nauto iface \u003d dbus_interface(conn, \"//not_a_valid_path\", \"iface name\");\ntry{\n    iface-\u003einitialize();\ncatch(...){\n   \n}\n```\n\nOld code, the exception would be caught.  new code, this would throw to the higher stack.\n\n\u003e \n\u003e So i\u0027m looking to you to explain more 😊\n\u003e \n\u003e \u003e but there\u0027s a lot of code that needs fixed across a bunch of repos if you want to do this.\n\u003e \n\u003e Can you provide one example? I was assuming that for anyone constructing `dbus_interface` it can be done with implicit conversion\n\u003e \n\u003e https://en.cppreference.com/w/cpp/language/implicit_conversion.html\n\nyeah, you are correct, but the implicit conversion could throw, right?",
+      "parentUuid": "60099907_25dae642",
+      "revId": "2fe63625587696dfde0b49c6df09761e0dae5dce",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "edeb09e0_20cd1610",
         "filename": "include/sdbusplus/asio/object_server.hpp",
         "patchSetId": 1
@@ -67,6 +85,24 @@
       "side": 1,
       "message": "What\u0027s the benefit here to represent an object path with `std::string` if we already have a value type (`sdbusplus::message::object_path`) for it?\n\n\nIt\u0027s inconsistent with the code which is using sdbusplus. Most of that code is using object_path.\n\n`std::string` has quite a large API surface and most of that is not needed when dealing with object paths inside of sdbusplus.\n\nhttps://en.cppreference.com/w/cpp/string/basic_string.html\n\nCleaning up this API can make the code more readable and more robust.",
       "parentUuid": "edeb09e0_20cd1610",
+      "revId": "2fe63625587696dfde0b49c6df09761e0dae5dce",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "09fe0535_34aa7053",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 397,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2026-03-18T20:17:52Z",
+      "side": 1,
+      "message": "\u003e What\u0027s the benefit here to represent an object path with `std::string` if we already have a value type (`sdbusplus::message::object_path`) for it?\n\nBecause it exists, and has existed prior to object_path, and has quite a bit of code that we know works.  If we\u0027re not adding safety anywhere, why is this interface better?  Is it just that it\u0027s an easier to use type?  Why does that matter within the class itself?\n\n\u003e \n\u003e \n\u003e It\u0027s inconsistent with the code which is using sdbusplus. Most of that code is using object_path.\n\u003e \n\u003e `std::string` has quite a large API surface and most of that is not needed when dealing with object paths inside of sdbusplus.\n\u003e \n\u003e https://en.cppreference.com/w/cpp/string/basic_string.html\n\u003e \n\u003e Cleaning up this API can make the code more readable and more robust.\n\nCode more readable, maybe.  More robust, I\u0027m not sure I see how?  Maybe something to add to your commit message?",
+      "parentUuid": "66c87441_208019c0",
       "revId": "2fe63625587696dfde0b49c6df09761e0dae5dce",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }

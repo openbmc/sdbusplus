@@ -20,6 +20,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "60099907_25dae642",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1001712
+      },
+      "writtenOn": "2026-03-18T17:53:36Z",
+      "side": 1,
+      "message": "\u003e This is going to change the behavior from throwing an exception on \ninitialize() which can be caught, to throwing an exception in the \nconstructor.\n\nI\u0027m not following here, can you kindly explain, which exception is thrown on which line?\n\nDo you mean the `dbus_interface` constructor? I don\u0027t see any interesting differences in  exception behavior there but I\u0027m also not an expert on C++ initialization or exceptions.\n\nSo i\u0027m looking to you to explain more 😊\n\n\u003e but there\u0027s a lot of code that needs fixed across a bunch of repos if you want to do this.\n\nCan you provide one example? I was assuming that for anyone constructing `dbus_interface` it can be done with implicit conversion\n\nhttps://en.cppreference.com/w/cpp/language/implicit_conversion.html",
+      "parentUuid": "83b61ed3_2dcdaec7",
+      "revId": "2fe63625587696dfde0b49c6df09761e0dae5dce",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "edeb09e0_20cd1610",
         "filename": "include/sdbusplus/asio/object_server.hpp",
         "patchSetId": 1
@@ -31,6 +49,24 @@
       "writtenOn": "2026-03-17T22:24:54Z",
       "side": 1,
       "message": "What is the benefit here if we\u0027re not doing any error handling?",
+      "revId": "2fe63625587696dfde0b49c6df09761e0dae5dce",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "66c87441_208019c0",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 397,
+      "author": {
+        "id": 1001712
+      },
+      "writtenOn": "2026-03-18T17:53:36Z",
+      "side": 1,
+      "message": "What\u0027s the benefit here to represent an object path with `std::string` if we already have a value type (`sdbusplus::message::object_path`) for it?\n\n\nIt\u0027s inconsistent with the code which is using sdbusplus. Most of that code is using object_path.\n\n`std::string` has quite a large API surface and most of that is not needed when dealing with object paths inside of sdbusplus.\n\nhttps://en.cppreference.com/w/cpp/string/basic_string.html\n\nCleaning up this API can make the code more readable and more robust.",
+      "parentUuid": "edeb09e0_20cd1610",
       "revId": "2fe63625587696dfde0b49c6df09761e0dae5dce",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }

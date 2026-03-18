@@ -297,6 +297,24 @@
       "parentUuid": "50a498b2_000cb5a0",
       "revId": "b4643ec2858b54a9c17def828e2d7b936f48adf6",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4d8b8227_af840bb2",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1001712
+      },
+      "writtenOn": "2026-03-18T14:50:33Z",
+      "side": 1,
+      "message": "Does it work for you if we default construct to `/invalid` ?\n\n\u003e And because the failure looks like it\u0027s occurring on the client side, it\n may not even happen in the same process or close in time to when the \ninterface was created.\n\nThat avoids the failure mode of a default initialized object path crashing other (non-buggy) processes.\n\n`/invalid` is better than `/` in some situations because it is more obviously \u0027wrong\u0027 and it cannot create the same amount of processing overhead when passed to e.g. the mapper.\n\nI would be fine to compromise on this value because it moves us closer to an  actually-contains-an-object-path design.",
+      "parentUuid": "ea1aabc0_cf246310",
+      "revId": "b4643ec2858b54a9c17def828e2d7b936f48adf6",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

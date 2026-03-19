@@ -423,6 +423,24 @@
       "parentUuid": "0c742d56_ce9be9f8",
       "revId": "b4643ec2858b54a9c17def828e2d7b936f48adf6",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "796670e4_5c35a6cc",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2026-03-19T23:49:13Z",
+      "side": 1,
+      "message": "\u003e \u003e `/\u003cinvalid_path\u003e`\n\u003e \n\u003e That\u0027s not in spec (https://dbus.freedesktop.org/doc/dbus-specification.html#basic-types under section \"Valid Object Paths\", `\u003c` is not allowed)\n\nIt would get escaped using this repos escaping rules, which would result in an intentionally strange looking object if it were ever instantiated. (_XXinvalid_XX) where XX is the ascii code\n\n\u003e \n\u003e \u003e If we want to default to initialize to /invalid, then put tests for invalid everywhere required and throw anytime that is present,\n\u003e  that would still work, it just seems messier to me.\n\u003e \n\u003e no dice, i am not familiar enough with sdbusplus and existing code to perform that kind of change successfully. I agree that it would be messier and not optimal solution.\n\nYep, this is why I originally let the exception get thrown in initialize()/register_vtable.\n\n\u003e \n\u003e On top of that, if we diff PS2 vs. PS3 of this patch, behavior changes in\n\u003e `test/message/types.cpp` that look concerning to me.\n\nI\u0027m not understanding why those were needed.  That code is calling the explicit constructor?\n\n\u003e \n\u003e I believe defaulting to `/` will be less difference to the existing behavior of `parent_path()`  and `filename()` functions.\n\u003e \n\u003e For these reasons, and since i could not get a +1 for `/invalid` as default value, i am reverting back to PS2 with `/` as default value.\n\nThen we\u0027re back to where we started.  I do not believe / is an improvement to the interface, and the code that\u0027s seeing an exception is correctly seeing an exception.\n\n\u003e \n\u003e Since you did not agree with PS2 i am leaving this thread as unresolved.\n\u003e \n\u003e It will probably be more productive for us to consider other patches and come back to this default constructor topic at a later date.\n\u003e \n\u003e Thanks for all the input on this patch so far 👍\n\nFWIW, I think we\u0027re in agreement that the default constructor could go away.  FWIW, I put some effort into looking into that a few days ago.  I might propose somethin gin the future.",
+      "parentUuid": "7ea2a6f3_ba26b8da",
+      "revId": "b4643ec2858b54a9c17def828e2d7b936f48adf6",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

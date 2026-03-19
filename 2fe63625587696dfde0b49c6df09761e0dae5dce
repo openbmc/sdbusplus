@@ -74,6 +74,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "7a64e2e8_8ec43b71",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2026-03-19T15:36:36Z",
+      "side": 1,
+      "message": "\u003e \u003e object_path can throw an exception if the path isn\u0027t valid in the passed in string.\n\u003e \n\u003e How so? There is no check, the string is directly assigned.\n\nFair point.  For some reason I thought there were more checks on construction.  I think I got mixed up on your desire for an \"always valid\" object_path class.  If we agree we\u0027re not chasing that anymore, this patch seems fine.\n\n\u003e \n\u003e ```cpp\n\u003e   struct string_path_wrapper\n\u003e   {\n\u003e       std::string str;\n\u003e   \n\u003e       string_path_wrapper() \u003d default;\n\u003e       string_path_wrapper(const string_path_wrapper\u0026) \u003d default;\n\u003e       string_path_wrapper\u0026 operator\u003d(const string_path_wrapper\u0026) \u003d default;\n\u003e       string_path_wrapper(string_path_wrapper\u0026\u0026) \u003d default;\n\u003e       string_path_wrapper\u0026 operator\u003d(string_path_wrapper\u0026\u0026) \u003d default;\n\u003e       ~string_path_wrapper() \u003d default;\n\u003e   \n\u003e       string_path_wrapper(const std::string\u0026 str_in) : str(str_in) {}\n\u003e       string_path_wrapper(std::string\u0026\u0026 str_in) : str(std::move(str_in)) {}\n\u003e ```\n\u003e \n\u003e I am looking at `string_path_wrapper(const std::string\u0026 str_in) : str(str_in) {}` here.\n\u003e \n\u003e \u003e yeah, you are correct, but the implicit conversion could throw, right?\n\u003e \n\u003e I\u0027m not super familiar with implicit conversions but if it calls the `object_path` constructor, that just assigns the string. `object_path` does not contribute anything new in terms of exceptions.\n\nYep, you did the right analysis.  I was replying to your other patch and got confused.",
+      "parentUuid": "03348b09_2a35bf8a",
+      "revId": "2fe63625587696dfde0b49c6df09761e0dae5dce",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "edeb09e0_20cd1610",
         "filename": "include/sdbusplus/asio/object_server.hpp",
         "patchSetId": 1
@@ -139,6 +157,24 @@
       "side": 1,
       "message": "\u003e If we\u0027re not adding safety anywhere,\n\nIn your other response you wrote\n\n\u003e object_path can throw an exception if the path isn\u0027t valid in the passed in string.\n\nSo either using `object_path` gives us exceptions in cases where there were none before (i don\u0027t think so), increasing the safety, or, it does not, in which case the change is safe to do and improves readability (intent to pass object path).\n\n\u003e Code more readable, maybe.  More robust, I\u0027m not sure I see how?\n\nIf we use a simpler type with less API surface, IMO that makes the code more robust and easier to review / change.\n\nThen we can be more confident that throughout the code only the supported operations are performed on the object path.\n\nWe can only be sure of it if the `str` member of `object_path` were private, but one step at a time.\n\n\u003e Because it exists, and has existed prior to object_path,\n\nYes, a good sign we should change it. Now that we have the `object_path`, we can apply it everywhere we want to represent object paths.",
       "parentUuid": "09fe0535_34aa7053",
+      "revId": "2fe63625587696dfde0b49c6df09761e0dae5dce",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "eee3a347_fde82b29",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 397,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2026-03-19T15:36:36Z",
+      "side": 1,
+      "message": "\u003e \u003e If we\u0027re not adding safety anywhere,\n\u003e \n\u003e In your other response you wrote\n\u003e \n\u003e \u003e object_path can throw an exception if the path isn\u0027t valid in the passed in string.\n\u003e \n\u003e So either using `object_path` gives us exceptions in cases where there were none before (i don\u0027t think so), increasing the safety, or, it does not, in which case the change is safe to do and improves readability (intent to pass object path).\n\u003e \n\u003e \u003e Code more readable, maybe.  More robust, I\u0027m not sure I see how?\n\u003e \n\u003e If we use a simpler type with less API surface, IMO that makes the code more robust and easier to review / change.\n\u003e \n\u003e Then we can be more confident that throughout the code only the supported operations are performed on the object path.\n\u003e \n\u003e We can only be sure of it if the `str` member of `object_path` were private, but one step at a time.\n\u003e \n\u003e \u003e Because it exists, and has existed prior to object_path,\n\u003e \n\u003e Yes, a good sign we should change it. Now that we have the `object_path`, we can apply it everywhere we want to represent object paths.\n\nIf we\u0027re in agreement that object_path as a class remains \"sometimes valid\", my above points are moot, and this can go.\n\nIf you agree that the \"sometimes valid\" part of object_path is remaining, then yes, this patch works.",
+      "parentUuid": "a2c388bc_dba49b8d",
       "revId": "2fe63625587696dfde0b49c6df09761e0dae5dce",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }

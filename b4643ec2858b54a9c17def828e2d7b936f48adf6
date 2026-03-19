@@ -369,6 +369,24 @@
       "parentUuid": "fe64d661_3efeaf2f",
       "revId": "b4643ec2858b54a9c17def828e2d7b936f48adf6",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "461ac9d1_72e86444",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1001712
+      },
+      "writtenOn": "2026-03-19T16:47:10Z",
+      "side": 1,
+      "message": "Thanks for clarify the expected behavior.\n\nTo me, the code i sent you does not look like it would have a bug.\n\nThe server is only default constructing an interface (which it probably should not)\nbut it\u0027s looking quite harmless.\n\nAnd i don\u0027t see people testing for remote peers to suddenly disconnect.\n\nWe can default construct to `/` (my preference) or `/invalid` to prevent these issues.\n\nIf we choose `/invalid` then you get to keep the pieces,\n\nif we go with `/` then i will fix up the resulting problems (if there are any) for a few months.\n\nAlternatively we can also accept this bug or sprinkle a few more try-catch into the code.",
+      "parentUuid": "dee49990_28f45c1a",
+      "revId": "b4643ec2858b54a9c17def828e2d7b936f48adf6",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

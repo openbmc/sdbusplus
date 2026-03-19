@@ -405,6 +405,24 @@
       "parentUuid": "dee49990_28f45c1a",
       "revId": "b4643ec2858b54a9c17def828e2d7b936f48adf6",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7ea2a6f3_ba26b8da",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1001712
+      },
+      "writtenOn": "2026-03-19T23:09:08Z",
+      "side": 1,
+      "message": "\u003e `/\u003cinvalid_path\u003e`\n\nThat\u0027s not in spec (https://dbus.freedesktop.org/doc/dbus-specification.html#basic-types under section \"Valid Object Paths\", `\u003c` is not allowed)\n\n\u003e If we want to default to initialize to /invalid, then put tests for invalid everywhere required and throw anytime that is present,\n that would still work, it just seems messier to me.\n\nno dice, i am not familiar enough with sdbusplus and existing code to perform that kind of change successfully. I agree that it would be messier and not optimal solution.\n\nOn top of that, if we diff PS2 vs. PS3 of this patch, behavior changes in\n`test/message/types.cpp` that look concerning to me.\n\nI believe defaulting to `/` will be less difference to the existing behavior of `parent_path()`  and `filename()` functions.\n\nFor these reasons, and since i could not get a +1 for `/invalid` as default value, i am reverting back to PS2 with `/` as default value.\n\nSince you did not agree with PS2 i am leaving this thread as unresolved.\n\nIt will probably be more productive for us to consider other patches and come back to this default constructor topic at a later date.\n\nThanks for all the input on this patch so far 👍",
+      "parentUuid": "0c742d56_ce9be9f8",
+      "revId": "b4643ec2858b54a9c17def828e2d7b936f48adf6",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

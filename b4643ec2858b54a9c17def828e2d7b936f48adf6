@@ -387,6 +387,24 @@
       "parentUuid": "dee49990_28f45c1a",
       "revId": "b4643ec2858b54a9c17def828e2d7b936f48adf6",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0c742d56_ce9be9f8",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2026-03-19T20:03:31Z",
+      "side": 1,
+      "message": "\u003e Simply use the first constructor without passing properties and you will achieve the bug.\n\n.... This would be a bug in the implementation if it didn\u0027t provide the initial object path, no?  Otherwise even if we come up with a default, you\u0027ll get 2 propertieschanged events, one for /invalid and one for the updated path, right?  This is really sounding more an more like a bug in the generated server usage of object_path.  Presumably every object_path usage would have a declared default, can we just have the generated server put that in?\n\n\u003e Since you did not provide any preferred value,\n\nI provided it to you on your other PR, but to duplicate it here, it was\n\n/\u003cinvalid_path\u003e\n\nhttps://gerrit.openbmc.org/c/openbmc/sdbusplus/+/88179\n\n\n\u003e but it\u0027s looking quite harmless.\n\nThis is the problem, when the code looks harmless, but is now wrong.  If we\u0027re going to now use some default value, should we check all the places object_path is used, and make sure that we continue to throw the right exceptions if you try to use a (wrong) default value?\n\n\u003e And i don\u0027t see people testing for remote peers to suddenly disconnect.\n\nDbus broker tests for this and Dbus type services will be restarted if they disconnect.  Fuzz testing is definitely something people do of the webserver, looking for service crashes.\n\nMy preference here is still to keep the status quo, attempts to use a default-initialized object path result in an error, with the goal of eventually deleting the default constructor (which has been on my list for a while now since unpack\u003c\u003e has existed).\n\nIf we want to default to initialize to /invalid, then put tests for invalid everywhere required and throw anytime that is present, that would still work, it just seems messier to me.",
+      "parentUuid": "dee49990_28f45c1a",
+      "revId": "b4643ec2858b54a9c17def828e2d7b936f48adf6",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

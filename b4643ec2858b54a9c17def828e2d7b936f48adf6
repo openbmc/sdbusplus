@@ -351,6 +351,24 @@
       "parentUuid": "d14b50b3_9fc8e12a",
       "revId": "b4643ec2858b54a9c17def828e2d7b936f48adf6",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "dee49990_28f45c1a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2026-03-19T16:19:00Z",
+      "side": 1,
+      "message": "\u003e If you use the generated server and client, both of them will get an exception.\n\nRight, isn\u0027t this the expected behavior if you instantiate a bad object path?  Generated client and generated server both use exceptions for error handling.  This sounds like that exception just wasn\u0027t caught?",
+      "parentUuid": "fe64d661_3efeaf2f",
+      "revId": "b4643ec2858b54a9c17def828e2d7b936f48adf6",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

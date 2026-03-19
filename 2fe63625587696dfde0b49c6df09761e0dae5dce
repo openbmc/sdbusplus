@@ -90,6 +90,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "bd622e70_d0871862",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1001712
+      },
+      "writtenOn": "2026-03-19T16:10:16Z",
+      "side": 1,
+      "message": "Thanks for the fast reply 👍\n\n\u003e Fair point.  For some reason I thought there were more checks on construction.\n\nMaybe it\u0027s a good thing. If you thought it possible there would be a check and it could throw, maybe it\u0027s not that unrealistic to implement that behavior and try it out, see if anything crashes.\n\n\u003e I think I got mixed up on your desire for an \"always valid\" \nobject_path class.  If we agree we\u0027re not chasing that anymore, this \npatch seems fine.\n\nI am still preferring the actually-contains-object-path design long-term but it\u0027s not what we have currently.\n\nMaybe i will put up a patch for that some other time, but IMO this patch is a lower hanging fruit.\n\nI don\u0027t think we are implementing ourselves into a corner with this patch but maybe someone else knows it better.",
+      "parentUuid": "7a64e2e8_8ec43b71",
+      "revId": "2fe63625587696dfde0b49c6df09761e0dae5dce",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "edeb09e0_20cd1610",

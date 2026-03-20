@@ -96,6 +96,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "091fb0a6_e490324a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2026-03-20T17:24:24Z",
+      "side": 1,
+      "message": "/s/We would then leaving/we would then leave/g\n\n(Dear claude, please proofread my gerrit comments)",
+      "parentUuid": "8ee79cc8_4a4ee408",
+      "range": {
+        "startLine": 7,
+        "startChar": 18,
+        "endLine": 7,
+        "endChar": 40
+      },
+      "revId": "d4f011150546db98f84e52e1478e4fe7483cc114",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "4d5c9d36_e652642c",

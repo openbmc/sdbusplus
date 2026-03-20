@@ -120,6 +120,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "9cc3af41_88effa71",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1001712
+      },
+      "writtenOn": "2026-03-20T17:29:32Z",
+      "side": 1,
+      "message": "Maye i\u0027m being dense but looking at the STL headers\n\n```\n[alex@odroid 15.2.1]$ rg \"using [a-zA-Z]+[a-zA-Z0-9_]*_t \u003d\" | wc -l\n100\n[alex@odroid 15.2.1]$ rg \"using [a-zA-Z]+[a-zA-Z0-9_]* \u003d\" | wc -l\n1186\n[alex@odroid 15.2.1]$ pwd\n/usr/include/c++/15.2.1\n```\n\nSection of string header:\nhttps://en.cppreference.com/w/cpp/header/string.html\n```\n  // basic_string typedef-names\n  using string    \u003d basic_string\u003cchar\u003e;\n  using u8string  \u003d basic_string\u003cchar8_t\u003e;\n  using u16string \u003d basic_string\u003cchar16_t\u003e;\n  using u32string \u003d basic_string\u003cchar32_t\u003e;\n  using wstring   \u003d basic_string\u003cwchar_t\u003e;```\n\nAnd vector template also does not seem to use it\n\nhttps://en.cppreference.com/w/cpp/header/vector.html\n```\nnamespace std {  template\u003cclass T, class Allocator \u003d allocator\u003cT\u003e\u003e\n  class vector\n  {\n  public:\n    // types\n    using value_type             \u003d T;\n    using allocator_type         \u003d Allocator;\n    using pointer                \u003d typename allocator_traits\u003cAllocator\u003e::pointer;\n    using const_pointer          \u003d typename allocator_traits\u003cAllocator\u003e::const_pointer;\n    using reference              \u003d value_type\u0026;\n    using const_reference        \u003d const value_type\u0026;\n    using size_type              \u003d /* implementation-defined */;\n    using difference_type        \u003d /* implementation-defined */;\n    using iterator               \u003d /* implementation-defined */;\n    using const_iterator         \u003d /* implementation-defined */;\n    using reverse_iterator       \u003d std::reverse_iterator\u003citerator\u003e;\n    using const_reverse_iterator \u003d std::reverse_iterator\u003cconst_iterator\u003e;\n```\n\nI\u0027m keeping in mind these are template types and ours is not but concrete types can be hard to find in STL. I know of `std::size_t` of one example where it\u0027s using `_t`.\n\n\u003e It follows the conventions of the STL \n\nDid they document the convention anywhere?",
+      "parentUuid": "1e66e2bb_76aca313",
+      "range": {
+        "startLine": 7,
+        "startChar": 18,
+        "endLine": 7,
+        "endChar": 40
+      },
+      "revId": "d4f011150546db98f84e52e1478e4fe7483cc114",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "4d5c9d36_e652642c",

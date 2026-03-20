@@ -29,7 +29,7 @@ class server :
         context_ref(ctx), Types<Instance, Self>(path)...
     {}
     explicit server(sdbusplus::async::context& ctx,
-                    const sdbusplus::message::object_path& path) :
+                    const sdbusplus::object_path& path) :
         context_ref(ctx), Types<Instance, Self>(path)...
     {}
 
@@ -40,8 +40,7 @@ class server :
         context_ref(ctx), Types<Instance, Self>(path, propValues)...
     {}
     explicit server(
-        sdbusplus::async::context& ctx,
-        const sdbusplus::message::object_path& path,
+        sdbusplus::async::context& ctx, const sdbusplus::object_path& path,
         typename Types<Instance, Self>::properties_t... propValues) :
         context_ref(ctx), Types<Instance, Self>(path, propValues)...
     {}

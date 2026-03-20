@@ -167,7 +167,7 @@ TEST_F(ReadTest, ObjectPath)
 {
     const char* const s = "/fsda";
     expect_basic<const char*>(SD_BUS_TYPE_OBJECT_PATH, s);
-    sdbusplus::message::object_path ret;
+    sdbusplus::object_path ret;
     new_message().read(ret);
     EXPECT_EQ(s, ret.str);
 }

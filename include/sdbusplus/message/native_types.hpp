@@ -306,6 +306,10 @@ inline constexpr bool has_convert_from_string_v =
     details::has_convert_from_string_v<T>;
 
 } // namespace message
+
+// type alias to make user code more readable
+using object_path = message::object_path;
+
 } // namespace sdbusplus
 
 namespace std

@@ -72,6 +72,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "8ee79cc8_4a4ee408",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2026-03-20T17:11:27Z",
+      "side": 1,
+      "message": "I have a minor preference for keeping object_path, and just moving the implementation out of the message namespace because now it\u0027s useful outside of the message building context.  We would then leaving a typedef in the message namespace for backward compatibility.\n\nEither that, what\u0027s in this patch, or what Patrick suggests seems like an improvement and I support any of them.",
+      "parentUuid": "1e66e2bb_76aca313",
+      "range": {
+        "startLine": 7,
+        "startChar": 18,
+        "endLine": 7,
+        "endChar": 40
+      },
+      "revId": "d4f011150546db98f84e52e1478e4fe7483cc114",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "4d5c9d36_e652642c",

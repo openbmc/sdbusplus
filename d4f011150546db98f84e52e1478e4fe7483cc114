@@ -24,6 +24,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "cedf75f2_1dd71392",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1001712
+      },
+      "writtenOn": "2026-03-20T16:51:35Z",
+      "side": 1,
+      "message": "I believe 2 core guidelines apply here\n\n\u003e NL.8: Use a consistent naming style.\n\nand \n\n\u003e T.42: Use template aliases to simplify notation and hide implementation details\n\n`object_path_t` is 2 extra characters which add `_t`. It does not simplify notation.\n\nWe already know that it\u0027s a type so I\u0027m wondering why `_t` needs to be appended at the end.\n\nIf we were going for consistency i would suggest removing the `_t` from whichever types and aliases they were added to.\n\nThe type we are aliasing here also does not have `_t`. So appending it would be inconsistent in it\u0027s own way.\n\nAdditionally we have to consider the incentive for anyone to use this alias.\nCurrently that incentive is that the name is much shorter.\n\nProbably you have some extra reasoning/context here, can you explain what\u0027s the benefit of `_t` for type aliases in general?",
+      "parentUuid": "0f4aaad3_3c01bd70",
+      "range": {
+        "startLine": 7,
+        "startChar": 18,
+        "endLine": 7,
+        "endChar": 40
+      },
+      "revId": "d4f011150546db98f84e52e1478e4fe7483cc114",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "4d5c9d36_e652642c",

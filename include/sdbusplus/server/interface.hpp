@@ -60,9 +60,9 @@ struct interface final : private sdbusplus::bus::details::bus_friend
     interface(sdbusplus::bus_t& bus, const char* path, const char* interf,
               const sdbusplus::vtable_t* vtable, void* context);
 
-    interface(sdbusplus::bus_t& bus,
-              const sdbusplus::message::object_path& path, const char* interf,
-              const sdbusplus::vtable_t* vtable, void* context);
+    interface(sdbusplus::bus_t& bus, const sdbusplus::object_path& path,
+              const char* interf, const sdbusplus::vtable_t* vtable,
+              void* context);
 
     ~interface();
 

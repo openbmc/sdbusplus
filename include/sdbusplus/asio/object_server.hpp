@@ -394,7 +394,7 @@ class dbus_interface
 {
   public:
     dbus_interface(std::shared_ptr<sdbusplus::asio::connection> conn,
-                   const sdbusplus::message::object_path& path,
+                   const sdbusplus::object_path& path,
                    const std::string& name) :
         conn_(conn), path_(path), name_(name)
 
@@ -823,7 +823,7 @@ class dbus_interface
         return true;
     }
 
-    sdbusplus::message::object_path get_object_path(void)
+    sdbusplus::object_path get_object_path(void)
     {
         return path_;
     }
@@ -835,7 +835,7 @@ class dbus_interface
 
   private:
     std::shared_ptr<sdbusplus::asio::connection> conn_;
-    sdbusplus::message::object_path path_;
+    sdbusplus::object_path path_;
     std::string name_;
 
     std::vector<signal> signals_;

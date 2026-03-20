@@ -13,7 +13,7 @@ TEST(AServerConstructWithObjectPath, NoProps)
 {
     sdbusplus::async::context ctx;
 
-    sdbusplus::message::object_path path("/");
+    sdbusplus::object_path path("/");
 
     sdbusplus::aserver::server::Test<A> t2(ctx, path);
 }
@@ -30,7 +30,7 @@ TEST(AServerConstructWithObjectPath, WithProps)
     sdbusplus::common::server::Test::properties_t props{
         0, 0, 0, 0, 0, 0, 0, std::string("/my/path"), 1.0, 1.0, 1.0, 1.0, x};
 
-    sdbusplus::message::object_path path("/");
+    sdbusplus::object_path path("/");
 
     sdbusplus::aserver::server::Test<A> t2(ctx, path, props);
 }

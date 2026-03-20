@@ -33,7 +33,7 @@ struct manager : private sdbusplus::bus::details::bus_friend
     }
 
     static slot_t makeManager(SdBusInterface* intf, sd_bus* bus,
-                              const sdbusplus::message::object_path& path)
+                              const sdbusplus::object_path& path)
     {
         return makeManager(intf, bus, path.str.c_str());
     }
@@ -48,8 +48,7 @@ struct manager : private sdbusplus::bus::details::bus_friend
         _slot(makeManager(bus.getInterface(), get_busp(bus), path))
     {}
 
-    manager(sdbusplus::bus_t& bus,
-            const sdbusplus::message::object_path& path) :
+    manager(sdbusplus::bus_t& bus, const sdbusplus::object_path& path) :
         _slot(makeManager(bus.getInterface(), get_busp(bus), path))
     {}
 };

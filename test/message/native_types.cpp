@@ -15,8 +15,8 @@ using namespace std::string_literals;
 
 TEST(MessageNativeTypeConversions, ObjectPath)
 {
-    std::string s1 = sdbusplus::message::object_path("/asdf/");
-    sdbusplus::message::object_path p = std::move(s1);
+    std::string s1 = sdbusplus::object_path("/asdf/");
+    sdbusplus::object_path p = std::move(s1);
 
     ASSERT_EQ("/asdf/", p);
     ASSERT_EQ(p, "/asdf/");
@@ -58,7 +58,7 @@ TEST(MessageNativeTypeConversions, SignatureInUnorderedMap)
 TEST(MessageNativeTypeConversions, WrapperReference)
 {
     auto orig = "str"s;
-    sdbusplus::message::object_path obj = orig;
+    sdbusplus::object_path obj = orig;
     auto out = static_cast<std::string>(obj);
     EXPECT_EQ(orig, out);
 }
@@ -66,7 +66,7 @@ TEST(MessageNativeTypeConversions, WrapperReference)
 TEST(MessageNativeTypeConversions, WrapperMove)
 {
     auto orig = "str"s;
-    sdbusplus::message::object_path obj = orig;
+    sdbusplus::object_path obj = orig;
     auto out = static_cast<std::string>(std::move(obj));
     EXPECT_EQ(orig, out);
 }
@@ -74,45 +74,45 @@ TEST(MessageNativeTypeConversions, WrapperMove)
 TEST(MessageFormatting, Format1ArgNoTrailingSlash)
 {
     const auto obj =
-        sdbusplus::message::object_path("/xyz/openbmc_project", "inventory");
+        sdbusplus::object_path("/xyz/openbmc_project", "inventory");
     EXPECT_EQ(obj.str, "/xyz/openbmc_project/inventory");
 }
 
 TEST(MessageFormatting, Format1ArgTrailingSlash)
 {
     const auto obj =
-        sdbusplus::message::object_path("/xyz/openbmc_project/", "inventory");
+        sdbusplus::object_path("/xyz/openbmc_project/", "inventory");
     EXPECT_EQ(obj.str, "/xyz/openbmc_project/inventory");
 }
 
 TEST(MessageFormatting, Format2Args)
 {
-    const auto obj = sdbusplus::message::object_path(
-        "/xyz/openbmc_project/", "software", "HostSPIFlash3892");
+    const auto obj = sdbusplus::object_path("/xyz/openbmc_project/", "software",
+                                            "HostSPIFlash3892");
     EXPECT_EQ(obj.str, "/xyz/openbmc_project/software/HostSPIFlash3892");
 }
 
 TEST(MessageFormatting, EmptyFormat)
 {
-    const auto obj = sdbusplus::message::object_path("/xyz/", "");
+    const auto obj = sdbusplus::object_path("/xyz/", "");
     EXPECT_EQ(obj.str, "/xyz/");
 }
 
 TEST(MessageFormatting, EscapesSegmentsNoTrailingSlash)
 {
-    const auto obj = sdbusplus::message::object_path("/xyz", " ");
+    const auto obj = sdbusplus::object_path("/xyz", " ");
     EXPECT_EQ(obj.str, "/xyz/_20");
 }
 
 TEST(MessageFormatting, EscapesSegmentsTrailingSlash)
 {
-    const auto obj = sdbusplus::message::object_path("/xyz/", " ");
+    const auto obj = sdbusplus::object_path("/xyz/", " ");
     EXPECT_EQ(obj.str, "/xyz/_20");
 }
 
 TEST(MessageFormatting, ConcatExistingPath)
 {
-    const auto obj = sdbusplus::message::object_path("/xyz/");
-    const auto obj2 = sdbusplus::message::object_path(obj, "inventory");
+    const auto obj = sdbusplus::object_path("/xyz/");
+    const auto obj2 = sdbusplus::object_path(obj, "inventory");
     EXPECT_EQ(obj2.str, "/xyz/inventory");
 }

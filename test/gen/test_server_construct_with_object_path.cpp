@@ -7,7 +7,7 @@ TEST(ServerConstructWithObjectPath, NoProps)
 {
     auto bus = sdbusplus::bus::new_default();
 
-    sdbusplus::message::object_path path("/");
+    sdbusplus::object_path path("/");
 
     sdbusplus::server::server::Test t(bus, path);
 }
@@ -20,7 +20,7 @@ TEST(ServerConstructWithObjectPath, WithProps)
                    sdbusplus::common::server::Test::PropertiesVariant>
         props = {{"SomeValue", 1}};
 
-    sdbusplus::message::object_path path("/");
+    sdbusplus::object_path path("/");
 
     sdbusplus::server::server::Test t(bus, path, props);
 }

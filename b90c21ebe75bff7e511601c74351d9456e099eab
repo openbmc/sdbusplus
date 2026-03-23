@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "53bfe94d_9aa3cc01",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2026-03-23T23:30:35Z",
+      "side": 1,
+      "message": "The only place it would impact backward compatibility is here:\n\noperator const std::string\u0026() const volatile\u0026\n\nRight?  Seems like everything else we could make compatible, even if not purely in API?",
+      "range": {
+        "startLine": 15,
+        "startChar": 0,
+        "endLine": 16,
+        "endChar": 43
+      },
+      "revId": "b90c21ebe75bff7e511601c74351d9456e099eab",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

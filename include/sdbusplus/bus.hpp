@@ -303,6 +303,13 @@ struct bus
         return message_t(m, _intf, std::false_type());
     }
 
+    auto new_method_call(const char* service,
+                         const sdbusplus::message::object_path& objpath,
+                         const char* interf, const char* method)
+    {
+        return new_method_call(service, objpath.str.c_str(), interf, method);
+    }
+
     /** @brief Create a signal message.
      *
      *  @param[in] objpath - The object's path for the signal.

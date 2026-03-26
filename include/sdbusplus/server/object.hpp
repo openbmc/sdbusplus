@@ -84,6 +84,11 @@ struct object :
         check_action(act);
     }
 
+    object(bus_t& bus, const sdbusplus::object_path& path,
+           action act = action::emit_object_added) :
+        object(bus, path.str.c_str(), act)
+    {}
+
     ~object() override
     {
         if (__sdbusplus_server_object_signalstate != action::emit_no_signals)

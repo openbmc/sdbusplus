@@ -22,6 +22,30 @@
       },
       "revId": "b90c21ebe75bff7e511601c74351d9456e099eab",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "db96c1d6_d220b856",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1001712
+      },
+      "writtenOn": "2026-03-31T16:38:54Z",
+      "side": 1,
+      "message": "Sorry for the late reply,\n\nI don\u0027t intend to make this type backward compatible to `sdbusplus::message::object_path` since that one has a bunch of problems like\n\n- wrong default construction\n- bugs with `/\u003d` operator creating invalid object path\n- maybe-contains-object-path design\n\nMy initial idea for this type was that we need a type to put into generated headers / reactors to use for constexpr namespace paths,\n\nwhich could then decay to a runtime type like `sdbusplus::message::object_path` if operators like `/` are used.\n\n\nThat would then allow for safer object path construction\nin cases like\n\n```\ninline std::string getDbusReportPath(std::string_view id)\n{\n    sdbusplus::message::object_path reportsPath(\n        \"/xyz/openbmc_project/Telemetry/Reports/TelemetryService\");\n    return {reportsPath / id};\n}\n```\n\nwhere the object path invariant could be checked at compile time.\n\nSince there is still repos which do not even use `sdbusplus::message::object_path` and the problem with public `str` member could possibly be fixed, i am not prioritizing this change very much, since our existing type still has possible improvements.\n\nFor example i would hope to get the type alias `sdbusplus::object_path` merged.",
+      "parentUuid": "53bfe94d_9aa3cc01",
+      "range": {
+        "startLine": 15,
+        "startChar": 0,
+        "endLine": 16,
+        "endChar": 43
+      },
+      "revId": "b90c21ebe75bff7e511601c74351d9456e099eab",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

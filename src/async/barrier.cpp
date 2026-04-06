@@ -1,6 +1,6 @@
 #include <sdbusplus/async/barrier.hpp>
 
-#include <ranges>
+#include <algorithm>
 
 namespace sdbusplus::async::barrier_ns
 {

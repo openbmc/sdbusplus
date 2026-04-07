@@ -56,7 +56,7 @@ struct manager : private sdbusplus::bus::details::bus_friend
 
 } // namespace manager
 
-using manager_t = manager::manager;
+using manager_t = manager_t;
 
 } // namespace server
 } // namespace sdbusplus

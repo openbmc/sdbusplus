@@ -50,7 +50,7 @@ struct merge_variants<std::variant<D, Done...>, std::variant<Next...>,
 } // namespace details
 
 /** This type is useful for processing D-Bus messages containing information for
- * multiple interfaces. For doing sdbusplus::message::message::read() on them
+ * multiple interfaces. For doing sdbusplus::message_t::read() on them
  * one needs to define an std::variant which would be a combination of all the
  * PropertiesVariant's involved. */
 template <typename... T>

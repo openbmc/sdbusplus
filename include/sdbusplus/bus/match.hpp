@@ -190,6 +190,6 @@ inline auto nameOwnerChanged(std::string_view s) noexcept
 } // namespace rules
 } // namespace match
 
-using match_t = match::match;
+using match_t = match_t;
 
 } // namespace sdbusplus::bus

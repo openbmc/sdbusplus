@@ -98,7 +98,7 @@ bus new_system()
     return bus;
 }
 
-bus::bus(busp_t b, sdbusplus::SdBusInterface* intf) :
+bus_t(busp_t b, sdbusplus::SdBusInterface* intf) :
     _intf(intf), _bus(_intf->sd_bus_ref(b), details::BusDeleter(intf))
 {
     // Emitting object added causes a message to get the properties
@@ -112,7 +112,7 @@ bus::bus(busp_t b, sdbusplus::SdBusInterface* intf) :
     }
 }
 
-bus::bus(busp_t b) :
+bus_t(busp_t b) :
     _intf(&sdbus_impl),
     _bus(_intf->sd_bus_ref(b), details::BusDeleter(&sdbus_impl))
 {
@@ -127,7 +127,7 @@ bus::bus(busp_t b) :
     }
 }
 
-bus::bus(busp_t b, std::false_type) :
+bus_t(busp_t b, std::false_type) :
     _intf(&sdbus_impl), _bus(b, details::BusDeleter(&sdbus_impl))
 {
     // Emitting object added causes a message to get the properties

@@ -23,7 +23,7 @@ slot_t match::makeMatch(context& ctx, const std::string_view& pattern)
     return slot_t{s, &sdbus_impl};
 }
 
-match::match(context& ctx, const std::string_view& pattern) :
+match_t(context& ctx, const std::string_view& pattern) :
     slot(makeMatch(ctx, pattern))
 {}
 

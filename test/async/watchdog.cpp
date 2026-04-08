@@ -23,7 +23,7 @@ struct WatchdogMock : public sdbusplus::SdBusImpl
 
     MOCK_METHOD(int, sd_watchdog_enabled, (int, uint64_t* usec), (override));
 
-    sdbusplus::bus::busp_t busp = nullptr;
+    sdbusplus::bus_tp_t busp = nullptr;
 };
 
 struct WatchdogContext : public testing::Test

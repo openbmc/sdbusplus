@@ -447,7 +447,7 @@ struct bus
 
     /** @brief Wrapper for sd_bus_emit_interfaces_added_strv
      *
-     *  In general the similarly named server::object::object API should
+     *  In general the similarly named server::object_t API should
      *  be used to manage emission of ObjectManager signals in favor
      *  of this one.  Provided here for complex usage scenarios.
      *
@@ -459,7 +459,7 @@ struct bus
 
     /** @brief Wrapper for sd_bus_emit_interfaces_removed_strv
      *
-     *  In general the similarly named server::object::object API should
+     *  In general the similarly named server::object_t API should
      *  be used to manage emission of ObjectManager signals in favor
      *  of this one.  Provided here for complex usage scenarios.
      *
@@ -471,7 +471,7 @@ struct bus
 
     /** @brief Wrapper for sd_bus_emit_object_added
      *
-     *  In general the similarly named server::object::object API should
+     *  In general the similarly named server::object_t API should
      *  be used to manage emission of ObjectManager signals in favor
      *  of this one.  Provided here for complex usage scenarios.
      *
@@ -484,7 +484,7 @@ struct bus
 
     /** @brief Wrapper for sd_bus_emit_object_removed
      *
-     *  In general the similarly named server::object::object API should
+     *  In general the similarly named server::object_t API should
      *  be used to manage emission of ObjectManager signals in favor
      *  of this one.  Provided here for complex usage scenarios.
      *
@@ -566,7 +566,7 @@ namespace details
 // only) to get the underlying bus pointer.
 struct bus_friend
 {
-    static busp_t get_busp(sdbusplus::bus::bus& b) noexcept
+    static busp_t get_busp(sdbusplus::bus_t& b) noexcept
     {
         return b.get();
     }
@@ -576,7 +576,7 @@ struct bus_friend
 
 } // namespace bus
 
-using bus_t = bus::bus;
+using bus_t = bus_t;
 
 /** @brief Get the dbus bus from the message.
  *

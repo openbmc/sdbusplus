@@ -24,7 +24,7 @@
 namespace sdbusplus
 {
 
-// Forward declare sdbusplus::bus::bus for 'friend'ship.
+// Forward declare sdbusplus::bus_t for 'friend'ship.
 namespace bus
 {
 struct bus;
@@ -193,7 +193,7 @@ class message : private sdbusplus::slot::details::slot_friend
 
     /** @brief Get the dbus bus from the message. */
     // Forward declare.
-    bus::bus get_bus() const;
+    bus_t get_bus() const;
 
     /** @brief Get the signature of a message.
      *
@@ -365,7 +365,7 @@ class message : private sdbusplus::slot::details::slot_friend
      *  @param[in] e - The exception we are returning
      *  @return method-return message.
      */
-    message new_method_error(const sdbusplus::exception::exception& e)
+    message new_method_error(const sdbusplus::exception_t& e)
     {
         msgp_t reply = nullptr;
         sd_bus_error error = SD_BUS_ERROR_NULL;
@@ -489,7 +489,7 @@ class message : private sdbusplus::slot::details::slot_friend
         return ret;
     }
 
-    friend struct sdbusplus::bus::bus;
+    friend struct sdbusplus::bus_t;
 
     /** @brief Get a pointer to the owned 'msgp_t'.
      * This api should be used sparingly and carefully, as it opens a number of
@@ -533,7 +533,7 @@ int call_async_cb(sd_bus_message* m, void* userdata, sd_bus_error*) noexcept
 
 } // namespace message
 
-using message_t = message::message;
+using message_t = message_t;
 
 } // namespace sdbusplus
 

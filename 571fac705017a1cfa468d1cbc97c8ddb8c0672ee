@@ -16,6 +16,24 @@
       "message": "RAII helper seems useful, as it creates predictable behavior. Limited adoption might come from the fact that:\n- services don\u0027t properly remove_interface, but they don\u0027t destroy objects unless application ends, so that\u0027s no problem\n- they do it \"old way\", because it\u0027s what majority of the code uses\n\nI wonder - what is the trouble with carrying this implementation forward? What new implementation will be hard, because of this inconsistency?",
       "revId": "571fac705017a1cfa468d1cbc97c8ddb8c0672ee",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4742be34_fb6f98b0",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2026-04-09T19:35:00Z",
+      "side": 1,
+      "message": "\u003e RAII helper seems useful, as it creates predictable behavior.\n\nWhat does this mean specifically versus the remove_interface in the destructor?\n\nI agree, RAII overall is useful, and that\u0027s the goal, but this version that accepts an arbitrary factory/callable is difficult to manage.\n\n\u003e Limited adoption might come from the fact that:\n\u003e - services don\u0027t properly remove_interface, but they don\u0027t destroy objects unless application ends, so that\u0027s no problem\n\n?  Every application I know of uses remove_interface.  Can you give examples that don\u0027t?\n\n\u003e - they do it \"old way\", because it\u0027s what majority of the code uses\n\nNew code also seems to do it the \"old\" way, so that doesn\u0027t really track for me.\n\n\u003e \n\u003e I wonder - what is the trouble with carrying this implementation forward? What new implementation will be hard, because of this inconsistency?\n\nI\u0027d like to see an RAII class for this stuff, but because of the callback, this API isn\u0027t something I can propagate through the whole codebase.  Initially removing it so we can add another RAII object that would work for the general use case I think is a better overall goal.  Also keeps us consistent for now so we\u0027re not inventing a 3rd way to do this before deprecating one.\n\nThe overall goal is to deprecate remove_interface, functionally by making it do nothing.",
+      "parentUuid": "84790eb3_e9d5c05e",
+      "revId": "571fac705017a1cfa468d1cbc97c8ddb8c0672ee",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

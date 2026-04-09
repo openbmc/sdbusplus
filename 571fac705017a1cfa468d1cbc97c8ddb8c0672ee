@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "84790eb3_e9d5c05e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000534
+      },
+      "writtenOn": "2026-04-09T18:27:55Z",
+      "side": 1,
+      "message": "RAII helper seems useful, as it creates predictable behavior. Limited adoption might come from the fact that:\n- services don\u0027t properly remove_interface, but they don\u0027t destroy objects unless application ends, so that\u0027s no problem\n- they do it \"old way\", because it\u0027s what majority of the code uses\n\nI wonder - what is the trouble with carrying this implementation forward? What new implementation will be hard, because of this inconsistency?",
+      "revId": "571fac705017a1cfa468d1cbc97c8ddb8c0672ee",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

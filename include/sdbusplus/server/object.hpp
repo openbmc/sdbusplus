@@ -150,7 +150,7 @@ struct object :
 
 // Type alias for object_t.
 template <class... Args>
-using object_t = object::object<Args...>;
+using object_t = object_t<Args...>;
 
 namespace object::details
 {

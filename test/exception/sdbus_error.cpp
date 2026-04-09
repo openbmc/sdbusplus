@@ -39,7 +39,7 @@ TEST(SdBusError, BasicErrno)
     SdBusError err(errorVal, prefix.c_str());
 
     // Make sure inheritance is defined correctly
-    sdbusplus::exception::exception& sdbusErr = err;
+    sdbusplus::exception_t& sdbusErr = err;
     SdBusError& errNew = err;
     EXPECT_EQ(errorVal, errNew.get_errno());
     EXPECT_EQ(std::string{error.name}, sdbusErr.name());
@@ -164,7 +164,7 @@ TEST(SdBusError, CatchBaseClassExceptions)
 {
     /* test each class in the chain:
      * std::exception
-     *   -> sdbusplus::exception::exception
+     *   -> sdbusplus::exception_t
      *     -> sdbusplus::exception::internal_exception
      *       -> sdbusplus::exception::SdBusError
      */
@@ -173,8 +173,7 @@ TEST(SdBusError, CatchBaseClassExceptions)
         { throw SdBusError(-EINVAL, "internal_exception"); },
         sdbusplus::exception::internal_exception);
     EXPECT_THROW(
-        { throw SdBusError(-EINVAL, "exception"); },
-        sdbusplus::exception::exception);
+        { throw SdBusError(-EINVAL, "exception"); }, sdbusplus::exception_t);
     EXPECT_THROW(
         { throw SdBusError(-EINVAL, "std::exception"); }, std::exception);
 }

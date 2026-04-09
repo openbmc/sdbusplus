@@ -19,8 +19,8 @@ static slot_t makeMatch(SdBusInterface* intf, sd_bus* bus, const char* _match,
     return slot_t{slot, intf};
 }
 
-match::match(sdbusplus::bus_t& bus, const char* _match,
-             sd_bus_message_handler_t handler, void* context) :
+match_t(sdbusplus::bus_t& bus, const char* _match,
+        sd_bus_message_handler_t handler, void* context) :
     _slot(
         makeMatch(bus.getInterface(), get_busp(bus), _match, handler, context))
 {}
@@ -35,7 +35,7 @@ static int matchCallback(sd_bus_message* m, void* context,
     return 0;
 }
 
-match::match(sdbusplus::bus_t& bus, const char* _match, callback_t callback) :
+match_t(sdbusplus::bus_t& bus, const char* _match, callback_t callback) :
     _callback(std::make_unique<callback_t>(std::move(callback))),
     _slot(makeMatch(bus.getInterface(), get_busp(bus), _match, matchCallback,
                     _callback.get()))

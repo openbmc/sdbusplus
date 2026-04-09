@@ -213,7 +213,7 @@ auto known_events() -> std::vector<std::string>;
 
 } // namespace exception
 
-using exception_t = exception::exception;
+using exception_t = exception_t;
 using internal_exception_t = exception::internal_exception;
 
 } // namespace sdbusplus

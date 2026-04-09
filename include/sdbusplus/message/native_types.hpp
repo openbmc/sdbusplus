@@ -308,7 +308,7 @@ inline constexpr bool has_convert_from_string_v =
 } // namespace message
 
 // type alias to make user code more readable
-using object_path = message::object_path;
+using object_path = object_path;
 
 } // namespace sdbusplus
 

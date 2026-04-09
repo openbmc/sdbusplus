@@ -85,7 +85,7 @@ namespace details
 // only) to get the underlying bus pointer.
 struct slot_friend
 {
-    static slotp_t get_slotp(sdbusplus::slot::slot& s) noexcept
+    static slotp_t get_slotp(sdbusplus::slot_t& s) noexcept
     {
         return s.get();
     }
@@ -95,6 +95,6 @@ struct slot_friend
 
 } // namespace slot
 
-using slot_t = slot::slot;
+using slot_t = slot_t;
 
 } // namespace sdbusplus

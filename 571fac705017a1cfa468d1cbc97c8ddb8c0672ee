@@ -52,6 +52,24 @@
       "parentUuid": "4742be34_fb6f98b0",
       "revId": "571fac705017a1cfa468d1cbc97c8ddb8c0672ee",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "20575274_b715adf9",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2026-04-10T17:39:40Z",
+      "side": 1,
+      "message": "\u003e \u003e\u003e services don\u0027t properly remove_interface, but they don\u0027t destroy objects unless application ends, so that\u0027s no problem\n\u003e \n\u003e \u003e ? Every application I know of uses `remove_interface()`. Can you give examples that don\u0027t?\n\u003e \n\u003e I literally picked one of the matches for `add_interface()` at random and found example first try: https://github.com/openbmc/phosphor-u-boot-env-mgr/blob/master/src/u-boot-env-mgr.cpp\n\nPoint taken.  I do see quite a few with a grep, but my intent is that I\u0027d like to get those cleaned up with RAII, but keeping this separate class working with the callback is slowing that down.\n\n\u003e \n\u003e It doesn\u0027t prove anything though. Just confirmed the hunch. I suspect it\u0027s okay, as interface is removed when the bus is destroyed.\n\u003e \n\u003e \u003e\u003e they do it \"old way\", because it\u0027s what majority of the code uses\n\u003e \n\u003e \u003e New code also seems to do it the \"old\" way, so that doesn\u0027t really track for me.\n\u003e \n\u003e Sure, perhaps no adoption comes from the fact, that the new API is just not known. I can see lot of destructors defined only for the sole purpose of calling `remove_interface()` bunch of times. In my experience, necessity of defining destructor just to free up resources, is not welcome with greatest enthusiasm. It\u0027s just yet another boilerplate code and source of errors I wish i didn\u0027t have to write.\n\nI don\u0027t really want to theorize here.  The point is that this API has existed for a very long time and even in new code isn\u0027t used.  If we want consistency, we can:\n1. try to get all repos to take patches to make_unique_interface.\n2. try to make dbus_interface itself an RAII\n\nThe later is what I\u0027m trying to accomplish, but this method stands in the way.\n\n\u003e \n\u003e All in all - I\u0027m not gatekeeping anything. I suspect this API had it\u0027s profits and merit, and limited adoption doesn\u0027t mean it\u0027s bad. Limited adoption makes it easier to drop it though. If it comes in your way I understand your sentiment.\n\u003e \n\u003e If end goal is to make `remove_interface()` obsolete, I won\u0027t mind how it\u0027s achieved, as this is step in the right direction.\n\n👍. Sounds like we\u0027re on the same page.  Ultimately, I want to turn remove_interface into a NOOP call, then we can start cleaning up over time.  Sounds like we closed this out.  I appreciate the discussion with you.",
+      "parentUuid": "59bac7f7_26b8d5ee",
+      "revId": "571fac705017a1cfa468d1cbc97c8ddb8c0672ee",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

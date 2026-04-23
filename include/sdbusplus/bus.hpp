@@ -23,47 +23,6 @@
 namespace sdbusplus
 {
 
-namespace bus
-{
-
-using busp_t = sd_bus*;
-struct bus;
-
-/* Methods for getting a new bus connection.
- *
- * There are two different bus types:
- *      - system
- *      - session ("user")
- *
- * If you call either `new_default` or `new_bus` you end up with a connection
- * to the default bus based on the current user; system if root, session
- * otherwise.
- *
- * sd-bus uses the word "default" to refer to a shared bus connection that it
- * saves in thread-local-storage.  The `new_default*` functions give a
- * connection to this thread-local-storage bus connection and not neceesarily a
- * new, unique bus connection.  This can be a very important distinction,
- * such as when writing test-cases that might require having both a server
- * and client connection.
- *
- * If you only expect to have a single bus connection in your process with a
- * single thread interacting with that connection, `new_default` is a fine
- * option.  Otherwise, you likely want `new_bus`.
- */
-
-/** @brief Get the shared instance of the 'default' bus. */
-bus new_default();
-/** @brief Get a new instance of a bus. */
-bus new_bus();
-/** @brief Get a new instance of the 'user' session bus. */
-bus new_user();
-/** @brief Get a new instance of the 'system' bus. */
-bus new_system();
-/** @brief Get the shared instance of the 'user' session bus. */
-bus new_default_user();
-/** @brief Get the shared instance of the 'system' bus. */
-bus new_default_system();
-
 namespace details
 {
 
@@ -117,11 +76,49 @@ struct bus_friend;
 
 } // namespace details
 
-/** @class bus
- *  @brief Provides C++ bindings to the sd_bus_* class functions.
- */
-struct bus
+struct bus_t
 {
+  public:
+    using busp_t = sd_bus*;
+
+    /* Methods for getting a new bus connection.
+     *
+     * There are two different bus types:
+     *      - system
+     *      - session ("user")
+     *
+     * If you call either `new_default` or `new_bus` you end up with a
+     * connection to the default bus based on the current user; system if root,
+     * session otherwise.
+     *
+     * sd-bus uses the word "default" to refer to a shared bus connection that
+     * it saves in thread-local-storage.  The `new_default*` functions give a
+     * connection to this thread-local-storage bus connection and not
+     * neceesarily a new, unique bus connection.  This can be a very important
+     * distinction, such as when writing test-cases that might require having
+     * both a server and client connection.
+     *
+     * If you only expect to have a single bus connection in your process with a
+     * single thread interacting with that connection, `new_default` is a fine
+     * option.  Otherwise, you likely want `new_bus`.
+     */
+
+    /** @brief Get the shared instance of the 'default' bus. */
+    static bus_t new_default();
+    /** @brief Get a new instance of a bus. */
+    static bus_t new_bus();
+    /** @brief Get a new instance of the 'user' session bus. */
+    static bus_t new_user();
+    /** @brief Get a new instance of the 'system' bus. */
+    static bus_t new_system();
+    /** @brief Get the shared instance of the 'user' session bus. */
+    static bus_t new_default_user();
+    /** @brief Get the shared instance of the 'system' bus. */
+    static bus_t new_default_system();
+
+    /** @class bus
+     *  @brief Provides C++ bindings to the sd_bus_* class functions.
+     */
     /* Define all of the basic class operations:
      *     Not allowed:
      *         - Default constructor to avoid nullptrs.
@@ -130,27 +127,27 @@ struct bus
      *         - Move operations.
      *         - Destructor.
      */
-    bus() = delete;
-    bus(const bus&) = delete;
-    bus& operator=(const bus&) = delete;
+    bus_t() = delete;
+    bus_t(const bus_t&) = delete;
+    bus_t& operator=(const bus_t&) = delete;
 
-    bus(bus&&) = default;
-    bus& operator=(bus&&) = default;
-    ~bus() = default;
+    bus_t(bus_t&&) = default;
+    bus_t& operator=(bus_t&&) = default;
+    ~bus_t() = default;
 
-    bus(busp_t b, sdbusplus::SdBusInterface* intf);
+    bus_t(busp_t b, sdbusplus::SdBusInterface* intf);
 
     /** @brief Conversion constructor from 'busp_t'.
      *
      *  Increments ref-count of the bus-pointer and releases it when done.
      */
-    explicit bus(busp_t b);
+    explicit bus_t(busp_t b);
 
     /** @brief Constructor for 'bus'.
      *
      *  Takes ownership of the bus-pointer and releases it when done.
      */
-    bus(busp_t b, std::false_type);
+    bus_t(busp_t b, std::false_type);
 
     /** @brief Sets the bus to be closed when this handle is destroyed. */
     void set_should_close(bool shouldClose)
@@ -236,7 +233,8 @@ struct bus
         return message_t(m, _intf, std::false_type());
     }
 
-    /** @brief Process waiting dbus messages or signals, discarding unhandled.
+    /** @brief Process waiting dbus messages or signals, discarding
+     * unhandled.
      */
     auto process_discard()
     {
@@ -550,7 +548,7 @@ struct bus
     /** @brief Trigger a systemd watchdog failure for this application. */
     void watchdog_trigger();
 
-    friend struct details::bus_friend;
+    friend struct sdbusplus::details::bus_friend;
 
   protected:
     busp_t get() noexcept
@@ -558,32 +556,59 @@ struct bus
         return _bus.get();
     }
     sdbusplus::SdBusInterface* _intf;
-    details::bus _bus;
+    sdbusplus::details::bus _bus;
 
   private:
     std::exception_ptr current_exception;
 };
 
+namespace bus
+{
+inline bus_t new_default()
+{
+    return sdbusplus::bus_t::new_default();
+}
+inline bus_t new_bus()
+{
+    return sdbusplus::bus_t::new_bus();
+}
+inline bus_t new_user()
+{
+    return sdbusplus::bus_t::new_user();
+}
+inline bus_t new_system()
+{
+    return sdbusplus::bus_t::new_system();
+}
+inline bus_t new_default_user()
+{
+    return sdbusplus::bus_t::new_default_user();
+}
+inline bus_t new_default_system()
+{
+    return sdbusplus::bus_t::new_default_system();
+}
+
+using bus [[deprecated("Use sdbusplus::bus_t")]] = sdbusplus::bus_t;
+
+} // namespace bus
+
 namespace details
 {
-
 // Some sdbusplus classes need to be able to pass the underlying bus pointer
-// along to sd_bus calls, but we don't want to make it available for everyone.
-// Define a class which can be inherited explicitly (intended for internal users
-// only) to get the underlying bus pointer.
+// along to sd_bus calls, but we don't want to make it available for
+// everyone. Define a class which can be inherited explicitly (intended for
+// internal users only) to get the underlying bus pointer.
 struct bus_friend
 {
-    static busp_t get_busp(sdbusplus::bus::bus& b) noexcept
+    static auto get_busp(sdbusplus::bus_t& b) noexcept
+        -> sdbusplus::bus_t::busp_t
     {
         return b.get();
     }
 };
 
 } // namespace details
-
-} // namespace bus
-
-using bus_t = bus::bus;
 
 /** @brief Get the dbus bus from the message.
  *

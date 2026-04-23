@@ -50,8 +50,14 @@ struct match : private sdbusplus::details::bus_friend
     slot_t _slot;
 };
 
+} // namespace match
+
+using match_t = match::match;
+
+} // namespace sdbusplus::bus
+
 /** Utilities for defining match rules based on the DBus specification */
-namespace rules
+namespace sdbusplus::match_rules
 {
 
 using namespace std::string_literals;
@@ -187,9 +193,9 @@ inline auto nameOwnerChanged(std::string_view s) noexcept
     return nameOwnerChanged().append(argN(0, s));
 }
 
-} // namespace rules
-} // namespace match
+} // namespace sdbusplus::match_rules
 
-using match_t = match::match;
-
-} // namespace sdbusplus::bus
+namespace sdbusplus::bus::match
+{
+namespace rules = sdbusplus::match_rules;
+}

@@ -43,13 +43,6 @@ struct ${interface.classname}
         % endfor
     };
 
-    struct property_names
-    {
-        % for p in interface.properties:
-        static constexpr auto ${p.snake_case} = "${p.name}";
-        % endfor
-    };
-
     using PropertiesVariant = sdbusplus::utility::dedup_variant_t<
         ${",\n        ".join(sorted(setOfPropertyTypes()))}>;
     % else:
@@ -57,10 +50,20 @@ struct ${interface.classname}
     % endif
 
     % if interface.methods:
+    % for method in interface.methods:
+    struct ${method.snake_case}_t
+    {
+        static constexpr auto name = "${method.name}";
+        using value_types = std::tuple<${method.parameter_types_as_list(interface)}>;
+        using return_type = ${method.cpp_return_type(interface)};
+    };
+    % endfor
+
     struct method_names
     {
         % for method in interface.methods:
-        static constexpr auto ${method.snake_case} = "${method.name}";
+        [[deprecated("Use ${method.snake_case}_t::name instead")]]
+        static constexpr auto ${method.snake_case} = ${method.snake_case}_t::name;
         % endfor
     };
     % endif
@@ -99,6 +102,26 @@ struct ${interface.classname}
         % endif
     static constexpr auto ${s.snake_case} = "${s.value}";
     % endfor
+
+    % if interface.properties:
+    % for p in interface.properties:
+    struct ${p.snake_case}_t
+    {
+        static constexpr auto name = "${p.name}";
+        using value_type = ${p.cppTypeParam(interface.name)};
+        ${p.snake_case}_t() = default;
+        explicit ${p.snake_case}_t(value_type) {}
+    };
+    % endfor
+
+    struct property_names
+    {
+        % for p in interface.properties:
+        [[deprecated("Use ${p.snake_case}_t::name instead")]]
+        static constexpr auto ${p.snake_case} = ${p.snake_case}_t::name;
+        % endfor
+    };
+    % endif
 
     % for e in interface.enums:
     /** @brief Convert a string to an appropriate enum value.

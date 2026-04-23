@@ -88,14 +88,12 @@ ${s.render(loader, "signal.aserver.emit.hpp.mako", signal=s, interface=interface
         _${interface.joinedName("_", "interface")}.emit_removed();
     }
 
-    /* Property access tags. */
-% for p in interface.properties:
-${p.render(loader, "property.aserver.tag.hpp.mako", property=p, interface=interface)}\
-% endfor
-
-    /* Method tags. */
+    // Import method and property tags from common
 % for m in interface.methods:
-${m.render(loader, "method.aserver.tag.hpp.mako", method=m, interface=interface)}\
+    using ${m.snake_case}_t = sdbusplus::common::${interface.cppNamespacedClass()}::${m.snake_case}_t;
+% endfor
+% for p in interface.properties:
+    using ${p.snake_case}_t = sdbusplus::common::${interface.cppNamespacedClass()}::${p.snake_case}_t;
 % endfor
 
 % for p in interface.properties:

@@ -10,7 +10,7 @@ TEST(MethodNames, TestMethodNames)
     // The property name is constexpr.
 
     constexpr auto methodName =
-        sdbusplus::common::server::TestWithMethod::method_names::update_value;
+        sdbusplus::common::server::TestWithMethod::update_value_t::name;
 
     // The method name can be used as part of error logs.
 
@@ -23,9 +23,8 @@ TEST(MethodNames, TestMethodNames)
 
     std::println(
         "using method {} \n",
-        sdbusplus::common::server::TestWithMethod::method_names::update_value);
+        sdbusplus::common::server::TestWithMethod::update_value_t::name);
 
-    EXPECT_EQ(
-        sdbusplus::common::server::TestWithMethod::method_names::update_value,
-        "UpdateValue");
+    EXPECT_EQ(sdbusplus::common::server::TestWithMethod::update_value_t::name,
+              "UpdateValue");
 }

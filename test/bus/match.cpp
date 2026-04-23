@@ -12,7 +12,7 @@ class Match : public ::testing::Test
 
     static auto matchRule()
     {
-        using namespace sdbusplus::bus::match::rules;
+        using namespace sdbusplus::match_rules;
         return nameOwnerChanged() + argN(0, busName);
     }
 

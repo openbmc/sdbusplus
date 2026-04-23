@@ -112,7 +112,7 @@ TEST_F(Context, DestructMatcherWithPendingAwait)
 
     bool ran = false;
     auto m = std::make_optional<sdbusplus::async::match>(
-        ctx(), sdbusplus::bus::match::rules::interfacesAdded(
+        ctx(), sdbusplus::match_rules::interfacesAdded(
                    "/this/is/a/bogus/path/for/SpawnMatcher"));
 
     // Await the match completion (which will never happen).
@@ -131,7 +131,7 @@ TEST_F(Context, DestructMatcherWithPendingAwaitAsTask)
     using namespace std::literals;
 
     auto m = std::make_optional<sdbusplus::async::match>(
-        ctx(), sdbusplus::bus::match::rules::interfacesAdded(
+        ctx(), sdbusplus::match_rules::interfacesAdded(
                    "/this/is/a/bogus/path/for/SpawnMatcher"));
 
     struct _

@@ -70,7 +70,7 @@ auto startup(sdbusplus::async::context& ctx) -> sdbusplus::async::task<>
     }
 
     // Create a match for the NameOwnerChanged signal.
-    namespace rules = sdbusplus::bus::match::rules;
+    namespace rules = sdbusplus::match_rules;
     auto match = sdbusplus::async::match(ctx, rules::nameOwnerChanged());
 
     // Listen for the signal 4 times...

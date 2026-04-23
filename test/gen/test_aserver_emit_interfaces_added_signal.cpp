@@ -52,8 +52,8 @@ int main()
     sdbusplus::server::manager_t manager(ctx.get_bus(), "/test");
 
     sdbusplus::async::match ifcAdded(
-        ctx, sdbusplus::bus::match::rules::interfacesAdded() +
-                 sdbusplus::bus::match::rules::sender(busName));
+        ctx, sdbusplus::match_rules::interfacesAdded() +
+                 sdbusplus::match_rules::sender(busName));
 
     ctx.spawn(waitForMatch(ctx, ifcAdded));
     ctx.spawn(shouldEmitSignal(ctx));

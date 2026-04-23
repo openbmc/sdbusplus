@@ -4,7 +4,7 @@
 #include <sdbusplus/exception.hpp>
 #include <sdbusplus/message.hpp>
 
-namespace sdbusplus::bus::match
+namespace sdbusplus
 {
 
 static slot_t makeMatch(SdBusInterface* intf, sd_bus* bus, const char* _match,
@@ -41,4 +41,4 @@ match::match(sdbusplus::bus_t& bus, const char* _match, callback_t callback) :
                     _callback.get()))
 {}
 
-} // namespace sdbusplus::bus::match
+} // namespace sdbusplus

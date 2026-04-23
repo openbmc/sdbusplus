@@ -10,10 +10,7 @@
 #include <memory>
 #include <string>
 
-namespace sdbusplus::bus
-{
-
-namespace match
+namespace sdbusplus
 {
 
 struct match : private sdbusplus::details::bus_friend
@@ -50,14 +47,8 @@ struct match : private sdbusplus::details::bus_friend
     slot_t _slot;
 };
 
-} // namespace match
-
-using match_t = match::match;
-
-} // namespace sdbusplus::bus
-
 /** Utilities for defining match rules based on the DBus specification */
-namespace sdbusplus::match_rules
+namespace match_rules
 {
 
 using namespace std::string_literals;
@@ -193,9 +184,15 @@ inline auto nameOwnerChanged(std::string_view s) noexcept
     return nameOwnerChanged().append(argN(0, s));
 }
 
-} // namespace sdbusplus::match_rules
+} // namespace match_rules
+
+} // namespace sdbusplus
 
 namespace sdbusplus::bus::match
 {
 namespace rules = sdbusplus::match_rules;
+}
+namespace sdbusplus::bus
+{
+using match_t = sdbusplus::match;
 }

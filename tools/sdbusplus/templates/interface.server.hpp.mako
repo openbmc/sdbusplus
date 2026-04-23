@@ -38,12 +38,14 @@ class ${interface.classname} :
          *  @param[in] bus - Bus to attach to.
          *  @param[in] path - Path to attach at.
          */
-        ${interface.classname}(bus_t& bus, const char* path) :
+        ${interface.classname}(sdbusplus::bus_t& bus,
+                     const char* path) :
             _${interface.joinedName("_", "interface")}(
                 bus, path, interface, _vtable, this),
             _sdbusplus_bus(bus) {}
 
-        ${interface.classname}(bus_t& bus, const sdbusplus::message::object_path& path) :
+        ${interface.classname}(sdbusplus::bus_t& bus,
+                     const sdbusplus::message::object_path& path) :
             ${interface.classname}(bus, path.str.c_str()) {}
 
     % if interface.properties:
@@ -54,7 +56,7 @@ class ${interface.classname} :
          *  @param[in] path - Path to attach at.
          *  @param[in] vals - Map of property name to value for initialization.
          */
-        ${interface.classname}(bus_t& bus, const char* path,
+        ${interface.classname}(sdbusplus::bus_t& bus, const char* path,
                      const std::map<std::string, PropertiesVariant>& vals,
                      bool skipSignal = false) :
             ${interface.classname}(bus, path)
@@ -65,7 +67,8 @@ class ${interface.classname} :
             }
         }
 
-        ${interface.classname}(bus_t& bus, const sdbusplus::message::object_path& path,
+        ${interface.classname}(sdbusplus::bus_t& bus,
+                     const sdbusplus::message::object_path& path,
                      const std::map<std::string, PropertiesVariant>& vals,
                      bool skipSignal = false) :
             ${interface.classname}(bus, path.str.c_str(), vals, skipSignal) {}
@@ -122,7 +125,7 @@ ${p.camelCase}(${p.cppTypeParam(interface.name)} value);
         }
 
         /** @return the bus instance */
-        bus_t& get_bus()
+        sdbusplus::bus_t& get_bus()
         {
             return  _sdbusplus_bus;
         }
@@ -148,7 +151,7 @@ ${ m.cpp_prototype(loader, interface=interface, ptype='callback-header') }
         static const vtable_t _vtable[];
         sdbusplus::server::interface_t
                 _${interface.joinedName("_", "interface")};
-        bus_t&  _sdbusplus_bus;
+        sdbusplus::bus_t&  _sdbusplus_bus;
 
     % for p in interface.properties:
         ${p.cppTypeParam(interface.name)} _${p.camelCase}${p.default_value(interface.name)};

@@ -88,16 +88,6 @@ ${s.render(loader, "signal.aserver.emit.hpp.mako", signal=s, interface=interface
         _${interface.joinedName("_", "interface")}.emit_removed();
     }
 
-    /* Property access tags. */
-% for p in interface.properties:
-${p.render(loader, "property.aserver.tag.hpp.mako", property=p, interface=interface)}\
-% endfor
-
-    /* Method tags. */
-% for m in interface.methods:
-${m.render(loader, "method.aserver.tag.hpp.mako", method=m, interface=interface)}\
-% endfor
-
 % for p in interface.properties:
 ${p.render(loader, "property.aserver.get.hpp.mako", property=p, interface=interface)}
 % endfor

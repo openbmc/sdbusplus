@@ -11,7 +11,7 @@ int main()
     // The property name is constexpr.
 
     constexpr auto propName =
-        sdbusplus::common::server::Test::property_names::some_value;
+        sdbusplus::common::server::Test::some_value_t::name;
 
     // The property name can be used as part of error logs.
 
@@ -23,10 +23,9 @@ int main()
     // it's DBus interactions.
 
     std::println("using property {} \n",
-                 sdbusplus::common::server::Test2::property_names::new_value);
+                 sdbusplus::common::server::Test2::new_value_t::name);
 
-    EXPECT_EQ(sdbusplus::common::server::Test2::property_names::new_value,
-              "NewValue");
+    EXPECT_EQ(sdbusplus::common::server::Test2::new_value_t::name, "NewValue");
 
     return 0;
 }

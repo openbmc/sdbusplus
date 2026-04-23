@@ -38,7 +38,7 @@ struct compose;
 template <class... Args>
 struct object :
     details::compose<Args...>,
-    private sdbusplus::bus::details::bus_friend
+    private sdbusplus::details::bus_friend
 {
     /* Define all of the basic class operations:
      *     Not allowed:

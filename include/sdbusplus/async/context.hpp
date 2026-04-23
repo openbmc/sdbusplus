@@ -38,10 +38,10 @@ struct context_friend;
  *  `sd_bus_process` calls are performed.  There is a condition-variable based
  *  handshake between the two threads to accomplish this interaction.
  */
-class context : public bus::details::bus_friend
+class context : public sdbusplus::details::bus_friend
 {
   public:
-    explicit context(bus_t&& bus = bus::new_bus());
+    explicit context(bus_t&& bus = bus_t::new_bus());
     context(context&&) = delete;
     context(const context&) = delete;
 

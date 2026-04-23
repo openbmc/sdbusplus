@@ -19,7 +19,7 @@ namespace manager
  *  Wraps sd_bus_add_object_manager so that an sd-bus owned object manager
  *  can be installed at a path and automatically removed when destructed.
  */
-struct manager : private sdbusplus::bus::details::bus_friend
+struct manager : private sdbusplus::details::bus_friend
 {
   private:
     slot_t _slot;

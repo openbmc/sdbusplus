@@ -50,7 +50,7 @@ namespace proxy_ns
  */
 template <bool S = false, bool P = false, bool I = false,
           bool Preserved = false>
-struct proxy : private sdbusplus::bus::details::bus_friend
+struct proxy : private sdbusplus::details::bus_friend
 {
     // Some typedefs to reduce template noise...
 

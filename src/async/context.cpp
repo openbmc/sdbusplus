@@ -24,7 +24,7 @@ namespace details
  *  task `co_await`ing Senders over and over.  This class is the completion
  *  handling for the Sender (to get it back to the Receiver, ie. the worker).
  */
-struct wait_process_completion : context_ref, bus::details::bus_friend
+struct wait_process_completion : context_ref, sdbusplus::details::bus_friend
 {
     explicit wait_process_completion(context& ctx) : context_ref(ctx) {}
     virtual ~wait_process_completion() = default;

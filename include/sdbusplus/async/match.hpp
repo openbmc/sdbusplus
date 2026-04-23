@@ -22,7 +22,7 @@ struct match_completion;
  *  This class registers a signal match pattern with the dbus and generates
  *  Senders using `next` to await the next matching signal.
  */
-class match : private bus::details::bus_friend
+class match : private sdbusplus::details::bus_friend
 {
   public:
     match() = delete;

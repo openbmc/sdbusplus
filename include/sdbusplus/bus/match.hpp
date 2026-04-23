@@ -16,7 +16,7 @@ namespace sdbusplus::bus
 namespace match
 {
 
-struct match : private sdbusplus::bus::details::bus_friend
+struct match : private sdbusplus::details::bus_friend
 {
     /** @brief Register a signal match.
      *

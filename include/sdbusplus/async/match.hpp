@@ -55,7 +55,7 @@ class match : private sdbusplus::details::bus_friend
     friend match_ns::match_completion;
 
   private:
-    sdbusplus::slot_t slot;
+    slot slot_;
 
     std::mutex lock{};
     std::queue<sdbusplus::message_t> queue{};
@@ -70,7 +70,7 @@ class match : private sdbusplus::details::bus_friend
      */
     void handle_completion(std::unique_lock<std::mutex>&&) noexcept;
 
-    slot_t makeMatch(context& ctx, const std::string_view& pattern);
+    slot makeMatch(context& ctx, const std::string_view& pattern);
 };
 
 namespace match_ns

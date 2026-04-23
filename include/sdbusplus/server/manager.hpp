@@ -22,18 +22,17 @@ namespace manager
 struct manager : private sdbusplus::details::bus_friend
 {
   private:
-    slot_t _slot;
+    slot _slot;
 
-    static slot_t makeManager(SdBusInterface* intf, sd_bus* bus,
-                              const char* path)
+    static slot makeManager(SdBusInterface* intf, sd_bus* bus, const char* path)
     {
-        sd_bus_slot* slot = nullptr;
-        intf->sd_bus_add_object_manager(bus, &slot, path);
-        return slot_t{slot, intf};
+        sd_bus_slot* s = nullptr;
+        intf->sd_bus_add_object_manager(bus, &s, path);
+        return {s, intf};
     }
 
-    static slot_t makeManager(SdBusInterface* intf, sd_bus* bus,
-                              const sdbusplus::object_path& path)
+    static slot makeManager(SdBusInterface* intf, sd_bus* bus,
+                            const sdbusplus::object_path& path)
     {
         return makeManager(intf, bus, path.str.c_str());
     }

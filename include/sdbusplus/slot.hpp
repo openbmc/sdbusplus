@@ -8,13 +8,6 @@
 
 namespace sdbusplus
 {
-
-namespace slot
-{
-
-using slotp_t = sd_bus_slot*;
-struct slot;
-
 namespace details
 {
 
@@ -23,7 +16,7 @@ struct SlotDeleter
 {
     explicit SlotDeleter(SdBusInterface* intf) : intf(intf) {}
 
-    void operator()(slotp_t ptr) const
+    void operator()(sd_bus_slot* ptr) const
     {
         intf->sd_bus_slot_unref(ptr);
     }
@@ -42,8 +35,10 @@ struct slot_friend;
  */
 struct slot
 {
+    using slotp_t = sd_bus_slot*;
+
     /** @brief Empty (unused) slot */
-    slot() : _slot(nullptr, details::SlotDeleter(&sdbus_impl)) {}
+    slot() : _slot(nullptr, sdbusplus::details::SlotDeleter(&sdbus_impl)) {}
     explicit slot(std::nullptr_t) : slot() {}
 
     /** @brief Conversion constructor for 'slotp_t'.
@@ -51,7 +46,7 @@ struct slot
      *  Takes ownership of the slot-pointer and releases it when done.
      */
     slot(slotp_t s, sdbusplus::SdBusInterface* intf) :
-        _slot(s, details::SlotDeleter(intf))
+        _slot(s, sdbusplus::details::SlotDeleter(intf))
     {}
 
     /** @brief Release ownership of the stored slot-pointer. */
@@ -66,7 +61,7 @@ struct slot
         return bool(_slot);
     }
 
-    friend struct details::slot_friend;
+    friend struct sdbusplus::details::slot_friend;
 
   private:
     slotp_t get() noexcept
@@ -85,7 +80,8 @@ namespace details
 // only) to get the underlying bus pointer.
 struct slot_friend
 {
-    static slotp_t get_slotp(sdbusplus::slot::slot& s) noexcept
+    static auto get_slotp(sdbusplus::slot& s) noexcept
+        -> sdbusplus::slot::slotp_t
     {
         return s.get();
     }
@@ -93,8 +89,6 @@ struct slot_friend
 
 } // namespace details
 
-} // namespace slot
-
-using slot_t = slot::slot;
+using slot_t = slot;
 
 } // namespace sdbusplus

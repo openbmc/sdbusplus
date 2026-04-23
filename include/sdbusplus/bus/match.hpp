@@ -44,7 +44,7 @@ struct match : private sdbusplus::details::bus_friend
 
   private:
     std::unique_ptr<callback_t> _callback;
-    slot_t _slot;
+    slot _slot;
 };
 
 /** Utilities for defining match rules based on the DBus specification */

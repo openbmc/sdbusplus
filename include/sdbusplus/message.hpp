@@ -64,7 +64,7 @@ void call_async_del(void* userdata) noexcept
 /** @class message
  *  @brief Provides C++ bindings to the sd_bus_message_* class functions.
  */
-class message : private sdbusplus::slot::details::slot_friend
+class message : private sdbusplus::details::slot_friend
 {
     /* Define all of the basic class operations:
      *     Allowed:
@@ -446,20 +446,20 @@ class message : private sdbusplus::slot::details::slot_friend
      *  @return The slot handle that manages the lifetime of the call object.
      */
     template <typename Cb>
-    [[nodiscard]] slot_t call_async(
+    [[nodiscard]] slot call_async(
         Cb&& cb, std::optional<SdBusDuration> timeout = std::nullopt)
     {
-        sd_bus_slot* slot;
+        sd_bus_slot* slotp;
         auto timeout_us = timeout ? timeout->count() : 0;
         using CbT = std::remove_cv_t<std::remove_reference_t<Cb>>;
-        int r = _intf->sd_bus_call_async(nullptr, &slot, get(),
+        int r = _intf->sd_bus_call_async(nullptr, &slotp, get(),
                                          details::call_async_cb<CbT>, nullptr,
                                          timeout_us);
         if (r < 0)
         {
             throw exception::SdBusError(-r, "sd_bus_call_async");
         }
-        slot_t ret(slot, _intf);
+        slot ret(slotp, _intf);
 
         if constexpr (std::is_pointer_v<CbT>)
         {

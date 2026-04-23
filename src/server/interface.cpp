@@ -9,18 +9,18 @@ namespace server
 namespace interface
 {
 
-static slot_t makeObjVtable(SdBusInterface* intf, sd_bus* bus, const char* path,
-                            const char* interf,
-                            const sdbusplus::vtable_t* vtable, void* context)
+static auto makeObjVtable(SdBusInterface* intf, sd_bus* bus, const char* path,
+                          const char* interf, const sdbusplus::vtable_t* vtable,
+                          void* context) -> sdbusplus::slot
 {
-    sd_bus_slot* slot;
-    int r = intf->sd_bus_add_object_vtable(bus, &slot, path, interf, vtable,
-                                           context);
+    sd_bus_slot* s;
+    int r =
+        intf->sd_bus_add_object_vtable(bus, &s, path, interf, vtable, context);
     if (r < 0)
     {
         throw exception::SdBusError(-r, "sd_bus_add_object_vtable");
     }
-    return slot_t{slot, intf};
+    return {s, intf};
 }
 
 interface::interface(sdbusplus::bus_t& bus, const char* path,

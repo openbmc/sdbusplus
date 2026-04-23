@@ -43,13 +43,6 @@ struct ${interface.classname}
         % endfor
     };
 
-    struct property_names
-    {
-        % for p in interface.properties:
-        static constexpr auto ${p.snake_case} = "${p.name}";
-        % endfor
-    };
-
     using PropertiesVariant = sdbusplus::utility::dedup_variant_t<
         ${",\n        ".join(sorted(setOfPropertyTypes()))}>;
     % else:
@@ -57,10 +50,14 @@ struct ${interface.classname}
     % endif
 
     % if interface.methods:
+% for method in interface.methods:
+${method.render(loader, "method.common.tag.hpp.mako", method=method, interface=interface)}\
+% endfor
+
     struct method_names
     {
         % for method in interface.methods:
-        static constexpr auto ${method.snake_case} = "${method.name}";
+        static constexpr auto ${method.snake_case} = ${method.snake_case}_t::name;
         % endfor
     };
     % endif
@@ -99,6 +96,19 @@ struct ${interface.classname}
         % endif
     static constexpr auto ${s.snake_case} = "${s.value}";
     % endfor
+
+    % if interface.properties:
+% for p in interface.properties:
+${p.render(loader, "property.common.tag.hpp.mako", property=p, interface=interface)}\
+% endfor
+
+    struct property_names
+    {
+        % for p in interface.properties:
+        static constexpr auto ${p.snake_case} = ${p.snake_case}_t::name;
+        % endfor
+    };
+    % endif
 
     % for e in interface.enums:
     /** @brief Convert a string to an appropriate enum value.

@@ -32,7 +32,10 @@ if not python_bin.found()
     error('No valid python3 installation found')
 endif
 
-root_inc = include_directories('include')
+root_inc = [
+    include_directories('include'),
+    include_directories('include/gen'),
+]
 
 libsdbusplus_src = files(
     'src/async/barrier.cpp',
@@ -50,9 +53,24 @@ libsdbusplus_src = files(
     'src/server/transaction.cpp',
 )
 
+should_generate_cpp = true
+should_generate_markdown = false
+should_generate_registry = false
+
+subdir('tools')
+
+# Generated sources from YAML files
+yaml_selected_subdirs = ['org']
+if get_option('examples').allowed()
+    yaml_selected_subdirs += ['net']
+endif
+
+subdir('include/gen')
+
 libsdbusplus = library(
     'sdbusplus',
     libsdbusplus_src,
+    generated_sources,
     include_directories: root_inc,
     dependencies: [libsystemd_pkg, nlohmann_json_dep, stdexec_dep],
     version: meson.project_version(),
@@ -81,12 +99,6 @@ sdbusplus_dep = declare_dependency(
 if meson.is_subproject()
     sdbusplus_dep = sdbusplus_dep.as_system()
 endif
-
-should_generate_cpp = true
-should_generate_markdown = false
-should_generate_registry = false
-
-subdir('tools')
 
 if get_option('examples').allowed()
     subdir('example')

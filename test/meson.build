@@ -46,6 +46,7 @@ foreach t : tests
         executable(
             'test-' + t.underscorify(),
             t + '.cpp',
+            generated_sources,
             dependencies: [
                 gtest_dep,
                 gmock_dep,
@@ -66,6 +67,7 @@ test(
     executable(
         'test-bus_aio',
         'bus/aio.cpp',
+        generated_sources,
         dependencies: [boost_dep, gmock_dep, gtest_dep, sdbusplus_dep],
     ),
 )
@@ -76,6 +78,7 @@ test(
         'test-vtable',
         'vtable/vtable.cpp',
         'vtable/vtable_c.c',
+        generated_sources,
         dependencies: [gtest_dep, sdbusplus_dep],
     ),
 )
@@ -106,6 +109,7 @@ test(
     executable(
         'test-server',
         'server/object.cpp',
+        generated_sources,
         dependencies: [gmock_dep, gtest_dep, server_test_dep],
     ),
 )
@@ -115,6 +119,7 @@ test(
     executable(
         'test-server-message-variant',
         'server/message_variant.cpp',
+        generated_sources,
         dependencies: [gmock_dep, gtest_dep, server_test_dep],
     ),
 )

@@ -1,5 +1,10 @@
+% if events.sdbusplus_internal:
+struct ${event.CamelCase} final :
+    public sdbusplus::exception::generated_internal_event<${event.CamelCase}>
+% else:
 struct ${event.CamelCase} final :
     public sdbusplus::exception::generated_event<${event.CamelCase}>
+% endif
 {
     ${event.CamelCase}(const nlohmann::json&, const std::source_location&);
 %if len(event.metadata) == 0:

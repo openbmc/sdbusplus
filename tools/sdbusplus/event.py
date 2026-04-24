@@ -182,6 +182,7 @@ class Event(NamedElement, Renderer):
 
     def __init__(self, **kwargs):
         self.version = kwargs.pop("version")
+        self.sdbusplus_internal = kwargs.pop("sdbusplus-internal", False)
         self.errors = [
             EventElement(**n, is_error=True) for n in kwargs.pop("errors", [])
         ]

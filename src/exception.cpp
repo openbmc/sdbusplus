@@ -30,6 +30,11 @@ int generated_exception::get_errno() const noexcept
     return EIO;
 }
 
+int generated_internal_exception::get_errno() const noexcept
+{
+    return EIO;
+}
+
 SdBusError::SdBusError(int error_in, const char* prefix,
                        SdBusInterface* intf_in) :
     SdBusError(error_in, std::string(prefix), intf_in)
@@ -211,11 +216,16 @@ int UnhandledStop::get_errno() const noexcept
     return ECANCELED;
 }
 
-static std::unordered_map<std::string, sdbusplus::sdbuspp::register_hook>
-    event_hooks = {};
+static auto& get_event_hooks()
+{
+    static std::unordered_map<std::string, sdbusplus::sdbuspp::register_hook>
+        event_hooks;
+    return event_hooks;
+}
 
 void throw_via_json(const nlohmann::json& j, const std::source_location& source)
 {
+    auto& event_hooks = get_event_hooks();
     for (const auto& i : j.items())
     {
         if (auto it = event_hooks.find(i.key()); it != event_hooks.end())
@@ -228,15 +238,41 @@ void throw_via_json(const nlohmann::json& j, const std::source_location& source)
 auto known_events() -> std::vector<std::string>
 {
     std::vector<std::string> result{};
+    auto& event_hooks = get_event_hooks();
 
     for (const auto& [key, _] : event_hooks)
     {
         result.emplace_back(key);
     }
 
-    std::ranges::sort(result);
+    std::sort(result.begin(), result.end());
 
     return result;
+}
+
+void throw_dbus_error(const char* method, sd_bus_error* error,
+                      const std::source_location& source)
+{
+    if (error == nullptr || !sd_bus_error_is_set(error))
+    {
+        throw SdBusError(error, method);
+    }
+
+    const char* name = error->name;
+    const char* details = error->message ? error->message : "";
+
+    // Construct JSON to trigger the appropriate registered event
+    nlohmann::json j;
+    nlohmann::json event_data;
+    event_data["METHOD"] = method;
+    event_data["DETAILS"] = details;
+    j[name] = event_data;
+
+    // Try to throw via the event system
+    throw_via_json(j, source);
+
+    // Fall back to generic SdBusError if not recognized
+    throw SdBusError(error, method);
 }
 
 } // namespace sdbusplus::exception
@@ -246,7 +282,7 @@ namespace sdbusplus::sdbuspp
 
 void register_event(const std::string& event, register_hook throw_hook)
 {
-    sdbusplus::exception::event_hooks.emplace(event, throw_hook);
+    sdbusplus::exception::get_event_hooks().emplace(event, throw_hook);
 }
 
 } // namespace sdbusplus::sdbuspp

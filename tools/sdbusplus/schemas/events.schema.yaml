@@ -135,6 +135,9 @@ properties:
         description:
             The version of the file, which will be used as the Redfish Message
             Registry version.
+    sdbusplus-internal:
+        type: boolean
+        description: Reserved for sdbusplus internal use.
     errors:
         type: array
         items:

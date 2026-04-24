@@ -77,7 +77,7 @@ struct callback_operation
             // Check 'e' for error.
             if ((nullptr != e) && (sd_bus_error_is_set(e)))
             {
-                throw exception::SdBusError(e, "callback");
+                exception::throw_dbus_error("async::callback", e);
             }
 
             message_t msg{m};
@@ -87,7 +87,7 @@ struct callback_operation
             {
                 sd_bus_error err = SD_BUS_ERROR_NULL;
                 sd_bus_error_copy(&err, msg.get_error());
-                throw exception::SdBusError(&err, "method");
+                exception::throw_dbus_error("async::method", &err);
             }
 
             execution::set_value(std::move(self.receiver), std::move(msg));

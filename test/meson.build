@@ -124,7 +124,6 @@ test(
     executable(
         'test-aserver-invalid-enum',
         'gen/test_aserver_invalid_enum.cpp',
-        generated_sources,
         include_directories: [root_inc],
         dependencies: [sdbusplus_dep, server_test_dep, gtest_dep],
     ),
@@ -135,7 +134,6 @@ test(
     executable(
         'test-json',
         'server/json.cpp',
-        generated_sources,
         include_directories: [root_inc],
         dependencies: [
             sdbusplus_dep,
@@ -151,7 +149,6 @@ test(
     executable(
         'test-aserver-signal-action',
         'gen/test_aserver_signal_action.cpp',
-        generated_sources,
         include_directories: [root_inc],
         dependencies: [sdbusplus_dep, server_test_dep, gmock_dep, gtest_dep],
     ),
@@ -175,7 +172,6 @@ foreach t : uninit_tests
         executable(
             t,
             f'gen/@t@.cpp',
-            generated_sources,
             include_directories: [root_inc],
             dependencies: [sdbusplus_dep, server_test_dep, gtest_dep],
         ),

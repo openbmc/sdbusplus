@@ -43,32 +43,26 @@ executable(
     dependencies: asio_dep,
 )
 
-yaml_selected_subdirs = ['net']
-subdir('gen')
-
 executable(
     'calculator-server',
     'calculator-server.cpp',
-    generated_sources,
     implicit_include_directories: false,
-    include_directories: include_directories('gen'),
+    include_directories: root_inc,
     dependencies: sdbusplus_dep,
 )
 
 executable(
     'calculator-aserver',
     'calculator-aserver.cpp',
-    generated_sources,
     implicit_include_directories: false,
-    include_directories: include_directories('gen'),
+    include_directories: root_inc,
     dependencies: sdbusplus_dep,
 )
 
 executable(
     'calculator-client',
     'calculator-client.cpp',
-    generated_sources,
     implicit_include_directories: false,
-    include_directories: include_directories('gen'),
+    include_directories: root_inc,
     dependencies: sdbusplus_dep,
 )

@@ -241,7 +241,7 @@ class Property(NamedElement, Renderer):
             "registryName": "string",
         },
         "object_path": {
-            "cppName": "sdbusplus::message::object_path",
+            "cppName": "sdbusplus::object_path",
             "params": 0,
             "registryName": "string",
         },

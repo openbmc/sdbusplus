@@ -45,7 +45,7 @@ class ${interface.classname} :
             _sdbusplus_bus(bus) {}
 
         ${interface.classname}(sdbusplus::bus_t& bus,
-                     const sdbusplus::message::object_path& path) :
+                     const sdbusplus::object_path& path) :
             ${interface.classname}(bus, path.str.c_str()) {}
 
     % if interface.properties:
@@ -68,7 +68,7 @@ class ${interface.classname} :
         }
 
         ${interface.classname}(sdbusplus::bus_t& bus,
-                     const sdbusplus::message::object_path& path,
+                     const sdbusplus::object_path& path,
                      const std::map<std::string, PropertiesVariant>& vals,
                      bool skipSignal = false) :
             ${interface.classname}(bus, path.str.c_str(), vals, skipSignal) {}

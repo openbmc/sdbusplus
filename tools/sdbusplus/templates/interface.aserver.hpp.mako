@@ -51,7 +51,7 @@ class ${interface.classname} :
         _${interface.joinedName("_", "interface")}(
             _context(), path, interface, _vtable, this)
     {}
-    explicit ${interface.classname}(const sdbusplus::message::object_path& path) :
+    explicit ${interface.classname}(const sdbusplus::object_path& path) :
         _${interface.joinedName("_", "interface")}(
             _context(), path, interface, _vtable, this)
     {}
@@ -67,7 +67,7 @@ class ${interface.classname} :
     }
 
     ${interface.classname}(
-        const sdbusplus::message::object_path& path,
+        const sdbusplus::object_path& path,
         [[maybe_unused]] ${interface.classname}::properties_t props) :
         ${interface.classname}(path.str.c_str(), props)
     {}

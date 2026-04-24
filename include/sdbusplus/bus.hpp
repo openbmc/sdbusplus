@@ -350,7 +350,7 @@ struct bus
             _intf->sd_bus_call(_bus.get(), m.get(), timeout_us, &error, &reply);
         if (r < 0)
         {
-            throw exception::SdBusError(&error, "sd_bus_call");
+            exception::throw_dbus_error("sd_bus_call", &error);
         }
 
         return message_t(reply, _intf, std::false_type());
@@ -372,7 +372,7 @@ struct bus
                                    nullptr);
         if (r < 0)
         {
-            throw exception::SdBusError(&error, "sd_bus_call noreply");
+            exception::throw_dbus_error("sd_bus_call[noreply]", &error);
         }
     }
     auto call_noreply(message_t& m,

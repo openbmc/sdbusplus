@@ -435,7 +435,7 @@ class message : private sdbusplus::slot::details::slot_friend
         int r = _intf->sd_bus_call(nullptr, get(), timeout_us, &error, &reply);
         if (r < 0)
         {
-            throw exception::SdBusError(&error, "sd_bus_call");
+            exception::throw_dbus_error("sd_bus_call", &error);
         }
 
         return message(reply, _intf, std::false_type());

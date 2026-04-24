@@ -135,6 +135,14 @@ properties:
         description:
             The version of the file, which will be used as the Redfish Message
             Registry version.
+    sdbusplus-internal:
+        type: boolean
+        description:
+            When set to true, generated exception classes will inherit from
+            sdbusplus::internal_exception instead of
+            sdbusplus::generated_exception. This allows the exceptions to be
+            caught by sdbusplus server bindings that catch internal_exception.
+            Default is false.
     errors:
         type: array
         items:

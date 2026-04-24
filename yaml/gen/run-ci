@@ -1,0 +1,15 @@
+#!/bin/bash
+cd "$(dirname "$0")" || exit
+./regenerate-meson || exit
+rc=0
+git --no-pager diff --exit-code -- . || rc=$?
+untracked="$(git ls-files --others --exclude-standard -- .)" || rc=$?
+if [[ -n "${untracked}" ]]; then
+    echo "Untracked files:" >&2
+    echo "${untracked}" >&2
+    rc=1
+fi
+if (( rc != 0 )); then
+    echo "Generated meson files differ from expected values" >&2
+    exit 1
+fi

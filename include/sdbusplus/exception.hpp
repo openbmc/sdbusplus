@@ -96,6 +96,58 @@ struct generated_event : public generated_event_base
 struct internal_exception : public exception
 {};
 
+/** base exception class for all errors created by the sdbus++ generator
+ *  that should be treated as internal exceptions */
+struct generated_internal_exception : public internal_exception
+{
+    int get_errno() const noexcept override;
+};
+
+/** Non-templated base for all new errors and events created by the sdbus++
+ * generator that should be treated as internal exceptions */
+struct generated_internal_event_base : public generated_internal_exception
+{
+    virtual auto to_json() const -> nlohmann::json = 0;
+    virtual int severity() const noexcept = 0;
+};
+
+/** base exception for all new errors and events created by the sdbus++
+ * generator that should be treated as internal exceptions */
+template <typename Event>
+struct generated_internal_event : public generated_internal_event_base
+{
+    const char* name() const noexcept override
+    {
+        return Event::errName;
+    }
+
+    const char* description() const noexcept override
+    {
+        return Event::errDesc;
+    }
+
+    const char* what() const noexcept override
+    {
+        return Event::errWhat;
+    }
+
+    int get_errno() const noexcept override
+    {
+        return Event::errErrno;
+    }
+
+    int severity() const noexcept override
+    {
+        return Event::errSeverity;
+    }
+
+    template <utility::details::consteval_string_holder V>
+    using metadata_t = utility::consteval_string<V>;
+
+  protected:
+    mutable std::string jsonString;
+};
+
 /** Exception for when an underlying sd_bus method call fails. */
 class SdBusError final : public internal_exception
 {
@@ -133,6 +185,16 @@ class SdBusError final : public internal_exception
     /** Helper to reduce duplicate move logic */
     void move(SdBusError&& other);
 };
+
+/** Throw a specific D-Bus error exception based on the sd_bus_error.
+ *
+ * @param[in] method - The method name where the error occurred.
+ * @param[in] error - The sd_bus_error containing the error details.
+ * @param[in] source - The source code location of the origin.
+ */
+[[noreturn]] void throw_dbus_error(
+    const char* method, sd_bus_error* error,
+    const std::source_location& source = std::source_location::current());
 
 /** Exception for when an invalid conversion from string to enum is
  *  attempted. */

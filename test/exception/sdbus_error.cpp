@@ -1,5 +1,6 @@
 #include <systemd/sd-bus.h>
 
+#include <sdbusplus/bus.hpp>
 #include <sdbusplus/exception.hpp>
 #include <sdbusplus/test/sdbus_mock.hpp>
 
@@ -9,6 +10,8 @@
 #include <utility>
 
 #include <gtest/gtest.h>
+
+#include <org/freedesktop/DBus/Error/event.hpp>
 
 #ifdef __clang__
 #pragma clang diagnostic push
@@ -177,6 +180,23 @@ TEST(SdBusError, CatchBaseClassExceptions)
         sdbusplus::exception::exception);
     EXPECT_THROW(
         { throw SdBusError(-EINVAL, "std::exception"); }, std::exception);
+}
+
+TEST(SdBusError, DbusErrorMapping)
+{
+    // Test that calling a method on a non-existent service throws
+    // an exception with the expected error name
+    auto bus = sdbusplus::bus::new_default();
+
+    // Try to call a method on a service that doesn't exist
+    auto method = bus.new_method_call("xyz.openbmc_project.bogus_service",
+                                      "/xyz/openbmc_project/bogus/object",
+                                      "xyz.openbmc_project.bogus.interface",
+                                      "BogusMethod");
+
+    // Should throw a specific ServiceUnknown exception
+    EXPECT_THROW(bus.call(method),
+                 sdbusplus::error::org::freedesktop::d_bus::Error::ServiceUnknown);
 }
 
 } // namespace

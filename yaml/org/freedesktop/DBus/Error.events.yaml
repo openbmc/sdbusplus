@@ -1,0 +1,513 @@
+version: 1.0.0
+sdbusplus-internal: true
+
+errors:
+    - name: Failed
+      severity: warning
+      errno: EACCES
+      en:
+          message: An operation failed.
+      metadata:
+          - name: Method
+            description: The method where the error occurred.
+            type: string
+            primary: false
+          - name: Details
+            description: The detailed error message.
+            type: string
+            primary: false
+
+    - name: NoMemory
+      severity: warning
+      errno: ENOMEM
+      en:
+          message: Out of memory.
+      metadata:
+          - name: Method
+            description: The method where the error occurred.
+            type: string
+            primary: false
+          - name: Details
+            description: The detailed error message.
+            type: string
+            primary: false
+
+    - name: ServiceUnknown
+      severity: warning
+      errno: EHOSTUNREACH
+      en:
+          message: The name was not provided by any .service files.
+      metadata:
+          - name: Method
+            description: The method where the error occurred.
+            type: string
+            primary: false
+          - name: Details
+            description: The detailed error message.
+            type: string
+            primary: false
+
+    - name: NameHasNoOwner
+      severity: warning
+      errno: ENXIO
+      en:
+          message: The name has no owner.
+      metadata:
+          - name: Method
+            description: The method where the error occurred.
+            type: string
+            primary: false
+          - name: Details
+            description: The detailed error message.
+            type: string
+            primary: false
+
+    - name: NoReply
+      severity: warning
+      errno: ETIMEDOUT
+      en:
+          message: No reply received.
+      metadata:
+          - name: Method
+            description: The method where the error occurred.
+            type: string
+            primary: false
+          - name: Details
+            description: The detailed error message.
+            type: string
+            primary: false
+
+    - name: IOError
+      severity: warning
+      errno: EIO
+      en:
+          message: Input/output error.
+      metadata:
+          - name: Method
+            description: The method where the error occurred.
+            type: string
+            primary: false
+          - name: Details
+            description: The detailed error message.
+            type: string
+            primary: false
+
+    - name: BadAddress
+      severity: warning
+      errno: EADDRNOTAVAIL
+      en:
+          message: Bad address.
+      metadata:
+          - name: Method
+            description: The method where the error occurred.
+            type: string
+            primary: false
+          - name: Details
+            description: The detailed error message.
+            type: string
+            primary: false
+
+    - name: NotSupported
+      severity: warning
+      errno: EOPNOTSUPP
+      en:
+          message: Not supported.
+      metadata:
+          - name: Method
+            description: The method where the error occurred.
+            type: string
+            primary: false
+          - name: Details
+            description: The detailed error message.
+            type: string
+            primary: false
+
+    - name: LimitsExceeded
+      severity: warning
+      errno: ENOBUFS
+      en:
+          message: Limits exceeded.
+      metadata:
+          - name: Method
+            description: The method where the error occurred.
+            type: string
+            primary: false
+          - name: Details
+            description: The detailed error message.
+            type: string
+            primary: false
+
+    - name: AccessDenied
+      severity: warning
+      errno: EACCES
+      en:
+          message: Access denied.
+      metadata:
+          - name: Method
+            description: The method where the error occurred.
+            type: string
+            primary: false
+          - name: Details
+            description: The detailed error message.
+            type: string
+            primary: false
+
+    - name: AuthFailed
+      severity: warning
+      errno: EACCES
+      en:
+          message: Authentication failed.
+      metadata:
+          - name: Method
+            description: The method where the error occurred.
+            type: string
+            primary: false
+          - name: Details
+            description: The detailed error message.
+            type: string
+            primary: false
+
+    - name: NoServer
+      severity: warning
+      errno: EHOSTDOWN
+      en:
+          message: No server.
+      metadata:
+          - name: Method
+            description: The method where the error occurred.
+            type: string
+            primary: false
+          - name: Details
+            description: The detailed error message.
+            type: string
+            primary: false
+
+    - name: Timeout
+      severity: warning
+      errno: ETIMEDOUT
+      en:
+          message: Timeout occurred.
+      metadata:
+          - name: Method
+            description: The method where the error occurred.
+            type: string
+            primary: false
+          - name: Details
+            description: The detailed error message.
+            type: string
+            primary: false
+
+    - name: NoNetwork
+      severity: warning
+      errno: ENONET
+      en:
+          message: No network.
+      metadata:
+          - name: Method
+            description: The method where the error occurred.
+            type: string
+            primary: false
+          - name: Details
+            description: The detailed error message.
+            type: string
+            primary: false
+
+    - name: AddressInUse
+      severity: warning
+      errno: EADDRINUSE
+      en:
+          message: Address in use.
+      metadata:
+          - name: Method
+            description: The method where the error occurred.
+            type: string
+            primary: false
+          - name: Details
+            description: The detailed error message.
+            type: string
+            primary: false
+
+    - name: Disconnected
+      severity: warning
+      errno: ECONNRESET
+      en:
+          message: Disconnected.
+      metadata:
+          - name: Method
+            description: The method where the error occurred.
+            type: string
+            primary: false
+          - name: Details
+            description: The detailed error message.
+            type: string
+            primary: false
+
+    - name: InvalidArgs
+      severity: warning
+      errno: EINVAL
+      en:
+          message: Invalid arguments.
+      metadata:
+          - name: Method
+            description: The method where the error occurred.
+            type: string
+            primary: false
+          - name: Details
+            description: The detailed error message.
+            type: string
+            primary: false
+
+    - name: FileNotFound
+      severity: warning
+      errno: ENOENT
+      en:
+          message: File not found.
+      metadata:
+          - name: Method
+            description: The method where the error occurred.
+            type: string
+            primary: false
+          - name: Details
+            description: The detailed error message.
+            type: string
+            primary: false
+
+    - name: FileExists
+      severity: warning
+      errno: EEXIST
+      en:
+          message: File exists.
+      metadata:
+          - name: Method
+            description: The method where the error occurred.
+            type: string
+            primary: false
+          - name: Details
+            description: The detailed error message.
+            type: string
+            primary: false
+
+    - name: UnknownMethod
+      severity: warning
+      errno: EBADR
+      en:
+          message: Unknown method.
+      metadata:
+          - name: Method
+            description: The method where the error occurred.
+            type: string
+            primary: false
+          - name: Details
+            description: The detailed error message.
+            type: string
+            primary: false
+
+    - name: UnknownObject
+      severity: warning
+      errno: EBADR
+      en:
+          message: Unknown object.
+      metadata:
+          - name: Method
+            description: The method where the error occurred.
+            type: string
+            primary: false
+          - name: Details
+            description: The detailed error message.
+            type: string
+            primary: false
+
+    - name: UnknownInterface
+      severity: warning
+      errno: EBADR
+      en:
+          message: Unknown interface.
+      metadata:
+          - name: Method
+            description: The method where the error occurred.
+            type: string
+            primary: false
+          - name: Details
+            description: The detailed error message.
+            type: string
+            primary: false
+
+    - name: UnknownProperty
+      severity: warning
+      errno: EBADR
+      en:
+          message: Unknown property.
+      metadata:
+          - name: Method
+            description: The method where the error occurred.
+            type: string
+            primary: false
+          - name: Details
+            description: The detailed error message.
+            type: string
+            primary: false
+
+    - name: PropertyReadOnly
+      severity: warning
+      errno: EROFS
+      en:
+          message: Property read only.
+      metadata:
+          - name: Method
+            description: The method where the error occurred.
+            type: string
+            primary: false
+          - name: Details
+            description: The detailed error message.
+            type: string
+            primary: false
+
+    - name: UnixProcessIdUnknown
+      severity: warning
+      errno: ESRCH
+      en:
+          message: Unix process ID unknown.
+      metadata:
+          - name: Method
+            description: The method where the error occurred.
+            type: string
+            primary: false
+          - name: Details
+            description: The detailed error message.
+            type: string
+            primary: false
+
+    - name: InvalidSignature
+      severity: warning
+      errno: EINVAL
+      en:
+          message: Invalid signature.
+      metadata:
+          - name: Method
+            description: The method where the error occurred.
+            type: string
+            primary: false
+          - name: Details
+            description: The detailed error message.
+            type: string
+            primary: false
+
+    - name: InconsistentMessage
+      severity: warning
+      errno: EBADMSG
+      en:
+          message: Inconsistent message.
+      metadata:
+          - name: Method
+            description: The method where the error occurred.
+            type: string
+            primary: false
+          - name: Details
+            description: The detailed error message.
+            type: string
+            primary: false
+
+    - name: TimedOut
+      severity: warning
+      errno: ETIMEDOUT
+      en:
+          message: Operation timed out.
+      metadata:
+          - name: Method
+            description: The method where the error occurred.
+            type: string
+            primary: false
+          - name: Details
+            description: The detailed error message.
+            type: string
+            primary: false
+
+    - name: MatchRuleNotFound
+      severity: warning
+      errno: ENOENT
+      en:
+          message: Match rule not found.
+      metadata:
+          - name: Method
+            description: The method where the error occurred.
+            type: string
+            primary: false
+          - name: Details
+            description: The detailed error message.
+            type: string
+            primary: false
+
+    - name: MatchRuleInvalid
+      severity: warning
+      errno: EINVAL
+      en:
+          message: Match rule invalid.
+      metadata:
+          - name: Method
+            description: The method where the error occurred.
+            type: string
+            primary: false
+          - name: Details
+            description: The detailed error message.
+            type: string
+            primary: false
+
+    - name: InteractiveAuthorizationRequired
+      severity: warning
+      errno: EACCES
+      en:
+          message: Interactive authorization required.
+      metadata:
+          - name: Method
+            description: The method where the error occurred.
+            type: string
+            primary: false
+          - name: Details
+            description: The detailed error message.
+            type: string
+            primary: false
+
+    - name: InvalidFileContent
+      severity: warning
+      errno: EINVAL
+      en:
+          message: Invalid file content.
+      metadata:
+          - name: Method
+            description: The method where the error occurred.
+            type: string
+            primary: false
+          - name: Details
+            description: The detailed error message.
+            type: string
+            primary: false
+
+    - name: SELinuxSecurityContextUnknown
+      severity: warning
+      errno: ESRCH
+      en:
+          message: SELinux security context unknown.
+      metadata:
+          - name: Method
+            description: The method where the error occurred.
+            type: string
+            primary: false
+          - name: Details
+            description: The detailed error message.
+            type: string
+            primary: false
+
+    - name: ObjectPathInUse
+      severity: warning
+      errno: EBUSY
+      en:
+          message: Object path in use.
+      metadata:
+          - name: Method
+            description: The method where the error occurred.
+            type: string
+            primary: false
+          - name: Details
+            description: The detailed error message.
+            type: string
+            primary: false

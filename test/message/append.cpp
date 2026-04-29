@@ -100,7 +100,7 @@ class AppendTest : public testing::Test
     {
         EXPECT_CALL(mock,
                     sd_bus_message_append_array(nullptr, type, testing::_, sz))
-            .WillOnce(testing::Invoke(on_array_append));
+            .WillOnce(on_array_append);
     }
 };
 

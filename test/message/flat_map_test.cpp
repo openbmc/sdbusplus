@@ -3,7 +3,7 @@
 #include <sdbusplus/message.hpp>
 #include <sdbusplus/test/sdbus_mock.hpp>
 
-#include <flat_map>
+#include <boost/container/flat_map.hpp>
 #include <string>
 
 #include <gmock/gmock.h>
@@ -15,6 +15,7 @@ namespace
 using testing::DoAll;
 using testing::Return;
 using testing::StrEq;
+using boost::container::flat_map;
 
 ACTION_TEMPLATE(SetReadValue, HAS_1_TEMPLATE_PARAMS(typename, T),
                 AND_1_VALUE_PARAMS(value))
@@ -45,7 +46,7 @@ class FlatMapTest : public testing::Test
 // Test that flat_map compiles with the read/append functions
 TEST_F(FlatMapTest, CompileTest)
 {
-    std::flat_map<std::string, int> fmap{{"key1", 100}, {"key2", 200}};
+    flat_map<std::string, int> fmap{{"key1", 100}, {"key2", 200}};
     // This test just verifies that the code compiles
     SUCCEED();
 }

@@ -1,6 +1,6 @@
 #include "server/TestWithMethod/common.hpp"
 
-#include <print>
+#include <cstdio>
 
 #include <gtest/gtest.h>
 
@@ -14,15 +14,15 @@ TEST(MethodNames, TestMethodNames)
 
     // The method name can be used as part of error logs.
 
-    std::println("error calling method {}\n", methodName);
+    printf("error calling method %s\n", methodName);
 
     // If the method is removed from the interface definition, it will cause a
     // build failure in applications still using that method. That can work
     // even if the application is not (yet) using PDI-generated bindings for
     // it's DBus interactions.
 
-    std::println(
-        "using method {} \n",
+    printf(
+        "using method %s \n",
         sdbusplus::common::server::TestWithMethod::update_value_t::name);
 
     EXPECT_EQ(sdbusplus::common::server::TestWithMethod::update_value_t::name,

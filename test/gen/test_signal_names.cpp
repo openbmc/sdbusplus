@@ -2,7 +2,7 @@
 #include "sdbusplus/bus/match.hpp"
 #include "server/Test2/common.hpp"
 
-#include <print>
+#include <cstdio>
 
 #include <gtest/gtest.h>
 
@@ -16,7 +16,7 @@ void cb(sdbusplus::message_t& msg)
 
     // The property name can be used as part of error logs.
 
-    std::println("signal {} received on path {}\n", sigName, msg.get_path());
+    printf("signal %s received on path %s\n", sigName, msg.get_path());
 }
 
 int main()
@@ -26,8 +26,8 @@ int main()
     // even if the application is not (yet) using PDI-generated bindings for
     // it's DBus interactions.
 
-    std::println(
-        "using signal {} \n",
+    printf(
+        "using signal %s \n",
         sdbusplus::common::server::Test2::signal_names::other_value_changed);
 
     EXPECT_EQ(

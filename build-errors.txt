@@ -1,0 +1,144 @@
+ninja: Entering directory `builddir'
+[1/106] Linking target test/test-bus_match
+[2/106] Linking target test/test-event_event
+[3/106] Linking target test/test-bus_list_names
+[4/106] Linking target test/test-message_call
+[5/106] Linking target test/async/test-mutex
+[6/106] Linking target test/test-bus_exception
+[7/106] Linking target test/async/test-context
+[8/106] Linking target test/async/fdio_timed/test-fdio_timed_write_skip_with_timeout
+[9/106] Linking target test/test-exception_sdbus_error
+[10/106] Linking target example/calculator-client
+[11/106] Linking target test/async/fdio_timed/test-fdio_timed_write_sync
+[12/106] Linking target example/coroutine-example
+[13/106] Linking target example/calculator-aserver
+[14/106] Linking target test/async/fdio_timed/test-fdio_timed_write_sync_iterative
+[15/106] Compiling C object test/test-vtable.p/vtable_vtable_c.c.o
+[16/106] Linking target test/async/fdio_timed/test-fdio_timed_write_async_with_timeout_iterative
+[17/106] Linking target test/async/fdio_timed/test-fdio_timed_write_async_with_timeout
+[18/106] Generating test/gen/server/Test2/server_Test2__cpp with a custom command
+[19/106] Generating test/gen/server/TestWithMethod/server_TestWithMethod__cpp with a custom command
+[20/106] Generating test/gen/server/Test3/server_Test3__cpp with a custom command
+[21/106] Generating test/gen/server/Test/server_Test__cpp with a custom command
+[22/106] Compiling C++ object test/test-utility_tuple_to_array.p/utility_tuple_to_array.cpp.o
+[23/106] Compiling C++ object test/test-vtable.p/vtable_vtable.cpp.o
+[24/106] Linking target test/test-utility_tuple_to_array
+[25/106] Linking target test/test-vtable
+[26/106] Compiling C++ object test/test-utility_type_traits.p/utility_type_traits.cpp.o
+[27/106] Linking target test/test-utility_type_traits
+[28/106] Compiling C++ object test/libserver-test.a.p/meson-generated_.._gen_server_TestWithMethod_server.cpp.o
+[29/106] Compiling C++ object test/test-utility_make_dbus_args_tuple.p/utility_make_dbus_args_tuple.cpp.o
+[30/106] Compiling C++ object test/test-message_types.p/message_types.cpp.o
+[31/106] Linking target test/test-utility_make_dbus_args_tuple
+[32/106] Compiling C++ object test/test-message_native_types.p/message_native_types.cpp.o
+[33/106] Linking target test/test-message_types
+[34/106] Compiling C++ object test/libserver-test.a.p/meson-generated_.._gen_server_Test2_server.cpp.o
+[35/106] Compiling C++ object test/libserver-test.a.p/meson-generated_.._gen_server_Test3_server.cpp.o
+[36/106] Compiling C++ object test/test_server_no_uninitialized_value_constructor.p/meson-generated_.._gen_server_Test3_server.cpp.o
+[37/106] Linking target test/test-message_native_types
+[38/106] Compiling C++ object test/test_server_no_uninitialized_value_constructor.p/meson-generated_.._gen_server_Test2_server.cpp.o
+[39/106] Compiling C++ object test/test_server_no_uninitialized_value_constructor.p/meson-generated_.._gen_server_TestWithMethod_server.cpp.o
+[40/106] Compiling C++ object test/test_server_no_uninitialized_value_constructor.p/gen_test_server_no_uninitialized_value_constructor.cpp.o
+[41/106] Compiling C++ object test/test_aserver_no_uninitialized_value_constructor.p/meson-generated_.._gen_server_Test2_server.cpp.o
+[42/106] Compiling C++ object test/test_aserver_no_uninitialized_value_constructor.p/meson-generated_.._gen_server_Test3_server.cpp.o
+[43/106] Compiling C++ object test/test_aserver_no_uninitialized_value_constructor.p/meson-generated_.._gen_server_TestWithMethod_server.cpp.o
+[44/106] Compiling C++ object test/test_aserver_emit_interfaces_added_signal.p/meson-generated_.._gen_server_Test3_server.cpp.o
+[45/106] Compiling C++ object test/test_aserver_emit_interfaces_added_signal.p/meson-generated_.._gen_server_TestWithMethod_server.cpp.o
+[46/106] Compiling C++ object test/test_aserver_multiple_interfaces.p/meson-generated_.._gen_server_Test2_server.cpp.o
+[47/106] Compiling C++ object test/test-message_flat_map_test.p/message_flat_map_test.cpp.o
+FAILED: test/test-message_flat_map_test.p/message_flat_map_test.cpp.o 
+c++ -Itest/test-message_flat_map_test.p -Itest -I../test -I../subprojects/googletest/googletest/include -I../subprojects/googletest/googletest -Isubprojects/googletest -I../subprojects/googletest -I../subprojects/googletest/googlemock/include -I../subprojects/googletest/googlemock -I../include -I/usr/include -fdiagnostics-color=always -D_GLIBCXX_ASSERTIONS=1 -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wextra -Wpedantic -Werror -std=c++23 -O2 -g -DBOOST_ASIO_DISABLE_THREADS -DBOOST_ALL_NO_LIB -DBOOST_SYSTEM_NO_DEPRECATED -DBOOST_ERROR_CODE_HEADER_ONLY -DBOOST_COROUTINES_NO_DEPRECATION_WARNING -pthread -isystem../subprojects/stdexec/include -isystem../subprojects/nlohmann_json/single_include -isystem../subprojects/googletest/googletest -isystem../subprojects/googletest/googletest/include -MD -MQ test/test-message_flat_map_test.p/message_flat_map_test.cpp.o -MF test/test-message_flat_map_test.p/message_flat_map_test.cpp.o.d -o test/test-message_flat_map_test.p/message_flat_map_test.cpp.o -c ../test/message/flat_map_test.cpp
+../test/message/flat_map_test.cpp: In member function ‘virtual void {anonymous}::FlatMapTest_CompileTest_Test::TestBody()’:
+../test/message/flat_map_test.cpp:49:10: error: ‘flat_map’ is not a member of ‘std’
+   49 |     std::flat_map<std::string, int> fmap{{"key1", 100}, {"key2", 200}};
+      |          ^~~~~~~~
+../test/message/flat_map_test.cpp:49:10: note: suggested alternatives:
+In file included from /usr/include/boost/container/allocator_traits.hpp:31,
+                 from /usr/include/boost/container/flat_map.hpp:24,
+                 from ../test/message/flat_map_test.cpp:6:
+/usr/include/boost/container/container_fwd.hpp:181:7: note:   ‘boost::container::flat_map’
+  181 | class flat_map;
+      |       ^~~~~~~~
+/usr/include/boost/container/container_fwd.hpp:181:7: note:   ‘boost::container::flat_map’
+../test/message/flat_map_test.cpp:49:30: error: expected primary-expression before ‘,’ token
+   49 |     std::flat_map<std::string, int> fmap{{"key1", 100}, {"key2", 200}};
+      |                              ^
+../test/message/flat_map_test.cpp:49:32: error: expected primary-expression before ‘int’
+   49 |     std::flat_map<std::string, int> fmap{{"key1", 100}, {"key2", 200}};
+      |                                ^~~
+[48/106] Compiling C++ object test/test_server_no_uninitialized_value_constructor.p/meson-generated_.._gen_server_Test_server.cpp.o
+[49/106] Compiling C++ object test/test_aserver_emit_interfaces_added_signal.p/meson-generated_.._gen_server_Test2_server.cpp.o
+[50/106] Compiling C++ object test/test_aserver_multiple_interfaces.p/meson-generated_.._gen_server_Test3_server.cpp.o
+[51/106] Compiling C++ object test/test_aserver_multiple_interfaces.p/meson-generated_.._gen_server_TestWithMethod_server.cpp.o
+[52/106] Compiling C++ object test/test-server-message-variant.p/server_message_variant.cpp.o
+[53/106] Compiling C++ object test/libserver-test.a.p/meson-generated_.._gen_server_Test_server.cpp.o
+[54/106] Compiling C++ object test/test_aserver_no_uninitialized_value_constructor.p/meson-generated_.._gen_server_Test_server.cpp.o
+[55/106] Compiling C++ object test/test_property_names.p/meson-generated_.._gen_server_Test2_server.cpp.o
+[56/106] Compiling C++ object test/test_property_names.p/meson-generated_.._gen_server_Test3_server.cpp.o
+[57/106] Compiling C++ object test/test-unpack_properties.p/unpack_properties.cpp.o
+[58/106] Compiling C++ object test/test_aserver_no_uninitialized_value_constructor.p/gen_test_aserver_no_uninitialized_value_constructor.cpp.o
+[59/106] Compiling C++ object test/test_property_names.p/meson-generated_.._gen_server_TestWithMethod_server.cpp.o
+[60/106] Compiling C++ object test/test_aserver_emit_interfaces_added_signal.p/meson-generated_.._gen_server_Test_server.cpp.o
+[61/106] Compiling C++ object test/test_aserver_multiple_interfaces.p/meson-generated_.._gen_server_Test_server.cpp.o
+[62/106] Compiling C++ object test/test_property_names.p/meson-generated_.._gen_server_Test_server.cpp.o
+[63/106] Compiling C++ object test/test-bus_aio.p/bus_aio.cpp.o
+[64/106] Compiling C++ object test/test_aserver_emit_interfaces_added_signal.p/gen_test_aserver_emit_interfaces_added_signal.cpp.o
+[65/106] Compiling C++ object test/test_aserver_multiple_interfaces.p/gen_test_aserver_multiple_interfaces.cpp.o
+[66/106] Compiling C++ object test/test-server.p/server_object.cpp.o
+[67/106] Compiling C++ object test/test-message_append.p/message_append.cpp.o
+[68/106] Compiling C++ object test/test-message_read.p/message_read.cpp.o
+FAILED: test/test-message_read.p/message_read.cpp.o 
+c++ -Itest/test-message_read.p -Itest -I../test -I../subprojects/googletest/googletest/include -I../subprojects/googletest/googletest -Isubprojects/googletest -I../subprojects/googletest -I../subprojects/googletest/googlemock/include -I../subprojects/googletest/googlemock -I../include -I/usr/include -fdiagnostics-color=always -D_GLIBCXX_ASSERTIONS=1 -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wextra -Wpedantic -Werror -std=c++23 -O2 -g -DBOOST_ASIO_DISABLE_THREADS -DBOOST_ALL_NO_LIB -DBOOST_SYSTEM_NO_DEPRECATED -DBOOST_ERROR_CODE_HEADER_ONLY -DBOOST_COROUTINES_NO_DEPRECATION_WARNING -pthread -isystem../subprojects/stdexec/include -isystem../subprojects/nlohmann_json/single_include -isystem../subprojects/googletest/googletest -isystem../subprojects/googletest/googletest/include -MD -MQ test/test-message_read.p/message_read.cpp.o -MF test/test-message_read.p/message_read.cpp.o.d -o test/test-message_read.p/message_read.cpp.o -c ../test/message/read.cpp
+../test/message/read.cpp: In instantiation of ‘void {anonymous}::ReadTest::expect_read_array(char) [with T = unsigned char]’:
+../test/message/read.cpp:270:31:   required from here
+../test/message/read.cpp:84:38: error: ‘typename std::decay<_Tp>::type testing::Invoke(FunctionImpl&&) [with FunctionImpl = void (&)(sd_bus_message*, char, const void**, long unsigned int*); typename std::decay<_Tp>::type = void (*)(sd_bus_message*, char, const void**, long unsigned int*)]’ is deprecated: Actions can now be implicitly constructed from callables. No need to create wrapper objects using Invoke(). [-Werror=deprecated-declarations]
+   84 |                 DoAll(testing::Invoke(read_array_callback<T>), Return(0)));
+      |                       ~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+In file included from ../subprojects/googletest/googlemock/include/gmock/gmock.h:56,
+                 from ../include/sdbusplus/test/sdbus_mock.hpp:6,
+                 from ../test/message/read.cpp:5:
+../subprojects/googletest/googlemock/include/gmock/gmock-actions.h:2059:41: note: declared here
+ 2059 | typename std::decay<FunctionImpl>::type Invoke(FunctionImpl&& function_impl) {
+      |                                         ^~~~~~
+../test/message/read.cpp: In instantiation of ‘void {anonymous}::ReadTest::expect_read_array(char) [with T = int]’:
+../test/message/read.cpp:278:31:   required from here
+../test/message/read.cpp:84:38: error: ‘typename std::decay<_Tp>::type testing::Invoke(FunctionImpl&&) [with FunctionImpl = void (&)(sd_bus_message*, char, const void**, long unsigned int*); typename std::decay<_Tp>::type = void (*)(sd_bus_message*, char, const void**, long unsigned int*)]’ is deprecated: Actions can now be implicitly constructed from callables. No need to create wrapper objects using Invoke(). [-Werror=deprecated-declarations]
+   84 |                 DoAll(testing::Invoke(read_array_callback<T>), Return(0)));
+      |                       ~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+../subprojects/googletest/googlemock/include/gmock/gmock-actions.h:2059:41: note: declared here
+ 2059 | typename std::decay<FunctionImpl>::type Invoke(FunctionImpl&& function_impl) {
+      |                                         ^~~~~~
+../test/message/read.cpp: In instantiation of ‘void {anonymous}::ReadTest::expect_read_array(char) [with T = long int]’:
+../test/message/read.cpp:286:31:   required from here
+../test/message/read.cpp:84:38: error: ‘typename std::decay<_Tp>::type testing::Invoke(FunctionImpl&&) [with FunctionImpl = void (&)(sd_bus_message*, char, const void**, long unsigned int*); typename std::decay<_Tp>::type = void (*)(sd_bus_message*, char, const void**, long unsigned int*)]’ is deprecated: Actions can now be implicitly constructed from callables. No need to create wrapper objects using Invoke(). [-Werror=deprecated-declarations]
+   84 |                 DoAll(testing::Invoke(read_array_callback<T>), Return(0)));
+      |                       ~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+../subprojects/googletest/googlemock/include/gmock/gmock-actions.h:2059:41: note: declared here
+ 2059 | typename std::decay<FunctionImpl>::type Invoke(FunctionImpl&& function_impl) {
+      |                                         ^~~~~~
+../test/message/read.cpp: In instantiation of ‘void {anonymous}::ReadTest::expect_read_array(char) [with T = unsigned int]’:
+../test/message/read.cpp:295:32:   required from here
+../test/message/read.cpp:84:38: error: ‘typename std::decay<_Tp>::type testing::Invoke(FunctionImpl&&) [with FunctionImpl = void (&)(sd_bus_message*, char, const void**, long unsigned int*); typename std::decay<_Tp>::type = void (*)(sd_bus_message*, char, const void**, long unsigned int*)]’ is deprecated: Actions can now be implicitly constructed from callables. No need to create wrapper objects using Invoke(). [-Werror=deprecated-declarations]
+   84 |                 DoAll(testing::Invoke(read_array_callback<T>), Return(0)));
+      |                       ~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+../subprojects/googletest/googlemock/include/gmock/gmock-actions.h:2059:41: note: declared here
+ 2059 | typename std::decay<FunctionImpl>::type Invoke(FunctionImpl&& function_impl) {
+      |                                         ^~~~~~
+../test/message/read.cpp: In instantiation of ‘void {anonymous}::ReadTest::expect_read_array(char) [with T = long unsigned int]’:
+../test/message/read.cpp:303:32:   required from here
+../test/message/read.cpp:84:38: error: ‘typename std::decay<_Tp>::type testing::Invoke(FunctionImpl&&) [with FunctionImpl = void (&)(sd_bus_message*, char, const void**, long unsigned int*); typename std::decay<_Tp>::type = void (*)(sd_bus_message*, char, const void**, long unsigned int*)]’ is deprecated: Actions can now be implicitly constructed from callables. No need to create wrapper objects using Invoke(). [-Werror=deprecated-declarations]
+   84 |                 DoAll(testing::Invoke(read_array_callback<T>), Return(0)));
+      |                       ~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+../subprojects/googletest/googlemock/include/gmock/gmock-actions.h:2059:41: note: declared here
+ 2059 | typename std::decay<FunctionImpl>::type Invoke(FunctionImpl&& function_impl) {
+      |                                         ^~~~~~
+../test/message/read.cpp: In instantiation of ‘void {anonymous}::ReadTest::expect_read_array(char) [with T = double]’:
+../test/message/read.cpp:311:30:   required from here
+../test/message/read.cpp:84:38: error: ‘typename std::decay<_Tp>::type testing::Invoke(FunctionImpl&&) [with FunctionImpl = void (&)(sd_bus_message*, char, const void**, long unsigned int*); typename std::decay<_Tp>::type = void (*)(sd_bus_message*, char, const void**, long unsigned int*)]’ is deprecated: Actions can now be implicitly constructed from callables. No need to create wrapper objects using Invoke(). [-Werror=deprecated-declarations]
+   84 |                 DoAll(testing::Invoke(read_array_callback<T>), Return(0)));
+      |                       ~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+../subprojects/googletest/googlemock/include/gmock/gmock-actions.h:2059:41: note: declared here
+ 2059 | typename std::decay<FunctionImpl>::type Invoke(FunctionImpl&& function_impl) {
+      |                                         ^~~~~~
+cc1plus: all warnings being treated as errors
+ninja: build stopped: subcommand failed.

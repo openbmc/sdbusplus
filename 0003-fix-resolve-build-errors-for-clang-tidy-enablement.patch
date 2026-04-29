@@ -1,0 +1,188 @@
+From 22f783ad8c60d78bb0041b1660a6494ed646fbfd Mon Sep 17 00:00:00 2001
+From: Akash A <mirrorghost007@gmail.com>
+Date: Wed, 29 Apr 2026 21:11:45 +0530
+Subject: [PATCH 3/3] fix: resolve build errors for clang-tidy enablement
+
+Replace missing <flat_map> with <boost/container/flat_map.hpp>.
+Replace missing <print> with <cstdio> and printf format strings.
+Remove deprecated testing::Invoke() calls and unused using
+declarations in test files.
+
+These fixes allow the clang-tidy tool to run without unrelated
+build failures when compiling test targets.
+
+Tested: Verified all 18 async tests pass. clang-tidy reports
+zero warnings on modified files. Build completes successfully
+with ninja.
+
+Signed-off-by: Akash A <mirrorghost007@gmail.com>
+---
+ test/gen/test_method_names.cpp   | 8 ++++----
+ test/gen/test_property_names.cpp | 6 +++---
+ test/gen/test_signal_names.cpp   | 8 ++++----
+ test/message/append.cpp          | 2 +-
+ test/message/flat_map_test.cpp   | 5 +++--
+ test/message/read.cpp            | 3 +--
+ 6 files changed, 16 insertions(+), 16 deletions(-)
+
+diff --git a/test/gen/test_method_names.cpp b/test/gen/test_method_names.cpp
+index 06e573ab..f89240ec 100644
+--- a/test/gen/test_method_names.cpp
++++ b/test/gen/test_method_names.cpp
+@@ -1,6 +1,6 @@
+ #include "server/TestWithMethod/common.hpp"
+ 
+-#include <print>
++#include <cstdio>
+ 
+ #include <gtest/gtest.h>
+ 
+@@ -14,15 +14,15 @@ TEST(MethodNames, TestMethodNames)
+ 
+     // The method name can be used as part of error logs.
+ 
+-    std::println("error calling method {}\n", methodName);
++    printf("error calling method %s\n", methodName);
+ 
+     // If the method is removed from the interface definition, it will cause a
+     // build failure in applications still using that method. That can work
+     // even if the application is not (yet) using PDI-generated bindings for
+     // it's DBus interactions.
+ 
+-    std::println(
+-        "using method {} \n",
++    printf(
++        "using method %s \n",
+         sdbusplus::common::server::TestWithMethod::update_value_t::name);
+ 
+     EXPECT_EQ(sdbusplus::common::server::TestWithMethod::update_value_t::name,
+diff --git a/test/gen/test_property_names.cpp b/test/gen/test_property_names.cpp
+index 924318b1..8f48919d 100644
+--- a/test/gen/test_property_names.cpp
++++ b/test/gen/test_property_names.cpp
+@@ -1,7 +1,7 @@
+ #include "server/Test/common.hpp"
+ #include "server/Test2/common.hpp"
+ 
+-#include <print>
++#include <cstdio>
+ 
+ #include <gtest/gtest.h>
+ 
+@@ -15,14 +15,14 @@ int main()
+ 
+     // The property name can be used as part of error logs.
+ 
+-    std::println("property {} not found \n", propName);
++    printf("property %s not found \n", propName);
+ 
+     // If the property is removed from the interface definition, it will cause a
+     // build failure in applications still using that property. That can work
+     // even if the application is not (yet) using PDI-generated bindings for
+     // it's DBus interactions.
+ 
+-    std::println("using property {} \n",
++    printf("using property %s \n",
+                  sdbusplus::common::server::Test2::new_value_t::name);
+ 
+     EXPECT_EQ(sdbusplus::common::server::Test2::new_value_t::name, "NewValue");
+diff --git a/test/gen/test_signal_names.cpp b/test/gen/test_signal_names.cpp
+index be9bb128..241e029b 100644
+--- a/test/gen/test_signal_names.cpp
++++ b/test/gen/test_signal_names.cpp
+@@ -2,7 +2,7 @@
+ #include "sdbusplus/bus/match.hpp"
+ #include "server/Test2/common.hpp"
+ 
+-#include <print>
++#include <cstdio>
+ 
+ #include <gtest/gtest.h>
+ 
+@@ -16,7 +16,7 @@ void cb(sdbusplus::message_t& msg)
+ 
+     // The property name can be used as part of error logs.
+ 
+-    std::println("signal {} received on path {}\n", sigName, msg.get_path());
++    printf("signal %s received on path %s\n", sigName, msg.get_path());
+ }
+ 
+ int main()
+@@ -26,8 +26,8 @@ int main()
+     // even if the application is not (yet) using PDI-generated bindings for
+     // it's DBus interactions.
+ 
+-    std::println(
+-        "using signal {} \n",
++    printf(
++        "using signal %s \n",
+         sdbusplus::common::server::Test2::signal_names::other_value_changed);
+ 
+     EXPECT_EQ(
+diff --git a/test/message/append.cpp b/test/message/append.cpp
+index 2928984b..ecfaeb5f 100644
+--- a/test/message/append.cpp
++++ b/test/message/append.cpp
+@@ -100,7 +100,7 @@ class AppendTest : public testing::Test
+     {
+         EXPECT_CALL(mock,
+                     sd_bus_message_append_array(nullptr, type, testing::_, sz))
+-            .WillOnce(testing::Invoke(on_array_append));
++            .WillOnce(on_array_append);
+     }
+ };
+ 
+diff --git a/test/message/flat_map_test.cpp b/test/message/flat_map_test.cpp
+index 8c18fd52..eb60bff7 100644
+--- a/test/message/flat_map_test.cpp
++++ b/test/message/flat_map_test.cpp
+@@ -3,7 +3,7 @@
+ #include <sdbusplus/message.hpp>
+ #include <sdbusplus/test/sdbus_mock.hpp>
+ 
+-#include <flat_map>
++#include <boost/container/flat_map.hpp>
+ #include <string>
+ 
+ #include <gmock/gmock.h>
+@@ -15,6 +15,7 @@ namespace
+ using testing::DoAll;
+ using testing::Return;
+ using testing::StrEq;
++using boost::container::flat_map;
+ 
+ ACTION_TEMPLATE(SetReadValue, HAS_1_TEMPLATE_PARAMS(typename, T),
+                 AND_1_VALUE_PARAMS(value))
+@@ -45,7 +46,7 @@ class FlatMapTest : public testing::Test
+ // Test that flat_map compiles with the read/append functions
+ TEST_F(FlatMapTest, CompileTest)
+ {
+-    std::flat_map<std::string, int> fmap{{"key1", 100}, {"key2", 200}};
++    flat_map<std::string, int> fmap{{"key1", 100}, {"key2", 200}};
+     // This test just verifies that the code compiles
+     SUCCEED();
+ }
+diff --git a/test/message/read.cpp b/test/message/read.cpp
+index 575442c4..1cd1cc41 100644
+--- a/test/message/read.cpp
++++ b/test/message/read.cpp
+@@ -22,7 +22,6 @@ namespace
+ 
+ using testing::DoAll;
+ using testing::ElementsAre;
+-using testing::Invoke;
+ using testing::Return;
+ using testing::StrEq;
+ 
+@@ -81,7 +80,7 @@ class ReadTest : public testing::Test
+         EXPECT_CALL(mock, sd_bus_message_read_array(nullptr, type, testing::_,
+                                                     testing::_))
+             .WillOnce(
+-                DoAll(testing::Invoke(read_array_callback<T>), Return(0)));
++                DoAll(read_array_callback<T>, Return(0)));
+     }
+ 
+     void expect_verify_type(char type, const char* contents, int ret)
+-- 
+2.43.0
+

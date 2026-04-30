@@ -16,6 +16,24 @@
       "message": "This is wrong.  flat_map is valid, likely you ran against an older version of clang that didn\u0027t have that yet?",
       "revId": "47ae04605f823d4f3f9409664b1797bcef2fb662",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d2a6a9d5_6a4d3efd",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1002739
+      },
+      "writtenOn": "2026-04-30T02:34:13Z",
+      "side": 1,
+      "message": "Yes, my local compiler was older. Reverted the flat_map change.\nOnly the testing::Invoke fixes remain now.",
+      "parentUuid": "55dd7683_0d5fea12",
+      "revId": "47ae04605f823d4f3f9409664b1797bcef2fb662",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 // IWYU pragma: begin_exports
+#include <sdbusplus/async/barrier.hpp>
 #include <sdbusplus/async/context.hpp>
 #include <sdbusplus/async/execution.hpp>
 #include <sdbusplus/async/fdio.hpp>

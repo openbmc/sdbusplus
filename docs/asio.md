@@ -54,3 +54,79 @@ leave `value` unmodified and return false.
 
 If the handler returns false but doesn't throw an exception, a generic
 org.freedesktop.DBus.Error.InvalidArgs error will be returned to the caller.
+
+## Methods
+
+### Synchronous methods
+
+`register_method()` registers a synchronous handler. The handler runs to
+completion inside the D-Bus dispatch and its return value becomes the method
+reply.
+
+### Coroutine methods
+
+If the handler's first parameter is a `boost::asio::yield_context`,
+`register_method()` runs the handler in a Boost.Asio stackful coroutine and
+sends the reply when the coroutine returns. This path requires Boost coroutines
+and is unsuitable for performance-sensitive code paths; some projects forbid it
+entirely.
+
+### Deferred-reply methods
+
+`register_deferred_method<ReturnTypes...>()` registers a method whose handler
+hands off to a callback-style asynchronous API and completes the D-Bus reply
+later, without using a coroutine. The handler receives an
+`sdbusplus::asio::deferred_reply<ReturnTypes...>` object by value, followed by
+the decoded D-Bus input arguments.
+
+The handler must call exactly one of `send(...)`, `send_errno(...)`, or
+`send_error(...)` on the reply object. Any subsequent call on the same reply
+object (or on one that has been moved-from) is silently ignored. If the reply
+object is destroyed without a call, an automatic `-EIO` error reply is sent so
+the caller does not time out.
+
+```c++
+iface->register_deferred_method<std::string>(
+    "GetValue",
+    [this](sdbusplus::asio::deferred_reply<std::string> reply,
+           const std::string& key) {
+        startAsyncLookup(
+            key,
+            [reply = std::move(reply)](boost::system::error_code ec,
+                                       std::string value) mutable {
+                if (ec)
+                {
+                    reply.send_errno(-EIO);
+                    return;
+                }
+                reply.send(std::move(value));
+            });
+    });
+```
+
+For void methods, pass an empty template argument list:
+
+```c++
+iface->register_deferred_method<>(
+    "Start",
+    [this](sdbusplus::asio::deferred_reply<> reply) {
+        startAsyncStart([reply = std::move(reply)](auto ec) mutable {
+            if (ec)
+            {
+                reply.send_errno(-EIO);
+                return;
+            }
+            reply.send();
+        });
+    });
+```
+
+`ReturnTypes...` are required because the handler always returns `void`, so the
+D-Bus output signature cannot be deduced from the C++ return type.
+
+`SD_BUS_VTABLE_METHOD_NO_REPLY` is unrelated: a deferred-reply method still
+sends a reply, just later.
+
+If the asynchronous completion may run on a thread other than the one driving
+the D-Bus event loop, `boost::asio::post()` (or similar) the completion onto the
+event-loop executor before calling `send()` on the reply object.

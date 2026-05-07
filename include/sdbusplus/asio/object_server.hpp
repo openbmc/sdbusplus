@@ -21,8 +21,10 @@
 #include <sdbusplus/utility/type_traits.hpp>
 
 #include <any>
+#include <cerrno>
 #include <functional>
 #include <optional>
+#include <type_traits>
 #include <utility>
 #include <vector>
 
@@ -304,6 +306,155 @@ class coroutine_method_instance
     }
 };
 #endif
+
+// Move-only handle that lets a method callback complete its D-Bus reply
+// asynchronously, without using a coroutine.  The handler receives a
+// deferred_reply by value, may move it into an asynchronous continuation,
+// and must call exactly one of send(), send_errno(), or send_error().  If
+// the object is destroyed without a reply, an automatic -EIO error reply
+// is sent so the caller does not time out.
+template <typename... ReturnTypes>
+class deferred_reply
+{
+  public:
+    explicit deferred_reply(message_t&& request) : request_(std::move(request))
+    {}
+
+    deferred_reply(const deferred_reply&) = delete;
+    deferred_reply& operator=(const deferred_reply&) = delete;
+
+    deferred_reply(deferred_reply&& other) noexcept :
+        request_(std::move(other.request_)),
+        replied_(std::exchange(other.replied_, true))
+    {}
+
+    deferred_reply& operator=(deferred_reply&& other) noexcept
+    {
+        if (this != &other)
+        {
+            abandon_if_unreplied();
+            request_ = std::move(other.request_);
+            replied_ = std::exchange(other.replied_, true);
+        }
+        return *this;
+    }
+
+    ~deferred_reply()
+    {
+        abandon_if_unreplied();
+    }
+
+    template <typename... Args>
+    void send(Args&&... args)
+    {
+        static_assert(sizeof...(Args) == sizeof...(ReturnTypes),
+                      "deferred_reply::send argument count must match "
+                      "ReturnTypes parameter pack");
+        if (replied_ || !request_)
+        {
+            return;
+        }
+        replied_ = true;
+        auto ret = request_.new_method_return();
+        (ret.append(std::forward<Args>(args)), ...);
+        ret.method_return();
+    }
+
+    void send_errno(int error, const sd_bus_error* e = nullptr)
+    {
+        if (replied_ || !request_)
+        {
+            return;
+        }
+        replied_ = true;
+        auto err = request_.new_method_errno(error, e);
+        err.method_return();
+    }
+
+    void send_error(const sdbusplus::exception_t& e)
+    {
+        if (replied_ || !request_)
+        {
+            return;
+        }
+        replied_ = true;
+        auto err = request_.new_method_error(e);
+        err.method_return();
+    }
+
+  private:
+    message_t request_;
+    bool replied_ = false;
+
+    void abandon_if_unreplied() noexcept
+    {
+        if (replied_ || !request_)
+        {
+            return;
+        }
+        try
+        {
+            auto err = request_.new_method_errno(-EIO);
+            err.method_return();
+        }
+        catch (...)
+        {}
+        replied_ = true;
+    }
+};
+
+template <typename T>
+struct is_deferred_reply : std::false_type
+{};
+
+template <typename... Ts>
+struct is_deferred_reply<deferred_reply<Ts...>> : std::true_type
+{};
+
+template <typename T>
+inline constexpr bool is_deferred_reply_v = is_deferred_reply<T>::value;
+
+template <typename DeferredReplyType, typename CallbackType>
+class deferred_callback_method_instance
+{
+  private:
+    using ActualSignature = boost::callable_traits::args_t<CallbackType>;
+    using DecayedSignature = utility::decay_tuple_t<ActualSignature>;
+    using DbusTupleType = utility::strip_first_arg_t<DecayedSignature>;
+
+    static_assert(
+        std::is_same_v<utility::get_first_arg_t<DecayedSignature>,
+                       DeferredReplyType>,
+        "deferred_callback_method_instance: handler's first parameter "
+        "must be sdbusplus::asio::deferred_reply<ReturnTypes...>");
+
+    CallbackType func_;
+
+  public:
+    explicit deferred_callback_method_instance(CallbackType&& func) :
+        func_(std::move(func))
+    {}
+
+    int operator()(message_t& m)
+    {
+        if (m.is_method_error())
+        {
+            return -EINVAL;
+        }
+
+        DbusTupleType dbusArgs;
+        std::apply([&m](auto&... x) { m.read(x...); }, dbusArgs);
+
+        DeferredReplyType reply{message_t{m}};
+        std::apply(
+            [this, &reply](auto&&... args) {
+                func_(std::move(reply), std::forward<decltype(args)>(args)...);
+            },
+            dbusArgs);
+
+        return 1;
+    }
+};
 
 template <typename PropertyType, typename CallbackType>
 class callback_get_instance
@@ -626,6 +777,58 @@ class dbus_interface
         {
             func = callback_method_instance<CallbackType>(std::move(handler));
         }
+        method_callbacks_.emplace_back(name, std::move(func), argType.data(),
+                                       resultType.data(), flags);
+
+        return true;
+    }
+
+    // Register a method that completes its D-Bus reply asynchronously
+    // through a deferred_reply object passed to the handler.  Use this
+    // when the handler hands off to a callback-based asynchronous API
+    // and cannot return the result synchronously, but coroutines are
+    // not desirable.  ReturnTypes... are the flat D-Bus output argument
+    // types; pass an empty pack for a void method.
+    template <typename... ReturnTypes, typename CallbackType>
+    bool register_deferred_method(const std::string& name,
+                                  CallbackType&& handler,
+                                  decltype(vtable_t::flags) flags = 0)
+    {
+        using DeferredReplyType = deferred_reply<ReturnTypes...>;
+        using ActualSignature = boost::callable_traits::args_t<CallbackType>;
+        using DecayedSignature = utility::decay_tuple_t<ActualSignature>;
+        using FirstArg = utility::get_first_arg_t<DecayedSignature>;
+        using ResultType = boost::callable_traits::return_type_t<CallbackType>;
+        using InputTupleType = utility::strip_first_arg_t<DecayedSignature>;
+
+        static_assert(
+            std::is_same_v<FirstArg, DeferredReplyType>,
+            "register_deferred_method: handler's first parameter must be "
+            "sdbusplus::asio::deferred_reply<ReturnTypes...> matching the "
+            "explicit ReturnTypes template arguments");
+        static_assert(
+            std::is_void_v<ResultType>,
+            "register_deferred_method: handler must return void; use the "
+            "deferred_reply object to send the result");
+
+        if (is_initialized())
+        {
+            return false;
+        }
+        if (sd_bus_member_name_is_valid(name.c_str()) != 1)
+        {
+            return false;
+        }
+
+        static const auto argType = utility::strip_ends(
+            utility::tuple_to_array(message::types::type_id<InputTupleType>()));
+        static const auto resultType =
+            utility::strip_ends(utility::tuple_to_array(
+                message::types::type_id<std::tuple<ReturnTypes...>>()));
+
+        std::function<int(message_t&)> func =
+            deferred_callback_method_instance<DeferredReplyType, CallbackType>(
+                std::move(handler));
         method_callbacks_.emplace_back(name, std::move(func), argType.data(),
                                        resultType.data(), flags);
 

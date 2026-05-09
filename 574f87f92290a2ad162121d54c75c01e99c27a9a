@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3f980c28_073868df",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1002885
+      },
+      "writtenOn": "2026-05-09T13:17:51Z",
+      "side": 1,
+      "message": "Hi @ed@tanous.net, @molberding@nvidia.com,\n\nThis is the non-coroutine, callback-based deferrd_reply API I proposed in 89528 (https://gerrit.openbmc.org/c/openbmc/dbus-sensors/+/89528).\n\nCould you take a look and let me know whether the direction and scoping match what you had in mind? \n\nThanks!",
+      "revId": "574f87f92290a2ad162121d54c75c01e99c27a9a",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

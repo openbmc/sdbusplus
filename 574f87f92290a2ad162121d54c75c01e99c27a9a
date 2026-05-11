@@ -16,6 +16,121 @@
       "message": "Hi @ed@tanous.net, @molberding@nvidia.com,\n\nThis is the non-coroutine, callback-based deferrd_reply API I proposed in 89528 (https://gerrit.openbmc.org/c/openbmc/dbus-sensors/+/89528).\n\nCould you take a look and let me know whether the direction and scoping match what you had in mind? \n\nThanks!",
       "revId": "574f87f92290a2ad162121d54c75c01e99c27a9a",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "34a79fd8_aa70a8d3",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 350,
+      "author": {
+        "id": 1002790
+      },
+      "writtenOn": "2026-05-11T09:21:53Z",
+      "side": 1,
+      "message": "Only argument count is checked, not types.\nSuggest adding:\n```\n  static_assert((std::is_convertible_v\u003cArgs\u0026\u0026, ReturnTypes\u003e \u0026\u0026 ...),\n                \"deferred_reply::send argument types must be \"\n                \"convertible to ReturnTypes\");\n```",
+      "range": {
+        "startLine": 350,
+        "startChar": 8,
+        "endLine": 350,
+        "endChar": 21
+      },
+      "revId": "574f87f92290a2ad162121d54c75c01e99c27a9a",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "68fdd015_9e164bff",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 357,
+      "author": {
+        "id": 1002790
+      },
+      "writtenOn": "2026-05-11T09:21:53Z",
+      "side": 1,
+      "message": "replied_ is set before the reply is actually sent. If append() / method_return() throws, replied_ stays true and the destructor skips the auto-EIO fallback → caller times out.\nSuggest moving the assignment after method_return() succeeds, or wrap in try/catch like coroutine_method_instance::after_spawn.",
+      "range": {
+        "startLine": 357,
+        "startChar": 8,
+        "endLine": 357,
+        "endChar": 24
+      },
+      "revId": "574f87f92290a2ad162121d54c75c01e99c27a9a",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4ec4187c_978a8cf2",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 363,
+      "author": {
+        "id": 1002790
+      },
+      "writtenOn": "2026-05-11T09:21:53Z",
+      "side": 1,
+      "message": "send_errno(int error) doesn\u0027t document whether \u0027error\u0027 should be passed as positive or negative. Because the doc example and abandon path use -EIO, coroutine_method_instance at Line 267 passes the positive e.get_errno(). \nSuggest a brief doxygen note on send_errno clarifying the expected sign.",
+      "range": {
+        "startLine": 363,
+        "startChar": 4,
+        "endLine": 363,
+        "endChar": 63
+      },
+      "revId": "574f87f92290a2ad162121d54c75c01e99c27a9a",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c3c4b469_1dd00e47",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 369,
+      "author": {
+        "id": 1002790
+      },
+      "writtenOn": "2026-05-11T09:21:53Z",
+      "side": 1,
+      "message": "Same problem as Line 357.",
+      "range": {
+        "startLine": 369,
+        "startChar": 0,
+        "endLine": 369,
+        "endChar": 24
+      },
+      "revId": "574f87f92290a2ad162121d54c75c01e99c27a9a",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1bbae170_5367408c",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 380,
+      "author": {
+        "id": 1002790
+      },
+      "writtenOn": "2026-05-11T09:21:53Z",
+      "side": 1,
+      "message": "Same problem as Line 357.",
+      "range": {
+        "startLine": 380,
+        "startChar": 8,
+        "endLine": 380,
+        "endChar": 24
+      },
+      "revId": "574f87f92290a2ad162121d54c75c01e99c27a9a",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

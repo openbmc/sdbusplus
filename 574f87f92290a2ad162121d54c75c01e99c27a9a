@@ -20,6 +20,29 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "ad1155e6_185aa03a",
+        "filename": "docs/asio.md",
+        "patchSetId": 2
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 1002790
+      },
+      "writtenOn": "2026-05-11T09:43:49Z",
+      "side": 1,
+      "message": "Suggestion: clarify that subsequent send/send_errno/send_error calls are silently ignored.",
+      "range": {
+        "startLine": 83,
+        "startChar": 38,
+        "endLine": 83,
+        "endChar": 39
+      },
+      "revId": "574f87f92290a2ad162121d54c75c01e99c27a9a",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "34a79fd8_aa70a8d3",
         "filename": "include/sdbusplus/asio/object_server.hpp",
         "patchSetId": 2
@@ -128,6 +151,29 @@
         "startChar": 8,
         "endLine": 380,
         "endChar": 24
+      },
+      "revId": "574f87f92290a2ad162121d54c75c01e99c27a9a",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b9c8275b_d8342a76",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 448,
+      "author": {
+        "id": 1002790
+      },
+      "writtenOn": "2026-05-11T09:43:49Z",
+      "side": 1,
+      "message": "Suggestion: add a brief comment like line 241, e.g. \"make a copy of m to move into the deferred reply\".",
+      "range": {
+        "startLine": 448,
+        "startChar": 8,
+        "endLine": 448,
+        "endChar": 46
       },
       "revId": "574f87f92290a2ad162121d54c75c01e99c27a9a",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"

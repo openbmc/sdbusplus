@@ -182,7 +182,7 @@ class connection : public sdbusplus::bus_t
                                 interf.c_str(), method.c_str());
             m.append(a...);
         }
-        catch (const exception::SdBusError& e)
+        catch (const exception::internal_exception& e)
         {
             ec = boost::system::errc::make_error_code(
                 static_cast<boost::system::errc::errc_t>(e.get_errno()));
@@ -268,7 +268,7 @@ class connection : public sdbusplus::bus_t
                                 interf.c_str(), method.c_str());
             m.append(a...);
         }
-        catch (const exception::SdBusError& e)
+        catch (const exception::internal_exception& e)
         {
             ec = boost::system::errc::make_error_code(
                 static_cast<boost::system::errc::errc_t>(e.get_errno()));

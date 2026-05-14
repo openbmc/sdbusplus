@@ -260,7 +260,7 @@ class coroutine_method_instance
         {
             std::apply([&b](auto&... x) { b.read(x...); }, dbusArgs);
         }
-        catch (const exception::SdBusError& e)
+        catch (const exception::internal_exception& e)
         {
             auto ret = b.new_method_errno(e.get_errno(), e.get_error());
             ret.method_return();
@@ -285,7 +285,7 @@ class coroutine_method_instance
             }
             ret.method_return();
         }
-        catch (const sdbusplus::exception::SdBusError& e)
+        catch (const sdbusplus::exception::internal_exception& e)
         {
             // Catch D-Bus error explicitly called by method handler
             message_t err = b.new_method_errno(e.get_errno(), e.get_error());

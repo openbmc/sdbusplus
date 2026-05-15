@@ -54,3 +54,73 @@ leave `value` unmodified and return false.
 
 If the handler returns false but doesn't throw an exception, a generic
 org.freedesktop.DBus.Error.InvalidArgs error will be returned to the caller.
+
+## Methods
+
+### Synchronous methods
+
+`register_method()` registers a synchronous handler. The handler runs to
+completion inside the D-Bus dispatch and its return value becomes the method
+reply.
+
+### Coroutine methods
+
+If the handler's first parameter is a `boost::asio::yield_context`,
+`register_method()` runs the handler in a Boost.Asio stackful coroutine and
+sends the reply when the coroutine returns. This path requires Boost coroutines
+and is unsuitable for performance-sensitive code paths; some projects forbid it
+entirely.
+
+### Deferred-completion methods
+
+`register_deferred_method<ReturnTypes...>()` registers a method whose handler
+defers completion: rather than returning the result, the handler hands off to a
+callback-style asynchronous API and completes the D-Bus method call later,
+without using a coroutine. The handler receives an
+`sdbusplus::asio::deferred_reply` by value, followed by the decoded D-Bus input
+arguments, and returns `void`.
+
+`ReturnTypes...` describe the D-Bus output arguments. They are required because
+the handler returns `void`, so the output signature cannot be deduced from the
+C++ return type; pass an empty list for a void method.
+
+The handler moves the `deferred_reply` into its asynchronous completion handler
+and completes the call there, exactly once:
+
+- `send(args...)` sends a successful method return, appending `args...` as the
+  reply body.
+- `message()` exposes the originating method-call message, so the handler can
+  build any other reply with the usual `message_t` API — for example an error
+  via `message().new_method_errno(error).method_return()`.
+
+Completion is the handler's responsibility. Calling `send()` more than once, or
+on a moved-from `deferred_reply`, is a no-op. A `deferred_reply` that is dropped
+without being completed sends nothing, so the caller blocks until its own D-Bus
+timeout.
+
+```c++
+iface->register_deferred_method<std::string>(
+    "GetValue",
+    [this](sdbusplus::asio::deferred_reply reply, const std::string& key) {
+        startAsyncLookup(
+            key,
+            [reply = std::move(reply)](boost::system::error_code ec,
+                                       std::string value) mutable {
+                if (ec)
+                {
+                    reply.message().new_method_errno(EIO).method_return();
+                    return;
+                }
+                reply.send(std::move(value));
+            });
+    });
+```
+
+If the asynchronous completion may run on a thread other than the one driving
+the D-Bus event loop, `boost::asio::post()` (or similar) the completion onto the
+event-loop executor before completing the `deferred_reply`.
+
+A complete, runnable example is in
+[`example/deferred-method-example.cpp`](../example/deferred-method-example.cpp),
+which uses a timer to stand in for an asynchronous backend and shows the event
+loop continuing to run while the reply is outstanding.

@@ -1,10 +1,13 @@
+#include <poll.h>
+
 #include <sdbusplus/async/fdio.hpp>
 
 namespace sdbusplus::async
 {
 fdio::fdio(context& ctx, int fd, std::chrono::microseconds timeout) :
     context_ref(ctx),
-    timeout(std::chrono::duration_cast<event_t::time_resolution>(timeout))
+    timeout(std::chrono::duration_cast<event_t::time_resolution>(timeout)),
+    ioFd(fd)
 {
     static auto eventHandler =
         [](sd_event_source*, int, uint32_t, void* data) noexcept {
@@ -41,6 +44,21 @@ void fdio::handleTimeout() noexcept
     {
         return;
     }
+
+    // Data may have arrived on the fd before the timer fired.
+    // When both the I/O event and timer are ready simultaneously,
+    // the event loop may dispatch the timer first. Check for data
+    // to avoid a spurious timeout in this race.
+    struct pollfd pfd = {ioFd, POLLIN, 0};
+
+    if (::poll(&pfd, 1, 0) > 0 && (pfd.revents & POLLIN))
+    {
+        auto c = std::exchange(complete, nullptr);
+        l.unlock();
+        c->complete();
+        return;
+    }
+
     auto c = std::exchange(complete, nullptr);
     l.unlock();
     c->error(std::make_exception_ptr(fdio_timeout_exception()));

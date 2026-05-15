@@ -38,6 +38,12 @@ executable(
 executable('register-property', 'register-property.cpp', dependencies: asio_dep)
 
 executable(
+    'deferred-method-example',
+    'deferred-method-example.cpp',
+    dependencies: asio_dep,
+)
+
+executable(
     'get-all-properties',
     'get-all-properties.cpp',
     dependencies: asio_dep,

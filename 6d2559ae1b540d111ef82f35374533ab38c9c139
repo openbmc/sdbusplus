@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "713a0263_014370a7",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 12
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1002739
+      },
+      "writtenOn": "2026-05-15T08:49:11Z",
+      "side": 1,
+      "message": "@patrick@stwcx.xyz The sync_iterative test fails intermittently on CI\ndue to a timeout/race condition ..the 1ms timeout fires before the\nfile event arrives. I tried increasing to 100ms but that caused the\nasync_iterative test to fail .How should we handle this?",
+      "revId": "6d2559ae1b540d111ef82f35374533ab38c9c139",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

@@ -35,6 +35,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "23ac6840_01e821a5",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 326,
+      "author": {
+        "id": 1002885
+      },
+      "writtenOn": "2026-05-15T13:17:11Z",
+      "side": 1,
+      "message": "The asymmetry is intentional. In move-construction `*this` is being created and `request_` is directly initialized from `other.request_` in the mem-init list. So there is no prior request on `*this` to abandon.\nHowever, in the move-assignment, `*this` already exists and may hold a live un-replied request. Calling `abandon_if_unreplied()` first sends `-EIO` to that original caller before we overwrite(otherwise they will time out).",
+      "parentUuid": "0b283d1f_df386a16",
+      "revId": "acf07bc2f5d707a9a3dce6d7096801b038cc34e7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "f6ac908e_2b103650",
@@ -52,6 +70,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "40249274_710bc190",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 335,
+      "author": {
+        "id": 1002885
+      },
+      "writtenOn": "2026-05-15T13:17:11Z",
+      "side": 1,
+      "message": "I think yes because `abandon_if_unreplied()` is idempotent.\nIt guards on `if (replied_ || ~request_) return;` initially and set `replied_ \u003d true` at the end, so any second call will be short-circuited at the guard.",
+      "parentUuid": "f6ac908e_2b103650",
+      "revId": "acf07bc2f5d707a9a3dce6d7096801b038cc34e7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "3bec7d74_75d0490e",
@@ -65,6 +101,24 @@
       "writtenOn": "2026-05-14T16:25:11Z",
       "side": 1,
       "message": "nit: this statement contradicts itself. Sounds like what you are trying to describe is idempotency?",
+      "revId": "acf07bc2f5d707a9a3dce6d7096801b038cc34e7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6b6cacbf_174c0f3f",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 393,
+      "author": {
+        "id": 1002885
+      },
+      "writtenOn": "2026-05-15T13:17:11Z",
+      "side": 1,
+      "message": "Thanks for the catching!\nRewrote the statement.",
+      "parentUuid": "3bec7d74_75d0490e",
       "revId": "acf07bc2f5d707a9a3dce6d7096801b038cc34e7",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }

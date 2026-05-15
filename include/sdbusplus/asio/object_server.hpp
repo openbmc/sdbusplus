@@ -12,6 +12,7 @@
 #include <boost/asio/detached.hpp>
 #include <boost/asio/spawn.hpp>
 #endif
+#include <sdbusplus/asio/completion.hpp>
 #include <sdbusplus/asio/connection.hpp>
 #include <sdbusplus/exception.hpp>
 #include <sdbusplus/message/read.hpp>
@@ -21,8 +22,10 @@
 #include <sdbusplus/utility/type_traits.hpp>
 
 #include <any>
+#include <cerrno>
 #include <functional>
 #include <optional>
+#include <type_traits>
 #include <utility>
 #include <vector>
 
@@ -611,8 +614,6 @@ class dbus_interface
         {
             return false;
         }
-        static const auto argType = utility::strip_ends(
-            utility::tuple_to_array(message::types::type_id<InputTupleType>()));
         static const auto resultType =
             utility::tuple_to_array(message::types::type_id<ResultType>());
 
@@ -626,10 +627,53 @@ class dbus_interface
         {
             func = callback_method_instance<CallbackType>(std::move(handler));
         }
-        method_callbacks_.emplace_back(name, std::move(func), argType.data(),
-                                       resultType.data(), flags);
+        return addMethodCallback<InputTupleType>(name, std::move(func),
+                                                 resultType.data(), flags);
+    }
 
-        return true;
+    // Register a method that completes its D-Bus reply asynchronously
+    // through a completion object passed to the handler.  Use this
+    // when the handler hands off to a callback-based asynchronous API
+    // and cannot return the result synchronously, but coroutines are
+    // not desirable.  ReturnTypes... are the flat D-Bus output argument
+    // types; pass an empty pack for a void method.
+    template <typename... ReturnTypes, typename CallbackType>
+    bool register_completion_method(const std::string& name,
+                                    CallbackType&& handler,
+                                    decltype(vtable_t::flags) flags = 0)
+    {
+        using ActualSignature = boost::callable_traits::args_t<CallbackType>;
+        using DecayedSignature = utility::decay_tuple_t<ActualSignature>;
+        using FirstArg = utility::get_first_arg_t<DecayedSignature>;
+        using ResultType = boost::callable_traits::return_type_t<CallbackType>;
+        using InputTupleType = utility::strip_first_arg_t<DecayedSignature>;
+
+        static_assert(
+            std::is_same_v<FirstArg, completion>,
+            "register_completion_method: handler's first parameter must be "
+            "sdbusplus::asio::completion");
+        static_assert(
+            std::is_void_v<ResultType>,
+            "register_completion_method: handler must return void; use the "
+            "completion object to send the result");
+
+        if (is_initialized())
+        {
+            return false;
+        }
+        if (sd_bus_member_name_is_valid(name.c_str()) != 1)
+        {
+            return false;
+        }
+
+        static const auto resultType =
+            utility::strip_ends(utility::tuple_to_array(
+                message::types::type_id<std::tuple<ReturnTypes...>>()));
+
+        std::function<int(message_t&)> func =
+            completion_method_instance<CallbackType>(std::move(handler));
+        return addMethodCallback<InputTupleType>(name, std::move(func),
+                                                 resultType.data(), flags);
     }
 
     static int get_handler(sd_bus* /*bus*/, const char* /*path*/,
@@ -834,6 +878,23 @@ class dbus_interface
     }
 
   private:
+    // Derive the input-argument signature from InputTupleType and append the
+    // method to the vtable.  Shared by register_method and
+    // register_completion_method, which differ only in how they build func and
+    // the output signature.
+    template <typename InputTupleType>
+    bool addMethodCallback(const std::string& name,
+                           std::function<int(message_t&)> func,
+                           const char* resultType,
+                           decltype(vtable_t::flags) flags)
+    {
+        static const auto argType = utility::strip_ends(
+            utility::tuple_to_array(message::types::type_id<InputTupleType>()));
+        method_callbacks_.emplace_back(name, std::move(func), argType.data(),
+                                       resultType, flags);
+        return true;
+    }
+
     std::shared_ptr<sdbusplus::asio::connection> conn_;
     sdbusplus::object_path path_;
     std::string name_;

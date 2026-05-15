@@ -66,6 +66,15 @@ test(
 )
 
 test(
+    'test-bus_completion_method',
+    executable(
+        'test-bus_completion_method',
+        'bus/completion_method.cpp',
+        dependencies: [boost_dep, gmock_dep, gtest_dep, sdbusplus_dep],
+    ),
+)
+
+test(
     'test-vtable',
     executable(
         'test-vtable',

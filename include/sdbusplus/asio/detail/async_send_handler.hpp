@@ -82,7 +82,7 @@ class async_send_handler
         if (ec < 0)
         {
             auto err =
-                make_error_code(static_cast<boost::system::errc::errc_t>(ec));
+                make_error_code(static_cast<boost::system::errc::errc_t>(-ec));
             context->handler_(err, mesg);
             return;
         }

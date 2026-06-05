@@ -18,6 +18,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "48f47508_1e3efb6b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1002885
+      },
+      "writtenOn": "2026-06-05T17:54:29Z",
+      "side": 1,
+      "message": "Thanks for acknowledging.\nI have added example in `example/deferred-method-example.cpp` to demonstrate how it can be used.",
+      "parentUuid": "e3a7f291_b15a2d03",
+      "revId": "112efbf16367f0bab8d994b200cd7ba8822239be",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "7adbbbab_ffad11ab",
@@ -31,6 +49,24 @@
       "writtenOn": "2026-05-28T16:07:24Z",
       "side": 1,
       "message": "1.  Please correct this to use the asio convention. This would be called a \"completion\"\n2. Please put this kind of documentation in the documentation and examples, not inline.\n3. Please remove internal error codes.  Describe the public API.",
+      "revId": "112efbf16367f0bab8d994b200cd7ba8822239be",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7ffd586e_e2f0d923",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 315,
+      "author": {
+        "id": 1002885
+      },
+      "writtenOn": "2026-06-05T17:54:29Z",
+      "side": 1,
+      "message": "Done. \n1. Migrated implementation to `sdbusplus::asio::completion`, and the API is now called `register_completion_method`.\n2. Noted and already moved the documentation to `docs/asio.md`.\n3. Noted. Expose only `send()` now and have described the API in the document.",
+      "parentUuid": "7adbbbab_ffad11ab",
       "revId": "112efbf16367f0bab8d994b200cd7ba8822239be",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
@@ -52,6 +88,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "c6cb0168_eaaa658a",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 317,
+      "author": {
+        "id": 1002885
+      },
+      "writtenOn": "2026-06-05T17:54:29Z",
+      "side": 1,
+      "message": "Done. `completion` and `completion_method_instance` now live in `include/sdbusplus/asio/completion.hpp`.",
+      "parentUuid": "3ae9eb89_25b7bb7b",
+      "revId": "112efbf16367f0bab8d994b200cd7ba8822239be",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "81b2abcd_df445432",
@@ -65,6 +119,24 @@
       "writtenOn": "2026-05-28T16:07:24Z",
       "side": 1,
       "message": "?  Why are we abandoning on a move?",
+      "revId": "112efbf16367f0bab8d994b200cd7ba8822239be",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "625f0806_41742e22",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 335,
+      "author": {
+        "id": 1002885
+      },
+      "writtenOn": "2026-06-05T17:54:29Z",
+      "side": 1,
+      "message": "Removed, with the destructor reply gone there is nothing to abandon, and the constructor and assignment operation()\u003d are now symmetric.",
+      "parentUuid": "81b2abcd_df445432",
       "revId": "112efbf16367f0bab8d994b200cd7ba8822239be",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
@@ -86,6 +158,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f8180586_e747e263",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 344,
+      "author": {
+        "id": 1002885
+      },
+      "writtenOn": "2026-06-05T17:54:29Z",
+      "side": 1,
+      "message": "The intention was to catch if the consumer has any unsend reply.\nHowever, that seems to be redundant as completing the call is explicitly the handler\u0027s responsibility.\nIn this case, I have removed this in the latest implementation.\nThanks for acknowledging!",
+      "parentUuid": "6f71aab2_ba1dfe60",
+      "revId": "112efbf16367f0bab8d994b200cd7ba8822239be",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "aa54615b_42bbff02",
@@ -99,6 +189,30 @@
       "writtenOn": "2026-05-28T16:07:24Z",
       "side": 1,
       "message": "Remove these.  They duplicate behavior on sdbusplus::message",
+      "range": {
+        "startLine": 371,
+        "startChar": 0,
+        "endLine": 406,
+        "endChar": 5
+      },
+      "revId": "112efbf16367f0bab8d994b200cd7ba8822239be",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b52956ea_5702cabc",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 406,
+      "author": {
+        "id": 1002885
+      },
+      "writtenOn": "2026-06-05T17:54:29Z",
+      "side": 1,
+      "message": "Done. \nRemoved the 2 redundant error handling functions.",
+      "parentUuid": "aa54615b_42bbff02",
       "range": {
         "startLine": 371,
         "startChar": 0,
@@ -132,6 +246,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "8695234f_6606531f",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 424,
+      "author": {
+        "id": 1002885
+      },
+      "writtenOn": "2026-06-05T17:54:29Z",
+      "side": 1,
+      "message": "Done.\nThis cases is no longer needed anymore as we have abandoned the consumer of this function.",
+      "parentUuid": "9756d6bb_20785bad",
+      "range": {
+        "startLine": 423,
+        "startChar": 0,
+        "endLine": 424,
+        "endChar": 10
+      },
+      "revId": "112efbf16367f0bab8d994b200cd7ba8822239be",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d3db9270_ef8de386",
@@ -149,6 +287,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "11ea525b_f017942e",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 438,
+      "author": {
+        "id": 1002885
+      },
+      "writtenOn": "2026-06-05T17:54:29Z",
+      "side": 1,
+      "message": "Done. Discarded this implementation in the latest patch.",
+      "parentUuid": "d3db9270_ef8de386",
+      "revId": "112efbf16367f0bab8d994b200cd7ba8822239be",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d1f72cb9_0d7b7a77",
@@ -162,6 +318,30 @@
       "writtenOn": "2026-05-28T16:07:24Z",
       "side": 1,
       "message": "A lot of this looks duplicated with register_method.  Is there any ways to avoid the duplication?",
+      "range": {
+        "startLine": 443,
+        "startChar": 0,
+        "endLine": 454,
+        "endChar": 23
+      },
+      "revId": "112efbf16367f0bab8d994b200cd7ba8822239be",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4bef91bc_7bb574e9",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 454,
+      "author": {
+        "id": 1002885
+      },
+      "writtenOn": "2026-06-05T17:54:29Z",
+      "side": 1,
+      "message": "Done.\nFactored the shared registration logic into a private helper `addMethodCallback()`.",
+      "parentUuid": "d1f72cb9_0d7b7a77",
       "range": {
         "startLine": 443,
         "startChar": 0,
@@ -195,6 +375,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "558f2f42_44f5469d",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 471,
+      "author": {
+        "id": 1002885
+      },
+      "writtenOn": "2026-06-05T17:54:29Z",
+      "side": 1,
+      "message": "Done.\nSwitched to `std::move()` to transfer the ownership.",
+      "parentUuid": "28230c34_62ebb0de",
+      "range": {
+        "startLine": 471,
+        "startChar": 0,
+        "endLine": 471,
+        "endChar": 59
+      },
+      "revId": "112efbf16367f0bab8d994b200cd7ba8822239be",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "fd124172_5e84a0cb",
@@ -208,6 +412,24 @@
       "writtenOn": "2026-05-28T16:07:24Z",
       "side": 1,
       "message": "I\u0027m a little confused how this works....  If you\u0027re registering this in the normal table, isn\u0027t it just doing a blocking call still?\n\nWhen you write your example, maybe include a timer in the callback to show that it\u0027s working the way we expect it to.",
+      "revId": "112efbf16367f0bab8d994b200cd7ba8822239be",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2b7230ca_fa767b9d",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 854,
+      "author": {
+        "id": 1002885
+      },
+      "writtenOn": "2026-06-05T17:54:29Z",
+      "side": 1,
+      "message": "It is not blocking.\nThe dispatch handler `completion_method_instance::operator()` returns 1 without calling `method_return()`; \nso the dispatch is released immediately and the reply is transmitted later from `completion::send()` on whatever callback completes the work. \nThis is the same mechanism the coroutine path already uses, and the completion path just swaps the coroutine for a caller-owned completion.",
+      "parentUuid": "fd124172_5e84a0cb",
       "revId": "112efbf16367f0bab8d994b200cd7ba8822239be",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }

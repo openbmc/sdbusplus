@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3dfc469c_38bc626c",
+        "filename": "example/completion-method-example.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2026-06-08T05:33:15Z",
+      "side": 1,
+      "message": "You\u0027ve only added one method, please just add an example of this call to the existing asio example rather than rewriting the whole thing.",
+      "revId": "4f57ae1e0f28457063071d7e5f3484df5c649168",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7b109848_d8b2b312",
+        "filename": "include/sdbusplus/asio/completion.hpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2026-06-08T05:33:15Z",
+      "side": 1,
+      "message": "asio completion objects generally don\u0027t take arbitrary arguments.  Do we need to be explicit here, and template this based on the return types in the regisetered function?",
+      "revId": "4f57ae1e0f28457063071d7e5f3484df5c649168",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

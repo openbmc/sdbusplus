@@ -89,6 +89,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "8925ced2_1cf9b9c4",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 315,
+      "author": {
+        "id": 1002885
+      },
+      "writtenOn": "2026-06-09T12:42:12Z",
+      "side": 1,
+      "message": "I\u0027ve read the completion-token overview you linked and understand that an async operation should take a completion token as its final argument so the same operation composes across callbacks, futures, coroutines, ..., etc.\n\nIn this revision, I took that to its conclusion and removed the abstraction altogether. There is no completion/handle type and no `send()`. Instead, I added a `deferred` flag that only suppresses the automatic reply, and the handler keeps the call `message_t` and replies through the normal message API (`new_method_return()` / `new_method_errno()`).\n\nThe consequence is that there is no new async primitive to fit into the completion-token model. However, if you\u0027d still prefer the completion-token-based reply type, I\u0027m glad to take it that direction.\n\nThe latest patch I pushed is just to propose the minimal form that adds no public type and reuses the existing path.",
+      "parentUuid": "6762cbcd_dcc58b86",
+      "revId": "112efbf16367f0bab8d994b200cd7ba8822239be",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "3ae9eb89_25b7bb7b",

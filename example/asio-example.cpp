@@ -1,6 +1,7 @@
 #include <boost/asio/detached.hpp>
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/spawn.hpp>
+#include <boost/asio/steady_timer.hpp>
 #include <sdbusplus/asio/connection.hpp>
 #include <sdbusplus/asio/object_server.hpp>
 #include <sdbusplus/asio/sd_event.hpp>
@@ -9,9 +10,11 @@
 #include <sdbusplus/server.hpp>
 #include <sdbusplus/timer.hpp>
 
+#include <cerrno>
 #include <chrono>
 #include <ctime>
 #include <iostream>
+#include <memory>
 #include <variant>
 
 using variant = std::variant<int, std::string>;
@@ -52,6 +55,22 @@ int voidBar(void)
 {
     std::cout << "voidBar() -> 42\n";
     return 42;
+}
+
+// Reschedules itself so the server prints a heartbeat while the event loop
+// runs.  It shows the loop keeps making progress while a deferred method
+// reply is still outstanding, i.e. the deferred call did not block it.
+void startHeartbeat(std::shared_ptr<boost::asio::steady_timer> timer)
+{
+    timer->expires_after(std::chrono::milliseconds(750));
+    timer->async_wait([timer](const boost::system::error_code& ec) {
+        if (ec)
+        {
+            return;
+        }
+        std::cout << "server: event loop alive\n";
+        startHeartbeat(timer);
+    });
 }
 
 void do_start_async_method_call_one(
@@ -260,7 +279,41 @@ int server()
 
     iface->register_method("execute", ipmiInterface);
 
+    // TestDeferredFunction demonstrates a deferred method reply.  The handler
+    // takes the call message and returns immediately, so the event loop is not
+    // blocked, then completes the reply from a steady_timer callback two
+    // seconds later.  The trailing deferred=true argument tells
+    // register_method() not to send an automatic reply when the handler
+    // returns.  The reply carries no payload, so the handler returns void; a
+    // method that needs to return data should publish it via properties.
+    iface->register_method(
+        "TestDeferredFunction",
+        [conn](sdbusplus::message_t call, int32_t value) {
+            std::cout << "TestDeferredFunction(" << value
+                      << "): deferring reply for 2s\n";
+            auto timer = std::make_shared<boost::asio::steady_timer>(
+                conn->get_io_context());
+            timer->expires_after(std::chrono::seconds(2));
+            timer->async_wait([timer, call = std::move(call), value](
+                                  const boost::system::error_code& ec) mutable {
+                if (ec)
+                {
+                    call.new_method_errno(EIO).method_return();
+                    return;
+                }
+                std::cout << "TestDeferredFunction(" << value
+                          << "): sending deferred reply now\n";
+                call.new_method_return().method_return();
+            });
+        },
+        0, /*deferred=*/true);
+
     iface->initialize();
+
+    // Heartbeat to show the event loop keeps running while the deferred reply
+    // above is outstanding.
+    auto heartbeat = std::make_shared<boost::asio::steady_timer>(io);
+    startHeartbeat(heartbeat);
 
     io.run();
 
@@ -405,6 +458,23 @@ int client()
         },
         "xyz.openbmc_project.asio-test", "/xyz/openbmc_project/test",
         "xyz.openbmc_project.test", "TestYieldFunction", int32_t(41));
+
+    // Call the deferred method.  Its reply arrives ~2s later, while the
+    // tick/tock timers above keep firing, showing the call did not block the
+    // server: the server returned from the handler immediately and only sent
+    // the reply once its own timer fired.
+    conn->async_method_call(
+        [](boost::system::error_code ec) {
+            if (ec)
+            {
+                std::cerr << "TestDeferredFunction returned error: " << ec
+                          << "\n";
+                return;
+            }
+            std::cout << "TestDeferredFunction deferred reply received\n";
+        },
+        "xyz.openbmc_project.asio-test", "/xyz/openbmc_project/test",
+        "xyz.openbmc_project.test", "TestDeferredFunction", int32_t(7));
     io.run();
 
     return 0;

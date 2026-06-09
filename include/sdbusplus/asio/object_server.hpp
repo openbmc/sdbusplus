@@ -192,9 +192,12 @@ class callback_method_instance
     using InputTupleType = utility::decay_tuple_t<CallbackSignature>;
 
     CallbackType func_;
+    bool deferred_;
 
   public:
-    callback_method_instance(CallbackType&& func) : func_(func) {}
+    callback_method_instance(CallbackType&& func, bool deferred = false) :
+        func_(func), deferred_(deferred)
+    {}
 
     int operator()(message_t& m)
     {
@@ -208,19 +211,42 @@ class callback_method_instance
         }
         std::apply([&m](auto&... x) { m.read(x...); }, dbusArgs);
 
-        auto ret = m.new_method_return();
         if constexpr (callbackWantsMessage<CallbackType>)
         {
-            InputTupleType inputArgs =
-                std::tuple_cat(std::forward_as_tuple(std::move(m)), dbusArgs);
-            callFunction(ret, inputArgs, func_);
+            if (deferred_)
+            {
+                // The handler takes ownership of the call message and is
+                // responsible for sending the reply later, once the
+                // asynchronous work completes.  Do not create a method return
+                // here, and return a positive value so sd-bus does not send an
+                // automatic reply now.
+                InputTupleType inputArgs = std::tuple_cat(
+                    std::forward_as_tuple(std::move(m)), dbusArgs);
+                std::apply(func_, inputArgs);
+                return 1;
+            }
+            else
+            {
+                // Build the method return before moving the call message into
+                // the handler; the handler receives the message for context
+                // and its return value is appended to ret.
+                auto ret = m.new_method_return();
+                InputTupleType inputArgs = std::tuple_cat(
+                    std::forward_as_tuple(std::move(m)), dbusArgs);
+                callFunction(ret, inputArgs, func_);
+                ret.method_return();
+                return 1;
+            }
         }
         else
         {
+            // The handler does not take the message; deferred_ has no meaning
+            // here (it cannot keep the call), so always reply synchronously.
+            auto ret = m.new_method_return();
             callFunction(ret, dbusArgs, func_);
+            ret.method_return();
+            return 1;
         }
-        ret.method_return();
-        return 1;
     }
 };
 
@@ -596,9 +622,34 @@ class dbus_interface
         return true;
     }
 
+    // Register a D-Bus method.
+    //
+    // When deferred is false (the default) the reply is sent automatically as
+    // soon as the handler returns, carrying the handler's return value.
+    //
+    // When deferred is true the automatic reply is suppressed: the handler must
+    // accept the sdbusplus::message_t for the call (as its first or second
+    // argument), keep a copy of it, and send the reply itself later, once the
+    // asynchronous work completes:
+    //
+    //     iface->register_method(
+    //         "Trigger",
+    //         [this](message_t call, std::string arg) {
+    //             startAsyncWork(arg,
+    //                 [call = std::move(call)]() mutable {
+    //                     call.new_method_return().method_return();
+    //                 });
+    //         },
+    //         0, /*deferred=*/true);
+    //
+    // The service must send exactly one reply (new_method_return() or
+    // new_method_errno()) for every call; sd-bus enforces the client-side
+    // method timeout on its own.  deferred is ignored unless the handler
+    // accepts the message_t.
     template <typename CallbackType>
     bool register_method(const std::string& name, CallbackType&& handler,
-                         decltype(vtable_t::flags) flags = 0)
+                         decltype(vtable_t::flags) flags = 0,
+                         bool deferred = false)
     {
         using ActualSignature = boost::callable_traits::args_t<CallbackType>;
         using CallbackSignature = utility::strip_first_n_args_t<
@@ -624,7 +675,8 @@ class dbus_interface
         }
         else
         {
-            func = callback_method_instance<CallbackType>(std::move(handler));
+            func = callback_method_instance<CallbackType>(std::move(handler),
+                                                          deferred);
         }
         method_callbacks_.emplace_back(name, std::move(func), argType.data(),
                                        resultType.data(), flags);

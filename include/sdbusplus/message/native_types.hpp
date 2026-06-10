@@ -155,6 +155,7 @@ struct string_path_wrapper
     string_path_wrapper parent_path() const;
     string_path_wrapper operator/(std::string_view) const;
     string_path_wrapper& operator/=(std::string_view);
+    bool starts_with(const string_path_wrapper& other) const;
 };
 
 /** Typename for sdbus SIGNATURE types. */

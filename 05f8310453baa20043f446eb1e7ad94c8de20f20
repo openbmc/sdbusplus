@@ -1,0 +1,90 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "00e2c448_b2ce19ee",
+        "filename": "example/asio-example.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2026-06-10T16:41:24Z",
+      "side": 1,
+      "message": "This should be in a separate patch.  I like the idea of having this, but some level of description for what it does and why (in the commit message) is required, and a separate patchset is the best way to do that.",
+      "revId": "05f8310453baa20043f446eb1e7ad94c8de20f20",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b3ebfc82_6067d16f",
+        "filename": "example/asio-example.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 288,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2026-06-10T16:41:24Z",
+      "side": 1,
+      "message": "Please condense.",
+      "range": {
+        "startLine": 282,
+        "startChar": 0,
+        "endLine": 288,
+        "endChar": 73
+      },
+      "revId": "05f8310453baa20043f446eb1e7ad94c8de20f20",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6e83fcc2_562a5d41",
+        "filename": "example/asio-example.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 306,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2026-06-10T16:41:24Z",
+      "side": 1,
+      "message": "This is still not how asio would handle completions.  You were closer on your last patch.  There should be a callable (token) passed to the method, that on completion can be called with either an error or a success, and the arguments that get returned.",
+      "range": {
+        "startLine": 306,
+        "startChar": 0,
+        "endLine": 306,
+        "endChar": 57
+      },
+      "revId": "05f8310453baa20043f446eb1e7ad94c8de20f20",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b8202993_041cd53f",
+        "filename": "example/asio-example.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 308,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2026-06-10T16:41:24Z",
+      "side": 1,
+      "message": "Please keep this in line with the lambda rules.  This likely needs to be a method.",
+      "range": {
+        "startLine": 291,
+        "startChar": 0,
+        "endLine": 308,
+        "endChar": 9
+      },
+      "revId": "05f8310453baa20043f446eb1e7ad94c8de20f20",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

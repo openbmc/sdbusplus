@@ -109,6 +109,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "df506f62_dcfb845a",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 315,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2026-06-10T16:41:24Z",
+      "side": 1,
+      "message": "\u003e I took that to its conclusion and removed the abstraction altogether.\n\nThis is not what I asked for.  I asked you to keep the completion, and make it compliant with asio completion tokens.\n\n\u003e if you\u0027d still prefer the completion-token-based reply type, I\u0027m glad to take it that direction.\n\nYes, this is what I prefer.  This is so that chaining of callbacks works properly with normal asio sockets/queues/events.",
+      "parentUuid": "8925ced2_1cf9b9c4",
+      "revId": "112efbf16367f0bab8d994b200cd7ba8822239be",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "3ae9eb89_25b7bb7b",
         "filename": "include/sdbusplus/asio/object_server.hpp",
         "patchSetId": 5

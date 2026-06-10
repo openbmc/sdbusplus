@@ -116,3 +116,20 @@ TEST(MessageFormatting, ConcatExistingPath)
     const auto obj2 = sdbusplus::object_path(obj, "inventory");
     EXPECT_EQ(obj2.str, "/xyz/inventory");
 }
+
+TEST(MessageFormatting, CheckStartsWithBasePath)
+{
+    const auto path =
+        sdbusplus::object_path("/xyz/openbmc_project/software/CPLD_3287");
+
+    const auto namespacePath =
+        sdbusplus::object_path("/xyz/openbmc_project/software");
+
+    const auto unrelatedPath =
+        sdbusplus::object_path("/xyz/openbmc_project/inventory");
+
+    EXPECT_TRUE(path.starts_with(sdbusplus::object_path("/")));
+    EXPECT_TRUE(path.starts_with(namespacePath));
+
+    EXPECT_FALSE(path.starts_with(unrelatedPath));
+}

@@ -146,6 +146,11 @@ string_path_wrapper& string_path_wrapper::operator/=(std::string_view extId)
     return *this;
 }
 
+bool string_path_wrapper::starts_with(const string_path_wrapper& other) const
+{
+    return str.starts_with(other.str);
+}
+
 } // namespace details
 } // namespace message
 } // namespace sdbusplus

@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f364865a_6e2a59c7",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2026-06-10T16:34:45Z",
+      "side": 1,
+      "message": "This code doesn\u0027t look right.  It should be doing something like\n\nobjectPath.parent() \u003d\u003d path\n\nWhich was actually added to prevent this kind of bug.\n\nWe don\u0027t define namespaces separated by underscores, so I\u0027d be fairly against this change, as it perpetuates \"invented\" namespaces in a subfield name.\n\nhttps://github.com/openbmc/bmcweb/blob/master/docs/COMMON_ERRORS.md#12-imprecise-matching\n\nIs the documentation bmcweb uses to justify this there.",
+      "range": {
+        "startLine": 19,
+        "startChar": 0,
+        "endLine": 19,
+        "endChar": 134
+      },
+      "revId": "e61ceec0b0ac0c7d289de1845d86d567929d87b7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0614368d_ad70a68d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2026-06-10T16:34:45Z",
+      "side": 1,
+      "message": "Overall not in support of this change.  The linked code looks incorrect and needs fixed.",
+      "revId": "e61ceec0b0ac0c7d289de1845d86d567929d87b7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

@@ -16,6 +16,24 @@
       "message": "We tried to make object_path match the API of std::fs::path and this is deviating from that.  I\u0027m ok with that in some dbus-specific ways if there is merit to it.\n\nCan you elaborate why someone needs to compare against root?  It isn\u0027t immediately obvious to me.",
       "revId": "a81de8245d01755f38f03a853da76738a617f129",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4d17f89c_d2388b55",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2026-06-11T15:08:21Z",
+      "side": 1,
+      "message": "+1",
+      "parentUuid": "e57dd3b9_f5ee0fa7",
+      "revId": "a81de8245d01755f38f03a853da76738a617f129",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

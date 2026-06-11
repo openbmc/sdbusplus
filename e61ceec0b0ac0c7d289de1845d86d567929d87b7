@@ -24,6 +24,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "594a0564_e27abd11",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1001712
+      },
+      "writtenOn": "2026-06-11T09:25:49Z",
+      "side": 1,
+      "message": "Your idea does not solve the problem for me because it involves a behavior change.\n\nYes, most of the linked codes are probably not right to do it like that, but that does not mean we can just go ahead and change them easily without reviewing the surrounding code.\n\nWith this change we can easily replace the existing code and achieve better encapsulation of our string member.\n\nIt\u0027s an incremental upgrade for existing code, and there is no claim that it is the right solution long term.\n\nUsers of `object_path` can do whatever they like currently since the string member is public. So fixing that in the fastest way (without behavior change of user code) should be prioritized over ideal usage which is unrealistic given the current state of the codebase and review timelines for any patches that involve behavior changes.\n\nThanks for your feedback, i did add a comment to the header saying that this function should not be used for new code and `parent_path()` is the preferred choice.",
+      "parentUuid": "f364865a_6e2a59c7",
+      "range": {
+        "startLine": 19,
+        "startChar": 0,
+        "endLine": 19,
+        "endChar": 134
+      },
+      "revId": "e61ceec0b0ac0c7d289de1845d86d567929d87b7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "0614368d_ad70a68d",
@@ -37,6 +61,24 @@
       "writtenOn": "2026-06-10T16:34:45Z",
       "side": 1,
       "message": "Overall not in support of this change.  The linked code looks incorrect and needs fixed.",
+      "revId": "e61ceec0b0ac0c7d289de1845d86d567929d87b7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e0186363_5880f32e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1001712
+      },
+      "writtenOn": "2026-06-11T09:25:49Z",
+      "side": 1,
+      "message": "The linked code is responsibility of the respective maintainers, and they will determine if it needs fixed.\n\nI would appreciate if you could fix the issue on bmcweb side.\n\nsdbusplus can only provide the `object_path` API, whoever writes the user code will determine how they want to use it.\n\nWhat we can do in sdbusplus is provide a better way to do what the user code is already doing.\nIn this case the improvement is that the string member is not accessed directly.\n\nWe don\u0027t have any disagreement that the linked code is probably wrong.",
+      "parentUuid": "0614368d_ad70a68d",
       "revId": "e61ceec0b0ac0c7d289de1845d86d567929d87b7",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }

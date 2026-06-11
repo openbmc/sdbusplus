@@ -146,6 +146,11 @@ string_path_wrapper& string_path_wrapper::operator/=(std::string_view extId)
     return *this;
 }
 
+bool string_path_wrapper::is_root() const
+{
+    return str == "/";
+}
+
 } // namespace details
 } // namespace message
 } // namespace sdbusplus

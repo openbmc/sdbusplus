@@ -4,6 +4,8 @@
 #include <sdbusplus/server/manager.hpp>
 #include <sdbusplus/vtable.hpp>
 
+#include <new>
+
 namespace sdbusplus::async
 {
 
@@ -63,7 +65,7 @@ struct server_context_friend
     template <typename Client, typename Self>
     static sdbusplus::async::context& context(Self* self)
     {
-        return static_cast<Client*>(self)->ctx;
+        return std::launder(static_cast<Client*>(self))->ctx;
     }
 };
 

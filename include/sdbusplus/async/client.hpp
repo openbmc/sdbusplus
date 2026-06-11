@@ -2,6 +2,8 @@
 
 #include <sdbusplus/async/proxy.hpp>
 
+#include <new>
+
 namespace sdbusplus::async
 {
 
@@ -105,7 +107,7 @@ struct client_context_friend
     template <typename Client, typename Self>
     static sdbusplus::async::context& context(Self* self)
     {
-        return static_cast<Client*>(self)->ctx;
+        return std::launder(static_cast<Client*>(self))->ctx;
     }
 };
 } // namespace client::details

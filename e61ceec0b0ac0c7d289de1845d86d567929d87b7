@@ -74,6 +74,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "94d196e7_04f07db7",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1001712
+      },
+      "writtenOn": "2026-06-11T16:04:56Z",
+      "side": 1,
+      "message": "There are at least 6 source locations involving `starts_with`\n\nhttps://github.com/search?q\u003dorg%3Aopenbmc+.str.starts_with%28\u0026type\u003dcode\n\nand at least 4 source locations involving `substr`\nhttps://github.com/search?q\u003dorg%3Aopenbmc+.str.substr\u0026type\u003dcode\n\nThen 7 problems involving `find`\nhttps://github.com/search?q\u003dorg%3Aopenbmc+.str.find\u0026type\u003dcode\n\nAnd 2 issues involving `rfind`\nhttps://github.com/search?q\u003dorg%3Aopenbmc+.str.rfind\u0026type\u003dcode\n\nOne of those problems is in fw update code and was introduced by me, fix is already up https://gerrit.openbmc.org/c/openbmc/phosphor-bmc-code-mgmt/+/91192\n\nAlso, people are adding new usages of `object_path::str` member all the time. If you blame this one, that\u0027s an `rfind` which was added just last week.\n\nhttps://github.com/openbmc/phosphor-bmc-code-mgmt/blame/3b9435fc224cc46f2fa1248388d02e26e4d5c85c/common/src/events.cpp#L21\n\nI am not saying someone cannot do an `rfind(\u0027_\u0027)` on an `object_path`, i just want to make this into an actual object path value type instead of just a fancy `std::string` wrapper.\n\nIf we just offer a fancy `std::string` wrapper to people then they might as well use `std::string`.\n\n\nKeep in mind there might be yet more `std::string` APIs in use on our object path, you can look for yourself also.\n\n\n\u003e I didn\u0027t suggest we change code without review or testing.\n\nIt did not need testing when we did the `sdbusplus::message::object_path -\u003e sdbusplus::object_path` migration. Not every change has to be tedious.",
+      "parentUuid": "7c23cbe5_16f5c72b",
+      "range": {
+        "startLine": 19,
+        "startChar": 0,
+        "endLine": 19,
+        "endChar": 134
+      },
+      "revId": "e61ceec0b0ac0c7d289de1845d86d567929d87b7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "0614368d_ad70a68d",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 1
@@ -121,6 +145,24 @@
       "side": 1,
       "message": "\u003e I would appreciate if you could fix the issue on bmcweb side.\n\nI\u0027ve been working on fixing the overall issue for years and fixed a lot of the issues already.  It\u0027s just not the highest priority for me.  I would prefer we don\u0027t make the problem worse by adding library APIs.\n\n\u003e We don\u0027t have any disagreement that the linked code is probably wrong.\n\nAwesome.  My strong preference is that we just fix the wrong code.  I understand that requires testing, but that\u0027s ok.",
       "parentUuid": "e0186363_5880f32e",
+      "revId": "e61ceec0b0ac0c7d289de1845d86d567929d87b7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ae69a1c9_fbff4309",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1001712
+      },
+      "writtenOn": "2026-06-11T16:04:56Z",
+      "side": 1,
+      "message": "\u003e I\u0027ve been working on fixing the overall issue for years and fixed a lot of the issues already. \n\nAre you sure the issue did not get worse or stay the same over time?\n\nThere is a lot of repos and a lot of people adding new code, so even if you make progress in your corner, the project as a whole may still regress.\n\n\u003e Awesome.  My strong preference is that we just fix the wrong code.  I understand that requires testing, but that\u0027s ok.\n\nWell if you spent years trying to fix it and it did not get fixed, maybe your way of fixing it is not working?\n\nMy proposed solution:\n\n- figure out which std::string APIs are used on object_path (e.g. `starts_with`)\n- provide those APIs on top of `object_path`, even if they are \u0027wrong\u0027. we can just document them as such.\n\n- merge changes to use those directly instead of `object_path::str` member access\n- not do any testing on those changes\n- make `object_path::str` private\n- migrate users to better APIs (may require testing)\n\nThat puts sdbusplus maintainers back in control on how `object_path` can be used instead of exposing the whole `std::string` surface on a mutable member variable.",
+      "parentUuid": "2eab250b_e7f7fd27",
       "revId": "e61ceec0b0ac0c7d289de1845d86d567929d87b7",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }

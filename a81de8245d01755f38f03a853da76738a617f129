@@ -34,6 +34,24 @@
       "parentUuid": "e57dd3b9_f5ee0fa7",
       "revId": "a81de8245d01755f38f03a853da76738a617f129",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bd246747_00aa7228",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1001712
+      },
+      "writtenOn": "2026-06-11T15:33:08Z",
+      "side": 1,
+      "message": "\u003e Can you elaborate\n\nSure, i was looking at phosphor-user-manager and noticed this code snippet\n\n```\n          std::string ldapConfigPath;\n          std::string userPrivilege;\n  \n          try  \n          {    \n              for (const auto\u0026 [path, interfaces] : objects)\n              {                                                                                         \n                  auto it \u003d interfaces.find(\"xyz.openbmc_project.Object.Enable\");\n                  if (it !\u003d interfaces.end())\n                  {    \n                      auto propIt \u003d it-\u003esecond.find(\"Enabled\");\n                      if (propIt !\u003d it-\u003esecond.end() \u0026\u0026\n                          std::get\u003cbool\u003e(propIt-\u003esecond))\n                      {    \n                          ldapConfigPath \u003d path.str + \u0027/\u0027; \n                          break;\n                      }    \n                  }    \n              }    \n  \n              if (ldapConfigPath.empty())\n              {    \n                  return userInfo;\n              }    \n  \n              if (ldapConfigPath.find(\"active_directory\") !\u003d std::string::npos)\n              {    \n                  userInfo.emplace(\"UserType\", convertForMessage(UserType::AD));\n              }    \n              else if (ldapConfigPath.find(\"openldap\") !\u003d std::string::npos)\n              {    \n                  userInfo.emplace(\"UserType\", convertForMessage(UserType::LDAP));\n              }    \n  \n              for (const auto\u0026 [path, interfaces] : objects)\n              {    \n                  if (!path.str.starts_with(ldapConfigPath))\n                  {    \n                      continue;\n                  }    \n```\n\nhttps://github.com/openbmc/phosphor-user-manager/blob/4e6172685fe76f7ae2fea1aa92d13bdd53bf79c2/user_mgr.cpp#L1412-L1438\n\nI wanted to rework it so that we would have\n\n```\nsdbusplus::object_path ldapConfigPath(\"/\");\n\n```\n\nand needed an easy way to check for the root path in case it was not set in the loop.\n\nOf course there is a million other ways to re-write that function but providing `.is_root()` seemed like the right choice to me.\n\n```\nif (ldapConfigPath.is_root()) {\n    //...\n}\n\nif (ldapConfigPath \u003d\u003d \"/\") {\n    //...\n}\n```\n\nseems to work as well but i would prefer to avoid adding extra string literals into the code when we can provide an alternative.",
+      "parentUuid": "4d17f89c_d2388b55",
+      "revId": "a81de8245d01755f38f03a853da76738a617f129",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

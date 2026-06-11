@@ -15,8 +15,8 @@ auto startup(sdbusplus::async::context& ctx) -> sdbusplus::async::task<>
 
     // Call ListUnitFiles method.
     using ret_type = std::vector<std::tuple<std::string, std::string>>;
-    for (auto& [file, status] :
-         co_await systemd.call<ret_type>(ctx, "ListUnitFiles"))
+    auto files = co_await systemd.call<ret_type>(ctx, "ListUnitFiles");
+    for (auto& [file, status] : files)
     {
         std::cout << file << " " << status << std::endl;
     }
@@ -29,8 +29,8 @@ auto startup(sdbusplus::async::context& ctx) -> sdbusplus::async::task<>
     using variant_type =
         std::variant<bool, std::string, std::vector<std::string>, uint64_t,
                      int32_t, uint32_t, double>;
-    for (auto& [property, value] :
-         co_await systemd.get_all_properties<variant_type>(ctx))
+    auto properties = co_await systemd.get_all_properties<variant_type>(ctx);
+    for (auto& [property, value] : properties)
     {
         std::cout
             << property << " is "

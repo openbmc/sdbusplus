@@ -50,6 +50,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "7c23cbe5_16f5c72b",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2026-06-11T15:17:11Z",
+      "side": 1,
+      "message": "\u003e Your idea does not solve the problem for me because it involves a behavior change.\n\u003e \n\u003e Yes, most of the linked codes are probably not right to do it like that, but that does not mean we can just go ahead and change them easily without reviewing the surrounding code.\n\nI didn\u0027t suggest we change code without review or testing.\n\n\u003e \n\u003e With this change we can easily replace the existing code and achieve better encapsulation of our string member.\n\nI would strongly prefer we don\u0027t and just continue to fix the core of the problem.  Adding this to the library implies that there\u0027s a correct way to use it.\n\n\u003e \n\u003e It\u0027s an incremental upgrade for existing code, and there is no claim that it is the right solution long term.\n\nNo argument there, my issue is this is actively going backward by adding an API that would be tough to remove later.\n\nIf your goal is to encapsulate the string internals, converting the code to using the existing parent/filename APIs would get you that result without needing this API.\n\n\u003e \n\u003e Users of `object_path` can do whatever they like currently since the string member is public. So fixing that in the fastest way (without behavior change of user code) should be prioritized over ideal usage which is unrealistic given the current state of the codebase and review timelines for any patches that involve behavior changes.\n\u003e \n\u003e Thanks for your feedback, i did add a comment to the header saying that this function should not be used for new code and `parent_path()` is the preferred choice.\n\nI\u0027m still against adding this API.  I know you linked 3 uses of starts_with, is that a complete list, or are there more?",
+      "parentUuid": "594a0564_e27abd11",
+      "range": {
+        "startLine": 19,
+        "startChar": 0,
+        "endLine": 19,
+        "endChar": 134
+      },
+      "revId": "e61ceec0b0ac0c7d289de1845d86d567929d87b7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "0614368d_ad70a68d",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 1
@@ -79,6 +103,24 @@
       "side": 1,
       "message": "The linked code is responsibility of the respective maintainers, and they will determine if it needs fixed.\n\nI would appreciate if you could fix the issue on bmcweb side.\n\nsdbusplus can only provide the `object_path` API, whoever writes the user code will determine how they want to use it.\n\nWhat we can do in sdbusplus is provide a better way to do what the user code is already doing.\nIn this case the improvement is that the string member is not accessed directly.\n\nWe don\u0027t have any disagreement that the linked code is probably wrong.",
       "parentUuid": "0614368d_ad70a68d",
+      "revId": "e61ceec0b0ac0c7d289de1845d86d567929d87b7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2eab250b_e7f7fd27",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2026-06-11T15:17:11Z",
+      "side": 1,
+      "message": "\u003e I would appreciate if you could fix the issue on bmcweb side.\n\nI\u0027ve been working on fixing the overall issue for years and fixed a lot of the issues already.  It\u0027s just not the highest priority for me.  I would prefer we don\u0027t make the problem worse by adding library APIs.\n\n\u003e We don\u0027t have any disagreement that the linked code is probably wrong.\n\nAwesome.  My strong preference is that we just fix the wrong code.  I understand that requires testing, but that\u0027s ok.",
+      "parentUuid": "e0186363_5880f32e",
       "revId": "e61ceec0b0ac0c7d289de1845d86d567929d87b7",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }

@@ -51,6 +51,24 @@
       "parentUuid": "948fb31f_fc4f9f0c",
       "revId": "4b5f21cc81742c37dcffeb1b59a7277c9c4e9180",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "150666d4_e9caf255",
+        "filename": "include/sdbusplus/message/native_types.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 160,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2026-06-12T14:52:52Z",
+      "side": 1,
+      "message": "I would almost advocate for wording the comment stronger here.\n\n\"This should not be used in new code.  Use filename() or parent_path() appropriately\"",
+      "parentUuid": "1e66cd04_b96bf557",
+      "revId": "4b5f21cc81742c37dcffeb1b59a7277c9c4e9180",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

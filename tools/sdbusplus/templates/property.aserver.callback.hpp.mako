@@ -66,7 +66,15 @@ i_name = interface.classname
             // Set up the transaction.
             sdbusplus::server::transaction::set_id(m);
 
-            auto new_value = m.unpack<${p_type}>();
+            ${p_type} new_value;
+            try
+            {
+                new_value = m.unpack<${p_type}>();
+            }
+            catch(const sdbusplus::internal_exception_t& e)
+            {
+                return e.set_error(error);
+            }
 
             // Get property value and add to message.
             if constexpr (server_details::has_set_property_msg<

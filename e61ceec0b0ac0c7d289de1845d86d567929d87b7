@@ -98,6 +98,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "15e81181_1a8401c9",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2026-06-12T14:48:44Z",
+      "side": 1,
+      "message": "\u003e There are at least 6 source locations involving `starts_with`\n\u003e \n\u003e https://github.com/search?q\u003dorg%3Aopenbmc+.str.starts_with%28\u0026type\u003dcode\n\nThe 3 left in bmcweb I\u0027m aware of.  The ethernet PATCH one is very non trivial to test and get right (we\u0027ve broken it several times in the last year and phosphor-network supports two variations) so I haven\u0027t had a desire to touch it.\n\nI do see there might be a use case for an \"is_child_of()\" method in some of them.  That would let you do\n\nif ({\"/xyz/openbmc_project/foo/bar\"}.is_child_of(\"/xyz/openbmc_project\")\n\nThat wouldn\u0027t violate the \"starts_with\" rules, but would still let you do a similar test?\n\n\u003e \n\u003e and at least 4 source locations involving `substr`\n\u003e https://github.com/search?q\u003dorg%3Aopenbmc+.str.substr\u0026type\u003dcode\n\u003e \n\u003e Then 7 problems involving `find`\n\u003e https://github.com/search?q\u003dorg%3Aopenbmc+.str.find\u0026type\u003dcode\n\u003e \n\u003e And 2 issues involving `rfind`\n\u003e https://github.com/search?q\u003dorg%3Aopenbmc+.str.rfind\u0026type\u003dcode\n\u003e \n\u003e One of those problems is in fw update code and was introduced by me, fix is already up https://gerrit.openbmc.org/c/openbmc/phosphor-bmc-code-mgmt/+/91192\n\nThank you for this.\n\n\u003e \n\u003e Also, people are adding new usages of `object_path::str` member all the time. If you blame this one, that\u0027s an `rfind` which was added just last week.\n\u003e \n\u003e https://github.com/openbmc/phosphor-bmc-code-mgmt/blame/3b9435fc224cc46f2fa1248388d02e26e4d5c85c/common/src/events.cpp#L21\n\u003e \n\u003e I am not saying someone cannot do an `rfind(\u0027_\u0027)` on an `object_path`, i just want to make this into an actual object path value type instead of just a fancy `std::string` wrapper.\n\nThat one doesn\u0027t suffer from the error I described above, but arguably should be\n\npath.filename().rfind(...) to avoid going to the string internals.\n\n\u003e \n\u003e If we just offer a fancy `std::string` wrapper to people then they might as well use `std::string`.\n\nobject_path has escaping and concatenation primitives like std::filesystem::path.  In a lot of cases, it replaced people trying to use std::filesystem::path for dbus construction.  I agree, I don\u0027t like that the string is accessible, but it was necessary for a lot of cases.\n\n\u003e \n\u003e \n\u003e Keep in mind there might be yet more `std::string` APIs in use on our object path, you can look for yourself also.\n\u003e \n\u003e \n\u003e \u003e I didn\u0027t suggest we change code without review or testing.\n\u003e \n\u003e It did not need testing when we did the `sdbusplus::message::object_path -\u003e sdbusplus::object_path` migration. Not every change has to be tedious.\n\nI\u0027m not sure how a simple rename of namespace is similar to calling different code, but that\u0027s not important to this patch.",
+      "parentUuid": "94d196e7_04f07db7",
+      "range": {
+        "startLine": 19,
+        "startChar": 0,
+        "endLine": 19,
+        "endChar": 134
+      },
+      "revId": "e61ceec0b0ac0c7d289de1845d86d567929d87b7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "0614368d_ad70a68d",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 1

@@ -16,6 +16,24 @@
       "message": "This CI failure might be due to something I merged.  Let me investigate.",
       "revId": "acf9af33c4bb1c586cd2e166ebb4aec7bf86f330",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b5e3cab8_f1bc9537",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2026-06-12T15:04:36Z",
+      "side": 1,
+      "message": "ACK",
+      "parentUuid": "845747f1_50f91413",
+      "revId": "acf9af33c4bb1c586cd2e166ebb4aec7bf86f330",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

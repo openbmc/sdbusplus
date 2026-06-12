@@ -25,10 +25,28 @@ m_return_count = len(method.returns)
         try
         {
             auto m = sdbusplus::message_t{msg};
+
+% if m_param_count:
 % if m_param_count == 1:
-            auto ${m_param} = m.unpack<${m_ptypes}>();
-% elif m_param_count:
-            auto [${m_param}] = m.unpack<${m_ptypes}>();
+            ${m_ptypes} ${m_param};
+% else:
+            std::tuple<${m_ptypes}> _${m_name}_params;
+% endif
+            try
+            {
+% if m_param_count == 1:
+                ${m_param} = m.unpack<${m_ptypes}>();
+% else:
+                _${m_name}_params = m.unpack<${m_ptypes}>();
+% endif
+            }
+            catch(const sdbusplus::internal_exception_t& e)
+            {
+                return e.set_error(error);
+            }
+% if m_param_count > 1:
+            auto& [${m_param}] = _${m_name}_params;
+% endif
 % endif
 
             constexpr auto has_method_msg =
@@ -116,7 +134,7 @@ co_await self_i->method_call(
                             m.new_method_error(e).method_return();
                             co_return;
                         }
-                        % endfor
+% endfor
                         catch(const std::exception&)
                         {
                             self->_context().get_bus().set_current_exception(

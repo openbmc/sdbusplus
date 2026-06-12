@@ -4,7 +4,12 @@ methods:
     - name: UpdateValue
       parameters:
           - name: updatedValue
-            type: int64
+            type: enum[self.EnumOne]
       returns:
           - name: status
             type: boolean
+enumerations:
+    - name: EnumOne
+      values:
+          - name: OneA
+          - name: OneB

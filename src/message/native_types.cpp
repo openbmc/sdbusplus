@@ -109,6 +109,11 @@ string_path_wrapper string_path_wrapper::parent_path() const
     return str.substr(0, index);
 }
 
+std::string string_path_wrapper::string() const
+{
+    return str;
+}
+
 string_path_wrapper string_path_wrapper::operator/(std::string_view extId) const
 {
     string_path_wrapper out;

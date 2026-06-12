@@ -83,6 +83,7 @@ struct string_wrapper
  *  alternative typename. */
 struct string_path_wrapper
 {
+    // do not access this member in new code, use string() function instead
     std::string str;
 
     string_path_wrapper() = default;
@@ -155,6 +156,10 @@ struct string_path_wrapper
     string_path_wrapper parent_path() const;
     string_path_wrapper operator/(std::string_view) const;
     string_path_wrapper& operator/=(std::string_view);
+
+    // avoid using this function for new code if
+    // 'filename()' / 'parent_path()' / ... will do
+    std::string string() const;
 };
 
 /** Typename for sdbus SIGNATURE types. */

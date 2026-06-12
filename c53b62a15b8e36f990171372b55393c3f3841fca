@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bc1dfdde_c81c0657",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1001712
+      },
+      "writtenOn": "2026-06-12T16:08:57Z",
+      "side": 1,
+      "message": "need to check if the full image will still build with this.\n\nThere might be a case of `using namespace sdbusplus::message` which would allow someone to use `object_path` without fully qualifying it and that would be broken by this change.",
+      "revId": "c53b62a15b8e36f990171372b55393c3f3841fca",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

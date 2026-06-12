@@ -181,8 +181,6 @@ struct unix_fd_type
 
 } // namespace details
 
-/** std::string wrapper for OBJECT_PATH. */
-using object_path = details::string_path_wrapper;
 /** std::string wrapper for SIGNATURE. */
 using signature = details::string_wrapper;
 using unix_fd = details::unix_fd_type;
@@ -313,7 +311,7 @@ inline constexpr bool has_convert_from_string_v =
 } // namespace message
 
 // type alias to make user code more readable
-using object_path = message::object_path;
+using object_path = message::details::string_path_wrapper;
 
 } // namespace sdbusplus
 

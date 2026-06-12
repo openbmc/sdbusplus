@@ -19,7 +19,7 @@ int main()
     auto reply = b.call(m);
 
     using return_type =
-        std::vector<std::tuple<uint32_t, std::string, message::object_path>>;
+        std::vector<std::tuple<uint32_t, std::string, object_path>>;
     auto users = reply.unpack<return_type>();
 
     for (auto& user : users)

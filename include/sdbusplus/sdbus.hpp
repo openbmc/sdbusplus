@@ -61,6 +61,7 @@ class SdBusInterface
     virtual int sd_bus_error_set_errno(sd_bus_error* e, int error) = 0;
     virtual int sd_bus_error_is_set(const sd_bus_error* e) = 0;
     virtual void sd_bus_error_free(sd_bus_error* e) = 0;
+    virtual int sd_bus_error_copy(sd_bus_error* dst, const sd_bus_error* e) = 0;
 
     virtual sd_event* sd_bus_get_event(sd_bus* bus) = 0;
     virtual int sd_bus_get_fd(sd_bus* bus) = 0;
@@ -301,6 +302,11 @@ class SdBusImpl : public SdBusInterface
     void sd_bus_error_free(sd_bus_error* e) override
     {
         return ::sd_bus_error_free(e);
+    }
+
+    int sd_bus_error_copy(sd_bus_error* dst, const sd_bus_error* e) override
+    {
+        return ::sd_bus_error_copy(dst, e);
     }
 
     sd_event* sd_bus_get_event(sd_bus* bus) override

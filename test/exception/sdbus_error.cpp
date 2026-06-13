@@ -146,11 +146,8 @@ TEST(SdBusError, BasicError)
     const int errorVal = sd_bus_error_get_errno(&error);
     SdBusError err(&error, prefix.c_str());
 
-    // We expect a move not copy
-    EXPECT_EQ(nameBeforeMove, err.name());
+    EXPECT_STREQ(nameBeforeMove, err.name());
 
-    // The SdBusError should have moved our error so it should be freeable
-    EXPECT_FALSE(sd_bus_error_is_set(&error));
     sd_bus_error_free(&error);
     sd_bus_error_free(&error);
 

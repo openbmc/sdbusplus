@@ -60,6 +60,21 @@ using strip_first_arg = strip_first_n_args<1, T>;
 template <typename T>
 using strip_first_arg_t = typename strip_first_arg<T>::type;
 
+// Helper class to drop the last element of a tuple, e.g. to recover the
+// leading arguments of a handler whose final parameter is a completion.
+template <typename Tuple,
+          typename Seq = std::make_index_sequence<std::tuple_size_v<Tuple> - 1>>
+struct strip_last_arg;
+
+template <typename Tuple, std::size_t... I>
+struct strip_last_arg<Tuple, std::index_sequence<I...>>
+{
+    using type = std::tuple<std::tuple_element_t<I, Tuple>...>;
+};
+
+template <typename Tuple>
+using strip_last_arg_t = typename strip_last_arg<Tuple>::type;
+
 // matching helper class to only return the first type
 template <typename T>
 struct get_first_arg

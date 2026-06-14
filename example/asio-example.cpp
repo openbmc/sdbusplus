@@ -1,6 +1,7 @@
 #include <boost/asio/detached.hpp>
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/spawn.hpp>
+#include <boost/asio/steady_timer.hpp>
 #include <sdbusplus/asio/connection.hpp>
 #include <sdbusplus/asio/object_server.hpp>
 #include <sdbusplus/asio/sd_event.hpp>
@@ -11,10 +12,16 @@
 
 #include <chrono>
 #include <ctime>
+#include <functional>
 #include <iostream>
+#include <memory>
 #include <variant>
 
 using variant = std::variant<int, std::string>;
+
+// Published so plain-function handlers can reach the io context.  A real
+// service would hold this as a member and register a member function.
+std::shared_ptr<sdbusplus::asio::connection> serverConn;
 
 int foo(int test)
 {
@@ -52,6 +59,42 @@ int voidBar(void)
 {
     std::cout << "voidBar() -> 42\n";
     return 42;
+}
+
+// How long the deferred method waits before sending its reply.
+constexpr auto deferredReplyDelay = std::chrono::seconds(2);
+
+// Sends the deferred reply once the timer fires: the value on success, or the
+// error_code (as an errno) on failure.  `timer` is unused here, bound only to
+// keep the steady_timer alive across the wait.  `done` is taken by value: asio
+// invokes the handler as an lvalue, so an rvalue reference would not bind.
+void sendDeferredReply(std::shared_ptr<boost::asio::steady_timer> /*timer*/,
+                       int32_t value, sdbusplus::asio::completion<int32_t> done,
+                       const boost::system::error_code& ec)
+{
+    if (ec)
+    {
+        // On error the result value is ignored; pass a placeholder, as an asio
+        // completion handler is always invoked with all arguments.
+        done(ec, 0);
+        return;
+    }
+    std::cout << "TestDeferredFunction(" << value
+              << "): sending deferred reply now\n";
+    done(ec, value);
+}
+
+// TestDeferredFunction handler: returns without replying, arming a timer whose
+// completion (sendDeferredReply) sends the reply later.  Takes the completion
+// by rvalue reference, the shape our dispatcher invokes it with.
+void testDeferredFunction(int32_t value,
+                          sdbusplus::asio::completion<int32_t>&& done)
+{
+    auto timer = std::make_shared<boost::asio::steady_timer>(
+        serverConn->get_io_context());
+    timer->expires_after(deferredReplyDelay);
+    timer->async_wait(
+        std::bind_front(&sendDeferredReply, timer, value, std::move(done)));
 }
 
 void do_start_async_method_call_one(
@@ -197,6 +240,7 @@ int server()
     // setup connection to dbus
     boost::asio::io_context io;
     auto conn = std::make_shared<sdbusplus::asio::connection>(io);
+    serverConn = conn;
 
     // test object server
     conn->request_name("xyz.openbmc_project.asio-test");
@@ -259,6 +303,11 @@ int server()
     iface->register_method("VoidFunctionReturnsInt", voidBar);
 
     iface->register_method("execute", ipmiInterface);
+
+    // Replies asynchronously: the handler returns immediately (not blocking the
+    // loop), then sendDeferredReply() invokes the completion later to reply.
+    iface->register_completion_method("TestDeferredFunction",
+                                      testDeferredFunction);
 
     iface->initialize();
 
@@ -405,6 +454,24 @@ int client()
         },
         "xyz.openbmc_project.asio-test", "/xyz/openbmc_project/test",
         "xyz.openbmc_project.test", "TestYieldFunction", int32_t(41));
+
+    // Call the deferred method.  Its reply arrives ~2s later, while the
+    // tick/tock timers above keep firing, showing the call did not block the
+    // server: the server returned from the handler immediately and only sent
+    // the reply once its own timer fired.
+    conn->async_method_call(
+        [](boost::system::error_code ec, int32_t value) {
+            if (ec)
+            {
+                std::cerr << "TestDeferredFunction returned error: " << ec
+                          << "\n";
+                return;
+            }
+            std::cout << "TestDeferredFunction deferred reply received: "
+                      << value << "\n";
+        },
+        "xyz.openbmc_project.asio-test", "/xyz/openbmc_project/test",
+        "xyz.openbmc_project.test", "TestDeferredFunction", int32_t(7));
     io.run();
 
     return 0;

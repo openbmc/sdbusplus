@@ -18,6 +18,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "6fcb9fe1_59f4c8e4",
+        "filename": "example/asio-example.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 1002885
+      },
+      "writtenOn": "2026-06-14T10:41:14Z",
+      "side": 1,
+      "message": "Understood, I have splitted the example implementation into another patch. Please find them in the following link:\nhttps://gerrit.openbmc.org/c/openbmc/sdbusplus/+/91295",
+      "parentUuid": "00e2c448_b2ce19ee",
+      "revId": "05f8310453baa20043f446eb1e7ad94c8de20f20",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "b3ebfc82_6067d16f",
@@ -31,6 +49,30 @@
       "writtenOn": "2026-06-10T16:41:24Z",
       "side": 1,
       "message": "Please condense.",
+      "range": {
+        "startLine": 282,
+        "startChar": 0,
+        "endLine": 288,
+        "endChar": 73
+      },
+      "revId": "05f8310453baa20043f446eb1e7ad94c8de20f20",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5e47ddd3_d502e9e3",
+        "filename": "example/asio-example.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 288,
+      "author": {
+        "id": 1002885
+      },
+      "writtenOn": "2026-06-14T10:41:14Z",
+      "side": 1,
+      "message": "Done in the separated patchset.\nThe inline narration is removed and the handler contract is documented in `docs/asio.md` instead.",
+      "parentUuid": "b3ebfc82_6067d16f",
       "range": {
         "startLine": 282,
         "startChar": 0,
@@ -64,6 +106,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "a7613b56_4593d7c1",
+        "filename": "example/asio-example.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 306,
+      "author": {
+        "id": 1002885
+      },
+      "writtenOn": "2026-06-14T10:41:14Z",
+      "side": 1,
+      "message": "Thanks for acknowledging. \nI have reworked and the handler can now receives and `sdbusplus::asio::completion` as its last argument instead of a raw `message_t`.",
+      "parentUuid": "6e83fcc2_562a5d41",
+      "range": {
+        "startLine": 306,
+        "startChar": 0,
+        "endLine": 306,
+        "endChar": 57
+      },
+      "revId": "05f8310453baa20043f446eb1e7ad94c8de20f20",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "b8202993_041cd53f",
@@ -87,6 +153,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "750cd006_1aae379f",
+        "filename": "example/asio-example.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 308,
+      "author": {
+        "id": 1002885
+      },
+      "writtenOn": "2026-06-14T10:41:14Z",
+      "side": 1,
+      "message": "Done.\nThe asynchronous work is now moved out of the registration into a named function, `completeDeferredCall()`.",
+      "parentUuid": "b8202993_041cd53f",
+      "range": {
+        "startLine": 291,
+        "startChar": 0,
+        "endLine": 308,
+        "endChar": 9
+      },
+      "revId": "05f8310453baa20043f446eb1e7ad94c8de20f20",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "1255d951_0ceee89a",
@@ -100,6 +190,24 @@
       "writtenOn": "2026-06-10T16:42:46Z",
       "side": 1,
       "message": "Please don\u0027t continue overloading the register_method.  If you want to keep common code, make a common private method that both public methods can call, but we\u0027re already overloading this callback a lot more than I\u0027d like to see with the various variations of msg/types/flags, and now defered.  Lets just make a new method like you had on patchset 1.",
+      "revId": "05f8310453baa20043f446eb1e7ad94c8de20f20",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9501a278_e718f77e",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 627,
+      "author": {
+        "id": 1002885
+      },
+      "writtenOn": "2026-06-14T10:41:14Z",
+      "side": 1,
+      "message": "Done.\n`register_method()` is now reverted and the deferred path is now a separate `register_completion_method()`, as on PS1, and the common vtable registration is factored into a private `addMethodCallback()` that both methods call.",
+      "parentUuid": "1255d951_0ceee89a",
       "revId": "05f8310453baa20043f446eb1e7ad94c8de20f20",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }

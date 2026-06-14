@@ -125,6 +125,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "c9a3deae_1f40e386",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 315,
+      "author": {
+        "id": 1002885
+      },
+      "writtenOn": "2026-06-14T10:41:14Z",
+      "side": 1,
+      "message": "Apologize for the misunderstanding. I have reworked and done in the way you asked. The completion approach is kept and made asio-compliant.\n\nIn this revision, `sdbusplus::asio::completion\u003cResults...\u003e` lives in its own file (`completion.hpp`) and has no `send()` nethod, and exposes only `operator()(boost::system::error_code, Results...)`.\nI think it should be a proper asio completion handler now and is able to chains with normal asio callbacks.\n\nThe inline documentation is also moved to `docs/asio.md` now.",
+      "parentUuid": "df506f62_dcfb845a",
+      "revId": "112efbf16367f0bab8d994b200cd7ba8822239be",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "3ae9eb89_25b7bb7b",

@@ -12,6 +12,7 @@
 #include <boost/asio/detached.hpp>
 #include <boost/asio/spawn.hpp>
 #endif
+#include <sdbusplus/asio/completion.hpp>
 #include <sdbusplus/asio/connection.hpp>
 #include <sdbusplus/exception.hpp>
 #include <sdbusplus/message/read.hpp>
@@ -607,10 +608,6 @@ class dbus_interface
         using InputTupleType = utility::decay_tuple_t<CallbackSignature>;
         using ResultType = boost::callable_traits::return_type_t<CallbackType>;
 
-        if (is_initialized())
-        {
-            return false;
-        }
         static const auto argType = utility::strip_ends(
             utility::tuple_to_array(message::types::type_id<InputTupleType>()));
         static const auto resultType =
@@ -626,10 +623,37 @@ class dbus_interface
         {
             func = callback_method_instance<CallbackType>(std::move(handler));
         }
-        method_callbacks_.emplace_back(name, std::move(func), argType.data(),
-                                       resultType.data(), flags);
+        return addMethodCallback(name, std::move(func), argType.data(),
+                                 resultType.data(), flags);
+    }
 
-        return true;
+    // Register a deferred D-Bus method.  The handler does not reply when it
+    // returns; instead its last argument is an sdbusplus::asio::completion that
+    // it hands to a callback-based asynchronous operation and invokes later to
+    // send the reply.  See docs/asio.md for the handler contract.
+    template <typename CallbackType>
+    bool register_completion_method(const std::string& name,
+                                    CallbackType&& handler,
+                                    decltype(vtable_t::flags) flags = 0)
+    {
+        using FullTuple = utility::decay_tuple_t<
+            boost::callable_traits::args_t<CallbackType>>;
+        constexpr std::size_t argCount = std::tuple_size_v<FullTuple>;
+        using CompletionType = std::tuple_element_t<argCount - 1, FullTuple>;
+        using InputTupleType = typename details::tuple_take_front<
+            FullTuple, std::make_index_sequence<argCount - 1>>::type;
+        using ResultTuple =
+            typename details::completion_traits<CompletionType>::results_tuple;
+
+        static const auto argType = utility::strip_ends(
+            utility::tuple_to_array(message::types::type_id<InputTupleType>()));
+        static const auto resultType = utility::strip_ends(
+            utility::tuple_to_array(message::types::type_id<ResultTuple>()));
+
+        std::function<int(message_t&)> func =
+            completion_method_instance<CallbackType>(std::move(handler));
+        return addMethodCallback(name, std::move(func), argType.data(),
+                                 resultType.data(), flags);
     }
 
     static int get_handler(sd_bus* /*bus*/, const char* /*path*/,
@@ -834,6 +858,22 @@ class dbus_interface
     }
 
   private:
+    // Shared tail of register_method() and register_completion_method(): record
+    // one method in the vtable once the dispatcher and signatures are built.
+    bool addMethodCallback(const std::string& name,
+                           std::function<int(message_t&)>&& func,
+                           const char* argType, const char* resultType,
+                           decltype(vtable_t::flags) flags)
+    {
+        if (is_initialized())
+        {
+            return false;
+        }
+        method_callbacks_.emplace_back(name, std::move(func), argType,
+                                       resultType, flags);
+        return true;
+    }
+
     std::shared_ptr<sdbusplus::asio::connection> conn_;
     sdbusplus::object_path path_;
     std::string name_;

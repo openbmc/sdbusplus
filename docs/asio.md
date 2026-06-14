@@ -54,3 +54,51 @@ leave `value` unmodified and return false.
 
 If the handler returns false but doesn't throw an exception, a generic
 org.freedesktop.DBus.Error.InvalidArgs error will be returned to the caller.
+
+## Methods
+
+### Deferred method callback
+
+A method registered with `register_method()` replies as soon as the handler
+returns. When the result is not available until a later callback runs (i.e. the
+handler hands off to a callback-based asynchronous API), register the method
+with `register_completion_method()` instead. The handler then takes an
+`sdbusplus::asio::completion` as its last argument:
+
+```c++
+// Completes the deferred call once the asynchronous work finishes.  `done` is
+// bound ahead of the (error_code, int32_t) the operation reports, so the
+// continuation stays a named function instead of a nested lambda.  Calling
+// done() sends the reply: the result on success, or the error_code (returned
+// to the caller as an errno) on failure.  Take `done` by value here: asio may
+// invoke the handler as an lvalue, so an rvalue-reference parameter would not
+// bind.
+void sendTriggerReply(sdbusplus::asio::completion<int32_t> done,
+                      const boost::system::error_code& ec, int32_t result)
+{
+    done(ec, result);
+}
+
+iface->register_completion_method(
+    "Trigger",
+    [](std::string arg, sdbusplus::asio::completion<int32_t>&& done) {
+        // Return without replying; the reply is sent later by
+        // sendTriggerReply() once the asynchronous work completes.
+        startAsyncWork(std::move(arg),
+                       std::bind_front(&sendTriggerReply, std::move(done)));
+    });
+```
+
+The completion's call signature is
+`void(boost::system::error_code, Results...)`, the ordinary asio
+completion-handler shape, where `Results...` are the method's return types.
+Invoke it exactly once: on success pass a default-constructed `error_code`
+followed by the return values; on failure pass a non-zero `error_code`, whose
+errno is returned to the caller via `new_method_errno()`.
+
+Because it has that signature, the completion composes with other asio
+operations: bind it into a named continuation with `std::bind_front` as above,
+or, when the operation already completes with the same
+`(error_code, Results...)`, pass `std::move(done)` straight through as its
+completion token. Either way avoids nesting a lambda inside the handler. sd-bus
+enforces the client-side method timeout, so the handler need not implement one.

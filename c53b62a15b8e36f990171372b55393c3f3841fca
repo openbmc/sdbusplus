@@ -16,6 +16,24 @@
       "message": "need to check if the full image will still build with this.\n\nThere might be a case of `using namespace sdbusplus::message` which would allow someone to use `object_path` without fully qualifying it and that would be broken by this change.",
       "revId": "c53b62a15b8e36f990171372b55393c3f3841fca",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "73081c4c_6d5985c8",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1001712
+      },
+      "writtenOn": "2026-06-15T09:33:06Z",
+      "side": 1,
+      "message": "There are 2 repos needing changes overall.\n\nSee the topic for which patches are required for the full image build.\nMost images should already build with only the patch for `phosphor-fan-presence`.\n\nhttps://gerrit.openbmc.org/q/topic:%22remove-type-alias-sdbusplus-message-object-path%22",
+      "parentUuid": "bc1dfdde_c81c0657",
+      "revId": "c53b62a15b8e36f990171372b55393c3f3841fca",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

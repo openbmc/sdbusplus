@@ -1,9 +1,14 @@
+#include <systemd/sd-bus-protocol.h>
+
 #include <sdbusplus/bus.hpp>
+#include <sdbusplus/exception.hpp>
 #include <sdbusplus/message.hpp>
+#include <sdbusplus/test/sdbus_mock.hpp>
 
 #include <chrono>
 #include <string>
 
+#include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
 namespace sdbusplus
@@ -14,6 +19,22 @@ namespace message
 using namespace std::literals::chrono_literals;
 
 std::string globalId;
+
+int setNoServiceError(sd_bus*, sd_bus_message*, uint64_t, sd_bus_error* error,
+                      sd_bus_message**)
+{
+    return sd_bus_error_set(error, SD_BUS_ERROR_FILE_NOT_FOUND, "No service");
+}
+
+int copyError(sd_bus_error* dest, const sd_bus_error* error)
+{
+    return sd_bus_error_copy(dest, error);
+}
+
+void freeError(sd_bus_error* error)
+{
+    sd_bus_error_free(error);
+}
 
 void setGlobalId(message&& m)
 {
@@ -109,6 +130,20 @@ TEST(CallAsync, ExceptionCaught)
             std::abort();
         }(),
         "testerror");
+}
+
+TEST(Call, ThrowsOnSdBusError)
+{
+    SdBusMock mock;
+    message method(nullptr, &mock, std::false_type());
+
+    ON_CALL(mock, sd_bus_error_copy).WillByDefault(testing::Invoke(copyError));
+    ON_CALL(mock, sd_bus_error_free).WillByDefault(testing::Invoke(freeError));
+    EXPECT_CALL(mock, sd_bus_call(testing::_, testing::_, testing::_,
+                                  testing::_, testing::_))
+        .WillOnce(testing::Invoke(setNoServiceError));
+
+    EXPECT_THROW(method.call(), sdbusplus::exception::SdBusError);
 }
 
 } // namespace message

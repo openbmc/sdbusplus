@@ -350,8 +350,11 @@ struct bus
             _intf->sd_bus_call(_bus.get(), m.get(), timeout_us, &error, &reply);
         if (r < 0)
         {
-            throw exception::SdBusError(&error, "sd_bus_call");
+            auto err = exception::SdBusError(&error, "sd_bus_call", _intf);
+            _intf->sd_bus_error_free(&error);
+            throw err;
         }
+        _intf->sd_bus_error_free(&error);
 
         return message_t(reply, _intf, std::false_type());
     }
@@ -372,8 +375,12 @@ struct bus
                                    nullptr);
         if (r < 0)
         {
-            throw exception::SdBusError(&error, "sd_bus_call noreply");
+            auto err =
+                exception::SdBusError(&error, "sd_bus_call noreply", _intf);
+            _intf->sd_bus_error_free(&error);
+            throw err;
         }
+        _intf->sd_bus_error_free(&error);
     }
     auto call_noreply(message_t& m,
                       std::optional<SdBusDuration> timeout = std::nullopt)

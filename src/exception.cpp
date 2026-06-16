@@ -52,9 +52,11 @@ SdBusError::SdBusError(int error_in, std::string&& prefix,
 }
 
 SdBusError::SdBusError(sd_bus_error* error_in, const char* prefix,
-                       SdBusInterface* intf_in) : intf(intf_in)
+                       SdBusInterface* intf_in) :
+    error(*error_in), intf(intf_in)
 {
-    intf->sd_bus_error_copy(&error, error_in);
+    // We own the error so remove the caller's reference
+    *error_in = SD_BUS_ERROR_NULL;
 
     populateMessage(std::string(prefix));
 }

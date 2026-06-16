@@ -16,6 +16,29 @@
       "message": "I had the exact same issue which manifested in one of my other change\nhttps://jenkins.openbmc.org/job/ci-repository/137478/console\n\nAlso had a fix which looked almost same. Will comment.",
       "revId": "ffde2ac5c98fb1d8c4d7be49466ea35510b445ed",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7469ff26_a544fab0",
+        "filename": "include/sdbusplus/bus.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 355,
+      "author": {
+        "id": 1001712
+      },
+      "writtenOn": "2026-06-16T14:47:39Z",
+      "side": 1,
+      "message": "nit: The documentation for `SdBusError` still says that it will become the owner of the error.\n\n```\n108     /** Becomes the owner of the error */\n109     SdBusError(sd_bus_error* error, const char* prefix,\n110                SdBusInterface* intf \u003d \u0026sdbus_impl);\n```\n\nTherefore in my fix the `SdBusError` constructor frees the error passed as argument.\n\n```\n--- a/src/exception.cpp\n+++ b/src/exception.cpp\n@@ -56,6 +56,10 @@ SdBusError::SdBusError(sd_bus_error* error_in, const char* prefix,\n {\n     intf-\u003esd_bus_error_copy(\u0026error, error_in);\n \n+    // idempotent on unset and already free\u0027d errors\n+    // https://www.man7.org/linux/man-pages/man3/sd_bus_error.3.html\n+    intf-\u003esd_bus_error_free(error_in);\n+\n     populateMessage(std::string(prefix));\n }\n```\n\nWith that alternative the code becomes more compact and not necessary anymore to \nhave a local variable, can directly throw it in the error path.\n\nWhat do you think, can we do it that way or did i overlooked something ?\n\nIf we solve it like PS1, do we need to update the comment for the `SdBusError` constructor?",
+      "range": {
+        "startLine": 353,
+        "startChar": 12,
+        "endLine": 355,
+        "endChar": 22
+      },
+      "revId": "ffde2ac5c98fb1d8c4d7be49466ea35510b445ed",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

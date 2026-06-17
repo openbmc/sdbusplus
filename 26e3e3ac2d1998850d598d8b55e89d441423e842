@@ -88,6 +88,24 @@
       "parentUuid": "9b213473_56c19301",
       "revId": "26e3e3ac2d1998850d598d8b55e89d441423e842",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d804cc5c_42eefd8f",
+        "filename": "src/message/native_types.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 1001712
+      },
+      "writtenOn": "2026-06-17T13:41:29Z",
+      "side": 1,
+      "message": "\u003e As a generalist, I agree with you, but std::filesystem doesn\u0027t really \nseem to operate that way, so if the goal is to follow that API, we need \nto decide which goal is more important, the above, or doing what stdlib \ndoes.\n\nI don\u0027t see a need to follow `std::filesystem::path` semantics to the letter if it prevents us from implementing D-Bus semantics. `sdbusplus` is a D-Bus abstraction library, not a filesystem abstraction. We should not violate the spec we are implementing without having a very good reason for it.\n\n\u003e I have a minor preference for the status quo, which admittedly does \ncause an invalid object path, but also should never really be called \nthat way, so the invalid object path throwing an exceptino later is \n\"correct\"\n\nI pushed a new revision this time using exceptions since that seems to be the preference here. Please let me know your thoughts and thanks for the feedback so far 👍",
+      "parentUuid": "77382625_0164c6c1",
+      "revId": "26e3e3ac2d1998850d598d8b55e89d441423e842",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

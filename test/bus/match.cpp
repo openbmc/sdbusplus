@@ -35,7 +35,7 @@ TEST_F(Match, FunctorIs_sd_bus_message_handler_t)
         return 0;
     };
 
-    sdbusplus::bus::match_t m{bus, matchRule(), trigger, &triggered};
+    sdbusplus::match m{bus, matchRule(), trigger, &triggered};
     auto m2 = std::move(m); // ensure match is move-safe.
 
     waitForIt(triggered);
@@ -54,7 +54,7 @@ TEST_F(Match, FunctorIs_LambdaTakingMessage)
         triggered = true;
     };
 
-    sdbusplus::bus::match_t m{bus, matchRule(), trigger};
+    sdbusplus::match m{bus, matchRule(), trigger};
     auto m2 = std::move(m); // ensure match is move-safe.
 
     waitForIt(triggered);
@@ -80,9 +80,9 @@ TEST_F(Match, FunctorIs_MemberFunctionTakingMessage)
     };
     BoolHolder b;
 
-    sdbusplus::bus::match_t m{bus, matchRule(),
-                              std::bind(std::mem_fn(&BoolHolder::callback), &b,
-                                        std::placeholders::_1)};
+    sdbusplus::match m{bus, matchRule(),
+                       std::bind(std::mem_fn(&BoolHolder::callback), &b,
+                                 std::placeholders::_1)};
     auto m2 = std::move(m); // ensure match is move-safe.
 
     waitForIt(b.triggered);

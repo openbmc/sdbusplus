@@ -41,7 +41,7 @@ int main()
         "type='signal',member={}",
         sdbusplus::common::server::Test2::signal_names::other_value_changed);
 
-    auto match = sdbusplus::bus::match_t(conn, matchStr, cb);
+    auto match = sdbusplus::match(conn, matchStr, cb);
 
     return 0;
 }

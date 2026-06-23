@@ -86,7 +86,10 @@ struct string_path_wrapper
     // direct access to str is deprecated; use string() instead
     std::string str;
 
+    // deprecated: does not create a valid D-Bus object path.
+    // New code should use the other constructors.
     string_path_wrapper() = default;
+
     string_path_wrapper(const string_path_wrapper&) = default;
     string_path_wrapper& operator=(const string_path_wrapper&) = default;
     string_path_wrapper(string_path_wrapper&&) = default;

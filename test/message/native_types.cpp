@@ -116,3 +116,19 @@ TEST(MessageFormatting, ConcatExistingPath)
     const auto obj2 = sdbusplus::object_path(obj, "inventory");
     EXPECT_EQ(obj2.str, "/xyz/inventory");
 }
+
+TEST(Logging, LogOStream)
+{
+    const sdbusplus::object_path path("/test/log");
+    std::cerr << path << std::endl;
+}
+
+TEST(Logging, LogStringStream)
+{
+    const sdbusplus::object_path path("/test/log");
+    std::stringstream ss;
+
+    ss << path;
+
+    EXPECT_EQ(ss.str(), "/test/log");
+}

@@ -151,6 +151,8 @@ struct string_path_wrapper
     {
         return l < r.str;
     }
+    friend std::ostream& operator<<(std::ostream& os,
+                                    const string_path_wrapper& r);
 
     std::string filename() const;
     string_path_wrapper parent_path() const;

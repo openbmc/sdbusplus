@@ -50,6 +50,11 @@ inline void pathAppendEscape(std::string& s, char c)
     s.append(1, hex[c & 0xf]);
 }
 
+std::ostream& operator<<(std::ostream& os, const string_path_wrapper& r)
+{
+    return os << r.str;
+}
+
 std::string string_path_wrapper::filename() const
 {
     std::string_view strv(str);

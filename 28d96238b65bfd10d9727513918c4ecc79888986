@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c0270d63_484dcac2",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2026-06-24T22:50:21Z",
+      "side": 1,
+      "message": "I don\u0027t love forcing the iostream header (which it looks like the #include is missing) into a core library like this, especially because of a few applications that really should be using (at minimum) std::print.\n\nstd::formatter I could seek having here as the modern equivalent.\n\nWith that said, this is not a bridge I\u0027m going to stand and die on.",
+      "revId": "28d96238b65bfd10d9727513918c4ecc79888986",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

@@ -3,6 +3,23 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "33ed0238_0e193341",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2026-06-25T18:38:45Z",
+      "side": 1,
+      "message": "Nit, usually these are links?",
+      "revId": "28d96238b65bfd10d9727513918c4ecc79888986",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "c0270d63_484dcac2",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 1

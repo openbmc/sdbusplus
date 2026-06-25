@@ -123,6 +123,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "005ff7ad_14bd3a97",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 637,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2026-06-25T15:52:01Z",
+      "side": 1,
+      "message": "and if we want to support flags later, lets discuss that in the next patch.",
+      "parentUuid": "fabc2007_f63b2eea",
+      "range": {
+        "startLine": 637,
+        "startChar": 36,
+        "endLine": 637,
+        "endChar": 71
+      },
+      "revId": "f6365078220662bdf7fdbddfad57a797c6b20ab8",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "1dd3be23_fbaeb4e4",
         "filename": "include/sdbusplus/asio/object_server.hpp",
         "patchSetId": 11

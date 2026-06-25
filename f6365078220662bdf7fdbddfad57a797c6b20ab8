@@ -1,0 +1,147 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4e078e3f_9dbe684a",
+        "filename": "docs/asio.md",
+        "patchSetId": 11
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2026-06-25T15:47:03Z",
+      "side": 1,
+      "message": "Shouldn\u0027t this be accepted by rvalue (ie \u0026\u0026)",
+      "range": {
+        "startLine": 71,
+        "startChar": 24,
+        "endLine": 71,
+        "endChar": 60
+      },
+      "revId": "f6365078220662bdf7fdbddfad57a797c6b20ab8",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7b34e450_8e9b8021",
+        "filename": "docs/asio.md",
+        "patchSetId": 11
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2026-06-25T15:47:03Z",
+      "side": 1,
+      "message": "error codes should be taken by const reference.",
+      "range": {
+        "startLine": 73,
+        "startChar": 0,
+        "endLine": 73,
+        "endChar": 61
+      },
+      "revId": "f6365078220662bdf7fdbddfad57a797c6b20ab8",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "985e6aba_11928102",
+        "filename": "docs/asio.md",
+        "patchSetId": 11
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2026-06-25T15:47:03Z",
+      "side": 1,
+      "message": "Double tiered lambda calls are definitely outside of what\u0027s allowed in the coding standard.  Lets make sure our examples comply with the coding best practices.\n\nAlso, if this example could be made to use bind_front, it would be much cleaner.",
+      "revId": "f6365078220662bdf7fdbddfad57a797c6b20ab8",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "152a7273_80487af4",
+        "filename": "include/sdbusplus/asio/completion.hpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2026-06-25T15:47:03Z",
+      "side": 1,
+      "message": "Please follow the appropriate naming conventions throughout this patch.",
+      "revId": "f6365078220662bdf7fdbddfad57a797c6b20ab8",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "80aa7df8_5684cf71",
+        "filename": "include/sdbusplus/asio/completion.hpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2026-06-25T15:47:03Z",
+      "side": 1,
+      "message": "Sorry, not understanding why this needs to exist.  Can\u0027t completion just have a\n\nusing result_type \u003d std::tuple\u003cResults...\u003e;\n\nRather than inventing a whole new traits?\n\n\nThis looks very similar to some of the other meta helper classes that exist already, can this be combined?",
+      "revId": "f6365078220662bdf7fdbddfad57a797c6b20ab8",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fabc2007_f63b2eea",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 637,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2026-06-25T15:47:03Z",
+      "side": 1,
+      "message": "Lets not allow flags to be set on this for now.  exposing sd-bus externals in register_method wasn\u0027t the best idea in the first place, so lets not continue to propagate it.  The majority of calls set no flags, so this should be fine.\n\nThis also keeps CallbackType as the last parameter, in line with how asio models these.",
+      "range": {
+        "startLine": 637,
+        "startChar": 36,
+        "endLine": 637,
+        "endChar": 71
+      },
+      "revId": "f6365078220662bdf7fdbddfad57a797c6b20ab8",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1dd3be23_fbaeb4e4",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 862,
+      "author": {
+        "id": 1000153
+      },
+      "writtenOn": "2026-06-25T15:47:03Z",
+      "side": 1,
+      "message": "Sorry, what is a dispatcher?  Is suspect this comment needs some rework.\n\n\"shared tail\" i\u0027m not sure about either.",
+      "range": {
+        "startLine": 861,
+        "startChar": 0,
+        "endLine": 862,
+        "endChar": 76
+      },
+      "revId": "f6365078220662bdf7fdbddfad57a797c6b20ab8",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

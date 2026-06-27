@@ -24,6 +24,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "8858b6c1_122b240e",
+        "filename": "docs/asio.md",
+        "patchSetId": 11
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 1002885
+      },
+      "writtenOn": "2026-06-27T10:34:35Z",
+      "side": 1,
+      "message": "Done.\nThe handler is now taking the completion by rvalue reference.",
+      "parentUuid": "4e078e3f_9dbe684a",
+      "range": {
+        "startLine": 71,
+        "startChar": 24,
+        "endLine": 71,
+        "endChar": 60
+      },
+      "revId": "f6365078220662bdf7fdbddfad57a797c6b20ab8",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "7b34e450_8e9b8021",
@@ -37,6 +61,30 @@
       "writtenOn": "2026-06-25T15:47:03Z",
       "side": 1,
       "message": "error codes should be taken by const reference.",
+      "range": {
+        "startLine": 73,
+        "startChar": 0,
+        "endLine": 73,
+        "endChar": 61
+      },
+      "revId": "f6365078220662bdf7fdbddfad57a797c6b20ab8",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7dd43b46_10f6d1b8",
+        "filename": "docs/asio.md",
+        "patchSetId": 11
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 1002885
+      },
+      "writtenOn": "2026-06-27T10:34:35Z",
+      "side": 1,
+      "message": "Done.\nI have modified the example and the related function is now taking `const` argument for error code.",
+      "parentUuid": "7b34e450_8e9b8021",
       "range": {
         "startLine": 73,
         "startChar": 0,
@@ -64,6 +112,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "083ed4ee_250321a5",
+        "filename": "docs/asio.md",
+        "patchSetId": 11
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 1002885
+      },
+      "writtenOn": "2026-06-27T10:34:35Z",
+      "side": 1,
+      "message": "Done. \nI have removed the nested lambda and explicitly declared the involved functions so that we can use the `std::bind_front` approach to link them together.",
+      "parentUuid": "985e6aba_11928102",
+      "revId": "f6365078220662bdf7fdbddfad57a797c6b20ab8",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "152a7273_80487af4",
@@ -81,6 +147,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "d607ee72_1647238f",
+        "filename": "include/sdbusplus/asio/completion.hpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1002885
+      },
+      "writtenOn": "2026-06-27T10:34:35Z",
+      "side": 1,
+      "message": "Done.\nI have aligned the naming to the snake_case instead of camelCase.",
+      "parentUuid": "152a7273_80487af4",
+      "revId": "f6365078220662bdf7fdbddfad57a797c6b20ab8",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "80aa7df8_5684cf71",
@@ -94,6 +178,24 @@
       "writtenOn": "2026-06-25T15:47:03Z",
       "side": 1,
       "message": "Sorry, not understanding why this needs to exist.  Can\u0027t completion just have a\n\nusing result_type \u003d std::tuple\u003cResults...\u003e;\n\nRather than inventing a whole new traits?\n\n\nThis looks very similar to some of the other meta helper classes that exist already, can this be combined?",
+      "revId": "f6365078220662bdf7fdbddfad57a797c6b20ab8",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1c2da369_f1fc1724",
+        "filename": "include/sdbusplus/asio/completion.hpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 1002885
+      },
+      "writtenOn": "2026-06-27T10:34:35Z",
+      "side": 1,
+      "message": "Done.\nI have moved `result_type \u003d std::tuple\u003cResults...\u003e` into the class itself.",
+      "parentUuid": "80aa7df8_5684cf71",
       "revId": "f6365078220662bdf7fdbddfad57a797c6b20ab8",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
@@ -145,6 +247,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e7a202ef_c405ae81",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 637,
+      "author": {
+        "id": 1002885
+      },
+      "writtenOn": "2026-06-27T10:34:35Z",
+      "side": 1,
+      "message": "Understood.\nDropped `flags` from `register_completion_method()` in PS 13.\nI think we don\u0027t necessarily need them now.",
+      "parentUuid": "005ff7ad_14bd3a97",
+      "range": {
+        "startLine": 637,
+        "startChar": 36,
+        "endLine": 637,
+        "endChar": 71
+      },
+      "revId": "f6365078220662bdf7fdbddfad57a797c6b20ab8",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "1dd3be23_fbaeb4e4",
@@ -158,6 +284,30 @@
       "writtenOn": "2026-06-25T15:47:03Z",
       "side": 1,
       "message": "Sorry, what is a dispatcher?  Is suspect this comment needs some rework.\n\n\"shared tail\" i\u0027m not sure about either.",
+      "range": {
+        "startLine": 861,
+        "startChar": 0,
+        "endLine": 862,
+        "endChar": 76
+      },
+      "revId": "f6365078220662bdf7fdbddfad57a797c6b20ab8",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "08931efb_c8b50d2a",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 862,
+      "author": {
+        "id": 1002885
+      },
+      "writtenOn": "2026-06-27T10:34:35Z",
+      "side": 1,
+      "message": "Reworded. The comment is now stating plainly that the helper records one method in the vtable and is called by both `register_method()` and `register_completion_method()`.",
+      "parentUuid": "1dd3be23_fbaeb4e4",
       "range": {
         "startLine": 861,
         "startChar": 0,

@@ -97,6 +97,25 @@ void testDeferredFunction(int32_t value,
         std::bind_front(&sendDeferredReply, timer, value, std::move(done)));
 }
 
+// How often the server prints its heartbeat.
+constexpr auto heartbeatInterval = std::chrono::milliseconds(750);
+
+// Reschedules itself so the server prints a heartbeat while the event loop
+// runs.  It shows the loop keeps making progress while a deferred method reply
+// is still outstanding, i.e. the deferred call did not block it.
+void startHeartbeat(std::shared_ptr<boost::asio::steady_timer> timer)
+{
+    timer->expires_after(heartbeatInterval);
+    timer->async_wait([timer](const boost::system::error_code& ec) {
+        if (ec)
+        {
+            return;
+        }
+        std::cout << "server: event loop alive\n";
+        startHeartbeat(timer);
+    });
+}
+
 void do_start_async_method_call_one(
     std::shared_ptr<sdbusplus::asio::connection> conn,
     boost::asio::yield_context yield)
@@ -310,6 +329,9 @@ int server()
                                       testDeferredFunction);
 
     iface->initialize();
+
+    auto heartbeat = std::make_shared<boost::asio::steady_timer>(io);
+    startHeartbeat(heartbeat);
 
     io.run();
 

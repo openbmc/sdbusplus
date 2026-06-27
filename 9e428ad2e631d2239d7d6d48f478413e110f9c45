@@ -18,6 +18,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "471fc740_869b3141",
+        "filename": "example/asio-example.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 1002885
+      },
+      "writtenOn": "2026-06-27T11:46:08Z",
+      "side": 1,
+      "message": "Done.\nThe heartbeat feature has now migrated to this patch:\nhttps://gerrit.openbmc.org/c/openbmc/sdbusplus/+/91781\n\nThanks for acknowledging!",
+      "parentUuid": "3008562d_05b4aafa",
+      "revId": "9e428ad2e631d2239d7d6d48f478413e110f9c45",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "465fd03b_1570ef85",
@@ -58,6 +76,48 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "26450bc8_82f983b6",
+        "filename": "example/asio-example.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 1002885
+      },
+      "writtenOn": "2026-06-27T11:46:08Z",
+      "side": 1,
+      "message": "Understood, I have removed the whole lambda and introduce a `sendDeferredReply()` instead.",
+      "parentUuid": "465fd03b_1570ef85",
+      "revId": "9e428ad2e631d2239d7d6d48f478413e110f9c45",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "04ee7d08_4f70e56e",
+        "filename": "example/asio-example.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 1002885
+      },
+      "writtenOn": "2026-06-27T11:46:08Z",
+      "side": 1,
+      "message": "Okay, I have removed the newly constructed `error_code`.",
+      "parentUuid": "3567da0c_44bd642f",
+      "range": {
+        "startLine": 94,
+        "startChar": 13,
+        "endLine": 94,
+        "endChar": 40
+      },
+      "revId": "9e428ad2e631d2239d7d6d48f478413e110f9c45",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a372adc7_589a7363",
@@ -71,6 +131,24 @@
       "writtenOn": "2026-06-25T15:50:38Z",
       "side": 1,
       "message": "Please follow the existing convention of providing a method that can be called rather than a lambda.  methodWithMessage might be a good example.",
+      "revId": "9e428ad2e631d2239d7d6d48f478413e110f9c45",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2ef72b59_b0d455a7",
+        "filename": "example/asio-example.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 316,
+      "author": {
+        "id": 1002885
+      },
+      "writtenOn": "2026-06-27T11:46:08Z",
+      "side": 1,
+      "message": "Done.\n`TestDeferredFunction()` is now registered as a plain name function.",
+      "parentUuid": "a372adc7_589a7363",
       "revId": "9e428ad2e631d2239d7d6d48f478413e110f9c45",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }

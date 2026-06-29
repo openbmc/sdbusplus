@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6e4a7d4a_9b57e997",
+        "filename": "test/async/context.cpp",
+        "patchSetId": 16
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1000086
+      },
+      "writtenOn": "2026-06-29T03:02:34Z",
+      "side": 1,
+      "message": "NIT: auto\u0026 context()\n{\n    assert(ctx !\u003d nullptr);\n    return *ctx;\n}",
+      "revId": "115f7cf1521bf6282a66428e9d07ba822f719126",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

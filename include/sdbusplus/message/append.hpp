@@ -112,8 +112,9 @@ struct append_single
     }
 
     template <typename T>
-    static std::enable_if_t<std::is_same_v<S, Td<T>> && std::is_enum_v<Td<T>>>
-        op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, T&& t)
+        requires(std::is_same_v<S, Td<T>> &&
+                 sdbusplus::message::has_convert_to_string_v<Td<T>>)
+    static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, T&& t)
     {
         auto value = sdbusplus::message::convert_to_string<Td<T>>(t);
         sdbusplus::message::append(intf, m, value);

@@ -93,7 +93,7 @@ struct read_single
 
     template <typename T>
     static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, T&& t)
-        requires(std::is_enum_v<Td<T>>)
+        requires(sdbusplus::message::has_convert_from_string_v<Td<T>>)
     {
         std::string value{};
         sdbusplus::message::read(intf, m, value);

@@ -200,6 +200,21 @@ struct convert_to_string
     static std::string op(T) = delete;
 };
 
+// Concept to determine if convert_from_string exists for a type.
+template <typename T>
+concept has_convert_from_string =
+    requires(const std::string& str) { convert_from_string<T>::op(str); };
+
+template <typename T>
+inline constexpr bool has_convert_from_string_v = has_convert_from_string<T>;
+
+// Concept to determine if convert_to_string exists for a type.
+template <typename T>
+concept has_convert_to_string = requires(T t) { convert_to_string<T>::op(t); };
+
+template <typename T>
+inline constexpr bool has_convert_to_string_v = has_convert_to_string<T>;
+
 } // namespace details
 
 /** @brief Convert from a string to a native type.
@@ -211,6 +226,7 @@ struct convert_to_string
  *  @return A std::optional<T> containing the value if conversion is possible.
  */
 template <typename T>
+    requires details::has_convert_from_string<T>
 auto convert_from_string(const std::string& str) noexcept
 {
     return details::convert_from_string<T>::op(str);
@@ -226,6 +242,7 @@ auto convert_from_string(const std::string& str) noexcept
  *          possible.
  */
 template <typename T>
+    requires details::has_convert_to_string<T>
 std::string convert_to_string(T t)
 {
     return details::convert_to_string<T>::op(t);
@@ -233,21 +250,6 @@ std::string convert_to_string(T t)
 
 namespace details
 {
-// SFINAE templates to determine if convert_from_string exists for a type.
-template <typename T>
-auto has_convert_from_string_helper(T)
-    -> decltype(convert_from_string<T>::op(std::declval<std::string>()),
-                std::true_type());
-auto has_convert_from_string_helper(...) -> std::false_type;
-
-template <typename T>
-struct has_convert_from_string :
-    decltype(has_convert_from_string_helper(std::declval<T>())){};
-
-template <typename T>
-inline constexpr bool has_convert_from_string_v =
-    has_convert_from_string<T>::value;
-
 // Specialization of 'convert_from_string' for variant.
 template <typename... Types>
 struct convert_from_string<std::variant<Types...>>
@@ -307,6 +309,11 @@ struct convert_from_string<std::variant<Types...>>
 template <typename T>
 inline constexpr bool has_convert_from_string_v =
     details::has_convert_from_string_v<T>;
+
+/** Export template helper to determine if a type has convert_to_string. */
+template <typename T>
+inline constexpr bool has_convert_to_string_v =
+    details::has_convert_to_string_v<T>;
 
 } // namespace message
 

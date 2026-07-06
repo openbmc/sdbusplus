@@ -62,7 +62,9 @@ class ${interface.classname} :
         : ${interface.classname}(path)
     {
 #ifdef SDBUSPLUS_ASYNC_NEW_PROPERTY_MEMBERS
+        % if interface.properties:
         properties = props;
+        % endif
 #else
         % for p in interface.properties:
         ${p.snake_case}_ = props.${p.snake_case};
@@ -101,7 +103,9 @@ ${p.render(loader, "property.aserver.set.hpp.mako", property=p, interface=interf
 
   protected:
 #ifdef SDBUSPLUS_ASYNC_NEW_PROPERTY_MEMBERS
+% if interface.properties:
     properties_t properties{};
+% endif
 #else
 % for p in interface.properties:
     ${p.cppTypeParam(interface.name)} ${p.snake_case}_${p.default_value(interface.name)};

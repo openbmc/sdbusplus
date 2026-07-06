@@ -41,8 +41,13 @@ i_name = interface.joinedName("_", "interface")
             !server_details::has_get_property<${p_tag}, Instance>,
             "Cannot create default set-property for '${p_tag}' with get-property overload.");
 
+#ifdef SDBUSPLUS_ASYNC_NEW_PROPERTY_MEMBERS
+        bool changed = (new_value != properties.${p_name});
+        properties.${p_name} = std::forward<Arg>(new_value);
+#else
         bool changed = (new_value != ${p_name}_);
         ${p_name}_ = std::forward<Arg>(new_value);
+#endif
 
         if (changed && EmitSignal)
         {

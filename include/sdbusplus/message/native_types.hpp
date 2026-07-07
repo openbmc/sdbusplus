@@ -202,15 +202,16 @@ struct convert_to_string
 
 // Concept to determine if convert_from_string exists for a type.
 template <typename T>
-concept has_convert_from_string =
-    requires(const std::string& str) { convert_from_string<T>::op(str); };
+concept has_convert_from_string = requires(
+    const std::string& str) { convert_from_string<std::decay_t<T>>::op(str); };
 
 template <typename T>
 inline constexpr bool has_convert_from_string_v = has_convert_from_string<T>;
 
 // Concept to determine if convert_to_string exists for a type.
 template <typename T>
-concept has_convert_to_string = requires(T t) { convert_to_string<T>::op(t); };
+concept has_convert_to_string =
+    requires(T t) { convert_to_string<std::decay_t<T>>::op(t); };
 
 template <typename T>
 inline constexpr bool has_convert_to_string_v = has_convert_to_string<T>;

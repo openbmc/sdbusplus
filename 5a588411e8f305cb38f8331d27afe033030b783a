@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "dee1927e_45c133fb",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1002810
+      },
+      "writtenOn": "2026-07-14T04:20:34Z",
+      "side": 1,
+      "message": "Suggestion: since this change exists to demonstrate the non-blocking\nproperty, consider pasting the captured output as evidence -- e.g. a short\n\"Tested:\" block showing the \"server: event loop alive\" heartbeat firing across\nthe 2s window while TestDeferredFunction\u0027s reply is outstanding, then the\ndeferred reply.",
+      "revId": "5a588411e8f305cb38f8331d27afe033030b783a",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c100b33f_5fdc0821",
+        "filename": "example/asio-example.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 1002810
+      },
+      "writtenOn": "2026-07-14T04:20:34Z",
+      "side": 1,
+      "message": "Nit (optional): the 750ms interval is a magic number. Naming it (e.g. a\nconstexpr heartbeatInterval)",
+      "revId": "5a588411e8f305cb38f8331d27afe033030b783a",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d621ba32_493229d6",
+        "filename": "example/asio-example.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 333,
+      "author": {
+        "id": 1002810
+      },
+      "writtenOn": "2026-07-14T04:20:34Z",
+      "side": 1,
+      "message": "Nit (optional): this call-site comment largely restates the doc comment already\non startHeartbeat (lines 101-103). Since the rationale lives on the\nfunction, this could be trimmed to avoid duplicating it.",
+      "revId": "5a588411e8f305cb38f8331d27afe033030b783a",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

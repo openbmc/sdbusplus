@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "37661f88_90f9fc5f",
+        "filename": "example/asio-example.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 1002810
+      },
+      "writtenOn": "2026-07-14T01:18:45Z",
+      "side": 1,
+      "message": "Nit: `timer` is received but unused here (/*timer*/). Its only purpose is to\ncarry the keep-alive copy bound in testDeferredFunction\u0027s async_wait call -- it deliberately\nholds the steady_timer alive across the wait. A short note that it\u0027s an\nintentional lifetime anchor (not a stray/forgotten parameter) would make this\nclearer in an example.",
+      "revId": "677dfeb8d8ac5c21d85fa2952bc18fb92e19b3bb",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "900d8493_64b43eb7",
+        "filename": "example/asio-example.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 1002810
+      },
+      "writtenOn": "2026-07-14T01:18:45Z",
+      "side": 1,
+      "message": "Suggestion (optional): the error branch here is never reached in the demo --\nthe steady_timer only reports an error on cancellation, which never happens,\nso a client never sees a deferred *failure* reply. Since the whole point of the\ncompletion is void(error_code, Results...), it might be worth a short path that\nactually reports a failure through `done`, so the example demonstrates both\noutcomes.",
+      "revId": "677dfeb8d8ac5c21d85fa2952bc18fb92e19b3bb",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ed3a1bdc_eec1020a",
+        "filename": "example/asio-example.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 1002810
+      },
+      "writtenOn": "2026-07-14T01:18:45Z",
+      "side": 1,
+      "message": "Nit (optional): the 2s deferral is a magic number. Naming it (e.g. a constexpr\ndeferredReplyDelay) would make its role self-documenting and easier to tweak.\nMinor readability only.",
+      "revId": "677dfeb8d8ac5c21d85fa2952bc18fb92e19b3bb",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

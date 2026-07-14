@@ -18,6 +18,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "11ff4a6c_53d6839b",
+        "filename": "example/asio-example.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 1002885
+      },
+      "writtenOn": "2026-07-14T10:22:39Z",
+      "side": 1,
+      "message": "Done, I have clarified that the parameter was unused in PS7.",
+      "parentUuid": "37661f88_90f9fc5f",
+      "revId": "677dfeb8d8ac5c21d85fa2952bc18fb92e19b3bb",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "900d8493_64b43eb7",
@@ -35,6 +53,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "80969387_0edbd3c8",
+        "filename": "example/asio-example.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 1002885
+      },
+      "writtenOn": "2026-07-14T10:22:39Z",
+      "side": 1,
+      "message": "Thanks for the suggestion, I have kept the example as previous because the `if (ec)` branch are to ensure the completion-contract correctness.\n\nThe intention of this example is to showcase how a feature consumer can implement their deferred function and thus I think the if branch here aligns more with the \"general\" approach.\n\nPlease tell me if you do have other concern here.",
+      "parentUuid": "900d8493_64b43eb7",
+      "revId": "677dfeb8d8ac5c21d85fa2952bc18fb92e19b3bb",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ed3a1bdc_eec1020a",
@@ -48,6 +84,24 @@
       "writtenOn": "2026-07-14T01:18:45Z",
       "side": 1,
       "message": "Nit (optional): the 2s deferral is a magic number. Naming it (e.g. a constexpr\ndeferredReplyDelay) would make its role self-documenting and easier to tweak.\nMinor readability only.",
+      "revId": "677dfeb8d8ac5c21d85fa2952bc18fb92e19b3bb",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e5f503a2_e41eff54",
+        "filename": "example/asio-example.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 1002885
+      },
+      "writtenOn": "2026-07-14T10:22:39Z",
+      "side": 1,
+      "message": "Sure, I have declared the 2s a variable with inline comment.\nHopefully it can provide more semantics here.",
+      "parentUuid": "ed3a1bdc_eec1020a",
       "revId": "677dfeb8d8ac5c21d85fa2952bc18fb92e19b3bb",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }

@@ -18,6 +18,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "554c3ebe_7f611e60",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1002885
+      },
+      "writtenOn": "2026-07-14T11:02:07Z",
+      "side": 1,
+      "message": "Good point!\nI have added the Tested section in the commit message,\nindicating how the example can be looked like.",
+      "parentUuid": "dee1927e_45c133fb",
+      "revId": "5a588411e8f305cb38f8331d27afe033030b783a",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c100b33f_5fdc0821",
@@ -35,6 +53,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "7676e59d_a6f18d52",
+        "filename": "example/asio-example.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 1002885
+      },
+      "writtenOn": "2026-07-14T11:02:07Z",
+      "side": 1,
+      "message": "Done, I have declared a variable to contain the magic number.\nHopefully it can provides more semantics here.",
+      "parentUuid": "c100b33f_5fdc0821",
+      "revId": "5a588411e8f305cb38f8331d27afe033030b783a",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d621ba32_493229d6",
@@ -48,6 +84,24 @@
       "writtenOn": "2026-07-14T04:20:34Z",
       "side": 1,
       "message": "Nit (optional): this call-site comment largely restates the doc comment already\non startHeartbeat (lines 101-103). Since the rationale lives on the\nfunction, this could be trimmed to avoid duplicating it.",
+      "revId": "5a588411e8f305cb38f8331d27afe033030b783a",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "cb7ca18d_c6dc9a11",
+        "filename": "example/asio-example.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 333,
+      "author": {
+        "id": 1002885
+      },
+      "writtenOn": "2026-07-14T11:02:07Z",
+      "side": 1,
+      "message": "Thanks, I have remove the inline comment in PS6.",
+      "parentUuid": "d621ba32_493229d6",
       "revId": "5a588411e8f305cb38f8331d27afe033030b783a",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }

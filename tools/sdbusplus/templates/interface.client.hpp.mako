@@ -68,35 +68,51 @@ ${p.render(loader, "property.client.hpp.mako", property=p, interface=interface)}
     auto properties()
     {
         return proxy.template get_all_properties<PropertiesVariant>(context()) |
-               sdbusplus::async::execution::then([](auto&& v) {
-                   properties_t result;
-                   for (const auto& [property, value] : v)
-                   {
-                       std::visit(
-                           [&](auto v) {
-                               % for p in interface.properties:
-                               if (property == "${p.name}")
-                               {
-                                   if constexpr (std::is_same_v<
-                                                     std::decay_t<decltype(v)>,
-                                                     ${p.cppTypeParam(interface.name)}>)
-                                   {
-                                       result.${p.snake_case} = v;
-                                       return;
-                                   }
-                                   else
-                                   {
-                                       throw exception::UnpackPropertyError(
-                                           property,
-                                           UnpackErrorReason::wrongType);
-                                   }
-                               }
-                               % endfor
-                           },
-                           value);
-                   }
-                   return result;
-               });
+               sdbusplus::async::execution::then(
+                   [](auto&& v) { return decode_properties(v); });
+    }
+
+    /** @brief Decode a property map into a typed properties_t
+     *
+     *  Accepts any range of (string, variant) pairs, including the
+     *  unordered_map<string, PropertiesVariant> returned by
+     *  get_all_properties() and the vector<pair<string, V>> payloads
+     *  carried by InterfacesAdded signals.
+     *
+     *  @tparam Map - Any range whose value_type is pair<string-like, variant>.
+     *  @param[in] v - The property map to decode.
+     *  @return - The decoded properties_t struct.
+     */
+    template <typename Map>
+    static properties_t decode_properties(const Map& v)
+    {
+        properties_t result;
+        for (const auto& [property, value] : v)
+        {
+            std::visit(
+                [&](auto v) {
+                    % for p in interface.properties:
+                    if (property == "${p.name}")
+                    {
+                        if constexpr (std::is_same_v<
+                                          std::decay_t<decltype(v)>,
+                                          ${p.cppTypeParam(interface.name)}>)
+                        {
+                            result.${p.snake_case} = v;
+                            return;
+                        }
+                        else
+                        {
+                            throw exception::UnpackPropertyError(
+                                property,
+                                UnpackErrorReason::wrongType);
+                        }
+                    }
+                    % endfor
+                },
+                value);
+        }
+        return result;
     }
     % endif
 

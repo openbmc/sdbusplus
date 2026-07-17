@@ -40,6 +40,7 @@ libsdbusplus_src = files(
     'src/async/fdio.cpp',
     'src/async/match.cpp',
     'src/async/mutex.cpp',
+    'src/async/object_server.cpp',
     'src/bus.cpp',
     'src/bus/match.cpp',
     'src/event.cpp',

@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "11491738_dab62858",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-07-17T18:14:58Z",
+      "side": 1,
+      "message": "I don’t really know what this means. From a dbus standards perspective this isn’t a thing. All implementations of this in places like entity-manager actually violate standards and/or conventions, so I’m not super excited about adding support for this. \n\nDo you have some concrete examples of how this is going to be leveraged?",
+      "range": {
+        "startLine": 10,
+        "startChar": 18,
+        "endLine": 11,
+        "endChar": 52
+      },
+      "revId": "6ba0ada113bc2332ea78219776cc42afc81277a1",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

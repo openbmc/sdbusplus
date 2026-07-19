@@ -22,6 +22,30 @@
       },
       "revId": "6ba0ada113bc2332ea78219776cc42afc81277a1",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7de18780_9cadba9e",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1003006
+      },
+      "writtenOn": "2026-07-19T17:28:31Z",
+      "side": 1,
+      "message": "The reason I pushed this change is that asio already has an equivalent and it covers my scenario, while async has no counterpart. If this genuinely conflicts with D-Bus standards or with the design intent of sdbusplus async, I\u0027m happy to abandon it.\n\nAs for my use case: I do have a JSON-driven service, similar to entity-manager. It reads a config describing custom CPLD registers and exposes each bit field as a D-Bus property. This is probably exactly what you\u0027re objecting to, though. The object_server saves me from hand-rolling a vtable and pulling in the raw sd-bus C API whenever I need to construct interfaces at runtime.\n\nWhat I\u0027d most like to understand is what the standard actually says here. If you can point me at the OpenBMC convention this is meant to follow, or to where it was discussed, that would be the most useful thing for me.",
+      "parentUuid": "11491738_dab62858",
+      "range": {
+        "startLine": 10,
+        "startChar": 18,
+        "endLine": 11,
+        "endChar": 52
+      },
+      "revId": "6ba0ada113bc2332ea78219776cc42afc81277a1",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

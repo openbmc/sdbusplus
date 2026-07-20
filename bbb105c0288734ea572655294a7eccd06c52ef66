@@ -16,6 +16,23 @@
       "message": "Clean, behavior-preserving extraction — properties() keeps identical semantics, and the new static template generalizes to any (string, variant) range, so an InterfacesAdded payload can be decoded into properties_t without a GetAll round-trip. This is the seam needed for signal-driven property caching.",
       "revId": "bbb105c0288734ea572655294a7eccd06c52ef66",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ce446c3f_3a74c4e2",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1001516
+      },
+      "writtenOn": "2026-07-20T06:42:59Z",
+      "side": 1,
+      "message": "Tested section missing, rest lgtm.",
+      "revId": "bbb105c0288734ea572655294a7eccd06c52ef66",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

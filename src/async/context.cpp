@@ -195,6 +195,16 @@ void context::check_stop_requested()
     }
 }
 
+void context::spawn(task<void>&& t)
+{
+    check_stop_requested();
+
+    pending_tasks.spawn(
+        std::move(execution::starts_on(loop.get_scheduler(), std::move(t))));
+
+    spawn_watcher();
+}
+
 void context::spawn_watcher()
 {
     {

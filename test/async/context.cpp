@@ -2,6 +2,8 @@
 
 #include <gtest/gtest.h>
 
+#include <cstdlib>
+
 struct Context : public testing::Test
 {
     ~Context() noexcept override = default;
@@ -59,6 +61,12 @@ TEST_F(Context, ReentrantRun)
     }
 }
 
+static bool isValgrind()
+{
+    static const bool rc = std::getenv("VALGRIND_LIB") != nullptr;
+    return rc;
+}
+
 TEST_F(Context, SpawnDelayedTask)
 {
     using namespace std::literals;
@@ -74,9 +82,11 @@ TEST_F(Context, SpawnDelayedTask)
 
     auto stop = std::chrono::steady_clock::now();
 
+    const auto tolerance = isValgrind() ? 8 : 3;
+
     EXPECT_TRUE(ran);
     EXPECT_GT(stop - start, timeout);
-    EXPECT_LT(stop - start, timeout * 3);
+    EXPECT_LT(stop - start, timeout * tolerance);
 }
 
 TEST_F(Context, SpawnRecursiveTask)

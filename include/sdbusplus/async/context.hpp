@@ -68,6 +68,15 @@ class context : public sdbusplus::details::bus_friend
         spawn_watcher();
     }
 
+    /** Spawn a task<void> to run on the context.
+     *
+     * Non-template specialization to reduce application binary size for
+     * a typical use case.
+     *
+     * @param[in] t - The task to run.
+     */
+    void spawn(task<void>&& t);
+
     bus_t& get_bus() noexcept
     {
         return bus;

@@ -1,10 +1,17 @@
 #include <sdbusplus/async.hpp>
 
 #include <chrono>
+#include <cstdlib>
 
 #include <gtest/gtest.h>
 
 using namespace std::literals;
+
+static bool isValgrind()
+{
+    static const bool rc = std::getenv("VALGRIND_LIB") != nullptr;
+    return rc;
+}
 
 TEST(Timer, DelaySome)
 {
@@ -20,6 +27,8 @@ TEST(Timer, DelaySome)
 
     auto stop = std::chrono::steady_clock::now();
 
+    const auto tolerance = isValgrind() ? 8 : 3;
+
     EXPECT_GT(stop - start, timeout);
-    EXPECT_LT(stop - start, timeout * 3);
+    EXPECT_LT(stop - start, timeout * tolerance);
 }

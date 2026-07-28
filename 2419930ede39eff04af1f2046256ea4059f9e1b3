@@ -33,6 +33,24 @@
       "message": "```suggestion\n        throw std::invalid_argument(\"string_path_wrapper: empty string append\");\n```",
       "revId": "2419930ede39eff04af1f2046256ea4059f9e1b3",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "91957cdb_726c17b7",
+        "filename": "src/message/native_types.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 1001712
+      },
+      "writtenOn": "2026-07-28T15:53:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "78e9c38e_a2f4a73a",
+      "revId": "2419930ede39eff04af1f2046256ea4059f9e1b3",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

@@ -33,6 +33,24 @@
       "message": "I don\u0027t really understand the utility of adding a comment that nobody is going to read.  How would we actually go about deprecating it?  How much stuff breaks if we mark it \"\u003d delete\"?  Is this just a first step towards marking it \"\u003d delete\"?",
       "revId": "38c6d4c281dc3a08cdba76abc3170c2487bd9ce6",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "381d0779_0e9687d2",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1001712
+      },
+      "writtenOn": "2026-07-28T15:31:12Z",
+      "side": 1,
+      "message": "\u003e I don\u0027t really understand the utility of adding a comment that nobody is going to read\n\nJust 5 days ago i pointed this out to someone that `.str` member access is deprecated and they should use `.string()` instead. They ended up changing it and maybe hopefully in future patches or in their own reviews they will be aware of that migration and help in that effort?\n\nhttps://gerrit.openbmc.org/c/openbmc/bmcweb/+/89319/comment/3a2cc00b_bf000177/\n\nMy approach is working (people are making changes in their patches based on what\u0027s documented in the header files) but it does not work if we don\u0027t document deprecated and preferred APIs.\n\n\u003e How would we actually go about deprecating it?\n\nLet\u0027s go step by step here. OpenBMC takes a long time to make any sweeping API migration. The first step is to document what\u0027s deprecated and what\u0027s preferred.\n\nThen later people can start implementing the required changes to migrate.\n\nIf we start going in the wrong order then people will probably just ignore any such \u0027migration\u0027 patches.\n\n\u003e How much stuff breaks if we mark it \"\u003d delete\"?\n\nToo much. It is not realistic to solve it with a gerrit topic. I have this exact same experience from `.str -\u003e .string()` migration. It takes multiple months to get these small migration patches merged and having this documentation is required to get people to even consider migration patches.\n\n\u003e Is this just a first step towards marking it \"\u003d delete\"?\n\nYes, that would be one option. The other option would be to have it as `\u003ddelete` for a short while only, then change the behavior to make it default construct the root path. But with the current implementation it should probably not be used.\n\nOverall i see two realistic options to fix it.\n\n- i tried to change it to make the implementation correct, that was dismissed\n\n- this approach is about documentation change so people are aware that it\u0027s broken and migration can happen over a longer timeline",
+      "parentUuid": "a1813d83_1c9ebba4",
+      "revId": "38c6d4c281dc3a08cdba76abc3170c2487bd9ce6",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

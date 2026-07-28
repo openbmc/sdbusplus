@@ -51,6 +51,24 @@
       "parentUuid": "a1813d83_1c9ebba4",
       "revId": "38c6d4c281dc3a08cdba76abc3170c2487bd9ce6",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0ad48485_a32dcd00",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-07-28T17:45:52Z",
+      "side": 1,
+      "message": "\u003e OpenBMC takes a long time to make any sweeping API migration.\n\nI don\u0027t think \"long time\" is that accurate, but I understand.",
+      "parentUuid": "381d0779_0e9687d2",
+      "revId": "38c6d4c281dc3a08cdba76abc3170c2487bd9ce6",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

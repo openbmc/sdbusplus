@@ -61,15 +61,9 @@ class ${interface.classname} :
             [[maybe_unused]] ${interface.classname}::properties_t props)
         : ${interface.classname}(path)
     {
-#ifdef SDBUSPLUS_ASYNC_NEW_PROPERTY_MEMBERS
         % if interface.properties:
         properties = props;
         % endif
-#else
-        % for p in interface.properties:
-        ${p.snake_case}_ = props.${p.snake_case};
-        % endfor
-#endif
     }
 
     ${interface.classname}(
@@ -102,15 +96,9 @@ ${p.render(loader, "property.aserver.set.hpp.mako", property=p, interface=interf
 % endfor
 
   protected:
-#ifdef SDBUSPLUS_ASYNC_NEW_PROPERTY_MEMBERS
 % if interface.properties:
     properties_t properties{};
 % endif
-#else
-% for p in interface.properties:
-    ${p.cppTypeParam(interface.name)} ${p.snake_case}_${p.default_value(interface.name)};
-% endfor
-#endif
 
   private:
     /** @return the async context */

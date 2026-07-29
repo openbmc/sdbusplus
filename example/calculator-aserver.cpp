@@ -1,4 +1,3 @@
-#define SDBUSPLUS_ASYNC_NEW_PROPERTY_MEMBERS
 #include <net/poettering/Calculator/aserver.hpp>
 #include <sdbusplus/async.hpp>
 

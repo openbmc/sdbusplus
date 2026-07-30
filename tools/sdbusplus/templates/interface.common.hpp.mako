@@ -5,6 +5,7 @@
 #include <string>
 #include <string_view>
 #include <tuple>
+#include <type_traits>
 
 #include <sdbusplus/exception.hpp>
 #include <sdbusplus/message.hpp>
@@ -41,6 +42,10 @@ struct ${interface.classname}
         % for p in interface.properties:
         ${p.cppTypeParam(interface.name)} ${p.snake_case}${p.default_value(interface.name)};
         % endfor
+
+        /** Unpack properties from a map-like (name to PropertiesVariant). */
+        template <typename M>
+        static properties_t unpack(const M&);
     };
 
     using PropertiesVariant = sdbusplus::utility::dedup_variant_t<
@@ -214,6 +219,38 @@ inline std::string ${interface.classname}::convert${e.name}ToString(
     return std::string(std::get<0>(*i));
 }
     % endfor
+
+% if interface.properties:
+template <typename M>
+inline auto ${interface.classname}::properties_t::unpack(const M& m) ->
+    ${interface.classname}::properties_t
+{
+   properties_t result;
+   for (const auto& [property, value] : m)
+   {
+        std::visit(
+            [&](auto v) {
+                % for p in interface.properties:
+                if (property == "${p.name}")
+                {
+                    if constexpr (std::is_same_v<std::decay_t<decltype(m)>,
+                                                 ${p.cppTypeParam(interface.name)}>)
+                    {
+                        result.${p.snake_case} = v;
+                        return;
+                    }
+                    else
+                    {
+                        throw exception::UnpackPropertyError(
+                            property, UnpackErrorReason::wrongType);
+                    }
+                }
+                % endfor
+            }, value);
+    }
+    return result;
+}
+% endif
 
 } // sdbusplus::common::${interface.cppNamespace()}
 

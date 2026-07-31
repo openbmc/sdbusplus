@@ -233,7 +233,7 @@ inline auto ${interface.classname}::properties_t::unpack(const M& m) ->
                 % for p in interface.properties:
                 if (property == "${p.name}")
                 {
-                    if constexpr (std::is_same_v<std::decay_t<decltype(m)>,
+                    if constexpr (std::is_same_v<std::decay_t<decltype(v)>,
                                                  ${p.cppTypeParam(interface.name)}>)
                     {
                         result.${p.snake_case} = v;

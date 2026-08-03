@@ -22,13 +22,7 @@ auto ${event.CamelCase}::to_json() const -> nlohmann::json
 {
     nlohmann::json j = { };
 % for m in event.metadata:
-    % if m.typeName == "object_path":
-    j["${m.SNAKE_CASE}"] = ${m.camelCase}.str;
-    % elif m.is_enum():
-    j["${m.SNAKE_CASE}"] = sdbusplus::message::convert_to_string(${m.camelCase});
-    % else:
     j["${m.SNAKE_CASE}"] = ${m.camelCase};
-    % endif
 % endfor
 
     // Add common source and pid info.
@@ -49,23 +43,7 @@ ${event.CamelCase}::${event.CamelCase}(
     const nlohmann::json& self = j.at(errName);
 
 % for m in event.metadata:
-    % if m.typeName == "object_path":
-    ${m.camelCase} = self.at("${m.SNAKE_CASE}").get<std::string>();
-    % elif m.is_enum():
-    if (auto enum_value =
-            sdbusplus::message::convert_from_string<decltype(${m.camelCase})>(
-                self.at("${m.SNAKE_CASE}"));
-        enum_value.has_value())
-    {
-        ${m.camelCase} = enum_value.value();
-    }
-    else
-    {
-        throw sdbusplus::exception::InvalidEnumString();
-    }
-    % else:
-    ${m.camelCase} = self.at("${m.SNAKE_CASE}");
-    % endif
+    self.at("${m.SNAKE_CASE}").get_to(${m.camelCase});
 % endfor
 
     if (!self.contains("_SOURCE"))
@@ -78,11 +56,12 @@ ${event.CamelCase}::${event.CamelCase}(
     }
     else
     {
-        source_file = self.at("FILE");
-        source_func = self.at("FUNCTION");
-        source_line = self.at("LINE");
-        source_column = self.at("COLUMN");
-        pid = self.at("PID");
+        const nlohmann::json& src = self.at("_SOURCE");
+        source_file = src.at("FILE");
+        source_func = src.at("FUNCTION");
+        source_line = src.at("LINE");
+        source_column = src.at("COLUMN");
+        pid = src.at("PID");
     }
 
 }

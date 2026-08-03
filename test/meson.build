@@ -130,6 +130,22 @@ test(
     ),
 )
 
+test(
+    'test-json',
+    executable(
+        'test-json',
+        'server/json.cpp',
+        generated_sources,
+        include_directories: [root_inc],
+        dependencies: [
+            sdbusplus_dep,
+            server_test_dep,
+            gtest_dep,
+            nlohmann_json_dep,
+        ],
+    ),
+)
+
 uninit_tests = [
     'test_server_no_uninitialized_value_constructor',
     'test_aserver_no_uninitialized_value_constructor',

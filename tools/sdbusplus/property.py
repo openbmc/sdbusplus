@@ -63,6 +63,17 @@ class Property(NamedElement, Renderer):
             return False
         return "enum" == self.__type_tuple()[0]
 
+    def is_variant(self):
+        """Return True if the type (or any nested type) is a variant."""
+        if not self.typeName:
+            return False
+        return self.__is_variant(self.__type_tuple())
+
+    def __is_variant(self, typeTuple):
+        if typeTuple[0] == "variant":
+            return True
+        return any(self.__is_variant(t) for t in typeTuple[1])
+
     def is_integer(self):
         return self.typeName in [
             "byte",

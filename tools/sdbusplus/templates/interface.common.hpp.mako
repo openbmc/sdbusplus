@@ -144,6 +144,12 @@ ${p.render(loader, "property.common.tag.hpp.mako", property=p, interface=interfa
     % endfor
 };
 
+    % if interface.properties and not any(p.is_variant() for p in interface.properties):
+/** JSON serialization for ${interface.classname}::properties_t. */
+void to_json(nlohmann::json& j, const ${interface.classname}::properties_t& v);
+void from_json(const nlohmann::json& j, ${interface.classname}::properties_t& v);
+    % endif
+
 % for e in interface.enums:
 /* Specialization of sdbusplus::common::convertForMessage
  * for enum-type ${interface.classname}::${e.name}.

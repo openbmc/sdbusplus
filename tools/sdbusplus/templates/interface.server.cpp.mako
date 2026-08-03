@@ -96,3 +96,24 @@ void from_json(const nlohmann::json& j, ${interface.classname}::${e.name}& e)
     % endfor
 } // namespace sdbusplus::common::${interface.cppNamespace()}
 % endif
+
+% if interface.properties and not any(p.is_variant() for p in interface.properties):
+namespace sdbusplus::common::${interface.cppNamespace()}
+{
+void to_json(nlohmann::json& j, const ${interface.classname}::properties_t& v)
+{
+    j = nlohmann::json{
+        % for p in interface.properties:
+        {"${p.name}", v.${p.snake_case}},
+        % endfor
+    };
+}
+
+void from_json(const nlohmann::json& j, ${interface.classname}::properties_t& v)
+{
+    % for p in interface.properties:
+    j.at("${p.name}").get_to(v.${p.snake_case});
+    % endfor
+}
+} // namespace sdbusplus::common::${interface.cppNamespace()}
+% endif

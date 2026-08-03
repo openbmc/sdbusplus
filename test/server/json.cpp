@@ -1,5 +1,6 @@
 #include <nlohmann/json.hpp>
 #include <server/Test/event.hpp>
+#include <server/Test2/common.hpp>
 
 #include <string>
 
@@ -52,4 +53,21 @@ TEST(JsonEvent, EnumAndObjectPathMetadataRoundTrip)
     Error e2(j, std::source_location::current());
     EXPECT_EQ(e2.enumValue, EnumOne::OneA);
     EXPECT_EQ(e2.objectPath, sdbusplus::object_path("/a/b/"));
+}
+
+TEST(JsonProperties, Test2PropertiesRoundTrip)
+{
+    using Props = sdbusplus::common::server::Test2::properties_t;
+
+    Props p;
+    p.new_value = 42;
+    p.other_value = 7;
+
+    nlohmann::json j = p;
+    EXPECT_EQ(j.at("NewValue"), 42);
+    EXPECT_EQ(j.at("OtherValue"), 7);
+
+    auto round = j.get<Props>();
+    EXPECT_EQ(round.new_value, 42);
+    EXPECT_EQ(round.other_value, 7);
 }

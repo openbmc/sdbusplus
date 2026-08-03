@@ -3,6 +3,7 @@
 #include <server/Test2/common.hpp>
 
 #include <string>
+#include <type_traits>
 
 #include <gtest/gtest.h>
 
@@ -95,4 +96,16 @@ TEST(JsonProperties, Test2MissingPropertyFallsBackToDefault)
     nlohmann::json::object().get_to(p2);
     EXPECT_EQ(p2.new_value, 10);
     EXPECT_EQ(p2.other_value, 0);
+}
+
+static_assert(
+    std::is_same_v<
+        sdbusplus::common::server::Test2::properties_t::interface_type,
+        sdbusplus::common::server::Test2>,
+    "properties_t::interface_type must name the owning interface class");
+
+TEST(JsonProperties, Test2InterfaceType)
+{
+    using Props = sdbusplus::common::server::Test2::properties_t;
+    EXPECT_EQ(Props::interface_type::interface, "server.Test2");
 }

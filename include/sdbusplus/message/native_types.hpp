@@ -1,5 +1,7 @@
 #pragma once
 
+#include <nlohmann/json_fwd.hpp>
+
 #include <optional>
 #include <string>
 #include <string_view>
@@ -190,6 +192,11 @@ using unix_fd = details::unix_fd_type;
 
 namespace details
 {
+
+void to_json(nlohmann::json& j, const string_wrapper& s);
+void from_json(const nlohmann::json& j, string_wrapper& s);
+void to_json(nlohmann::json& j, const string_path_wrapper& s);
+void from_json(const nlohmann::json& j, string_path_wrapper& s);
 
 template <typename T>
 struct convert_from_string

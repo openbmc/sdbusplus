@@ -1,3 +1,4 @@
+#include <nlohmann/json.hpp>
 #include <sdbusplus/message/native_types.hpp>
 
 #include <algorithm>
@@ -12,6 +13,26 @@ namespace message
 {
 namespace details
 {
+
+void to_json(nlohmann::json& j, const string_wrapper& s)
+{
+    j = s.str;
+}
+
+void from_json(const nlohmann::json& j, string_wrapper& s)
+{
+    j.get_to(s.str);
+}
+
+void to_json(nlohmann::json& j, const string_path_wrapper& s)
+{
+    j = s.str;
+}
+
+void from_json(const nlohmann::json& j, string_path_wrapper& s)
+{
+    j.get_to(s.str);
+}
 
 constexpr std::array<char, 16> hex{'0', '1', '2', '3', '4', '5', '6', '7',
                                    '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};

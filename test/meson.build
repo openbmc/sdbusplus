@@ -46,7 +46,12 @@ foreach t : tests
         executable(
             'test-' + t.underscorify(),
             t + '.cpp',
-            dependencies: [gtest_dep, gmock_dep, sdbusplus_dep],
+            dependencies: [
+                gtest_dep,
+                gmock_dep,
+                sdbusplus_dep,
+                nlohmann_json_dep,
+            ],
         ),
     )
 endforeach

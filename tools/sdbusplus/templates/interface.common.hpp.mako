@@ -46,6 +46,9 @@ struct ${interface.classname}
         /** Unpack properties from a map-like (name to PropertiesVariant). */
         template <typename M>
         static properties_t unpack(const M&);
+
+        /** The interface class type which owns this properties_t. */
+        using interface_type = ${interface.classname};
     };
 
     using PropertiesVariant = sdbusplus::utility::dedup_variant_t<

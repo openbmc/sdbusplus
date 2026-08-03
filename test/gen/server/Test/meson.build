@@ -5,9 +5,12 @@ sdbusplus_current_path = 'server/Test'
 generated_sources += custom_target(
     'server/Test__cpp'.underscorify(),
     input: [
+        '../../../yaml/server/Test.events.yaml',
         '../../../yaml/server/Test.interface.yaml',
     ],
     output: [
+        'event.cpp',
+        'event.hpp',
         'common.hpp',
         'server.hpp',
         'server.cpp',
@@ -29,6 +32,8 @@ generated_sources += custom_target(
     ],
     install: should_generate_cpp,
     install_dir: [
+        false,
+        get_option('includedir') / sdbusplus_current_path,
         get_option('includedir') / sdbusplus_current_path,
         get_option('includedir') / sdbusplus_current_path,
         false,

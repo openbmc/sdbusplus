@@ -157,6 +157,10 @@ inline std::string convertForMessage(${interface.classname}::${e.name} e)
 {
     return ${interface.classname}::convert${e.name}ToString(e);
 }
+
+/** JSON serialization for enum-type ${interface.classname}::${e.name} */
+void to_json(nlohmann::json& j, ${interface.classname}::${e.name} e);
+void from_json(const nlohmann::json& j, ${interface.classname}::${e.name}& e);
 % endfor
 
     % for e in interface.enums:

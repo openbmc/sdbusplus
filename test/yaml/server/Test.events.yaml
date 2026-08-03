@@ -1,0 +1,32 @@
+version: 0.0.0
+
+errors:
+    - name: EnumObjectPathError
+      severity: warning
+      errno: EIO
+      en:
+          message: Test error with enum and object_path metadata.
+      metadata:
+          - name: EnumValue
+            description: An enum of the Test interface.
+            type: enum[self.EnumOne]
+            primary: false
+          - name: ObjectPath
+            description: An object path.
+            type: object_path
+            primary: false
+
+events:
+    - name: EnumObjectPathEvent
+      en:
+          description: Test event with enum and object_path metadata.
+          message: Test event with enum and object_path metadata.
+      metadata:
+          - name: EnumValue
+            description: An enum of the Test interface.
+            type: enum[self.EnumOne]
+            primary: false
+          - name: ObjectPath
+            description: An object path.
+            type: object_path
+            primary: false

@@ -1,5 +1,6 @@
 #include <exception>
 #include <map>
+#include <nlohmann/json.hpp>
 #include <sdbusplus/sdbus.hpp>
 #include <sdbusplus/sdbuspp_support/server.hpp>
 #include <sdbusplus/server.hpp>
@@ -71,3 +72,27 @@ ${ p.render(loader, "property.server.vtable.cpp.mako", property=p, interface=int
 };
 
 } // namespace sdbusplus::server::${interface.cppNamespace()}
+
+% if interface.enums:
+namespace sdbusplus::common::${interface.cppNamespace()}
+{
+    % for e in interface.enums:
+void to_json(nlohmann::json& j, ${interface.classname}::${e.name} e)
+{
+    j = sdbusplus::message::convert_to_string(e);
+}
+
+void from_json(const nlohmann::json& j, ${interface.classname}::${e.name}& e)
+{
+    auto value =
+        sdbusplus::message::convert_from_string<${interface.classname}::${e.name}>(
+            j.get<std::string>());
+    if (!value)
+    {
+        throw sdbusplus::exception::InvalidEnumString();
+    }
+    e = *value;
+}
+    % endfor
+} // namespace sdbusplus::common::${interface.cppNamespace()}
+% endif

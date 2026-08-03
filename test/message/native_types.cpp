@@ -1,3 +1,4 @@
+#include <nlohmann/json.hpp>
 #include <sdbusplus/message.hpp>
 
 #include <map>
@@ -37,6 +38,22 @@ TEST(MessageNativeTypeConversions, SignatureInVector)
         sdbusplus::message::signature("iii")};
 
     ASSERT_EQ(v.front(), "iii");
+}
+
+TEST(MessageNativeTypeJson, ObjectPathRoundTrip)
+{
+    sdbusplus::object_path p("/a/b/");
+    nlohmann::json j = p;
+    ASSERT_EQ(j, "/a/b/");
+    ASSERT_EQ(j.get<sdbusplus::object_path>(), p);
+}
+
+TEST(MessageNativeTypeJson, SignatureRoundTrip)
+{
+    sdbusplus::message::signature sig("iii");
+    nlohmann::json j = sig;
+    ASSERT_EQ(j, "iii");
+    ASSERT_EQ(j.get<sdbusplus::message::signature>(), sig);
 }
 
 TEST(MessageNativeTypeConversions, SignatureInMap)

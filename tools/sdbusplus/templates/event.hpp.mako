@@ -12,7 +12,7 @@ struct ${event.CamelCase} final :
 %else:
     ${event.CamelCase}(
         ${", ".join([
-            f"metadata_t<\"{m.SNAKE_CASE}\">, {m.cppTypeParam(events.name)} {m.camelCase}_"
+            f"metadata_t<\"{m.SNAKE_CASE}\">, {m.cppTypeParam(events.name, full=True)} {m.camelCase}_"
             for m in event.metadata ])},
         const std::source_location& source = std::source_location::current()) :
         ${", ".join([
@@ -23,7 +23,7 @@ struct ${event.CamelCase} final :
     {}
 
 %for m in event.metadata:
-    ${m.cppTypeParam(events.name)} ${m.camelCase};
+    ${m.cppTypeParam(events.name, full=True)} ${m.camelCase};
 %endfor
 
 %endif

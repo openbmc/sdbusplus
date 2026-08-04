@@ -34,6 +34,11 @@ auto ${event.CamelCase}::to_json() const -> nlohmann::json
     source_info["PID"] = pid;
     j["_SOURCE"] = source_info;
 
+    for (const auto& [interface, dump] : extensions)
+    {
+        j["_EXTENSIONS"][interface] = nlohmann::json::parse(dump);
+    }
+
     return nlohmann::json{ { errName, std::move(j) } };
 }
 

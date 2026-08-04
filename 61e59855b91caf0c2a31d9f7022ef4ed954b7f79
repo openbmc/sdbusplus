@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "626f83de_d49e70b5",
+        "filename": "tools/sdbusplus/templates/event.cpp.mako",
+        "patchSetId": 1
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-08-04T11:17:58Z",
+      "side": 1,
+      "message": "Is this check necessary?",
+      "revId": "61e59855b91caf0c2a31d9f7022ef4ed954b7f79",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bccf6edb_c84e265f",
+        "filename": "tools/sdbusplus/templates/interface.server.cpp.mako",
+        "patchSetId": 1
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-08-04T11:17:58Z",
+      "side": 1,
+      "message": "Does this violate ODR?",
+      "revId": "61e59855b91caf0c2a31d9f7022ef4ed954b7f79",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

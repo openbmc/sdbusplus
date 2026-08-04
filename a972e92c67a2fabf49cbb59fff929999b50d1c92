@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "626e98a5_47830757",
+        "filename": "tools/sdbusplus/templates/interface.server.cpp.mako",
+        "patchSetId": 1
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-08-04T11:26:12Z",
+      "side": 1,
+      "message": "String by should be SNAKE_CASE?",
+      "revId": "a972e92c67a2fabf49cbb59fff929999b50d1c92",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

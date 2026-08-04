@@ -1,6 +1,7 @@
 #include <exception>
 #include <map>
 #include <nlohmann/json.hpp>
+#include <sdbusplus/exception.hpp>
 #include <sdbusplus/sdbus.hpp>
 #include <sdbusplus/sdbuspp_support/server.hpp>
 #include <sdbusplus/server.hpp>
@@ -119,4 +120,20 @@ void from_json(const nlohmann::json& j, ${interface.classname}::properties_t& v)
     % endfor
 }
 } // namespace sdbusplus::common::${interface.cppNamespace()}
+% endif
+
+% if interface.properties and not any(p.is_variant() for p in interface.properties):
+namespace sdbusplus::exception::details
+{
+template <has_interface_type T>
+void extend(std::map<std::string, std::string>& extensions,
+            std::string_view interface, const T& v)
+{
+    extensions[std::string(interface)] = nlohmann::json(v).dump();
+}
+
+template void extend<common::${interface.cppNamespacedClass()}::properties_t>(
+    std::map<std::string, std::string>&, std::string_view,
+    const common::${interface.cppNamespacedClass()}::properties_t&);
+} // namespace sdbusplus::exception::details
 % endif

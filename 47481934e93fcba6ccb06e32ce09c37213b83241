@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "32a1c682_c543c7d6",
+        "filename": "tools/sdbusplus/templates/interface.server.cpp.mako",
+        "patchSetId": 1
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-08-04T11:29:19Z",
+      "side": 1,
+      "message": "Is there an already throwing version of convert_from_string?",
+      "revId": "47481934e93fcba6ccb06e32ce09c37213b83241",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

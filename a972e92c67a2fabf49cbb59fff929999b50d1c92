@@ -3,6 +3,23 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "72da1dd5_5b4d827a",
+        "filename": "test/server/json.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1001712
+      },
+      "writtenOn": "2026-08-04T12:06:08Z",
+      "side": 1,
+      "message": "it could be helpful to have an additional test to cover the behavior in case of some properties not existing on the json object.",
+      "revId": "a972e92c67a2fabf49cbb59fff929999b50d1c92",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "626e98a5_47830757",
         "filename": "tools/sdbusplus/templates/interface.server.cpp.mako",
         "patchSetId": 1
@@ -14,6 +31,29 @@
       "writtenOn": "2026-08-04T11:26:12Z",
       "side": 1,
       "message": "String by should be SNAKE_CASE?",
+      "revId": "a972e92c67a2fabf49cbb59fff929999b50d1c92",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d47471eb_16e57a8b",
+        "filename": "tools/sdbusplus/templates/interface.server.cpp.mako",
+        "patchSetId": 1
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 1001712
+      },
+      "writtenOn": "2026-08-04T12:06:08Z",
+      "side": 1,
+      "message": "nit: do we want to inject the defaults for properties that do not exist in the json object?\n\nAlternatively, are you open to someone making that change in a follow up?\n\nI\u0027m considering this because a lot of newly defined interfaces have defaults for their properties to make migration easier.",
+      "range": {
+        "startLine": 115,
+        "startChar": 4,
+        "endLine": 115,
+        "endChar": 48
+      },
       "revId": "a972e92c67a2fabf49cbb59fff929999b50d1c92",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }

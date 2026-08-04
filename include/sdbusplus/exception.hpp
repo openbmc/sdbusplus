@@ -7,8 +7,10 @@
 #include <sdbusplus/utility/consteval_string.hpp>
 
 #include <exception>
+#include <map>
 #include <source_location>
 #include <string>
+#include <string_view>
 
 namespace sdbusplus
 {
@@ -47,12 +49,53 @@ struct generated_exception : public exception
     int get_errno() const noexcept override;
 };
 
+template <typename T>
+concept has_interface_type = requires {
+                                 typename T::interface_type;
+                                 std::string_view(T::interface_type::interface);
+                                 requires T::is_extension;
+                             };
+
+namespace details
+{
+
+/** Store a JSON-serializable value in an event's `_EXTENSIONS` object, keyed
+ *  by the interface name reported by `T::interface_type::interface` (as
+ *  provided by a generated `properties_t`). The value is stored serialized,
+ *  so that nlohmann::json need not be complete here.
+ *
+ *  @param[in,out] extensions - The event's extension map to add to.
+ *  @param[in] interface - The interface name to key the value by.
+ *  @param[in] v - The value to serialize and store. The type must provide an
+ *                 `interface_type::interface` name and be serializable by
+ *                 nlohmann::json.
+ *
+ *  @note This is declared here but defined in a generated .cpp
+ *        (e.g. interface.server.cpp.mako), where nlohmann::json is complete,
+ *        and explicitly instantiated for the relevant `properties_t` type.
+ */
+template <has_interface_type T>
+void extend(std::map<std::string, std::string>& extensions,
+            std::string_view interface, const T& v);
+
+} // namespace details
+
 /** Non-templated base for all new errors and events created by the sdbus++
- * generator */
+ *  generator */
 struct generated_event_base : public generated_exception
 {
     virtual auto to_json() const -> nlohmann::json = 0;
     virtual int severity() const noexcept = 0;
+
+    /** Delegate to the detail helper (defined in a generated .cpp). */
+    template <has_interface_type T>
+    void extend(const T& v)
+    {
+        details::extend(extensions, T::interface_type::interface, v);
+    }
+
+  protected:
+    std::map<std::string, std::string> extensions;
 };
 
 /** base exception for all new errors and events created by the sdbus++

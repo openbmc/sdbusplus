@@ -1,6 +1,7 @@
 #include <nlohmann/json.hpp>
 #include <server/Test/event.hpp>
 #include <server/Test2/common.hpp>
+#include <server/Test3/common.hpp>
 
 #include <string>
 #include <type_traits>
@@ -104,8 +105,97 @@ static_assert(
         sdbusplus::common::server::Test2>,
     "properties_t::interface_type must name the owning interface class");
 
+static_assert(
+    sdbusplus::exception::has_interface_type<
+        sdbusplus::common::server::Test2::properties_t>,
+    "extendable properties_t must satisfy has_interface_type");
+
+static_assert(
+    !sdbusplus::exception::has_interface_type<
+        sdbusplus::common::server::Test::properties_t>,
+    "a properties_t with a variant must not satisfy has_interface_type");
+
+static_assert(
+    !sdbusplus::exception::has_interface_type<
+        sdbusplus::common::server::Test3::properties_t>,
+    "an interface with no properties must not satisfy has_interface_type");
+
 TEST(JsonProperties, Test2InterfaceType)
 {
     using Props = sdbusplus::common::server::Test2::properties_t;
     EXPECT_EQ(Props::interface_type::interface, "server.Test2");
+}
+
+TEST(JsonEvent, NoExtensionsWhenNotExtended)
+{
+    using Event = sdbusplus::event::server::Test::EnumObjectPathEvent;
+
+    Event e(Event::metadata_t<"ENUM_VALUE">{"ENUM_VALUE"}, EnumOne::OneA,
+            Event::metadata_t<"OBJECT_PATH">{"OBJECT_PATH"},
+            sdbusplus::object_path("/a/b/"));
+
+    auto j = e.to_json();
+    const auto& self = j.at(Event::errName);
+    EXPECT_FALSE(self.contains("_EXTENSIONS"));
+}
+
+TEST(JsonEvent, ExtendAddsPropertiesByInterfaceName)
+{
+    using Event = sdbusplus::event::server::Test::EnumObjectPathEvent;
+    using Props = sdbusplus::common::server::Test2::properties_t;
+
+    Event e(Event::metadata_t<"ENUM_VALUE">{"ENUM_VALUE"}, EnumOne::OneA,
+            Event::metadata_t<"OBJECT_PATH">{"OBJECT_PATH"},
+            sdbusplus::object_path("/a/b/"));
+
+    Props p;
+    p.new_value = 42;
+    p.other_value = 7;
+    e.extend(p);
+
+    auto j = e.to_json();
+    const auto& self = j.at(Event::errName);
+    const auto& extensions = self.at("_EXTENSIONS");
+    EXPECT_EQ(extensions.size(), 1);
+    EXPECT_EQ(extensions.at("server.Test2").at("NewValue"), 42);
+    EXPECT_EQ(extensions.at("server.Test2").at("OtherValue"), 7);
+}
+
+TEST(JsonEvent, ExtendRoundTripsThroughJson)
+{
+    using Event = sdbusplus::event::server::Test::EnumObjectPathEvent;
+    using Props = sdbusplus::common::server::Test2::properties_t;
+
+    Event e(Event::metadata_t<"ENUM_VALUE">{"ENUM_VALUE"}, EnumOne::OneA,
+            Event::metadata_t<"OBJECT_PATH">{"OBJECT_PATH"},
+            sdbusplus::object_path("/a/b/"));
+
+    Props p;
+    p.new_value = 42;
+    p.other_value = 7;
+    e.extend(p);
+
+    auto j = e.to_json();
+    // The event can be reconstructed from the same JSON, and the extension
+    // value can itself be deserialized back into properties_t.
+    const auto& extensions = j.at(Event::errName).at("_EXTENSIONS");
+    EXPECT_EQ(extensions.at("server.Test2").get<Props>().new_value, 42);
+    EXPECT_EQ(extensions.at("server.Test2").get<Props>().other_value, 7);
+}
+
+TEST(JsonEvent, ExtendKeepsMetadataIntact)
+{
+    using Event = sdbusplus::event::server::Test::EnumObjectPathEvent;
+    using Props = sdbusplus::common::server::Test2::properties_t;
+
+    Event e(Event::metadata_t<"ENUM_VALUE">{"ENUM_VALUE"}, EnumOne::OneA,
+            Event::metadata_t<"OBJECT_PATH">{"OBJECT_PATH"},
+            sdbusplus::object_path("/a/b/"));
+    e.extend(Props{});
+
+    auto j = e.to_json();
+    const auto& self = j.at(Event::errName);
+    EXPECT_EQ(self.at("ENUM_VALUE"), "server.Test.EnumOne.OneA");
+    EXPECT_EQ(self.at("OBJECT_PATH"), "/a/b/");
+    EXPECT_TRUE(self.contains("_EXTENSIONS"));
 }

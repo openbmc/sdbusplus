@@ -49,6 +49,11 @@ struct ${interface.classname}
 
         /** The interface class type which owns this properties_t. */
         using interface_type = ${interface.classname};
+    % if not any(p.is_variant() for p in interface.properties) and not interface.methods:
+        /** True if this properties_t can be used as a JSON-serializable
+         *  "plain data" extension on an event. */
+        static constexpr bool is_extension = true;
+    % endif
     };
 
     using PropertiesVariant = sdbusplus::utility::dedup_variant_t<

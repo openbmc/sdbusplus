@@ -18,6 +18,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "0be5fed7_44cb8baf",
+        "filename": "test/server/json.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-08-05T19:34:00Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "72da1dd5_5b4d827a",
+      "revId": "a972e92c67a2fabf49cbb59fff929999b50d1c92",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "626e98a5_47830757",
@@ -35,6 +53,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "c57d151b_7e335f70",
+        "filename": "tools/sdbusplus/templates/interface.server.cpp.mako",
+        "patchSetId": 1
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-08-05T19:34:00Z",
+      "side": 1,
+      "message": "Explicitly using `p.name` to match the property name on dbus.  This aligns with what other repositories are doing, such as entity-manager for their JSON.\n\nphosphor-logging used SNAKE_CASE for error metadata and we followed that for event metadata for consistency / compatibility, but we do not need to follow that for new features.",
+      "parentUuid": "626e98a5_47830757",
+      "revId": "a972e92c67a2fabf49cbb59fff929999b50d1c92",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d47471eb_16e57a8b",
@@ -48,6 +84,30 @@
       "writtenOn": "2026-08-04T12:06:08Z",
       "side": 1,
       "message": "nit: do we want to inject the defaults for properties that do not exist in the json object?\n\nAlternatively, are you open to someone making that change in a follow up?\n\nI\u0027m considering this because a lot of newly defined interfaces have defaults for their properties to make migration easier.",
+      "range": {
+        "startLine": 115,
+        "startChar": 4,
+        "endLine": 115,
+        "endChar": 48
+      },
+      "revId": "a972e92c67a2fabf49cbb59fff929999b50d1c92",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8549abf5_703c915e",
+        "filename": "tools/sdbusplus/templates/interface.server.cpp.mako",
+        "patchSetId": 1
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-08-05T19:34:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d47471eb_16e57a8b",
       "range": {
         "startLine": 115,
         "startChar": 4,

@@ -27,7 +27,7 @@ TEST(Timer, DelaySome)
 
     auto stop = std::chrono::steady_clock::now();
 
-    const auto tolerance = isValgrind() ? 8 : 3;
+    const auto tolerance = isValgrind() ? 16 : 3;
 
     EXPECT_GT(stop - start, timeout);
     EXPECT_LT(stop - start, timeout * tolerance);

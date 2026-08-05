@@ -3,6 +3,23 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "53af28af_27295a28",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1000086
+      },
+      "writtenOn": "2026-08-05T03:45:55Z",
+      "side": 1,
+      "message": "NIT: Question about the extension model. currently serialize only properties_t, so extensions can include interface properties but not data exposed through methods. How would a user attach data from an interface that provides its information through methods instead of properties, such as a large record retrieval API? Is the expectation that such data should be exposed as properties, or do we see a need for a more generic extension mechanism in the future?",
+      "revId": "61e59855b91caf0c2a31d9f7022ef4ed954b7f79",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "626f83de_d49e70b5",
         "filename": "tools/sdbusplus/templates/event.cpp.mako",
         "patchSetId": 1

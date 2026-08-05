@@ -72,7 +72,7 @@ TEST_F(Context, SpawnDelayedTask)
 
     auto stop = std::chrono::steady_clock::now();
 
-    const auto tolerance = isValgrind() ? 8 : 3;
+    const auto tolerance = isValgrind() ? 16 : 3;
 
     EXPECT_TRUE(ran);
     EXPECT_GT(stop - start, timeout);

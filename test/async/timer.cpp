@@ -1,17 +1,12 @@
+#include "../valgrind.hpp"
+
 #include <sdbusplus/async.hpp>
 
 #include <chrono>
-#include <cstdlib>
 
 #include <gtest/gtest.h>
 
 using namespace std::literals;
-
-static bool isValgrind()
-{
-    static const bool rc = std::getenv("VALGRIND_LIB") != nullptr;
-    return rc;
-}
 
 TEST(Timer, DelaySome)
 {

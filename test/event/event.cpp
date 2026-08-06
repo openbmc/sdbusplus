@@ -1,3 +1,5 @@
+#include "../valgrind.hpp"
+
 #include <sdbusplus/event.hpp>
 
 #include <chrono>
@@ -20,8 +22,10 @@ TEST_F(Event, TimeoutWorks)
     ev.run_one(timeout);
     auto stop = std::chrono::steady_clock::now();
 
+    const auto tolerance = isValgrind() ? 16 : 3;
+
     EXPECT_TRUE(stop - start > timeout);
-    EXPECT_TRUE(stop - start < timeout * 3);
+    EXPECT_TRUE(stop - start < timeout * tolerance);
 }
 
 TEST_F(Event, Runnable)
@@ -76,7 +80,9 @@ TEST_F(Event, Timer)
     ev.run_one();
     auto stop = std::chrono::steady_clock::now();
 
+    const auto tolerance = isValgrind() ? 16 : 3;
+
     EXPECT_TRUE(ran);
     EXPECT_TRUE(stop - start > timeout);
-    EXPECT_TRUE(stop - start < timeout * 3);
+    EXPECT_TRUE(stop - start < timeout * tolerance);
 }

@@ -150,7 +150,8 @@ string_path_wrapper& string_path_wrapper::operator/=(std::string_view extId)
 
     if (extId.empty())
     {
-        throw std::invalid_argument("string_path_wrapper: empty string append");
+        throw std::invalid_argument(
+            "string_path_wrapper: empty string append to " + str);
     }
 
     if (!str.empty() && str[str.size() - 1] != '/')

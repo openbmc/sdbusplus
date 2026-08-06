@@ -114,6 +114,17 @@ TEST(MessageTypes, ObjectPathOperatorSlashEqual)
 
     sdbusplus::object_path path3("/xyz");
     EXPECT_THROW(path3 /= "", std::invalid_argument);
+
+    try
+    {
+        path3 /= "";
+    }
+    catch (const std::invalid_argument& e)
+    {
+        // The exception should contain the path we were trying to append to
+        auto s = std::string(e.what());
+        EXPECT_TRUE(s.contains(path3.string()));
+    }
 }
 
 TEST(MessageTypes, Signature)

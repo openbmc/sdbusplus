@@ -1,6 +1,6 @@
-#include <sdbusplus/async.hpp>
+#include "valgrind.hpp"
 
-#include <cstdlib>
+#include <sdbusplus/async.hpp>
 
 #include <gtest/gtest.h>
 
@@ -49,12 +49,6 @@ TEST_F(Context, ReentrantRun)
     {
         ctx->run();
     }
-}
-
-static bool isValgrind()
-{
-    static const bool rc = std::getenv("VALGRIND_LIB") != nullptr;
-    return rc;
 }
 
 TEST_F(Context, SpawnDelayedTask)

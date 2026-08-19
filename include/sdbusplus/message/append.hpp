@@ -185,9 +185,9 @@ struct append_single<details::string_wrapper>
     }
 };
 
-/** @brief Specialization of append_single for details::string_wrapper. */
+/** @brief Specialization of append_single for object_path. */
 template <>
-struct append_single<details::string_path_wrapper>
+struct append_single<object_path>
 {
     template <typename S>
     static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, S&& s)

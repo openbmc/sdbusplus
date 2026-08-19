@@ -88,7 +88,6 @@ class context : public sdbusplus::details::bus_friend
 
     void request_name(const char* service)
     {
-        name_requested = true;
         bus.request_name(service);
     }
 
@@ -108,7 +107,6 @@ class context : public sdbusplus::details::bus_friend
     bus_t bus;
     event_source_t dbus_source;
     event_t event_loop{};
-    bool name_requested = false;
 
     /** The async run-loop from std::execution. */
     execution::run_loop loop{};

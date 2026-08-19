@@ -53,7 +53,7 @@ constexpr auto make_dbus_args_tuple(std::tuple<Args...>& t)
     constexpr std::size_t input_size = std::tuple_size_v<tuple_type>;
     constexpr size_t skip_args = details::args_to_skip<tuple_type>();
     constexpr std::size_t new_size = input_size - skip_args;
-    std::index_sequence seq = std::make_index_sequence<new_size>{};
+    constexpr auto seq = std::make_index_sequence<new_size>{};
     return details::make_sub_tuple_impl<skip_args>(t, seq);
 }
 } // namespace utility

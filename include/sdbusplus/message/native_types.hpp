@@ -81,53 +81,56 @@ struct string_wrapper
     }
 };
 
+} // namespace details
+} // namespace message
+
 /** Simple wrapper class for std::string to allow conversion to and from an
  *  alternative typename. */
-struct string_path_wrapper
+struct object_path
 {
     // direct access to str is deprecated; use string() instead
     std::string str;
 
     // deprecated: does not create a valid D-Bus object path.
     // New code should use the other constructors.
-    string_path_wrapper() = default;
+    object_path() = default;
 
-    string_path_wrapper(const string_path_wrapper&) = default;
-    string_path_wrapper& operator=(const string_path_wrapper&) = default;
-    string_path_wrapper(string_path_wrapper&&) = default;
-    string_path_wrapper& operator=(string_path_wrapper&&) = default;
-    ~string_path_wrapper() = default;
+    object_path(const object_path&) = default;
+    object_path& operator=(const object_path&) = default;
+    object_path(object_path&&) = default;
+    object_path& operator=(object_path&&) = default;
+    ~object_path() = default;
 
-    string_path_wrapper(const std::string& str_in) : str(str_in) {}
-    string_path_wrapper(std::string&& str_in) : str(std::move(str_in)) {}
+    object_path(const std::string& str_in) : str(str_in) {}
+    object_path(std::string&& str_in) : str(std::move(str_in)) {}
 
     template <typename Base, typename... Args>
-    inline string_path_wrapper(const Base& base, Args&&... args)
+    inline object_path(const Base& base, Args&&... args)
         requires(sizeof...(Args) >= 1)
     {
-        string_path_wrapper res = {base};
+        object_path res = {base};
         ((res /= std::forward<Args>(args)), ...);
         str = std::move(res.str);
     }
 
     operator const std::string&() const volatile&
     {
-        return const_cast<const string_path_wrapper*>(this)->str;
+        return const_cast<const object_path*>(this)->str;
     }
     operator std::string&&() &&
     {
         return std::move(str);
     }
 
-    bool operator==(const string_path_wrapper& r) const
+    bool operator==(const object_path& r) const
     {
         return str == r.str;
     }
-    bool operator!=(const string_path_wrapper& r) const
+    bool operator!=(const object_path& r) const
     {
         return str != r.str;
     }
-    bool operator<(const string_path_wrapper& r) const
+    bool operator<(const object_path& r) const
     {
         return str < r.str;
     }
@@ -144,28 +147,37 @@ struct string_path_wrapper
         return str < r;
     }
 
-    friend bool operator==(const std::string& l, const string_path_wrapper& r)
+    friend bool operator==(const std::string& l, const object_path& r)
     {
         return l == r.str;
     }
-    friend bool operator!=(const std::string& l, const string_path_wrapper& r)
+    friend bool operator!=(const std::string& l, const object_path& r)
     {
         return l != r.str;
     }
-    friend bool operator<(const std::string& l, const string_path_wrapper& r)
+    friend bool operator<(const std::string& l, const object_path& r)
     {
         return l < r.str;
     }
 
     std::string filename() const;
-    string_path_wrapper parent_path() const;
-    string_path_wrapper operator/(std::string_view) const;
-    string_path_wrapper& operator/=(std::string_view);
+    object_path parent_path() const;
+    object_path operator/(std::string_view) const;
+    object_path& operator/=(std::string_view);
 
     // This should not be used in new code. Use filename() or parent_path()
     // appropriately
     std::string string() const;
 };
+
+void to_json(nlohmann::json& j, const object_path& s);
+void from_json(const nlohmann::json& j, object_path& s);
+
+namespace message
+{
+
+namespace details
+{
 
 /** Typename for sdbus SIGNATURE types. */
 struct signature_type
@@ -195,8 +207,6 @@ namespace details
 
 void to_json(nlohmann::json& j, const string_wrapper& s);
 void from_json(const nlohmann::json& j, string_wrapper& s);
-void to_json(nlohmann::json& j, const string_path_wrapper& s);
-void from_json(const nlohmann::json& j, string_path_wrapper& s);
 
 template <typename T>
 struct convert_from_string
@@ -328,9 +338,6 @@ inline constexpr bool has_convert_to_string_v =
 
 } // namespace message
 
-// type alias to make user code more readable
-using object_path = message::details::string_path_wrapper;
-
 } // namespace sdbusplus
 
 namespace std
@@ -351,9 +358,9 @@ struct hash<sdbusplus::message::details::string_wrapper>
 
 /** Overload of std::hash for details::string_wrappers */
 template <>
-struct hash<sdbusplus::message::details::string_path_wrapper>
+struct hash<sdbusplus::object_path>
 {
-    using argument_type = sdbusplus::message::details::string_path_wrapper;
+    using argument_type = sdbusplus::object_path;
     using result_type = std::size_t;
 
     result_type operator()(const argument_type& s) const

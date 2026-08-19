@@ -24,16 +24,6 @@ void from_json(const nlohmann::json& j, string_wrapper& s)
     j.get_to(s.str);
 }
 
-void to_json(nlohmann::json& j, const string_path_wrapper& s)
-{
-    j = s.str;
-}
-
-void from_json(const nlohmann::json& j, string_path_wrapper& s)
-{
-    j.get_to(s.str);
-}
-
 constexpr std::array<char, 16> hex{'0', '1', '2', '3', '4', '5', '6', '7',
                                    '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
 
@@ -72,7 +62,22 @@ inline void pathAppendEscape(std::string& s, char c)
     s.append(1, hex[c & 0xf]);
 }
 
-std::string string_path_wrapper::filename() const
+} // namespace details
+} // namespace message
+
+using namespace message::details;
+
+void to_json(nlohmann::json& j, const object_path& s)
+{
+    j = s.str;
+}
+
+void from_json(const nlohmann::json& j, object_path& s)
+{
+    j.get_to(s.str);
+}
+
+std::string object_path::filename() const
 {
     std::string_view strv(str);
     size_t firstIndex = strv.rfind('/');
@@ -116,41 +121,41 @@ std::string string_path_wrapper::filename() const
     return out;
 }
 
-string_path_wrapper string_path_wrapper::parent_path() const
+object_path object_path::parent_path() const
 {
     auto index = str.rfind('/');
     if (index == std::string::npos)
     {
-        return string_path_wrapper("/");
+        return object_path("/");
     }
     if (index <= 1)
     {
-        return string_path_wrapper("/");
+        return object_path("/");
     }
 
     return str.substr(0, index);
 }
 
-std::string string_path_wrapper::string() const
+std::string object_path::string() const
 {
     return str;
 }
 
-string_path_wrapper string_path_wrapper::operator/(std::string_view extId) const
+object_path object_path::operator/(std::string_view extId) const
 {
-    string_path_wrapper out;
+    object_path out;
     out.str.reserve(str.size() + 1 + extId.size() * 3);
     out.str.append(str);
     return out /= extId;
 }
 
-string_path_wrapper& string_path_wrapper::operator/=(std::string_view extId)
+object_path& object_path::operator/=(std::string_view extId)
 {
     str.reserve(str.size() + 1 + extId.size() * 3);
 
     if (extId.empty())
     {
-        throw std::invalid_argument("string_path_wrapper: empty string append");
+        throw std::invalid_argument("object_path: empty string append");
     }
 
     if (!str.empty() && str[str.size() - 1] != '/')
@@ -178,6 +183,4 @@ string_path_wrapper& string_path_wrapper::operator/=(std::string_view extId)
     return *this;
 }
 
-} // namespace details
-} // namespace message
 } // namespace sdbusplus

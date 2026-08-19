@@ -113,12 +113,12 @@ using read_single_t = read_single<types::details::type_id_downcast_t<T>>;
 /** @brief Specialization of read_single for various string class types.
  *
  *  Supports std::strings, details::string_wrapper and
- *  details::string_path_wrapper.
+ *  object_path.
  */
 template <typename S>
     requires(std::is_same_v<S, std::string> ||
              std::is_same_v<S, details::string_wrapper> ||
-             std::is_same_v<S, details::string_path_wrapper>)
+             std::is_same_v<S, object_path>)
 struct read_single<S>
 {
     static void op(sdbusplus::SdBusInterface* intf, sd_bus_message* m, S& t)

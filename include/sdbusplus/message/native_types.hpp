@@ -167,9 +167,6 @@ struct string_path_wrapper
     std::string string() const;
 };
 
-/** Typename for sdbus SIGNATURE types. */
-struct signature_type
-{};
 /** Typename for sdbus UNIX_FD types. */
 struct unix_fd_type
 {

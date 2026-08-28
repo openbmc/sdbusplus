@@ -125,9 +125,10 @@ void from_json(const nlohmann::json& j, ${interface.classname}::properties_t& v)
 % if interface.properties and not any(p.is_variant() for p in interface.properties) and not interface.methods:
 namespace sdbusplus::exception::details
 {
-template <has_interface_type T>
+template <typename T>
 void extend(std::map<std::string, std::string>& extensions,
             std::string_view interface, const T& v)
+    requires has_interface_type<T>
 {
     extensions[std::string(interface)] = nlohmann::json(v).dump();
 }

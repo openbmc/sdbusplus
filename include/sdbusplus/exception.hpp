@@ -75,9 +75,10 @@ namespace details
  *        (e.g. interface.server.cpp.mako), where nlohmann::json is complete,
  *        and explicitly instantiated for the relevant `properties_t` type.
  */
-template <has_interface_type T>
+template <typename T>
 void extend(std::map<std::string, std::string>& extensions,
-            std::string_view interface, const T& v);
+            std::string_view interface, const T& v)
+    requires has_interface_type<T>;
 
 } // namespace details
 
@@ -89,16 +90,18 @@ struct generated_event_base : public generated_exception
     virtual int severity() const noexcept = 0;
 
     /** Delegate to the detail helper (defined in a generated .cpp). */
-    template <has_interface_type T>
+    template <typename T>
     auto extend(const T& v) & -> generated_event_base&
+        requires has_interface_type<T>
     {
         details::extend(extensions, T::interface_type::interface, v);
         return *this;
     }
 
     /** @overload */
-    template <has_interface_type T>
+    template <typename T>
     auto extend(const T& v) && -> generated_event_base&&
+        requires has_interface_type<T>
     {
         details::extend(extensions, T::interface_type::interface, v);
         return std::move(*this);

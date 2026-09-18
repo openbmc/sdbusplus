@@ -146,6 +146,17 @@ test(
     ),
 )
 
+test(
+    'test-aserver-signal-action',
+    executable(
+        'test-aserver-signal-action',
+        'gen/test_aserver_signal_action.cpp',
+        generated_sources,
+        include_directories: [root_inc],
+        dependencies: [sdbusplus_dep, server_test_dep, gmock_dep, gtest_dep],
+    ),
+)
+
 uninit_tests = [
     'test_server_no_uninitialized_value_constructor',
     'test_aserver_no_uninitialized_value_constructor',

@@ -4,6 +4,7 @@ async_tests = [
     'context',
     'fdio',
     'mutex',
+    'server_action',
     'task',
     'timer',
     'watchdog',

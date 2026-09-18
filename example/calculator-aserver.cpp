@@ -8,7 +8,8 @@ class Calculator :
 {
   public:
     explicit Calculator(sdbusplus::async::context& ctx, auto path) :
-        sdbusplus::aserver::net::poettering::Calculator<Calculator>(ctx, path)
+        sdbusplus::aserver::net::poettering::Calculator<Calculator>(
+            ctx, path, signal_action::emit_object_added)
     {}
 
     auto method_call(multiply_t, auto x, auto y)

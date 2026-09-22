@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ed5fb117_b1694a39",
+        "filename": "include/sdbusplus/async/context.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 1001712
+      },
+      "writtenOn": "2026-09-22T13:51:49Z",
+      "side": 1,
+      "message": "can we pass `sdbusplus::object_path` instead?\n\nobject paths are usually runtime values anyways and that type is more specific to D-Bus. So it would be more explicit.\n\n```suggestion\n    void emit_object_added(const sdbusplus::object_path\u0026 path);\n```",
+      "range": {
+        "startLine": 106,
+        "startChar": 27,
+        "endLine": 106,
+        "endChar": 43
+      },
+      "revId": "a18cab0a77c28d6bf79238c64f3bed402ae38e78",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

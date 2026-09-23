@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "df0f5eb5_49ba3db0",
+        "filename": "include/sdbusplus/async/server.hpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1001712
+      },
+      "writtenOn": "2026-09-23T09:00:39Z",
+      "side": 1,
+      "message": "i am wondering if we really need all of those abilities currently.\n\nIs it possible to maybe have one or two options and a default to cover existing use-cases or do you have use-cases for all of these?\n\nFor example is there currently a use-case for `emit_no_signals` ?",
+      "range": {
+        "startLine": 18,
+        "startChar": 4,
+        "endLine": 34,
+        "endChar": 21
+      },
+      "revId": "369671068e89340f2081f64153a315f69ec43cab",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

@@ -22,6 +22,30 @@
       },
       "revId": "369671068e89340f2081f64153a315f69ec43cab",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7677108e_59d78266",
+        "filename": "include/sdbusplus/async/server.hpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-09-23T10:31:48Z",
+      "side": 1,
+      "message": "Yes, there is a use for every one of them.\n\n`emit_object_added` - this is the preferred default when you have your object fully constructed via the constructor.\n`emit_interface_added` - this is used when you have a sub-interface you have added dynamically at a path and is fully constructed.\n`defer_emit` - this is used when you need to set up member variables before you emit, which was used a lot in the sync bindings, but hopefully less now that we have the `properties_t` constructor form.\n`emit_no_signals` - this is used when you are setting up an `optional\u003cfoo\u003e` sub-interface, but it is all determined in the parent interface\u0027s constructor.  This is used as protection to ensure that the child/sub-interface never emits its own signals because it was handled by the parent\u0027s `emit_object_added`.\n\nA use case of the example I gave for `emit_no_signals` is the `extensions` behavior we are currently adding to phosphor-logging events in order to handle CPER data.",
+      "parentUuid": "df0f5eb5_49ba3db0",
+      "range": {
+        "startLine": 18,
+        "startChar": 4,
+        "endLine": 34,
+        "endChar": 21
+      },
+      "revId": "369671068e89340f2081f64153a315f69ec43cab",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

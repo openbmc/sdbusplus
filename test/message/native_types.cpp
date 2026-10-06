@@ -2,6 +2,7 @@
 #include <sdbusplus/message.hpp>
 
 #include <map>
+#include <sstream>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -21,6 +22,30 @@ TEST(MessageNativeTypeConversions, ObjectPath)
 
     ASSERT_EQ("/asdf/", p);
     ASSERT_EQ(p, "/asdf/");
+}
+
+TEST(MessageNativeTypePrinting, ObjectPathStream)
+{
+    const sdbusplus::object_path path("/xyz/openbmc_project/_20");
+    std::ostringstream os;
+
+    EXPECT_EQ(&(os << path), &os);
+    EXPECT_EQ(os.str(), "/xyz/openbmc_project/_20");
+}
+
+TEST(MessageNativeTypePrinting, ObjectPathRoot)
+{
+    std::ostringstream os;
+
+    os << sdbusplus::object_path("/");
+    EXPECT_EQ(os.str(), "/");
+}
+
+TEST(MessageNativeTypePrinting, ObjectPathGoogleTest)
+{
+    const sdbusplus::object_path path("/xyz/openbmc_project/_20");
+
+    EXPECT_EQ(testing::PrintToString(path), "/xyz/openbmc_project/_20");
 }
 
 TEST(MessageNativeTypeConversions, Signature)

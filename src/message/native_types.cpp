@@ -5,6 +5,7 @@
 #include <array>
 #include <cctype>
 #include <cstdint>
+#include <ostream>
 #include <stdexcept>
 
 namespace sdbusplus
@@ -13,6 +14,11 @@ namespace message
 {
 namespace details
 {
+
+std::ostream& operator<<(std::ostream& os, const string_path_wrapper& path)
+{
+    return os << static_cast<const std::string&>(path);
+}
 
 void to_json(nlohmann::json& j, const string_wrapper& s)
 {

@@ -2,6 +2,7 @@
 
 #include <nlohmann/json_fwd.hpp>
 
+#include <iosfwd>
 #include <optional>
 #include <string>
 #include <string_view>
@@ -166,6 +167,8 @@ struct string_path_wrapper
     // appropriately
     std::string string() const;
 };
+
+std::ostream& operator<<(std::ostream& os, const string_path_wrapper& path);
 
 /** Typename for sdbus UNIX_FD types. */
 struct unix_fd_type

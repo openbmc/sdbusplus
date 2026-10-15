@@ -115,8 +115,8 @@ class context : public sdbusplus::details::bus_friend
 
   private:
     bus_t bus;
-    event_source_t dbus_source;
     event_t event_loop{};
+    event_source_t dbus_source;
     bool name_requested = false;
 
     /** The async run-loop from std::execution. */

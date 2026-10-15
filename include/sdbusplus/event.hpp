@@ -123,9 +123,6 @@ class event
 
     sd_event* eventp = nullptr;
 
-    // Condition to allow 'break_run' to exit the run-loop.
-    condition run_condition{*this};
-
     // Lock for the sd_event.
     //
     // There are cases where we need to lock the mutex from inside the context
@@ -141,6 +138,9 @@ class event
     // the lock before the signaller can run.  This stage is first obtained
     // prior to getting the primary lock in order to set an order.
     std::mutex obtain_lock_stage{};
+
+    // Condition to allow 'break_run' to exit the run-loop.
+    condition run_condition{*this};
 };
 
 } // namespace event

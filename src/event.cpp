@@ -21,8 +21,8 @@ source& source::operator=(source&& s)
 {
     if (nullptr != sourcep)
     {
-        auto l = ev->obtain_lock();
-        sd_event_source_unref(sourcep);
+        auto l = ev->acquire_lock();
+        reset_locked();
     }
     ev = std::exchange(s.ev, nullptr);
     sourcep = std::exchange(s.sourcep, nullptr);
@@ -34,8 +34,34 @@ source::~source()
 {
     if (nullptr != sourcep)
     {
-        auto l = ev->obtain_lock();
+        auto l = ev->acquire_lock();
+        reset_locked();
+    }
+}
+
+void source::reset_locked() noexcept
+{
+    if (sourcep != nullptr)
+    {
         sd_event_source_unref(sourcep);
+    }
+    sourcep = nullptr;
+    ev = nullptr;
+}
+
+void source::set_enabled(bool enabled)
+{
+    if (sourcep == nullptr || ev == nullptr)
+    {
+        return;
+    }
+
+    auto l = ev->acquire_lock();
+    auto rc = sd_event_source_set_enabled(sourcep,
+                                          enabled ? SD_EVENT_ON : SD_EVENT_OFF);
+    if (rc < 0)
+    {
+        throw exception::SdBusError(-rc, __func__);
     }
 }
 
@@ -107,6 +133,11 @@ void event::break_run()
     run_condition.signal();
 }
 
+std::unique_lock<std::recursive_mutex> event::acquire_lock()
+{
+    return obtain_lock<true>();
+}
+
 source event::add_io(int fd, uint32_t events, sd_event_io_handler_t handler,
                      void* data)
 {
@@ -176,19 +207,26 @@ int event::run_wakeup(sd_event_source*, int, uint32_t, void* data)
 template <bool Signal>
 std::unique_lock<std::recursive_mutex> event::obtain_lock()
 {
-    std::unique_lock stage{this->obtain_lock_stage};
-
     std::unique_lock<std::recursive_mutex> l{this->lock, std::defer_lock_t()};
     if constexpr (Signal)
     {
+        if (l.try_lock())
+        {
+            return l;
+        }
+
+        std::unique_lock stage{this->obtain_lock_stage};
         if (!l.try_lock())
         {
             run_condition.signal();
             l.lock();
         }
+
+        return l;
     }
     else
     {
+        std::unique_lock stage{this->obtain_lock_stage};
         l.lock();
     }
 

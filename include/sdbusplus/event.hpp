@@ -27,6 +27,12 @@ class source
     source& operator=(source&&);
     ~source();
 
+    /** Enable or disable an event source. */
+    void set_enabled(bool enabled);
+
+    /** Remove this source while the owning event lock is already held. */
+    void reset_locked() noexcept;
+
   private:
     source(event& e, sd_event_source*& s) : ev(&e)
     {
@@ -103,6 +109,9 @@ class event
     void run_one(time_resolution timeout = time_resolution::max());
     /** Force a pending `run_one` to exit. */
     void break_run();
+
+    /** Acquire the event lock, waking a running loop if necessary. */
+    std::unique_lock<std::recursive_mutex> acquire_lock();
 
     /** Add a file-descriptor source to the sd-event (see sd_event_add_io). */
     source add_io(int fd, uint32_t events, sd_event_io_handler_t handler,

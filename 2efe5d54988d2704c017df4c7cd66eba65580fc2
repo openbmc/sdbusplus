@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9c7117c5_4c224925",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1003197
+      },
+      "writtenOn": "2026-10-21T13:28:28Z",
+      "side": 1,
+      "message": "This CL contains at least five independent changes and hence should be split: event: fix deadlock when a callback re-acquires the event lock: the try_lock() fast path in obtain_lock\u003ctrue\u003e. This is a separate, existing bug. While a callback holds the lock, a worker thread can take obtain_lock_stage and block on the lock. If the callback then calls obtain_lock, it blocks on the stage mutex and both threads are stuck. This fix and the CallbackCanReenterEventLock test deserve their own commit with that explanation.event: add source::set_enabled().async: fdio: turn off the fd watch between waits: the busy-loop fix, which is what most of the commit message actually describes.async: fdio: add setTimeout(): the change the subject line names, which is about 5 lines.Test fixture change: switching from a fixed /tmp to a mkdtemp() directory is unrelated cleanup.",
+      "revId": "2efe5d54988d2704c017df4c7cd66eba65580fc2",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

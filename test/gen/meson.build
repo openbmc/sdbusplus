@@ -5,10 +5,10 @@ sdbuspp_gen_meson_ver = run_command(
     check: true,
 ).stdout().strip().split('\n')[0]
 
-if sdbuspp_gen_meson_ver != 'sdbus++-gen-meson version 10'
+if sdbuspp_gen_meson_ver != 'sdbus++-gen-meson version 11'
     warning('Generated meson files from wrong version of sdbus++-gen-meson.')
     warning(
-        'Expected "sdbus++-gen-meson version 10", got:',
+        'Expected "sdbus++-gen-meson version 11", got:',
         sdbuspp_gen_meson_ver,
     )
 endif
@@ -20,6 +20,7 @@ generated_sources = []
 generated_markdown = []
 generated_registry = []
 
+subdir('sdbusplus')
 foreach d : yaml_selected_subdirs
     subdir(d)
 endforeach

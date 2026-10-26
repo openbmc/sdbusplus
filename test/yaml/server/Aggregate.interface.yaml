@@ -1,0 +1,50 @@
+description: >
+    Exercises collection-wide property variants without recursive definitions.
+
+properties:
+    - name: Recursive
+      type: dict[string,variant[all]]
+    - name: Numbers
+      type: array[uint64]
+    - name: Associations
+      type: array[struct[string,string,string]]
+    - name: States
+      type: array[enum[server.Test.EnumOne]]
+    - name: State
+      type: enum[server.Test.EnumOne]
+    - name: Flag
+      type: boolean
+    - name: FirstOption
+      type: variant[uint32,string]
+    - name: SecondOption
+      type: variant[uint64,boolean]
+    - name: SizeOption
+      type: struct[size,variant[int64]]
+    - name: UnsignedOption
+      type: struct[uint64,variant[string]]
+    - name: NarrowUnsignedOption
+      type: struct[uint32,variant[double]]
+    - name: SignedSizeOption
+      type: struct[ssize,variant[uint32]]
+    - name: SignedOption
+      type: struct[int64,variant[boolean]]
+    - name: NarrowSignedOption
+      type: struct[int32,variant[string]]
+    - name: NestedSizeOption
+      type: dict[string,struct[size,variant[int64]]]
+    - name: NestedUnsignedOption
+      type: dict[string,struct[uint64,variant[string]]]
+
+methods:
+    - name: GetManagedObjects
+      returns:
+          - name: Objects
+            type: dict[object_path,dict[string,dict[string,variant[all]]]]
+
+signals:
+    - name: InterfacesAdded
+      properties:
+          - name: ObjectPath
+            type: object_path
+          - name: Interfaces
+            type: dict[string,dict[string,variant[all]]]

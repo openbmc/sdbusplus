@@ -10,6 +10,7 @@ sdbusplusplus_depfiles = files(
     'sdbusplus/namedelement.py',
     'sdbusplus/path.py',
     'sdbusplus/property.py',
+    'sdbusplus/propertyvariant.py',
     'sdbusplus/renderer.py',
     'sdbusplus/schemas/events.schema.yaml',
     'sdbusplus/servicename.py',
@@ -47,6 +48,7 @@ sdbusplusplus_depfiles = files(
     'sdbusplus/templates/property.md.mako',
     'sdbusplus/templates/property.server.cpp.mako',
     'sdbusplus/templates/property.server.vtable.cpp.mako',
+    'sdbusplus/templates/propertyvariant.hpp.mako',
     'sdbusplus/templates/signal.aserver.emit.hpp.mako',
     'sdbusplus/templates/signal.aserver.typeid.hpp.mako',
     'sdbusplus/templates/signal.aserver.vtable.hpp.mako',
@@ -59,3 +61,11 @@ sdbusplusplus_prog = find_program('sdbus++', native: true)
 
 meson.override_find_program('sdbus++-gen-meson', files('sdbus++-gen-meson'))
 sdbuspp_gen_meson_prog = find_program('sdbus++-gen-meson', native: true)
+
+if get_option('tests').allowed()
+    test(
+        'test-property-variant-generator',
+        python_bin,
+        args: files('test_propertyvariant.py'),
+    )
+endif

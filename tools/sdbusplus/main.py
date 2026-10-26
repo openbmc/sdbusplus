@@ -13,6 +13,7 @@ def main():
         "error": sdbusplus.Error,
         "event": sdbusplus.Event,
         "interface": sdbusplus.Interface,
+        "property-variant": sdbusplus.PropertyVariant,
     }
     valid_processes = {
         "aserver-header": "async_server_header",

@@ -81,7 +81,9 @@ test(
 )
 
 yaml_selected_subdirs = ['server']
+should_generate_cpp = false
 subdir('gen')
+should_generate_cpp = true
 
 server_test_pre = declare_dependency(
     include_directories: include_directories('gen'),
@@ -116,6 +118,15 @@ test(
         'test-server-message-variant',
         'server/message_variant.cpp',
         dependencies: [gmock_dep, gtest_dep, server_test_dep],
+    ),
+)
+
+test(
+    'test-property-variant',
+    executable(
+        'test-property-variant',
+        'server/property_variant.cpp',
+        dependencies: [gtest_dep, server_test_dep],
     ),
 )
 

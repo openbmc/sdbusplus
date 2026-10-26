@@ -69,6 +69,41 @@ class Property(NamedElement, Renderer):
             return False
         return self.__is_variant(self.__type_tuple())
 
+    def uses_property_variant(self):
+        return self.__uses_property_variant(self.__type_tuple())
+
+    def __uses_property_variant(self, typeTuple):
+        if typeTuple == ("variant", [("all", [])]):
+            return True
+        return any(self.__uses_property_variant(t) for t in typeTuple[1])
+
+    def wire_cpp_type(self):
+        """Represent enums as strings, including inside containers."""
+        return self.wire_type_cpp(self.wire_type())
+
+    def wire_type(self):
+        """Return a normalized, immutable wire-type tree."""
+        return self.__wire_type(self.__type_tuple())
+
+    def __wire_type(self, typeTuple):
+        name, params = typeTuple
+        if name == "enum":
+            return ("string", ())
+        if name == "set":
+            name = "array"
+        return (name, tuple(self.__wire_type(t) for t in params))
+
+    @staticmethod
+    def wire_type_cpp(typeTuple):
+        name, params = typeTuple
+        cppName = Property.propertyMap[name]["cppName"]
+        if not params:
+            return cppName
+        if name == "variant":
+            cppName = "sdbusplus::utility::dedup_variant_t"
+        arguments = ", ".join(Property.wire_type_cpp(t) for t in params)
+        return f"{cppName}<{arguments}>"
+
     def __is_variant(self, typeTuple):
         if typeTuple[0] == "variant":
             return True
@@ -132,6 +167,9 @@ class Property(NamedElement, Renderer):
         return self.__enum_headers(typeTuple, interface)
 
     def __enum_headers(self, typeTuple, interface=None):
+        if typeTuple == ("variant", [("all", [])]):
+            return ["sdbusplus/property_variant.hpp"]
+
         # Enums can be processed directly.
         if "enum" == typeTuple[0]:
             # Get enum type from typeTuple.
@@ -283,6 +321,9 @@ class Property(NamedElement, Renderer):
     """
 
     def __parse_cpp_type__(self, typeTuple):
+        if typeTuple == ("variant", [("all", [])]):
+            return "sdbusplus::PropertyVariant"
+
         if len(typeTuple) != 2:
             raise RuntimeError("Invalid typeTuple %s" % typeTuple)
 

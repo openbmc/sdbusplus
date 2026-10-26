@@ -5,6 +5,7 @@
 #include <sstream>
 #include <string>
 #include <unordered_map>
+#include <variant>
 #include <vector>
 
 #include <gtest/gtest.h>
@@ -22,6 +23,15 @@ TEST(MessageNativeTypeConversions, ObjectPath)
 
     ASSERT_EQ("/asdf/", p);
     ASSERT_EQ(p, "/asdf/");
+}
+
+TEST(MessageNativeTypeConversions, StringDoesNotSelectNestedVariant)
+{
+    using Value = std::variant<std::variant<std::string>, std::string>;
+    const auto value = sdbusplus::message::convert_from_string<Value>("text");
+    ASSERT_TRUE(value.has_value());
+    ASSERT_TRUE(std::holds_alternative<std::string>(*value));
+    EXPECT_EQ(std::get<std::string>(*value), "text");
 }
 
 TEST(MessageNativeTypePrinting, ObjectPathStream)

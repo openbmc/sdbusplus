@@ -293,8 +293,9 @@ struct convert_from_string<std::variant<Types...>>
     static auto process(const std::string& str)
         -> std::optional<std::variant<Types...>>
     {
-        // If convert_from_string exists for the type, attempt it.
-        if constexpr (has_convert_from_string_v<T>)
+        // Nested variants have a separate wire layer, not a string value.
+        if constexpr (has_convert_from_string_v<T> &&
+                      !requires { std::variant_size<T>::value; })
         {
             auto r = convert_from_string<T>::op(str);
             if (r)

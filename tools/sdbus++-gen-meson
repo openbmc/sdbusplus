@@ -28,6 +28,7 @@ Commands:
     cpp <intf>          - Generate the source files from a YAML interface.
     markdown <intf>     - Generate the markdown files from a YAML interface.
     registry <intf>     - Generate the Redfish registry from a YAML interface.
+    property-variant    - Generate the variant of all property types.
     version             - Display this tool's version string.
 
 EOF
@@ -37,7 +38,7 @@ EOF
 ## if a repository contains old copies of the generated meson.build files and
 ## needs an update.  We should increment the version number whenever the
 ## resulting meson.build would change.
-tool_version="sdbus++-gen-meson version 10"
+tool_version="sdbus++-gen-meson version 11"
 function show_version() {
     echo "${tool_version}"
 }
@@ -137,6 +138,14 @@ generated_sources = []
 generated_markdown = []
 generated_registry = []
 
+EOF
+
+    if [[ ${has_property_variant} == 1 ]]; then
+        echo "subdir('sdbusplus')" >> "${outputdir}/meson.build"
+    fi
+
+    cat >> "${outputdir}/meson.build" \
+        << EOF
 foreach d : yaml_selected_subdirs
     subdir(d)
 endforeach
@@ -150,6 +159,42 @@ foreach s : generated_sources
     endforeach
 endforeach
 
+EOF
+}
+
+## Generate a shared header, depending on every interface in the collection.
+function meson_property_variant_target() {
+    local mesondir="${outputdir}/sdbusplus"
+    local yamldir
+    local yamlpath
+    mkdir -p "${mesondir}"
+    yamldir="$(realpath --relative-to="${mesondir}" "${rootdir}")"
+    meson_empty_file "${mesondir}"
+    cat >> "${mesondir}/meson.build" \
+        << EOF
+generated_sources += custom_target(
+    'sdbusplus_property_variant',
+    input: [
+EOF
+    for y in "${interface_yamls[@]}"; do
+        yamlpath="$(realpath --relative-to="${rootdir}" "${y}")"
+        echo "        '${yamldir}/${yamlpath}'," >> "${mesondir}/meson.build"
+    done
+    cat >> "${mesondir}/meson.build" \
+        << EOF
+    ],
+    output: ['property_variant.hpp'],
+    depend_files: sdbusplusplus_depfiles,
+    command: [
+        sdbuspp_gen_meson_prog, '--command', 'property-variant',
+        '--output', meson.current_build_dir(),
+        '--tool', sdbusplusplus_prog,
+        '--directory', meson.current_source_dir() / '${yamldir}',
+    ],
+    install: should_generate_cpp,
+    install_dir: get_option('includedir') / 'sdbusplus',
+    build_by_default: should_generate_cpp,
+)
 EOF
 }
 
@@ -388,6 +433,8 @@ function cmd_meson() {
     yamls="$(find "${rootdir}" -name '*.interface.yaml' -o -name '*.errors.yaml' -o -name '*.events.yaml')"
     yamls="$(echo "${yamls}" | sort)"
 
+    interface_yamls=()
+    has_property_variant=0
     # Assign the YAML files into the hash-table by interface name.
     for y in ${yamls}; do
         rel="$(realpath "--relative-to=${rootdir}" "${y}")"
@@ -397,10 +444,21 @@ function cmd_meson() {
         key="${dir}/${base}"
 
         interfaces["${key}"]="${interfaces[${key}]} ${ext}"
+        if [[ ${ext} == interface.yaml ]]; then
+            interface_yamls+=("${y}")
+        fi
     done
+
+    if ((${#interface_yamls[@]})) &&
+        grep -Eqz 'variant[[:space:]]*\[[[:space:]]*all[[:space:]]*\]' "${interface_yamls[@]}"; then
+        has_property_variant=1
+    fi
 
     # Create the meson.build files.
     meson_create_root
+    if [[ ${has_property_variant} == 1 ]]; then
+        meson_property_variant_target
+    fi
     # shellcheck disable=SC2312
     sorted_ifaces="$(echo "${!interfaces[@]}" | tr " " "\n" | sort)"
     iface_parent_dirs="$(echo "${sorted_ifaces}" | xargs -n1 dirname)"
@@ -527,9 +585,15 @@ function cmd_registry() {
 }
 
 
+## Handle command=property-variant.
+function cmd_property_variant() {
+    mkdir -p "${outputdir}"
+    "${sdbuspp}" -r "${rootdir}" property-variant common-header all > "${outputdir}/property_variant.hpp"
+}
+
 ## Handle command=version.
 function cmd_version() {
     show_version
 }
 
-"cmd_${cmd}" "$*"
+"cmd_${cmd//-/_}" "$*"

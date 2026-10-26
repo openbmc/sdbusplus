@@ -128,6 +128,31 @@ but this is due to C++ being a strongly-typed language. In order to generate
 bindings, to read from and append to a message, the binding generator must know
 all possible types the variant may contain.
 
+#### Collection-wide property variant
+
+`variant[all]` represents the property types from every `*.interface.yaml` below
+the YAML root passed to `sdbus++`. It is intended for generic APIs such as
+`org.freedesktop.DBus.ObjectManager`, for example:
+
+```yaml
+type: dict[object_path,dict[string,dict[string,variant[all]]]]
+```
+
+The alternatives are sorted and deduplicated. Enums, including those nested in
+containers, are represented as strings so the aggregate does not depend on
+individual interface headers or reject values from unrelated enumerations.
+
+Sets are represented as arrays. Variant-valued properties remain nested
+variants. Types with the same wire shape are merged, including variant
+alternatives nested inside containers, so decoding does not select an
+alternative that only supports a subset of the possible values.
+
+Properties containing `variant[all]` at any nesting depth are excluded from the
+collection to prevent recursive types. Other properties on those same interfaces
+still contribute. Method parameters, return values, and signal arguments do not
+contribute property types. This is a finite collection, not support for
+arbitrary D-Bus types outside the YAML repository.
+
 ### Enumeration Types
 
 Enumerations are expressed like a container, but the contained-type is an

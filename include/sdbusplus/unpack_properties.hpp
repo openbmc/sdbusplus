@@ -2,6 +2,7 @@
 
 #include <sdbusplus/exception.hpp>
 #include <sdbusplus/utility/type_traits.hpp>
+#include <xyz/openbmc_project/sdbusplus/Error/event.hpp>
 
 #include <algorithm>
 #include <bitset>
@@ -143,9 +144,11 @@ inline void unpackProperties(
     const std::vector<std::pair<std::string, VariantType>>& input,
     Args&&... args)
 {
+    using UnpackError = ::sdbusplus::error::xyz::openbmc_project::sdbusplus::
+        Error::UnpackPropertyError;
     details::unpackPropertiesCommon(
         [](const UnpackErrorReason reason, const std::string& property) {
-            throw exception::UnpackPropertyError(property, reason);
+            throw UnpackError(property, to_string(reason));
         },
         input, std::forward<Args>(args)...);
 }

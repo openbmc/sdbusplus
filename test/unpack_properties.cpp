@@ -1,4 +1,5 @@
 #include <sdbusplus/unpack_properties.hpp>
+#include <xyz/openbmc_project/sdbusplus/Error/event.hpp>
 
 #include <gmock/gmock.h>
 
@@ -167,55 +168,61 @@ TYPED_TEST_SUITE(UnpackPropertiesThrowingTest, ContainerTypesThrowing);
 TYPED_TEST(UnpackPropertiesThrowingTest, throwsErrorWhenKeyIsMissing)
 {
     using namespace testing;
+    using UnpackError = ::sdbusplus::error::xyz::openbmc_project::sdbusplus::
+        Error::UnpackPropertyError;
 
     std::string val1;
     float val2 = 0.f;
     double val3 = 0.;
 
-    auto error = captureException<exception::UnpackPropertyError>([&] {
+    auto error = captureException<UnpackError>([&] {
         this->unpackPropertiesCall(this->data, "Key-1", val1, "Key-4", val2,
                                    "Key-3", val3);
     });
     ASSERT_TRUE(error.has_value());
     if (!error.has_value())
         return; // structural guard just for the analyzer
-    ASSERT_THAT(error->reason, Eq(UnpackErrorReason::missingProperty));
+    ASSERT_THAT(error->reason, Eq("missingProperty"));
     ASSERT_THAT(error->propertyName, Eq("Key-4"));
 }
 
 TYPED_TEST(UnpackPropertiesThrowingTest, throwsErrorWhenTypeDoesntMatch)
 {
     using namespace testing;
+    using UnpackError = ::sdbusplus::error::xyz::openbmc_project::sdbusplus::
+        Error::UnpackPropertyError;
 
     std::string val1;
     std::string val2;
     double val3 = 0.;
 
-    auto error = captureException<exception::UnpackPropertyError>([&] {
+    auto error = captureException<UnpackError>([&] {
         this->unpackPropertiesCall(this->data, "Key-1", val1, "Key-2", val2,
                                    "Key-3", val3);
     });
     ASSERT_TRUE(error.has_value());
     if (!error.has_value())
         return; // structural guard just for the analyzer
-    ASSERT_THAT(error->reason, Eq(UnpackErrorReason::wrongType));
+    ASSERT_THAT(error->reason, Eq("wrongType"));
     ASSERT_THAT(error->propertyName, Eq("Key-2"));
 }
 
 TYPED_TEST(UnpackPropertiesThrowingTest, throwsErrorWhenOptionalTypeDoesntMatch)
 {
     using namespace testing;
+    using UnpackError = ::sdbusplus::error::xyz::openbmc_project::sdbusplus::
+        Error::UnpackPropertyError;
 
     std::optional<std::string> val1;
     std::optional<std::string> val2;
 
-    auto error = captureException<exception::UnpackPropertyError>([&] {
+    auto error = captureException<UnpackError>([&] {
         this->unpackPropertiesCall(this->data, "Key-1", val1, "Key-2", val2);
     });
     ASSERT_TRUE(error.has_value());
     if (!error.has_value())
         return; // structural guard just for the analyzer
-    ASSERT_THAT(error->reason, Eq(UnpackErrorReason::wrongType));
+    ASSERT_THAT(error->reason, Eq("wrongType"));
     ASSERT_THAT(error->propertyName, Eq("Key-2"));
 }
 

@@ -1,9 +1,9 @@
 % if events.sdbusplus_internal:
 struct ${event.CamelCase} final :
-    public sdbusplus::exception::generated_internal_event<${event.CamelCase}>
+    public ::sdbusplus::exception::generated_internal_event<${event.CamelCase}>
 % else:
 struct ${event.CamelCase} final :
-    public sdbusplus::exception::generated_event<${event.CamelCase}>
+    public ::sdbusplus::exception::generated_event<${event.CamelCase}>
 % endif
 {
     ${event.CamelCase}(const nlohmann::json&, const std::source_location&);
@@ -17,7 +17,7 @@ struct ${event.CamelCase} final :
 %else:
     ${event.CamelCase}(
         ${", ".join([
-            f"metadata_t<\"{m.SNAKE_CASE}\">, {m.cppTypeParam(events.name, full=True)} {m.camelCase}_"
+            f"{m.cppTypeParam(events.name, full=True)} {m.camelCase}_"
             for m in event.metadata ])},
         const std::source_location& source = std::source_location::current()) :
         ${", ".join([

@@ -1,5 +1,6 @@
 #include <sdbusplus/bus.hpp>
 #include <server/Test/server.hpp>
+#include <xyz/openbmc_project/sdbusplus/Error/event.hpp>
 
 #include <gtest/gtest.h>
 
@@ -38,7 +39,8 @@ struct Object : public ::testing::Test
 
         V2 new_data = {};
         EXPECT_THROW(msg.read(new_data),
-                     sdbusplus::exception::InvalidEnumString);
+                     sdbusplus::error::xyz::openbmc_project::sdbusplus::Error::
+                         InvalidEnumString);
     }
 };
 

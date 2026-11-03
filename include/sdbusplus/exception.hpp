@@ -4,7 +4,6 @@
 
 #include <nlohmann/json_fwd.hpp>
 #include <sdbusplus/sdbus.hpp>
-#include <sdbusplus/utility/consteval_string.hpp>
 
 #include <exception>
 #include <map>
@@ -21,6 +20,15 @@ enum class UnpackErrorReason
     missingProperty,
     wrongType
 };
+
+// Forward declarations of generated sdbusplus internal errors.
+// The complete definitions are in
+// <xyz/openbmc_project/sdbusplus/Error/event.hpp> which is included at the
+// bottom of this file.
+namespace error::xyz::openbmc_project::sdbusplus::Error
+{
+struct InvalidEnumString;
+}
 
 namespace exception
 {
@@ -141,9 +149,6 @@ struct generated_event : public generated_event_base
         return Event::errSeverity;
     }
 
-    template <utility::details::consteval_string_holder V>
-    using metadata_t = utility::consteval_string<V>;
-
   protected:
     mutable std::string jsonString;
 };
@@ -208,9 +213,6 @@ struct generated_internal_event : public generated_internal_event_base
         return Event::errSeverity;
     }
 
-    template <utility::details::consteval_string_holder V>
-    using metadata_t = utility::consteval_string<V>;
-
   protected:
     mutable std::string jsonString;
 };
@@ -264,24 +266,14 @@ class SdBusError final : public internal_exception
     const std::source_location& source = std::source_location::current());
 
 /** Exception for when an invalid conversion from string to enum is
- *  attempted. */
-struct InvalidEnumString final : public internal_exception
-{
-    static constexpr auto errName =
-        "xyz.openbmc_project.sdbusplus.Error.InvalidEnumString";
-    static constexpr auto errDesc =
-        "An enumeration mapping was attempted for which no valid enumeration "
-        "value exists.";
-    static constexpr auto errWhat =
-        "xyz.openbmc_project.sdbusplus.Error.InvalidEnumString: "
-        "An enumeration mapping was attempted for which no valid enumeration "
-        "value exists.";
-
-    const char* name() const noexcept override;
-    const char* description() const noexcept override;
-    const char* what() const noexcept override;
-    int get_errno() const noexcept override;
-};
+ *  attempted.
+ *
+ *  @note This is an alias for the generated event
+ *  `sdbusplus::error::xyz::openbmc_project::sdbusplus::Error::InvalidEnumString`
+ *  kept for backward compatibility.
+ */
+using InvalidEnumString = ::sdbusplus::error::xyz::openbmc_project::sdbusplus::
+    Error::InvalidEnumString;
 
 /** Exception for when unpackProperties cannot find given property in provided
  * container */
@@ -329,3 +321,8 @@ using exception_t = exception::exception;
 using internal_exception_t = exception::internal_exception;
 
 } // namespace sdbusplus
+
+// Include generated sdbusplus internal errors so that the aliases above
+// resolve to complete types for users that only include this header.
+// This must be at the end because the generated header includes this file.
+#include <xyz/openbmc_project/sdbusplus/Error/event.hpp>

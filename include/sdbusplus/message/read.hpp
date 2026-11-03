@@ -6,6 +6,7 @@
 #include <sdbusplus/message/types.hpp>
 #include <sdbusplus/utility/tuple_to_array.hpp>
 #include <sdbusplus/utility/type_traits.hpp>
+#include <xyz/openbmc_project/sdbusplus/Error/event.hpp>
 
 #include <string>
 #include <string_view>
@@ -101,7 +102,8 @@ struct read_single
         auto r = sdbusplus::message::convert_from_string<Td<T>>(value);
         if (!r)
         {
-            throw sdbusplus::exception::InvalidEnumString();
+            throw ::sdbusplus::error::xyz::openbmc_project::sdbusplus::Error::
+                InvalidEnumString();
         }
         t = *r;
     }
@@ -382,7 +384,8 @@ struct read_single<std::variant<Args...>>
 
             if (!ret)
             {
-                throw sdbusplus::exception::InvalidEnumString();
+                throw ::sdbusplus::error::xyz::openbmc_project::sdbusplus::
+                    Error::InvalidEnumString();
             }
 
             t = std::move(*ret);

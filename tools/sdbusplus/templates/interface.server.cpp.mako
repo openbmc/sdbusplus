@@ -90,7 +90,8 @@ void from_json(const nlohmann::json& j, ${interface.classname}::${e.name}& e)
             j.get<std::string>());
     if (!value)
     {
-        throw sdbusplus::exception::InvalidEnumString();
+        throw ::sdbusplus::error::xyz::openbmc_project::sdbusplus::Error::
+            InvalidEnumString();
     }
     e = *value;
 }

@@ -1,5 +1,6 @@
 #include <sdbusplus/async.hpp>
 #include <server/TestWithMethod/aserver.hpp>
+#include <xyz/openbmc_project/sdbusplus/Error/event.hpp>
 
 #include <algorithm>
 #include <cstring>
@@ -34,10 +35,12 @@ auto call(sdbusplus::async::context& ctx, std::string name)
         co_await this_service.call<bool>(ctx, "UpdateValue",
                                          "InvalidEnumValue");
     }
-    catch (const sdbusplus::exception::SdBusError& e)
+    catch (const sdbusplus::error::xyz::openbmc_project::sdbusplus::Error::
+               InvalidEnumString& e)
     {
         // The generated callback should catch the InvalidEnumString,
-        // call e.set_error(error), and return it to the client.
+        // call e.set_error(error), and return it to the client, which
+        // rethrows the same generated type via throw_dbus_error.
         if (std::strcmp(
                 e.name(),
                 "xyz.openbmc_project.sdbusplus.Error.InvalidEnumString") == 0)

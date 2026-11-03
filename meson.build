@@ -60,7 +60,7 @@ should_generate_registry = false
 subdir('tools')
 
 # Generated sources from YAML files
-yaml_selected_subdirs = ['org']
+yaml_selected_subdirs = ['org', 'xyz']
 if get_option('examples').allowed()
     yaml_selected_subdirs += ['net']
 endif

@@ -1,0 +1,9 @@
+version: 1.0.0
+sdbusplus-internal: true
+
+errors:
+    - name: InvalidEnumString
+      severity: warning
+      errno: EINVAL
+      en:
+          message: An enumeration mapping was attempted for which no valid enumeration value exists.

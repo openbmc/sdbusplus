@@ -22,6 +22,30 @@
       },
       "revId": "20df92cff638b0be9f5ab9d06d102bb6b4c00af3",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2d1fa289_9f50152b",
+        "filename": "include/sdbusplus/asio/object_server.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 291,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-11-03T23:31:27Z",
+      "side": 0,
+      "message": "No, errno isn\u0027t a thing that goes across the dbus response anyhow. \n\nWhen an error only has an errno, it devolves into a System.Error.*. The earlier commit in this stack migrated most previously SdBusError into a generated exception type so that this code would rarely trigger anymore anyhow, but if it were manually constructed by a client then line 294 triggers with the same effect at an on-the-wire level. Detailed analysis to confirm if you are interested:\n\nhttps://gist.github.com/williamspatrick/4273180f6e6ccc4f3665303fded9e3a3",
+      "parentUuid": "f403eb61_f6200f51",
+      "range": {
+        "startLine": 291,
+        "startChar": 49,
+        "endLine": 291,
+        "endChar": 58
+      },
+      "revId": "20df92cff638b0be9f5ab9d06d102bb6b4c00af3",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

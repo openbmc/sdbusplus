@@ -2,6 +2,7 @@
 #include <server/Test/event.hpp>
 #include <server/Test2/common.hpp>
 #include <server/Test3/common.hpp>
+#include <xyz/openbmc_project/sdbusplus/Error/event.hpp>
 
 #include <string>
 #include <type_traits>
@@ -36,16 +37,15 @@ TEST(JsonEnum, EnumToJsonToString)
 TEST(JsonEnum, InvalidEnumStringThrows)
 {
     nlohmann::json j = "server.Test.EnumOne.NoSuchValue";
-    EXPECT_THROW(j.get<EnumOne>(), sdbusplus::exception::InvalidEnumString);
+    EXPECT_THROW(j.get<EnumOne>(), sdbusplus::error::xyz::openbmc_project::
+                                       sdbusplus::Error::InvalidEnumString);
 }
 
 TEST(JsonEvent, EnumAndObjectPathMetadataRoundTrip)
 {
     using Error = sdbusplus::error::server::Test::EnumObjectPathError;
 
-    Error e(Error::metadata_t<"ENUM_VALUE">{"ENUM_VALUE"}, EnumOne::OneA,
-            Error::metadata_t<"OBJECT_PATH">{"OBJECT_PATH"},
-            sdbusplus::object_path("/a/b/"));
+    Error e(EnumOne::OneA, sdbusplus::object_path("/a/b/"));
 
     auto j = e.to_json();
     const auto& self = j.at(Error::errName);
@@ -129,9 +129,7 @@ TEST(JsonEvent, NoExtensionsWhenNotExtended)
 {
     using Event = sdbusplus::event::server::Test::EnumObjectPathEvent;
 
-    Event e(Event::metadata_t<"ENUM_VALUE">{"ENUM_VALUE"}, EnumOne::OneA,
-            Event::metadata_t<"OBJECT_PATH">{"OBJECT_PATH"},
-            sdbusplus::object_path("/a/b/"));
+    Event e(EnumOne::OneA, sdbusplus::object_path("/a/b/"));
 
     auto j = e.to_json();
     const auto& self = j.at(Event::errName);
@@ -143,9 +141,7 @@ TEST(JsonEvent, ExtendAddsPropertiesByInterfaceName)
     using Event = sdbusplus::event::server::Test::EnumObjectPathEvent;
     using Props = sdbusplus::common::server::Test2::properties_t;
 
-    Event e(Event::metadata_t<"ENUM_VALUE">{"ENUM_VALUE"}, EnumOne::OneA,
-            Event::metadata_t<"OBJECT_PATH">{"OBJECT_PATH"},
-            sdbusplus::object_path("/a/b/"));
+    Event e(EnumOne::OneA, sdbusplus::object_path("/a/b/"));
 
     Props p;
     p.new_value = 42;
@@ -165,9 +161,7 @@ TEST(JsonEvent, ExtendRoundTripsThroughJson)
     using Event = sdbusplus::event::server::Test::EnumObjectPathEvent;
     using Props = sdbusplus::common::server::Test2::properties_t;
 
-    Event e(Event::metadata_t<"ENUM_VALUE">{"ENUM_VALUE"}, EnumOne::OneA,
-            Event::metadata_t<"OBJECT_PATH">{"OBJECT_PATH"},
-            sdbusplus::object_path("/a/b/"));
+    Event e(EnumOne::OneA, sdbusplus::object_path("/a/b/"));
 
     Props p;
     p.new_value = 42;
@@ -187,9 +181,7 @@ TEST(JsonEvent, ExtendKeepsMetadataIntact)
     using Event = sdbusplus::event::server::Test::EnumObjectPathEvent;
     using Props = sdbusplus::common::server::Test2::properties_t;
 
-    Event e(Event::metadata_t<"ENUM_VALUE">{"ENUM_VALUE"}, EnumOne::OneA,
-            Event::metadata_t<"OBJECT_PATH">{"OBJECT_PATH"},
-            sdbusplus::object_path("/a/b/"));
+    Event e(EnumOne::OneA, sdbusplus::object_path("/a/b/"));
     e.extend(Props{});
 
     auto j = e.to_json();
@@ -205,10 +197,7 @@ TEST(JsonEvent, ExtendCanBeChained)
     using Props = sdbusplus::common::server::Test2::properties_t;
 
     const auto makeEvent = [] {
-        return Event(Event::metadata_t<"ENUM_VALUE">{"ENUM_VALUE"},
-                     EnumOne::OneA,
-                     Event::metadata_t<"OBJECT_PATH">{"OBJECT_PATH"},
-                     sdbusplus::object_path("/a/b/"));
+        return Event(EnumOne::OneA, sdbusplus::object_path("/a/b/"));
     };
 
     // rvalue: the temporary is moved through the chain.

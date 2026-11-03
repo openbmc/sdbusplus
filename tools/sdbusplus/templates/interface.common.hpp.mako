@@ -216,7 +216,8 @@ inline auto ${interface.classname}::convert${e.name}FromString(const std::string
 
     if (!r)
     {
-        throw sdbusplus::exception::InvalidEnumString();
+        throw ::sdbusplus::error::xyz::openbmc_project::sdbusplus::Error::
+            InvalidEnumString();
     }
     else
     {

@@ -21,6 +21,20 @@ enum class UnpackErrorReason
     wrongType
 };
 
+/** Convert an UnpackErrorReason to its string representation for use as
+ *  event metadata. */
+inline std::string to_string(UnpackErrorReason reason)
+{
+    switch (reason)
+    {
+        case UnpackErrorReason::missingProperty:
+            return "missingProperty";
+        case UnpackErrorReason::wrongType:
+            return "wrongType";
+    }
+    return "unknown";
+}
+
 // Forward declarations of generated sdbusplus internal errors.
 // The complete definitions are in
 // <xyz/openbmc_project/sdbusplus/Error/event.hpp> which is included at the
@@ -28,7 +42,8 @@ enum class UnpackErrorReason
 namespace error::xyz::openbmc_project::sdbusplus::Error
 {
 struct InvalidEnumString;
-}
+struct UnpackPropertyError;
+} // namespace error::xyz::openbmc_project::sdbusplus::Error
 
 namespace exception
 {
@@ -276,32 +291,14 @@ using InvalidEnumString = ::sdbusplus::error::xyz::openbmc_project::sdbusplus::
     Error::InvalidEnumString;
 
 /** Exception for when unpackProperties cannot find given property in provided
- * container */
-class UnpackPropertyError final : public internal_exception
-{
-  public:
-    UnpackPropertyError(std::string_view propertyName,
-                        const UnpackErrorReason reason);
-
-    static constexpr auto errName =
-        "xyz.openbmc_project.sdbusplus.Error.UnpackPropertyError";
-    static constexpr auto errDesc =
-        "unpackProperties failed to unpack one of requested properties.";
-    static constexpr auto errWhat =
-        "xyz.openbmc_project.sdbusplus.Error.UnpackPropertyError: "
-        "unpackProperties failed to unpack one of requested properties.";
-
-    const char* name() const noexcept override;
-    const char* description() const noexcept override;
-    const char* what() const noexcept override;
-    int get_errno() const noexcept override;
-
-    const std::string propertyName;
-    const UnpackErrorReason reason;
-
-  private:
-    const std::string errWhatDetailed;
-};
+ * container
+ *
+ *  @note This is an alias for the generated event
+ *  `sdbusplus::error::xyz::openbmc_project::sdbusplus::Error::UnpackPropertyError`
+ *  kept for backward compatibility.
+ */
+using UnpackPropertyError = ::sdbusplus::error::xyz::openbmc_project::
+    sdbusplus::Error::UnpackPropertyError;
 
 /** Throw a generated_event from the JSON representation.
  *

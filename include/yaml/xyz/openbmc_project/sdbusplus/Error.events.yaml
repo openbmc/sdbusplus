@@ -9,3 +9,20 @@ errors:
           message:
               An enumeration mapping was attempted for which no valid
               enumeration value exists.
+
+    - name: UnpackPropertyError
+      severity: warning
+      errno: EINVAL
+      en:
+          message:
+              unpackProperties failed to unpack one of requested properties.
+      metadata:
+          - name: PropertyName
+            description: The name of the property that failed to unpack.
+            type: string
+            primary: false
+          - name: Reason
+            description:
+                The reason unpacking failed (missingProperty or wrongType).
+            type: string
+            primary: false

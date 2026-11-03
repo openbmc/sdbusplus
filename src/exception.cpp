@@ -136,45 +136,6 @@ void SdBusError::move(SdBusError&& other)
     full_message = std::move(other.full_message);
 }
 
-static std::string unpackErrorReasonToString(const UnpackErrorReason reason)
-{
-    switch (reason)
-    {
-        case UnpackErrorReason::missingProperty:
-            return "Missing property";
-        case UnpackErrorReason::wrongType:
-            return "Type not matched";
-    }
-    return "Unknown";
-}
-
-UnpackPropertyError::UnpackPropertyError(std::string_view propertyNameIn,
-                                         const UnpackErrorReason reasonIn) :
-    propertyName(propertyNameIn), reason(reasonIn),
-    errWhatDetailed(std::string(errWhat) + " PropertyName: '" + propertyName +
-                    "', Reason: '" + unpackErrorReasonToString(reason) + "'.")
-{}
-
-const char* UnpackPropertyError::name() const noexcept
-{
-    return errName;
-}
-
-const char* UnpackPropertyError::description() const noexcept
-{
-    return errDesc;
-}
-
-const char* UnpackPropertyError::what() const noexcept
-{
-    return errWhatDetailed.c_str();
-}
-
-int UnpackPropertyError::get_errno() const noexcept
-{
-    return EINVAL;
-}
-
 static auto& get_event_hooks()
 {
     static std::unordered_map<std::string, sdbusplus::sdbuspp::register_hook>

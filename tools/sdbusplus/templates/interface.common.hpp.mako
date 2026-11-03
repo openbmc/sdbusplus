@@ -261,8 +261,9 @@ inline auto ${interface.classname}::properties_t::unpack(const M& m) ->
                     }
                     else
                     {
-                        throw exception::UnpackPropertyError(
-                            property, UnpackErrorReason::wrongType);
+                        throw ::sdbusplus::error::xyz::openbmc_project::
+                            sdbusplus::Error::UnpackPropertyError(property,
+                                                                  "wrongType");
                     }
                 }
                 % endfor

@@ -5,6 +5,7 @@
 #include <sdbusplus/asio/property.hpp>
 #include <sdbusplus/bus.hpp>
 #include <sdbusplus/unpack_properties.hpp>
+#include <xyz/openbmc_project/sdbusplus/Error/event.hpp>
 
 #include <iostream>
 
@@ -73,8 +74,8 @@ class Application
         ++fatalErrors_;
     }
 
-    void logExpectedException(
-        const sdbusplus::exception::UnpackPropertyError& error)
+    void logExpectedException(const ::sdbusplus::error::xyz::openbmc_project::
+                                  sdbusplus::Error::UnpackPropertyError& error)
     {
         std::cout << "As expected " << error.what() << "\n";
     }
@@ -125,7 +126,8 @@ class Application
                                  "not matched type\n";
                     ++fatalErrors_;
                 }
-                catch (const sdbusplus::exception::UnpackPropertyError& error)
+                catch (const ::sdbusplus::error::xyz::openbmc_project::
+                           sdbusplus::Error::UnpackPropertyError& error)
                 {
                     logExpectedException(error);
                 }
@@ -160,7 +162,8 @@ class Application
                     std::cout << "value of goodbyes: " << goodbyes << "\n";
                     std::cout << "value of value: " << value << "\n";
                 }
-                catch (const sdbusplus::exception::UnpackPropertyError& error)
+                catch (const ::sdbusplus::error::xyz::openbmc_project::
+                           sdbusplus::Error::UnpackPropertyError& error)
                 {
                     logException(error);
                 }
@@ -175,7 +178,8 @@ class Application
                                  "missing property\n";
                     ++fatalErrors_;
                 }
-                catch (const sdbusplus::exception::UnpackPropertyError& error)
+                catch (const ::sdbusplus::error::xyz::openbmc_project::
+                           sdbusplus::Error::UnpackPropertyError& error)
                 {
                     logExpectedException(error);
                 }
@@ -190,7 +194,8 @@ class Application
                                  "not matched type\n";
                     ++fatalErrors_;
                 }
-                catch (const sdbusplus::exception::UnpackPropertyError& error)
+                catch (const ::sdbusplus::error::xyz::openbmc_project::
+                           sdbusplus::Error::UnpackPropertyError& error)
                 {
                     logExpectedException(error);
                 }

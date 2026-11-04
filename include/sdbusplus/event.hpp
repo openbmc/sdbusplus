@@ -135,8 +135,10 @@ class event
     std::unique_lock<std::recursive_mutex> obtain_lock();
     // When obtain_lock signals 'run_one' to exit, we want a priority of
     // obtaining the lock so that the 'run_one' task doesn't run and reclaim
-    // the lock before the signaller can run.  This stage is first obtained
-    // prior to getting the primary lock in order to set an order.
+    // the lock before the signaller can run.  This stage is obtained before
+    // blocking on the primary lock in order to set an order.  A signaller that
+    // can take the primary lock without blocking, including one that already
+    // holds it, skips the stage.
     std::mutex obtain_lock_stage{};
 
     // Condition to allow 'break_run' to exit the run-loop.

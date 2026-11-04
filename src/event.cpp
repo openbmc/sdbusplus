@@ -176,19 +176,29 @@ int event::run_wakeup(sd_event_source*, int, uint32_t, void* data)
 template <bool Signal>
 std::unique_lock<std::recursive_mutex> event::obtain_lock()
 {
-    std::unique_lock stage{this->obtain_lock_stage};
-
     std::unique_lock<std::recursive_mutex> l{this->lock, std::defer_lock_t()};
     if constexpr (Signal)
     {
+        // A thread already holding the recursive lock, such as one running an
+        // sd-event callback, must not wait on the stage: another thread may
+        // hold the stage while it waits for this very lock.
+        if (l.try_lock())
+        {
+            return l;
+        }
+
+        std::unique_lock stage{this->obtain_lock_stage};
         if (!l.try_lock())
         {
             run_condition.signal();
             l.lock();
         }
+
+        return l;
     }
     else
     {
+        std::unique_lock stage{this->obtain_lock_stage};
         l.lock();
     }
 

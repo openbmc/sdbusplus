@@ -1,7 +1,7 @@
 #include <sdbusplus/unpack_properties.hpp>
 #include <xyz/openbmc_project/sdbusplus/Error/event.hpp>
 
-#include <gmock/gmock.h>
+#include <gtest/gtest.h>
 
 namespace sdbusplus
 {
@@ -91,8 +91,6 @@ TYPED_TEST_SUITE(UnpackPropertiesTest, ContainerTypes);
 
 TYPED_TEST(UnpackPropertiesTest, returnsValueWhenKeyIsPresentAndTypeMatches)
 {
-    using namespace testing;
-
     std::string val1;
     float val2 = 0.f;
     double val3 = 0.;
@@ -100,45 +98,37 @@ TYPED_TEST(UnpackPropertiesTest, returnsValueWhenKeyIsPresentAndTypeMatches)
     EXPECT_FALSE(this->unpackPropertiesCall(this->data, "Key-1", val1, "Key-2",
                                             val2, "Key-3", val3));
 
-    ASSERT_THAT(val1, Eq("string"));
-    ASSERT_THAT(val2, FloatEq(42.f));
-    ASSERT_THAT(val3, DoubleEq(15.));
+    ASSERT_EQ(val1, "string");
+    ASSERT_FLOAT_EQ(val2, 42.f);
+    ASSERT_DOUBLE_EQ(val3, 15.);
 }
 
 TYPED_TEST(UnpackPropertiesTest,
            unpackDoesntChangeOriginalDataWhenPassedAsNonConstReference)
 {
-    using namespace testing;
-
     std::string val1, val2;
 
     EXPECT_FALSE(this->unpackPropertiesCall(this->data, "Key-1", val1));
     EXPECT_FALSE(this->unpackPropertiesCall(this->data, "Key-1", val2));
 
-    ASSERT_THAT(val1, Eq("string"));
-    ASSERT_THAT(val2, Eq("string"));
+    ASSERT_EQ(val1, "string");
+    ASSERT_EQ(val2, "string");
 }
 
 TYPED_TEST(UnpackPropertiesTest, doesntReportMissingPropertyForOptional)
 {
-    using namespace testing;
-    using namespace std::string_literals;
-
     std::optional<std::string> val1;
     std::optional<std::string> val4;
 
     EXPECT_FALSE(
         this->unpackPropertiesCall(this->data, "Key-1", val1, "Key-4", val4));
 
-    ASSERT_THAT(val1, Eq("string"));
-    ASSERT_THAT(val4, Eq(std::nullopt));
+    ASSERT_EQ(val1, "string");
+    ASSERT_EQ(val4, std::nullopt);
 }
 
 TYPED_TEST(UnpackPropertiesTest, setPresentPointersOnSuccess)
 {
-    using namespace testing;
-    using namespace std::string_literals;
-
     const std::string* val1 = nullptr;
     const float* val2 = nullptr;
     const double* val3 = nullptr;
@@ -151,9 +141,9 @@ TYPED_TEST(UnpackPropertiesTest, setPresentPointersOnSuccess)
     ASSERT_TRUE(val1 && val2 && val3);
     ASSERT_TRUE(!val4);
 
-    ASSERT_THAT(*val1, Eq("string"));
-    ASSERT_THAT(*val2, FloatEq(42.f));
-    ASSERT_THAT(*val3, DoubleEq(15.));
+    ASSERT_EQ(*val1, "string");
+    ASSERT_FLOAT_EQ(*val2, 42.f);
+    ASSERT_DOUBLE_EQ(*val3, 15.);
 }
 
 template <typename Params>
@@ -167,7 +157,6 @@ TYPED_TEST_SUITE(UnpackPropertiesThrowingTest, ContainerTypesThrowing);
 
 TYPED_TEST(UnpackPropertiesThrowingTest, throwsErrorWhenKeyIsMissing)
 {
-    using namespace testing;
     using UnpackError = ::sdbusplus::error::xyz::openbmc_project::sdbusplus::
         Error::UnpackPropertyError;
 
@@ -182,13 +171,12 @@ TYPED_TEST(UnpackPropertiesThrowingTest, throwsErrorWhenKeyIsMissing)
     ASSERT_TRUE(error.has_value());
     if (!error.has_value())
         return; // structural guard just for the analyzer
-    ASSERT_THAT(error->reason, Eq("missingProperty"));
-    ASSERT_THAT(error->propertyName, Eq("Key-4"));
+    ASSERT_EQ(error->reason, "missingProperty");
+    ASSERT_EQ(error->propertyName, "Key-4");
 }
 
 TYPED_TEST(UnpackPropertiesThrowingTest, throwsErrorWhenTypeDoesntMatch)
 {
-    using namespace testing;
     using UnpackError = ::sdbusplus::error::xyz::openbmc_project::sdbusplus::
         Error::UnpackPropertyError;
 
@@ -203,13 +191,12 @@ TYPED_TEST(UnpackPropertiesThrowingTest, throwsErrorWhenTypeDoesntMatch)
     ASSERT_TRUE(error.has_value());
     if (!error.has_value())
         return; // structural guard just for the analyzer
-    ASSERT_THAT(error->reason, Eq("wrongType"));
-    ASSERT_THAT(error->propertyName, Eq("Key-2"));
+    ASSERT_EQ(error->reason, "wrongType");
+    ASSERT_EQ(error->propertyName, "Key-2");
 }
 
 TYPED_TEST(UnpackPropertiesThrowingTest, throwsErrorWhenOptionalTypeDoesntMatch)
 {
-    using namespace testing;
     using UnpackError = ::sdbusplus::error::xyz::openbmc_project::sdbusplus::
         Error::UnpackPropertyError;
 
@@ -222,8 +209,8 @@ TYPED_TEST(UnpackPropertiesThrowingTest, throwsErrorWhenOptionalTypeDoesntMatch)
     ASSERT_TRUE(error.has_value());
     if (!error.has_value())
         return; // structural guard just for the analyzer
-    ASSERT_THAT(error->reason, Eq("wrongType"));
-    ASSERT_THAT(error->propertyName, Eq("Key-2"));
+    ASSERT_EQ(error->reason, "wrongType");
+    ASSERT_EQ(error->propertyName, "Key-2");
 }
 
 template <typename Params>
@@ -237,8 +224,6 @@ TYPED_TEST_SUITE(UnpackPropertiesNonThrowingTest, ContainerTypesNonThrowing);
 
 TYPED_TEST(UnpackPropertiesNonThrowingTest, ErrorWhenKeyIsMissing)
 {
-    using namespace testing;
-
     std::string val1;
     float val2 = 0.f;
     double val3 = 0.;
@@ -248,14 +233,12 @@ TYPED_TEST(UnpackPropertiesNonThrowingTest, ErrorWhenKeyIsMissing)
     ASSERT_TRUE(badProperty.has_value());
     if (!badProperty.has_value())
         return; // structural guard just for the analyzer
-    EXPECT_THAT(badProperty->reason, Eq(UnpackErrorReason::missingProperty));
-    EXPECT_THAT(badProperty->property, Eq("Key-4"));
+    EXPECT_EQ(badProperty->reason, UnpackErrorReason::missingProperty);
+    EXPECT_EQ(badProperty->property, "Key-4");
 }
 
 TYPED_TEST(UnpackPropertiesNonThrowingTest, ErrorWhenTypeDoesntMatch)
 {
-    using namespace testing;
-
     std::string val1;
     std::string val2;
     double val3 = 0.;
@@ -265,14 +248,12 @@ TYPED_TEST(UnpackPropertiesNonThrowingTest, ErrorWhenTypeDoesntMatch)
     ASSERT_TRUE(badProperty.has_value());
     if (!badProperty.has_value())
         return; // structural guard just for the analyzer
-    EXPECT_THAT(badProperty->reason, Eq(UnpackErrorReason::wrongType));
-    EXPECT_THAT(badProperty->property, Eq("Key-2"));
+    EXPECT_EQ(badProperty->reason, UnpackErrorReason::wrongType);
+    EXPECT_EQ(badProperty->property, "Key-2");
 }
 
 TYPED_TEST(UnpackPropertiesNonThrowingTest, ErrorWhenOptionalTypeDoesntMatch)
 {
-    using namespace testing;
-
     std::optional<std::string> val1;
     std::optional<std::string> val2;
 
@@ -281,8 +262,8 @@ TYPED_TEST(UnpackPropertiesNonThrowingTest, ErrorWhenOptionalTypeDoesntMatch)
     ASSERT_TRUE(badProperty.has_value());
     if (!badProperty.has_value())
         return; // structural guard just for the analyzer
-    EXPECT_THAT(badProperty->reason, Eq(UnpackErrorReason::wrongType));
-    EXPECT_THAT(badProperty->property, Eq("Key-2"));
+    EXPECT_EQ(badProperty->reason, UnpackErrorReason::wrongType);
+    EXPECT_EQ(badProperty->property, "Key-2");
 }
 
 template <typename Params>
@@ -299,7 +280,6 @@ TYPED_TEST_SUITE(UnpackPropertiesTest_ForVector, ContainerTypesVector);
 
 TYPED_TEST(UnpackPropertiesTest_ForVector, silentlyDiscardsDuplicatedKeyInData)
 {
-    using namespace testing;
     using namespace std::string_literals;
 
     std::string val1;
@@ -312,9 +292,9 @@ TYPED_TEST(UnpackPropertiesTest_ForVector, silentlyDiscardsDuplicatedKeyInData)
     EXPECT_FALSE(this->unpackPropertiesCall(this->data, "Key-1", val1, "Key-2",
                                             val2, "Key-3", val3));
 
-    ASSERT_THAT(val1, Eq("string"));
-    ASSERT_THAT(val2, FloatEq(42.f));
-    ASSERT_THAT(val3, DoubleEq(15.));
+    ASSERT_EQ(val1, "string");
+    ASSERT_FLOAT_EQ(val2, 42.f);
+    ASSERT_DOUBLE_EQ(val3, 15.);
 }
 
 } // namespace sdbusplus

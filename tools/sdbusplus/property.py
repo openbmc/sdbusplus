@@ -115,7 +115,7 @@ class Property(NamedElement, Renderer):
 
         # Fix up local enum placeholders.
         if full:
-            r = r.replace(self.LOCAL_ENUM_MAGIC, "sdbusplus::common::" + iface)
+            r = r.replace(self.LOCAL_ENUM_MAGIC, "::sdbusplus::common::" + iface)
         else:
             r = r.replace(self.LOCAL_ENUM_MAGIC + "::", "")
 
@@ -245,19 +245,19 @@ class Property(NamedElement, Renderer):
             "params": 0,
             "registryName": "number",
         },
-        "unixfd": {"cppName": "sdbusplus::message::unix_fd", "params": 0},
+        "unixfd": {"cppName": "::sdbusplus::message::unix_fd", "params": 0},
         "string": {
             "cppName": "std::string",
             "params": 0,
             "registryName": "string",
         },
         "object_path": {
-            "cppName": "sdbusplus::object_path",
+            "cppName": "::sdbusplus::object_path",
             "params": 0,
             "registryName": "string",
         },
         "signature": {
-            "cppName": "sdbusplus::message::signature",
+            "cppName": "::sdbusplus::message::signature",
             "params": 0,
         },
         "array": {"cppName": "std::vector", "params": 1},
@@ -319,7 +319,7 @@ class Property(NamedElement, Renderer):
             result = result.split(".")
             result = "::".join(
                 [
-                    "sdbusplus",
+                    "::sdbusplus",
                     self.NONLOCAL_ENUM_MAGIC,
                     NamedElement(
                         name=".".join(result[0:-1])

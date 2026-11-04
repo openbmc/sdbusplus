@@ -75,6 +75,6 @@ namespace details
 {
 void register_${event.CamelCase}()
 {
-    sdbusplus::sdbuspp::register_event_helper<${event.CamelCase}>::hook();
+    ::sdbusplus::sdbuspp::register_event_helper<${event.CamelCase}>::hook();
 }
 }

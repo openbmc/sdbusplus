@@ -61,11 +61,11 @@ class Interface(NamedElement, Renderer):
         iface_name, _, err_name = error.rpartition(".")
         # Old errors keep D-Bus case; new errors use snake_case.
         if iface_name.endswith(".Error"):
-            return "sdbusplus::" + error.replace(".", "::")
+            return "::sdbusplus::" + error.replace(".", "::")
 
         iface_cpp = NamedElement(name=iface_name).cppNamespacedClass()
         err_cpp = NamedElement(name=err_name).CamelCase
-        return f"sdbusplus::error::{iface_cpp}::{err_cpp}"
+        return f"::sdbusplus::error::{iface_cpp}::{err_cpp}"
 
     def enum_includes(self, inc_list):
         includes = []

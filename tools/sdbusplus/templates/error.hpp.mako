@@ -7,7 +7,7 @@
 namespace ${error.namespaces}
 {
     % for e in error.errors:
-struct ${e.CamelCase} final : public sdbusplus::exception::generated_exception
+struct ${e.CamelCase} final : public ::sdbusplus::exception::generated_exception
 {
     static constexpr auto errName =
         "${error.name}.Error.${e.name}";
@@ -45,7 +45,7 @@ struct ${e.CamelCase} final : public sdbusplus::exception::generated_exception
 namespace ${error.old_namespaces}
 {
     % for e in error.errors:
-    using ${e.name} = ${error.namespaces}::${e.CamelCase};
+    using ${e.name} = ::${error.namespaces}::${e.CamelCase};
     % endfor
 } // namespace ${error.old_namespaces}
 #endif\

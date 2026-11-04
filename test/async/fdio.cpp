@@ -1,5 +1,9 @@
+#include <fcntl.h>
+#include <unistd.h>
+
 #include <sdbusplus/async.hpp>
 
+#include <ctime>
 #include <filesystem>
 #include <fstream>
 
@@ -71,6 +75,53 @@ class FdioTest : public ::testing::Test
         co_return;
     }
 
+    auto stopAfter(std::chrono::milliseconds duration)
+        -> sdbusplus::async::task<>
+    {
+        co_await sdbusplus::async::sleep_for(*ctx, duration);
+        ctx->request_stop();
+        co_return;
+    }
+
+    auto completeThenIdle(sdbusplus::async::fdio& watcher, bool& secondComplete,
+                          std::chrono::microseconds& idleCpu,
+                          std::chrono::microseconds& idleWall)
+        -> sdbusplus::async::task<>
+    {
+        co_await watcher.next();
+        const auto cpuStart = std::clock();
+        const auto wallStart = std::chrono::steady_clock::now();
+        co_await sdbusplus::async::sleep_for(*ctx, 50ms);
+        idleCpu = std::chrono::duration_cast<std::chrono::microseconds>(
+            std::chrono::duration<double>(
+                static_cast<double>(std::clock() - cpuStart) / CLOCKS_PER_SEC));
+        idleWall = std::chrono::duration_cast<std::chrono::microseconds>(
+            std::chrono::steady_clock::now() - wallStart);
+        co_await watcher.next();
+        secondComplete = true;
+        ctx->request_stop();
+        co_return;
+    }
+
+    auto failEachWait(sdbusplus::async::fdio& watcher, int& failures)
+        -> sdbusplus::async::task<>
+    {
+        for (int i = 0; i < 2; i++)
+        {
+            try
+            {
+                co_await watcher.next();
+                ADD_FAILURE() << "Expected the wait to report an error";
+            }
+            catch (const std::exception&)
+            {
+                failures++;
+            }
+        }
+        ctx->request_stop();
+        co_return;
+    }
+
     std::unique_ptr<sdbusplus::async::context> ctx;
     std::unique_ptr<sdbusplus::async::fdio> fdioInstance;
 
@@ -99,4 +150,111 @@ TEST_F(FdioTest, TestFdEventsWithSleep)
         sdbusplus::async::execution::then([&]() { ctx->request_stop(); }));
     ctx->run();
     EXPECT_TRUE(ran);
+}
+
+TEST_F(FdioTest, IdleReadableFdDoesNotSpin)
+{
+    int fds[2];
+    ASSERT_EQ(pipe2(fds, O_NONBLOCK), 0);
+    auto pipeFdio = std::make_unique<sdbusplus::async::fdio>(*ctx, fds[0]);
+    const char byte = 'x';
+    ASSERT_EQ(write(fds[1], &byte, sizeof(byte)), sizeof(byte));
+
+    auto wallStart = std::chrono::steady_clock::now();
+    auto cpuStart = std::clock();
+    ctx->spawn(stopAfter(150ms));
+    ctx->run();
+    auto cpuElapsed = std::clock() - cpuStart;
+    auto wallElapsed = std::chrono::steady_clock::now() - wallStart;
+
+    EXPECT_LT(std::chrono::duration<double>(
+                  static_cast<double>(cpuElapsed) / CLOCKS_PER_SEC),
+              std::chrono::duration<double>(wallElapsed) / 2);
+    pipeFdio.reset();
+    close(fds[0]);
+    close(fds[1]);
+}
+
+TEST_F(FdioTest, IdleHangupDoesNotSpin)
+{
+    int fds[2];
+    ASSERT_EQ(pipe2(fds, O_NONBLOCK), 0);
+    auto pipeFdio = std::make_unique<sdbusplus::async::fdio>(*ctx, fds[0]);
+    close(fds[1]);
+
+    auto wallStart = std::chrono::steady_clock::now();
+    auto cpuStart = std::clock();
+    ctx->spawn(stopAfter(150ms));
+    ctx->run();
+    auto cpuElapsed = std::clock() - cpuStart;
+    auto wallElapsed = std::chrono::steady_clock::now() - wallStart;
+
+    EXPECT_LT(std::chrono::duration<double>(
+                  static_cast<double>(cpuElapsed) / CLOCKS_PER_SEC),
+              std::chrono::duration<double>(wallElapsed) / 2);
+    pipeFdio.reset();
+    close(fds[0]);
+}
+
+TEST_F(FdioTest, ReadinessAfterCompletionIsIdleUntilNextWait)
+{
+    int fds[2];
+    ASSERT_EQ(pipe2(fds, O_NONBLOCK), 0);
+    auto pipeFdio = std::make_unique<sdbusplus::async::fdio>(*ctx, fds[0]);
+    const char byte = 'x';
+    ASSERT_EQ(write(fds[1], &byte, sizeof(byte)), sizeof(byte));
+
+    bool secondComplete = false;
+    std::chrono::microseconds idleCpu{};
+    std::chrono::microseconds idleWall{};
+    ctx->spawn(completeThenIdle(*pipeFdio, secondComplete, idleCpu, idleWall));
+    ctx->spawn(stopAfter(250ms));
+    ctx->run();
+
+    EXPECT_TRUE(secondComplete);
+    EXPECT_GE(idleWall, 40ms);
+    EXPECT_LT(idleWall, 500ms);
+    EXPECT_LT(idleCpu, idleWall / 2);
+    pipeFdio.reset();
+    close(fds[0]);
+    close(fds[1]);
+}
+
+TEST_F(FdioTest, HangupAfterCompletionIsIdleUntilNextWait)
+{
+    int fds[2];
+    ASSERT_EQ(pipe2(fds, O_NONBLOCK), 0);
+    auto pipeFdio = std::make_unique<sdbusplus::async::fdio>(*ctx, fds[0]);
+    close(fds[1]);
+
+    bool secondComplete = false;
+    std::chrono::microseconds idleCpu{};
+    std::chrono::microseconds idleWall{};
+    ctx->spawn(completeThenIdle(*pipeFdio, secondComplete, idleCpu, idleWall));
+    ctx->spawn(stopAfter(250ms));
+    ctx->run();
+
+    EXPECT_TRUE(secondComplete);
+    EXPECT_GE(idleWall, 40ms);
+    EXPECT_LT(idleWall, 500ms);
+    EXPECT_LT(idleCpu, idleWall / 2);
+    pipeFdio.reset();
+    close(fds[0]);
+}
+
+TEST_F(FdioTest, FailureToEnableIsReportedToEveryWait)
+{
+    int fds[2];
+    ASSERT_EQ(pipe2(fds, O_NONBLOCK), 0);
+    auto pipeFdio = std::make_unique<sdbusplus::async::fdio>(*ctx, fds[0]);
+    close(fds[0]);
+
+    int failures = 0;
+    ctx->spawn(failEachWait(*pipeFdio, failures));
+    ctx->spawn(stopAfter(500ms));
+    ctx->run();
+
+    EXPECT_EQ(failures, 2);
+    pipeFdio.reset();
+    close(fds[1]);
 }

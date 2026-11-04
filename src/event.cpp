@@ -39,6 +39,16 @@ source::~source()
     }
 }
 
+void source::reset_locked() noexcept
+{
+    if (sourcep != nullptr)
+    {
+        sd_event_source_unref(sourcep);
+    }
+    sourcep = nullptr;
+    ev = nullptr;
+}
+
 void source::set_enabled(bool enabled)
 {
     if (sourcep == nullptr || ev == nullptr)
@@ -121,6 +131,11 @@ void event::run_one(time_resolution timeout)
 void event::break_run()
 {
     run_condition.signal();
+}
+
+std::unique_lock<std::recursive_mutex> event::acquire_lock()
+{
+    return obtain_lock<true>();
 }
 
 source event::add_io(int fd, uint32_t events, sd_event_io_handler_t handler,

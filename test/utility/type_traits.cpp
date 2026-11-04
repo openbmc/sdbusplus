@@ -4,7 +4,7 @@
 
 #include <type_traits>
 
-#include <gmock/gmock.h>
+#include <gtest/gtest.h>
 
 namespace
 {
@@ -30,11 +30,9 @@ TEST(TypeTraits, Basic)
 TEST(TypeTraits, HasMemberFind)
 {
     using sdbusplus::utility::has_member_find_v;
-    using namespace testing;
 
-    ASSERT_THAT((has_member_find_v<std::map<std::string, int>>), Eq(true));
-    ASSERT_THAT((has_member_find_v<std::vector<std::pair<std::string, int>>>),
-                Eq(false));
+    ASSERT_TRUE((has_member_find_v<std::map<std::string, int>>));
+    ASSERT_FALSE((has_member_find_v<std::vector<std::pair<std::string, int>>>));
 
     struct Foo
     {
@@ -46,23 +44,21 @@ TEST(TypeTraits, HasMemberFind)
     struct Bar
     {};
 
-    ASSERT_THAT(has_member_find_v<Foo>, Eq(true));
-    ASSERT_THAT(has_member_find_v<Foo&>, Eq(true));
-    ASSERT_THAT(has_member_find_v<const Foo&>, Eq(true));
+    ASSERT_TRUE(has_member_find_v<Foo>);
+    ASSERT_TRUE(has_member_find_v<Foo&>);
+    ASSERT_TRUE(has_member_find_v<const Foo&>);
 
-    ASSERT_THAT(has_member_find_v<Bar>, Eq(false));
+    ASSERT_FALSE(has_member_find_v<Bar>);
 }
 
 TEST(TypeTraits, HasMemberContains)
 {
     using sdbusplus::utility::has_member_contains_v;
-    using namespace testing;
 
     // std::map has member_contains from c++20
-    ASSERT_THAT((has_member_contains_v<std::map<std::string, int>>), Eq(true));
-    ASSERT_THAT(
-        (has_member_contains_v<std::vector<std::pair<std::string, int>>>),
-        Eq(false));
+    ASSERT_TRUE((has_member_contains_v<std::map<std::string, int>>));
+    ASSERT_FALSE(
+        (has_member_contains_v<std::vector<std::pair<std::string, int>>>));
 
     struct Foo
     {
@@ -74,11 +70,11 @@ TEST(TypeTraits, HasMemberContains)
     struct Bar
     {};
 
-    ASSERT_THAT(has_member_contains_v<Foo>, Eq(true));
-    ASSERT_THAT(has_member_contains_v<Foo&>, Eq(true));
-    ASSERT_THAT(has_member_contains_v<const Foo&>, Eq(true));
+    ASSERT_TRUE(has_member_contains_v<Foo>);
+    ASSERT_TRUE(has_member_contains_v<Foo&>);
+    ASSERT_TRUE(has_member_contains_v<const Foo&>);
 
-    ASSERT_THAT(has_member_contains_v<Bar>, Eq(false));
+    ASSERT_FALSE(has_member_contains_v<Bar>);
 }
 
 TEST(TypeTraits, IsOptional)

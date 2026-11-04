@@ -195,26 +195,6 @@ int UnpackPropertyError::get_errno() const noexcept
     return EINVAL;
 }
 
-const char* UnhandledStop::name() const noexcept
-{
-    return errName;
-}
-
-const char* UnhandledStop::description() const noexcept
-{
-    return errDesc;
-}
-
-const char* UnhandledStop::what() const noexcept
-{
-    return errWhat;
-}
-
-int UnhandledStop::get_errno() const noexcept
-{
-    return ECANCELED;
-}
-
 static auto& get_event_hooks()
 {
     static std::unordered_map<std::string, sdbusplus::sdbuspp::register_hook>

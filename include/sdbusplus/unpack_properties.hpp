@@ -148,7 +148,8 @@ inline void unpackProperties(
         Error::UnpackPropertyError;
     details::unpackPropertiesCommon(
         [](const UnpackErrorReason reason, const std::string& property) {
-            throw UnpackError(property, to_string(reason));
+            throw UnpackError("PROPERTY_NAME", property, "REASON",
+                              to_string(reason));
         },
         input, std::forward<Args>(args)...);
 }

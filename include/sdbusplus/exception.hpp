@@ -4,6 +4,7 @@
 
 #include <nlohmann/json_fwd.hpp>
 #include <sdbusplus/sdbus.hpp>
+#include <sdbusplus/utility/consteval_string.hpp>
 
 #include <exception>
 #include <map>
@@ -164,6 +165,9 @@ struct generated_event : public generated_event_base
         return Event::errSeverity;
     }
 
+    template <utility::details::consteval_string_holder V>
+    using metadata_t = utility::consteval_string<V>;
+
   protected:
     mutable std::string jsonString;
 };
@@ -227,6 +231,9 @@ struct generated_internal_event : public generated_internal_event_base
     {
         return Event::errSeverity;
     }
+
+    template <utility::details::consteval_string_holder V>
+    using metadata_t = utility::consteval_string<V>;
 
   protected:
     mutable std::string jsonString;

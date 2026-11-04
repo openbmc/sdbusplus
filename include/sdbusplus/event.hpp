@@ -27,6 +27,9 @@ class source
     source& operator=(source&&);
     ~source();
 
+    /** Enable or disable an event source. */
+    void set_enabled(bool enabled);
+
   private:
     source(event& e, sd_event_source*& s) : ev(&e)
     {

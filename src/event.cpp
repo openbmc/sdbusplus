@@ -39,6 +39,22 @@ source::~source()
     }
 }
 
+void source::set_enabled(bool enabled)
+{
+    if (sourcep == nullptr || ev == nullptr)
+    {
+        return;
+    }
+
+    auto l = ev->obtain_lock();
+    auto rc = sd_event_source_set_enabled(sourcep,
+                                          enabled ? SD_EVENT_ON : SD_EVENT_OFF);
+    if (rc < 0)
+    {
+        throw exception::SdBusError(-rc, __func__);
+    }
+}
+
 condition::condition(condition&& c)
 {
     if (&c == this)

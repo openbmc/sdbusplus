@@ -1,5 +1,6 @@
 #include "../valgrind.hpp"
 
+#include <sys/epoll.h>
 #include <sys/wait.h>
 #include <unistd.h>
 
@@ -54,6 +55,12 @@ struct ReentrantCallback
         return 0;
     }
 };
+
+int countEvent(sd_event_source*, int, uint32_t, void* data)
+{
+    ++*static_cast<int*>(data);
+    return 0;
+}
 
 TEST_F(Event, TimeoutWorks)
 {
@@ -174,4 +181,34 @@ TEST_F(Event, CallbackCanReenterEventLock)
     kill(child, SIGKILL);
     waitpid(child, &status, 0);
     FAIL() << "Callback deadlocked while reentering the event lock";
+}
+
+TEST_F(Event, SetEnabledControlsDispatch)
+{
+    int fds[2];
+    ASSERT_EQ(pipe(fds), 0);
+    const char byte = 'x';
+    ASSERT_EQ(write(fds[1], &byte, sizeof(byte)), sizeof(byte));
+
+    int calls = 0;
+    {
+        auto source = ev.add_io(fds[0], EPOLLIN, countEvent, &calls);
+
+        source.set_enabled(false);
+        ev.run_one(10ms);
+        EXPECT_EQ(calls, 0);
+
+        source.set_enabled(true);
+        ev.run_one(10ms);
+        EXPECT_EQ(calls, 1);
+    }
+
+    close(fds[0]);
+    close(fds[1]);
+}
+
+TEST_F(Event, SetEnabledIgnoresEmptySource)
+{
+    sdbusplus::event_source_t source{};
+    EXPECT_NO_THROW(source.set_enabled(true));
 }

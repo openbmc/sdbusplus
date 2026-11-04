@@ -136,26 +136,6 @@ void SdBusError::move(SdBusError&& other)
     full_message = std::move(other.full_message);
 }
 
-const char* InvalidEnumString::name() const noexcept
-{
-    return errName;
-}
-
-const char* InvalidEnumString::description() const noexcept
-{
-    return errDesc;
-}
-
-const char* InvalidEnumString::what() const noexcept
-{
-    return errWhat;
-}
-
-int InvalidEnumString::get_errno() const noexcept
-{
-    return EINVAL;
-}
-
 static std::string unpackErrorReasonToString(const UnpackErrorReason reason)
 {
     switch (reason)

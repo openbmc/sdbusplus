@@ -25,6 +25,12 @@ class fdio : private context_ref, details::context_friend
     fdio(context& ctx, int fd,
          std::chrono::microseconds timeout = std::chrono::microseconds(0));
 
+    /** Change the timeout used by subsequent calls to `next`.  A wait already
+     *  in progress keeps its original timeout.  A zero duration disables the
+     *  timeout.
+     */
+    void setTimeout(std::chrono::microseconds timeout);
+
     /** Get the next fd event.
      *  Note: the implementation only supports a single awaiting task.  Two
      *  tasks should not share this object and both call `next`.

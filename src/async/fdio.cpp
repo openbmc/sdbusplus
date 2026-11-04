@@ -35,6 +35,12 @@ fdio::~fdio() noexcept
     complete = nullptr;
 }
 
+void fdio::setTimeout(std::chrono::microseconds newTimeout)
+{
+    auto eventLock = event_loop().acquire_lock();
+    timeout = std::chrono::duration_cast<event_t::time_resolution>(newTimeout);
+}
+
 std::exception_ptr fdio::retireSourcesLocked() noexcept
 {
     std::exception_ptr failure;

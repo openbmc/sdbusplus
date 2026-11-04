@@ -20,6 +20,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "ee30e48a_9a1c00a8",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1002532
+      },
+      "writtenOn": "2026-11-04T06:49:54Z",
+      "side": 1,
+      "message": "Hi @patrick@stwcx.xyz,\nThanks, and sorry about the confusing commit message. \n\nThe fix is in its own change now, so this one only adds setTimeout(). The reason for it is phosphor-modbus: several devices share one serial port and can need different response timeouts. Without this we\u0027d have to create a new fdio for every response. I\u0027ve put that in the commit message too, with a link to the modbus change that uses it.",
+      "parentUuid": "21e81107_f514962f",
+      "revId": "2efe5d54988d2704c017df4c7cd66eba65580fc2",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "9c7117c5_4c224925",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 3
@@ -49,6 +67,24 @@
       "side": 1,
       "message": "💯",
       "parentUuid": "9c7117c5_4c224925",
+      "revId": "2efe5d54988d2704c017df4c7cd66eba65580fc2",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "756591d0_369ff111",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1002532
+      },
+      "writtenOn": "2026-11-04T06:49:54Z",
+      "side": 1,
+      "message": "Hi @bvanassche@acm.org,\nThanks for the detailed review, this really helped.\n\nI\u0027ve split it into 4 changes: the deadlock fix, set_enabled(), the busy-loop fix, and setTimeout(). I left out the /tmp fixture cleanup since it\u0027s unrelated. The new timeout test uses its own pipe now, so it doesn\u0027t need that cleanup. I can send it separately if you still want it.\n\nLet me know if I missed anything. Thanks.",
+      "parentUuid": "db73a1da_59b1c21f",
       "revId": "2efe5d54988d2704c017df4c7cd66eba65580fc2",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }

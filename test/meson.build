@@ -66,7 +66,18 @@ test(
     executable(
         'test-bus_aio',
         'bus/aio.cpp',
-        dependencies: [boost_dep, gmock_dep, gtest_dep, sdbusplus_dep],
+        dependencies: [
+            boost_dep,
+            dependency(
+                'boost',
+                modules: ['context'],
+                disabler: true,
+                required: false,
+            ),
+            gmock_dep,
+            gtest_dep,
+            sdbusplus_dep,
+        ],
     ),
 )
 

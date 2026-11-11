@@ -277,14 +277,17 @@ class connection : public sdbusplus::bus_t
         {
             message_t r;
             r = async_send_yield(m, yield[ec]);
-            try
+            if (!ec)
             {
-                return r.unpack<RetTypes...>();
-            }
-            catch (const std::exception&)
-            {
-                ec = boost::system::errc::make_error_code(
-                    boost::system::errc::invalid_argument);
+                try
+                {
+                    return r.unpack<RetTypes...>();
+                }
+                catch (const std::exception&)
+                {
+                    ec = boost::system::errc::make_error_code(
+                        boost::system::errc::invalid_argument);
+                }
             }
         }
         return default_ret_types<RetTypes...>();

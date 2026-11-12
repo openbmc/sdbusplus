@@ -3,7 +3,7 @@ import string
 
 from .namedelement import NamedElement
 
-""" Class for parsing 'service_name' definition eleemnts from an interface.
+""" Class for parsing 'service_name' definition elements from an interface.
 """
 
 

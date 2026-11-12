@@ -48,9 +48,9 @@ constexpr bool operator==(const sd_bus_vtable& t1, const sd_bus_vtable& t2)
         case _SD_BUS_VTABLE_END:
         {
             // The union x shall be all zeros for END
-            constexpr uint8_t allZeors[sizeof(t1.x)] = {0};
-            return memcmp(&t1.x, allZeors, sizeof(t1.x)) == 0 &&
-                   memcmp(&t2.x, allZeors, sizeof(t2.x)) == 0;
+            constexpr uint8_t allZeros[sizeof(t1.x)] = {0};
+            return memcmp(&t1.x, allZeros, sizeof(t1.x)) == 0 &&
+                   memcmp(&t2.x, allZeros, sizeof(t2.x)) == 0;
         }
         case _SD_BUS_VTABLE_METHOD:
             return strcmp(t1.x.method.member, t2.x.method.member) == 0 &&

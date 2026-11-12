@@ -133,7 +133,7 @@ class connection : public sdbusplus::bus_t
             }
             catch (const std::exception&)
             {
-                // This message waas received with no error, however we failed
+                // This message was received with no error, however we failed
                 // to parse the message; force error-code to let the consumer
                 // know of the failure in the handler.
                 std::get<0>(responseData) =

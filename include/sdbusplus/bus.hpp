@@ -94,7 +94,7 @@ struct bus_t
      * sd-bus uses the word "default" to refer to a shared bus connection that
      * it saves in thread-local-storage.  The `new_default*` functions give a
      * connection to this thread-local-storage bus connection and not
-     * neceesarily a new, unique bus connection.  This can be a very important
+     * necessarily a new, unique bus connection.  This can be a very important
      * distinction, such as when writing test-cases that might require having
      * both a server and client connection.
      *

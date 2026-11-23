@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6997b1b6_837b6371",
+        "filename": "include/sdbusplus/async/fdio.hpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1001758
+      },
+      "writtenOn": "2026-11-23T23:43:59Z",
+      "side": 1,
+      "message": "I suppose you should use snake_case here as set_timeout",
+      "revId": "1ad12af085b8371b6c06a064b32a006c4c079455",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

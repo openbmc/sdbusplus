@@ -1,11 +1,10 @@
 #include <sdbusplus/async.hpp>
 
+#include <atomic>
 #include <filesystem>
 #include <fstream>
 
 #include <gtest/gtest.h>
-
-using namespace std::literals;
 
 namespace fs = std::filesystem;
 
@@ -78,8 +77,10 @@ class MutexTest : public ::testing::Test
         sdbusplus::async::lock_guard lg{mutex};
         co_await lg.lock();
 
-        ctx->spawn(writeToFile());
-        co_await fdioInstance->next();
+        // Write the file concurrent with waiting for the fd event so the
+        // notification is not missed.
+        co_await sdbusplus::async::execution::when_all(writeToFile(),
+                                                       fdioInstance->next());
         co_await readFromFile();
         ran++;
 
@@ -87,7 +88,7 @@ class MutexTest : public ::testing::Test
     }
 
     int sharedVar = 0;
-    int ran = 0;
+    std::size_t ran = 0;
     sdbusplus::async::mutex mutex;
 
   private:
@@ -96,52 +97,74 @@ class MutexTest : public ::testing::Test
 
 TEST_F(MutexTest, TestAsyncAddition)
 {
-    constexpr auto testIterations = 10;
-    for (auto i = 0; i < testIterations; i++)
+    constexpr std::size_t testIterations = 10;
+    std::size_t completed = 0;
+    for (std::size_t i = 0; i < testIterations; i++)
     {
-        ctx->spawn(testAsyncAddition());
+        ctx->spawn(
+            testAsyncAddition() | sdbusplus::async::execution::then([&]() {
+                const std::size_t done = ++completed;
+                if (done == testIterations)
+                {
+                    ctx->request_stop();
+                }
+            }));
     }
-
-    ctx->spawn(
-        sdbusplus::async::sleep_for(*ctx, 1s) |
-        sdbusplus::async::execution::then([&]() { ctx->request_stop(); }));
 
     ctx->run();
 
-    EXPECT_EQ(sharedVar, testIterations);
+    EXPECT_EQ(sharedVar, static_cast<int>(testIterations));
+    EXPECT_EQ(completed, testIterations);
 }
 
 TEST_F(MutexTest, TestAsyncMixed)
 {
-    constexpr auto testIterations = 10;
-    for (auto i = 0; i < testIterations; i++)
+    constexpr std::size_t testIterations = 10;
+    std::size_t completed = 0;
+    for (std::size_t i = 0; i < testIterations; i++)
     {
-        ctx->spawn(testAsyncAddition());
-        ctx->spawn(testAsyncSubtraction(2));
+        ctx->spawn(
+            testAsyncAddition() | sdbusplus::async::execution::then([&]() {
+                const std::size_t done = ++completed;
+                if (done == 2 * testIterations)
+                {
+                    ctx->request_stop();
+                }
+            }));
+        ctx->spawn(
+            testAsyncSubtraction(2) | sdbusplus::async::execution::then([&]() {
+                const std::size_t done = ++completed;
+                if (done == 2 * testIterations)
+                {
+                    ctx->request_stop();
+                }
+            }));
     }
-
-    ctx->spawn(
-        sdbusplus::async::sleep_for(*ctx, 1s) |
-        sdbusplus::async::execution::then([&]() { ctx->request_stop(); }));
 
     ctx->run();
 
-    EXPECT_EQ(sharedVar, -testIterations);
+    EXPECT_EQ(sharedVar, -static_cast<int>(testIterations));
+    EXPECT_EQ(completed, 2 * testIterations);
 }
 
 TEST_F(MutexTest, TestFdEvents)
 {
-    constexpr static auto testIterations = 5;
+    constexpr static std::size_t testIterations = 5;
 
-    for (auto i = 0; i < testIterations; i++)
+    std::atomic<std::size_t> completed = 0;
+    for (std::size_t i = 0; i < testIterations; i++)
     {
-        ctx->spawn(testFdEvents());
+        ctx->spawn(testFdEvents() | sdbusplus::async::execution::then([&]() {
+                       const std::size_t done = ++completed;
+                       if (done == testIterations)
+                       {
+                           ctx->request_stop();
+                       }
+                   }));
     }
-    ctx->spawn(
-        sdbusplus::async::sleep_for(*ctx, 3s) |
-        sdbusplus::async::execution::then([&]() { ctx->request_stop(); }));
     ctx->run();
     EXPECT_EQ(ran, testIterations);
+    EXPECT_EQ(completed.load(), testIterations);
 }
 
 TEST_F(MutexTest, TestLockGuardNoLock)

@@ -8,6 +8,8 @@
 #include <sdbusplus/async/match.hpp>
 #include <sdbusplus/async/timer.hpp>
 
+#include <cassert>
+
 class A
 {};
 
@@ -69,12 +71,18 @@ auto constructInterfaces(sdbusplus::async::context& ctx, std::string& busName)
     auto client =
         sdbusplus::client::server::Test(ctx).service(busName).path("/3");
 
-    assert(co_await client.some_value() == 832);
+    {
+        auto val = co_await client.some_value();
+        assert(val == 832);
+    }
 
     auto client2 =
         sdbusplus::client::server::Test2(ctx).service(busName).path("/6");
 
-    assert(co_await client2.new_value() == 4200);
+    {
+        auto val = co_await client2.new_value();
+        assert(val == 4200);
+    }
 
     ctx.request_stop();
 
